@@ -1,89 +1,14 @@
 ﻿using HipHopFile;
+using IndustrialPark;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text.RegularExpressions;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public enum MinfAssetParam : uint
-    {
-        Unknown = 0,
-        AlertTime = 0xE1F06C25,
-        AttackFOV = 0x542DEDB9,
-        AttackFrames01 = 0x08DD3607,
-        AttackFrames01a = 0x8932A5D6,
-        AttackFrames01b = 0x8932A5D7,
-        AttackFrames02 = 0x08DD3608,
-        AttackFrames02a = 0x8932A659,
-        AttackFrames02b = 0x8932A65A,
-        AttackFrames03 = 0x08DD3609,
-        AttackFrames03a = 0x8932A6DC,
-        AttackFrames03b = 0x8932A6DD,
-        AttackPeriod = 0x7E0D772D,
-        AttackRadius = 0x2CFEF976,
-        AttackSize01 = 0xB7E2838E,
-        Bogus_Share = 0x21471CD4,
-        BoundMainCenter = 0x7FC3A6D8,
-        BoundMainExtent = 0xC51AAE79,
-        BoundMainIsBox = 0x897929FA,
-        DelayFidget = 0xCE24D474,
-        DetectHeight = 0x3527643A,
-        DetectOffset = 0x26EF64C2,
-        DetectRadius = 0xC1708625,
-        DistShadowCast = 0xAD40A895,
-        Empty = 0xC5989999,
-        EndTag_INIOnly = 0x4E7E7FA0,
-        EndTag_PropsOnly = 0xFAC5F4FC,
-        EndTag_Shared = 0xADC60725,
-        EsteemSlotA = 0xE41EF9D0,
-        EsteemSlotB = 0xE41EF9D1,
-        EsteemSlotC = 0xE41EF9D2,
-        EsteemSlotD = 0xE41EF9D3,
-        EsteemSlotE = 0xE41EF9D4,
-        FactorAccel = 0x760DAEFD,
-        FactorDrift = 0xACBAF0C6,
-        FactorElasticity = 0x5E65A9CC,
-        FactorGravKnoc = 0x6BB17A76,
-        FactorMass = 0x1BE96B2B,
-        FirstMovepoint = 0x10DB9FC3,
-        HitPoints = 0x716A0BCE,
-        IsBucketHead = 0x5505FA6C,
-        MoveSpeed = 0x9CFD776A,
-        NonRandomTalkAnims = 0x870AB6C2,
-        ScaleModel = 0x50E7A4A3,
-        ShadowCacheRadius = 0x22822228,
-        ShadowRasterRadius = 0xDF02CEFF,
-        Shrapnel = 0x98615EC9,
-        SoundRadius = 0x77E1B6C1,
-        StunTime = 0xE807BCBB,
-        TestCount = 0x282BF925,
-        TurnSpeed = 0x1DB516BA,
-        VtxAttack = 0x60FF93CA,
-        VtxAttack1 = 0xA2C8A08F,
-        VtxAttack2 = 0xA2C8A090,
-        VtxAttack3 = 0xA2C8A091,
-        VtxAttack4 = 0xA2C8A092,
-        VtxAttackBase = 0x3D1A90E7,
-        VtxDmgFlameA = 0x9BAE0B2E,
-        VtxDmgFlameB = 0x9BAE0B2F,
-        VtxDmgFlameC = 0x9BAE0B30,
-        VtxDmgSmokeA = 0x74D34EBE,
-        VtxDmgSmokeB = 0x74D34EBF,
-        VtxDmgSmokeC = 0x74D34EC0,
-        VtxExhaust = 0x91046CD0,
-        VtxEyeball = 0x57FCA29A,
-        VtxGen01 = 0xC3E4972B,
-        VtxGen02 = 0xC3E4972C,
-        VtxGen03 = 0xC3E4972D,
-        VtxGen04 = 0xC3E4972E,
-        VtxGen05 = 0xC3E4972F,
-        VtxPropel = 0xF9FCFD6C,
-    }
-
     public class MinfReference : GenericAssetDataContainer
     {
         public static int Size => 56;
@@ -154,9 +79,9 @@ namespace IndustrialPark
     public class MinfParam : GenericAssetDataContainer
     {
         public AssetID Type_Hex { get; set; }
-        public MinfAssetParam Type_Enum
+        public EMinfParamType Type_Enum
         {
-            get => Enum.GetValues(typeof(MinfAssetParam)).Cast<MinfAssetParam>().DefaultIfEmpty(MinfAssetParam.Unknown).FirstOrDefault(p => Type_Hex.Equals((uint)p));
+            get => Enum.GetValues(typeof(EMinfParamType)).Cast<EMinfParamType>().DefaultIfEmpty(EMinfParamType.Unknown).FirstOrDefault(p => Type_Hex.Equals((uint)p));
             set
             {
                 Type_Hex = (uint)value;
@@ -212,8 +137,36 @@ namespace IndustrialPark
         public AssetID AnimationTable { get; set; }
         [Category(categoryName)]
         public AssetID CombatID { get; set; }
-        [Category(categoryName)]
+
+        private const string categoryNameBrain = categoryName + ": Brain ID";
+
+        [Category(categoryNameBrain)]
         public AssetID BrainID { get; set; }
+        [Category(categoryNameBrain)]
+        public EBrainID_Movie BrainID_Movie
+        {
+            get => Enum.GetValues(typeof(EBrainID_Movie)).Cast<EBrainID_Movie>().DefaultIfEmpty(EBrainID_Movie.Unknown).FirstOrDefault(p => BrainID.Equals((uint)p));
+            set { BrainID = (uint)value; }
+        }
+        [Category(categoryNameBrain)]
+        public EBrainID_Incredibles BrainID_Incredibles
+        {
+            get => Enum.GetValues(typeof(EBrainID_Incredibles)).Cast<EBrainID_Incredibles>().DefaultIfEmpty(EBrainID_Incredibles.Unknown).FirstOrDefault(p => BrainID.Equals((uint)p));
+            set { BrainID = (uint)value; }
+        }
+        [Category(categoryNameBrain)]
+        public EBrainID_ROTU BrainID_ROTU
+        {
+            get => Enum.GetValues(typeof(EBrainID_ROTU)).Cast<EBrainID_ROTU>().DefaultIfEmpty(EBrainID_ROTU.Unknown).FirstOrDefault(p => BrainID.Equals((uint)p));
+            set { BrainID = (uint)value; }
+        }
+        [Category(categoryNameBrain)]
+        public EBrainID_RatProto BrainID_RatProto
+        {
+            get => Enum.GetValues(typeof(EBrainID_RatProto)).Cast<EBrainID_RatProto>().DefaultIfEmpty(EBrainID_RatProto.Unknown).FirstOrDefault(p => BrainID.Equals((uint)p));
+            set { BrainID = (uint)value; }
+        }
+
         [Category(categoryName)]
         public MinfReference[] References { get; set; }
 
@@ -354,15 +307,15 @@ namespace IndustrialPark
         private Vector3 GetScaleParameter()
         {
             foreach (var param in _parameters)
-                if (param.Type_Enum == MinfAssetParam.ScaleModel)
+                if (param.Type_Enum == EMinfParamType.ScaleModel)
                     return ParamToVector(param.Value);
             return Vector3.One;
         }
 
         private static Vector3 ParamToVector(string paramValue)
         {
-            var tokens = Regex.Replace(paramValue, @"\s+", " ").Split(' ');
-            var prevScale = new Vector3(Convert.ToSingle(tokens[1].Trim(',')), Convert.ToSingle(tokens[2].Trim(',')), Convert.ToSingle(tokens[3].Trim(',')));
+            var tokens = paramValue.Trim('{', '}', ' ').Replace(" ", "").Split(',');
+            var prevScale = new Vector3(Convert.ToSingle(tokens[0]), Convert.ToSingle(tokens[1]), Convert.ToSingle(tokens[2]));
             return prevScale;
         }
 
@@ -372,6 +325,13 @@ namespace IndustrialPark
             {
                 dt.RemoveProperty("CombatID");
                 dt.RemoveProperty("BrainID");
+            }
+            if (game != Game.Incredibles)
+            {
+                dt.RemoveProperty("BrainID_Movie");
+                dt.RemoveProperty("BrainID_Incredibles");
+                dt.RemoveProperty("BrainID_ROTU");
+                dt.RemoveProperty("BrainID_RatProto");
             }
 
             base.SetDynamicProperties(dt);
@@ -385,7 +345,7 @@ namespace IndustrialPark
 
             var sparamIndex = -1;
             for (int i = 0; i < mparams.Count; i++)
-                if (mparams[i].Type_Enum == MinfAssetParam.ScaleModel)
+                if (mparams[i].Type_Enum == EMinfParamType.ScaleModel)
                 {
                     sparamIndex = i;
                     break;
@@ -393,7 +353,7 @@ namespace IndustrialPark
 
             if (sparamIndex == -1)
             {
-                mparams.Add(new MinfParam() { Type_Enum = MinfAssetParam.ScaleModel, Value = VectorToParam(scale) });
+                mparams.Add(new MinfParam() { Type_Enum = EMinfParamType.ScaleModel, Value = VectorToParam(scale) });
             }
             else
             {

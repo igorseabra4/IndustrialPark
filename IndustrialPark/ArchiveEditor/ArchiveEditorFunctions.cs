@@ -632,15 +632,13 @@ namespace IndustrialPark
 
         private Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
         {
+            //return CreateAsset(AHDR, game, endianness, showMessageBox, ref error);
             try
             {
                 return CreateAsset(AHDR, game, endianness, showMessageBox, ref error);
             }
             catch (Exception ex)
             {
-                //#if DEBUG
-                //                throw ex;
-                //#endif
                 error = $"[{AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
                 if (showMessageBox)
