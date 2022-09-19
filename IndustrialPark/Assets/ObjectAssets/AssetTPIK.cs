@@ -97,16 +97,14 @@ namespace IndustrialPark
             DeniedSoundGroup == assetID;
     }
 
-    public class AssetTPIK : Asset
+    public class AssetTPIK : BaseAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
         private const string categoryName = "Pickup Types";
 
         [Category(categoryName)]
-        public int Unknown04 { get; set; }
-        [Category(categoryName)]
-        public int Unknown08 { get; set; }
+        public int Version { get; set; }
         private EntryTPIK[] _entries;
         [Category(categoryName)]
         public EntryTPIK[] Entries
@@ -119,16 +117,20 @@ namespace IndustrialPark
             }
         }
 
+        public AssetTPIK(string assetName) : base(assetName, AssetType.PickupTypes, BaseAssetType.Unknown_Other)
+        {
+            Version = 3;
+            Entries = new EntryTPIK[0];
+        }
+
         public AssetTPIK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                reader.BaseStream.Position = 0x4;
-
-                Unknown04 = reader.ReadInt32();
-                Unknown08 = reader.ReadInt32();
-                int amountOfEntries = reader.ReadInt32();
-                _entries = new EntryTPIK[amountOfEntries];
+                reader.BaseStream.Position = baseHeaderEndPosition;
+                Version = reader.ReadInt32();
+                int count = reader.ReadInt32();
+                _entries = new EntryTPIK[count];
                 for (int i = 0; i < _entries.Length; i++)
                     _entries[i] = new EntryTPIK(reader);
 
@@ -140,9 +142,8 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(assetID);
-                writer.Write(Unknown04);
-                writer.Write(Unknown08);
+                writer.Write(SerializeBase(endianness));
+                writer.Write(Version);
                 writer.Write(Entries.Length);
                 foreach (var t in Entries)
                     writer.Write(t.Serialize(endianness));

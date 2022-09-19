@@ -110,7 +110,7 @@ namespace IndustrialPark
             }
         }
 
-        protected int baseHeaderEndPosition => 8;
+        protected const int baseHeaderEndPosition = 8;
 
         protected int linkStartPosition(long streamLength, int linkCount) =>
             (int)(streamLength - linkCount * Link.sizeOfStruct - (this is AssetPLYR && game != Game.Scooby ? 4 : 0));
