@@ -144,10 +144,10 @@ namespace IndustrialPark
                     renderingDictionary[tpikEntry.Model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
                     drew = true;
                 }
-                if (renderingDictionary.ContainsKey(tpikEntry.RingModel))
+                if (renderingDictionary.ContainsKey(tpikEntry.PulseModel))
                 {
-                    var color = new Vector4(tpikEntry.RingColorR, tpikEntry.RingColorG, tpikEntry.RingColorB, 1f);
-                    renderingDictionary[tpikEntry.RingModel].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, Vector3.Zero);
+                    var color = new Vector4(tpikEntry.ColorR, tpikEntry.ColorG, tpikEntry.ColorB, 1f);
+                    renderingDictionary[tpikEntry.PulseModel].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, Vector3.Zero);
                     drew = true;
                 }
             }

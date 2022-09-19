@@ -5,57 +5,57 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class EntryTPIK
+    public class EntryTPIK : GenericAssetDataContainer
     {
         public AssetID PickupHash { get; set; }
         public AssetID Model { get; set; }
-        public AssetID RingModel { get; set; }
-        public AssetSingle UnknownFloat_0C { get; set; }
-        public AssetSingle UnknownFloat_10 { get; set; }
-        public AssetSingle UnknownFloat_14 { get; set; }
-        public AssetSingle RingColorR { get; set; }
-        public AssetSingle RingColorG { get; set; }
-        public AssetSingle RingColorB { get; set; }
-        public AssetColor RingColorRGB
+        public AssetID PulseModel { get; set; }
+        public AssetSingle PulseTime { get; set; }
+        public AssetSingle PulseAddScale { get; set; }
+        public AssetSingle PulseMoveDown { get; set; }
+        public AssetSingle ColorR { get; set; }
+        public AssetSingle ColorG { get; set; }
+        public AssetSingle ColorB { get; set; }
+        public AssetColor ColorRGB
         {
-            get => new AssetColor((byte)(RingColorR * 255), (byte)(RingColorG * 255), (byte)(RingColorB * 255), 255);
+            get => new AssetColor((byte)(ColorR * 255), (byte)(ColorG * 255), (byte)(ColorB * 255), 255);
             set
             {
                 var val = value.ToVector4();
-                RingColorR = val.X;
-                RingColorG = val.Y;
-                RingColorB = val.Z;
+                ColorR = val.X;
+                ColorG = val.Y;
+                ColorB = val.Z;
             }
         }
-        public AssetID Unknown_24 { get; set; }
-        public AssetID Unknown_28 { get; set; }
+        public AssetID Color { get; set; }
+        public AssetID FlyingSoundGroup { get; set; }
         public AssetID PickupSoundGroup { get; set; }
         public AssetID DeniedSoundGroup { get; set; }
         public byte HealthValue { get; set; }
         public byte PowerValue { get; set; }
-        public byte BonusValue { get; set; }
-        public byte UnknownByte_37 { get; set; }
+        public byte SaveFlag { get; set; }
+        public byte BInitialized { get; set; }
 
         public EntryTPIK() { }
         public EntryTPIK(EndianBinaryReader reader)
         {
             PickupHash = reader.ReadUInt32();
             Model = reader.ReadUInt32();
-            RingModel = reader.ReadUInt32();
-            UnknownFloat_0C = reader.ReadSingle();
-            UnknownFloat_10 = reader.ReadSingle();
-            UnknownFloat_14 = reader.ReadSingle();
-            RingColorR = reader.ReadSingle();
-            RingColorG = reader.ReadSingle();
-            RingColorB = reader.ReadSingle();
-            Unknown_24 = reader.ReadUInt32();
-            Unknown_28 = reader.ReadUInt32();
+            PulseModel = reader.ReadUInt32();
+            PulseTime = reader.ReadSingle();
+            PulseAddScale = reader.ReadSingle();
+            PulseMoveDown = reader.ReadSingle();
+            ColorR = reader.ReadSingle();
+            ColorG = reader.ReadSingle();
+            ColorB = reader.ReadSingle();
+            Color = reader.ReadUInt32();
+            FlyingSoundGroup = reader.ReadUInt32();
             PickupSoundGroup = reader.ReadUInt32();
             DeniedSoundGroup = reader.ReadUInt32();
             HealthValue = reader.ReadByte();
             PowerValue = reader.ReadByte();
-            BonusValue = reader.ReadByte();
-            UnknownByte_37 = reader.ReadByte();
+            SaveFlag = reader.ReadByte();
+            BInitialized = reader.ReadByte();
         }
 
         public byte[] Serialize(Endianness endianness)
@@ -64,37 +64,25 @@ namespace IndustrialPark
             {
                 writer.Write(PickupHash);
                 writer.Write(Model);
-                writer.Write(RingModel);
-                writer.Write(UnknownFloat_0C);
-                writer.Write(UnknownFloat_10);
-                writer.Write(UnknownFloat_14);
-                writer.Write(RingColorR);
-                writer.Write(RingColorG);
-                writer.Write(RingColorB);
-                writer.Write(Unknown_24);
-                writer.Write(Unknown_28);
+                writer.Write(PulseModel);
+                writer.Write(PulseTime);
+                writer.Write(PulseAddScale);
+                writer.Write(PulseMoveDown);
+                writer.Write(ColorR);
+                writer.Write(ColorG);
+                writer.Write(ColorB);
+                writer.Write(Color);
+                writer.Write(FlyingSoundGroup);
                 writer.Write(PickupSoundGroup);
                 writer.Write(DeniedSoundGroup);
                 writer.Write(HealthValue);
                 writer.Write(PowerValue);
-                writer.Write(BonusValue);
-                writer.Write(UnknownByte_37);
+                writer.Write(SaveFlag);
+                writer.Write(BInitialized);
 
                 return writer.ToArray();
             }
         }
-
-        [Browsable(false)]
-        public static int StructSize => 0x38;
-
-        public bool HasReference(uint assetID) =>
-            PickupHash == assetID ||
-            Model == assetID ||
-            RingModel == assetID ||
-            Unknown_24 == assetID ||
-            Unknown_28 == assetID ||
-            PickupSoundGroup == assetID ||
-            DeniedSoundGroup == assetID;
     }
 
     public class AssetTPIK : BaseAsset
@@ -173,9 +161,9 @@ namespace IndustrialPark
             {
                 Verify(a.PickupHash, ref result);
                 Verify(a.Model, ref result);
-                Verify(a.RingModel, ref result);
-                Verify(a.Unknown_24, ref result);
-                Verify(a.Unknown_28, ref result);
+                Verify(a.PulseModel, ref result);
+                Verify(a.Color, ref result);
+                Verify(a.FlyingSoundGroup, ref result);
                 Verify(a.PickupSoundGroup, ref result);
                 Verify(a.DeniedSoundGroup, ref result);
             }
