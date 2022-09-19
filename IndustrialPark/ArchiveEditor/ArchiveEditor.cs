@@ -839,6 +839,15 @@ namespace IndustrialPark
 
                     archive.AddAsset(AHDR, asset.game, asset.endianness, true);
 
+                    if (ArchiveEditorFunctions.updateReferencesOnCopy)
+                    {
+                        if (standalone)
+                            archive.ReplaceReferences(oldAssetID, AHDR.assetID);
+                        else
+                            foreach (var ae in Program.MainForm.archiveEditors)
+                                ae.archive.ReplaceReferences(oldAssetID, AHDR.assetID);
+                    }
+
                     SetSelectedIndex(AHDR.assetID, true);
                 }
             }
@@ -1254,6 +1263,7 @@ namespace IndustrialPark
                 archive.UnsavedChanges = true;
                 if (!archive.NoLayers)
                     comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
+                PopulateAssetListAndComboBox();
                 SetSelectedIndices(assetIDs, true);
             }
 

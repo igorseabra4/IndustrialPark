@@ -1304,6 +1304,9 @@ namespace IndustrialPark
                     section.data = ReplaceReferences(section.data, newReferenceUpdate);
         }
 
+        public void ReplaceReferences(uint oldAssetId, uint newAssetId) =>
+            FindWhoTargets(oldAssetId).ForEach(assetId => GetFromAssetID(assetId).ReplaceReferences(oldAssetId, newAssetId));            
+        
         public List<uint> ImportMultipleAssets(List<Section_AHDR> AHDRs, bool overwrite)
         {
             UnsavedChanges = true;

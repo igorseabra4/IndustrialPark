@@ -22,6 +22,30 @@ namespace IndustrialPark
                         (typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]) &&
                             ((IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)).Any(a => a.HasReference(assetID))))));
 
+        public virtual void ReplaceReferences(uint oldAssetId, uint newAssetId)
+        {
+            var typeProperties = GetType().GetProperties();
+
+            typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID)) && ((AssetID)prop.GetValue(this)).Equals(oldAssetId)).ToList()
+                .ForEach(prop => prop.SetValue(this, new AssetID(newAssetId)));
+
+            typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).ToList()
+                .ForEach(prop => ((GenericAssetDataContainer)prop.GetValue(this)).ReplaceReferences(oldAssetId, newAssetId));
+
+            typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID[]))).ToList().ForEach(prop =>
+            {
+                var array = (AssetID[])prop.GetValue(this);
+                for (int i = 0; i < array.Length; i++)
+                    if (array[i] == oldAssetId)
+                        array[i] = newAssetId;
+            });
+
+            typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) &&
+                typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).ToList()
+                .ForEach(prop => ((IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)).ToList()
+                .ForEach(gadc => gadc.ReplaceReferences(oldAssetId, newAssetId)));
+        }
+
         public virtual void Verify(ref List<string> result) { }
 
         public static void Verify(uint assetID, ref List<string> result)

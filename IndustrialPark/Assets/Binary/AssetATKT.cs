@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using SharpDX;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -332,9 +331,13 @@ namespace IndustrialPark
     {
         private const string categoryName = "Attack Table";
 
+        [Category(categoryName)]
         public AttackTableSection[] Sections { get; set; }
+        [Category(categoryName)]
         public AttackTableEntry[] Entries { get; set; }
+        [Category(categoryName)]
         public AttackTableTransition[] Transitions { get; set; }
+        [Category(categoryName)]
         public AttackTableState[] States { get; set; }
         
         public AssetATKT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)

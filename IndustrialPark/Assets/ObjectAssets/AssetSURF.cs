@@ -348,23 +348,23 @@ namespace IndustrialPark
         [Category(categoryName)]
         public byte DashImpactType { get; set; }
         [Category(categoryName)]
-        public float DashImpactThrowBack { get; set; }
+        public AssetSingle DashImpactThrowBack { get; set; }
         [Category(categoryName)]
-        public float DashSprayMagnitude { get; set; }
+        public AssetSingle DashSprayMagnitude { get; set; }
         [Category(categoryName)]
-        public float DashCoolRate { get; set; }
+        public AssetSingle DashCoolRate { get; set; }
         [Category(categoryName)]
-        public float DashCoolAmount { get; set; }
+        public AssetSingle DashCoolAmount { get; set; }
         [Category(categoryName)]
-        public float DashPass { get; set; }
+        public AssetSingle DashPass { get; set; }
         [Category(categoryName)]
-        public float DashRampMaxDistance { get; set; }
+        public AssetSingle DashRampMaxDistance { get; set; }
         [Category(categoryName)]
-        public float DashRampMinDistance { get; set; }
+        public AssetSingle DashRampMinDistance { get; set; }
         [Category(categoryName)]
-        public float DashRampKeySpeed { get; set; }
+        public AssetSingle DashRampKeySpeed { get; set; }
         [Category(categoryName)]
-        public float DashRampMaxHeight { get; set; }
+        public AssetSingle DashRampMaxHeight { get; set; }
         [Category(categoryName)]
         public AssetID DashRampTarget_MovePoint { get; set; }
         [Category(categoryName)]
@@ -382,7 +382,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public zHitDecalData HitDecalData2 { get; set; }
         [Category(categoryName)]
-        public float OffSurfaceTime { get; set; }
+        public AssetSingle OffSurfaceTime { get; set; }
         [Category(categoryName)]
         public byte SwimmableSurface { get; set; }
         [Category(categoryName)]

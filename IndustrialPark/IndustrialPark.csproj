@@ -524,7 +524,7 @@
     <Compile Include="MainForm\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Other\EndianConvertible.cs" />
+    <Compile Include="Other\Endianness.cs" />
     <Compile Include="Models\ModelConverterData.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Models\Vertex.cs" />

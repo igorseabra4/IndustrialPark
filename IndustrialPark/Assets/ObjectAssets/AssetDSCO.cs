@@ -48,9 +48,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor("Loop", "Enabled");
         [Category(categoryName)]
-        public float TimeYellow { get; set; }
+        public AssetSingle TimeYellow { get; set; }
         [Category(categoryName)]
-        public float TimeRed { get; set; }
+        public AssetSingle TimeRed { get; set; }
         [Category(categoryName), Description(discoDesc)]
         public int AmountOfTiles { get; set; }
         [Category(categoryName)]
@@ -222,9 +222,9 @@ namespace IndustrialPark
         }
 
         public override bool HasReference(uint assetID) =>
-            TileName_FirstWhite == HexUIntTypeConverter.StringFromAssetID(assetID) ||
-            TileName_FirstYellow == HexUIntTypeConverter.StringFromAssetID(assetID) ||
-            TileName_FirstRed == HexUIntTypeConverter.StringFromAssetID(assetID) ||
+            Functions.BKDRHash(TileName_FirstWhite) == assetID ||
+            Functions.BKDRHash(TileName_FirstYellow) == assetID ||
+            Functions.BKDRHash(TileName_FirstRed) == assetID ||
             base.HasReference(assetID);
     }
 }

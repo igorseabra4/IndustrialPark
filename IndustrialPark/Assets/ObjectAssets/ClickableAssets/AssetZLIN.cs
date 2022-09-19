@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -10,33 +11,42 @@ namespace IndustrialPark
         private const string categoryName = "Zip Line";
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Spline);
 
+        [Category(categoryName)]
         public AssetByte DismountType { get; set; }
 
         private Vector3 _position;
+        [Category(categoryName)]
         public AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
+        [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
+        [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
+        [Category(categoryName)]
         public AssetSingle HangLength { get; set; }
 
+        [Category(categoryName)]
         public AssetID Spline { get; set; }
 
+        [Category(categoryName)]
         public AssetID Entity { get; set; }
 
+        [Category(categoryName)]
         public AssetSingle Speed { get; set; }
 
+        [Category(categoryName)]
         public FlagBitmask ZipLineFlags { get; set; } = IntFlagsDescriptor();
 
         public AssetZLIN(string assetName, Vector3 position) : base(assetName, AssetType.ZipLine, BaseAssetType.ZipLine)

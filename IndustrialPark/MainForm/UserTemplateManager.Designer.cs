@@ -48,7 +48,7 @@
             this.groupBox2.Size = new System.Drawing.Size(263, 251);
             this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Assets";
+            this.groupBox2.Text = "Templates";
             // 
             // listBoxTemplates
             // 
