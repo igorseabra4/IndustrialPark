@@ -2,145 +2,130 @@
 using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 
 namespace IndustrialPark
 {
     [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class StyleStyleEntry : GenericAssetDataContainer
+    public class CreditsTextBox : GenericAssetDataContainer
     {
-        public int Unknown_00_1 { get; set; }
+        public FontEnum Font { get; set; }
         public AssetColor Color { get; set; }
         public AssetSingle CharWidth { get; set; }
         public AssetSingle CharHeight { get; set; }
-        public AssetSingle Unknown1 { get; set; }
-        public AssetSingle Unknown2 { get; set; }
+        public AssetSingle CharSpacingX { get; set; }
+        public AssetSingle CharSpacingY { get; set; }
         public AssetSingle MaxScreenWidth { get; set; }
         public AssetSingle MaxScreenHeight { get; set; }
 
-        public StyleStyleEntry()
+        public CreditsTextBox()
         {
             Color = new AssetColor();
         }
-        public StyleStyleEntry(EndianBinaryReader reader)
+        public CreditsTextBox(EndianBinaryReader reader)
         {
-            Unknown_00_1 = reader.ReadInt32();
+            Font = (FontEnum)reader.ReadInt32();
             Color = reader.ReadColor();
             CharWidth = reader.ReadSingle();
             CharHeight = reader.ReadSingle();
-            Unknown1 = reader.ReadSingle();
-            Unknown2 = reader.ReadSingle();
+            CharSpacingX = reader.ReadSingle();
+            CharSpacingY = reader.ReadSingle();
             MaxScreenWidth = reader.ReadSingle();
             MaxScreenHeight = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-
-                writer.Write(Unknown_00_1);
-                writer.Write(Color);
-                writer.Write(CharWidth);
-                writer.Write(CharHeight);
-                writer.Write(Unknown1);
-                writer.Write(Unknown2);
-                writer.Write(MaxScreenWidth);
-                writer.Write(MaxScreenHeight);
-
-                return writer.ToArray();
-            }
+            writer.Write((int)Font);
+            writer.Write(Color);
+            writer.Write(CharWidth);
+            writer.Write(CharHeight);
+            writer.Write(CharSpacingX);
+            writer.Write(CharSpacingY);
+            writer.Write(MaxScreenWidth);
+            writer.Write(MaxScreenHeight);
         }
     }
 
-    public class StyleEntry : GenericAssetDataContainer
+    public class CreditsPreset : GenericAssetDataContainer
     {
-        public short Unknown_00 { get; set; }
-        public short Unknown_02 { get; set; }
-        public AssetSingle Unknown_04 { get; set; }
-        public AssetSingle Unknown_08 { get; set; }
-        public StyleStyleEntry TextStyle { get; set; }
-        public StyleStyleEntry BackdropStyle { get; set; }
+        public short Num { get; set; }
+        public short Align { get; set; }
+        public AssetSingle Delay { get; set; }
+        public AssetSingle Innerspace { get; set; }
+        public CreditsTextBox TextStyle { get; set; }
+        public CreditsTextBox BackdropStyle { get; set; }
 
-        public StyleEntry()
+        public CreditsPreset()
         {
-            TextStyle = new StyleStyleEntry();
-            BackdropStyle = new StyleStyleEntry();
+            TextStyle = new CreditsTextBox();
+            BackdropStyle = new CreditsTextBox();
         }
-        public StyleEntry(EndianBinaryReader reader)
+        public CreditsPreset(EndianBinaryReader reader)
         {
-            Unknown_00 = reader.ReadInt16();
-            Unknown_02 = reader.ReadInt16();
-            Unknown_04 = reader.ReadSingle();
-            Unknown_08 = reader.ReadSingle();
+            Num = reader.ReadInt16();
+            Align = reader.ReadInt16();
+            Delay = reader.ReadSingle();
+            Innerspace = reader.ReadSingle();
 
-            TextStyle = new StyleStyleEntry(reader);
-            BackdropStyle = new StyleStyleEntry(reader);
+            TextStyle = new CreditsTextBox(reader);
+            BackdropStyle = new CreditsTextBox(reader);
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-
-                writer.Write(Unknown_00);
-                writer.Write(Unknown_02);
-                writer.Write(Unknown_04);
-                writer.Write(Unknown_08);
-                writer.Write(TextStyle.Serialize(game, endianness));
-                writer.Write(BackdropStyle.Serialize(game, endianness));
-
-                return writer.ToArray();
-            }
+            writer.Write(Num);
+            writer.Write(Align);
+            writer.Write(Delay);
+            writer.Write(Innerspace);
+            TextStyle.Serialize(writer);
+            BackdropStyle.Serialize(writer);
         }
     }
 
-    public class TitleEntry : GenericAssetDataContainer
+    public class CreditsHunk : GenericAssetDataContainer
     {
-        public int StyleIndex { get; set; }
+        public int PresetIndex { get; set; }
         public AssetSingle StartTime { get; set; }
         public AssetSingle EndTime { get; set; }
-        public int Unknown { get; set; }
         public string Text { get; set; }
 
-        public TitleEntry()
+        public CreditsHunk()
         {
             Text = "";
         }
-        public TitleEntry(EndianBinaryReader reader)
+        public CreditsHunk(EndianBinaryReader reader)
         {
             reader.ReadInt32(); // size
-            StyleIndex = reader.ReadInt32();
+            PresetIndex = reader.ReadInt32();
             StartTime = reader.ReadSingle();
             EndTime = reader.ReadSingle();
-            reader.ReadInt32(); // text offset
-            Unknown = reader.ReadInt32();
+            reader.ReadInt64(); // text offset
             Text = Functions.ReadString(reader);
 
             while (reader.BaseStream.Position % 4 != 0)
                 reader.BaseStream.Position++;
         }
 
-        public byte[] Serialize(int prevFileSize, Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+            var startPos = writer.BaseStream.Position;
+            writer.Write(0);
+            writer.Write(PresetIndex);
+            writer.Write(StartTime);
+            writer.Write(EndTime);
+            writer.Write((int)(writer.BaseStream.Position + 8)); // text offset
+            writer.Write(0);
+            writer.Write(Text);
 
-                writer.Write(0);
-                writer.Write(StyleIndex);
-                writer.Write(StartTime);
-                writer.Write(EndTime);
-                writer.Write((int)(prevFileSize + writer.BaseStream.Position + 8)); // text offset
-                writer.Write(Unknown);
-                writer.Write(Text);
+            do writer.Write((byte)0);
+            while (writer.BaseStream.Length % 4 != 0);
 
-                do writer.Write((byte)0);
-                while (writer.BaseStream.Length % 4 != 0);
-
-                writer.BaseStream.Position = 0;
-                writer.Write((int)writer.BaseStream.Length);
-
-                return writer.ToArray();
-            }
+            var savePos = writer.BaseStream.Position;
+            var size = savePos - startPos;
+            writer.BaseStream.Position = startPos;
+            writer.Write((int)size);
+            writer.BaseStream.Position = savePos;
         }
 
         public override string ToString()
@@ -149,80 +134,79 @@ namespace IndustrialPark
         }
     }
 
-    public class SectionEntry : GenericAssetDataContainer
+    public class CreditsEntry : GenericAssetDataContainer
     {
         public AssetSingle Duration { get; set; }
-        public int Unknown_08 { get; set; }
-        public AssetSingle Unknown_0C { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
+        public AssetSingle BeginX { get; set; }
         public AssetSingle BeginY { get; set; }
-        public AssetSingle Unknown_14 { get; set; }
+        public AssetSingle EndX { get; set; }
         public AssetSingle EndY { get; set; }
-        public AssetSingle Unknown_1C { get; set; }
-        public AssetSingle Unknown_20 { get; set; }
+        public AssetSingle ScrollRate { get; set; }
+        public AssetSingle Lifetime { get; set; }
         public AssetSingle FadeInBegin { get; set; }
         public AssetSingle FadeInEnd { get; set; }
         public AssetSingle FadeOutBegin { get; set; }
         public AssetSingle FadeOutEnd { get; set; }
-        public StyleEntry[] Styles { get; set; }
-        public TitleEntry[] Titles { get; set; }
+        public CreditsPreset[] Presets { get; set; }
+        public CreditsHunk[] Titles { get; set; }
 
-        public SectionEntry(EndianBinaryReader reader)
+        public CreditsEntry(EndianBinaryReader reader)
         {
             var start = reader.BaseStream.Position;
             int size = reader.ReadInt32();
             Duration = reader.ReadSingle();
-            Unknown_08 = reader.ReadInt32();
-            Unknown_0C = reader.ReadSingle();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            BeginX = reader.ReadSingle();
             BeginY = reader.ReadSingle();
-            Unknown_14 = reader.ReadSingle();
+            EndX = reader.ReadSingle();
             EndY = reader.ReadSingle();
-            Unknown_1C = reader.ReadSingle();
-            Unknown_20 = reader.ReadSingle();
+            ScrollRate = reader.ReadSingle();
+            Lifetime = reader.ReadSingle();
             FadeInBegin = reader.ReadSingle();
             FadeInEnd = reader.ReadSingle();
             FadeOutBegin = reader.ReadSingle();
             FadeOutEnd = reader.ReadSingle();
             int numberOfStyles = reader.ReadInt32();
 
-            Styles = new StyleEntry[numberOfStyles];
-            for (int i = 0; i < Styles.Length; i++)
-                Styles[i] = new StyleEntry(reader);
+            Presets = new CreditsPreset[numberOfStyles];
+            for (int i = 0; i < Presets.Length; i++)
+                Presets[i] = new CreditsPreset(reader);
 
-            var titles = new List<TitleEntry>();
+            var titles = new List<CreditsHunk>();
             while (reader.BaseStream.Position < start + size)
-                titles.Add(new TitleEntry(reader));
+                titles.Add(new CreditsHunk(reader));
             Titles = titles.ToArray();
         }
 
-        public byte[] Serialize(int prevSize, Game game, Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(0); // size
-                writer.Write(Duration);
-                writer.Write(Unknown_08);
-                writer.Write(Unknown_0C);
-                writer.Write(BeginY);
-                writer.Write(Unknown_14);
-                writer.Write(EndY);
-                writer.Write(Unknown_1C);
-                writer.Write(Unknown_20);
-                writer.Write(FadeInBegin);
-                writer.Write(FadeInEnd);
-                writer.Write(FadeOutBegin);
-                writer.Write(FadeOutEnd);
-                writer.Write(Styles.Length);
+            var startPos = writer.BaseStream.Position;
+            writer.Write(0); // size
+            writer.Write(Duration);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(BeginX);
+            writer.Write(BeginY);
+            writer.Write(EndX);
+            writer.Write(EndY);
+            writer.Write(ScrollRate);
+            writer.Write(Lifetime);
+            writer.Write(FadeInBegin);
+            writer.Write(FadeInEnd);
+            writer.Write(FadeOutBegin);
+            writer.Write(FadeOutEnd);
+            writer.Write(Presets.Length);
 
-                foreach (var s in Styles)
-                    writer.Write(s.Serialize(game, endianness));
-                foreach (var t in Titles)
-                    writer.Write(t.Serialize((int)writer.BaseStream.Length + prevSize, endianness));
+            foreach (var s in Presets)
+                s.Serialize(writer);
+            foreach (var t in Titles)
+                t.Serialize(writer);
 
-                writer.BaseStream.Position = 0;
-                writer.Write((int)writer.BaseStream.Length);
-
-                return writer.ToArray();
-            }
+            var savePos = writer.BaseStream.Position;
+            var size = savePos - startPos;
+            writer.BaseStream.Position = startPos;
+            writer.Write((int)size);
+            writer.BaseStream.Position = savePos;
         }
     }
 
@@ -231,31 +215,29 @@ namespace IndustrialPark
         private const string categoryName = "Credits";
 
         [Category(categoryName)]
-        public AssetID Unknown00 { get; set; }
+        public int Version { get; set; }
         [Category(categoryName)]
-        public int Unknown04 { get; set; }
+        public int CrdId { get; set; }
         [Category(categoryName)]
-        public int Unknown08 { get; set; }
+        public int State { get; set; }
         [Category(categoryName)]
-        public int Unknown0C { get; set; }
+        public AssetSingle total_time { get; set; }
         [Category(categoryName)]
-        public AssetSingle Duration { get; set; }
-        [Category(categoryName)]
-        public SectionEntry[] Sections { get; set; }
+        public CreditsEntry[] Sections { get; set; }
 
         public AssetCRDT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
-                Unknown00 = reader.ReadUInt32();
-                Unknown04 = reader.ReadInt32();
-                Unknown08 = reader.ReadInt32();
-                Unknown0C = reader.ReadInt32();
-                Duration = reader.ReadSingle();
+                reader.ReadUInt32(); // beef
+                Version = reader.ReadInt32();
+                CrdId = reader.ReadInt32();
+                State = reader.ReadInt32();
+                total_time = reader.ReadSingle();
                 reader.ReadInt32(); // file size
-                var sections = new List<SectionEntry>();
+                var sections = new List<CreditsEntry>();
                 while (!reader.EndOfStream)
-                    sections.Add(new SectionEntry(reader));
+                    sections.Add(new CreditsEntry(reader));
                 Sections = sections.ToArray();
             }
         }
@@ -264,14 +246,14 @@ namespace IndustrialPark
         {
             using (var writer = new EndianBinaryWriter(endianness))
             {
-                writer.Write(Unknown00);
-                writer.Write(Unknown04);
-                writer.Write(Unknown08);
-                writer.Write(Unknown0C);
-                writer.Write(Duration);
+                writer.Write(0xBEEEEEEF);
+                writer.Write(Version);
+                writer.Write(CrdId);
+                writer.Write(State);
+                writer.Write(total_time);
                 writer.Write(0); // size
                 foreach (var s in Sections)
-                    writer.Write(s.Serialize((int)writer.BaseStream.Length, game, endianness));
+                    s.Serialize(writer);
 
                 writer.BaseStream.Position = 0x14;
                 writer.Write((int)writer.BaseStream.Length);
