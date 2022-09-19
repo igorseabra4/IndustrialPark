@@ -85,7 +85,7 @@ namespace IndustrialPark.Randomizer
             else
             {
                 RandomizableArchive archive = new RandomizableArchive();
-                archive.OpenFile(rootDir, false, Platform.Unknown, out _, true);
+                archive.OpenFile(rootDir, false, Platform.Unknown);
                 archive.Randomize(settings);
                 archive.Save();
 
@@ -173,7 +173,7 @@ namespace IndustrialPark.Randomizer
             foreach (string hipPath in hipPaths)
             {
                 RandomizableArchive hip = new RandomizableArchive();
-                hip.OpenFile(hipPath, false, scoobyPlatform, out _, true);
+                hip.OpenFile(hipPath, false, scoobyPlatform);
 
                 progressBar.PerformStep();
 
@@ -205,7 +205,7 @@ namespace IndustrialPark.Randomizer
                 if (File.Exists(hopPath))
                 {
                     hop = new RandomizableArchive();
-                    hop.OpenFile(hopPath, false, scoobyPlatform, out _, true);
+                    hop.OpenFile(hopPath, false, scoobyPlatform);
 
                     levelPairs.Add((hip, hop));
 
@@ -243,7 +243,7 @@ namespace IndustrialPark.Randomizer
                 if (File.Exists(bootPath))
                 {
                     var boot = new RandomizableArchive();
-                    boot.OpenFile(bootPath, false, scoobyPlatform, out _, true);
+                    boot.OpenFile(bootPath, false, scoobyPlatform);
 
                     bool shouldSave = false;
 
@@ -286,7 +286,7 @@ namespace IndustrialPark.Randomizer
                 if (File.Exists(mnu5path))
                 {
                     var mnu5 = new RandomizableArchive();
-                    mnu5.OpenFile(mnu5path, false, scoobyPlatform, out _, true);
+                    mnu5.OpenFile(mnu5path, false, scoobyPlatform);
 
                     if (mnu5.RestoreRobotLaugh())
                     {
@@ -306,7 +306,7 @@ namespace IndustrialPark.Randomizer
                 if (File.Exists(mnu4path))
                 {
                     var mnu4 = new RandomizableArchive();
-                    mnu4.OpenFile(mnu4path, false, scoobyPlatform, out _, true);
+                    mnu4.OpenFile(mnu4path, false, scoobyPlatform);
                     
                     if (mnu4.WidescreenMenu())
                     {
@@ -582,61 +582,6 @@ namespace IndustrialPark.Randomizer
                 var c = warpRandomizerOutput[warpRandomizerOutput.Count - 1];
                 streamWriter.WriteLine($"({c.Item1})-[:{c.Item2}]->({c.Item3})");
             }
-        }
-
-        public void LogWarps(System.Windows.Forms.ProgressBar progressBar)
-        {
-            Platform scoobyPlatform = Platform.Unknown;
-            Dictionary<string, string> levelNames = new Dictionary<string, string>();
-
-            string[] levelNamesFiles = File.ReadAllLines("scooby_levelnames.txt");
-            foreach (string s in levelNamesFiles)
-            {
-                string[] split = s.Split('-');
-                levelNames.Add(split[0].ToUpper(), split[1]);
-            }
-
-            List<string> folderNames = new List<string>() { rootDir };
-            foreach (string dir in Directory.GetDirectories(rootDir))
-                folderNames.Add(dir);
-
-            progressBar.Minimum = 0;
-            progressBar.Maximum = folderNames.Count;
-            progressBar.Step = 1;
-
-            using (StreamWriter writer = new StreamWriter(new FileStream("scooby_warps.txt", FileMode.Create)))
-                foreach (string dir in folderNames)
-                {
-                    foreach (string hipPath in Directory.GetFiles(dir))
-                        if (Path.GetExtension(hipPath).ToLower() == ".hip")
-                        {
-                            RandomizableArchive hip = new RandomizableArchive();
-                            hip.OpenFile(hipPath, false, scoobyPlatform, out _, true);
-
-                            if (scoobyPlatform == Platform.Unknown)
-                                scoobyPlatform = hip.platform;
-
-                            List<string> warpNames = new List<string>();
-                            //warpNames.AddRange(hip.GetWarpNames(new List<string>()));
-
-                            foreach (string s in warpNames)
-                            {
-                                string hipPathSmall = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
-
-                                if (levelNames.ContainsKey(hipPathSmall))
-                                    hipPathSmall = levelNames[hipPathSmall];
-
-                                string a = s;
-                                if (levelNames.ContainsKey(s))
-                                    a = levelNames[s];
-
-                                writer.WriteLine(hipPathSmall + " -> " + a);
-                            }
-
-                            hip.Dispose(false);
-                        }
-                    progressBar.PerformStep();
-                }
         }
     }
 }

@@ -140,7 +140,7 @@ namespace IndustrialPark
             return false;
         }
 
-        public void OpenFile(string fileName, bool displayProgressBar, Platform scoobyPlatform, out string[] autoCompleteSource, bool skipTexturesAndModels = false)
+        public void OpenFile(string fileName, bool displayProgressBar, Platform scoobyPlatform)
         {
             Dispose();
 
@@ -214,20 +214,16 @@ namespace IndustrialPark
 
             if (assetsWithError != "")
                 MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
-
-            if (!(skipTexturesAndModels || standalone) && ContainsAssetWithType(AssetType.Texture))
-            {
-                SetupTextureDisplay();
-            }
-
+            
+            SetupTextureDisplay();
             RecalculateAllMatrices();
 
-            autoCompleteSource = autoComplete.ToArray();
+            autoCompleteSource.Clear();
+            autoCompleteSource.AddRange(autoComplete.ToArray());
 
-            if (!skipTexturesAndModels && ContainsAssetWithType(AssetType.PipeInfoTable) && ContainsAssetWithType(AssetType.Model))
-                foreach (var asset in assetDictionary.Values)
-                    if (asset is AssetPIPT PIPT)
-                        PIPT.UpdateDictionary();
+            if (ContainsAssetWithType(AssetType.PipeInfoTable) && ContainsAssetWithType(AssetType.Model))
+                foreach (var PIPT in assetDictionary.Values.Where(a => a is AssetPIPT).Select(a => (AssetPIPT)a))
+                    PIPT.UpdateDictionary();
 
             progressBar.Close();
 

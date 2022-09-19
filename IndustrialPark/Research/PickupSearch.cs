@@ -80,8 +80,8 @@ namespace IndustrialPark
             {
                 progressBar1.PerformStep();
 
-                ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                archive.OpenFile(s, false, scoobyPlatform, out _, true);
+                ArchiveEditorFunctions archive = new ArchiveEditorFunctions() { SkipTextureDisplay = true };
+                archive.OpenFile(s, false, scoobyPlatform);
                 scoobyPlatform = archive.platform;
                 Check(archive, ref result);
                 archive.Dispose(false);

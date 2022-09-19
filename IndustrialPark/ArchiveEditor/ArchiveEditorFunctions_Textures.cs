@@ -3,7 +3,6 @@ using RenderWareFile;
 using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -15,8 +14,13 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        public bool SkipTextureDisplay = false;
+
         public void SetupTextureDisplay()
         {
+            if (standalone || SkipTextureDisplay || !ContainsAssetWithType(AssetType.Texture))
+                return;
+
             lock (locker)
             {
                 if (!Directory.Exists(tempGcTxdsDir))

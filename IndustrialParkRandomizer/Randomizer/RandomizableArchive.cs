@@ -12,6 +12,12 @@ namespace IndustrialPark.Randomizer
 {
     public class RandomizableArchive : ArchiveEditorFunctions
     {
+        public RandomizableArchive()
+        {
+            NoLayers = true;
+            SkipTextureDisplay = true;
+        }
+
         public static Random random;
 
         public bool needToAddNumbers = false;
@@ -20,8 +26,6 @@ namespace IndustrialPark.Randomizer
         {
             if (LevelName == "hb09")
                 return false;
-
-            NoLayers = true;
 
             bool shuffled = false;
 
@@ -3005,7 +3009,7 @@ namespace IndustrialPark.Randomizer
             if (ContainsAsset(new AssetID(musicDispAssetName + "_01")) && ContainsAsset(new AssetID(musicGroupAssetName + "_01")))
                 return false;
 
-            var dpat = PlaceTemplate( musicDispAssetName, template: AssetTemplate.Dispatcher);
+            var dpat = PlaceTemplate(musicDispAssetName, template: AssetTemplate.Dispatcher);
 
             var group = (AssetGRUP)PlaceTemplate(musicGroupAssetName, template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;

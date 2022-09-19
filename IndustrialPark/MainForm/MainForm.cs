@@ -1729,7 +1729,7 @@ namespace IndustrialPark
                 {
                     p.Text = Path.GetFileName(hip);
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
-                    archive.OpenFile(hip, false, scoobyPlat, out _, false);
+                    archive.OpenFile(hip, false, scoobyPlat);
                     scoobyPlat = archive.platform;
                     archive.Dispose();
                     p.PerformStep();

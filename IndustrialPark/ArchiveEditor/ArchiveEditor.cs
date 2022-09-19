@@ -157,13 +157,11 @@ namespace IndustrialPark
         /// <param name="scoobyPlatform">The </param>
         private void OpenFile(string fileName, Platform scoobyPlatform = Platform.Unknown)
         {
-            archive.autoCompleteSource.Clear();
             //new Thread(() =>
             //{
-            archive.OpenFile(fileName, true, scoobyPlatform, out string[] autoComplete);
+            archive.OpenFile(fileName, true, scoobyPlatform);
             //    Invoke(new Action(() =>
             //   {
-            archive.autoCompleteSource.AddRange(autoComplete);
             OpenFileDone(fileName);
             //   }));
             //}).Start();
