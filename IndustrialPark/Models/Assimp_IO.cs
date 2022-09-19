@@ -863,7 +863,7 @@ namespace IndustrialPark.Models
                         Name = "mesh_" + material.Name.Replace("mat_", "")
                     };
 
-                    if (geo.geometryFlags2 == (GeometryFlags2)0x0101)
+                    if ((geo.geometryFlags2 & GeometryFlags2.isNativeGeometry) != 0)
                     {
                         NativeDataGC n = null;
 

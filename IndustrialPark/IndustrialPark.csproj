@@ -146,6 +146,7 @@
     </Compile>
     <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
     <Compile Include="ArchiveEditor\Other\Layer.cs" />
+    <Compile Include="Assets\Binary\AssetATKT.cs" />
     <Compile Include="Assets\Binary\AssetONEL.cs" />
     <Compile Include="Assets\Binary\AssetCTOC.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectUberLaser.cs" />
@@ -258,7 +259,7 @@
     <Compile Include="ArchiveEditor\Dialogs\ProgressBar.Designer.cs">
       <DependentUpon>ProgressBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="Assets\Binary\AssetTPIK.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetTPIK.cs" />
     <Compile Include="Assets\Binary\AssetSHRP.cs" />
     <Compile Include="Assets\Binary\AssetCRDT.cs" />
     <Compile Include="Assets\Binary\AssetFLY.cs" />
