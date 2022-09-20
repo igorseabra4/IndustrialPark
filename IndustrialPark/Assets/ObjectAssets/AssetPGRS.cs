@@ -60,20 +60,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            foreach (Link link in _progressLinks)
-            {
-                Verify(link.TargetAsset, ref result);
-                Verify(link.ArgumentAsset, ref result);
-
-                if (link.EventSendID == 0 || ((EventTSSM)link.EventSendID).ToString() == link.EventSendID.ToString())
-                    result.Add("Progress link sends event of unknown type for TSSM: " + link.EventSendID.ToString());
-            }
-        }
     }
 }

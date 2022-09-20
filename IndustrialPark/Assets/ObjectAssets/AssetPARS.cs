@@ -11,9 +11,9 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public int Type { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID ParticleSystem { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Texture { get; set; }
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = ByteFlagsDescriptor();
@@ -99,14 +99,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(Texture, ref result);
-            Verify(ParticleSystem, ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

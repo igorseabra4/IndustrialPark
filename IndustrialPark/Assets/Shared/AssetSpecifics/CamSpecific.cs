@@ -122,8 +122,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result) => Asset.Verify(Unknown, ref result);
     }
 
     public class CamSpecific_StaticFollow : CamSpecific_Generic

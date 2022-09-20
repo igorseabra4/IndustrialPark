@@ -123,6 +123,7 @@ namespace IndustrialPark
 
     public class PareSpecific_tagEmitVolume : PareSpecific_Generic
     {
+        [ValidReferenceRequired]
         public AssetID Volume { get; set; }
 
         public PareSpecific_tagEmitVolume()
@@ -143,8 +144,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result) => Asset.Verify(Volume, ref result);
     }
 
     public class PareSpecific_tagEmitOffsetPoint : PareSpecific_Generic

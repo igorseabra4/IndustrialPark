@@ -7,6 +7,7 @@ namespace IndustrialPark
 {
     public class ThrowableEntry : GenericAssetDataContainer
     {
+        [ValidReferenceRequired]
         public AssetID Model { get; set; }
         public int Type { get; set; }
         public AssetID Shrapnel { get; set; }
@@ -52,14 +53,6 @@ namespace IndustrialPark
         {
             return Model.GetHashCode();
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Model, ref result);
-            if (Model == 0)
-                result.Add("Throwable entry with Model set to 0");
-            Verify(Shrapnel, ref result);
-        }
     }
 
     public class AssetTRWT : BaseAsset
@@ -104,13 +97,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-            foreach(var entry in Entries)
-                entry.Verify(ref result);
         }
     }
 }

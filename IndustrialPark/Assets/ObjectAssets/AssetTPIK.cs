@@ -8,6 +8,7 @@ namespace IndustrialPark
     public class EntryTPIK : GenericAssetDataContainer
     {
         public AssetID PickupHash { get; set; }
+        [ValidReferenceRequired]
         public AssetID Model { get; set; }
         public AssetID PulseModel { get; set; }
         public AssetSingle PulseTime { get; set; }
@@ -153,20 +154,6 @@ namespace IndustrialPark
         {
             foreach (EntryTPIK entry in Entries)
                 tpikEntries.Remove(entry.PickupHash);
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntryTPIK a in Entries)
-            {
-                Verify(a.PickupHash, ref result);
-                Verify(a.Model, ref result);
-                Verify(a.PulseModel, ref result);
-                Verify(a.Color, ref result);
-                Verify(a.FlyingSoundGroup, ref result);
-                Verify(a.PickupSoundGroup, ref result);
-                Verify(a.DeniedSoundGroup, ref result);
-            }
         }
     }
 }

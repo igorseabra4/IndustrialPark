@@ -61,7 +61,7 @@ namespace IndustrialPark
     {
         private const string categoryName = "Pipe Info";
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Model { get; set; }
         [Category(categoryName)]
         public FlagBitmask SubObjectBits { get; set; } = IntFlagsDescriptor();
@@ -340,19 +340,6 @@ namespace IndustrialPark
 
         public delegate void OnPipeInfoTableEdited(Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> blendModes);
         private readonly OnPipeInfoTableEdited onPipeInfoTableEdited;
-
-        //public override bool HasReference(uint assetID) =>
-        //    PIPT_Entries.Any(p => p.Model == assetID) || base.HasReference(assetID);
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (PipeInfo a in Entries)
-            {
-                if (a.Model == 0)
-                    result.Add("PIPT entry with ModelAssetID set to 0");
-                Verify(a.Model, ref result);
-            }
-        }
 
         public void UpdateDictionary()
         {

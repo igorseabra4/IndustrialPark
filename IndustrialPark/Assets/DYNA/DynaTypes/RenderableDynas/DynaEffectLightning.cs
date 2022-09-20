@@ -15,15 +15,6 @@ namespace IndustrialPark
 
         protected override short constVersion => 2;
 
-        public override void Verify(ref List<string> result)
-        {
-            Verify(LightningTexture, ref result);
-            Verify(GlowTexture, ref result);
-            Verify(SimpleObject1, ref result);
-            Verify(SimpleObject2, ref result);
-            base.Verify(ref result);
-        }
-
         protected Vector3 _positionEnd;
         [Category(dynaCategoryName)]
         public AssetSingle PositionEndX

@@ -126,13 +126,6 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(Sound, ref result);
-        }
-
         public override void Draw(SharpRenderer renderer)
         {
             Vector4 Color = _color;

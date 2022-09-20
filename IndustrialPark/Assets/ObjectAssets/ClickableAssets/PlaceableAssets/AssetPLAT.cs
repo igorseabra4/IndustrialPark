@@ -258,12 +258,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            PlatSpecific.Verify(ref result);
-            base.Verify(ref result);
-        }
-
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;

@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         protected override short constVersion => 3;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Texture { get; set; }
         [Category(dynaCategoryName)]
         public AssetID Unknown04 { get; set; }
@@ -73,12 +73,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Texture, ref result);
-            base.Verify(ref result);
         }
     }
 }

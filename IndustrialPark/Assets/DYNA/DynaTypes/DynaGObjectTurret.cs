@@ -151,15 +151,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(BaseObject, ref result);
-            Verify(GunObject, ref result);
-            Verify(FinalPointer, ref result);
-            Verify(LaserSoundGroup, ref result);
-            Verify(TargetTexture, ref result);
-            base.Verify(ref result);
-        }
     }
 }

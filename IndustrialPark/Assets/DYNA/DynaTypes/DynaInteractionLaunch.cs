@@ -14,9 +14,9 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName)]
         public int LaunchType { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID LaunchObject { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Target { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Gravity { get; set; }
@@ -58,13 +58,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(LaunchObject, ref result);
-            Verify(Target, ref result);
-            base.Verify(ref result);
-        }
-
     }
 }

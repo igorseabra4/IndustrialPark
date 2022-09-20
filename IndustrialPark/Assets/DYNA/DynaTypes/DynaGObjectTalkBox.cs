@@ -131,19 +131,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Dialog_TextBoxID, ref result);
-            Verify(Prompt_TextBoxID, ref result);
-            Verify(Quit_TextBoxID, ref result);
-            Verify(TeleportPointerID, ref result);
-            Verify(PromptSkip_TextID, ref result);
-            Verify(PromptNoSkip_TextID, ref result);
-            Verify(PromptQuitTextID, ref result);
-            Verify(PromptNoQuitTextID, ref result);
-            Verify(PromptYesNoTextID, ref result);
-            base.Verify(ref result);
-        }
     }
 }

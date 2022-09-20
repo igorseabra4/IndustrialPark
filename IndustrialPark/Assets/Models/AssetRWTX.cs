@@ -30,6 +30,8 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
+            base.Verify(ref result);
+
             if (TextureAsRWSections.Length == 0)
                 result.Add("Failed to read RWTX asset. This might be just a library error and does not necessarily mean the texture is broken.");
 

@@ -270,7 +270,7 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public AssetID ConstructFunc_Hash { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID[] Animations { get; set; }
         [Category(categoryName)]
         public AnimationFile[] AnimationFiles { get; set; }
@@ -345,16 +345,6 @@ namespace IndustrialPark
                     animState.Serialize(writer, game);
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (var a in Animations)
-            {
-                if (a == 0)
-                    result.Add("ATBL entry with animation asset ID set to 0");
-                Verify(a, ref result);
             }
         }
     }

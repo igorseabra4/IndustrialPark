@@ -329,6 +329,7 @@ namespace IndustrialPark
         }
 
         public uint _assetID;
+        [ValidReferenceRequired]
         public AssetID Sound { get => _assetID; set => _assetID = value; }
         public byte loop { get; set; }
         public byte index { get; set; }

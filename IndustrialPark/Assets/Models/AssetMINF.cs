@@ -12,6 +12,7 @@ namespace IndustrialPark
     public class MinfReference : GenericAssetDataContainer
     {
         public static int Size => 56;
+        [ValidReferenceRequired]
         public AssetID Model { get; set; }
         public ushort Flags { get; set; }
         public byte Parent { get; set; }
@@ -133,7 +134,7 @@ namespace IndustrialPark
         private const string categoryName = "Model Info";
         public override string AssetInfo => string.Join(", ", References.Select(r => HexUIntTypeConverter.StringFromAssetID(r.Model)));
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID AnimationTable { get; set; }
         [Category(categoryName)]
         public AssetID CombatID { get; set; }
@@ -256,17 +257,6 @@ namespace IndustrialPark
         {
             RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
             RemoveFromNameDictionary(Functions.BKDRHash(newName));
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(AnimationTable, ref result);
-            foreach (MinfReference m in References)
-            {
-                if (m.Model == 0)
-                    result.Add("ModelInfo model reference with Model set to 0");
-                Verify(m.Model, ref result);
-            }
         }
 
         public static bool drawOnlyFirst = false;

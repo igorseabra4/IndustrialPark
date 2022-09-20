@@ -18,13 +18,13 @@ namespace IndustrialPark
 
         protected override short constVersion => 2;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Marker { get; set; }
         [Category(dynaCategoryName)]
         public PlayerEnum Player { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Camera { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID SimpleObject { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Delay { get; set; }
@@ -64,21 +64,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            if (Marker == 0)
-                result.Add("Bus stop with no MRKR reference");
-            Verify(Marker, ref result);
-            if (Camera == 0)
-                result.Add("Bus stop with no CAM reference");
-            Verify(Camera, ref result);
-            if (SimpleObject == 0)
-                result.Add("Bus stop with no SIMP reference");
-            Verify(SimpleObject, ref result);
-
-            base.Verify(ref result);
         }
     }
 }

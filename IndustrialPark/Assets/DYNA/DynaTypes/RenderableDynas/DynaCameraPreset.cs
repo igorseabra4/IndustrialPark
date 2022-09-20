@@ -59,13 +59,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Checkpoint, ref result);
-
-            base.Verify(ref result);
-        }
-
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
 
         protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;

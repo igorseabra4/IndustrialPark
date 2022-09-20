@@ -17,6 +17,7 @@ namespace IndustrialPark
         public short fmtExtBytes { get; set; }
         public short fmtExtData { get; set; }
         public int dataSize { get; set; }
+        [ValidReferenceRequired]
         public AssetID Sound { get; set; }
         public int unknown { get; set; }
 
@@ -137,30 +138,6 @@ namespace IndustrialPark
                     writer.Write(e.Serialize());
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntrySoundInfo_XBOX a in Entries_SND)
-            {
-                if (a.Sound == 0)
-                    result.Add("Sound Info entry with Sound set to 0");
-                Verify(a.Sound, ref result);
-            }
-
-            foreach (EntrySoundInfo_XBOX a in Entries_SNDS)
-            {
-                if (a.Sound == 0)
-                    result.Add("Sound Info entry with Sound set to 0");
-                Verify(a.Sound, ref result);
-            }
-
-            foreach (EntrySoundInfo_XBOX a in Entries_Sound_CIN)
-            {
-                if (a.Sound == 0)
-                    result.Add("Sound Info entry with Sound set to 0");
-                Verify(a.Sound, ref result);
             }
         }
 

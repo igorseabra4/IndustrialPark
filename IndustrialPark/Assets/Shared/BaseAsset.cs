@@ -174,24 +174,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (Link link in _links)
-            {
-                if (link.TargetAsset == 0)
-                    result.Add("Link with Target Asset set to 0");
-                Verify(link.TargetAsset, ref result);
-                Verify(link.ArgumentAsset, ref result);
-                Verify(link.SourceCheckAsset, ref result);
-
-                var eventCount = Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)).Length;
-
-                if (link.EventReceiveID == 0 || link.EventReceiveID > eventCount)
-                    result.Add("Link receives event of unknown type: " + link.EventReceiveID.ToString());
-                if (link.EventSendID == 0 || link.EventSendID > eventCount)
-                    result.Add("Link sends event of unknown type: " + link.EventSendID.ToString());
-            }
-        }
     }
 }

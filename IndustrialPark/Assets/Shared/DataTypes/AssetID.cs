@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -51,4 +52,10 @@ namespace IndustrialPark
 
         public static implicit operator AssetID(string value) => HipHopFile.Functions.BKDRHash(value);
     }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+    public class ValidReferenceRequiredAttribute : Attribute { }
+
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]
+    public class IgnoreVerificationAttribute : Attribute { }
 }

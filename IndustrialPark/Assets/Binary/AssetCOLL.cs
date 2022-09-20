@@ -7,6 +7,7 @@ namespace IndustrialPark
 {
     public class EntryCOLL : GenericAssetDataContainer
     {
+        [ValidReferenceRequired]
         public AssetID Model { get; set; }
         public AssetID CollisionModel { get; set; }
         public AssetID CameraCollisionModel { get; set; }
@@ -78,19 +79,6 @@ namespace IndustrialPark
                 }
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (var a in CollisionTable_Entries)
-            {
-                if (a.Model == 0)
-                    result.Add("CollisionTable entry with Model set to 0");
-
-                Verify(a.Model, ref result);
-                Verify(a.CollisionModel, ref result);
-                Verify(a.CameraCollisionModel, ref result);
             }
         }
 

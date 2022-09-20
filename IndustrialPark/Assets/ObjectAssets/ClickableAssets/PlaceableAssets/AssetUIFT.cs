@@ -22,7 +22,7 @@ namespace IndustrialPark
         public byte UIFontMode { get; set; }
         [Category(categoryName)]
         public FontEnum FontID { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Text { get; set; }
         [Category(categoryName)]
         public AssetColor BackgroundColor { get; set; }
@@ -116,13 +116,6 @@ namespace IndustrialPark
         public static new bool dontRender = false;
 
         public override bool DontRender => dontRender;
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(Text, ref result);
-        }
 
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {

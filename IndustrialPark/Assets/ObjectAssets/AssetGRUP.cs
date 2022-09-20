@@ -16,11 +16,11 @@ namespace IndustrialPark
     {
         public override string AssetInfo => $"{Items.Length} items";
 
-        private const string catName = "Group";
+        private const string categoryName = "Group";
 
-        [Category(catName)]
+        [Category(categoryName)]
         public Delegation ReceiveEventDelegation { get; set; }
-        [Category(catName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID[] Items { get; set; }
 
         public AssetGRUP(string assetName) : base(assetName, AssetType.Group, BaseAssetType.Group)
@@ -55,18 +55,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            foreach (AssetID a in Items)
-            {
-                if (a == 0)
-                    result.Add("Group with item set to 0");
-                Verify(a, ref result);
             }
         }
 

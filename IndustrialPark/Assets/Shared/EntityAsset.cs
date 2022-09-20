@@ -167,7 +167,7 @@ namespace IndustrialPark
         public AssetSingle ColorAlphaSpeed { get; set; }
 
         protected uint _model;
-        [Category(categoryName + " References"), Description("Model or ModelInfo asset")]
+        [Category(categoryName + " References"), Description("Model or ModelInfo asset"), ValidReferenceRequired]
         public AssetID Model
         {
             get => _model;
@@ -378,18 +378,6 @@ namespace IndustrialPark
                     min = d;
 
             return min;
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(Surface, ref result);
-            if (Model == 0)
-                result.Add(GetType().ToString().Replace("Asset", "") + " with Model set to 0");
-            if (!(this is AssetTRIG))
-                Verify(Model, ref result);
-            Verify(Animation, ref result);
         }
 
         public static bool movementPreview = false;

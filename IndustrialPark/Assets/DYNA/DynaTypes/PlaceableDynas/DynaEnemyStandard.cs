@@ -127,21 +127,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (MovePoint == 0 && MovePointGroup == 0)
-                result.Add("DYNA Enemy Standard without set MVPT");
-
-            Verify(MovePoint, ref result);
-            Verify(MovePointGroup, ref result);
-            Verify(Unknown5C, ref result);
-            Verify(Unknown60, ref result);
-            Verify(Unknown64, ref result);
-            Verify(Unknown68, ref result);
-        }
-
         public static bool dontRender = false;
         public override bool DontRender => dontRender;
     }

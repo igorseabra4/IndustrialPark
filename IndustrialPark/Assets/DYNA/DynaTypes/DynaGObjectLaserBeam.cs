@@ -204,16 +204,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Attach, ref result);
-            Verify(Target, ref result);
-            Verify(OriginEmitter, ref result);
-            Verify(StrikeEmitter, ref result);
-            Verify(BeamTexture, ref result);
-            Verify(RibbonTexture, ref result);
-            base.Verify(ref result);
-        }
     }
 }

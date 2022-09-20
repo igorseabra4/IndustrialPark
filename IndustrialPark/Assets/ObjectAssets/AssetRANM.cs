@@ -64,21 +64,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-            Verify(ModelStatic, ref result);
-            Verify(ModelBound, ref result);
-            Verify(AnimationIdle, ref result);
-            Verify(AnimationMoveThrough, ref result);
-            Verify(AnimationHit, ref result);
-            Verify(SoundGroupIdle, ref result);
-            Verify(SoundGroupMoveThrough, ref result);
-            Verify(SoundGroupHit, ref result);
-            Verify(ModelBurn, ref result);
-            Verify(AnimationBurn, ref result);
-        }
     }
 
     public class AssetRANM : BaseAsset
@@ -116,13 +101,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-            foreach (var ra in ReactiveAnimations)
-                ra.Verify(ref result);
         }
     }
 }

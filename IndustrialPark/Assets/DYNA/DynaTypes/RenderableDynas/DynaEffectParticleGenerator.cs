@@ -40,7 +40,7 @@ namespace IndustrialPark
         public FlagBitmask ParticleGeneratorFlags { get; set; } = ByteFlagsDescriptor();
         [Category(dynaCategoryName)]
         public AssetSingle Rate { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Texture { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte SystemType { get; set; }
@@ -330,12 +330,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Texture, ref result);
-            base.Verify(ref result);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

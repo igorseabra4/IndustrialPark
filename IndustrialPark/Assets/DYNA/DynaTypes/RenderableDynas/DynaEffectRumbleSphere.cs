@@ -15,7 +15,7 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Rumble { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Radius { get; set; }
@@ -63,12 +63,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Rumble, ref result);
-            base.Verify(ref result);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

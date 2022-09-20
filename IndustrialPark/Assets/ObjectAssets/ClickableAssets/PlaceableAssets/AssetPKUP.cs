@@ -302,14 +302,6 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (PickReferenceID == 0)
-                result.Add("PKUP with PickReferenceID set to 0");
-        }
-
         protected override void CreateBoundingBox()
         {
             if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))

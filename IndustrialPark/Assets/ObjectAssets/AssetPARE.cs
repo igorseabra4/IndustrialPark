@@ -90,13 +90,13 @@ namespace IndustrialPark
         public AssetByte CountVariation { get; set; }
         [Category(categoryName)]
         public AssetSingle Interval { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), IgnoreVerification]
         public AssetID ParticleProperties { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
         public PareSpecific_Generic ParticleEmitterSettings { get; set; }
         [Category(categoryName)]
         public AssetID Emitter { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), IgnoreVerification]
         public AssetID ParticleSystem { get; set; }
         [Category(categoryName)]
         public AssetSingle Emitter_PosX { get; set; }
@@ -332,21 +332,12 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            ParticleEmitterSettings.Verify(ref result);
-            if (game == Game.Scooby)
-            {
-                if (ParticleSystem == 0)
-                    result.Add("Particle Emitter with ParticleSystem set to 0");
-                Verify(ParticleSystem, ref result);
-            }
-            else
-            {
-                if (ParticleProperties == 0)
-                    result.Add("Particle Emitter with ParticleProperties set to 0");
-                Verify(ParticleProperties, ref result);
-            }
-            Verify(Emitter, ref result);
             base.Verify(ref result);
+
+            if (game == Game.Scooby)
+                Verify(ParticleSystem, "ParticleSystem", true, ref result);
+            else
+                Verify(ParticleProperties, "ParticleProperties", true, ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

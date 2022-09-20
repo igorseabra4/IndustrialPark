@@ -164,22 +164,6 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-            Verify(SpawnItem, ref result);
-
-            if (game != Game.Scooby)
-            {
-                Verify(DestroyShrapnel, ref result);
-                Verify(HitShrapnel, ref result);
-                Verify(DestroySFX, ref result);
-                Verify(HitSFX, ref result);
-                Verify(HitModel, ref result);
-                Verify(DestroyModel, ref result);
-            }
-        }
-
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (game == Game.Scooby)

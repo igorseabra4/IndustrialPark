@@ -151,13 +151,6 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(Texture, ref result);
-        }
-
         public override void CreateTransformMatrix()
         {
             world = renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity;

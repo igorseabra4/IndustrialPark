@@ -8,6 +8,7 @@ namespace IndustrialPark
 {
     public class EntryJAW : GenericAssetDataContainer
     {
+        [ValidReferenceRequired]
         public AssetID Sound { get; set; }
         public byte[] JawData { get; set; }
 
@@ -97,16 +98,6 @@ namespace IndustrialPark
                 writer.Write(newJawData.ToArray());
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntryJAW a in JAW_Entries)
-            {
-                if (a.Sound == 0)
-                    result.Add("JAW entry with SoundAssetID set to 0");
-                Verify(a.Sound, ref result);
             }
         }
 

@@ -1,12 +1,12 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
     public class EntryMAPR : GenericAssetDataContainer
     {
+        [ValidReferenceRequired]
         public AssetID Surface { get; set; }
         public AssetID Unknown { get; set; }
 
@@ -59,16 +59,6 @@ namespace IndustrialPark
                 }
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntryMAPR a in Entries)
-            {
-                if (a.Surface == 0)
-                    result.Add("Surface Mapper entry with Surface set to 0");
-                Verify(a.Surface, ref result);
             }
         }
     }

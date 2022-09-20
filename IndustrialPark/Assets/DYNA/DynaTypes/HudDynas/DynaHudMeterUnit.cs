@@ -102,12 +102,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(EmptyModel, ref result);
-            Verify(FullModel, ref result);
-            base.Verify(ref result);
-        }
     }
 }

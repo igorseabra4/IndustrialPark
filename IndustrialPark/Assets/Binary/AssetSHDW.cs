@@ -7,7 +7,9 @@ namespace IndustrialPark
 {
     public class EntrySHDW : GenericAssetDataContainer
     {
+        [ValidReferenceRequired]
         public AssetID Model { get; set; }
+        [ValidReferenceRequired]
         public AssetID ShadowModel { get; set; }
         public int Unknown { get; set; }
 
@@ -82,19 +84,6 @@ namespace IndustrialPark
                     writer.Write(l.Serialize(endianness));
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntrySHDW a in Entries)
-            {
-                if (a.Model == 0)
-                    result.Add("Shadow table entry with Model set to 0");
-                Verify(a.Model, ref result);
-                if (a.ShadowModel == 0)
-                    result.Add("Shadow table entry with ShadowModel set to 0");
-                Verify(a.ShadowModel, ref result);
             }
         }
 

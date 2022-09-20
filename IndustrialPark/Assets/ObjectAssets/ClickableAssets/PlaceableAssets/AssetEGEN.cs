@@ -70,12 +70,5 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(OnAnimation, ref result);
-        }
     }
 }

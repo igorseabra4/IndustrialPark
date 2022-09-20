@@ -94,38 +94,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntrySHRP a in Entries)
-                switch (a.Type)
-                {
-                    case 3:
-                        if (game == Game.BFBB)
-                            Verify(((EntrySHRP_Type3_BFBB)a).ParticleEmitter, ref result);
-                        else if (game == Game.Incredibles)
-                            Verify(((EntrySHRP_Type3_TSSM)a).Unknown1F0, ref result);
-                        break;
-                    case 4:
-                        if (game == Game.BFBB)
-                        {
-                            Verify(((EntrySHRP_Type4_BFBB)a).Model, ref result);
-                            Verify(((EntrySHRP_Type4_BFBB)a).Unknown74, ref result);
-                        }
-                        else if (game == Game.Incredibles)
-                            Verify(((EntrySHRP_Type4_TSSM)a).Model, ref result);
-                        break;
-                    case 6:
-                        if (game == Game.BFBB)
-                            Verify(((EntrySHRP_Type6_BFBB)a).Sound, ref result);
-                        else if (game == Game.Incredibles)
-                            Verify(((EntrySHRP_Type6_TSSM)a).Sound, ref result);
-                        break;
-                    case 9:
-                        Verify(((EntrySHRP_Type9)a).Unknown18, ref result);
-                        break;
-                }
-        }
-
         public void AddEntry(int type)
         {
             List<EntrySHRP> list = Entries.ToList();

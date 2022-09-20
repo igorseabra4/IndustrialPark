@@ -28,7 +28,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public DynaRingControlPlayerType PlayerType { get; set; }
         private uint _ringModel;
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID RingModel
         {
             get => _ringModel;
@@ -42,7 +42,7 @@ namespace IndustrialPark
         public AssetSingle DefaultWarningTime { get; set; }
         [Category(dynaCategoryName)]
         public int UnusedOffset { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID RingSoundGroup1 { get; set; }
         [Category(dynaCategoryName)]
         public AssetID RingSoundGroup2 { get; set; }
@@ -52,7 +52,7 @@ namespace IndustrialPark
         public AssetID RingSoundGroup4 { get; set; }
         [Category(dynaCategoryName)]
         public int NumNextRingsToShow { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID[] Rings { get; set; }
 
         public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl)
@@ -108,22 +108,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            if (RingModel == 0)
-                result.Add("Ring Control with no Ring Model reference");
-            Verify(RingModel, ref result);
-
-            if (RingSoundGroup1 == 0)
-                result.Add("Ring Control with no SGRP reference");
-            Verify(RingSoundGroup1, ref result);
-
-            foreach (var ring in Rings)
-                Verify(ring, ref result);
-
-            base.Verify(ref result);
         }
 
         [Browsable(false)]

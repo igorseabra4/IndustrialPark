@@ -9,6 +9,7 @@ namespace IndustrialPark
     public class EntrySoundInfo_GCN_V1 : GenericAssetDataContainer
     {
         public byte[] SoundHeader { get; set; }
+        [ValidReferenceRequired]
         public AssetID Sound { get; set; }
 
         public EntrySoundInfo_GCN_V1()
@@ -113,30 +114,6 @@ namespace IndustrialPark
                         writer.Write(e.Serialize());
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntrySoundInfo_GCN_V1 a in Entries_SND)
-            {
-                if (a.Sound == 0)
-                    result.Add("Sound Info entry with Sound set to 0");
-                Verify(a.Sound, ref result);
-            }
-
-            foreach (EntrySoundInfo_GCN_V1 a in Entries_SNDS)
-            {
-                if (a.Sound == 0)
-                    result.Add("Sound Info entry with Sound set to 0");
-                Verify(a.Sound, ref result);
-            }
-
-            foreach (EntrySoundInfo_GCN_V1 a in Entries_Sound_CIN)
-            {
-                if (a.Sound == 0)
-                    result.Add("Sound Info entry with Sound set to 0");
-                Verify(a.Sound, ref result);
             }
         }
 

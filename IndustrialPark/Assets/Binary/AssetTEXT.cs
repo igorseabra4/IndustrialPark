@@ -45,6 +45,8 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
+            base.Verify(ref result);
+
             foreach (string s in AssetNamesInText)
                 if (!(Program.MainForm.AssetExists(Functions.BKDRHash(s)) || Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3"))))
                     result.Add("No open archive contains asset " + s + ", which is referenced in this asset.");

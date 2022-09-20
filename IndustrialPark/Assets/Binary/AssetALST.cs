@@ -38,11 +38,10 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
-            if (Animations.Length != 10)
-                result.Add("ALST asset has a number of animation asset IDs different from 10");
+            base.Verify(ref result);
 
-            foreach (AssetID assetID in Animations)
-                Verify(assetID, ref result);
+            if (Animations.Length != 10)
+                result.Add("Animation List asset has a number of animation asset IDs different from 10");
         }
 
         [Browsable(false)]

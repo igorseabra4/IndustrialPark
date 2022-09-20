@@ -327,7 +327,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(catName), DisplayName("Conditional (Hash)")]
+        [Category(catName), DisplayName("Conditional (Hash)"), IgnoreVerification]
         public AssetID ConditionalVariable_Hash { get; set; }
         [Category(catName), DisplayName("Conditional (Scooby)")]
         public ConditionalVariableScooby Conditional_Scooby
@@ -404,12 +404,10 @@ namespace IndustrialPark
         {
             base.Verify(ref result);
 
-            Verify(AssetUnderEvaluation, ref result);
-
             if ((int)Operation > 6)
-                result.Add("Conditional with unknown operation type: " + Operation.ToString());
+                result.Add("Unknown operation type: " + Operation.ToString());
             if (ConditionalVariable_Hash == 0)
-                result.Add("Conditional with conditional variable set to 0");
+                result.Add("Conditional variable set to 0");
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

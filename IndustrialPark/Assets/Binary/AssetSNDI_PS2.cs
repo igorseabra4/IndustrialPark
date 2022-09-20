@@ -10,6 +10,7 @@ namespace IndustrialPark
     {
         public byte[] SoundHeader { get; set; }
 
+        [ValidReferenceRequired]
         public AssetID SoundAssetID
         {
             get => BitConverter.ToUInt32(SoundHeader, 0x8);
@@ -88,23 +89,6 @@ namespace IndustrialPark
                     writer.Write(e.SoundHeader);
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntrySoundInfo_PS2 a in Entries_SND)
-            {
-                if (a.SoundAssetID == 0)
-                    result.Add("SNDI entry with SoundAssetID set to 0");
-                Verify(a.SoundAssetID, ref result);
-            }
-
-            foreach (EntrySoundInfo_PS2 a in Entries_SNDS)
-            {
-                if (a.SoundAssetID == 0)
-                    result.Add("SNDI entry with SoundAssetID set to 0");
-                Verify(a.SoundAssetID, ref result);
             }
         }
 

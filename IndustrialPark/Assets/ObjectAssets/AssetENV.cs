@@ -11,7 +11,7 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public AssetID BSP { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID StartCamera { get; set; }
         [Category(categoryName)]
         public int ClimateFlags { get; set; }
@@ -131,24 +131,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(BSP, ref result);
-            if (StartCamera == 0)
-                result.Add("Environment with StartCamera set to 0");
-            Verify(StartCamera, ref result);
-            Verify(BSP_LightKit, ref result);
-            Verify(Object_LightKit, ref result);
-            Verify(BSP_Collision, ref result);
-            Verify(BSP_FX, ref result);
-            Verify(BSP_Camera, ref result);
-            Verify(BSP_SurfaceMapper, ref result);
-            Verify(BSP_Collision_SurfaceMapper, ref result);
-            Verify(BSP_FX_SurfaceMapper, ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

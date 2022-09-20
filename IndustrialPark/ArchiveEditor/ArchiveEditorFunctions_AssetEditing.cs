@@ -607,39 +607,32 @@ namespace IndustrialPark
 
         public string VerifyArchive()
         {
-            string result = "";
-            char endl = '\n';
+            List<string> result = new List<string>();
 
             ProgressBar progressBar = new ProgressBar("Verify Archive");
             progressBar.SetProgressBar(0, assetDictionary.Values.Count + 1, 1);
             progressBar.Show();
 
-            //foreach (Section_LHDR LHDR in DICT.LTOC.LHDRList)
-            //    foreach (uint assetID in LHDR.assetIDlist)
-            //        if (!ContainsAsset(assetID))
-            //            result += $"Archive: Asset 0x{assetID.ToString("X8")} appears to be present in a layer, but it's not in the AHDR dictionary. This archive is likely unusable." + endl;
-
             List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.assetName).ToList();
             ordered = ordered.OrderBy(f => f.assetType).ToList();
 
             if (!ContainsAssetWithType(AssetType.JSP))
-                result += $"Archive: Does not contain any JSP asset." + endl;
+                result.Add($"Archive: Does not contain any JSP asset.");
 
             progressBar.PerformStep();
 
             foreach (Asset asset in ordered)
             {
-                List<string> resultParam = new List<string>();
                 try
                 {
-                    asset.Verify(ref resultParam);
-
-                    foreach (string s in resultParam)
-                        result += $"[{asset.assetType}] {asset.assetName}: " + s + endl;
+                    var resultAsset = new List<string>();
+                    asset.Verify(ref resultAsset);
+                    foreach (string s in resultAsset)
+                        result.Add($"[{AssetTypeContainer.AssetTypeToString(asset.assetType)}] {asset.assetName}: " + s);
                 }
                 catch (Exception e)
                 {
-                    result += $"Failed verification on [{asset.assetType}] {asset.assetName}: " + e.Message + endl;
+                    result.Add($"Failed verification on [{asset.assetType}] {asset.assetName}: " + e.Message);
                 }
 
                 progressBar.PerformStep();
@@ -647,7 +640,7 @@ namespace IndustrialPark
 
             progressBar.Close();
 
-            return result;
+            return string.Join("\n", result);
         }
 
         public void ApplyScale(Vector3 factor, IEnumerable<AssetType> assetTypes = null, bool bakeEntityUnproportionalScales = true, bool bakeNpcsVilScales = false)

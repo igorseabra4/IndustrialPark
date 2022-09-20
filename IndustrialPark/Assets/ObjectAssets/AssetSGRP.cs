@@ -8,6 +8,7 @@ namespace IndustrialPark
 {
     public class SoundGroupInfo : GenericAssetDataContainer
     {
+        [ValidReferenceRequired]
         public AssetID Sound { get; set; }
         [DisplayName("Volume (0-1)")]
         public AssetSingle Volume { get; set; }
@@ -151,18 +152,6 @@ namespace IndustrialPark
                     writer.Write(i.Serialize(endianness));
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            foreach (var i in Entries)
-            {
-                if (i.Sound == 0)
-                    result.Add("Sound Group entry with Sound set to 0");
-                Verify(i.Sound, ref result);
             }
         }
 

@@ -29,7 +29,7 @@ namespace IndustrialPark
             get => (EnemyBucketOTronType)(uint)Model;
             set => Model = (uint)value;
         }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Group { get; set; }
         [Category(dynaCategoryName)]
         public int UnknownInt54 { get; set; }
@@ -80,16 +80,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (Group == 0)
-                result.Add("DYNA BucketOTron with GRUP Asset ID set to 0");
-
-            Verify(Group, ref result);
         }
 
         public static bool dontRender = false;

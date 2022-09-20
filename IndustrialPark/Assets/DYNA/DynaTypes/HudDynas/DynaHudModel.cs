@@ -13,7 +13,8 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName),
-            Description("It needs to be a hash of the model's name without the .dff or else it won't play the spinning animation for some reason")]
+            Description("It needs to be a hash of the model's name without the .dff or else it won't play the spinning animation for some reason"),
+            ValidReferenceRequired]
         public AssetID Model { get; set; }
 
         public DynaHudModel(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__model, game, endianness)
@@ -34,12 +35,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Model, ref result);
-            base.Verify(ref result);
         }
     }
 }

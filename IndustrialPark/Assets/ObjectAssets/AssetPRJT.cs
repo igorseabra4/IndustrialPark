@@ -11,7 +11,7 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public int EffectType { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Model { get; set; }
         [Category(categoryName)]
         public AssetID Animation { get; set; }
@@ -87,15 +87,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (Model == 0)
-                result.Add("Projectile with Model set to 0");
-            Verify(Model, ref result);
         }
     }
 }

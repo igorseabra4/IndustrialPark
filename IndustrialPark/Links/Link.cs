@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 
 namespace IndustrialPark
 {
@@ -18,6 +19,7 @@ namespace IndustrialPark
         [JsonProperty]
         private Game game;
 
+        [ValidReferenceRequired]
         public AssetID TargetAsset { get; set; }
         public ushort EventReceiveID;
         public ushort EventSendID;
@@ -156,6 +158,18 @@ namespace IndustrialPark
 
             string assetName = HexUIntTypeConverter.StringFromAssetID(TargetAsset);
             return $"{(LinkListEditor.LinkType == LinkType.Normal ? recEvent : Time.ToString())} => {sndEvent} => {assetName}";
+        }
+
+        public override void Verify(ref List<string> result)
+        {
+            base.Verify(ref result);
+
+            var eventCount = Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)).Length;
+
+            if (EventReceiveID == 0 || EventReceiveID > eventCount)
+                result.Add("Link receives event of unknown type: " + EventReceiveID.ToString());
+            if (EventSendID == 0 || EventSendID > eventCount)
+                result.Add("Link sends event of unknown type: " + EventSendID.ToString());
         }
     }
 }

@@ -51,14 +51,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(Unknown50, ref result);
-            Verify(Unknown54, ref result);
-        }
-
         public static bool dontRender = false;
         public override bool DontRender => dontRender;
     }

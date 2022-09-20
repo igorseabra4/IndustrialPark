@@ -12,9 +12,9 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID JSPInfo { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Group { get; set; }
 
         public DynaJSPExtraData(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.JSPExtraData, game, endianness)
@@ -37,17 +37,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            if (JSPInfo == 0)
-                result.Add("JSP Extra Data with no JSPInfo reference");
-            Verify(JSPInfo, ref result);
-            if (Group == 0)
-                result.Add("JSP Extra Data with no GRUP reference");
-            Verify(Group, ref result);
-            base.Verify(ref result);
         }
     }
 }

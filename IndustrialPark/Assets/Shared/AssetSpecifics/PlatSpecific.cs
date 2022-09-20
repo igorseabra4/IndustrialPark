@@ -54,8 +54,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result) => Verify(BustModel, ref result);
     }
 
     public class PlatSpecific_FR : PlatSpecific_Generic
@@ -203,13 +201,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Animation1, ref result);
-            Verify(Animation2, ref result);
-            Verify(Animation3, ref result);
         }
     }
 

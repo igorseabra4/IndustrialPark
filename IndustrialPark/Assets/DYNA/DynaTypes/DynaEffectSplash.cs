@@ -49,12 +49,5 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Unknown0C, ref result);
-            Verify(Unknown10, ref result);
-            base.Verify(ref result);
-        }
     }
 }

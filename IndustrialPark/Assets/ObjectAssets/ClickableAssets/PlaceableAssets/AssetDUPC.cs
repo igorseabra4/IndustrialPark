@@ -109,15 +109,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            Verify(NavMesh1, ref result);
-
-            NPC.Verify(ref result);
-
-            base.Verify(ref result);
-        }
-
         public void CreateTransformMatrix() => NPC.CreateTransformMatrix();
         public float GetDistanceFrom(Vector3 position) => NPC.GetDistanceFrom(position);
         public bool ShouldDraw(SharpRenderer renderer)

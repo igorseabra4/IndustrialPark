@@ -15,8 +15,8 @@ namespace IndustrialPark
 
         public override string Note => "Version is always 1 or 2. CameraAngle is not present in version 1, or in Movie/Incredibles regardless of version.";
 
-        [Category(dynaCategoryName)]
         private uint _mrkr;
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Marker
         {
             get => _mrkr;
@@ -45,7 +45,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName), Description("Not used in version 1 or Movie/Incredibles.")]
         public int CameraAngle { get; set; }
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID TargetTeleportBox { get; set; }
 
         public DynaGObjectTeleport(string assetName, uint mrkrId, DynaGObjectTeleportGetMRKR getMRKR) : base(assetName, DynaType.game_object__Teleport, Vector3.Zero)
@@ -91,17 +91,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            if (_mrkr == 0)
-                result.Add("Teleport with no MRKR reference");
-            Verify(_mrkr, ref result);
-            if (TargetTeleportBox == 0)
-                result.Add("Teleport with no target reference");
-            Verify(TargetTeleportBox, ref result);
-            base.Verify(ref result);
         }
 
         private void ValidateMRKR()

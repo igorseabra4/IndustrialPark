@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Texture { get; set; }
 
         public DynaHudImage(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__image, game, endianness)
@@ -33,12 +33,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Texture, ref result);
-            base.Verify(ref result);
         }
     }
 }

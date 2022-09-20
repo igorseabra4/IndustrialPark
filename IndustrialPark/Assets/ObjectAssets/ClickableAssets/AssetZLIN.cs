@@ -37,10 +37,10 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle HangLength { get; set; }
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Spline { get; set; }
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Entity { get; set; }
 
         [Category(categoryName)]
@@ -106,14 +106,6 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public bool SpecialBlendMode => true;
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(Spline, ref result);
-            Verify(Entity, ref result);
-        }
 
         public void CreateTransformMatrix()
         {

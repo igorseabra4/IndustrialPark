@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         private const string categoryName = "Cutscene Manager";
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Cutscene { get; set; }
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
@@ -234,15 +234,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (Cutscene == 0)
-                result.Add("Cutscene Manager with Cutscene set to 0");
-            Verify(Cutscene, ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

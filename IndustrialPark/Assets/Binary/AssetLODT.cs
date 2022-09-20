@@ -7,6 +7,7 @@ namespace IndustrialPark
 {
     public class EntryLODT : GenericAssetDataContainer
     {
+        [ValidReferenceRequired]
         public AssetID BaseModel { get; set; }
         public AssetSingle MaxDistance { get; set; }
         public AssetID LOD1_Model { get; set; }
@@ -120,20 +121,6 @@ namespace IndustrialPark
                     writer.Write(l.Serialize(game, endianness));
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (var a in Entries)
-            {
-                if (a.BaseModel == 0)
-                    result.Add("LOD table entry with Model set to 0");
-
-                Verify(a.BaseModel, ref result);
-                Verify(a.LOD1_Model, ref result);
-                Verify(a.LOD2_Model, ref result);
-                Verify(a.LOD3_Model, ref result);
             }
         }
 

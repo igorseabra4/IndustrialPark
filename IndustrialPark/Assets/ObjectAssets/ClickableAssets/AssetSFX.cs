@@ -18,7 +18,7 @@ namespace IndustrialPark
         public short Frequency { get; set; }
         [Category(categoryName)]
         public AssetSingle MinFrequency { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Sound { get; set; }
         [Category(categoryName)]
         public AssetID Attach { get; set; }
@@ -163,15 +163,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (Sound == 0)
-                result.Add("SFX with Sound set to 0");
-            Verify(Sound, ref result);
         }
 
         private Matrix world;

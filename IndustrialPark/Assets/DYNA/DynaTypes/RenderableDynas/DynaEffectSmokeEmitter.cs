@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using AssetEditorColors;
+using HipHopFile;
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace IndustrialPark
         public AssetSingle ScaleY { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle ScaleZ { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Texture { get; set; }
         [Category(dynaCategoryName), TypeConverter(typeof(HexUShortTypeConverter))]
         public ushort TextureRows { get; set; }
@@ -57,13 +58,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle Wind { get; set; }
         [Category(dynaCategoryName)]
-        public short UnknownShort_68 { get; set; }
+        public AssetColor ColorBirth { get; set; }
         [Category(dynaCategoryName)]
-        public short UnknownShort_6A { get; set; }
-        [Category(dynaCategoryName)]
-        public short UnknownShort_6C { get; set; }
-        [Category(dynaCategoryName)]
-        public short UnknownShort_6E { get; set; }
+        public AssetColor ColorDeath { get; set; }
 
         public DynaEffectSmokeEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__smoke_emitter, game, endianness)
         {
@@ -96,10 +93,8 @@ namespace IndustrialPark
                 VelDirZ = reader.ReadSingle();
                 VelDirVary = reader.ReadSingle();
                 Wind = reader.ReadSingle();
-                UnknownShort_68 = reader.ReadInt16();
-                UnknownShort_6A = reader.ReadInt16();
-                UnknownShort_6C = reader.ReadInt16();
-                UnknownShort_6E = reader.ReadInt16();
+                ColorBirth = reader.ReadColor();
+                ColorDeath = reader.ReadColor();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -137,21 +132,11 @@ namespace IndustrialPark
                 writer.Write(VelDirZ);
                 writer.Write(VelDirVary);
                 writer.Write(Wind);
-                writer.Write(UnknownShort_68);
-                writer.Write(UnknownShort_6A);
-                writer.Write(UnknownShort_6C);
-                writer.Write(UnknownShort_6E);
+                writer.Write(ColorBirth);
+                writer.Write(ColorDeath);
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Texture, ref result);
-            Verify(AttachTo, ref result);
-
-            base.Verify(ref result);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

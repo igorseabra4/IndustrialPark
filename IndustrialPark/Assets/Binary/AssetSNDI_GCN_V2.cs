@@ -77,17 +77,6 @@ namespace IndustrialPark
             return AHDR.data;
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            foreach (FSB3_File a in Entries)
-                foreach (EntrySoundInfo_GCN_V2 e in a.soundEntries)
-                {
-                    if (e.Sound == 0)
-                        result.Add("SNDI entry with SoundAssetID set to 0");
-                    Verify(e.Sound, ref result);
-                }
-        }
-
         private int FooterOffset
         {
             get => ReadInt(0x04) + 0x20;

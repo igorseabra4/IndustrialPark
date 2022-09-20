@@ -90,20 +90,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            foreach (Link link in _timedLinks)
-            {
-                Verify(link.TargetAsset, ref result);
-                Verify(link.ArgumentAsset, ref result);
-
-                if (link.EventSendID == 0 || link.EventSendID.ToString() == ((int)link.EventSendID).ToString())
-                    result.Add("Timed link sends event of unknown type for TSSM: " + link.EventSendID.ToString());
-            }
-        }
-
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (game != Game.Incredibles)

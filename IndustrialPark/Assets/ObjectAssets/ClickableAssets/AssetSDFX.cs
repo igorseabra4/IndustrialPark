@@ -11,7 +11,7 @@ namespace IndustrialPark
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(SoundGroup);
 
         private uint _soundGroup;
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID SoundGroup
         {
             get => _soundGroup;
@@ -91,16 +91,6 @@ namespace IndustrialPark
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (SoundGroup == 0)
-                result.Add("SDFX with SoundGroup set to 0");
-            Verify(SoundGroup, ref result);
-            Verify(Emitter, ref result);
-        }
 
         public void CreateTransformMatrix()
         {

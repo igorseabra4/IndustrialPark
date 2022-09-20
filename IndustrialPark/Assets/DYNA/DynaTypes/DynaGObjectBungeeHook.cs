@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         protected override short constVersion => 13;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Entity { get; set; }
         [Category(dynaCategoryName)]
         public int EnterX { get; set; }
@@ -186,13 +186,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-        
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Entity, ref result);
-
-            base.Verify(ref result);
         }
     }
 }

@@ -38,13 +38,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(BumpMapTexture, ref result);
-            Verify(EnvMapTexture, ref result);
-            Verify(DualMapTexture, ref result);
-        }
     }
 
     [TypeConverter(typeof(ExpandableObjectConverter))]
@@ -102,8 +95,6 @@ namespace IndustrialPark
                 return writer.ToArray();
             }
         }
-
-        public override void Verify(ref List<string> result) => Verify(Group, ref result);
     }
 
     [TypeConverter(typeof(ExpandableObjectConverter))]
@@ -586,15 +577,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-            zSurfMatFX.Verify(ref result);
-            zSurfColorFX.Verify(ref result);
-            zSurfTextureAnim1.Verify(ref result);
-            zSurfTextureAnim2.Verify(ref result);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

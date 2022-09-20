@@ -59,7 +59,7 @@ namespace IndustrialPark
             set { _arenaRadius = value; CreateTransformMatrix(); }
         }
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID[] NextMovePoints { get; set; }
 
         public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MovePoint, BaseAssetType.MovePoint)
@@ -153,14 +153,6 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public bool SpecialBlendMode => true;
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            foreach (AssetID a in NextMovePoints)
-                Verify(a, ref result);
-        }
 
         public void CreateTransformMatrix()
         {

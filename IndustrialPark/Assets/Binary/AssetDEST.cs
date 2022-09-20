@@ -65,7 +65,7 @@ namespace IndustrialPark
     {
         private const string categoryName = "Destructible";
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID ModelInfo { get; set; }
         [Category(categoryName)]
         public int HitPoints { get; set; }
@@ -148,14 +148,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(ModelInfo, ref result);
-
-            if (ModelInfo == 0)
-                result.Add("DEST with MINF set to 0");
         }
     }
 }

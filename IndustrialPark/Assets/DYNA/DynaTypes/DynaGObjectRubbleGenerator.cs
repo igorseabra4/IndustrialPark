@@ -45,7 +45,7 @@ namespace IndustrialPark
         public AssetID LaunchSoundGroup { get; set; }
         [Category(dynaCategoryName)]
         public AssetID LandSoundGroup { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID[] Models { get; set; }
 
         public DynaGObjectRubbleGenerator(string assetName) : base(assetName, DynaType.game_object__RubbleGenerator)
@@ -107,14 +107,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (var model in Models)
-                Verify(model, ref result);
-
-            base.Verify(ref result);
         }
 
         [Browsable(false)]

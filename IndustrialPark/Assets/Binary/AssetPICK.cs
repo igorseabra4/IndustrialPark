@@ -12,6 +12,7 @@ namespace IndustrialPark
         [TypeConverter(typeof(HexUShortTypeConverter))]
         public ushort PickupFlags { get; set; }
         public uint Quantity { get; set; }
+        [ValidReferenceRequired]
         public AssetID Model { get; set; }
         public AssetID Animation { get; set; }
 
@@ -88,16 +89,6 @@ namespace IndustrialPark
                     writer.Write(l.Serialize(endianness));
 
                 return writer.ToArray();
-            }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            foreach (EntryPICK a in _entries)
-            {
-                if (a.Model == 0)
-                    result.Add("Pickup table entry with Model set to 0");
-                Verify(a.Model, ref result);
             }
         }
 

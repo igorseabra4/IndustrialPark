@@ -89,7 +89,7 @@ namespace IndustrialPark
         private const string categoryName = "Particle Properties";
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(ParticleSystem);
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID ParticleSystem { get; set; }
         [Category(categoryName)]
         private StructPARP[] _structs { get; set; }
@@ -161,15 +161,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (ParticleSystem == 0)
-                result.Add("Particle Properties with ParticleSystem set to 0");
-            Verify(ParticleSystem, ref result);
         }
     }
 }

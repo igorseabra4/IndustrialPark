@@ -222,17 +222,7 @@ namespace IndustrialPark
             base.Verify(ref result);
 
             if (game == Game.BFBB && NpcType_BFBB.ToString() == NpcType.ToString())
-                result.Add("NPC with unknown NpcType 0x" + NpcType.ToString("X8"));
-
-            Verify(NPCSettingsObject, ref result);
-            Verify(MovePoint, ref result);
-            Verify(TaskBox1, ref result);
-            Verify(TaskBox2, ref result);
-            if (game == Game.Incredibles)
-            {
-                Verify(NavMesh2, ref result);
-                Verify(NPCSettings, ref result);
-            }
+                result.Add("Unknown NpcType 0x" + NpcType.ToString("X8"));
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

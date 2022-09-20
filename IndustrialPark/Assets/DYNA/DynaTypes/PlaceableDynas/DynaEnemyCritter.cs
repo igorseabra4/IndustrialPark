@@ -63,17 +63,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (MovePoint == 0)
-                result.Add("DYNA Critter with MVPT Asset ID set to 0");
-
-            Verify(MovePoint, ref result);
-            Verify(Unknown54, ref result);
-        }
-
         public static bool dontRender = false;
         [Browsable(false)]
         public override bool DontRender => dontRender;

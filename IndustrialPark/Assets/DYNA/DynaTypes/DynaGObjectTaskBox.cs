@@ -20,7 +20,7 @@ namespace IndustrialPark
         public AssetByte Enable { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte Retry { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID TalkBox { get; set; }
         [Category(dynaCategoryName)]
         public AssetID NextTaskBox { get; set; }
@@ -77,19 +77,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(TalkBox, ref result);
-            Verify(NextTaskBox, ref result);
-            Verify(BeginText, ref result);
-            Verify(DescriptionText, ref result);
-            Verify(ReminderText, ref result);
-            Verify(SuccessText, ref result);
-            Verify(FailureText, ref result);
-            Verify(End_TextID, ref result);
-            base.Verify(ref result);
         }
     }
 }

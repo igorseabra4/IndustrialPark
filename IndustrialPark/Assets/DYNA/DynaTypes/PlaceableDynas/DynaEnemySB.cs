@@ -156,7 +156,7 @@ namespace IndustrialPark
         public AssetSingle PseudoColorAlphaSpeed { get; set; }
 
         protected uint _model;
-        [Category(dynaCategoryName + " Entity References")]
+        [Category(dynaCategoryName + " Entity References"), ValidReferenceRequired]
         public AssetID Model
         {
             get => _model;
@@ -345,15 +345,6 @@ namespace IndustrialPark
         public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Surface, ref result);
-            Verify(Model, ref result);
-            Verify(Animation, ref result);
-
-            base.Verify(ref result);
         }
     }
 }

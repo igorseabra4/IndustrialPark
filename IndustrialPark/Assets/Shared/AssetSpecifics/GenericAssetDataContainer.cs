@@ -1,7 +1,10 @@
-﻿using HipHopFile;
+﻿using DiscordRPC;
+using HipHopFile;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace IndustrialPark
 {
@@ -26,32 +29,52 @@ namespace IndustrialPark
         {
             var typeProperties = GetType().GetProperties();
 
-            typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID)) && ((AssetID)prop.GetValue(this)).Equals(oldAssetId)).ToList()
-                .ForEach(prop => prop.SetValue(this, new AssetID(newAssetId)));
+            foreach (var prop in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID)) && ((AssetID)prop.GetValue(this)).Equals(oldAssetId)))
+                prop.SetValue(this, new AssetID(newAssetId));
 
-            typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).ToList()
-                .ForEach(prop => ((GenericAssetDataContainer)prop.GetValue(this)).ReplaceReferences(oldAssetId, newAssetId));
+            foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
+                gadc.ReplaceReferences(oldAssetId, newAssetId);
 
-            typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID[]))).ToList().ForEach(prop =>
-            {
-                var array = (AssetID[])prop.GetValue(this);
+            foreach (var array in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID[]))).Select(prop => (AssetID[])prop.GetValue(this)))
                 for (int i = 0; i < array.Length; i++)
                     if (array[i] == oldAssetId)
                         array[i] = newAssetId;
-            });
 
-            typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) &&
-                typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).ToList()
-                .ForEach(prop => ((IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)).ToList()
-                .ForEach(gadc => gadc.ReplaceReferences(oldAssetId, newAssetId)));
+            foreach (var gadcs in typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) && typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).Select(prop => (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)))
+                foreach (var gadc in gadcs)
+                    gadc.ReplaceReferences(oldAssetId, newAssetId);
         }
 
-        public virtual void Verify(ref List<string> result) { }
+        public virtual void Verify(ref List<string> result)
+        {
+            var typeProperties = GetType().GetProperties();
 
-        public static void Verify(uint assetID, ref List<string> result)
+            foreach (var prop in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID))))
+                if (prop.GetCustomAttribute(typeof(IgnoreVerificationAttribute)) == null)
+                    Verify((AssetID)prop.GetValue(this), prop.Name, prop.GetCustomAttribute(typeof(ValidReferenceRequiredAttribute)) != null, ref result);
+
+            foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
+                gadc.Verify(ref result);
+
+            foreach (var prop in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID[]))))
+                if (prop.GetCustomAttribute(typeof(IgnoreVerificationAttribute)) == null)
+                {
+                    var array = (AssetID[])prop.GetValue(this);
+                    foreach (var assetID in array)
+                        Verify(assetID, prop.Name, prop.GetCustomAttribute(typeof(ValidReferenceRequiredAttribute)) != null, ref result);
+                }
+
+            foreach (var gadcs in typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) && typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).Select(prop => (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)))
+                foreach (var gadc in gadcs)
+                    gadc.Verify(ref result);
+        }
+
+        protected static void Verify(uint assetID, string propName, bool validReferenceRequired, ref List<string> result)
         {
             if (assetID != 0 && !Program.MainForm.AssetExists(assetID))
                 result.Add("Referenced asset 0x" + assetID.ToString("X8") + " was not found in any open archive.");
+            if (validReferenceRequired && assetID == 0)
+                result.Add($"{propName} is 0");
         }
 
         protected static FlagBitmask ByteFlagsDescriptor(params string[] flagNames) => FlagsDescriptor(8, flagNames);

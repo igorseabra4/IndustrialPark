@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -10,12 +9,6 @@ namespace IndustrialPark
         public AssetWithMotion(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) : base(assetName, assetType, baseAssetType, position) { }
 
         public AssetWithMotion(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
-
-        public override void Verify(ref List<string> result)
-        {
-            Motion.Verify(ref result);
-            base.Verify(ref result);
-        }
 
         public override void Draw(SharpRenderer renderer)
         {

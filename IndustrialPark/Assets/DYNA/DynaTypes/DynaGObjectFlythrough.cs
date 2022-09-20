@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Flythrough { get; set; }
 
         public DynaGObjectFlythrough(string assetName) : base(assetName, DynaType.game_object__Flythrough)
@@ -36,15 +36,6 @@ namespace IndustrialPark
                 writer.Write(Flythrough);
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            if (Flythrough == 0)
-                result.Add("Flythrough with no FLY reference");
-            Verify(Flythrough, ref result);
-
-            base.Verify(ref result);
         }
     }
 }

@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Marker { get; set; }
         [Category(dynaCategoryName)]
         public int SetViewAngle { get; set; }
@@ -47,13 +47,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Marker, ref result);
-
-            base.Verify(ref result);
         }
     }
 }

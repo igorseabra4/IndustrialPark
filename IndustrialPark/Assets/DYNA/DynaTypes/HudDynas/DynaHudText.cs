@@ -12,9 +12,9 @@ namespace IndustrialPark
         public override string TypeString => dynaCategoryName;
         public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(TextBox)} {HexUIntTypeConverter.StringFromAssetID(Text)}";
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID TextBox { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Text { get; set; }
 
         public DynaHudText(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__text, game, endianness)
@@ -38,13 +38,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(TextBox, ref result);
-            Verify(Text, ref result);
-            base.Verify(ref result);
         }
     }
 }

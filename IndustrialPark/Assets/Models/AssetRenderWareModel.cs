@@ -100,11 +100,13 @@ namespace IndustrialPark
 
         public override void Verify(ref List<string> result)
         {
+            base.Verify(ref result);
+
             if (ModelAsRWSections.Length == 0)
                 result.Add("Failed to read MODL asset. This might be just a library error and does not necessarily mean the model is broken.");
 
             foreach (string s in Textures)
-                if (!Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3")) && !Program.MainForm.AssetExists(Functions.BKDRHash(s)))
+                if (!(Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3")) || Program.MainForm.AssetExists(Functions.BKDRHash(s))))
                     result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
 
             if (Program.MainForm.WhoTargets(assetID).Count == 0)

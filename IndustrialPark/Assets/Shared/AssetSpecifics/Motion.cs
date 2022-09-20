@@ -279,6 +279,7 @@ namespace IndustrialPark
     public class Motion_MovePoint : Motion
     {
         public FlagBitmask MovePointFlags { get; set; } = IntFlagsDescriptor();
+        [ValidReferenceRequired]
         public AssetID MovePoint { get; set; }
         public AssetSingle Speed { get; set; }
 
@@ -309,13 +310,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            if (MovePoint == 0)
-                result.Add("MovePoint PLAT with MovePoint set to 0");
-            Verify(MovePoint, ref result);
         }
 
         private AssetMVPT currentMVPT;

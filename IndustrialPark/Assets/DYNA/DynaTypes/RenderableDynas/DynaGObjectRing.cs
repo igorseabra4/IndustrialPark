@@ -129,12 +129,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            Verify(DriverPlatform, ref result);
-            base.Verify(ref result);
-        }
-
         public override void CreateTransformMatrix()
         {
             world = (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID) ?

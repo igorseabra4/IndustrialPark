@@ -12,17 +12,17 @@ namespace IndustrialPark
 
         protected override short constVersion => 1;
 
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Marker { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Camera { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Portal { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID TalkBox { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Text { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID SimpleObject { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle InvisibleTimer { get; set; }
@@ -61,17 +61,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            Verify(Marker, ref result);
-            Verify(Camera, ref result);
-            Verify(Portal, ref result);
-            Verify(TalkBox, ref result);
-            Verify(Text, ref result);
-            Verify(SimpleObject, ref result);
-            base.Verify(ref result);
         }
     }
 }

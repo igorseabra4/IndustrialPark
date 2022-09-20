@@ -181,14 +181,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            if (BackgroundMusic == 0)
-                result.Add("Scene Properties with no song reference");
-            Verify(BackgroundMusic, ref result);
-            base.Verify(ref result);
-        }
-
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (!inc)

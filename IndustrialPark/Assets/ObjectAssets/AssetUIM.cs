@@ -105,13 +105,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            foreach (var c in Commands)
-                c.Verify(ref result);
-            base.Verify(ref result);
-        }
-
         public void AddEntry(UIMCommandType cmdType)
         {
             UIMCommand newCmd;

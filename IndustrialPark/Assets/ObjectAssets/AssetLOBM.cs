@@ -11,7 +11,7 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public AssetID LobMasterType { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Projectile { get; set; }
         [Category(categoryName)]
         public AssetSingle PositionX { get; set; }
@@ -149,15 +149,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (Projectile == 0)
-                result.Add("LobMaster with Projectile set to 0");
-            Verify(Projectile, ref result);
         }
     }
 }

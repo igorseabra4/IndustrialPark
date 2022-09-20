@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         [Category(catName)]
         public FlagBitmask GustFlags { get; set; } = IntFlagsDescriptor("Start on", "No leaves");
-        [Category(catName)]
+        [Category(catName), ValidReferenceRequired]
         public AssetID Volume { get; set; }
         [Category(catName)]
         public AssetID Effect { get; set; }
@@ -69,16 +69,6 @@ namespace IndustrialPark
 
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (Volume == 0)
-                result.Add("Gust with Volume set to 0");
-            Verify(Volume, ref result);
-            Verify(Effect, ref result);
         }
     }
 }

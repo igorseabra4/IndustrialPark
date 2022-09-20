@@ -377,17 +377,7 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
-             
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(ProjectileType, ref result);
-            Verify(Bullseye_MovePoint, ref result);
-            Verify(MovePoint, ref result);
-            Verify(Path, ref result);
-        }
-
+        
         public override void Draw(SharpRenderer renderer)
         {
             Vector4 Color = _color;

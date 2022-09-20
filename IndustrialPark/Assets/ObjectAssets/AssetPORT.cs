@@ -11,9 +11,9 @@ namespace IndustrialPark
         private const string categoryName = "Portal";
         public override string AssetInfo => DestinationLevel;
 
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID Camera { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), ValidReferenceRequired]
         public AssetID DestinationMarker { get; set; }
         [Category(categoryName)]
         public AssetSingle Rotation { get; set; }
@@ -64,16 +64,6 @@ namespace IndustrialPark
                 writer.Write(SerializeLinks(endianness));
                 return writer.ToArray();
             }
-        }
-
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            if (Camera == 0)
-                result.Add("Portal with Camera set to 0");
-            if (DestinationMarker == 0)
-                result.Add("Portal with DestinationMarker set to 0");
         }
     }
 }

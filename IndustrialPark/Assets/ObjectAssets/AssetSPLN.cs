@@ -143,14 +143,6 @@ namespace IndustrialPark
             }
         }
 
-        public override void Verify(ref List<string> result)
-        {
-            base.Verify(ref result);
-
-            Verify(UnknownHash_14, ref result);
-            Verify(UnknownHash_18, ref result);
-        }
-
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
