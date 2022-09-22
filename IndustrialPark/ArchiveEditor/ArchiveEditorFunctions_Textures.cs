@@ -130,25 +130,8 @@ namespace IndustrialPark
 
         public void ImportTextureDictionary(string fileName, bool RW3)
         {
-            UnsavedChanges = true;
-
-            int prev = SelectedLayerIndex;
-            if (!NoLayers)
-            {
-                var layers = new List<Layer>
-                {
-                    new Layer(LayerType.TEXTURE)
-                };
-                layers.AddRange(Layers);
-                Layers = layers;
-                SelectedLayerIndex = 0;
-            }
-
             List<Section_AHDR> AHDRs = GetAssetsFromTextureDictionary(fileName, RW3);
             ImportMultipleAssets(AHDRs, true);
-
-            if (!NoLayers)
-                SelectedLayerIndex = prev;
         }
 
         public List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3)

@@ -811,9 +811,9 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0 || standalone) return;
 
             if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
-                Program.MainForm.renderer.Camera.SetPositionCamera(cam);
+                Program.Renderer.Camera.SetPositionCamera(cam);
             else if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
-                Program.MainForm.renderer.Camera.SetPosition(a.GetBoundingBox().Center - (10 + a.GetBoundingBox().Size) * Program.MainForm.renderer.Camera.Forward);
+                Program.Renderer.Camera.SetPosition(a.GetBoundingBox().Center - (10 + a.GetBoundingBox().Size) * Program.MainForm.renderer.Camera.Forward);
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)

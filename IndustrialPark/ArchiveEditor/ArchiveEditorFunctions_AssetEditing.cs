@@ -468,7 +468,8 @@ namespace IndustrialPark
             Layer textureLayer1 = new Layer(LayerType.TEXTURE);
             Layer textureLayer2 = new Layer(LayerType.TEXTURE);
             Layer textureStrmLayer = new Layer(LayerType.TEXTURE_STRM);
-            List<(Layer, Layer, Layer, Layer)> jspLayers = new List<(Layer, Layer, Layer, Layer)>();
+            Layer bspLayer = new Layer(LayerType.BSP);
+            List<Layer> jspInfoLayers = new List<Layer>();
             Layer modelLayer0 = new Layer(LayerType.MODEL);
             Layer modelLayer1 = new Layer(LayerType.MODEL);
             Layer modelLayer2 = new Layer(LayerType.MODEL);
@@ -502,10 +503,13 @@ namespace IndustrialPark
                                 textureLayer2.AssetIDs.Add(a.assetID);
                                 break;
                         }
-                        textureIndex = (textureIndex + 1) % 3;
+                        if (game != Game.Scooby)
+                            textureIndex = (textureIndex + 1) % 3;
                         break;
                     }
+                    case AssetType.BinkVideo:
                     case AssetType.TextureStream:
+                    case AssetType.WireframeModel:
                     {
                         textureStrmLayer.AssetIDs.Add(a.assetID);
                         break;
@@ -513,26 +517,16 @@ namespace IndustrialPark
                     case AssetType.BSP:
                     case AssetType.JSP:
                     {
-                        if (!ContainsAssetWithType(AssetType.JSPInfo))
+                        if (game == Game.Scooby || !ContainsAssetWithType(AssetType.JSPInfo))
                         {
-                            if (!jspLayers.Any())
-                                jspLayers.Add((new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO)));
-
-                            if (jspLayers[0].Item1.AssetIDs.Count == 0)
-                                jspLayers[0].Item1.AssetIDs.Add(a.assetID);
-                            else if (jspLayers[0].Item2.AssetIDs.Count == 0)
-                                jspLayers[0].Item2.AssetIDs.Add(a.assetID);
-                            else if (jspLayers[0].Item3.AssetIDs.Count == 0)
-                                jspLayers[0].Item3.AssetIDs.Add(a.assetID);
+                            bspLayer.AssetIDs.Add(a.assetID);
                             doneJsps.Add(a.assetID);
                         }
                         break;
                     }
                     case AssetType.JSPInfo:
                     {
-                        var key = (new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO));
-                        key.Item4.AssetIDs.Add(a.assetID);
-                        jspLayers.Add(key);
+                        jspInfoLayers.Add(new Layer(LayerType.JSPINFO) { AssetIDs = new List<uint>() {a.assetID } });
                         break;
                     }
                     case AssetType.Model:
@@ -549,7 +543,8 @@ namespace IndustrialPark
                                 modelLayer2.AssetIDs.Add(a.assetID);
                                 break;
                         }
-                        modelIndex = (modelIndex + 1) % 3;
+                        if (game != Game.Scooby)
+                            modelIndex = (modelIndex + 1) % 3;
                         break;
                     }
                     case AssetType.Animation:
@@ -604,26 +599,23 @@ namespace IndustrialPark
             AddIfNotEmpty(textureLayer1);
             AddIfNotEmpty(textureLayer2);
             AddIfNotEmpty(textureStrmLayer);
-            foreach (var js in jspLayers)
+            AddIfNotEmpty(bspLayer);
+            foreach (var l in jspInfoLayers)
             {
-                if (js.Item4.AssetIDs.Count > 0 && GetFromAssetID(js.Item4.AssetIDs[0]) is AssetJSP_INFO jspInfo)
+                if (GetFromAssetID(l.AssetIDs[0]) is AssetJSP_INFO jspInfo)
                 {
-                    foreach (var u in jspInfo.JSP_AssetIDs)
+                    for (int i = 0; i < 3; i++)
                     {
-                        if (js.Item1.AssetIDs.Count == 0)
-                            js.Item1.AssetIDs.Add(u);
-                        else if (jspLayers[0].Item2.AssetIDs.Count == 0)
-                            js.Item2.AssetIDs.Add(u);
-                        else if (jspLayers[0].Item3.AssetIDs.Count == 0)
-                            js.Item3.AssetIDs.Add(u);
-                        doneJsps.Add(u);
+                        var assetIDs = new List<uint>(1);
+                        if (i < jspInfo.JSP_AssetIDs.Length)
+                        {
+                            assetIDs.Add(jspInfo.JSP_AssetIDs[i]);
+                            doneJsps.Add(jspInfo.JSP_AssetIDs[i]);
+                        }
+                        list.Add(new Layer(LayerType.BSP) { AssetIDs = assetIDs });
                     }
                 }
-                list.Add(js.Item1);
-                list.Add(js.Item2);
-                list.Add(js.Item3);
-                if (game != Game.Scooby)
-                    list.Add(js.Item4);
+                list.Add(l);
             }
             AddIfNotEmpty(modelLayer0);
             AddIfNotEmpty(modelLayer1);
@@ -635,7 +627,7 @@ namespace IndustrialPark
             AddIfNotEmpty(sndtocLayer);
             AddIfNotEmpty(cutscenetocLayer);
 
-            var unusedJsps = from Asset a in assetDictionary.Values where a.assetType == AssetType.JSP || a.assetType == AssetType.BSP && !doneJsps.Contains(a.assetID) select a;
+            var unusedJsps = (from Asset a in assetDictionary.Values where (a.assetType == AssetType.JSP || a.assetType == AssetType.BSP) && !doneJsps.Contains(a.assetID) select a).ToList();
             if (unusedJsps.Any())
             {
                 var message = "Unable to create a layer setup for your archive. The following BSP/JSP assets are not referenced in a JSPINFO asset:\n" +

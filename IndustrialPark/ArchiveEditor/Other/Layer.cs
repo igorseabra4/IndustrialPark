@@ -13,5 +13,11 @@ namespace IndustrialPark
             Type = type;
             AssetIDs = new List<uint>();
         }
+
+        public Layer(LayerType type, int assetCountBuffer)
+        {
+            Type = type;
+            AssetIDs = new List<uint>(assetCountBuffer);
+        }
     }
 }

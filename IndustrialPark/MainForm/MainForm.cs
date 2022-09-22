@@ -1725,15 +1725,40 @@ namespace IndustrialPark
                 p.SetProgressBar(0, hipList.Count, 1);
                 p.Show();
 
+                var layerLogs = new List<string>();
+                var layerTypes = new Dictionary<LayerType, HashSet<AssetType>>();
+
                 foreach (var hip in hipList)
                 {
                     p.Text = Path.GetFileName(hip);
                     ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
                     archive.OpenFile(hip, false, scoobyPlat);
                     scoobyPlat = archive.platform;
-                    archive.Dispose();
+                    foreach (var v in archive.AssetTypesPerLayer())
+                    {
+                        if (!layerTypes.ContainsKey(v.Key))
+                            layerTypes[v.Key] = new HashSet<AssetType>();
+                        foreach (var t in v.Value)
+                        {
+
+                            layerTypes[v.Key].Add(t);
+                            if (v.Key == LayerType.SRAM && v.Value.Contains(AssetType.SoundInfo))
+                                MessageBox.Show(archive.currentlyOpenFilePath);
+                        }
+                    }
+
+                    var sndis = archive.GetAllAssets().Where(a => a.assetType == AssetType.SoundInfo);
+                    if (sndis.Any())
+                    {
+                        archive.SelectedLayerIndex = archive.GetLayerFromAssetID(sndis.FirstOrDefault().assetID);
+                        if (archive.GetLayerType() == (int)LayerType_BFBB.SRAM)
+                            MessageBox.Show(archive.currentlyOpenFilePath);
+                    }
+                    archive.Dispose(false);
                     p.PerformStep();
                 }
+
+                File.WriteAllText("layerslogs.txt", string.Join("\n", layerTypes.OrderBy(l => (int)l.Key).Select(k => $"{k.Key}: {string.Join(", ", k.Value.Select(v => v.ToString()).OrderBy(f => f))}")));
 
                 p.Close();
             }

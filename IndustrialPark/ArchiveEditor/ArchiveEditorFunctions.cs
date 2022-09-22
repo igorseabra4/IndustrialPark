@@ -193,21 +193,22 @@ namespace IndustrialPark
             foreach (Section_LHDR LHDR in hipFile.DICT.LTOC.LHDRList)
                 Layers.Add(LHDRToLayer(LHDR));
 
-            foreach (Section_AHDR AHDR in hipFile.DICT.ATOC.AHDRList)
-            {
-                string error = AddAssetToDictionary(AHDR, game, platform.Endianness(), true, false);
+            foreach (var l in Layers)
+                foreach (var u in l.AssetIDs)
+                {
+                    var AHDR = hipFile.DICT.ATOC.AHDRList.Where(ahdr => ahdr.assetID == u).First();
+                    string error = AddAssetToDictionary(AHDR, game, platform.Endianness(), true, false);
 
-                if (error != null)
-                    assetsWithError += error + "\n";
+                    if (error != null)
+                        assetsWithError += error + "\n";
 
-                autoComplete.Add(AHDR.ADBG.assetName);
+                    autoComplete.Add(AHDR.ADBG.assetName);
 
-                progressBar.PerformStep();
-
+                    progressBar.PerformStep();
 #if DEBUG
-                tempAhdrUglyDict[AHDR.assetID] = AHDR;
+                    tempAhdrUglyDict[AHDR.assetID] = AHDR;
 #endif
-            }
+                }
 
             if (assetsWithError != "")
                 MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
@@ -233,7 +234,7 @@ namespace IndustrialPark
 
         private Layer LHDRToLayer(Section_LHDR LHDR)
         {
-            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType));
+            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType), LHDR.assetIDlist.Count);
             foreach (var u in LHDR.assetIDlist)
                 layer.AssetIDs.Add(u);
             return layer;
@@ -486,15 +487,19 @@ namespace IndustrialPark
             if (assetList.Count == 0)
                 return;
 
-            ProgressBar progressBar = new ProgressBar("Closing Archive");
+            ProgressBar progressBar = null;
             if (showProgress)
+            {
+                progressBar = new ProgressBar("Closing Archive");
                 progressBar.Show();
-            progressBar.SetProgressBar(0, assetList.Count, 1);
+                progressBar.SetProgressBar(0, assetList.Count, 1);
+            }
 
             foreach (uint assetID in assetList)
             {
                 DisposeOfAsset(assetID);
-                progressBar.PerformStep();
+                if (showProgress)
+                    progressBar.PerformStep();
             }
 
             Layers.Clear();
@@ -502,7 +507,8 @@ namespace IndustrialPark
 
             currentlyOpenFilePath = null;
 
-            progressBar.Close();
+            if (showProgress)
+                progressBar.Close();
         }
 
         public void DisposeOfAsset(uint assetID)
@@ -574,7 +580,7 @@ namespace IndustrialPark
         {
             if (ContainsAsset(key))
                 return assetDictionary[key];
-            throw new KeyNotFoundException("Asset not present in dictionary.");
+            throw new KeyNotFoundException($"Asset [{key:X8}] not present in dictionary.");
         }
 
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
@@ -694,10 +700,12 @@ namespace IndustrialPark
                 case AssetType.TextureStream:
                     return new AssetRWTX(AHDR, game, endianness);
                 case AssetType.SoundInfo:
-                    if (platform == Platform.GameCube && (game == Game.BFBB || game == Game.Scooby))
-                        return new AssetSNDI_GCN_V1(AHDR, game, endianness);
                     if (platform == Platform.GameCube)
+                    {
+                        if (game != Game.Incredibles)
+                            return new AssetSNDI_GCN_V1(AHDR, game, endianness);
                         return new AssetSNDI_GCN_V2(AHDR, game, endianness);
+                    }
                     if (platform == Platform.Xbox)
                         return new AssetSNDI_XBOX(AHDR, game, endianness);
                     if (platform == Platform.PS2)
@@ -1203,7 +1211,7 @@ namespace IndustrialPark
             {
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.BuildAHDR(platform.Endianness())));
 
-                if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.SoundStream)
+                if (asset is AssetSound)
                 {
                     try
                     {
@@ -1214,8 +1222,7 @@ namespace IndustrialPark
                         MessageBox.Show(e.Message + " The asset will be copied as it is.");
                     }
                 }
-
-                clipboard.Add(asset.game, platform.Endianness(), AHDR);
+                clipboard.Add(asset.game, platform.Endianness(), AHDR, asset is AssetJSP_INFO jspInfo ? jspInfo.JSP_AssetIDs : null);
             }
 
             Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
@@ -1270,7 +1277,9 @@ namespace IndustrialPark
                         MessageBox.Show(ex.Message);
                     }
                 }
-
+                else if (asset is AssetJSP_INFO jspInfo)
+                    jspInfo.JSP_AssetIDs = clipboard.jspExtraInfo[i];
+                
                 finalIndices.Add(AHDR.assetID);
             }
 
@@ -1324,7 +1333,6 @@ namespace IndustrialPark
         
         public List<uint> ImportMultipleAssets(List<Section_AHDR> AHDRs, bool overwrite)
         {
-            UnsavedChanges = true;
             var assetIDs = new List<uint>();
 
             foreach (Section_AHDR AHDR in AHDRs)
@@ -1353,6 +1361,7 @@ namespace IndustrialPark
                         }
                     }
 
+                    UnsavedChanges = true;
                     assetIDs.Add(AHDR.assetID);
                 }
                 catch (Exception ex)
@@ -1454,6 +1463,14 @@ namespace IndustrialPark
                         result.Clear();
                 }
             return result.ToArray();
+        }
+        
+        public Dictionary<LayerType, HashSet<AssetType>> AssetTypesPerLayer()
+        {
+            var result = new Dictionary<LayerType, HashSet<AssetType>>();
+            foreach (var l in Layers)
+                result[l.Type] = (from uint a in l.AssetIDs select assetDictionary[a].assetType).Distinct().ToHashSet();
+            return result;
         }
     }
 }
