@@ -15,7 +15,7 @@ namespace IndustrialPark
             Text = "";
         }
 
-        public AssetTEXT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetTEXT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -24,19 +24,15 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Text.Length);
-                writer.Write(Text);
+            writer.Write(Text.Length);
+            writer.Write(Text);
 
-                if (Text.Length == 0 || writer.BaseStream.Length % 4 != 0 || (writer.BaseStream.Length % 4 == 0 && Text[Text.Length - 1] != '\0'))
-                    do writer.Write((byte)0);
-                    while (writer.BaseStream.Length % 4 != 0);
-
-                return writer.ToArray();
-            }
+            if (Text.Length == 0 || writer.BaseStream.Length % 4 != 0 || (writer.BaseStream.Length % 4 == 0 && Text[Text.Length - 1] != '\0'))
+                do
+                    writer.Write((byte)0);
+                while (writer.BaseStream.Length % 4 != 0);
         }
 
         public override bool HasReference(uint assetID) =>

@@ -27,14 +27,10 @@ namespace IndustrialPark
             Vertex1 = reader.ReadUInt16();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Vertex0);
-                writer.Write(Vertex1);
-                return writer.ToArray();
-            }
+            writer.Write(Vertex0);
+            writer.Write(Vertex1);
         }
 
         public override string ToString()
@@ -56,7 +52,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID hashID1 { get; set; }
 
-        public AssetWIRE(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
+        public AssetWIRE(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -79,10 +75,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(0);
                 writer.Write(0);
                 writer.Write(0);
@@ -90,10 +85,10 @@ namespace IndustrialPark
                 writer.Write(hashID1);
 
                 foreach (var p in Points)
-                    writer.Write(p.Serialize(endianness));
+                    p.Serialize(writer);
 
                 foreach (var l in Lines)
-                    writer.Write(l.Serialize(endianness));
+                    l.Serialize(writer);
 
                 writer.BaseStream.Position = 0;
 
@@ -101,8 +96,7 @@ namespace IndustrialPark
                 writer.Write(Points.Length);
                 writer.Write(Lines.Length);
 
-                return writer.ToArray();
-            }
+                
         }
 
         public void ToObj(string fileName)

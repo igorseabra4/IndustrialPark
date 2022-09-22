@@ -245,54 +245,48 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(PseudoAssetID);
-                writer.Write(PseudoAssetType);
-                writer.Write(PseudoLinkCount);
-                writer.Write(PseudoBaseFlags.FlagValueShort);
-                writer.Write(PseudoVisibilityFlags.FlagValueByte);
-                writer.Write(PseudoTypeFlag);
-                writer.Write(PseudoFlag0A.FlagValueByte);
-                writer.Write(PseudoSolidityFlags.FlagValueByte);
-                writer.Write(Surface);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_scale.X);
-                writer.Write(_scale.Y);
-                writer.Write(_scale.Z);
-                writer.Write(_color.X);
-                writer.Write(_color.Y);
-                writer.Write(_color.Z);
-                writer.Write(_color.W);
-                writer.Write(PseudoColorAlphaSpeed);
-                writer.Write(_model);
-                writer.Write(Animation);
-
-                writer.Write(ParentCar);
-                writer.Write(StartSpline);
-                writer.Write(InitialU);
-                writer.Write(FrontAxleDist);
-                writer.Write(RearAxleDist);
-                writer.Write(FrontHitchDist);
-                writer.Write(RearHitchDist);
-                writer.Write(AxleWidth);
-                writer.Write(HaveSparks);
-                writer.Write(IsDestructible);
-                writer.Write((short)0);
-                writer.Write(NavMesh);
-                writer.Write(NavMeshGroupIndex);
-                writer.Write((byte)0);
-                writer.Write((short)0);
-
-                return writer.ToArray();
-            }
+            writer.Write(PseudoAssetID);
+            writer.Write(PseudoAssetType);
+            writer.Write(PseudoLinkCount);
+            writer.Write(PseudoBaseFlags.FlagValueShort);
+            writer.Write(PseudoVisibilityFlags.FlagValueByte);
+            writer.Write(PseudoTypeFlag);
+            writer.Write(PseudoFlag0A.FlagValueByte);
+            writer.Write(PseudoSolidityFlags.FlagValueByte);
+            writer.Write(Surface);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_scale.X);
+            writer.Write(_scale.Y);
+            writer.Write(_scale.Z);
+            writer.Write(_color.X);
+            writer.Write(_color.Y);
+            writer.Write(_color.Z);
+            writer.Write(_color.W);
+            writer.Write(PseudoColorAlphaSpeed);
+            writer.Write(_model);
+            writer.Write(Animation);
+            writer.Write(ParentCar);
+            writer.Write(StartSpline);
+            writer.Write(InitialU);
+            writer.Write(FrontAxleDist);
+            writer.Write(RearAxleDist);
+            writer.Write(FrontHitchDist);
+            writer.Write(RearHitchDist);
+            writer.Write(AxleWidth);
+            writer.Write(HaveSparks);
+            writer.Write(IsDestructible);
+            writer.Write((short)0);
+            writer.Write(NavMesh);
+            writer.Write(NavMeshGroupIndex);
+            writer.Write((byte)0);
+            writer.Write((short)0);
         }
 
         [Browsable(false)]

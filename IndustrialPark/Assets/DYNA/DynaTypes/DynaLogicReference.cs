@@ -24,13 +24,11 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Initial);
-                return writer.ToArray();
-            }
+                
         }
     }
 }

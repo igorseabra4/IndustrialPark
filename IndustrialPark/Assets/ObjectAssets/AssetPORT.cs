@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
@@ -52,18 +51,14 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Camera);
-                writer.Write(DestinationMarker);
-                writer.Write(Rotation);
-                writer.WriteMagic(new string(_destinationLevel.ToArray()));
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Camera);
+            writer.Write(DestinationMarker);
+            writer.Write(Rotation);
+            writer.WriteMagic(new string(_destinationLevel.ToArray()));
+            SerializeLinks(writer);
         }
     }
 }

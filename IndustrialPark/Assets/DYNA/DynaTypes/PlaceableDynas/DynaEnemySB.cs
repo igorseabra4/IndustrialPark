@@ -215,38 +215,33 @@ namespace IndustrialPark
             }
         }
 
-        protected byte[] SerializeEntityDyna(Endianness endianness)
+        protected void SerializeEntityDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(PseudoAssetID);
-                writer.Write(PseudoAssetType);
-                writer.Write(PseudoLinkCount);
-                writer.Write(PseudoBaseFlags.FlagValueShort);
-                writer.Write(PseudoVisibilityFlags.FlagValueByte);
-                writer.Write(PseudoTypeFlag);
-                writer.Write(PseudoFlag0A.FlagValueByte);
-                writer.Write(PseudoSolidityFlags.FlagValueByte);
-                writer.Write(Surface);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_scale.X);
-                writer.Write(_scale.Y);
-                writer.Write(_scale.Z);
-                writer.Write(_color.X);
-                writer.Write(_color.Y);
-                writer.Write(_color.Z);
-                writer.Write(_color.W);
-                writer.Write(PseudoColorAlphaSpeed);
-                writer.Write(_model);
-                writer.Write(Animation);
-
-                return writer.ToArray();
-            }
+            writer.Write(PseudoAssetID);
+            writer.Write(PseudoAssetType);
+            writer.Write(PseudoLinkCount);
+            writer.Write(PseudoBaseFlags.FlagValueShort);
+            writer.Write(PseudoVisibilityFlags.FlagValueByte);
+            writer.Write(PseudoTypeFlag);
+            writer.Write(PseudoFlag0A.FlagValueByte);
+            writer.Write(PseudoSolidityFlags.FlagValueByte);
+            writer.Write(Surface);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_scale.X);
+            writer.Write(_scale.Y);
+            writer.Write(_scale.Z);
+            writer.Write(_color.X);
+            writer.Write(_color.Y);
+            writer.Write(_color.Z);
+            writer.Write(_color.W);
+            writer.Write(PseudoColorAlphaSpeed);
+            writer.Write(_model);
+            writer.Write(Animation);
         }
 
         [Browsable(false)]

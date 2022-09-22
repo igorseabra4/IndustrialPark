@@ -43,19 +43,17 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
+
+                base.Serialize(writer);
                 writer.Write((short)Items.Length);
                 writer.Write((short)ReceiveEventDelegation);
                 foreach (var a in Items)
                     writer.Write(a);
-                writer.Write(SerializeLinks(endianness));
+                SerializeLinks(writer);
 
-                return writer.ToArray();
-            }
+                
         }
 
         [Browsable(false)]

@@ -184,7 +184,7 @@ namespace IndustrialPark
         }
 
         // meant for use with DUPC VIL only
-        public AssetVIL(EndianBinaryReader reader) : base(reader)
+        public AssetVIL(EndianBinaryReader reader, Game game) : base(reader, game)
         {
             NpcFlags.FlagValueInt = reader.ReadUInt32();
             NpcType = reader.ReadUInt32();
@@ -196,25 +196,21 @@ namespace IndustrialPark
             NPCSettings = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            base.Serialize(writer);
+            writer.Write(NpcFlags.FlagValueInt);
+            writer.Write(NpcType);
+            writer.Write(NPCSettingsObject);
+            writer.Write(MovePoint);
+            writer.Write(TaskBox1);
+            writer.Write(TaskBox2);
+            if (game == Game.Incredibles)
             {
-                writer.Write(SerializeEntity(game, endianness));
-                writer.Write(NpcFlags.FlagValueInt);
-                writer.Write(NpcType);
-                writer.Write(NPCSettingsObject);
-                writer.Write(MovePoint);
-                writer.Write(TaskBox1);
-                writer.Write(TaskBox2);
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(NavMesh2);
-                    writer.Write(NPCSettings);
-                }
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
+                writer.Write(NavMesh2);
+                writer.Write(NPCSettings);
             }
+            SerializeLinks(writer);
         }
 
         public override void Verify(ref List<string> result)

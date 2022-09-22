@@ -16,8 +16,7 @@ namespace IndustrialPark
             this.assetType = assetType;
         }
 
-        public override string ToString() =>
-            AssetTypeToString(assetType);
+        public override string ToString() => AssetTypeToString(assetType);
 
         public static bool LegacyAssetNameFormat = false;
 

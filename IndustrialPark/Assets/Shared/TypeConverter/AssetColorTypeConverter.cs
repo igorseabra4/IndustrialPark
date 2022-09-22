@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace AssetEditorColors
+namespace IndustrialPark.AssetEditorColors
 {
-    public class AssetColorConverter : TypeConverter
+    public class AssetColorTypeConverter : TypeConverter
     {
         public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
         {

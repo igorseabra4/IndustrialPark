@@ -768,8 +768,7 @@ namespace IndustrialPark
             if (asset == null)
                 return null;
 
-            asset.game = game;
-            asset.endianness = platform.Endianness();
+            asset.SetGame(game);
 
             AddAsset(asset, false);
 
@@ -1136,7 +1135,7 @@ namespace IndustrialPark
                 }
                 case AssetTemplate.Empty_Sound:
                 case AssetTemplate.Empty_Streaming_Sound:
-                    return new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.StreamingSound, game, platform, new byte[0]);
+                    return new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.SoundStream, game, platform, new byte[0]);
                 case AssetTemplate.Empty_BSP:
                     return new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? Program.MainForm.renderer : null);
                 case AssetTemplate.Shiny_Red:

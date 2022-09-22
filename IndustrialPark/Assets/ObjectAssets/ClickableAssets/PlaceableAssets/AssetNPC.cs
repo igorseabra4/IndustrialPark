@@ -331,47 +331,43 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
-                writer.Write(ActivateRadius);
-                writer.Write(ActivateFOV);
-                writer.Write(DetectHeight);
-                writer.Write(DetectHeightOffset);
-                writer.Write(SpeedMovement);
-                writer.Write(SpeedPursue);
-                writer.Write(SpeedTurn);
-                writer.Write(PursuitRange);
-                writer.Write(DurDazedState);
-                writer.Write(DurGloatState);
-                writer.Write(DurGummedState);
-                writer.Write(DurBubbleState);
-                writer.Write(Hitpoints);
-                writer.Write(BehaviorState);
-                writer.Write((short)0);
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(LobSpeed);
-                writer.Write(LobDurReload);
-                writer.Write(LobRange);
-                writer.Write(LobSalvo);
-                writer.Write(ProjectileType);
-                writer.Write(Bullseye_MovePoint);
-                writer.Write(LobArcness);
-                writer.Write(LobHeavy);
-                writer.Write(ExtenderRange);
-                writer.Write(ExtenderWidth);
-                writer.Write(ExtenderDuration);
-                writer.Write(ExtenderRate);
-                writer.Write(ExtenderReloadTime);
-                writer.Write(MovePoint);
-                writer.Write(Path);
-                writer.Write(MinPlayerPowerups);
-                writer.Write(MinGameDifficulty);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(ActivateRadius);
+            writer.Write(ActivateFOV);
+            writer.Write(DetectHeight);
+            writer.Write(DetectHeightOffset);
+            writer.Write(SpeedMovement);
+            writer.Write(SpeedPursue);
+            writer.Write(SpeedTurn);
+            writer.Write(PursuitRange);
+            writer.Write(DurDazedState);
+            writer.Write(DurGloatState);
+            writer.Write(DurGummedState);
+            writer.Write(DurBubbleState);
+            writer.Write(Hitpoints);
+            writer.Write(BehaviorState);
+            writer.Write((short)0);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(LobSpeed);
+            writer.Write(LobDurReload);
+            writer.Write(LobRange);
+            writer.Write(LobSalvo);
+            writer.Write(ProjectileType);
+            writer.Write(Bullseye_MovePoint);
+            writer.Write(LobArcness);
+            writer.Write(LobHeavy);
+            writer.Write(ExtenderRange);
+            writer.Write(ExtenderWidth);
+            writer.Write(ExtenderDuration);
+            writer.Write(ExtenderRate);
+            writer.Write(ExtenderReloadTime);
+            writer.Write(MovePoint);
+            writer.Write(Path);
+            writer.Write(MinPlayerPowerups);
+            writer.Write(MinGameDifficulty);
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

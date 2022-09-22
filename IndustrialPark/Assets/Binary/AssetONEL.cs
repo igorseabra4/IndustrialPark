@@ -3,7 +3,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public enum ePlayerType
+    public enum EPlayerType
     {
         eALWAYS,
         eCOUNTER,
@@ -29,7 +29,7 @@ namespace IndustrialPark
         public short EventType { get; set; }
         public short PlaysInMusicChannel { get; set; }
         public AssetID pData { get; set; }
-        public ePlayerType PlayerType { get; set; }
+        public EPlayerType PlayerType { get; set; }
         public int TesterDataFirstParam { get; set; }
         public AssetSingle TesterDataSecondParam { get; set; }
 
@@ -51,36 +51,31 @@ namespace IndustrialPark
             EventType = reader.ReadInt16();
             PlaysInMusicChannel = reader.ReadInt16();
             pData = reader.ReadUInt32();
-            PlayerType = (ePlayerType)reader.ReadInt32();
+            PlayerType = (EPlayerType)reader.ReadInt32();
             TesterDataFirstParam = reader.ReadInt32();
             TesterDataSecondParam = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SoundGroupNameHash);
-                writer.Write(SoundStartDelay);
-                writer.Write(TimeSpan);
-                writer.Write(TimeLastPlayed);
-                writer.Write(NumPlays);
-                writer.Write(DelayBetweenPlays);
-                writer.Write(Probability);
-                writer.Write(DefaultDuration);
-                writer.Write(LastDuration);
-                writer.Write(MaxPlays);
-                writer.Write(SoundGroupHandle);
-                writer.Write(OLManager);
-                writer.Write(EventType);
-                writer.Write(PlaysInMusicChannel);
-                writer.Write(pData);
-                writer.Write((int)PlayerType);
-                writer.Write(TesterDataFirstParam);
-                writer.Write(TesterDataSecondParam);
-
-                return writer.ToArray();
-            }
+            writer.Write(SoundGroupNameHash);
+            writer.Write(SoundStartDelay);
+            writer.Write(TimeSpan);
+            writer.Write(TimeLastPlayed);
+            writer.Write(NumPlays);
+            writer.Write(DelayBetweenPlays);
+            writer.Write(Probability);
+            writer.Write(DefaultDuration);
+            writer.Write(LastDuration);
+            writer.Write(MaxPlays);
+            writer.Write(SoundGroupHandle);
+            writer.Write(OLManager);
+            writer.Write(EventType);
+            writer.Write(PlaysInMusicChannel);
+            writer.Write(pData);
+            writer.Write((int)PlayerType);
+            writer.Write(TesterDataFirstParam);
+            writer.Write(TesterDataSecondParam);
         }
     }
 
@@ -98,7 +93,7 @@ namespace IndustrialPark
             OneLiners = new OneLiner[0];
         }
 
-        public AssetONEL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetONEL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -110,17 +105,12 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(OneLiners.Length);
-                foreach (var state in OneLiners)
-                    writer.Write(state.Serialize(game, endianness));
-                writer.Write(new byte[unkByteCount]);
-
-                return writer.ToArray();
-            }
+            writer.Write(OneLiners.Length);
+            foreach (var state in OneLiners)
+                state.Serialize(writer);
+            writer.Write(new byte[unkByteCount]);
         }
     }
 }

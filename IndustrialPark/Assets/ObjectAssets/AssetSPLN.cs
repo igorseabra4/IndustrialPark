@@ -2,7 +2,6 @@
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -36,15 +35,11 @@ namespace IndustrialPark
             Z = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(X);
-                writer.Write(Y);
-                writer.Write(Z);
-                return writer.ToArray();
-            }
+            writer.Write(X);
+            writer.Write(Y);
+            writer.Write(Z);
         }
 
         public static implicit operator Vector3(SplineVector vector) => new Vector3(vector.X, vector.Y, vector.Z);
@@ -119,28 +114,28 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(Endianness.Little));
-                writer.Write(SplineType);
-                writer.Write(_points.Length + SplineType); // point count plus 3
-                writer.Write(_points.Length - 1); // point count minus one
-                writer.Write(UnknownHash_14);
-                writer.Write(UnknownHash_18);
-                foreach (var v in _points)
-                    writer.Write(v.Serialize(endianness));
-                if (SplineType == 1)
-                    writer.Write(new byte[8]);
-                else if (SplineType == 3)
-                    writer.Write(new byte[16]);
-                foreach (var v in _points)
-                    writer.Write(v.W);
+            var prevEndian = writer.endianness;
+            writer.endianness = Endianness.Little;
 
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.endianness = prevEndian;
+            
+            writer.Write(SplineType);
+            writer.Write(_points.Length + SplineType); // point count plus 3
+            writer.Write(_points.Length - 1); // point count minus one
+            writer.Write(UnknownHash_14);
+            writer.Write(UnknownHash_18);
+            foreach (var v in _points)
+                v.Serialize(writer);
+            if (SplineType == 1)
+                writer.Write(new byte[8]);
+            else if (SplineType == 3)
+                writer.Write(new byte[16]);
+            foreach (var v in _points)
+                writer.Write(v.W);
+            SerializeLinks(writer);
         }
 
         private BoundingBox boundingBox;

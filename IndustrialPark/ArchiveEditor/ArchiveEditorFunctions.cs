@@ -81,10 +81,10 @@ namespace IndustrialPark
             {
                 return _unsavedChanges;
             }
-            set { 
+            set {
                 _unsavedChanges = value;
                 OnChangesMade();
-            } 
+            }
         }
 
         public event Action ChangesMade;
@@ -173,7 +173,7 @@ namespace IndustrialPark
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
 
-            this.game = game;            
+            this.game = game;
             platform = (scoobyPlatform != Platform.Unknown) ? scoobyPlatform : platformFromFile;
 
             while (platform == Platform.Unknown)
@@ -189,12 +189,9 @@ namespace IndustrialPark
 
             PACK = hipFile.PACK;
 
-            if (!NoLayers)
-            {
-                Layers = new List<Layer>();
-                foreach (Section_LHDR LHDR in hipFile.DICT.LTOC.LHDRList)
-                    Layers.Add(LHDRToLayer(LHDR));
-            }
+            Layers = new List<Layer>();
+            foreach (Section_LHDR LHDR in hipFile.DICT.LTOC.LHDRList)
+                Layers.Add(LHDRToLayer(LHDR));
 
             foreach (Section_AHDR AHDR in hipFile.DICT.ATOC.AHDRList)
             {
@@ -214,7 +211,7 @@ namespace IndustrialPark
 
             if (assetsWithError != "")
                 MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
-            
+
             SetupTextureDisplay();
             RecalculateAllMatrices();
 
@@ -225,8 +222,10 @@ namespace IndustrialPark
                 foreach (var PIPT in assetDictionary.Values.Where(a => a is AssetPIPT).Select(a => (AssetPIPT)a))
                     PIPT.UpdateDictionary();
 
-            progressBar.Close();
+            if (NoLayers)
+                Layers = new List<Layer>();
 
+            progressBar.Close();
 #if DEBUG
             LogAssetOrder(hipFile.DICT, tempAhdrUglyDict);
 #endif
@@ -290,8 +289,15 @@ namespace IndustrialPark
 
         public void Save()
         {
-            File.WriteAllBytes(currentlyOpenFilePath, BuildHipFile().ToBytes(game, platform));
-            UnsavedChanges = false;
+            try
+            {
+                File.WriteAllBytes(currentlyOpenFilePath, BuildHipFile().ToBytes(game, platform));
+                UnsavedChanges = false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private HipFile BuildHipFile()
@@ -299,7 +305,10 @@ namespace IndustrialPark
             var DICT = new Section_DICT();
 
             foreach (var asset in assetDictionary.Values)
-                DICT.ATOC.AHDRList.Add(asset.BuildAHDR(game, platform.Endianness()));
+            {
+                asset.SetGame(game);
+                DICT.ATOC.AHDRList.Add(asset.BuildAHDR(platform.Endianness()));
+            }
 
             foreach (var layer in NoLayers ? BuildLayers() : Layers)
                 DICT.LTOC.LHDRList.Add(new Section_LHDR()
@@ -363,15 +372,23 @@ namespace IndustrialPark
             get => _noLayers;
             set
             {
-                _noLayers = value;
-                if (_noLayers)
+                if (value)
                 {
                     Layers = new List<Layer>();
                 }
                 else
                 {
-                    Layers = BuildLayers();
+                    try
+                    {
+                        Layers = BuildLayers();
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                        return;
+                    }
                 }
+                _noLayers = value;
                 UnsavedChanges = true;
             }
         }
@@ -544,10 +561,10 @@ namespace IndustrialPark
             asset is AssetJSP_INFO ||
             asset is AssetLODT ||
             asset is AssetFLY
-            select asset.assetType).Distinct();
+             select asset.assetType).Distinct();
 
         public List<AssetType> AssetTypesOnLayer() => NoLayers ?
-            (from Asset a in assetDictionary.Values select a.assetType).Distinct().ToList():
+            (from Asset a in assetDictionary.Values select a.assetType).Distinct().ToList() :
             (from uint a in Layers[SelectedLayerIndex].AssetIDs select assetDictionary[a].assetType).Distinct().ToList();
 
         public bool ContainsAssetWithType(AssetType assetType) =>
@@ -583,7 +600,7 @@ namespace IndustrialPark
             // testing if build works
             if (fast)
             {
-                var built = newAsset.BuildAHDR().data;
+                var built = newAsset.BuildAHDR(platform.Endianness()).data;
                 if (!Enumerable.SequenceEqual(AHDR.data, built))
                 {
                     error = $"[{AHDR.assetID:X8}] {AHDR.ADBG.assetName} (unsupported format)";
@@ -632,10 +649,10 @@ namespace IndustrialPark
 
         private Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
         {
-            //return CreateAsset(AHDR, game, endianness, showMessageBox, ref error);
+            //return CreateAsset(AHDR, game, endianness);
             try
             {
-                return CreateAsset(AHDR, game, endianness, showMessageBox, ref error);
+                return CreateAsset(AHDR, game, endianness);
             }
             catch (Exception ex)
             {
@@ -648,7 +665,7 @@ namespace IndustrialPark
             }
         }
 
-        private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
+        private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness)
         {
             if (AHDR.IsDyna)
                 return CreateDYNA(AHDR, game, endianness);
@@ -670,10 +687,11 @@ namespace IndustrialPark
                 case AssetType.JSP:
                     return new AssetJSP(AHDR, game, endianness, Program.Renderer);
                 case AssetType.JSPInfo:
-                    return new AssetJSP_INFO(AHDR, game, endianness);
+                    return new AssetJSP_INFO(AHDR, game, GetJspAssetIDs);
                 case AssetType.Model:
                     return new AssetMODL(AHDR, game, endianness, Program.Renderer);
                 case AssetType.Texture:
+                case AssetType.TextureStream:
                     return new AssetRWTX(AHDR, game, endianness);
                 case AssetType.SoundInfo:
                     if (platform == Platform.GameCube && (game == Game.BFBB || game == Game.Scooby))
@@ -834,7 +852,7 @@ namespace IndustrialPark
                     return new AssetZLIN(AHDR, game, endianness);
 
                 case AssetType.Sound:
-                case AssetType.StreamingSound:
+                case AssetType.SoundStream:
                     return new AssetSound(AHDR, game, platform);
 
                 case AssetType.CameraCurve:
@@ -850,7 +868,6 @@ namespace IndustrialPark
                 case AssetType.RawImage:
                 case AssetType.SplinePath:
                 case AssetType.Subtitles:
-                case AssetType.TEXS:
                 case AssetType.UIFN:
 
                 case AssetType.Null:
@@ -1047,16 +1064,18 @@ namespace IndustrialPark
             return null;
         }
 
-        public uint AddAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool setTextureDisplay)
+        public Asset AddAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool setTextureDisplay)
         {
             if (!NoLayers)
                 Layers[SelectedLayerIndex].AssetIDs.Add(AHDR.assetID);
             AddAssetToDictionary(AHDR, game, endianness, false, true);
 
-            if (setTextureDisplay && GetFromAssetID(AHDR.assetID) is AssetRWTX rwtx)
+            var asset = GetFromAssetID(AHDR.assetID);
+
+            if (setTextureDisplay && asset is AssetRWTX rwtx)
                 EnableTextureForDisplay(rwtx);
 
-            return AHDR.assetID;
+            return asset;
         }
 
         public uint AddAsset(Asset asset, bool setTextureDisplay)
@@ -1071,7 +1090,7 @@ namespace IndustrialPark
             return asset.assetID;
         }
 
-        public uint AddAssetWithUniqueID(Section_AHDR AHDR, Game game, Endianness endianness, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
+        public Asset AddAssetWithUniqueID(Section_AHDR AHDR, Game game, Endianness endianness, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
         {
             var assetName = GetUniqueAssetName(AHDR.ADBG.assetName, AHDR.assetID, giveIDregardless, ignoreNumber);
 
@@ -1159,12 +1178,12 @@ namespace IndustrialPark
 
             foreach (var asset in currentlySelectedAssets)
             {
-                string serializedObject = JsonConvert.SerializeObject(asset.BuildAHDR());
+                string serializedObject = JsonConvert.SerializeObject(asset.BuildAHDR(platform.Endianness()));
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
                 var previousAssetID = AHDR.assetID;
 
-                AddAssetWithUniqueID(AHDR, asset.game, asset.endianness);
+                AddAssetWithUniqueID(AHDR, asset.game, platform.Endianness());
 
                 referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
@@ -1182,9 +1201,9 @@ namespace IndustrialPark
 
             foreach (Asset asset in currentlySelectedAssets)
             {
-                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.BuildAHDR()));
+                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.BuildAHDR(platform.Endianness())));
 
-                if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.StreamingSound)
+                if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.SoundStream)
                 {
                     try
                     {
@@ -1196,7 +1215,7 @@ namespace IndustrialPark
                     }
                 }
 
-                clipboard.Add(asset.game, asset.endianness, AHDR);
+                clipboard.Add(asset.game, platform.Endianness(), AHDR);
             }
 
             Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
@@ -1233,16 +1252,18 @@ namespace IndustrialPark
                 if (replaceAssetsOnPaste && !dontReplace && ContainsAsset(AHDR.assetID))
                     RemoveAsset(AHDR.assetID);
 
-                AddAssetWithUniqueID(clipboard.assets[i], clipboard.games[i], clipboard.endiannesses[i]);
+                var asset = AddAssetWithUniqueID(AHDR, clipboard.games[i], clipboard.endiannesses[i]);
 
-                referenceUpdate.Add(previousAssetID, AHDR.assetID);
+                asset.SetGame(game);
 
-                if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.StreamingSound)
+                referenceUpdate.Add(previousAssetID, asset.assetID);
+
+                if (asset is AssetSound sound)
                 {
                     try
                     {
-                        AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
-                        AHDR.data = soundData;
+                        AddSoundToSNDI(sound.Data, sound.assetID, sound.assetType, out byte[] soundData);
+                        sound.Data = soundData;
                     }
                     catch (Exception ex)
                     {
@@ -1274,7 +1295,7 @@ namespace IndustrialPark
                     AssetType.Texture,
                     AssetType.Sound,
                     AssetType.SoundInfo,
-                    AssetType.StreamingSound,
+                    AssetType.SoundStream,
                     AssetType.Text
                 };
 
@@ -1319,7 +1340,7 @@ namespace IndustrialPark
                     else
                         AddAssetWithUniqueID(AHDR, game, platform.Endianness(), setTextureDisplay: true);
 
-                    if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.StreamingSound)
+                    if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.SoundStream)
                     {
                         try
                         {
@@ -1414,6 +1435,25 @@ namespace IndustrialPark
             if (ContainsAsset(mrkr) && GetFromAssetID(mrkr) is AssetMRKR MRKR)
                 return MRKR;
             return null;
+        }
+
+        private AssetID[] GetJspAssetIDs(uint jspInfo)
+        {
+            var result = new List<AssetID>();
+            var layerIndex = GetLayerFromAssetID(jspInfo);
+            for (int i = layerIndex - 3; i < layerIndex; i++)
+                if (i > 0 && i < Layers.Count)
+                {
+                    if (Layers[i].Type == LayerType.BSP)
+                    {
+                        foreach (var u in Layers[i].AssetIDs)
+                            if (GetFromAssetID(u).assetType == AssetType.JSP)
+                                result.Add(u);
+                    }
+                    else if (Layers[i].Type == LayerType.JSPINFO)
+                        result.Clear();
+                }
+            return result.ToArray();
         }
     }
 }

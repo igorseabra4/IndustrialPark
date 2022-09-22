@@ -13,12 +13,15 @@ namespace IndustrialPark
             Data = data;
         }
 
-        public AssetWithData(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetWithData(Section_AHDR AHDR, Game game) : base(AHDR, game)
         {
             Data = AHDR.data;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness) => Data;
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(Data);
+        }
 
         public string RwVersion(int renderWareVersion)
         {

@@ -77,11 +77,10 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
+
+                base.Serialize(writer);
 
                 writer.Write(DismountType);
                 writer.Write(new byte[3]);
@@ -94,9 +93,8 @@ namespace IndustrialPark
                 writer.Write(Speed);
                 writer.Write(ZipLineFlags.FlagValueInt);
 
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+                SerializeLinks(writer);
+                
         }
 
         private Matrix world;

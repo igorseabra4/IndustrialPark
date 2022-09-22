@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -37,18 +36,16 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Object);
                 writer.Write(UnknownX);
                 writer.Write(UnknownY);
                 writer.Write(UnknownZ);
                 writer.Write(GrappleFlags.FlagValueInt);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 }

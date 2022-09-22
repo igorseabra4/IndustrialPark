@@ -72,41 +72,42 @@ namespace IndustrialPark
                 UnknownInt_28 = reader.ReadInt32();
                 NavMesh1 = reader.ReadUInt32();
                 UnknownInt_30 = reader.ReadInt32();
-                NPC = new AssetVIL(reader);
+                NPC = new AssetVIL(reader, game);
             }
 
             CreateTransformMatrix();
             AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
+            base.Serialize(writer);
 
-                writer.Write(InitialSpawn);
-                writer.Write(MaximumInGame);
-                writer.Write(MaximumToSpawn);
-                writer.Write((short)0);
-                writer.Write(SpawnRate);
-                writer.Write(UnknownInt_14);
-                writer.Write(UnknownInt_18);
-                writer.Write(UnknownInt_1C);
-                writer.Write(UnknownInt_20);
-                writer.Write(UnknownInt_24);
-                writer.Write(UnknownInt_28);
-                writer.Write(NavMesh1);
-                writer.Write(UnknownInt_30);
+            writer.Write(InitialSpawn);
+            writer.Write(MaximumInGame);
+            writer.Write(MaximumToSpawn);
+            writer.Write((short)0);
+            writer.Write(SpawnRate);
+            writer.Write(UnknownInt_14);
+            writer.Write(UnknownInt_18);
+            writer.Write(UnknownInt_1C);
+            writer.Write(UnknownInt_20);
+            writer.Write(UnknownInt_24);
+            writer.Write(UnknownInt_28);
+            writer.Write(NavMesh1);
+            writer.Write(UnknownInt_30);
 
-                writer.Write(assetID);
-                writer.Write((byte)BaseAssetType.NPC);
-                writer.Write((byte)_links.Length);
-                writer.Write(NPC.Serialize(game, endianness).Skip(6).ToArray());
+            var npcStart = writer.BaseStream.Position;
+            NPC.Serialize(writer);
+            var npcEnd = writer.BaseStream.Position;
 
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            writer.BaseStream.Position = npcStart;
+            writer.Write(assetID);
+            writer.Write((byte)BaseAssetType.NPC);
+            writer.Write((byte)_links.Length);
+            writer.BaseStream.Position = npcEnd;
+
+            SerializeLinks(writer);
         }
 
         public void CreateTransformMatrix() => NPC.CreateTransformMatrix();

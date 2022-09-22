@@ -30,15 +30,10 @@ namespace IndustrialPark
             Sound = reader.ReadUInt32();
         }
 
-        public byte[] Serialize()
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(Endianness.Big))
-            {
-                writer.Write(SoundHeader);
-                writer.Write(Sound);
-
-                return writer.ToArray();
-            }
+            writer.Write(SoundHeader);
+            writer.Write(Sound);
         }
 
         public override string ToString()
@@ -67,7 +62,7 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
         }
 
-        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Big))
             {
@@ -95,26 +90,21 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Entries_SND.Length);
-                writer.Write(0xCDCDCDCD);
-                writer.Write(Entries_SNDS.Length);
-                if (game == Game.BFBB)
-                    writer.Write(Entries_Sound_CIN.Length);
+            writer.Write(Entries_SND.Length);
+            writer.Write(0xCDCDCDCD);
+            writer.Write(Entries_SNDS.Length);
+            if (game == Game.BFBB)
+                writer.Write(Entries_Sound_CIN.Length);
 
-                foreach (var e in Entries_SND)
-                    writer.Write(e.Serialize());
-                foreach (var e in Entries_SNDS)
-                    writer.Write(e.Serialize());
-                if (game == Game.BFBB)
-                    foreach (var e in Entries_Sound_CIN)
-                        writer.Write(e.Serialize());
-
-                return writer.ToArray();
-            }
+            foreach (var e in Entries_SND)
+                e.Serialize(writer);
+            foreach (var e in Entries_SNDS)
+                e.Serialize(writer);
+            if (game == Game.BFBB)
+                foreach (var e in Entries_Sound_CIN)
+                    e.Serialize(writer);
         }
 
         public void AddEntry(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)

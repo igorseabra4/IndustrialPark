@@ -38,6 +38,8 @@ namespace IndustrialPark
         {
             return Sound.GetHashCode();
         }
+
+        public override void Serialize(EndianBinaryWriter writer) { }
     }
 
     public class AssetJAW : Asset
@@ -52,7 +54,7 @@ namespace IndustrialPark
             JAW_Entries = new EntryJAW[0];
         }
 
-        public AssetJAW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetJAW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -74,31 +76,26 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            List<byte> newJawData = new List<byte>();
+
+            writer.Write(JAW_Entries.Length);
+
+            foreach (var i in JAW_Entries)
             {
-                List<byte> newJawData = new List<byte>();
+                writer.Write(i.Sound);
+                writer.Write(newJawData.Count);
+                writer.Write(i.JawData.Length + 4);
 
-                writer.Write(JAW_Entries.Length);
+                newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
+                newJawData.AddRange(i.JawData);
 
-                foreach (var i in JAW_Entries)
-                {
-                    writer.Write(i.Sound);
-                    writer.Write(newJawData.Count);
-                    writer.Write(i.JawData.Length + 4);
-
-                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
-                    newJawData.AddRange(i.JawData);
-
-                    while (newJawData.Count % 4 != 0)
-                        newJawData.Add(0);
-                }
-
-                writer.Write(newJawData.ToArray());
-
-                return writer.ToArray();
+                while (newJawData.Count % 4 != 0)
+                    newJawData.Add(0);
             }
+
+            writer.Write(newJawData.ToArray());
         }
 
         public void AddEntry(byte[] jawData, uint assetID)

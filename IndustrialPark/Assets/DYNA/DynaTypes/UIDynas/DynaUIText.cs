@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -80,32 +81,27 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeDynaUI(endianness));
-                writer.Write(Text);
-                writer.Write(font);
-                writer.Write(fontSizeW);
-                writer.Write(fontSizeH);
-                writer.Write(fontSpacingX);
-                writer.Write(fontSpacingY);
-                writer.Write(textBoxInsetTop);
-                writer.Write(textBoxInsetLeft);
-                writer.Write(textBoxInsetRight);
-                writer.Write(textBoxInsetBottom);
-                writer.Write(justifyX);
-                writer.Write(justifyY);
-                writer.Write(textFlags);
-                writer.Write(ShadowColor);
-                writer.Write(shadowOffsetX);
-                writer.Write(shadowOffsetY);
-                writer.Write(shadowScaleX);
-                writer.Write(shadowScaleY);
-
-                return writer.ToArray();
-            }
+            SerializeDynaUI(writer);
+            writer.Write(Text);
+            writer.Write(font);
+            writer.Write(fontSizeW);
+            writer.Write(fontSizeH);
+            writer.Write(fontSpacingX);
+            writer.Write(fontSpacingY);
+            writer.Write(textBoxInsetTop);
+            writer.Write(textBoxInsetLeft);
+            writer.Write(textBoxInsetRight);
+            writer.Write(textBoxInsetBottom);
+            writer.Write(justifyX);
+            writer.Write(justifyY);
+            writer.Write(textFlags);
+            writer.Write(ShadowColor);
+            writer.Write(shadowOffsetX);
+            writer.Write(shadowOffsetY);
+            writer.Write(shadowScaleX);
+            writer.Write(shadowScaleY);
         }
     }
 }

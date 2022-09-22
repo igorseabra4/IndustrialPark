@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -15,6 +14,8 @@ namespace IndustrialPark
         {
             return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - [{HexUIntTypeConverter.StringFromAssetID(Unknown)}]";
         }
+
+        public override void Serialize(EndianBinaryWriter writer) { }
     }
 
     public class AssetMAPR : Asset
@@ -29,7 +30,7 @@ namespace IndustrialPark
             Entries = new EntryMAPR[0];
         }
 
-        public AssetMAPR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetMAPR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -46,19 +47,14 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            writer.Write(assetID);
+            writer.Write(Entries.Length);
+            foreach (var entry in Entries)
             {
-                writer.Write(assetID);
-                writer.Write(Entries.Length);
-                foreach (var entry in Entries)
-                {
-                    writer.Write(entry.Surface);
-                    writer.Write(entry.Unknown);
-                }
-
-                return writer.ToArray();
+                writer.Write(entry.Surface);
+                writer.Write(entry.Unknown);
             }
         }
     }

@@ -1,9 +1,6 @@
-﻿using HipHopFile;
-using System.Collections.Generic;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
-    public class CamSpecific_Generic : GenericAssetDataContainer
+    public abstract class CamSpecific_Generic : GenericAssetDataContainer
     {
         public CamSpecific_Generic() { }
     }
@@ -28,18 +25,14 @@ namespace IndustrialPark
             EndSpeed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Rotation);
-                writer.Write(Distance);
-                writer.Write(Height);
-                writer.Write(RubberBand);
-                writer.Write(StartSpeed);
-                writer.Write(EndSpeed);
-                return writer.ToArray();
-            }
+            writer.Write(Rotation);
+            writer.Write(Distance);
+            writer.Write(Height);
+            writer.Write(RubberBand);
+            writer.Write(StartSpeed);
+            writer.Write(EndSpeed);
         }
     }
 
@@ -63,18 +56,14 @@ namespace IndustrialPark
             Unknown2 = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Distance);
-                writer.Write(Height);
-                writer.Write(RealignSpeed);
-                writer.Write(RealignDelay);
-                writer.Write(Unknown1);
-                writer.Write(Unknown2);
-                return writer.ToArray();
-            }
+            writer.Write(Distance);
+            writer.Write(Height);
+            writer.Write(RealignSpeed);
+            writer.Write(RealignDelay);
+            writer.Write(Unknown1);
+            writer.Write(Unknown2);
         }
     }
 
@@ -88,13 +77,9 @@ namespace IndustrialPark
             Unused = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Unused);
-                return writer.ToArray();
-            }
+            writer.Write(Unused);
         }
     }
 
@@ -112,15 +97,11 @@ namespace IndustrialPark
             TimeDelay = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Unknown);
-                writer.Write(TimeEnd);
-                writer.Write(TimeDelay);
-                return writer.ToArray();
-            }
+            writer.Write(Unknown);
+            writer.Write(TimeEnd);
+            writer.Write(TimeDelay);
         }
     }
 
@@ -134,13 +115,9 @@ namespace IndustrialPark
             RubberBand = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(RubberBand);
-                return writer.ToArray();
-            }
+            writer.Write(RubberBand);
         }
     }
 
@@ -164,18 +141,14 @@ namespace IndustrialPark
             Unknown6 = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Unknown1);
-                writer.Write(Unknown2);
-                writer.Write(Unknown3);
-                writer.Write(Unknown4);
-                writer.Write(Unknown5);
-                writer.Write(Unknown6);
-                return writer.ToArray();
-            }
+            writer.Write(Unknown1);
+            writer.Write(Unknown2);
+            writer.Write(Unknown3);
+            writer.Write(Unknown4);
+            writer.Write(Unknown5);
+            writer.Write(Unknown6);
         }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using static Assimp.Metadata;
 
 namespace IndustrialPark
 {
@@ -38,6 +39,13 @@ namespace IndustrialPark
         {
             return Model.GetHashCode();
         }
+
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(Model);
+            writer.Write(CollisionModel);
+            writer.Write(CameraCollisionModel);
+        }
     }
 
     public class AssetCOLL : Asset, IAssetAddSelected
@@ -52,7 +60,7 @@ namespace IndustrialPark
             CollisionTable_Entries = new EntryCOLL[0];
         }
 
-        public AssetCOLL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetCOLL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -65,21 +73,12 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(CollisionTable_Entries.Length);
+            writer.Write(CollisionTable_Entries.Length);
 
-                foreach (var entry in CollisionTable_Entries)
-                {
-                    writer.Write(entry.Model);
-                    writer.Write(entry.CollisionModel);
-                    writer.Write(entry.CameraCollisionModel);
-                }
-
-                return writer.ToArray();
-            }
+            foreach (var entry in CollisionTable_Entries)
+                entry.Serialize(writer);
         }
 
         public void Merge(AssetCOLL asset)

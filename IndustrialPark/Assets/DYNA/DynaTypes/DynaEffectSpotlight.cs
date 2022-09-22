@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -80,10 +81,9 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Flags.FlagValueInt);
                 writer.Write(OriginEntity);
                 writer.Write(TargetEntity);
@@ -103,8 +103,7 @@ namespace IndustrialPark
                 writer.Write(GlowMax);
                 writer.Write((short)0);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -14,18 +15,18 @@ namespace IndustrialPark
         public AssetSingle PulseTime { get; set; }
         public AssetSingle PulseAddScale { get; set; }
         public AssetSingle PulseMoveDown { get; set; }
-        public AssetSingle ColorR { get; set; }
-        public AssetSingle ColorG { get; set; }
-        public AssetSingle ColorB { get; set; }
+        public AssetSingle ColorRed { get; set; }
+        public AssetSingle ColorGreen { get; set; }
+        public AssetSingle ColorBlue { get; set; }
         public AssetColor ColorRGB
         {
-            get => new AssetColor((byte)(ColorR * 255), (byte)(ColorG * 255), (byte)(ColorB * 255), 255);
+            get => AssetColor.FromVector4(ColorRed, ColorGreen, ColorBlue, 1f);
             set
             {
                 var val = value.ToVector4();
-                ColorR = val.X;
-                ColorG = val.Y;
-                ColorB = val.Z;
+                ColorRed = val.X;
+                ColorGreen = val.Y;
+                ColorBlue = val.Z;
             }
         }
         public AssetID Color { get; set; }
@@ -46,9 +47,9 @@ namespace IndustrialPark
             PulseTime = reader.ReadSingle();
             PulseAddScale = reader.ReadSingle();
             PulseMoveDown = reader.ReadSingle();
-            ColorR = reader.ReadSingle();
-            ColorG = reader.ReadSingle();
-            ColorB = reader.ReadSingle();
+            ColorRed = reader.ReadSingle();
+            ColorGreen = reader.ReadSingle();
+            ColorBlue = reader.ReadSingle();
             Color = reader.ReadUInt32();
             FlyingSoundGroup = reader.ReadUInt32();
             PickupSoundGroup = reader.ReadUInt32();
@@ -59,19 +60,18 @@ namespace IndustrialPark
             BInitialized = reader.ReadByte();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(PickupHash);
                 writer.Write(Model);
                 writer.Write(PulseModel);
                 writer.Write(PulseTime);
                 writer.Write(PulseAddScale);
                 writer.Write(PulseMoveDown);
-                writer.Write(ColorR);
-                writer.Write(ColorG);
-                writer.Write(ColorB);
+                writer.Write(ColorRed);
+                writer.Write(ColorGreen);
+                writer.Write(ColorBlue);
                 writer.Write(Color);
                 writer.Write(FlyingSoundGroup);
                 writer.Write(PickupSoundGroup);
@@ -81,8 +81,7 @@ namespace IndustrialPark
                 writer.Write(SaveFlag);
                 writer.Write(BInitialized);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 
@@ -127,17 +126,13 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Version);
-                writer.Write(Entries.Length);
-                foreach (var t in Entries)
-                    writer.Write(t.Serialize(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Version);
+            writer.Write(Entries.Length);
+            foreach (var t in Entries)
+                t.Serialize(writer);
         }
 
         public static Dictionary<uint, EntryTPIK> tpikEntries = new Dictionary<uint, EntryTPIK>();

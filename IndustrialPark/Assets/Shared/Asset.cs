@@ -8,9 +8,6 @@ namespace IndustrialPark
         public bool isSelected;
         public bool isInvisible = false;
 
-        public Game game;
-        public Endianness endianness;
-
         [Browsable(false)]
         public uint assetID { get; set; }
         public string assetName;
@@ -28,8 +25,7 @@ namespace IndustrialPark
 
         public Asset(string assetName, AssetType assetType)
         {
-            game = Game.Unknown;
-            endianness = Endianness.Unknown;
+            _game = Game.Unknown;
 
             this.assetType = assetType;
             this.assetName = assetName;
@@ -38,10 +34,9 @@ namespace IndustrialPark
             flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
         }
 
-        public Asset(Section_AHDR AHDR, Game game, Endianness endianness)
+        public Asset(Section_AHDR AHDR, Game game)
         {
-            this.game = game;
-            this.endianness = endianness;
+            _game = game;
 
             assetID = AHDR.assetID;
             assetName = AHDR.ADBG.assetName;
@@ -54,24 +49,11 @@ namespace IndustrialPark
         // use with DUPC VIL only
         protected Asset() { }
 
-        public Section_AHDR BuildAHDR()
+        public Section_AHDR BuildAHDR(Endianness endianness)
         {
             return new Section_AHDR(assetID, assetType, flags,
                 new Section_ADBG(0, assetName, assetFileName, checksum),
-                Serialize(game, endianness));
-        }
-
-        public Section_AHDR BuildAHDR(Game game, Endianness endianness, bool overwrite = true)
-        {
-            if (!overwrite)
-            {
-                this.game = game;
-                this.endianness = endianness;
-            }
-
-            return new Section_AHDR(assetID, assetType, flags,
-                new Section_ADBG(0, assetName, assetFileName, checksum),
-                Serialize(game, endianness));
+                Serialize(endianness));
         }
 
         public override string ToString() => $"{assetName} [{assetID:X8}]";
@@ -83,10 +65,6 @@ namespace IndustrialPark
             if (obj is Asset other)
                 return other.GetHashCode() == GetHashCode();
             return false;
-        }
-
-        public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
-        {
         }
     }
 }

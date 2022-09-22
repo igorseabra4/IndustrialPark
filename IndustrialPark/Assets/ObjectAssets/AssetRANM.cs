@@ -42,27 +42,23 @@ namespace IndustrialPark
             MoveThroughRadius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(ModelStatic);
-                writer.Write(ModelBound);
-                writer.Write(LevelOfDetailDistance);
-                writer.Write(AnimationIdle);
-                writer.Write(AnimationMoveThrough);
-                writer.Write(AnimationHit);
-                writer.Write(SoundGroupIdle);
-                writer.Write(SoundGroupMoveThrough);
-                writer.Write(SoundGroupHit);
-                writer.Write(ModelBurn);
-                writer.Write(AnimationBurn);
-                writer.Write(BurnFuel);
-                writer.Write(BurnFlameSize);
-                writer.Write(BurnEmitScale);
-                writer.Write(MoveThroughRadius);
-                return writer.ToArray();
-            }
+            writer.Write(ModelStatic);
+            writer.Write(ModelBound);
+            writer.Write(LevelOfDetailDistance);
+            writer.Write(AnimationIdle);
+            writer.Write(AnimationMoveThrough);
+            writer.Write(AnimationHit);
+            writer.Write(SoundGroupIdle);
+            writer.Write(SoundGroupMoveThrough);
+            writer.Write(SoundGroupHit);
+            writer.Write(ModelBurn);
+            writer.Write(AnimationBurn);
+            writer.Write(BurnFuel);
+            writer.Write(BurnFlameSize);
+            writer.Write(BurnEmitScale);
+            writer.Write(MoveThroughRadius);
         }
     }
 
@@ -89,18 +85,14 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Version);
-                writer.Write(ReactiveAnimations.Length);
-                foreach (var ra in ReactiveAnimations)
-                    writer.Write(ra.Serialize(game, endianness));
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Version);
+            writer.Write(ReactiveAnimations.Length);
+            foreach (var ra in ReactiveAnimations)
+                ra.Serialize(writer);
+            SerializeLinks(writer);
         }
     }
 }

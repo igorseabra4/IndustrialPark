@@ -66,7 +66,7 @@ namespace IndustrialPark
                         internalEditors.Add(new InternalAssetEditor(asset, this, updateListView));
                     break;
                 case AssetType.Sound:
-                case AssetType.StreamingSound:
+                case AssetType.SoundStream:
                     internalEditors.Add(new InternalSoundEditor((AssetSound)asset, this));
                     break;
                 case AssetType.Text:
@@ -429,7 +429,7 @@ namespace IndustrialPark
                 case AssetType.Animation:
                 case AssetType.Credits:
                 case AssetType.Sound:
-                case AssetType.StreamingSound:
+                case AssetType.SoundStream:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.WRITE_TRANSFORM;
                 case AssetType.BSP:
                 case AssetType.Model:
@@ -438,6 +438,7 @@ namespace IndustrialPark
                 case AssetType.JSP:
                 case AssetType.JSPInfo:
                 case AssetType.Texture:
+                case AssetType.TextureStream:
                     return AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM;
                 case AssetType.LightKit:
                     return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM | AHDRFlags.WRITE_TRANSFORM;
@@ -446,10 +447,19 @@ namespace IndustrialPark
             }
         }
 
-        public void OrganizeLayers()
+        public bool OrganizeLayers()
         {
-            Layers = BuildLayers();
-            UnsavedChanges = true;
+            try
+            {
+                Layers = BuildLayers();
+                UnsavedChanges = true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+            }
         }
 
         private List<Layer> BuildLayers()
@@ -457,7 +467,8 @@ namespace IndustrialPark
             Layer textureLayer0 = new Layer(LayerType.TEXTURE);
             Layer textureLayer1 = new Layer(LayerType.TEXTURE);
             Layer textureLayer2 = new Layer(LayerType.TEXTURE);
-            Dictionary<string, (Layer, Layer, Layer, Layer)> jspLayers = new Dictionary<string, (Layer, Layer, Layer, Layer)>();
+            Layer textureStrmLayer = new Layer(LayerType.TEXTURE_STRM);
+            List<(Layer, Layer, Layer, Layer)> jspLayers = new List<(Layer, Layer, Layer, Layer)>();
             Layer modelLayer0 = new Layer(LayerType.MODEL);
             Layer modelLayer1 = new Layer(LayerType.MODEL);
             Layer modelLayer2 = new Layer(LayerType.MODEL);
@@ -468,10 +479,10 @@ namespace IndustrialPark
             Layer sndtocLayer = new Layer(LayerType.SNDTOC);
             Layer cutscenetocLayer = new Layer(LayerType.CUTSCENETOC);
 
-            Dictionary<int, List<Layer>> layers = new Dictionary<int, List<Layer>>();
-
             int textureIndex = 0;
             int modelIndex = 0;
+
+            var doneJsps = new List<uint>();
 
             foreach (Asset a in assetDictionary.Values)
             {
@@ -494,27 +505,34 @@ namespace IndustrialPark
                         textureIndex = (textureIndex + 1) % 3;
                         break;
                     }
+                    case AssetType.TextureStream:
+                    {
+                        textureStrmLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
                     case AssetType.BSP:
                     case AssetType.JSP:
                     {
-                        var key = a.assetName.TrimEnd('0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
-                        if (!jspLayers.ContainsKey(key))
-                            jspLayers[key] = (new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO));
+                        if (!ContainsAssetWithType(AssetType.JSPInfo))
+                        {
+                            if (!jspLayers.Any())
+                                jspLayers.Add((new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO)));
 
-                        if (jspLayers[key].Item1.AssetIDs.Count == 0)
-                            jspLayers[key].Item1.AssetIDs.Add(a.assetID);
-                        else if (jspLayers[key].Item2.AssetIDs.Count == 0)
-                            jspLayers[key].Item2.AssetIDs.Add(a.assetID);
-                        else if (jspLayers[key].Item3.AssetIDs.Count == 0)
-                            jspLayers[key].Item3.AssetIDs.Add(a.assetID);
+                            if (jspLayers[0].Item1.AssetIDs.Count == 0)
+                                jspLayers[0].Item1.AssetIDs.Add(a.assetID);
+                            else if (jspLayers[0].Item2.AssetIDs.Count == 0)
+                                jspLayers[0].Item2.AssetIDs.Add(a.assetID);
+                            else if (jspLayers[0].Item3.AssetIDs.Count == 0)
+                                jspLayers[0].Item3.AssetIDs.Add(a.assetID);
+                            doneJsps.Add(a.assetID);
+                        }
                         break;
                     }
                     case AssetType.JSPInfo:
                     {
-                        var key = a.assetName;
-                        if (!jspLayers.ContainsKey(key))
-                            jspLayers[key] = (new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO));
-                        jspLayers[key].Item4.AssetIDs.Add(a.assetID);
+                        var key = (new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.BSP), new Layer(LayerType.JSPINFO));
+                        key.Item4.AssetIDs.Add(a.assetID);
+                        jspLayers.Add(key);
                         break;
                     }
                     case AssetType.Model:
@@ -549,7 +567,7 @@ namespace IndustrialPark
                         break;
                     }
                     case AssetType.Sound:
-                    case AssetType.StreamingSound:
+                    case AssetType.SoundStream:
                     {
                         sramLayer.AssetIDs.Add(a.assetID);
                         break;
@@ -585,12 +603,27 @@ namespace IndustrialPark
             AddIfNotEmpty(textureLayer0);
             AddIfNotEmpty(textureLayer1);
             AddIfNotEmpty(textureLayer2);
-            foreach (var js in jspLayers.Values)
+            AddIfNotEmpty(textureStrmLayer);
+            foreach (var js in jspLayers)
             {
+                if (js.Item4.AssetIDs.Count > 0 && GetFromAssetID(js.Item4.AssetIDs[0]) is AssetJSP_INFO jspInfo)
+                {
+                    foreach (var u in jspInfo.JSP_AssetIDs)
+                    {
+                        if (js.Item1.AssetIDs.Count == 0)
+                            js.Item1.AssetIDs.Add(u);
+                        else if (jspLayers[0].Item2.AssetIDs.Count == 0)
+                            js.Item2.AssetIDs.Add(u);
+                        else if (jspLayers[0].Item3.AssetIDs.Count == 0)
+                            js.Item3.AssetIDs.Add(u);
+                        doneJsps.Add(u);
+                    }
+                }
                 list.Add(js.Item1);
                 list.Add(js.Item2);
                 list.Add(js.Item3);
-                list.Add(js.Item4);
+                if (game != Game.Scooby)
+                    list.Add(js.Item4);
             }
             AddIfNotEmpty(modelLayer0);
             AddIfNotEmpty(modelLayer1);
@@ -601,6 +634,14 @@ namespace IndustrialPark
             AddIfNotEmpty(sramLayer);
             AddIfNotEmpty(sndtocLayer);
             AddIfNotEmpty(cutscenetocLayer);
+
+            var unusedJsps = from Asset a in assetDictionary.Values where a.assetType == AssetType.JSP || a.assetType == AssetType.BSP && !doneJsps.Contains(a.assetID) select a;
+            if (unusedJsps.Any())
+            {
+                var message = "Unable to create a layer setup for your archive. The following BSP/JSP assets are not referenced in a JSPINFO asset:\n" +
+                    string.Join("\n", from Asset a in unusedJsps select $"[{a.assetID:X8}] {a.assetName}");
+                throw new Exception(message);
+            }
 
             return list;
         }
@@ -931,7 +972,7 @@ namespace IndustrialPark
         {
             if (ContainsAsset(modelAssetId) && GetFromAssetID(modelAssetId) is AssetMODL modl)
             {
-                var AHDR = modl.BuildAHDR();
+                var AHDR = modl.BuildAHDR(platform.Endianness());
                 var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
                 var newAssetId = Functions.BKDRHash(newAssetName);
 
@@ -944,11 +985,11 @@ namespace IndustrialPark
                     if (!NoLayers)
                         SelectedLayerIndex = GetLayerFromAssetID(modelAssetId);
 
-                    newAssetId = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+                    var asset = (AssetMODL)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
 
                     if (!NoLayers)
                         SelectedLayerIndex = prevLayerType;
-                    ((AssetMODL)GetFromAssetID(newAssetId)).ApplyScale(scale);
+                    asset.ApplyScale(scale);
                     UnsavedChanges = true;
                 }
 
@@ -956,7 +997,7 @@ namespace IndustrialPark
             }
             else if (ContainsAsset(modelAssetId) && GetFromAssetID(modelAssetId) is AssetMINF minf)
             {
-                var AHDR = minf.BuildAHDR();
+                var AHDR = minf.BuildAHDR(platform.Endianness());
                 var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
                 var newAssetId = Functions.BKDRHash(newAssetName);
 
@@ -969,12 +1010,12 @@ namespace IndustrialPark
                     if (!NoLayers)
                         SelectedLayerIndex = GetLayerFromAssetID(modelAssetId);
 
-                    var assetId = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+                    var asset = (AssetMINF)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
 
                     if (!NoLayers)
                         SelectedLayerIndex = prevLayerType;
 
-                    ((AssetMINF)GetFromAssetID(assetId)).ApplyScale(scale);
+                    asset.ApplyScale(scale);
                     UnsavedChanges = true;
                 }
 

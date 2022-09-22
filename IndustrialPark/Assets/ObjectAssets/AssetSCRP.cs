@@ -67,27 +67,23 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            base.Serialize(writer);
+            writer.Write(ScriptStartTime);
+            writer.Write(_timedLinks.Length);
+
+            if (game == Game.Incredibles)
             {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(ScriptStartTime);
-                writer.Write(_timedLinks.Length);
-
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(Flag1);
-                    writer.Write(Flag2);
-                    writer.Write(Flag3);
-                    writer.Write(Flag4);
-                }
-
-                foreach (var l in _timedLinks)
-                    writer.Write(l.Serialize(LinkType.Timed, endianness));
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
+                writer.Write(Flag1);
+                writer.Write(Flag2);
+                writer.Write(Flag3);
+                writer.Write(Flag4);
             }
+
+            foreach (var l in _timedLinks)
+                l.Serialize(LinkType.Timed, writer);
+            SerializeLinks(writer);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

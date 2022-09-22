@@ -335,56 +335,5 @@ namespace IndustrialPark
                 textureDictionaryExtension = new Extension_0003()
             }, currentTextureVersion(game)));
         }
-
-        private bool PerformTextureConversion()
-        {
-            lock (locker)
-            {
-                Dictionary<uint, Section_AHDR> dataDict = new Dictionary<uint, Section_AHDR>();
-
-                if (!Directory.Exists(tempPcTxdsDir))
-                    Directory.CreateDirectory(tempPcTxdsDir);
-                if (!Directory.Exists(tempGcTxdsDir))
-                    Directory.CreateDirectory(tempGcTxdsDir);
-
-                try
-                {
-                    ExportTextureDictionary(pathToPcTXD, CheckState.Checked);
-                    PerformTXDConversionExternal(platform, false);
-                    foreach (var AHDR in GetAssetsFromTextureDictionary(pathToGcTXD, true))
-                        dataDict.Add(AHDR.assetID, AHDR);
-
-                    ExportTextureDictionary(pathToPcTXD, CheckState.Unchecked);
-                    PerformTXDConversionExternal(platform, false);
-                    foreach (var AHDR in GetAssetsFromTextureDictionary(pathToGcTXD, false))
-                        dataDict.Add(AHDR.assetID, AHDR);
-                }
-                catch
-                {
-                    File.Delete(pathToGcTXD);
-                    File.Delete(pathToPcTXD);
-                    return false;
-                }
-
-                File.Delete(pathToGcTXD);
-                File.Delete(pathToPcTXD);
-
-                ReadFileMethods.treatStuffAsByteArray = true;
-
-                foreach (var rwtx in assetDictionary.Values.OfType<AssetRWTX>())
-                {
-                    rwtx.Data =
-                            ReadFileMethods.ExportRenderWareFile(
-                            ReadFileMethods.ReadRenderWareFile(
-                                dataDict[rwtx.assetID].data),
-                            Models.BSP_IO_Shared.modelRenderWareVersion(game));
-                    rwtx.game = game;
-                    rwtx.endianness = platform.Endianness();
-                }
-
-                ReadFileMethods.treatStuffAsByteArray = false;
-                return true;
-            }
-        }
     }
 }

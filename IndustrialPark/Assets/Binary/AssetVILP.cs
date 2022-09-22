@@ -26,7 +26,7 @@ namespace IndustrialPark
         [Category(vilpName)]
         public int Unknown_20 { get; set; }
 
-        public AssetVILP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetVILP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -42,10 +42,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Unknown_00);
                 writer.Write(Unknown_04);
                 writer.Write(Unknown_08);
@@ -56,8 +55,7 @@ namespace IndustrialPark
                 writer.Write(Unknown_1C);
                 writer.Write(Unknown_20);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 }

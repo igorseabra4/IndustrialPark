@@ -38,26 +38,21 @@ namespace IndustrialPark
             nAnimations = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Percent);
-                writer.Write(Model);
-                writer.Write(Shrapnel_Destroy);
-                writer.Write(Shrapnel_Hit);
-                writer.Write(SoundGroup_Idle);
-                writer.Write(SoundGroup_Fx);
-                writer.Write(SoundGroup_Hit);
-                writer.Write(SoundGroup_Fx_Switch);
-                writer.Write(SoundGroup_Hit_Switch);
-                writer.Write(Rumble_Hit);
-                writer.Write(Rumble_Switch);
-                writer.Write(FxFlags);
-                writer.Write(nAnimations);
-
-                return writer.ToArray();
-            }
+            writer.Write(Percent);
+            writer.Write(Model);
+            writer.Write(Shrapnel_Destroy);
+            writer.Write(Shrapnel_Hit);
+            writer.Write(SoundGroup_Idle);
+            writer.Write(SoundGroup_Fx);
+            writer.Write(SoundGroup_Hit);
+            writer.Write(SoundGroup_Fx_Switch);
+            writer.Write(SoundGroup_Hit_Switch);
+            writer.Write(Rumble_Hit);
+            writer.Write(Rumble_Switch);
+            writer.Write(FxFlags);
+            writer.Write(nAnimations);
         }
     }
 
@@ -95,7 +90,7 @@ namespace IndustrialPark
             States = new DestState[0];
         }
 
-        public AssetDEST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetDEST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -123,10 +118,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(ModelInfo);
                 writer.Write(States.Length);
                 writer.Write(HitPoints);
@@ -141,13 +135,12 @@ namespace IndustrialPark
                 writer.Write((byte)0);
                 writer.Write((byte)0);
                 foreach (var state in States)
-                    writer.Write(state.Serialize(game, endianness));
+                    state.Serialize(writer);
                 writer.Write(Unknown1);
                 if (Unknown2.HasValue)
                     writer.Write(Unknown2.Value);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 }

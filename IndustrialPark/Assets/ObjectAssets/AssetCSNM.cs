@@ -173,67 +173,64 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Cutscene);
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(InterpSpeed);
-                if (game == Game.Incredibles)
-                    writer.Write(Subtitles);
+            base.Serialize(writer);
+            writer.Write(Cutscene);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(InterpSpeed);
 
-                writer.Write(StartTime1);
-                writer.Write(StartTime2);
-                writer.Write(StartTime3);
-                writer.Write(StartTime4);
-                writer.Write(StartTime5);
-                writer.Write(StartTime6);
-                writer.Write(StartTime7);
-                writer.Write(StartTime8);
-                writer.Write(StartTime9);
-                writer.Write(StartTime10);
-                writer.Write(StartTime11);
-                writer.Write(StartTime12);
-                writer.Write(StartTime13);
-                writer.Write(StartTime14);
-                writer.Write(StartTime15);
+            if (game == Game.Incredibles)
+                writer.Write(Subtitles);
 
-                writer.Write(EndTime1);
-                writer.Write(EndTime2);
-                writer.Write(EndTime3);
-                writer.Write(EndTime4);
-                writer.Write(EndTime5);
-                writer.Write(EndTime6);
-                writer.Write(EndTime7);
-                writer.Write(EndTime8);
-                writer.Write(EndTime9);
-                writer.Write(EndTime10);
-                writer.Write(EndTime11);
-                writer.Write(EndTime12);
-                writer.Write(EndTime13);
-                writer.Write(EndTime14);
-                writer.Write(EndTime15);
+            writer.Write(StartTime1);
+            writer.Write(StartTime2);
+            writer.Write(StartTime3);
+            writer.Write(StartTime4);
+            writer.Write(StartTime5);
+            writer.Write(StartTime6);
+            writer.Write(StartTime7);
+            writer.Write(StartTime8);
+            writer.Write(StartTime9);
+            writer.Write(StartTime10);
+            writer.Write(StartTime11);
+            writer.Write(StartTime12);
+            writer.Write(StartTime13);
+            writer.Write(StartTime14);
+            writer.Write(StartTime15);
 
-                writer.Write(Emitter1);
-                writer.Write(Emitter2);
-                writer.Write(Emitter3);
-                writer.Write(Emitter4);
-                writer.Write(Emitter5);
-                writer.Write(Emitter6);
-                writer.Write(Emitter7);
-                writer.Write(Emitter8);
-                writer.Write(Emitter9);
-                writer.Write(Emitter10);
-                writer.Write(Emitter11);
-                writer.Write(Emitter12);
-                writer.Write(Emitter13);
-                writer.Write(Emitter14);
-                writer.Write(Emitter15);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            writer.Write(EndTime1);
+            writer.Write(EndTime2);
+            writer.Write(EndTime3);
+            writer.Write(EndTime4);
+            writer.Write(EndTime5);
+            writer.Write(EndTime6);
+            writer.Write(EndTime7);
+            writer.Write(EndTime8);
+            writer.Write(EndTime9);
+            writer.Write(EndTime10);
+            writer.Write(EndTime11);
+            writer.Write(EndTime12);
+            writer.Write(EndTime13);
+            writer.Write(EndTime14);
+            writer.Write(EndTime15);
+
+            writer.Write(Emitter1);
+            writer.Write(Emitter2);
+            writer.Write(Emitter3);
+            writer.Write(Emitter4);
+            writer.Write(Emitter5);
+            writer.Write(Emitter6);
+            writer.Write(Emitter7);
+            writer.Write(Emitter8);
+            writer.Write(Emitter9);
+            writer.Write(Emitter10);
+            writer.Write(Emitter11);
+            writer.Write(Emitter12);
+            writer.Write(Emitter13);
+            writer.Write(Emitter14);
+            writer.Write(Emitter15);
+            SerializeLinks(writer);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

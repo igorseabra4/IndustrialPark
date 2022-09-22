@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
@@ -56,28 +57,23 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(Visible);
-                writer.Write((short)0);
-                writer.Write((byte)0);
-                writer.Write(OnLength);
-                writer.Write(OffLength);
-                writer.Write(Color);
-                writer.Write(Damage);
-                writer.Write(Knockback);
-                writer.Write(DamageRadius);
-
-                return writer.ToArray();
-            }
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(Visible);
+            writer.Write((short)0);
+            writer.Write((byte)0);
+            writer.Write(OnLength);
+            writer.Write(OffLength);
+            writer.Write(Color);
+            writer.Write(Damage);
+            writer.Write(Knockback);
+            writer.Write(DamageRadius);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

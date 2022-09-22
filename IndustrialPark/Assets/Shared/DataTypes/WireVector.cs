@@ -31,15 +31,11 @@ namespace IndustrialPark
             Z = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(X);
-                writer.Write(Y);
-                writer.Write(Z);
-                return writer.ToArray();
-            }
+            writer.Write(X);
+            writer.Write(Y);
+            writer.Write(Z);
         }
 
         public override string ToString()

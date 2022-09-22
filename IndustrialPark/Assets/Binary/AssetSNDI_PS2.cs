@@ -8,6 +8,8 @@ namespace IndustrialPark
 {
     public class EntrySoundInfo_PS2 : GenericAssetDataContainer
     {
+        public override void Serialize(EndianBinaryWriter writer) { }
+
         public byte[] SoundHeader { get; set; }
 
         [ValidReferenceRequired]
@@ -59,7 +61,7 @@ namespace IndustrialPark
             Entries_SNDS = new EntrySoundInfo_PS2[0];
         }
 
-        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
             {
@@ -76,10 +78,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Entries_SND.Length);
                 writer.Write(Entries_SNDS.Length);
 
@@ -88,8 +89,7 @@ namespace IndustrialPark
                 foreach (var e in Entries_SNDS)
                     writer.Write(e.SoundHeader);
 
-                return writer.ToArray();
-            }
+                
         }
 
         public void AddEntry(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)

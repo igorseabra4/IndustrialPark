@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -48,11 +49,10 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
+
+                base.Serialize(writer);
 
                 writer.Write(EndColor);
                 writer.Write(StartColor);
@@ -65,9 +65,8 @@ namespace IndustrialPark
                 writer.Write((byte)0);
                 writer.Write((byte)0);
 
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+                SerializeLinks(writer);
+                
         }
     }
 }

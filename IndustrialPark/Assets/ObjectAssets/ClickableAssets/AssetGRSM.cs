@@ -1,5 +1,5 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -33,20 +33,16 @@ namespace IndustrialPark
             Color = reader.ReadColor();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(X);
-                writer.Write(Y);
-                writer.Write(Z);
-                writer.Write(Height);
-                writer.Write(NormalX);
-                writer.Write(NormalY);
-                writer.Write(NormalZ);
-                writer.Write(Color);
-                return writer.ToArray();
-            }
+            writer.Write(X);
+            writer.Write(Y);
+            writer.Write(Z);
+            writer.Write(Height);
+            writer.Write(NormalX);
+            writer.Write(NormalY);
+            writer.Write(NormalZ);
+            writer.Write(Color);
         }
     }
 
@@ -103,30 +99,26 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Vertices.Length);
-                writer.Write(Triangles.Length);
+            base.Serialize(writer);
+            writer.Write(Vertices.Length);
+            writer.Write(Triangles.Length);
 
-                writer.Write(MinX);
-                writer.Write(MinY);
-                writer.Write(MinZ);
-                writer.Write(MaxX);
-                writer.Write(MaxY);
-                writer.Write(MaxZ);
+            writer.Write(MinX);
+            writer.Write(MinY);
+            writer.Write(MinZ);
+            writer.Write(MaxX);
+            writer.Write(MaxY);
+            writer.Write(MaxZ);
 
-                foreach (var v in Vertices)
-                    writer.Write(v.Serialize(endianness));
+            foreach (var v in Vertices)
+                v.Serialize(writer);
 
-                foreach (var t in Triangles)
-                    writer.Write(t.Serialize(endianness));
+            foreach (var t in Triangles)
+                t.Serialize(writer);
 
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            SerializeLinks(writer);
         }
 
         public void CreateTransformMatrix()

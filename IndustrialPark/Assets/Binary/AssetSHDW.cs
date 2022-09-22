@@ -21,16 +21,11 @@ namespace IndustrialPark
             Unknown = reader.ReadInt32();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Model);
-                writer.Write(ShadowModel);
-                writer.Write(Unknown);
-
-                return writer.ToArray();
-            }
+            writer.Write(Model);
+            writer.Write(ShadowModel);
+            writer.Write(Unknown);
         }
 
         public override string ToString()
@@ -63,7 +58,7 @@ namespace IndustrialPark
             Entries = new EntrySHDW[0];
         }
 
-        public AssetSHDW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSHDW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -74,17 +69,15 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Entries.Length);
 
                 foreach (var l in Entries)
-                    writer.Write(l.Serialize(endianness));
+                    l.Serialize(writer);
 
-                return writer.ToArray();
-            }
+                
         }
 
         public void Merge(AssetSHDW asset)

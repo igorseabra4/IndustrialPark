@@ -36,22 +36,18 @@ namespace IndustrialPark
             V3 = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Vertex1);
-                writer.Write(Vertex2);
-                writer.Write(Vertex3);
-                writer.Write(Flags);
-                writer.Write(U1);
-                writer.Write(U2);
-                writer.Write(U3);
-                writer.Write(V1);
-                writer.Write(V2);
-                writer.Write(V3);
-                return writer.ToArray();
-            }
+            writer.Write(Vertex1);
+            writer.Write(Vertex2);
+            writer.Write(Vertex3);
+            writer.Write(Flags);
+            writer.Write(U1);
+            writer.Write(U2);
+            writer.Write(U3);
+            writer.Write(V1);
+            writer.Write(V2);
+            writer.Write(V3);
         }
     }
 
@@ -72,15 +68,11 @@ namespace IndustrialPark
             Vertex3 = reader.ReadUInt16();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Vertex1);
-                writer.Write(Vertex2);
-                writer.Write(Vertex3);
-                return writer.ToArray();
-            }
+            writer.Write(Vertex1);
+            writer.Write(Vertex2);
+            writer.Write(Vertex3);
         }
     }
 
@@ -149,37 +141,34 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            base.Serialize(writer);
+            writer.Write(Vertices.Length);
+            writer.Write(Triangles.Length);
+            writer.Write(LandableStart);
+            writer.Write(LeavableStart);
+            writer.Write(Unknown1);
+            writer.Write(Unknown2);
+            writer.Write(Unknown3);
+
+            foreach (var v in Vertices)
             {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Vertices.Length);
-                writer.Write(Triangles.Length);
-                writer.Write(LandableStart);
-                writer.Write(LeavableStart);
-                writer.Write(Unknown1);
-                writer.Write(Unknown2);
-                writer.Write(Unknown3);
-
-                foreach (var v in Vertices)
-                {
-                    writer.Write(v.X);
-                    writer.Write(v.Y);
-                    writer.Write(v.Z);
-                }
-
-                foreach (var t in Triangles)
-                    writer.Write(t.Serialize(endianness));
-
-                foreach (var p in Portals)
-                    writer.Write(p.Serialize(endianness));
-                writer.Write(LastTriangle);
-                writer.Write(LastPositionX);
-                writer.Write(LastPositionY);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
+                writer.Write(v.X);
+                writer.Write(v.Y);
+                writer.Write(v.Z);
             }
+
+            foreach (var t in Triangles)
+                t.Serialize(writer);
+
+            foreach (var p in Portals)
+                p.Serialize(writer);
+
+            writer.Write(LastTriangle);
+            writer.Write(LastPositionX);
+            writer.Write(LastPositionY);
+            SerializeLinks(writer);
         }
 
         public void CreateTransformMatrix()

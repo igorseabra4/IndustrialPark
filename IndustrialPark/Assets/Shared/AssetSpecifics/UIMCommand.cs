@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -46,20 +47,16 @@ namespace IndustrialPark
             reader.BaseStream.Position += 3;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(StartTime);
-                writer.Write(EndTime);
-                writer.Write(AccelTime);
-                writer.Write(DecelTime);
-                writer.Write((byte)(Enabled ? 1 : 0));
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                return writer.ToArray();
-            }
+            writer.Write(StartTime);
+            writer.Write(EndTime);
+            writer.Write(AccelTime);
+            writer.Write(DecelTime);
+            writer.Write((byte)(Enabled ? 1 : 0));
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
         }
     }
 
@@ -79,16 +76,12 @@ namespace IndustrialPark
             DistanceY = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.Move);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(DistanceX);
-                writer.Write(DistanceY);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.Move);
+            base.Serialize(writer);
+            writer.Write(DistanceX);
+            writer.Write(DistanceY);
         }
     }
 
@@ -118,22 +111,18 @@ namespace IndustrialPark
             CenterOffsetY = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.Scale);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(AmountX);
-                writer.Write(AmountY);
-                writer.Write((byte)(CenterPivot ? 1 : 0));
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(CenterOffsetX);
-                writer.Write(CenterOffsetY);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.Scale);
+            base.Serialize(writer);
+            writer.Write(AmountX);
+            writer.Write(AmountY);
+            writer.Write((byte)(CenterPivot ? 1 : 0));
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write(CenterOffsetX);
+            writer.Write(CenterOffsetY);
         }
     }
 
@@ -156,17 +145,13 @@ namespace IndustrialPark
             CenterOffsetY = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.Rotate);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(Rotation);
-                writer.Write(CenterOffsetX);
-                writer.Write(CenterOffsetY);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.Rotate);
+            base.Serialize(writer);
+            writer.Write(Rotation);
+            writer.Write(CenterOffsetX);
+            writer.Write(CenterOffsetY);
         }
     }
 
@@ -187,18 +172,14 @@ namespace IndustrialPark
             reader.BaseStream.Position += 2;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.Opacity);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(StartOpacity);
-                writer.Write(EndOpacity);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.Opacity);
+            base.Serialize(writer);
+            writer.Write(StartOpacity);
+            writer.Write(EndOpacity);
+            writer.Write((byte)0);
+            writer.Write((byte)0);                
         }
     }
 
@@ -231,22 +212,18 @@ namespace IndustrialPark
             reader.BaseStream.Position += 2;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.AbsoluteScale);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(StartX);
-                writer.Write(StartY);
-                writer.Write(EndX);
-                writer.Write(EndY);
-                writer.Write((byte)(Enabled ? 1 : 0));
-                writer.Write(TextScale);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.AbsoluteScale);
+            base.Serialize(writer);
+            writer.Write(StartX);
+            writer.Write(StartY);
+            writer.Write(EndX);
+            writer.Write(EndY);
+            writer.Write((byte)(Enabled ? 1 : 0));
+            writer.Write(TextScale);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
         }
     }
 
@@ -267,18 +244,14 @@ namespace IndustrialPark
             reader.BaseStream.Position += 2;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.Brightness);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(StartBrightness);
-                writer.Write(EndBrightness);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.Brightness);
+            base.Serialize(writer);
+            writer.Write(StartBrightness);
+            writer.Write(EndBrightness);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
         }
     }
 
@@ -332,22 +305,18 @@ namespace IndustrialPark
             reader.BaseStream.Position += 2;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.Color);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(_startColorR);
-                writer.Write(_startColorG);
-                writer.Write(_startColorB);
-                writer.Write(_endColorR);
-                writer.Write(_endColorG);
-                writer.Write(_endColorB);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.Color);
+            base.Serialize(writer);
+            writer.Write(_startColorR);
+            writer.Write(_startColorG);
+            writer.Write(_startColorB);
+            writer.Write(_endColorR);
+            writer.Write(_endColorG);
+            writer.Write(_endColorB);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
         }
     }
 
@@ -367,16 +336,12 @@ namespace IndustrialPark
             AmountV = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((int)UIMCommandType.UVScroll);
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(AmountU);
-                writer.Write(AmountV);
-                return writer.ToArray();
-            }
+            writer.Write((int)UIMCommandType.UVScroll);
+            base.Serialize(writer);
+            writer.Write(AmountU);
+            writer.Write(AmountV);
         }
     }
 }

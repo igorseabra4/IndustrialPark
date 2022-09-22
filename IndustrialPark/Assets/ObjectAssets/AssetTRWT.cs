@@ -24,17 +24,15 @@ namespace IndustrialPark
             DamageRadius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Model);
                 writer.Write(Type);
                 writer.Write(Shrapnel);
                 writer.Write(Damage);
                 writer.Write(DamageRadius);
-                return writer.ToArray();
-            }
+                
         }
 
         public override string ToString()
@@ -85,18 +83,14 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Version);
-                writer.Write(Entries.Length);
-                foreach (var e in Entries)
-                    writer.Write(e.Serialize(game, endianness));
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Version);
+            writer.Write(Entries.Length);
+            foreach (var e in Entries)
+                e.Serialize(writer);
+            SerializeLinks(writer);
         }
     }
 }

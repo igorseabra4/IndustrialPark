@@ -15,7 +15,7 @@ namespace IndustrialPark
             Animations = new AssetID[10];
         }
 
-        public AssetALST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetALST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -26,14 +26,12 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 foreach (var i in Animations)
                     writer.Write(i);
-                return writer.ToArray();
-            }
+                
         }
 
         public override void Verify(ref List<string> result)

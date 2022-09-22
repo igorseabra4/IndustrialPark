@@ -92,34 +92,30 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
-                writer.Write(Gravity);
-                writer.Write(Mass);
-                writer.Write(BounceFactor);
-                writer.Write(Friction);
-                if (game == Game.BFBB)
-                    writer.Write(StartFriction);
-                writer.Write(MaxLinearVelocity);
-                writer.Write(MaxAngularVelocity);
-                writer.Write(Stickiness);
-                writer.Write(BounceDamp);
-                writer.Write(BoulderFlags.FlagValueInt);
-                writer.Write(KillTimer);
-                writer.Write(Hitpoints);
-                writer.Write(Sound);
-                if (game == Game.BFBB)
-                    writer.Write(Volume);
-                writer.Write(MinSoundVel);
-                writer.Write(MaxSoundVel);
-                writer.Write(InnerRadius);
-                writer.Write(OuterRadius);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Gravity);
+            writer.Write(Mass);
+            writer.Write(BounceFactor);
+            writer.Write(Friction);
+            if (game == Game.BFBB)
+                writer.Write(StartFriction);
+            writer.Write(MaxLinearVelocity);
+            writer.Write(MaxAngularVelocity);
+            writer.Write(Stickiness);
+            writer.Write(BounceDamp);
+            writer.Write(BoulderFlags.FlagValueInt);
+            writer.Write(KillTimer);
+            writer.Write(Hitpoints);
+            writer.Write(Sound);
+            if (game == Game.BFBB)
+                writer.Write(Volume);
+            writer.Write(MinSoundVel);
+            writer.Write(MaxSoundVel);
+            writer.Write(InnerRadius);
+            writer.Write(OuterRadius);
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

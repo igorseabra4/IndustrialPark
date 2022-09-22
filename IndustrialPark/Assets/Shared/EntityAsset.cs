@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -151,9 +152,9 @@ namespace IndustrialPark
             set => _color.W = value;
         }
         [Category(categoryName + " Color")]
-        public AssetColor Color_RBGA
+        public AssetColor ColorRBGA
         {
-            get => new AssetColor((byte)(ColorRed * 255), (byte)(ColorGreen * 255), (byte)(ColorBlue * 255), (byte)(ColorAlpha * 255));
+            get => AssetColor.FromVector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
             set
             {
                 ColorRed = value.R / 255f;
@@ -224,7 +225,7 @@ namespace IndustrialPark
         }
 
         // meant for use with DUPC VIL only
-        protected EntityAsset(EndianBinaryReader reader) : base(reader)
+        protected EntityAsset(EndianBinaryReader reader, Game game) : base(reader, game)
         {
             VisibilityFlags.FlagValueByte = reader.ReadByte();
             TypeFlag = reader.ReadByte();
@@ -244,38 +245,32 @@ namespace IndustrialPark
             Animation = reader.ReadUInt32();
         }
 
-        protected byte[] SerializeEntity(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-
-                writer.Write(VisibilityFlags.FlagValueByte);
-                writer.Write(TypeFlag);
-                writer.Write(Flag0A.FlagValueByte);
-                writer.Write(SolidityFlags.FlagValueByte);
-                if (game == Game.BFBB)
-                    writer.Write(0);
-                writer.Write(Surface);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_scale.X);
-                writer.Write(_scale.Y);
-                writer.Write(_scale.Z);
-                writer.Write(_color.X);
-                writer.Write(_color.Y);
-                writer.Write(_color.Z);
-                writer.Write(_color.W);
-                writer.Write(ColorAlphaSpeed);
-                writer.Write(_model);
-                writer.Write(Animation);
-
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(VisibilityFlags.FlagValueByte);
+            writer.Write(TypeFlag);
+            writer.Write(Flag0A.FlagValueByte);
+            writer.Write(SolidityFlags.FlagValueByte);
+            if (game == Game.BFBB)
+                writer.Write(0);
+            writer.Write(Surface);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_scale.X);
+            writer.Write(_scale.Y);
+            writer.Write(_scale.Z);
+            writer.Write(_color.X);
+            writer.Write(_color.Y);
+            writer.Write(_color.Z);
+            writer.Write(_color.W);
+            writer.Write(ColorAlphaSpeed);
+            writer.Write(_model);
+            writer.Write(Animation);
         }
 
         [Browsable(false)]

@@ -254,51 +254,47 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
+            base.Serialize(writer);
 
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(NormalizedForwardX);
-                writer.Write(NormalizedForwardY);
-                writer.Write(NormalizedForwardZ);
-                writer.Write(NormalizedUpX);
-                writer.Write(NormalizedUpY);
-                writer.Write(NormalizedUpZ);
-                writer.Write(NormalizedLeftX);
-                writer.Write(NormalizedLeftY);
-                writer.Write(NormalizedLeftZ);
-                writer.Write(ViewOffsetX);
-                writer.Write(ViewOffsetY);
-                writer.Write(ViewOffsetZ);
-                writer.Write(OffsetStartFrames);
-                writer.Write(OffsetEndFrames);
-                writer.Write(FieldOfView);
-                writer.Write(TransitionTime);
-                writer.Write((int)TransitionType);
-                writer.Write(CamFlags.FlagValueInt);
-                writer.Write(FadeUp);
-                writer.Write(FadeDown);
-                writer.Write(CamSpecific.Serialize(game, endianness));
-                while (writer.BaseStream.Length < 0x78)
-                    writer.Write((byte)0);
-                writer.Write(Flags1.FlagValueByte);
-                writer.Write(Flags2.FlagValueByte);
-                writer.Write(Flags3.FlagValueByte);
-                writer.Write(Flags4.FlagValueByte);
-                writer.Write(Marker1);
-                writer.Write(Marker2);
-                writer.Write((byte)_camType);
-                while (writer.BaseStream.Length < 0x88)
-                    writer.Write((byte)0);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(NormalizedForwardX);
+            writer.Write(NormalizedForwardY);
+            writer.Write(NormalizedForwardZ);
+            writer.Write(NormalizedUpX);
+            writer.Write(NormalizedUpY);
+            writer.Write(NormalizedUpZ);
+            writer.Write(NormalizedLeftX);
+            writer.Write(NormalizedLeftY);
+            writer.Write(NormalizedLeftZ);
+            writer.Write(ViewOffsetX);
+            writer.Write(ViewOffsetY);
+            writer.Write(ViewOffsetZ);
+            writer.Write(OffsetStartFrames);
+            writer.Write(OffsetEndFrames);
+            writer.Write(FieldOfView);
+            writer.Write(TransitionTime);
+            writer.Write((int)TransitionType);
+            writer.Write(CamFlags.FlagValueInt);
+            writer.Write(FadeUp);
+            writer.Write(FadeDown);
+            CamSpecific.Serialize(writer);
+            while (writer.BaseStream.Length < 0x78)
+                writer.Write((byte)0);
+            writer.Write(Flags1.FlagValueByte);
+            writer.Write(Flags2.FlagValueByte);
+            writer.Write(Flags3.FlagValueByte);
+            writer.Write(Flags4.FlagValueByte);
+            writer.Write(Marker1);
+            writer.Write(Marker2);
+            writer.Write((byte)_camType);
+            while (writer.BaseStream.Length < 0x88)
+                writer.Write((byte)0);
 
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            SerializeLinks(writer);
         }
 
         private Matrix world;

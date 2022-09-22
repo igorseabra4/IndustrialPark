@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
@@ -89,32 +90,27 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_positionEnd.X);
-                writer.Write(_positionEnd.Y);
-                writer.Write(_positionEnd.Z);
-                writer.Write(Color);
-                writer.Write(Width);
-                writer.Write(BranchSpeed);
-                writer.Write(LightningTexture);
-                writer.Write(GlowTexture);
-                writer.Write(Damage);
-                writer.Write(KnockbackSpeed);
-                writer.Write(SoundGroup);
-                writer.Write(SoundHit1);
-                writer.Write(SoundHit2);
-                writer.Write(SimpleObject1);
-                writer.Write(SimpleObject2);
-                writer.Write(DamagePlayer ? 1 : 0);
-
-                return writer.ToArray();
-            }
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_positionEnd.X);
+            writer.Write(_positionEnd.Y);
+            writer.Write(_positionEnd.Z);
+            writer.Write(Color);
+            writer.Write(Width);
+            writer.Write(BranchSpeed);
+            writer.Write(LightningTexture);
+            writer.Write(GlowTexture);
+            writer.Write(Damage);
+            writer.Write(KnockbackSpeed);
+            writer.Write(SoundGroup);
+            writer.Write(SoundHit1);
+            writer.Write(SoundHit2);
+            writer.Write(SimpleObject1);
+            writer.Write(SimpleObject2);
+            writer.Write(DamagePlayer ? 1 : 0);
         }
 
         private Matrix world2;

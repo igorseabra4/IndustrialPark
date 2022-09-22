@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Web.UI;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -51,29 +52,24 @@ namespace IndustrialPark
             PosZ = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Model);
-                writer.Write(Flags);
-                writer.Write(Parent);
-                writer.Write(Bone);
-                writer.Write(RightX);
-                writer.Write(RightY);
-                writer.Write(RightZ);
-                writer.Write(UpX);
-                writer.Write(UpY);
-                writer.Write(UpZ);
-                writer.Write(AtX);
-                writer.Write(AtY);
-                writer.Write(AtZ);
-                writer.Write(PosX);
-                writer.Write(PosY);
-                writer.Write(PosZ);
-
-                return writer.ToArray();
-            }
+            writer.Write(Model);
+            writer.Write(Flags);
+            writer.Write(Parent);
+            writer.Write(Bone);
+            writer.Write(RightX);
+            writer.Write(RightY);
+            writer.Write(RightZ);
+            writer.Write(UpX);
+            writer.Write(UpY);
+            writer.Write(UpZ);
+            writer.Write(AtX);
+            writer.Write(AtY);
+            writer.Write(AtZ);
+            writer.Write(PosX);
+            writer.Write(PosY);
+            writer.Write(PosZ);
         }
     }
 
@@ -106,24 +102,20 @@ namespace IndustrialPark
             Value = Value.Trim('\0');
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Type_Hex);
+            writer.Write(Type_Hex);
 
-                var pDataLen = Value.Length + 2;
-                while (pDataLen % 4 != 0)
-                    pDataLen++;
+            var pDataLen = Value.Length + 2;
+            while (pDataLen % 4 != 0)
+                pDataLen++;
 
-                writer.Write((byte)(pDataLen / 4 - 1));
-                writer.Write(Value);
+            writer.Write((byte)(pDataLen / 4 - 1));
+            writer.Write(Value);
 
-                do writer.Write((byte)0);
-                while (writer.BaseStream.Length % 4 != 0);
-
-                return writer.ToArray();
-            }
+            do
+                writer.Write((byte)0);
+            while (writer.BaseStream.Length % 4 != 0);
         }
 
         public override string ToString() => $"[{Type_Enum}] " + Value;
@@ -191,7 +183,7 @@ namespace IndustrialPark
             AddToDictionary();
         }
 
-        public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -218,27 +210,22 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            writer.WriteMagic("MINF");
+            writer.Write(References.Length);
+            writer.Write(AnimationTable);
+
+            if (game != Game.Scooby)
             {
-                writer.WriteMagic("MINF");
-                writer.Write(References.Length);
-                writer.Write(AnimationTable);
-
-                if (game != Game.Scooby)
-                {
-                    writer.Write(CombatID);
-                    writer.Write(BrainID);
-                }
-
-                foreach (var r in References)
-                    writer.Write(r.Serialize(game, endianness));
-                foreach (var b in _parameters)
-                    writer.Write(b.Serialize(endianness));
-
-                return writer.ToArray();
+                writer.Write(CombatID);
+                writer.Write(BrainID);
             }
+
+            foreach (var r in References)
+                r.Serialize(writer);
+            foreach (var b in _parameters)
+                b.Serialize(writer);
         }
 
         private string newName => assetName.Replace(".MINF", "");

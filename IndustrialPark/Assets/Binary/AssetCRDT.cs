@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -34,7 +35,7 @@ namespace IndustrialPark
             MaxScreenHeight = reader.ReadSingle();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write((int)Font);
             writer.Write(Color);
@@ -72,7 +73,7 @@ namespace IndustrialPark
             BackdropStyle = new CreditsTextBox(reader);
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Num);
             writer.Write(Align);
@@ -107,7 +108,7 @@ namespace IndustrialPark
                 reader.BaseStream.Position++;
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             var startPos = writer.BaseStream.Position;
             writer.Write(0);
@@ -179,7 +180,7 @@ namespace IndustrialPark
             Titles = titles.ToArray();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             var startPos = writer.BaseStream.Position;
             writer.Write(0); // size
@@ -225,7 +226,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public CreditsEntry[] Sections { get; set; }
 
-        public AssetCRDT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetCRDT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -242,10 +243,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(0xBEEEEEEF);
                 writer.Write(Version);
                 writer.Write(CrdId);
@@ -258,8 +258,7 @@ namespace IndustrialPark
                 writer.BaseStream.Position = 0x14;
                 writer.Write((int)writer.BaseStream.Length);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -47,23 +46,18 @@ namespace IndustrialPark
             }
         }
 
-        protected byte[] SerializeDynaHudMeter(Endianness endianness)
+        protected void SerializeDynaHudMeter(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeDynaHud(endianness));
-                writer.Write(StartValue);
-                writer.Write(MinValue);
-                writer.Write(MaxValue);
-                writer.Write(IncrementTime);
-                writer.Write(DecrementTime);
-                writer.Write(StartIncrementSound);
-                writer.Write(IncrementSound);
-                writer.Write(StartDecrementSound);
-                writer.Write(DecrementSound);
-
-                return writer.ToArray();
-            }
+            SerializeDynaHud(writer);
+            writer.Write(StartValue);
+            writer.Write(MinValue);
+            writer.Write(MaxValue);
+            writer.Write(IncrementTime);
+            writer.Write(DecrementTime);
+            writer.Write(StartIncrementSound);
+            writer.Write(IncrementSound);
+            writer.Write(StartDecrementSound);
+            writer.Write(DecrementSound);
         }
     }
 }

@@ -1,5 +1,5 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -84,34 +84,29 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeDynaUI(endianness));
-                writer.Write(Texture);
-                writer.Write(uv1u);
-                writer.Write(uv1v);
-                writer.Write(uv2u);
-                writer.Write(uv2v);
-                writer.Write(uv3u);
-                writer.Write(uv3v);
-                writer.Write(uv4u);
-                writer.Write(uv4v);
-                writer.Write(rotation);
-                writer.Write(UIImageFlags.FlagValueShort);
-                writer.Write(addreasMoveU);
-                writer.Write(addreasMoveV);
-                writer.Write(Color1);
-                writer.Write(Color2);
-                writer.Write(Color3);
-                writer.Write(Color4);
+            SerializeDynaUI(writer);
+            writer.Write(Texture);
+            writer.Write(uv1u);
+            writer.Write(uv1v);
+            writer.Write(uv2u);
+            writer.Write(uv2v);
+            writer.Write(uv3u);
+            writer.Write(uv3v);
+            writer.Write(uv4u);
+            writer.Write(uv4v);
+            writer.Write(rotation);
+            writer.Write(UIImageFlags.FlagValueShort);
+            writer.Write(addreasMoveU);
+            writer.Write(addreasMoveV);
+            writer.Write(Color1);
+            writer.Write(Color2);
+            writer.Write(Color3);
+            writer.Write(Color4);
 
-                if (extraFieldPresent)
-                    writer.Write(Unknown);
-
-                return writer.ToArray();
-            }
+            if (extraFieldPresent)
+                writer.Write(Unknown);
         }
     }
 }

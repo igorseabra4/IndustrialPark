@@ -47,22 +47,17 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Rumble);
-                writer.Write(Radius);
-                writer.Write(PositionX);
-                writer.Write(PositionY);
-                writer.Write(PositionZ);
-                writer.Write(OnlyRumbleOnY);
-                writer.Write(FallOff);
-                writer.Write(OnlyOnFloor);
-                writer.Write((byte)0);
-
-                return writer.ToArray();
-            }
+            writer.Write(Rumble);
+            writer.Write(Radius);
+            writer.Write(PositionX);
+            writer.Write(PositionY);
+            writer.Write(PositionZ);
+            writer.Write(OnlyRumbleOnY);
+            writer.Write(FallOff);
+            writer.Write(OnlyOnFloor);
+            writer.Write((byte)0);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

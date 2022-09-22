@@ -1,11 +1,10 @@
-﻿using HipHopFile;
-using System.Collections.Generic;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
     public class PareSpecific_Generic : GenericAssetDataContainer
     {
         public PareSpecific_Generic() { }
+
+        public override void Serialize(EndianBinaryWriter writer) { }
     }
 
     public class PareSpecific_xPECircle : PareSpecific_Generic
@@ -26,17 +25,13 @@ namespace IndustrialPark
             DirZ = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Radius);
-                writer.Write(Deflection);
-                writer.Write(DirX);
-                writer.Write(DirY);
-                writer.Write(DirZ);
-                return writer.ToArray();
-            }
+            writer.Write(Radius);
+            writer.Write(Deflection);
+            writer.Write(DirX);
+            writer.Write(DirY);
+            writer.Write(DirZ);
         }
     }
 
@@ -50,13 +45,9 @@ namespace IndustrialPark
             Radius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Radius);
-                return writer.ToArray();
-            }
+            writer.Write(Radius);
         }
     }
 
@@ -72,14 +63,10 @@ namespace IndustrialPark
             Z_Len = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(X_Len);
-                writer.Write(Z_Len);
-                return writer.ToArray();
-            }
+            writer.Write(X_Len);
+            writer.Write(Z_Len);
         }
     }
 
@@ -105,19 +92,15 @@ namespace IndustrialPark
             Radius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Position_0_X);
-                writer.Write(Position_0_Y);
-                writer.Write(Position_0_Z);
-                writer.Write(Position_1_X);
-                writer.Write(Position_1_Y);
-                writer.Write(Position_1_Z);
-                writer.Write(Radius);
-                return writer.ToArray();
-            }
+            writer.Write(Position_0_X);
+            writer.Write(Position_0_Y);
+            writer.Write(Position_0_Z);
+            writer.Write(Position_1_X);
+            writer.Write(Position_1_Y);
+            writer.Write(Position_1_Z);
+            writer.Write(Radius);
         }
     }
 
@@ -136,13 +119,9 @@ namespace IndustrialPark
             Volume = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Volume);
-                return writer.ToArray();
-            }
+            writer.Write(Volume);
         }
     }
 
@@ -160,15 +139,11 @@ namespace IndustrialPark
             Position_Z = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Position_X);
-                writer.Write(Position_Y);
-                writer.Write(Position_Z);
-                return writer.ToArray();
-            }
+            writer.Write(Position_X);
+            writer.Write(Position_Y);
+            writer.Write(Position_Z);
         }
     }
 
@@ -186,15 +161,11 @@ namespace IndustrialPark
             Deflection = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Height);
-                writer.Write(Radius);
-                writer.Write(Deflection);
-                return writer.ToArray();
-            }
+            writer.Write(Height);
+            writer.Write(Radius);
+            writer.Write(Deflection);
         }
     }
 
@@ -223,21 +194,17 @@ namespace IndustrialPark
             Deflection = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(flags);
-                writer.Write(type);
-                writer.Write(bone);
-                writer.Write((byte)0);
-                writer.Write(OffsetX);
-                writer.Write(OffsetY);
-                writer.Write(OffsetZ);
-                writer.Write(Radius);
-                writer.Write(Deflection);
-                return writer.ToArray();
-            }
+            writer.Write(flags);
+            writer.Write(type);
+            writer.Write(bone);
+            writer.Write((byte)0);
+            writer.Write(OffsetX);
+            writer.Write(OffsetY);
+            writer.Write(OffsetZ);
+            writer.Write(Radius);
+            writer.Write(Deflection);
         }
     }
 
@@ -261,18 +228,14 @@ namespace IndustrialPark
             Deflection = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(flags);
-                writer.Write(type);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(Expand);
-                writer.Write(Deflection);
-                return writer.ToArray();
-            }
+            writer.Write(flags);
+            writer.Write(type);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write(Expand);
+            writer.Write(Deflection);
         }
     }
 }

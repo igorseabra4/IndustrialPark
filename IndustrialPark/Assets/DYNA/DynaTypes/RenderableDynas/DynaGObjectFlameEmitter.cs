@@ -71,10 +71,9 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Flags.FlagValueInt);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
@@ -92,8 +91,7 @@ namespace IndustrialPark
                 if (inc)
                     writer.Write(Unknown);
 
-                return writer.ToArray();
-            }
+                
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

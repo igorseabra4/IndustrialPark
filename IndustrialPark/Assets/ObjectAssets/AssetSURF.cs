@@ -25,18 +25,16 @@ namespace IndustrialPark
             DualMapTexture = reader.ReadUInt32();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Flags.FlagValueInt);
                 writer.Write(BumpMapTexture);
                 writer.Write(EnvMapTexture);
                 writer.Write(Shininess);
                 writer.Write(Bumpiness);
                 writer.Write(DualMapTexture);
-                return writer.ToArray();
-            }
+                
         }
     }
 
@@ -55,15 +53,11 @@ namespace IndustrialPark
             Speed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Flags.FlagValueShort);
-                writer.Write(Mode);
-                writer.Write(Speed);
-                return writer.ToArray();
-            }
+            writer.Write(Flags.FlagValueShort);
+            writer.Write(Mode);
+            writer.Write(Speed);
         }
     }
 
@@ -84,16 +78,14 @@ namespace IndustrialPark
             Speed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Padding);
                 writer.Write(Mode);
                 writer.Write(Group);
                 writer.Write(Speed);
-                return writer.ToArray();
-            }
+                
         }
     }
 
@@ -154,36 +146,32 @@ namespace IndustrialPark
             MinMaxSpeed_Z = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Mode);
-                writer.Write(Rot);
-                writer.Write(RotSpd);
-                writer.Write(Trans_X);
-                writer.Write(Trans_Y);
-                writer.Write(Trans_Z);
-                writer.Write(TransSpeed_X);
-                writer.Write(TransSpeed_Y);
-                writer.Write(TransSpeed_Z);
-                writer.Write(Scale_X);
-                writer.Write(Scale_Y);
-                writer.Write(Scale_Z);
-                writer.Write(ScaleSpeed_X);
-                writer.Write(ScaleSpeed_Y);
-                writer.Write(ScaleSpeed_Z);
-                writer.Write(Min_X);
-                writer.Write(Min_Y);
-                writer.Write(Min_Z);
-                writer.Write(Max_X);
-                writer.Write(Max_Y);
-                writer.Write(Max_Z);
-                writer.Write(MinMaxSpeed_X);
-                writer.Write(MinMaxSpeed_Y);
-                writer.Write(MinMaxSpeed_Z);
-                return writer.ToArray();
-            }
+            writer.Write(Mode);
+            writer.Write(Rot);
+            writer.Write(RotSpd);
+            writer.Write(Trans_X);
+            writer.Write(Trans_Y);
+            writer.Write(Trans_Z);
+            writer.Write(TransSpeed_X);
+            writer.Write(TransSpeed_Y);
+            writer.Write(TransSpeed_Z);
+            writer.Write(Scale_X);
+            writer.Write(Scale_Y);
+            writer.Write(Scale_Z);
+            writer.Write(ScaleSpeed_X);
+            writer.Write(ScaleSpeed_Y);
+            writer.Write(ScaleSpeed_Z);
+            writer.Write(Min_X);
+            writer.Write(Min_Y);
+            writer.Write(Min_Z);
+            writer.Write(Max_X);
+            writer.Write(Max_Y);
+            writer.Write(Max_Z);
+            writer.Write(MinMaxSpeed_X);
+            writer.Write(MinMaxSpeed_Y);
+            writer.Write(MinMaxSpeed_Z);
         }
     }
 
@@ -204,17 +192,12 @@ namespace IndustrialPark
             Duration = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(ParticleEmitter);
-                writer.Write(Sound);
-                writer.Write(Texture);
-                writer.Write(Duration);
-
-                return writer.ToArray();
-            }
+            writer.Write(ParticleEmitter);
+            writer.Write(Sound);
+            writer.Write(Texture);
+            writer.Write(Duration);
         }
     }
 
@@ -233,16 +216,11 @@ namespace IndustrialPark
             SizeY = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Texture);
-                writer.Write(SizeX);
-                writer.Write(SizeY);
-
-                return writer.ToArray();
-            }
+            writer.Write(Texture);
+            writer.Write(SizeX);
+            writer.Write(SizeY);
         }
     }
 
@@ -277,19 +255,19 @@ namespace IndustrialPark
     {
         private const string categoryName = "Surface";
 
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte DamageType { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte Sticky { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte DamageFlags { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte SurfaceType { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte Phys_Pad { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte SlideStart { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte SlideStop { get; set; }
         [Category(categoryName)]
         public FlagBitmask PhysicsFlags { get; set; } = ByteFlagsDescriptor(
@@ -318,7 +296,7 @@ namespace IndustrialPark
         public zSurfUVFX zSurfUVFX { get; set; }
         [Category(categoryName)]
         public zSurfUVFX zSurfUVFX2 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(HexByteTypeConverter))]
+        [Category(categoryName)]
         public byte On { get; set; }
         [Category(categoryName)]
         public AssetSingle OutOfBoundsDelay { get; set; }
@@ -497,86 +475,82 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            base.Serialize(writer);
+            writer.Write(DamageType);
+            writer.Write(Sticky);
+            writer.Write(DamageFlags);
+            writer.Write(SurfaceType);
+            writer.Write(Phys_Pad);
+            writer.Write(SlideStart);
+            writer.Write(SlideStop);
+            writer.Write(PhysicsFlags.FlagValueByte);
+            writer.Write(Friction);
+            zSurfMatFX.Serialize(writer);
+            zSurfColorFX.Serialize(writer);
+            writer.Write(TextureAnimFlags.FlagValueInt);
+            zSurfTextureAnim1.Serialize(writer);
+            zSurfTextureAnim2.Serialize(writer);
+            writer.Write(UVEffectsFlags.FlagValueInt);
+            zSurfUVFX.Serialize(writer);
+            if (game != Game.Scooby)
             {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(DamageType);
-                writer.Write(Sticky);
-                writer.Write(DamageFlags);
-                writer.Write(SurfaceType);
-                writer.Write(Phys_Pad);
-                writer.Write(SlideStart);
-                writer.Write(SlideStop);
-                writer.Write(PhysicsFlags.FlagValueByte);
-                writer.Write(Friction);
-                writer.Write(zSurfMatFX.Serialize(game, endianness));
-                writer.Write(zSurfColorFX.Serialize(game, endianness));
-                writer.Write(TextureAnimFlags.FlagValueInt);
-                writer.Write(zSurfTextureAnim1.Serialize(game, endianness));
-                writer.Write(zSurfTextureAnim2.Serialize(game, endianness));
-                writer.Write(UVEffectsFlags.FlagValueInt);
-                writer.Write(zSurfUVFX.Serialize(game, endianness));
-                if (game != Game.Scooby)
-                {
-                    writer.Write(zSurfUVFX2.Serialize(game, endianness));
-                    writer.Write(On);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                }
-                writer.Write(OutOfBoundsDelay);
-                writer.Write(WalljumpScaleXZ);
-                writer.Write(WalljumpScaleY);
-                writer.Write(DamageTimer);
-                writer.Write(DamageBounce);
-                if (game == Game.Scooby)
-                {
-                    writer.Write(UnknownInt);
-                    writer.Write(On);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                }
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(ImpactSound);
-                    writer.Write(DashImpactType);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write(DashImpactThrowBack);
-                    writer.Write(DashSprayMagnitude);
-                    writer.Write(DashCoolRate);
-                    writer.Write(DashCoolAmount);
-                    writer.Write(DashPass);
-                    writer.Write(DashRampMaxDistance);
-                    writer.Write(DashRampMinDistance);
-                    writer.Write(DashRampKeySpeed);
-                    writer.Write(DashRampMaxHeight);
-                    writer.Write(DashRampTarget_MovePoint);
-                    writer.Write(DamageAmount);
-                    writer.Write((int)HitSourceDamageType);
-                    writer.Write(OffSurface.Serialize(game, endianness));
-                    writer.Write(OnSurface.Serialize(game, endianness));
-                    writer.Write(HitDecalData0.Serialize(game, endianness));
-                    writer.Write(HitDecalData1.Serialize(game, endianness));
-                    writer.Write(HitDecalData2.Serialize(game, endianness));
-                    writer.Write(OffSurfaceTime);
-                    writer.Write(SwimmableSurface);
-                    writer.Write(DashFall);
-                    writer.Write(NeedButtonPress);
-                    writer.Write(DashAttack);
-                    writer.Write(FootstepDecals);
-                    writer.Write(0);
-                    writer.Write(DrivingSurfaceType);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                }
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
+                zSurfUVFX2.Serialize(writer);
+                writer.Write(On);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
             }
+            writer.Write(OutOfBoundsDelay);
+            writer.Write(WalljumpScaleXZ);
+            writer.Write(WalljumpScaleY);
+            writer.Write(DamageTimer);
+            writer.Write(DamageBounce);
+            if (game == Game.Scooby)
+            {
+                writer.Write(UnknownInt);
+                writer.Write(On);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+            }
+            if (game == Game.Incredibles)
+            {
+                writer.Write(ImpactSound);
+                writer.Write(DashImpactType);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write(DashImpactThrowBack);
+                writer.Write(DashSprayMagnitude);
+                writer.Write(DashCoolRate);
+                writer.Write(DashCoolAmount);
+                writer.Write(DashPass);
+                writer.Write(DashRampMaxDistance);
+                writer.Write(DashRampMinDistance);
+                writer.Write(DashRampKeySpeed);
+                writer.Write(DashRampMaxHeight);
+                writer.Write(DashRampTarget_MovePoint);
+                writer.Write(DamageAmount);
+                writer.Write((int)HitSourceDamageType);
+                OffSurface.Serialize(writer);
+                OnSurface.Serialize(writer);
+                HitDecalData0.Serialize(writer);
+                HitDecalData1.Serialize(writer);
+                HitDecalData2.Serialize(writer);
+                writer.Write(OffSurfaceTime);
+                writer.Write(SwimmableSurface);
+                writer.Write(DashFall);
+                writer.Write(NeedButtonPress);
+                writer.Write(DashAttack);
+                writer.Write(FootstepDecals);
+                writer.Write(0);
+                writer.Write(DrivingSurfaceType);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+            }
+            SerializeLinks(writer);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

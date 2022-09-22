@@ -46,6 +46,8 @@ namespace IndustrialPark
             reader.BaseStream.Position += 12;
         }
 
+        public override void Serialize(EndianBinaryWriter writer) { }
+
         public byte[] Serialize()
         {
             List<byte> array = new List<byte>();
@@ -100,7 +102,7 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_XBOX[0];
         }
 
-        public AssetSNDI_XBOX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSNDI_XBOX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
             {
@@ -122,10 +124,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(Entries_SND.Length);
                 writer.Write(Entries_SNDS.Length);
                 writer.Write(Entries_Sound_CIN.Length);
@@ -137,8 +138,7 @@ namespace IndustrialPark
                 foreach (var e in Entries_Sound_CIN)
                     writer.Write(e.Serialize());
 
-                return writer.ToArray();
-            }
+                
         }
 
         public void AddEntry(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)

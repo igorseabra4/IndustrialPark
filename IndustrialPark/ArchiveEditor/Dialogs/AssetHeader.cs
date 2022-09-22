@@ -15,7 +15,7 @@ namespace IndustrialPark
             InitializeComponent();
 
             foreach (AssetType o in Enum.GetValues(typeof(AssetType)).Cast<AssetType>().OrderBy(f => f.ToString()))
-                comboBoxAssetTypes.Items.Add(o);
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(o));
 
             buttonOK.Enabled = false;
             TopMost = true;
@@ -26,7 +26,25 @@ namespace IndustrialPark
         {
             InitializeComponent();
 
-            comboBoxAssetTypes.Enabled = false;
+            if (AHDR.assetType == AssetType.Texture || AHDR.assetType == AssetType.TextureStream)
+            {
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Texture));
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.TextureStream));
+            }
+            else if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.SoundStream)
+            {
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Sound));
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.SoundStream));
+            }
+            else if (AHDR.assetType == AssetType.SimpleObject || AHDR.assetType == AssetType.Track)
+            {
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.SimpleObject));
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Track));
+            }
+            else
+            {
+                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AHDR.assetType));
+            }
 
             TopMost = true;
             defaultColor = textBoxAssetID.BackColor;
@@ -93,7 +111,11 @@ namespace IndustrialPark
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            assetType = (AssetType)comboBoxAssetTypes.SelectedItem;
+            if (comboBoxAssetTypes.Items.Count < 2)
+                return;
+
+            var container = (AssetTypeContainer)comboBoxAssetTypes.SelectedItem;
+            assetType = container.assetType;
 
             AHDRFlags flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
 

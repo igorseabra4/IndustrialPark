@@ -54,10 +54,9 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(ForwardScript);
                 writer.Write(BackwardScript);
                 writer.Write(LiftObject);
@@ -70,8 +69,7 @@ namespace IndustrialPark
                 writer.Write(DropGravity);
                 writer.Write(LiftFlags.FlagValueInt);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 }

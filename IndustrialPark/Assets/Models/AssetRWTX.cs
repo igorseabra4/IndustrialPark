@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         private string platformFormat;
 
-        public AssetRWTX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetRWTX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             platformFormat = GetPlatform();
             try
@@ -25,8 +25,6 @@ namespace IndustrialPark
             }
             catch { }
         }
-
-        public override byte[] Serialize(Game game, Endianness endianness) => Data;
 
         public override void Verify(ref List<string> result)
         {

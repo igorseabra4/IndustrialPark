@@ -16,7 +16,7 @@ namespace IndustrialPark
             count = reader.ReadUInt16();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(section);
             writer.Write(start);
@@ -54,7 +54,7 @@ namespace IndustrialPark
             startTime = reader.ReadSingle();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(animationStateID);
             writer.Write(animationState);
@@ -92,7 +92,7 @@ namespace IndustrialPark
             flags = reader.ReadUInt32();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(sourceState);
             writer.Write(destinationState);
@@ -124,7 +124,7 @@ namespace IndustrialPark
             reader.BaseStream.Position += 2;
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(bone);
             writer.Write(new byte[2]);
@@ -149,7 +149,7 @@ namespace IndustrialPark
             position = reader.ReadInt32();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(bone);
             writer.Write(new byte[2]);
@@ -269,7 +269,7 @@ namespace IndustrialPark
             powerBonus = reader.ReadInt16();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(state);
             writer.Write(moveDistanceZ);
@@ -340,7 +340,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AttackTableState[] States { get; set; }
         
-        public AssetATKT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetATKT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             if (AHDR.data.Length == 0)
                 return;
@@ -370,29 +370,24 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             if (Sections == null || Entries == null || Transitions == null || States == null)
-                return new byte[0];
+                return;
 
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((short)Sections.Length);
-                writer.Write((short)Entries.Length);
-                writer.Write((short)Transitions.Length);
-                writer.Write((short)States.Length);
+            writer.Write((short)Sections.Length);
+            writer.Write((short)Entries.Length);
+            writer.Write((short)Transitions.Length);
+            writer.Write((short)States.Length);
 
-                foreach (var s in Sections)
-                    s.Serialize(writer);
-                foreach (var s in Entries)
-                    s.Serialize(writer);
-                foreach (var s in Transitions)
-                    s.Serialize(writer);
-                foreach (var s in States)
-                    s.Serialize(writer);
-
-                return writer.ToArray();
-            }
+            foreach (var s in Sections)
+                s.Serialize(writer);
+            foreach (var s in Entries)
+                s.Serialize(writer);
+            foreach (var s in Transitions)
+                s.Serialize(writer);
+            foreach (var s in States)
+                s.Serialize(writer);
         }
     }
 }

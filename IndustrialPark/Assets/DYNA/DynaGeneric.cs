@@ -9,6 +9,15 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Generic Dynamic";
 
+        private Endianness endianness;
+
+        public DynaGeneric(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        {
+            Data = AHDR.data.Skip(dynaDataStartPosition).Take(AHDR.data.Length - dynaDataStartPosition - _links.Length * Link.sizeOfStruct).ToArray();
+
+            this.endianness = endianness;
+        }
+
         [Category(dynaCategoryName)]
         public byte[] Data { get; set; }
 
@@ -56,11 +65,9 @@ namespace IndustrialPark
             }
         }
 
-        public DynaGeneric(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            Data = AHDR.data.Skip(dynaDataStartPosition).Take(AHDR.data.Length - dynaDataStartPosition - _links.Length * Link.sizeOfStruct).ToArray();
+            writer.Write(Data);
         }
-
-        protected override byte[] SerializeDyna(Game game, Endianness endianness) => Data;
     }
 }

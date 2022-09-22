@@ -16,12 +16,14 @@ namespace IndustrialPark
         public AssetSingle LOD2_MinDistance { get; set; }
         public AssetID LOD3_Model { get; set; }
         public AssetSingle LOD3_MinDistance { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public AssetSingle Unknown { get; set; }
 
         public EntryLODT() { }
         public EntryLODT(EndianBinaryReader reader, Game game)
         {
+            _game = game;
+
             BaseModel = reader.ReadUInt32();
             MaxDistance = reader.ReadSingle();
             LOD1_Model = reader.ReadUInt32();
@@ -35,24 +37,19 @@ namespace IndustrialPark
                 Unknown = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(BaseModel);
-                writer.Write(MaxDistance);
-                writer.Write(LOD1_Model);
-                writer.Write(LOD2_Model);
-                writer.Write(LOD3_Model);
-                writer.Write(LOD1_MinDistance);
-                writer.Write(LOD2_MinDistance);
-                writer.Write(LOD3_MinDistance);
+            writer.Write(BaseModel);
+            writer.Write(MaxDistance);
+            writer.Write(LOD1_Model);
+            writer.Write(LOD2_Model);
+            writer.Write(LOD3_Model);
+            writer.Write(LOD1_MinDistance);
+            writer.Write(LOD2_MinDistance);
+            writer.Write(LOD3_MinDistance);
 
-                if (game == Game.Incredibles)
-                    writer.Write(Unknown);
-
-                return writer.ToArray();
-            }
+            if (game == Game.Incredibles)
+                writer.Write(Unknown);
         }
 
         public override string ToString()
@@ -98,7 +95,7 @@ namespace IndustrialPark
             Entries = new EntryLODT[0];
         }
 
-        public AssetLODT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetLODT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -111,17 +108,13 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Entries.Length);
+            writer.Write(Entries.Length);
 
-                foreach (var l in Entries)
-                    writer.Write(l.Serialize(game, endianness));
+            foreach (var l in Entries)
+                l.Serialize(writer);
 
-                return writer.ToArray();
-            }
         }
 
         public void UpdateDictionary()

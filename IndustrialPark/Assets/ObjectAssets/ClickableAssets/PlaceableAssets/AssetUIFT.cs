@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System.Collections.Generic;
@@ -86,31 +87,26 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
-                writer.Write(SerializeUIData(endianness));
-                writer.Write(UIFontFlags.FlagValueShort);
-                writer.Write(UIFontMode);
-                writer.Write((byte)FontID);
-                writer.Write(Text);
-                writer.Write(BackgroundColor);
-                writer.Write(FontColor);
-                writer.Write(Padding_Top);
-                writer.Write(Padding_Bottom);
-                writer.Write(Padding_Left);
-                writer.Write(Padding_Right);
-                writer.Write(Spacing_Horizontal);
-                writer.Write(Spacing_Vertical);
-                writer.Write(Char_Width);
-                writer.Write(Char_Height);
-                if (game != Game.Scooby)
-                    writer.Write(MaxHeight);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            SerializeForUIFT(writer);
+            writer.Write(UIFontFlags.FlagValueShort);
+            writer.Write(UIFontMode);
+            writer.Write((byte)FontID);
+            writer.Write(Text);
+            writer.Write(BackgroundColor);
+            writer.Write(FontColor);
+            writer.Write(Padding_Top);
+            writer.Write(Padding_Bottom);
+            writer.Write(Padding_Left);
+            writer.Write(Padding_Right);
+            writer.Write(Spacing_Horizontal);
+            writer.Write(Spacing_Vertical);
+            writer.Write(Char_Width);
+            writer.Write(Char_Height);
+            if (game != Game.Scooby)
+                writer.Write(MaxHeight);
+            SerializeLinks(writer);
         }
 
         public static new bool dontRender = false;

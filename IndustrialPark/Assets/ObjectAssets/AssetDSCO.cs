@@ -127,15 +127,14 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             byte fillerByte = 0;
             if (game == Game.Incredibles)
                 fillerByte = 0xCD;
 
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
+
+                base.Serialize(writer);
 
                 for (int i = 0; i < 9; i++)
                     writer.Write(0);
@@ -192,9 +191,8 @@ namespace IndustrialPark
                     writer.Write(PhaseOffsets[i]);
 
                 writer.BaseStream.Position = writer.BaseStream.Length;
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+                SerializeLinks(writer);
+                
         }
 
         private string ReadString(EndianBinaryReader reader)

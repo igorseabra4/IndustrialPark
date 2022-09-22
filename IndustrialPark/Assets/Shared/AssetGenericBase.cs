@@ -9,23 +9,22 @@ namespace IndustrialPark
     {
         private const string categoryName = "Generic Base Asset";
 
+        private Endianness endianness;
+
         [Category(categoryName)]
         public byte[] Data { get; set; }
 
         public AssetGenericBase(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
             Data = AHDR.data.Skip(baseHeaderEndPosition).Take(AHDR.data.Length - baseHeaderEndPosition - _links.Length * Link.sizeOfStruct).ToArray();
+            this.endianness = endianness;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Data);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Data);
+            SerializeLinks(writer);
         }
 
         [Category(categoryName)]

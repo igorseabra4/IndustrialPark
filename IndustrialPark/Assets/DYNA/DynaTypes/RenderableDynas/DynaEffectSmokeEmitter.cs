@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
@@ -101,42 +102,37 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SmokeEmitterFlags.FlagValueInt);
-                writer.Write(AttachTo);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(ScaleX);
-                writer.Write(ScaleY);
-                writer.Write(ScaleZ);
-                writer.Write(Texture);
-                writer.Write(TextureRows);
-                writer.Write(TextureColumns);
-                writer.Write(Rate);
-                writer.Write(LifeMin);
-                writer.Write(LifeMax);
-                writer.Write(SizeMin);
-                writer.Write(SizeMax);
-                writer.Write(VelMin);
-                writer.Write(VelMax);
-                writer.Write(Growth);
-                writer.Write(VelDirX);
-                writer.Write(VelDirY);
-                writer.Write(VelDirZ);
-                writer.Write(VelDirVary);
-                writer.Write(Wind);
-                writer.Write(ColorBirth);
-                writer.Write(ColorDeath);
-
-                return writer.ToArray();
-            }
+            writer.Write(SmokeEmitterFlags.FlagValueInt);
+            writer.Write(AttachTo);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(ScaleX);
+            writer.Write(ScaleY);
+            writer.Write(ScaleZ);
+            writer.Write(Texture);
+            writer.Write(TextureRows);
+            writer.Write(TextureColumns);
+            writer.Write(Rate);
+            writer.Write(LifeMin);
+            writer.Write(LifeMax);
+            writer.Write(SizeMin);
+            writer.Write(SizeMax);
+            writer.Write(VelMin);
+            writer.Write(VelMax);
+            writer.Write(Growth);
+            writer.Write(VelDirX);
+            writer.Write(VelDirY);
+            writer.Write(VelDirZ);
+            writer.Write(VelDirVary);
+            writer.Write(Wind);
+            writer.Write(ColorBirth);
+            writer.Write(ColorDeath);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

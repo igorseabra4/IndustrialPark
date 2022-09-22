@@ -105,6 +105,7 @@
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
     <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
@@ -123,6 +124,8 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
+    <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />
     <Compile Include="ArchiveEditor\Other\LayerComparer.cs" />
     <Compile Include="ArchiveEditor\Other\AssetTypeContainer.cs" />
     <Compile Include="ArchiveEditor\Other\BakeScaleModelContainer.cs" />
@@ -149,6 +152,7 @@
     <Compile Include="Assets\Binary\AssetATKT.cs" />
     <Compile Include="Assets\Binary\AssetONEL.cs" />
     <Compile Include="Assets\Binary\AssetCTOC.cs" />
+    <Compile Include="Assets\Binary\AssetSHRP.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaEffectUberLaser.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaCheckpoint.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRubbleGenerator.cs" />
@@ -183,7 +187,7 @@
     <Compile Include="Assets\Shared\AssetSound.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\UIMCommand.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\VolumeSpecific.cs" />
-    <Compile Include="Assets\Shared\Colors\BakeScaleEditor.cs" />
+    <Compile Include="Assets\Shared\Editors\BakeScaleEditor.cs" />
     <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableRotatableDynaBase.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableDynaBase.cs" />
@@ -200,7 +204,7 @@
     <Compile Include="Assets\Shared\AssetWithData.cs" />
     <Compile Include="Assets\Shared\DataTypes\AssetByte.cs" />
     <Compile Include="Assets\Shared\DataTypes\AssetSingle.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\FlagBitmask.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\FlagBitmask.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\DynamicTypeDescriptor.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.cs">
       <SubType>Form</SubType>
@@ -208,7 +212,7 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.Designer.cs">
       <DependentUpon>InternalMultiAssetEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\Other\MaterialListEditor.cs" />
+    <Compile Include="Assets\Shared\Editors\MaterialListEditor.cs" />
     <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
@@ -251,7 +255,7 @@
     <Compile Include="ArchiveEditor\Dialogs\LinkEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\Other\LinkListEditor.cs" />
+    <Compile Include="Assets\Shared\Editors\LinkListEditor.cs" />
     <Compile Include="ArchiveEditor\Gizmos\GizmoBase.cs" />
     <Compile Include="ArchiveEditor\Gizmos\PositionGizmo.cs" />
     <Compile Include="ArchiveEditor\Gizmos\PositionLocalGizmo.cs" />
@@ -264,7 +268,7 @@
       <DependentUpon>ProgressBar.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\ObjectAssets\AssetTPIK.cs" />
-    <Compile Include="Assets\Binary\AssetSHRP.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelEntry.cs" />
     <Compile Include="Assets\Binary\AssetCRDT.cs" />
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
@@ -330,13 +334,13 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\GenericAssetDataContainer.cs" />
+    <Compile Include="Assets\Shared\GenericAssetDataContainer.cs" />
     <Compile Include="Assets\Shared\AssetWithMotion.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\PareSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Motion.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\PlatSpecific.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\FlagField.cs" />
+    <Compile Include="Assets\Shared\DataTypes\FlagField.cs" />
     <Compile Include="Assets\Shared\Interfaces\IAssetAddSelected.cs" />
     <Compile Include="Assets\Shared\Interfaces\IVolumeAsset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
@@ -466,9 +470,9 @@
     <Compile Include="Models\BSP_IO.cs" />
     <Compile Include="Models\BSP_IO_ReadOBJ.cs" />
     <Compile Include="Other\FileAssociation.cs" />
-    <Compile Include="Assets\Shared\Colors\AssetColor.cs" />
-    <Compile Include="Assets\Shared\Colors\AssetColorConverter.cs" />
-    <Compile Include="Assets\Shared\Colors\AssetColorEditor.cs" />
+    <Compile Include="Assets\Shared\DataTypes\AssetColor.cs" />
+    <Compile Include="Assets\Shared\TypeConverter\AssetColorTypeConverter.cs" />
+    <Compile Include="Assets\Shared\Editors\AssetColorEditor.cs" />
     <Compile Include="Assets\DYNA\DynaGeneric.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBoulderGen.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBungeeDrop.cs" />

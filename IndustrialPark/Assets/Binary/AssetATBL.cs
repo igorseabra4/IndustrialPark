@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -98,7 +99,7 @@ namespace IndustrialPark
 
         public int RawDataOffset;
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(FileFlags);
             writer.Write(Duration);
@@ -120,10 +121,15 @@ namespace IndustrialPark
         public int SubStateID { get; set; }
         public int SubStateCount { get; set; }
 
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AnimationEffect[] AnimationEffects { get; set; }
 
-        public AnimationState() { }
-        public AnimationState(EndianBinaryReader reader, Game game)
+        public AnimationState(Game game)
+        {
+            _game = game;
+        }
+
+        public AnimationState(EndianBinaryReader reader, Game game) : this(game)
         {
             StateID = reader.ReadUInt32();
             AnimFileIndex = reader.ReadInt32();
@@ -153,7 +159,7 @@ namespace IndustrialPark
 
         public int EffectOffset;
 
-        public void Serialize(EndianBinaryWriter writer, Game game)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(StateID);
             writer.Write(AnimFileIndex);
@@ -165,6 +171,11 @@ namespace IndustrialPark
                 writer.Write(SubStateID);
                 writer.Write(SubStateCount);
             }
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            base.SetDynamicProperties(dt);
         }
     }
 
@@ -180,31 +191,57 @@ namespace IndustrialPark
         [Description("BFBB/Scooby only")]
         public byte[] UserDataBytes { get; set; }
 
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte10 { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte11 { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte12 { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte13 { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public AssetID Unknown14 { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte18 { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte19 { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte1A { get; set; }
-        [Description("Incredibles only")]
+        [Description("Movie/Incredibles only")]
         public byte UnknownByte1B { get; set; }
 
-        public AnimationEffect()
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
+            if (game == Game.Incredibles)
+            {
+                dt.RemoveProperty("EffectType");
+                dt.RemoveProperty("UserDataBytes");
+            }
+            else
+            {
+                dt.RemoveProperty("UnknownByte10");
+                dt.RemoveProperty("UnknownByte11");
+                dt.RemoveProperty("UnknownByte12");
+                dt.RemoveProperty("UnknownByte13");
+                dt.RemoveProperty("Unknown14");
+                dt.RemoveProperty("UnknownByte18");
+                dt.RemoveProperty("UnknownByte19");
+                dt.RemoveProperty("UnknownByte1A");
+                dt.RemoveProperty("UnknownByte1B");
+            }
+        }
+
+        public AnimationEffect(Game game)
+        {
+            _game = game;
+
             UserDataBytes = new byte[0];
         }
+
         public AnimationEffect(EndianBinaryReader reader, Game game)
         {
+            _game = game;
+
             StateID = reader.ReadInt32();
             StartTime = reader.ReadSingle();
             EndTime = reader.ReadSingle();
@@ -229,7 +266,7 @@ namespace IndustrialPark
             }
         }
 
-        public virtual void Serialize(EndianBinaryWriter writer, Game game)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(StateID);
             writer.Write(StartTime);
@@ -275,10 +312,10 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AnimationFile[] AnimationFiles { get; set; }
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AnimationState[] AnimationStates { get; set; }
 
-        public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -302,50 +339,45 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            writer.WriteMagic("ATBL");
+
+            writer.Write(Animations.Length);
+            writer.Write(AnimationFiles.Length);
+            writer.Write(AnimationStates.Length);
+            writer.Write(ConstructFunc_Hash);
+
+            foreach (var anim in Animations)
+                writer.Write(anim);
+
+            var filesStartPos = writer.BaseStream.Position;
+
+            writer.BaseStream.Position += 32 * AnimationFiles.Length + (game == Game.Scooby ? 20 : 28) * AnimationStates.Length;
+
+            for (int i = 0; i < AnimationStates.Length; i++)
             {
-                writer.WriteMagic("ATBL");
-
-                writer.Write(Animations.Length);
-                writer.Write(AnimationFiles.Length);
-                writer.Write(AnimationStates.Length);
-                writer.Write(ConstructFunc_Hash);
-
-                foreach (var anim in Animations)
-                    writer.Write(anim);
-
-                var filesStartPos = writer.BaseStream.Position;
-
-                writer.BaseStream.Position += 32 * AnimationFiles.Length + (game == Game.Scooby ? 20 : 28) * AnimationStates.Length;
-
-                for (int i = 0; i < AnimationStates.Length; i++)
-                {
-                    AnimationStates[i].EffectOffset = (int)writer.BaseStream.Position;
-                    foreach (var j in AnimationStates[i].AnimationEffects)
-                        j.Serialize(writer, game);
-                }
-
-                for (int i = 0; i < AnimationFiles.Length; i++)
-                {
-                    AnimationFiles[i].RawDataOffset = (int)writer.BaseStream.Position;
-
-                    foreach (var j in AnimationFiles[i].RawData)
-                        foreach (var k in j)
-                            writer.Write(k);
-                }
-
-                writer.BaseStream.Position = filesStartPos;
-
-                foreach (var animFile in AnimationFiles)
-                    animFile.Serialize(writer);
-
-                foreach (var animState in AnimationStates)
-                    animState.Serialize(writer, game);
-
-                return writer.ToArray();
+                AnimationStates[i].EffectOffset = (int)writer.BaseStream.Position;
+                foreach (var j in AnimationStates[i].AnimationEffects)
+                    j.Serialize(writer);
             }
+
+            for (int i = 0; i < AnimationFiles.Length; i++)
+            {
+                AnimationFiles[i].RawDataOffset = (int)writer.BaseStream.Position;
+
+                foreach (var j in AnimationFiles[i].RawData)
+                    foreach (var k in j)
+                        writer.Write(k);
+            }
+
+            writer.BaseStream.Position = filesStartPos;
+
+            foreach (var animFile in AnimationFiles)
+                animFile.Serialize(writer);
+
+            foreach (var animState in AnimationStates)
+                animState.Serialize(writer);
         }
     }
 }

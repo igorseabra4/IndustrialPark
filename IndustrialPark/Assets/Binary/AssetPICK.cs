@@ -28,20 +28,15 @@ namespace IndustrialPark
             Animation = reader.ReadUInt32();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(PickupHash);
-                writer.Write(PickupType);
-                writer.Write(PickupIndex);
-                writer.Write(PickupFlags);
-                writer.Write(Quantity);
-                writer.Write(Model);
-                writer.Write(Animation);
-
-                return writer.ToArray();
-            }
+            writer.Write(PickupHash);
+            writer.Write(PickupType);
+            writer.Write(PickupIndex);
+            writer.Write(PickupFlags);
+            writer.Write(Quantity);
+            writer.Write(Model);
+            writer.Write(Animation);
         }
 
         public override string ToString() =>
@@ -66,7 +61,7 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPICK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPICK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -79,17 +74,15 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.WriteMagic("PICK");
                 writer.Write(_entries.Length);
                 foreach (var l in _entries)
-                    writer.Write(l.Serialize(endianness));
+                    l.Serialize(writer);
 
-                return writer.ToArray();
-            }
+                
         }
 
         private void UpdateDictionary()

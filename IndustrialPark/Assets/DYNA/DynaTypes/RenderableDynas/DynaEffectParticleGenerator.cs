@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
@@ -240,96 +241,91 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            writer.Write(ParticleGeneratorFlags.FlagValueByte);
+            writer.Write(AttachFlags.FlagValueByte);
+            writer.Write(MotionFlags.FlagValueByte);
+            writer.Write(VolumeFlags.FlagValueByte);
+            writer.Write(Rate);
+            writer.Write(Texture);
+            writer.Write((byte)AttachType);
+            writer.Write((byte)MotionType);
+            writer.Write((byte)VolumeType);
+            writer.Write(SystemType);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(Entity);
+
+            if (AttachType == DynaEffectParticleGeneratorAttachType.attach_entity_tag)
             {
-                writer.Write(ParticleGeneratorFlags.FlagValueByte);
-                writer.Write(AttachFlags.FlagValueByte);
-                writer.Write(MotionFlags.FlagValueByte);
-                writer.Write(VolumeFlags.FlagValueByte);
-                writer.Write(Rate);
-                writer.Write(Texture);
-                writer.Write((byte)AttachType);
-                writer.Write((byte)MotionType);
-                writer.Write((byte)VolumeType);
-                writer.Write(SystemType);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(Entity);
-
-                if (AttachType == DynaEffectParticleGeneratorAttachType.attach_entity_tag)
-                {
-                    writer.Write(AttachEntityTagX);
-                    writer.Write(AttachEntityTagY);
-                    writer.Write(AttachEntityTagZ);
-                }
-                else
-                {
-                    writer.Write(Bone);
-                    writer.Write(new byte[11]);
-                }
-
-                writer.Write(MotionSpiralFlags.FlagValueByte);
-                writer.Write(Points);
-                writer.Write(new byte[2]);
-                writer.Write(RadiusInner);
-                writer.Write(RadiusOuter);
-                writer.Write(Duration);
-                writer.Write(Frequency);
-
-                if (VolumeType == 0)
-                {
-                    writer.Write(new byte[12]);
-                }
-                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_sphere || VolumeType == DynaEffectParticleGeneratorVolumeType.volume_circle)
-                {
-                    writer.Write(Radius);
-                    writer.Write(CircleArcLength);
-                    writer.Write(new byte[4]);
-                }
-                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_line)
-                {
-                    writer.Write(LineFlags.FlagValueByte);
-                    writer.Write(new byte[3]);
-                    writer.Write(LineRadius);
-                    writer.Write(LineLength);
-                }
-                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_model)
-                {
-                    writer.Write(ModelFlags.FlagValueByte);
-                    writer.Write(ModelExclude);
-                    writer.Write(new byte[2]);
-                    writer.Write(ModelExpand);
-                    writer.Write(new byte[4]);
-                }
-
-                writer.Write(UnknownFlags.FlagValueInt);
-                writer.Write(Unknown01);
-                writer.Write(Unknown02);
-                writer.Write(Unknown03);
-                writer.Write(Unknown04);
-                writer.Write(Unknown05);
-                writer.Write(Unknown06);
-                writer.Write(Unknown07);
-                writer.Write(Unknown08);
-                writer.Write(Unknown09);
-                writer.Write(Unknown10);
-                writer.Write(Unknown11);
-                writer.Write(Unknown12);
-                writer.Write(Unknown13);
-                writer.Write(Unknown14);
-                writer.Write(Unknown15);
-                writer.Write(UnknownColor);
-                writer.Write(Unknown16);
-                writer.Write(Unknown17);
-
-                return writer.ToArray();
+                writer.Write(AttachEntityTagX);
+                writer.Write(AttachEntityTagY);
+                writer.Write(AttachEntityTagZ);
             }
+            else
+            {
+                writer.Write(Bone);
+                writer.Write(new byte[11]);
+            }
+
+            writer.Write(MotionSpiralFlags.FlagValueByte);
+            writer.Write(Points);
+            writer.Write(new byte[2]);
+            writer.Write(RadiusInner);
+            writer.Write(RadiusOuter);
+            writer.Write(Duration);
+            writer.Write(Frequency);
+
+            if (VolumeType == 0)
+            {
+                writer.Write(new byte[12]);
+            }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_sphere || VolumeType == DynaEffectParticleGeneratorVolumeType.volume_circle)
+            {
+                writer.Write(Radius);
+                writer.Write(CircleArcLength);
+                writer.Write(new byte[4]);
+            }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_line)
+            {
+                writer.Write(LineFlags.FlagValueByte);
+                writer.Write(new byte[3]);
+                writer.Write(LineRadius);
+                writer.Write(LineLength);
+            }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_model)
+            {
+                writer.Write(ModelFlags.FlagValueByte);
+                writer.Write(ModelExclude);
+                writer.Write(new byte[2]);
+                writer.Write(ModelExpand);
+                writer.Write(new byte[4]);
+            }
+
+            writer.Write(UnknownFlags.FlagValueInt);
+            writer.Write(Unknown01);
+            writer.Write(Unknown02);
+            writer.Write(Unknown03);
+            writer.Write(Unknown04);
+            writer.Write(Unknown05);
+            writer.Write(Unknown06);
+            writer.Write(Unknown07);
+            writer.Write(Unknown08);
+            writer.Write(Unknown09);
+            writer.Write(Unknown10);
+            writer.Write(Unknown11);
+            writer.Write(Unknown12);
+            writer.Write(Unknown13);
+            writer.Write(Unknown14);
+            writer.Write(Unknown15);
+            writer.Write(UnknownColor);
+            writer.Write(Unknown16);
+            writer.Write(Unknown17);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

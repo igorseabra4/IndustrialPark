@@ -46,11 +46,10 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
+
+                base.Serialize(writer);
                 writer.Write(HangFlags.FlagValueInt);
                 writer.Write(PivotOffset);
                 writer.Write(LeverArm);
@@ -59,9 +58,8 @@ namespace IndustrialPark
                 writer.Write(Decay);
                 writer.Write(GrabDelay);
                 writer.Write(StopDeceleration);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+                SerializeLinks(writer);
+                
         }
 
         public static bool dontRender = false;

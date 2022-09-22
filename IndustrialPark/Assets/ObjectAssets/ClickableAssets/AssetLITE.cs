@@ -2,6 +2,7 @@
 using SharpDX;
 using System.ComponentModel;
 using AssetEditorColors;
+using IndustrialPark.AssetEditorColors;
 
 namespace IndustrialPark
 {
@@ -73,7 +74,7 @@ namespace IndustrialPark
         [Category(categoryName + " Color")]
         public AssetColor Color_RBGA
         {
-            get => new AssetColor((byte)(ColorRed * 255), (byte)(ColorGreen * 255), (byte)(ColorBlue * 255), (byte)(ColorAlpha * 255));
+            get => AssetColor.FromVector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
             set
             {
                 ColorRed = value.R / 255f;
@@ -162,11 +163,10 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
+
+                base.Serialize(writer);
 
                 writer.Write((byte)LightType);
                 writer.Write((byte)LightEffect);
@@ -186,9 +186,8 @@ namespace IndustrialPark
                 writer.Write(Radius);
                 writer.Write(Attach);
 
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+                SerializeLinks(writer);
+                
         }
 
         private Matrix world;

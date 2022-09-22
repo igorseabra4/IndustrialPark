@@ -115,36 +115,27 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
-                writer.Write(SerializeUIData(endianness));
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            SerializeForUIFT(writer);
+            SerializeLinks(writer);
         }
 
-        protected byte[] SerializeUIData(Endianness endianness)
+        protected void SerializeForUIFT(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(UIFlags.FlagValueInt);
-                writer.Write(Width);
-                writer.Write(Height);
-                writer.Write(Texture);
-                writer.Write(TextCoordTopLeftX);
-                writer.Write(TextCoordTopLeftY);
-                writer.Write(TextCoordTopRightX);
-                writer.Write(TextCoordTopRightY);
-                writer.Write(TextCoordBottomRightX);
-                writer.Write(TextCoordBottomRightY);
-                writer.Write(TextCoordBottomLeftX);
-                writer.Write(TextCoordBottomLeftY);
-
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(UIFlags.FlagValueInt);
+            writer.Write(Width);
+            writer.Write(Height);
+            writer.Write(Texture);
+            writer.Write(TextCoordTopLeftX);
+            writer.Write(TextCoordTopLeftY);
+            writer.Write(TextCoordTopRightX);
+            writer.Write(TextCoordTopRightY);
+            writer.Write(TextCoordBottomRightX);
+            writer.Write(TextCoordBottomRightY);
+            writer.Write(TextCoordBottomLeftX);
+            writer.Write(TextCoordBottomLeftY);
         }
 
         public static bool dontRender = false;

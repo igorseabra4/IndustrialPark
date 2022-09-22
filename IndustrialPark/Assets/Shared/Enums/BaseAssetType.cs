@@ -74,6 +74,7 @@
         CameraTweak = 0x45,
         SlideProps = 0x46,
         HUD_text = 0x47,
+        Spline = 0x49,
         SoundGroup = 0x4A,
         SDFX = 0x4B,
         UIM = 0x53,

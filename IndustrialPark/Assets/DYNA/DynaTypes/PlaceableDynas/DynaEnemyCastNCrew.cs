@@ -26,13 +26,9 @@ namespace IndustrialPark
 
         public DynaEnemyCastNCrew(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__CastNCrew, game, endianness) { }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntityDyna(endianness));
-                return writer.ToArray();
-            }
+            SerializeEntityDyna(writer);
         }
 
         public static bool dontRender = false;

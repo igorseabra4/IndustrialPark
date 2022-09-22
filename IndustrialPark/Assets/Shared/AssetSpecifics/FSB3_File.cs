@@ -8,6 +8,8 @@ namespace IndustrialPark
 {
     public class FSB3_File : GenericAssetDataContainer
     {
+        public override void Serialize(EndianBinaryWriter writer) { }
+
         // header
         // char4
         [Category("FSB3 Header")]
@@ -217,6 +219,8 @@ namespace IndustrialPark
 
     public class EntrySoundInfo_GCN_V2 : GenericAssetDataContainer
     {
+        public override void Serialize(EndianBinaryWriter writer) { }
+
         public int templengthcompressedbytes;
 
         public int lengthsamples { get; set; }

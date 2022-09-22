@@ -1,8 +1,8 @@
-﻿using DiscordRPC;
-using HipHopFile;
+﻿using HipHopFile;
+using Newtonsoft.Json;
 using SharpDX;
-using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
@@ -10,7 +10,36 @@ namespace IndustrialPark
 {
     public abstract class GenericAssetDataContainer
     {
-        public virtual byte[] Serialize(Game game, Endianness endianness) => new byte[0];
+        [JsonProperty]
+        protected Game _game;
+
+        [Browsable(false)]
+        public Game game => _game;
+        
+        public void SetGame(Game game)
+        {
+            _game = game;
+
+            var typeProperties = GetType().GetProperties();
+
+            foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
+                gadc.SetGame(game);
+
+            foreach (var gadcs in typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) && typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).Select(prop => (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)))
+                foreach (var gadc in gadcs)
+                    gadc.SetGame(game);
+        }
+
+        public abstract void Serialize(EndianBinaryWriter writer);
+
+        public byte[] Serialize(Endianness endianness)
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                Serialize(writer);
+                return writer.ToArray();
+            }
+        }
 
         public virtual bool HasReference(uint assetID) =>
             GetType().GetProperties().Any(prop => (
@@ -75,6 +104,10 @@ namespace IndustrialPark
                 result.Add("Referenced asset 0x" + assetID.ToString("X8") + " was not found in any open archive.");
             if (validReferenceRequired && assetID == 0)
                 result.Add($"{propName} is 0");
+        }
+
+        public virtual void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
         }
 
         protected static FlagBitmask ByteFlagsDescriptor(params string[] flagNames) => FlagsDescriptor(8, flagNames);

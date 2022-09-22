@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class AssetANIM_KeyFrame
+    public class AssetANIM_KeyFrame : GenericAssetDataContainer
     {
         public ushort TimeIndex { get; set; }
         public short RotationX { get; set; }
@@ -27,7 +27,7 @@ namespace IndustrialPark
             PositionZ = reader.ReadInt16();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(TimeIndex);
             writer.Write(RotationX);
@@ -59,7 +59,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public short[][] Offsets { get; set; }
 
-        public AssetANIM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetANIM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -94,10 +94,9 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.WriteMagic("SKB1");
                 writer.Write(Flags.FlagValueInt);
 
@@ -123,8 +122,7 @@ namespace IndustrialPark
                 while (writer.BaseStream.Length % 4 != 0)
                     writer.Write((byte)0xCD);
 
-                return writer.ToArray();
-            }
+                
         }
     }
 }

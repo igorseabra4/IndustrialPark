@@ -133,29 +133,25 @@ namespace IndustrialPark
             ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(Flags.FlagValueInt);
-                writer.Write((byte)_shape);
+            base.Serialize(writer);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write((byte)_shape);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            VolumeShape.Serialize(writer);
+            while (writer.BaseStream.Length < 0x34)
                 writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(VolumeShape.Serialize(game, endianness));
-                while (writer.BaseStream.Length < 0x34)
-                    writer.Write((byte)0);
-                writer.Write(UnknownInt34);
-                writer.Write(UnknownInt38);
-                writer.Write(UnknownInt3C);
-                writer.Write(UnknownInt40);
-                writer.Write(Rotation);
-                writer.Write(PivotX);
-                writer.Write(PivotZ);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            writer.Write(UnknownInt34);
+            writer.Write(UnknownInt38);
+            writer.Write(UnknownInt3C);
+            writer.Write(UnknownInt40);
+            writer.Write(Rotation);
+            writer.Write(PivotX);
+            writer.Write(PivotZ);
+            SerializeLinks(writer);
         }
 
         [Browsable(false)]

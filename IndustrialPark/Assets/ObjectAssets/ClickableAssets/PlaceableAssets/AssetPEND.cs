@@ -17,7 +17,7 @@ namespace IndustrialPark
 
         public AssetPEND(string assetName, Vector3 position) : base(assetName, AssetType.Pendulum, BaseAssetType.Pendulum, position)
         {
-            Motion = new Motion_Pendulum();
+            Motion = new Motion_Pendulum(game);
         }
 
         public AssetPEND(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -26,7 +26,7 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityHeaderEndPosition;
 
-                Motion = new Motion_Pendulum(reader);
+                Motion = new Motion_Pendulum(reader, game);
 
                 reader.BaseStream.Position = 0x74 + (game == Game.BFBB ? 4 : 0);
 
@@ -36,20 +36,15 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
-                writer.Write(Motion.Serialize(game, endianness));
-                writer.BaseStream.Position = 0x74 + (game == Game.BFBB ? 4 : 0);
-                writer.Write(Lt);
-                writer.Write(Q1t);
-                writer.Write(Q3t);
-
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            Motion.Serialize(writer);
+            writer.BaseStream.Position = 0x74 + (game == Game.BFBB ? 4 : 0);
+            writer.Write(Lt);
+            writer.Write(Q1t);
+            writer.Write(Q3t);
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

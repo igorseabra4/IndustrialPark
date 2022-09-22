@@ -1,6 +1,4 @@
 ﻿using HipHopFile;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 
@@ -122,7 +120,7 @@ namespace IndustrialPark
             _links = new Link[0];
         }
 
-        public BaseAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public BaseAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -142,8 +140,9 @@ namespace IndustrialPark
         }
 
         // meant for use with DUPC VIL only
-        protected BaseAsset(EndianBinaryReader reader)
+        protected BaseAsset(EndianBinaryReader reader, Game game)
         {
+            _game = game;
             assetID = reader.ReadUInt32();
             BaseAssetType = (BaseAssetType)reader.ReadByte();
             reader.ReadByte();
@@ -151,28 +150,18 @@ namespace IndustrialPark
             _links = new Link[0];
         }
 
-        protected byte[] SerializeBase(Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(assetID);
-                writer.Write((byte)BaseAssetType);
-                writer.Write((byte)_links.Length);
-                writer.Write(BaseFlags);
-
-                return writer.ToArray();
-            }
+            writer.Write(assetID);
+            writer.Write((byte)BaseAssetType);
+            writer.Write((byte)_links.Length);
+            writer.Write(BaseFlags);
         }
 
-        public byte[] SerializeLinks(Endianness endianness)
+        protected void SerializeLinks(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                foreach (var l in _links)
-                    writer.Write(l.Serialize(LinkType.Normal, endianness));
-
-                return writer.ToArray();
-            }
+            foreach (var l in _links)
+                l.Serialize(LinkType.Normal, writer);
         }
     }
 }

@@ -35,26 +35,23 @@ namespace IndustrialPark
             null,
             "Don't start moving");
 
-        public Motion(MotionType type)
+        public Motion(Game game, MotionType type)
         {
+            _game = game;
             Type = type;
         }
 
-        public Motion(EndianBinaryReader reader) : this((MotionType)reader.ReadByte())
+        public Motion(EndianBinaryReader reader, Game game) : this(game, (MotionType)reader.ReadByte())
         {
             UseBanking = reader.ReadByte();
             MotionFlags.FlagValueShort = reader.ReadUInt16();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write((byte)Type);
-                writer.Write(UseBanking);
-                writer.Write(MotionFlags.FlagValueShort);
-                return writer.ToArray();
-            }
+            writer.Write((byte)Type);
+            writer.Write(UseBanking);
+            writer.Write(MotionFlags.FlagValueShort);
         }
 
         protected int LocalFrameCounter = -1;
@@ -98,9 +95,9 @@ namespace IndustrialPark
         public AssetSingle RetractTime { get; set; }
         public AssetSingle RetractWaitTime { get; set; }
 
-        public Motion_ExtendRetract() : base(MotionType.ExtendRetract) { }
+        public Motion_ExtendRetract(Game game) : base(game, MotionType.ExtendRetract) { }
 
-        public Motion_ExtendRetract(EndianBinaryReader reader) : base(reader)
+        public Motion_ExtendRetract(EndianBinaryReader reader, Game game) : base(reader, game)
         {
             RetractPositionX = reader.ReadSingle();
             RetractPositionY = reader.ReadSingle();
@@ -114,24 +111,19 @@ namespace IndustrialPark
             RetractWaitTime = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(RetractPositionX);
-                writer.Write(RetractPositionY);
-                writer.Write(RetractPositionZ);
-                writer.Write(ExtendDeltaPositionX);
-                writer.Write(ExtendDeltaPositionY);
-                writer.Write(ExtendDeltaPositionZ);
-                writer.Write(ExtendTime);
-                writer.Write(ExtendWaitTime);
-                writer.Write(RetractTime);
-                writer.Write(RetractWaitTime);
-
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(RetractPositionX);
+            writer.Write(RetractPositionY);
+            writer.Write(RetractPositionZ);
+            writer.Write(ExtendDeltaPositionX);
+            writer.Write(ExtendDeltaPositionY);
+            writer.Write(ExtendDeltaPositionZ);
+            writer.Write(ExtendTime);
+            writer.Write(ExtendWaitTime);
+            writer.Write(RetractTime);
+            writer.Write(RetractWaitTime);
         }
 
         private CurrentMovementAction currentMovementAction;
@@ -206,8 +198,8 @@ namespace IndustrialPark
         public AssetSingle Height { get; set; }
         public AssetSingle Period { get; set; }
 
-        public Motion_Orbit() : base(MotionType.Orbit) { }
-        public Motion_Orbit(EndianBinaryReader reader) : base(reader)
+        public Motion_Orbit(Game game) : base(game, MotionType.Orbit) { }
+        public Motion_Orbit(EndianBinaryReader reader, Game game) : base(reader, game)
         {
             CenterX = reader.ReadSingle();
             CenterY = reader.ReadSingle();
@@ -217,20 +209,15 @@ namespace IndustrialPark
             Period = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(CenterX);
-                writer.Write(CenterY);
-                writer.Write(CenterZ);
-                writer.Write(Width);
-                writer.Write(Height);
-                writer.Write(Period);
-
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(CenterX);
+            writer.Write(CenterY);
+            writer.Write(CenterZ);
+            writer.Write(Width);
+            writer.Write(Height);
+            writer.Write(Period);
         }
 
         public override Matrix PlatLocalTranslation()
@@ -246,32 +233,34 @@ namespace IndustrialPark
 
     public class Motion_Spline : Motion
     {
+        public string Note => "Speed and LeanModifier are only present in Movie/Incredibles.";
+
         public int SplineID { get; set; }
-        [Description("Incredibles only")]
         public AssetSingle Speed { get; set; }
-        [Description("Incredibles only")]
         public AssetSingle LeanModifier { get; set; }
 
-        public Motion_Spline() : base(MotionType.Spline) { }
-        public Motion_Spline(EndianBinaryReader reader) : base(reader)
+        public Motion_Spline(Game game) : base(game, MotionType.Spline)
         {
+            _game = game;
+        }
+
+        public Motion_Spline(EndianBinaryReader reader, Game game) : base(reader, game)
+        {
+            _game = game;
+
             SplineID = reader.ReadInt32();
             Speed = reader.ReadSingle();
             LeanModifier = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            base.Serialize(writer);
+            writer.Write(SplineID);
+            if (game == Game.Incredibles)
             {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(SplineID);
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(Speed);
-                    writer.Write(LeanModifier);
-                }
-                return writer.ToArray();
+                writer.Write(Speed);
+                writer.Write(LeanModifier);
             }
         }
     }
@@ -283,14 +272,14 @@ namespace IndustrialPark
         public AssetID MovePoint { get; set; }
         public AssetSingle Speed { get; set; }
 
-        public Motion_MovePoint(Vector3 initialPosition) : base(MotionType.MovePoint)
+        public Motion_MovePoint(Game game, Vector3 initialPosition) : base(game, MotionType.MovePoint)
         {
             this.initialPosition = initialPosition;
 
             MovePoint = 0;
         }
 
-        public Motion_MovePoint(EndianBinaryReader reader, Vector3 initialPosition) : base(reader)
+        public Motion_MovePoint(EndianBinaryReader reader, Game game, Vector3 initialPosition) : base(reader, game)
         {
             this.initialPosition = initialPosition;
 
@@ -299,17 +288,12 @@ namespace IndustrialPark
             Speed = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(MovePointFlags.FlagValueInt);
-                writer.Write(MovePoint);
-                writer.Write(Speed);
-
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(MovePointFlags.FlagValueInt);
+            writer.Write(MovePoint);
+            writer.Write(Speed);
         }
 
         private AssetMVPT currentMVPT;
@@ -402,12 +386,12 @@ namespace IndustrialPark
 
     public class Motion_Mechanism : Motion
     {
+        public string Note => "ScaleAxis, ScaleAmount and ScaleDuration are only present in Movie/Incredibles.";
+
         public EMovementType MovementType { get; set; }
         public EMechanismFlags MovementLoopMode { get; set; }
         public Axis SlideAxis { get; set; }
         public Axis RotateAxis { get; set; }
-        [Description("Incredibles only")]
-        public byte ScaleAxis { get; set; }
         public AssetSingle SlideDistance { get; set; }
         public AssetSingle SlideTime { get; set; }
         public AssetSingle SlideAccelTime { get; set; }
@@ -418,14 +402,13 @@ namespace IndustrialPark
         public AssetSingle RotateDecelTime { get; set; }
         public AssetSingle RetractDelay { get; set; }
         public AssetSingle PostRetractDelay { get; set; }
-        [Description("Incredibles only")]
+        public byte ScaleAxis { get; set; }
         public AssetSingle ScaleAmount { get; set; }
-        [Description("Incredibles only")]
         public AssetSingle ScaleDuration { get; set; }
 
-        public Motion_Mechanism() : this(MotionType.Mechanism) { }
-        public Motion_Mechanism(MotionType motionType) : base(motionType) { }
-        public Motion_Mechanism(EndianBinaryReader reader, Game game) : base(reader)
+        public Motion_Mechanism(Game game) : this(game, MotionType.Mechanism) { }
+        public Motion_Mechanism(Game game, MotionType motionType) : base(game, motionType) { }
+        public Motion_Mechanism(EndianBinaryReader reader, Game game) : base(reader, game)
         {
             MovementType = (EMovementType)reader.ReadByte();
             MovementLoopMode = (EMechanismFlags)reader.ReadByte();
@@ -455,39 +438,34 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            base.Serialize(writer);
+            writer.Write((byte)MovementType);
+            writer.Write((byte)MovementLoopMode);
+            writer.Write((byte)SlideAxis);
+            writer.Write((byte)RotateAxis);
+            if (game == Game.Incredibles)
             {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write((byte)MovementType);
-                writer.Write((byte)MovementLoopMode);
-                writer.Write((byte)SlideAxis);
-                writer.Write((byte)RotateAxis);
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(ScaleAxis);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                }
-                writer.Write(SlideDistance);
-                writer.Write(SlideTime);
-                writer.Write(SlideAccelTime);
-                writer.Write(SlideDecelTime);
-                writer.Write(RotateDistance);
-                writer.Write(RotateTime);
-                writer.Write(RotateAccelTime);
-                writer.Write(RotateDecelTime);
-                writer.Write(RetractDelay);
-                writer.Write(PostRetractDelay);
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(ScaleAmount);
-                    writer.Write(ScaleDuration);
-                }
-
-                return writer.ToArray();
+                writer.Write(ScaleAxis);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+            }
+            writer.Write(SlideDistance);
+            writer.Write(SlideTime);
+            writer.Write(SlideAccelTime);
+            writer.Write(SlideDecelTime);
+            writer.Write(RotateDistance);
+            writer.Write(RotateTime);
+            writer.Write(RotateAccelTime);
+            writer.Write(RotateDecelTime);
+            writer.Write(RetractDelay);
+            writer.Write(PostRetractDelay);
+            if (game == Game.Incredibles)
+            {
+                writer.Write(ScaleAmount);
+                writer.Write(ScaleDuration);
             }
         }
 
@@ -697,8 +675,8 @@ namespace IndustrialPark
         private AssetSingle Range_Rad;
         private AssetSingle Phase_Rad;
 
-        public Motion_Pendulum() : base(MotionType.Pendulum) { }
-        public Motion_Pendulum(EndianBinaryReader reader) : base(reader)
+        public Motion_Pendulum(Game game) : base(game, MotionType.Pendulum) { }
+        public Motion_Pendulum(EndianBinaryReader reader, Game game) : base(reader, game)
         {
             PendulumFlags = reader.ReadByte();
             Plane = reader.ReadByte();
@@ -710,21 +688,17 @@ namespace IndustrialPark
             Phase_Rad = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(PendulumFlags);
-                writer.Write(Plane);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(Length);
-                writer.Write(Range_Rad);
-                writer.Write(Period);
-                writer.Write(Phase_Rad);
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(PendulumFlags);
+            writer.Write(Plane);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write(Length);
+            writer.Write(Range_Rad);
+            writer.Write(Period);
+            writer.Write(Phase_Rad);
         }
 
         float speed = 0;

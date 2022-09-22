@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -12,7 +13,14 @@ namespace IndustrialPark
 
         public void ExportHip(string fileName)
         {
-            BuildHipFile().ToIni(game, fileName, true, true);
+            try
+            {
+                BuildHipFile().ToIni(game, fileName, true, true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public void ImportHip(string[] fileNames, bool forceOverwrite)

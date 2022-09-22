@@ -3,9 +3,9 @@ using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace AssetEditorColors
+namespace IndustrialPark.AssetEditorColors
 {
-    [TypeConverter(typeof(AssetColorConverter)), Editor(typeof(AssetColorEditor), typeof(UITypeEditor)), Description("Hex Color (RRGGBBAA)")]
+    [TypeConverter(typeof(AssetColorTypeConverter)), Editor(typeof(AssetColorEditor), typeof(UITypeEditor)), Description("Hex Color (RRGGBBAA)")]
     public class AssetColor
     {
         public byte R { get; set; }
@@ -46,6 +46,10 @@ namespace AssetEditorColors
             G = argb[1];
             B = argb[0];
         }
+
+        public static AssetColor FromVector4(float R, float G, float B, float A) => new AssetColor((byte)(R * 255f), (byte)(G * 255f), (byte)(B * 255f), (byte)(A * 255f));
+
+        public static AssetColor FromVector4(Vector4 color) => FromVector4(color.X, color.Y, color.Z, color.W);
 
         public int GetARGB()
         {

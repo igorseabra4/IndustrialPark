@@ -21,7 +21,7 @@ namespace IndustrialPark
             Setup(renderer);
         }
 
-        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
+        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game)
         {
             Setup(renderer);
         }

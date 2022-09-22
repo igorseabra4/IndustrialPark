@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System;
 using System.IO;
 using System.Linq;
@@ -28,30 +29,56 @@ namespace IndustrialPark
             this.endianness = endianness;
         }
 
-        public override float ReadSingle() =>
-            (endianness == Endianness.Little) ?
-            base.ReadSingle() :
-            BitConverter.ToSingle(base.ReadBytes(4).Reverse().ToArray(), 0);
+        public override float ReadSingle()
+        {
+            if (endianness == Endianness.Little)
+                return base.ReadSingle();
+            return BitConverter.ToSingle(ReadReverse4(), 0);
+        }
 
-        public override short ReadInt16() =>
-            (endianness == Endianness.Little) ?
-            base.ReadInt16() :
-            BitConverter.ToInt16(base.ReadBytes(2).Reverse().ToArray(), 0);
+        public override short ReadInt16()
+        {
+            if (endianness == Endianness.Little)
+                return base.ReadInt16();
+            return BitConverter.ToInt16(ReadReverse2(), 0);
+        }
 
-        public override int ReadInt32() =>
-            (endianness == Endianness.Little) ?
-            base.ReadInt32() :
-            BitConverter.ToInt32(base.ReadBytes(4).Reverse().ToArray(), 0);
+        public override int ReadInt32()
+        {
+            if (endianness == Endianness.Little)
+                return base.ReadInt32();
+            return BitConverter.ToInt32(ReadReverse4(), 0);
+        }
 
-        public override ushort ReadUInt16() =>
-            (endianness == Endianness.Little) ?
-            base.ReadUInt16() :
-            BitConverter.ToUInt16(base.ReadBytes(2).Reverse().ToArray(), 0);
+        public override ushort ReadUInt16()
+        {
+            if (endianness == Endianness.Little)
+                return base.ReadUInt16();
+            return BitConverter.ToUInt16(ReadReverse2(), 0);
+        }
 
-        public override uint ReadUInt32() =>
-            (endianness == Endianness.Little) ?
-            base.ReadUInt32() :
-            BitConverter.ToUInt32(base.ReadBytes(4).Reverse().ToArray(), 0);
+        public override uint ReadUInt32()
+        {
+            if (endianness == Endianness.Little)
+                return base.ReadUInt32();
+            return BitConverter.ToUInt32(ReadReverse4(), 0);
+        }
+
+        private byte[] ReadReverse2()
+        {
+            var b0 = base.ReadByte();
+            var b1 = base.ReadByte();
+            return new byte[2] { b1, b0 };
+        }
+
+        private byte[] ReadReverse4()
+        {
+            var b0 = base.ReadByte();
+            var b1 = base.ReadByte();
+            var b2 = base.ReadByte();
+            var b3 = base.ReadByte();
+            return new byte[4] { b3, b2, b1, b0 };
+        }
 
         public bool ReadByteBool() => ReadByte() != 0;
 
@@ -68,7 +95,7 @@ namespace IndustrialPark
 
     public class EndianBinaryWriter : BinaryWriter
     {
-        public readonly Endianness endianness;
+        public Endianness endianness;
 
         public EndianBinaryWriter(Endianness endianness) : base(new MemoryStream())
         {
@@ -81,38 +108,50 @@ namespace IndustrialPark
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse(BitConverter.GetBytes(f));
+            else WriteReverse4(BitConverter.GetBytes(f));
         }
 
         public override void Write(int f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse(BitConverter.GetBytes(f));
+            else WriteReverse4(BitConverter.GetBytes(f));
         }
 
         public override void Write(short f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse(BitConverter.GetBytes(f));
+            else WriteReverse2(BitConverter.GetBytes(f));
         }
 
         public override void Write(uint f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse(BitConverter.GetBytes(f));
+            else WriteReverse4(BitConverter.GetBytes(f));
         }
 
         public override void Write(ushort f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse(BitConverter.GetBytes(f));
+            else WriteReverse2(BitConverter.GetBytes(f));
         }
 
-        private void WriteReverse(byte[] bytes) => base.Write(bytes.Reverse().ToArray());
+        private void WriteReverse4(byte[] bytes)
+        {
+            base.Write(bytes[3]);
+            base.Write(bytes[2]);
+            base.Write(bytes[1]);
+            base.Write(bytes[0]);
+        }
+
+        private void WriteReverse2(byte[] bytes)
+        {
+            base.Write(bytes[1]);
+            base.Write(bytes[0]);
+        }
 
         public override void Write(string f)
         {

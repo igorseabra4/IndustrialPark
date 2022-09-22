@@ -1,6 +1,8 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
@@ -79,8 +81,7 @@ namespace IndustrialPark
                         ParticleEmitterSettings = new PareSpecific_xPEEntBound();
                         break;
                     default:
-                        ParticleEmitterSettings = new PareSpecific_Generic();
-                        break;
+                        throw new ArgumentException($"Unknown particle emitter type: {_emitterType}");
                 }
             }
         }
@@ -194,6 +195,9 @@ namespace IndustrialPark
 
                 switch (_emitterType)
                 {
+                    case EmitterType.Point:
+                        ParticleEmitterSettings = new PareSpecific_Generic();
+                        break;
                     case EmitterType.CircleEdge:
                     case EmitterType.Circle:
                     case EmitterType.OCircleEdge:
@@ -229,8 +233,7 @@ namespace IndustrialPark
                         ParticleEmitterSettings = new PareSpecific_xPEEntBound(reader);
                         break;
                     default:
-                        ParticleEmitterSettings = new PareSpecific_Generic();
-                        break;
+                        throw new ArgumentException($"Unknown particle emitter type: {_emitterType}");
                 } // 0x1C in size
 
                 reader.BaseStream.Position = 0x2C;
@@ -268,66 +271,62 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(EmitterFlags.FlagValueByte);
-                writer.Write((byte)_emitterType);
+            base.Serialize(writer);
+            writer.Write(EmitterFlags.FlagValueByte);
+            writer.Write((byte)_emitterType);
 
-                if (game == Game.Scooby)
-                {
-                    writer.Write(Count);
-                    writer.Write(CountVariation);
-                    writer.Write(Interval);
-                }
-                else
-                {
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write(ParticleProperties);
-                }
-                writer.Write(ParticleEmitterSettings.Serialize(game, endianness));
-                while (writer.BaseStream.Length < 0x2C)
-                    writer.Write((byte)0);
-                writer.Write(Emitter);
-                if (game == Game.Scooby)
-                    writer.Write(ParticleSystem);
-                writer.Write(Emitter_PosX);
-                writer.Write(Emitter_PosY);
-                writer.Write(Emitter_PosZ);
-                writer.Write(Velocity_X);
-                writer.Write(Velocity_Y);
-                writer.Write(Velocity_Z);
-                writer.Write(Velocity_AngleVariation_Rad);
-                if (game == Game.Scooby)
-                {
-                    writer.Write(StartColor);
-                    writer.Write(EndColor);
-                    writer.Write(SizeBirth);
-                    writer.Write(SizeBirthVariation);
-                    writer.Write(SizeDeath);
-                    writer.Write(Life);
-                    writer.Write(LifeVariation);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write((byte)CullMode);
-                    writer.Write((byte)0);
-                    writer.Write(CullDistanceSquared);
-                    writer.Write(MaxEmit);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                    writer.Write((byte)0);
-                }
-                else
-                {
-                    writer.Write(CullMode);
-                    writer.Write(CullDistanceSquared);
-                }
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
+            if (game == Game.Scooby)
+            {
+                writer.Write(Count);
+                writer.Write(CountVariation);
+                writer.Write(Interval);
             }
+            else
+            {
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write(ParticleProperties);
+            }
+            ParticleEmitterSettings.Serialize(writer);
+            while (writer.BaseStream.Length < 0x2C)
+                writer.Write((byte)0);
+            writer.Write(Emitter);
+            if (game == Game.Scooby)
+                writer.Write(ParticleSystem);
+            writer.Write(Emitter_PosX);
+            writer.Write(Emitter_PosY);
+            writer.Write(Emitter_PosZ);
+            writer.Write(Velocity_X);
+            writer.Write(Velocity_Y);
+            writer.Write(Velocity_Z);
+            writer.Write(Velocity_AngleVariation_Rad);
+            if (game == Game.Scooby)
+            {
+                writer.Write(StartColor);
+                writer.Write(EndColor);
+                writer.Write(SizeBirth);
+                writer.Write(SizeBirthVariation);
+                writer.Write(SizeDeath);
+                writer.Write(Life);
+                writer.Write(LifeVariation);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)CullMode);
+                writer.Write((byte)0);
+                writer.Write(CullDistanceSquared);
+                writer.Write(MaxEmit);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+                writer.Write((byte)0);
+            }
+            else
+            {
+                writer.Write(CullMode);
+                writer.Write(CullDistanceSquared);
+            }
+            SerializeLinks(writer);
         }
 
         public override void Verify(ref List<string> result)

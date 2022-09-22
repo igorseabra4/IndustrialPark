@@ -37,19 +37,14 @@ namespace IndustrialPark
             }
         }
 
-        protected byte[] SerializeDynaHud(Endianness endianness)
+        protected void SerializeDynaHud(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(PositionX);
-                writer.Write(PositionY);
-                writer.Write(PositionZ);
-                writer.Write(ScaleX);
-                writer.Write(ScaleY);
-                writer.Write(ScaleZ);
-
-                return writer.ToArray();
-            }
+            writer.Write(PositionX);
+            writer.Write(PositionY);
+            writer.Write(PositionZ);
+            writer.Write(ScaleX);
+            writer.Write(ScaleY);
+            writer.Write(ScaleZ);
         }
     }
 }

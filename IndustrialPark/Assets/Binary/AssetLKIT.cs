@@ -1,5 +1,5 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -7,19 +7,19 @@ namespace IndustrialPark
     public class LightKitLight : GenericAssetDataContainer
     {
         public int Type { get; set; }
-        public AssetSingle ColorR { get; set; }
-        public AssetSingle ColorG { get; set; }
-        public AssetSingle ColorB { get; set; }
+        public AssetSingle ColorRed { get; set; }
+        public AssetSingle ColorGreen { get; set; }
+        public AssetSingle ColorBlue { get; set; }
         public AssetSingle ColorAlpha { get; set; }
         public AssetColor ColorRGBA
         {
-            get => new AssetColor((byte)(ColorR * 255), (byte)(ColorG * 255), (byte)(ColorB * 255), (byte)(ColorAlpha * 255));
+            get => AssetColor.FromVector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
             set
             {
                 var val = value.ToVector4();
-                ColorR = val.X;
-                ColorG = val.Y;
-                ColorB = val.Z;
+                ColorRed = val.X;
+                ColorGreen = val.Y;
+                ColorBlue = val.Z;
                 ColorAlpha = val.W;
             }
         }
@@ -47,9 +47,9 @@ namespace IndustrialPark
         public LightKitLight(EndianBinaryReader reader)
         {
             Type = reader.ReadInt32();
-            ColorR = reader.ReadSingle();
-            ColorG = reader.ReadSingle();
-            ColorB = reader.ReadSingle();
+            ColorRed = reader.ReadSingle();
+            ColorGreen = reader.ReadSingle();
+            ColorBlue = reader.ReadSingle();
             ColorAlpha = reader.ReadSingle();
             Unknown02_X = reader.ReadSingle();
             Unknown02_Y = reader.ReadSingle();
@@ -72,37 +72,32 @@ namespace IndustrialPark
             PlatLight = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Type);
-                writer.Write(ColorR);
-                writer.Write(ColorG);
-                writer.Write(ColorB);
-                writer.Write(ColorAlpha);
-                writer.Write(Unknown02_X);
-                writer.Write(Unknown02_Y);
-                writer.Write(Unknown02_Z);
-                writer.Write(Unknown02_W);
-                writer.Write(Unknown03_X);
-                writer.Write(Unknown03_Y);
-                writer.Write(Unknown03_Z);
-                writer.Write(Unknown03_W);
-                writer.Write(Direction_X);
-                writer.Write(Direction_Y);
-                writer.Write(Direction_Z);
-                writer.Write(Direction_W);
-                writer.Write(Unknown05_X);
-                writer.Write(Unknown05_Y);
-                writer.Write(Unknown05_Z);
-                writer.Write(Unknown05_W);
-                writer.Write(Radius);
-                writer.Write(Angle);
-                writer.Write(PlatLight);
-
-                return writer.ToArray();
-            }
+            writer.Write(Type);
+            writer.Write(ColorRed);
+            writer.Write(ColorGreen);
+            writer.Write(ColorBlue);
+            writer.Write(ColorAlpha);
+            writer.Write(Unknown02_X);
+            writer.Write(Unknown02_Y);
+            writer.Write(Unknown02_Z);
+            writer.Write(Unknown02_W);
+            writer.Write(Unknown03_X);
+            writer.Write(Unknown03_Y);
+            writer.Write(Unknown03_Z);
+            writer.Write(Unknown03_W);
+            writer.Write(Direction_X);
+            writer.Write(Direction_Y);
+            writer.Write(Direction_Z);
+            writer.Write(Direction_W);
+            writer.Write(Unknown05_X);
+            writer.Write(Unknown05_Y);
+            writer.Write(Unknown05_Z);
+            writer.Write(Unknown05_W);
+            writer.Write(Radius);
+            writer.Write(Angle);
+            writer.Write(PlatLight);
         }
     }
 
@@ -121,7 +116,7 @@ namespace IndustrialPark
             Read(data, endianness);
         }
 
-        public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             Read(AHDR.data, endianness);
         }
@@ -141,24 +136,19 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             if (Lights == null)
-                return new byte[0];
+                return;
 
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.WriteMagic("LKIT");
+            writer.WriteMagic("LKIT");
 
-                writer.Write(Group);
-                writer.Write(Lights.Length);
-                writer.Write(0);
+            writer.Write(Group);
+            writer.Write(Lights.Length);
+            writer.Write(0);
 
-                foreach (var l in Lights)
-                    writer.Write(l.Serialize(endianness));
-
-                return writer.ToArray();
-            }
+            foreach (var l in Lights)
+                l.Serialize(writer);
         }
     }
 }

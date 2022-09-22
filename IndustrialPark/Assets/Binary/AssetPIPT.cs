@@ -232,7 +232,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName + " (Incredibles only)")]
+        [Category(categoryName + " (Movie/Incredibles only)")]
         public int Unknown { get; set; }
 
         public PipeInfo()
@@ -263,6 +263,8 @@ namespace IndustrialPark
 
         public PipeInfo(EndianBinaryReader reader, Game game)
         {
+            _game = game;
+
             Model = reader.ReadUInt32();
             SubObjectBits.FlagValueInt = reader.ReadUInt32();
             PipeFlags = reader.ReadInt32();
@@ -270,19 +272,14 @@ namespace IndustrialPark
                 Unknown = reader.ReadInt32();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Model);
-                writer.Write(SubObjectBits.FlagValueInt);
-                writer.Write(PipeFlags);
+            writer.Write(Model);
+            writer.Write(SubObjectBits.FlagValueInt);
+            writer.Write(PipeFlags);
 
-                if (game == Game.Incredibles)
-                    writer.Write(Unknown);
-
-                return writer.ToArray();
-            }
+            if (game == Game.Incredibles)
+                writer.Write(Unknown);
         }
     }
 
@@ -307,7 +304,7 @@ namespace IndustrialPark
             Entries = new PipeInfo[0];
         }
 
-        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -320,17 +317,12 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(_entries.Length);
+            writer.Write(_entries.Length);
 
-                foreach (var l in _entries)
-                    writer.Write(l.Serialize(game, endianness));
-
-                return writer.ToArray();
-            }
+            foreach (var l in _entries)
+                l.Serialize(writer);
         }
 
         public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, endianness)

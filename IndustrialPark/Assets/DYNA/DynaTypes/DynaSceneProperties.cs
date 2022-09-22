@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -129,56 +128,58 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
+            var idlesStart = writer.BaseStream.Position;
+
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(bombCount);
+            writer.Write(extraIdleDelay);
+            writer.Write(hdrGlow);
+            writer.Write(hdrDarken);
+            writer.Write(BackgroundMusic);
+            writer.Write(scenePropertiesFlags);
+            writer.Write(waterTileWidth);
+            writer.Write(lodFadeDistance);
+            writer.Write(UnknownInt24);
+            writer.Write(UnknownInt28);
+            writer.Write(UnknownInt2C);
+            writer.Write(UnknownInt30);
+
+            if (inc)
             {
-                writer.Write(idle03Extras.Length);
-                writer.Write(0);
-                writer.Write(idle04Extras.Length);
-                writer.Write(0);
-                writer.Write(bombCount);
-                writer.Write(extraIdleDelay);
-                writer.Write(hdrGlow);
-                writer.Write(hdrDarken);
-                writer.Write(BackgroundMusic);
-                writer.Write(scenePropertiesFlags);
-                writer.Write(waterTileWidth);
-                writer.Write(lodFadeDistance);
-                writer.Write(UnknownInt24);
-                writer.Write(UnknownInt28);
-                writer.Write(UnknownInt2C);
-                writer.Write(UnknownInt30);
-
-                if (inc)
-                {
-                    writer.Write(UnknownInt34);
-                    writer.Write(UnknownInt38);
-                    writer.Write(UnknownInt3C);
-                    writer.Write(UnknownInt40);
-                    writer.Write(UnknownInt44);
-                    writer.Write(UnknownInt48);
-                    writer.Write(UnknownInt4C);
-                    writer.Write(UnknownInt50);
-                    writer.Write(UnknownInt54);
-                }
-
-                var idle03Pos = (int)writer.BaseStream.Position;
-                foreach (var u in idle03Extras)
-                    writer.Write(u);
-
-                var idle04Pos = (int)writer.BaseStream.Position;
-                foreach (var u in idle04Extras)
-                    writer.Write(u);
-
-                writer.BaseStream.Position = 0x4;
-                writer.Write(idle03Pos);
-
-                writer.BaseStream.Position = 0xC;
-                writer.Write(idle04Pos);
-
-                return writer.ToArray();
+                writer.Write(UnknownInt34);
+                writer.Write(UnknownInt38);
+                writer.Write(UnknownInt3C);
+                writer.Write(UnknownInt40);
+                writer.Write(UnknownInt44);
+                writer.Write(UnknownInt48);
+                writer.Write(UnknownInt4C);
+                writer.Write(UnknownInt50);
+                writer.Write(UnknownInt54);
             }
+
+            var idle03Pos = (int)(writer.BaseStream.Position - idlesStart);
+            foreach (var u in idle03Extras)
+                writer.Write(u);
+
+            var idle04Pos = (int)(writer.BaseStream.Position - idlesStart);
+            foreach (var u in idle04Extras)
+                writer.Write(u);
+
+            var dynaDataEnd = writer.BaseStream.Position;
+
+            writer.BaseStream.Position = idlesStart;
+
+            writer.Write(idle03Extras.Length);
+            writer.Write(idle03Pos);
+            writer.Write(idle04Extras.Length);
+            writer.Write(idle04Pos);
+
+            writer.BaseStream.Position = dynaDataEnd;
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

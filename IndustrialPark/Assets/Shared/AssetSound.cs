@@ -35,7 +35,7 @@ namespace IndustrialPark
             SetFileType(game, platform);
         }
 
-        public AssetSound(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game, platform.Endianness())
+        public AssetSound(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game)
         {
             SetFileType(game, platform);
         }

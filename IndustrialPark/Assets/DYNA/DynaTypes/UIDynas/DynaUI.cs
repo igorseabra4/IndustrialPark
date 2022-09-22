@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -71,32 +72,27 @@ namespace IndustrialPark
             }
         }
 
-        protected byte[] SerializeDynaUI(Endianness endianness)
+        protected void SerializeDynaUI(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(PositionX);
-                writer.Write(PositionY);
-                writer.Write(PositionZ);
-                writer.Write(Width);
-                writer.Write(Height);
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(Color);
-                writer.Write(UIMotion_Selected);
-                writer.Write(UIMotion_Unselected);
-                writer.Write(Brightness);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(autoMenuUp);
-                writer.Write(autoMenuDown);
-                writer.Write(autoMenuLeft);
-                writer.Write(autoMenuRight);
-                writer.Write(custom);
-                writer.Write(customWidget);
-
-                return writer.ToArray();
-            }
+            writer.Write(PositionX);
+            writer.Write(PositionY);
+            writer.Write(PositionZ);
+            writer.Write(Width);
+            writer.Write(Height);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(Color);
+            writer.Write(UIMotion_Selected);
+            writer.Write(UIMotion_Unselected);
+            writer.Write(Brightness);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write(autoMenuUp);
+            writer.Write(autoMenuDown);
+            writer.Write(autoMenuLeft);
+            writer.Write(autoMenuRight);
+            writer.Write(custom);
+            writer.Write(customWidget);
         }
     }
 }

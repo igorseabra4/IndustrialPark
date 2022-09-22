@@ -86,7 +86,7 @@ namespace IndustrialPark
             RefreshPropertyGrid();
         }
 
-        private List<int> RowSizes = new List<int>() { -1 };
+        private readonly List<int> RowSizes = new List<int>() { -1 };
         private const int ButtonSize = 28;
         private const int CheckboxLabelSize = 22;
 
@@ -282,11 +282,31 @@ namespace IndustrialPark
         {
             AddRow(ButtonSize);
             AddRow(ButtonSize);
-            AddRow(ButtonSize);
 
-            foreach (var i in new int[] { 3, 4, 5, 6, 8, 9 })
+            var validTypes = new List<IShrapnelType>()
             {
-                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add Type {i}", AutoSize = true };
+                IShrapnelType.Particle,
+                IShrapnelType.Projectile,
+                IShrapnelType.Lightning,
+                IShrapnelType.Sound
+            };
+
+            if (asset.game == Game.Incredibles)
+            {
+                AddRow(ButtonSize);
+                AddRow(ButtonSize);
+
+                validTypes.AddRange(new IShrapnelType[] {
+                     IShrapnelType.Shockwave,
+                     IShrapnelType.Explosion,
+                     IShrapnelType.Distortion,
+                     IShrapnelType.Fire,
+                });
+            }
+
+            foreach (var i in validTypes)
+            {
+                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add {i}", AutoSize = true };
                 buttonAdd.Click += (object sender, EventArgs e) =>
                 {
                     asset.AddEntry(i);

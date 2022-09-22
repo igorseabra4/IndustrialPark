@@ -33,16 +33,12 @@ namespace IndustrialPark
             MaxPitchMult = reader.ReadSingle();
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Sound);
-                writer.Write(Volume);
-                writer.Write(MinPitchMult);
-                writer.Write(MaxPitchMult);
-                return writer.ToArray();
-            }
+            writer.Write(Sound);
+            writer.Write(Volume);
+            writer.Write(MinPitchMult);
+            writer.Write(MaxPitchMult);
         }
 
         public override string ToString() => $"[{HexUIntTypeConverter.StringFromAssetID(Sound)}] - [{Volume}]";
@@ -56,34 +52,34 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int uPlayedMask { get; set; }
         [Category(categoryName)]
-        public AssetByte uSetBits { get; set; }
+        public byte uSetBits { get; set; }
         [Category(categoryName)]
-        public AssetByte nMaxPlays { get; set; }
+        public byte nMaxPlays { get; set; }
         [Category(categoryName)]
-        public AssetByte uPriority { get; set; }
+        public byte uPriority { get; set; }
         [Category(categoryName)]
         public FlagBitmask uFlags { get; set; } = ByteFlagsDescriptor("Play globally");
         [Category(categoryName)]
-        public FlagBitmask eSoundCategory { get; set; } = ByteFlagsDescriptor("Choose random entry");
+        public byte eSoundCategory { get; set; }
         [Category(categoryName)]
-        public AssetByte ePlayRule { get; set; }
+        public byte ePlayRule { get; set; }
         [Category(categoryName)]
-        public AssetByte uInfoPad0 { get; set; }
+        public byte uInfoPad0 { get; set; }
         [Category(categoryName)]
         public AssetSingle InnerRadius { get; set; }
         [Category(categoryName)]
         public AssetSingle OuterRadius { get; set; }
 
-        private char[] _pszGroupName;
+        private int _pszGroupName;
         [Category(categoryName)]
-        public string pszGroupName
+        public string PszGroupName
         {
-            get => new string(_pszGroupName);
+            get => System.Text.Encoding.GetEncoding(1252).GetString(BitConverter.GetBytes(_pszGroupName));
             set
             {
                 if (value.Length != 4)
                     throw new ArgumentException("Value must be 4 characters long");
-                _pszGroupName = value.ToCharArray();
+                _pszGroupName = BitConverter.ToInt32(value.ToCharArray().Cast<byte>().ToArray(), 0);
             }
         }
 
@@ -114,15 +110,14 @@ namespace IndustrialPark
                 uPriority = reader.ReadByte();
 
                 uFlags.FlagValueByte = reader.ReadByte();
-                eSoundCategory.FlagValueByte = reader.ReadByte();
+                eSoundCategory = reader.ReadByte();
                 ePlayRule = reader.ReadByte();
                 uInfoPad0 = reader.ReadByte();
 
                 InnerRadius = reader.ReadSingle();
                 OuterRadius = reader.ReadSingle();
 
-                _pszGroupName = reader.ReadString(4).ToCharArray();
-                _pszGroupName = reader.endianness == Endianness.Little ? _pszGroupName : _pszGroupName.Reverse().ToArray();
+                _pszGroupName = reader.ReadInt32();
 
                 Entries = new SoundGroupInfo[entryCount];
                 for (int i = 0; i < Entries.Length; i++)
@@ -130,29 +125,25 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(uPlayedMask);
-                writer.Write((byte)Entries.Length);
-                writer.Write(uSetBits);
-                writer.Write(nMaxPlays);
-                writer.Write(uPriority);
-                writer.Write(uFlags.FlagValueByte);
-                writer.Write(eSoundCategory.FlagValueByte);
-                writer.Write(ePlayRule);
-                writer.Write(uInfoPad0);
-                writer.Write(InnerRadius);
-                writer.Write(OuterRadius);
-                writer.Write(new string(endianness == Endianness.Little ? _pszGroupName : _pszGroupName.Reverse().ToArray()));
+            base.Serialize(writer);
+            writer.Write(uPlayedMask);
+            writer.Write((byte)Entries.Length);
+            writer.Write(uSetBits);
+            writer.Write(nMaxPlays);
+            writer.Write(uPriority);
+            writer.Write(uFlags.FlagValueByte);
+            writer.Write(eSoundCategory);
+            writer.Write(ePlayRule);
+            writer.Write(uInfoPad0);
+            writer.Write(InnerRadius);
+            writer.Write(OuterRadius);
+            writer.Write(_pszGroupName);
 
-                foreach (var i in Entries)
-                    writer.Write(i.Serialize(endianness));
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            foreach (var i in Entries)
+                i.Serialize(writer);
+            SerializeLinks(writer);
         }
 
         [Browsable(false)]

@@ -80,29 +80,25 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write((byte)Commands.Length);
-                writer.Write(In);
-                writer.Write((short)0);
-                var cmdSizePos = writer.BaseStream.Position;
-                writer.Write(0);
-                writer.Write(TotalTime);
-                writer.Write(LoopTime);
+            base.Serialize(writer);
+            writer.Write((byte)Commands.Length);
+            writer.Write(In);
+            writer.Write((short)0);
+            var cmdSizePos = writer.BaseStream.Position;
+            writer.Write(0);
+            writer.Write(TotalTime);
+            writer.Write(LoopTime);
 
-                var cmdStart = writer.BaseStream.Position;
-                foreach (var c in Commands)
-                    writer.Write(c.Serialize(game, endianness));
-                var cmdEnd = writer.BaseStream.Position;
-                writer.BaseStream.Position = cmdSizePos;
-                writer.Write((int)(cmdEnd - cmdStart));
-                writer.BaseStream.Position = cmdEnd;
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            var cmdStart = writer.BaseStream.Position;
+            foreach (var c in Commands)
+                c.Serialize(writer);
+            var cmdEnd = writer.BaseStream.Position;
+            writer.BaseStream.Position = cmdSizePos;
+            writer.Write((int)(cmdEnd - cmdStart));
+            writer.BaseStream.Position = cmdEnd;
+            SerializeLinks(writer);
         }
 
         public void AddEntry(UIMCommandType cmdType)

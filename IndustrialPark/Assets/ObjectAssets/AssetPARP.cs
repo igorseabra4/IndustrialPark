@@ -45,17 +45,13 @@ namespace IndustrialPark
             this.index = index;
         }
 
-        public byte[] Serialize(Endianness endianness)
+        public void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Interp_0);
-                writer.Write(Interp_1);
-                writer.Write((uint)Interp_Mode);
-                writer.Write(Frequency_RandLinStep);
-                writer.Write(Frequency_SinCos);
-                return writer.ToArray();
-            }
+            writer.Write(Interp_0);
+            writer.Write(Interp_1);
+            writer.Write((uint)Interp_Mode);
+            writer.Write(Frequency_RandLinStep);
+            writer.Write(Frequency_SinCos);
         }
 
         public string EntryFunction
@@ -142,25 +138,21 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(ParticleSystem);
+            base.Serialize(writer);
+            writer.Write(ParticleSystem);
 
-                if (_structs.Length != 14)
-                    throw new Exception("PARS structs must be exactly 14 entries.");
-                foreach (var p in _structs)
-                    writer.Write(p.Serialize(endianness));
-                writer.Write(VelX);
-                writer.Write(VelY);
-                writer.Write(VelZ);
-                writer.Write(Emit_Limit);
-                writer.Write(Emit_limit_reset_time);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            if (_structs.Length != 14)
+                throw new Exception("PARS structs must be exactly 14 entries.");
+            foreach (var p in _structs)
+                p.Serialize(writer);
+            writer.Write(VelX);
+            writer.Write(VelY);
+            writer.Write(VelZ);
+            writer.Write(Emit_Limit);
+            writer.Write(Emit_limit_reset_time);
+            SerializeLinks(writer);
         }
     }
 }

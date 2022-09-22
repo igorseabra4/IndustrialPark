@@ -71,17 +71,15 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(PickupHash);
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
 
-                return writer.ToArray();
-            }
+                
         }
 
         protected override List<Vector3> vertexSource => null;
@@ -146,7 +144,7 @@ namespace IndustrialPark
                 }
                 if (renderingDictionary.ContainsKey(tpikEntry.PulseModel))
                 {
-                    var color = new Vector4(tpikEntry.ColorR, tpikEntry.ColorG, tpikEntry.ColorB, 1f);
+                    var color = new Vector4(tpikEntry.ColorRed, tpikEntry.ColorGreen, tpikEntry.ColorBlue, 1f);
                     renderingDictionary[tpikEntry.PulseModel].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, Vector3.Zero);
                     drew = true;
                 }

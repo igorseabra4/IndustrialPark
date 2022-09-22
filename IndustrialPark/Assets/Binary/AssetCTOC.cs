@@ -21,7 +21,7 @@
 //            Index = reader.ReadInt32();
 //        }
 
-//        public override byte[] Serialize(Game game, Endianness endianness)
+//        public override void Serialize(EndianBinaryWriter writer)
 //        {
 //            using (var writer = new EndianBinaryWriter(endianness))
 //            {
@@ -65,7 +65,7 @@
 //            }
 //        }
 
-//        public override byte[] Serialize(Game game, Endianness endianness)
+//        public override void Serialize(EndianBinaryWriter writer)
 //        {
 //            using (var writer = new EndianBinaryWriter(endianness))
 //            {
@@ -108,7 +108,7 @@
 //            BreakList = new xCutsceneBreak[0];
 //        }
 
-//        public AssetCSN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+//        public AssetCSN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
 //        {
 //            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
 //            {
@@ -145,7 +145,7 @@
 //            }
 //        }
 
-//        public override byte[] Serialize(Game game, Endianness endianness)
+//        public override void Serialize(EndianBinaryWriter writer)
 //        {
 //            using (var writer = new EndianBinaryWriter(endianness))
 //            {

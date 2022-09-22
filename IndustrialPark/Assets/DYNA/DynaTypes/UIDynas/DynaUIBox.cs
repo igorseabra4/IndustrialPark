@@ -1,5 +1,6 @@
 ﻿using AssetEditorColors;
 using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using System;
 using System.ComponentModel;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace IndustrialPark
         public AssetSingle uv4u { get; set; }
         public AssetSingle uv4v { get; set; }
         public AssetSingle rotation { get; set; }
-        public byte enabled { get; set; }
+        public byte Enabled { get; set; }
 
         public UIBoxPart() { }
         public UIBoxPart(EndianBinaryReader reader)
@@ -35,34 +36,29 @@ namespace IndustrialPark
             uv4u = reader.ReadSingle();
             uv4v = reader.ReadSingle();
             rotation = reader.ReadSingle();
-            enabled = reader.ReadByte();
+            Enabled = reader.ReadByte();
             reader.ReadByte();
             reader.ReadByte();
             reader.ReadByte();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(Texture);
-                writer.Write(Color);
-                writer.Write(uv1u);
-                writer.Write(uv1v);
-                writer.Write(uv2u);
-                writer.Write(uv2v);
-                writer.Write(uv3u);
-                writer.Write(uv3v);
-                writer.Write(uv4u);
-                writer.Write(uv4v);
-                writer.Write(rotation);
-                writer.Write(enabled);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-
-                return writer.ToArray();
-            }
+            writer.Write(Texture);
+            writer.Write(Color);
+            writer.Write(uv1u);
+            writer.Write(uv1v);
+            writer.Write(uv2u);
+            writer.Write(uv2v);
+            writer.Write(uv3u);
+            writer.Write(uv3v);
+            writer.Write(uv4u);
+            writer.Write(uv4v);
+            writer.Write(rotation);
+            writer.Write(Enabled);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
         }
     }
 
@@ -86,27 +82,27 @@ namespace IndustrialPark
             }
         }
         [Category(dynaCategoryName)]
-        public AssetSingle borderWidth { get; set; }
+        public AssetSingle BorderWidth { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle borderHeight { get; set; }
+        public AssetSingle BorderHeight { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle widthPerUV { get; set; }
+        public AssetSingle WidthPerUV { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle heightPerUV { get; set; }
+        public AssetSingle HeightPerUV { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle centerWidthPerUV { get; set; }
+        public AssetSingle CenterWidthPerUV { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle centerHeightPerUV { get; set; }
+        public AssetSingle CenterHeightPerUV { get; set; }
         [Category(dynaCategoryName)]
-        public byte scaleHSide { get; set; }
+        public byte ScaleHSide { get; set; }
         [Category(dynaCategoryName)]
-        public byte scaleVSide { get; set; }
+        public byte ScaleVSide { get; set; }
         [Category(dynaCategoryName)]
-        public byte scaleCenter { get; set; }
+        public byte ScaleCenter { get; set; }
         [Category(dynaCategoryName)]
-        public byte stretchUVsOnMotionScale { get; set; }
+        public byte StretchUVsOnMotionScale { get; set; }
         [Category(dynaCategoryName)]
-        public byte forceAlphaWrite { get; set; }
+        public byte ForceAlphaWrite { get; set; }
 
         public DynaUIBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__box, game, endianness)
         {
@@ -118,48 +114,43 @@ namespace IndustrialPark
                 for (int i = 0; i < _parts.Length; i++)
                     _parts[i] = new UIBoxPart(reader);
 
-                borderWidth = reader.ReadSingle();
-                borderHeight = reader.ReadSingle();
-                widthPerUV = reader.ReadSingle();
-                heightPerUV = reader.ReadSingle();
-                centerWidthPerUV = reader.ReadSingle();
-                centerHeightPerUV = reader.ReadSingle();
-                scaleHSide = reader.ReadByte();
-                scaleVSide = reader.ReadByte();
-                scaleCenter = reader.ReadByte();
-                stretchUVsOnMotionScale = reader.ReadByte();
-                forceAlphaWrite = reader.ReadByte();
+                BorderWidth = reader.ReadSingle();
+                BorderHeight = reader.ReadSingle();
+                WidthPerUV = reader.ReadSingle();
+                HeightPerUV = reader.ReadSingle();
+                CenterWidthPerUV = reader.ReadSingle();
+                CenterHeightPerUV = reader.ReadSingle();
+                ScaleHSide = reader.ReadByte();
+                ScaleVSide = reader.ReadByte();
+                ScaleCenter = reader.ReadByte();
+                StretchUVsOnMotionScale = reader.ReadByte();
+                ForceAlphaWrite = reader.ReadByte();
                 reader.ReadByte();
                 reader.ReadByte();
                 reader.ReadByte();
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeDynaUI(endianness));
+            SerializeDynaUI(writer);
 
-                foreach (var p in _parts)
-                    writer.Write(p.Serialize(game, endianness));
-                writer.Write(borderWidth);
-                writer.Write(borderHeight);
-                writer.Write(widthPerUV);
-                writer.Write(heightPerUV);
-                writer.Write(centerWidthPerUV);
-                writer.Write(centerHeightPerUV);
-                writer.Write(scaleHSide);
-                writer.Write(scaleVSide);
-                writer.Write(scaleCenter);
-                writer.Write(stretchUVsOnMotionScale);
-                writer.Write(forceAlphaWrite);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-
-                return writer.ToArray();
-            }
+            foreach (var p in _parts)
+                p.Serialize(writer);
+            writer.Write(BorderWidth);
+            writer.Write(BorderHeight);
+            writer.Write(WidthPerUV);
+            writer.Write(HeightPerUV);
+            writer.Write(CenterWidthPerUV);
+            writer.Write(CenterHeightPerUV);
+            writer.Write(ScaleHSide);
+            writer.Write(ScaleVSide);
+            writer.Write(ScaleCenter);
+            writer.Write(StretchUVsOnMotionScale);
+            writer.Write(ForceAlphaWrite);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
         }
     }
 }

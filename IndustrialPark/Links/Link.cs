@@ -16,9 +16,6 @@ namespace IndustrialPark
     {
         public static int sizeOfStruct => 32;
 
-        [JsonProperty]
-        private Game game;
-
         [ValidReferenceRequired]
         public AssetID TargetAsset { get; set; }
         public ushort EventReceiveID;
@@ -64,12 +61,12 @@ namespace IndustrialPark
 
         public Link(Game game)
         {
-            this.game = game;
+            _game = game;
         }
 
         public Link(EndianBinaryReader reader, LinkType type, Game game)
         {
-            this.game = game;
+            _game = game;
 
             if (type == LinkType.Normal)
             {
@@ -98,37 +95,34 @@ namespace IndustrialPark
             }
         }
 
-        public byte[] Serialize(LinkType type, Endianness endianness)
-        {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                if (type == LinkType.Normal)
-                {
-                    writer.Write(EventReceiveID);
-                    writer.Write(EventSendID);
-                    writer.Write(TargetAsset);
-                    writer.Write(Parameter1);
-                    writer.Write(Parameter2);
-                    writer.Write(Parameter3);
-                    writer.Write(Parameter4);
-                    writer.Write(ArgumentAsset);
-                    writer.Write(SourceCheckAsset);
-                }
-                else
-                {
-                    writer.Write(Time);
-                    if (type == LinkType.Progress)
-                        writer.Write(Flags);
-                    writer.Write(TargetAsset);
-                    writer.Write((int)EventSendID);
-                    writer.Write(Parameter1);
-                    writer.Write(Parameter2);
-                    writer.Write(Parameter3);
-                    writer.Write(Parameter4);
-                    writer.Write(ArgumentAsset);
-                }
+        public override void Serialize(EndianBinaryWriter writer) { }
 
-                return writer.ToArray();
+        public void Serialize(LinkType type, EndianBinaryWriter writer)
+        {
+            if (type == LinkType.Normal)
+            {
+                writer.Write(EventReceiveID);
+                writer.Write(EventSendID);
+                writer.Write(TargetAsset);
+                writer.Write(Parameter1);
+                writer.Write(Parameter2);
+                writer.Write(Parameter3);
+                writer.Write(Parameter4);
+                writer.Write(ArgumentAsset);
+                writer.Write(SourceCheckAsset);
+            }
+            else
+            {
+                writer.Write(Time);
+                if (type == LinkType.Progress)
+                    writer.Write(Flags);
+                writer.Write(TargetAsset);
+                writer.Write((int)EventSendID);
+                writer.Write(Parameter1);
+                writer.Write(Parameter2);
+                writer.Write(Parameter3);
+                writer.Write(Parameter4);
+                writer.Write(ArgumentAsset);
             }
         }
 

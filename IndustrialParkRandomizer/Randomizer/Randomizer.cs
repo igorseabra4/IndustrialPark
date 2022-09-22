@@ -377,10 +377,6 @@ namespace IndustrialPark.Randomizer
 
                 progressBar.PerformStep();
 
-                levelPairs[0].Item1.OrganizeLayers();
-                if (levelPairs[0].Item2 != null)
-                    levelPairs[0].Item2.OrganizeLayers();
-
                 // Save to a random different path (level files randomizer)
                 if (settings.Level_Files && !FileInSecondBox(levelPairs[0].Item1.currentlyOpenFilePath))
                 {

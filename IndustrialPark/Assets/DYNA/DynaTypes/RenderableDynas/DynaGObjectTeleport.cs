@@ -78,10 +78,9 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(_mrkr);
                 writer.Write(Opened ? 1 : 0);
                 writer.Write(_launchAngle);
@@ -89,8 +88,7 @@ namespace IndustrialPark
                     writer.Write(CameraAngle);
                 writer.Write(TargetTeleportBox);
 
-                return writer.ToArray();
-            }
+                
         }
 
         private void ValidateMRKR()

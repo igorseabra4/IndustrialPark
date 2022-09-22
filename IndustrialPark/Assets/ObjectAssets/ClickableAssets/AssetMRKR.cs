@@ -35,7 +35,7 @@ namespace IndustrialPark
             ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public AssetMRKR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetMRKR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
@@ -45,15 +45,13 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
+
                 writer.Write(_position.X);
                 writer.Write(_position.Y);
                 writer.Write(_position.Z);
-                return writer.ToArray();
-            }
+                
         }
 
         private Matrix world;

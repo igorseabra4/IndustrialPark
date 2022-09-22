@@ -62,7 +62,7 @@ namespace IndustrialPark
                     1 << 7 |
                     1 << 14 |
                     1 << 15;
-                Motion = new Motion_Mechanism()
+                Motion = new Motion_Mechanism(game)
                 {
                     MovementType = EMovementType.SlideAndRotate,
                     MovementLoopMode = EMechanismFlags.ReturnToStart,
@@ -83,7 +83,7 @@ namespace IndustrialPark
                     1 << 12 |
                     1 << 13 |
                     1 << 16;
-                Motion = new Motion_Mechanism()
+                Motion = new Motion_Mechanism(game)
                 {
                     MovementType = EMovementType.SlideAndRotate,
                     MovementLoopMode = EMechanismFlags.ReturnToStart,
@@ -98,7 +98,7 @@ namespace IndustrialPark
                 Pitch -= 90f;
                 ActMethod = ButnActMethod.Other;
                 Model = "rbsi0001";
-                Motion = new Motion_Mechanism()
+                Motion = new Motion_Mechanism(game)
                 {
                     MovementType = EMovementType.SlideAndRotate,
                     MovementLoopMode = EMechanismFlags.ReturnToStart,
@@ -112,7 +112,7 @@ namespace IndustrialPark
             {
                 ActMethod = ButnActMethod.PressurePlate;
                 Model = "rbsl0001";
-                Motion = new Motion_Mechanism()
+                Motion = new Motion_Mechanism(game)
                 {
                     MovementType = EMovementType.SlideAndRotate,
                     MovementLoopMode = EMechanismFlags.ReturnToStart,
@@ -126,7 +126,7 @@ namespace IndustrialPark
             {
                 ActMethod = ButnActMethod.Button;
                 Model = "rbus0001";
-                Motion = new Motion_Mechanism()
+                Motion = new Motion_Mechanism(game)
                 {
                     MovementType = EMovementType.SlideAndRotate,
                     MovementLoopMode = EMechanismFlags.ReturnToStart,
@@ -140,7 +140,7 @@ namespace IndustrialPark
             {
                 ActMethod = ButnActMethod.PressurePlate;
                 Model = "rbue0001";
-                Motion = new Motion_Mechanism()
+                Motion = new Motion_Mechanism(game)
                 {
                     MovementType = EMovementType.SlideAndRotate,
                     MovementLoopMode = EMechanismFlags.ReturnToStart,
@@ -151,7 +151,7 @@ namespace IndustrialPark
                 Motion.MotionFlags.FlagValueShort = 4;
             }
             else
-                Motion = new Motion_Mechanism();
+                Motion = new Motion_Mechanism(game);
         }
 
         public AssetBUTN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -171,31 +171,27 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
+            base.Serialize(writer);
 
-                if (game != Game.Scooby)
-                    writer.Write(PressedModel);
-                writer.Write((int)ActMethod);
-                writer.Write(InitialButtonState);
-                writer.Write(ResetAfterDelay ? 1 : 0);
-                writer.Write(ResetDelay);
-                writer.Write(HitMask.FlagValueInt);
-                writer.Write(Motion.Serialize(game, endianness));
+            if (game != Game.Scooby)
+                writer.Write(PressedModel);
+            writer.Write((int)ActMethod);
+            writer.Write(InitialButtonState);
+            writer.Write(ResetAfterDelay ? 1 : 0);
+            writer.Write(ResetDelay);
+            writer.Write(HitMask.FlagValueInt);
+            Motion.Serialize(writer);
 
-                int linkStart =
-                    game == Game.Scooby ? 0x94 :
-                    game == Game.BFBB ? 0x9C :
-                    game == Game.Incredibles ? 0xA4 : throw new ArgumentException("Invalid game");
+            int linkStart =
+                game == Game.Scooby ? 0x94 :
+                game == Game.BFBB ? 0x9C :
+                game == Game.Incredibles ? 0xA4 : throw new ArgumentException("Invalid game");
 
-                while (writer.BaseStream.Length < linkStart)
-                    writer.Write((byte)0);
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            while (writer.BaseStream.Length < linkStart)
+                writer.Write((byte)0);
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

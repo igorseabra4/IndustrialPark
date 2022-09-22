@@ -67,14 +67,14 @@ namespace IndustrialPark
             AHDR = new Section_AHDR(assetID, assetType, flags, new Section_ADBG(0, assetName, assetFileName, checksum), new byte[0x20]);
         }
 
-        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             this.AHDR = AHDR;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            return AHDR.data;
+            writer.Write(AHDR.data);
         }
 
         private int FooterOffset

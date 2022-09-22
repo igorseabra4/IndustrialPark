@@ -824,7 +824,7 @@ namespace IndustrialPark
 
                 var asset = archive.GetFromAssetID(oldAssetID);
 
-                Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR());
+                Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR(archive.platform.Endianness()));
 
                 if (AHDR != null)
                 {
@@ -835,7 +835,7 @@ namespace IndustrialPark
                     while (archive.ContainsAsset(AHDR.assetID))
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
 
-                    archive.AddAsset(AHDR, asset.game, asset.endianness, true);
+                    archive.AddAsset(AHDR, asset.game, archive.platform.Endianness(), true);
 
                     if (ArchiveEditorFunctions.updateReferencesOnCopy)
                     {
@@ -896,7 +896,7 @@ namespace IndustrialPark
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        var AHDR = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).BuildAHDR();
+                        var AHDR = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).BuildAHDR(archive.platform.Endianness());
                         File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                     }
                     catch (Exception ex)
@@ -914,7 +914,7 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
-                            var AHDR = archive.GetFromAssetID(u).BuildAHDR();
+                            var AHDR = archive.GetFromAssetID(u).BuildAHDR(archive.platform.Endianness());
                             File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
                         }
                         catch (Exception ex)
@@ -1107,17 +1107,19 @@ namespace IndustrialPark
             if (archive.NoLayers)
                 return;
 
-            archive.OrganizeLayers();
-            PopulateLayerComboBox();
-            comboBoxLayers.SelectedIndex = -1;
-            comboBoxLayers_SelectedIndexChanged(sender, e);
-            buttonDuplicate.Enabled = false;
-            buttonCopy.Enabled = false;
-            buttonRemoveAsset.Enabled = false;
-            buttonExportRaw.Enabled = false;
-            buttonEditAsset.Enabled = false;
-            buttonInternalEdit.Enabled = false;
-            buttonMultiEdit.Enabled = false;
+            if (archive.OrganizeLayers())
+            {
+                PopulateLayerComboBox();
+                comboBoxLayers.SelectedIndex = -1;
+                comboBoxLayers_SelectedIndexChanged(sender, e);
+                buttonDuplicate.Enabled = false;
+                buttonCopy.Enabled = false;
+                buttonRemoveAsset.Enabled = false;
+                buttonExportRaw.Enabled = false;
+                buttonEditAsset.Enabled = false;
+                buttonInternalEdit.Enabled = false;
+                buttonMultiEdit.Enabled = false;
+            }
         }
 
         private ScrollableMessageBox verifyResult;
@@ -1375,7 +1377,7 @@ namespace IndustrialPark
 
         private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.StreamingSound))
+            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
                 return;
 
             CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
@@ -1385,7 +1387,7 @@ namespace IndustrialPark
             if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
 
-                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.StreamingSound))
+                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.SoundStream))
                     try
                     {
                         string extension =

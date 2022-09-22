@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -88,7 +87,7 @@ namespace IndustrialPark
             Frames = new FlyFrame[0];
         }
 
-        public AssetFLY(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetFLY(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             List<FlyFrame> entries = new List<FlyFrame>();
 
@@ -99,12 +98,10 @@ namespace IndustrialPark
             Frames = entries.ToArray();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            List<byte> newData = new List<byte>();
             foreach (var i in Frames)
-                newData.AddRange(i.Serialize());
-            return newData.ToArray();
+                writer.Write(i.Serialize());
         }
     }
 }

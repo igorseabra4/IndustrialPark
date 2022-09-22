@@ -8,14 +8,10 @@ namespace IndustrialPark
 
         public AssetDPAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeBase(endianness));
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            SerializeLinks(writer);                
         }
     }
 }

@@ -45,15 +45,11 @@ namespace IndustrialPark
             _position.Z = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(CenterX);
-                writer.Write(CenterY);
-                writer.Write(CenterZ);
-                return writer.ToArray();
-            }
+            writer.Write(CenterX);            
+            writer.Write(CenterY);
+            writer.Write(CenterZ);
         }
 
         public BoundingBox boundingBox;
@@ -172,19 +168,15 @@ namespace IndustrialPark
             _minimum.Z = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(MaximumX);
-                writer.Write(MaximumY);
-                writer.Write(MaximumZ);
-                writer.Write(MinimumX);
-                writer.Write(MinimumY);
-                writer.Write(MinimumZ);
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(MaximumX);
+            writer.Write(MaximumY);
+            writer.Write(MaximumZ);
+            writer.Write(MinimumX);
+            writer.Write(MinimumY);
+            writer.Write(MinimumZ);
         }
 
         public override void CreateTransformMatrix()
@@ -282,14 +274,10 @@ namespace IndustrialPark
             Radius = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(Radius);
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Radius);
         }
 
         public override void CreateTransformMatrix()
@@ -339,14 +327,10 @@ namespace IndustrialPark
             Height = reader.ReadSingle();
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(base.Serialize(game, endianness));
-                writer.Write(Height);
-                return writer.ToArray();
-            }
+            base.Serialize(writer);
+            writer.Write(Height);
         }
 
         public override void CreateTransformMatrix()

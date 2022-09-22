@@ -2379,42 +2379,7 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private void ReplaceReferences(uint oldAssetID, uint newAssetID)
-        {
-            foreach (uint a in FindWhoTargets(oldAssetID))
-            {
-                if (GetFromAssetID(a) is BaseAsset asset)
-                {
-                    Link[] links = asset.Links;
-                    for (int i = 0; i < links.Length; i++)
-                        if (links[i].TargetAsset == oldAssetID)
-                            links[i].TargetAsset = newAssetID;
-                    asset.Links = links.ToArray();
-                }
-                else if (GetFromAssetID(a) is AssetGRUP grup)
-                {
-                    List<AssetID> assetIDs = grup.Items.ToList();
-                    for (int i = 0; i < assetIDs.Count; i++)
-                        if (assetIDs[i] == oldAssetID)
-                            assetIDs[i] = newAssetID;
-                    grup.Items = assetIDs.ToArray();
-                }
-            }
-        }
-
-        private HashSet<NpcType_BFBB> GetVilTypesInLevel(List<NpcType_BFBB> chooseFrom)
-        {
-            HashSet<NpcType_BFBB> viltypes = new HashSet<NpcType_BFBB>();
-
-            foreach (AssetVIL a in (from asset in assetDictionary.Values
-                                    where asset is AssetVIL vil && chooseFrom.Contains(vil.NpcType_BFBB)
-                                    select asset).Cast<AssetVIL>())
-                viltypes.Add(a.NpcType_BFBB);
-
-            return viltypes;
-        }
-
-        private static NpcType_BFBB[] importVilTypes = new NpcType_BFBB[] {
+        private static readonly NpcType_BFBB[] importVilTypes = new NpcType_BFBB[] {
             NpcType_BFBB.g_love_bind,
             NpcType_BFBB.ham_bind,
             NpcType_BFBB.robot_0a_bomb_bind,
@@ -2449,13 +2414,13 @@ namespace IndustrialPark.Randomizer
         }
 
 
-        private static EnemySupplyCrateType[] importCrateTypes = new EnemySupplyCrateType[] {
-                        EnemySupplyCrateType.crate_wood_bind,
-                        EnemySupplyCrateType.crate_hover_bind,
-                        EnemySupplyCrateType.crate_explode_bind,
-                        EnemySupplyCrateType.crate_shrink_bind,
-                        EnemySupplyCrateType.crate_steel_bind,
-                    };
+        private static readonly EnemySupplyCrateType[] importCrateTypes = new EnemySupplyCrateType[] {
+            EnemySupplyCrateType.crate_wood_bind,
+            EnemySupplyCrateType.crate_hover_bind,
+            EnemySupplyCrateType.crate_explode_bind,
+            EnemySupplyCrateType.crate_shrink_bind,
+            EnemySupplyCrateType.crate_steel_bind,
+        };
 
         public HashSet<EnemySupplyCrateType> GetDynaCrateTypes()
         {
@@ -2470,29 +2435,29 @@ namespace IndustrialPark.Randomizer
             return outSet;
         }
 
-        private static EnemyStandardType[] importEnemyTypes = new EnemyStandardType[] {
-                        EnemyStandardType.flinger_v1_bind,
-                        EnemyStandardType.flinger_v2_bind,
-                        EnemyStandardType.flinger_v3_bind,
-                        EnemyStandardType.fogger_de_bind,
-                        EnemyStandardType.fogger_gg_bind,
-                        EnemyStandardType.fogger_jk_bind,
-                        EnemyStandardType.fogger_pt_bind,
-                        EnemyStandardType.fogger_tr_bind,
-                        EnemyStandardType.fogger_tt_bind,
-                        EnemyStandardType.fogger_v1_bind,
-                        EnemyStandardType.fogger_v2_bind,
-                        EnemyStandardType.fogger_v3_bind,
-                        EnemyStandardType.mervyn_v3_bind,
-                        EnemyStandardType.minimerv_v1_bind,
-                        EnemyStandardType.popper_v1_bind,
-                        EnemyStandardType.popper_v3_bind,
-                        EnemyStandardType.slammer_v1_bind,
-                        EnemyStandardType.slammer_des_bind,
-                        EnemyStandardType.slammer_v3_bind,
-                        EnemyStandardType.spinner_v1_bind,
-                        EnemyStandardType.spinner_v2_bind,
-                        EnemyStandardType.spinner_v3_bind
+        private static readonly EnemyStandardType[] importEnemyTypes = new EnemyStandardType[] {
+            EnemyStandardType.flinger_v1_bind,
+            EnemyStandardType.flinger_v2_bind,
+            EnemyStandardType.flinger_v3_bind,
+            EnemyStandardType.fogger_de_bind,
+            EnemyStandardType.fogger_gg_bind,
+            EnemyStandardType.fogger_jk_bind,
+            EnemyStandardType.fogger_pt_bind,
+            EnemyStandardType.fogger_tr_bind,
+            EnemyStandardType.fogger_tt_bind,
+            EnemyStandardType.fogger_v1_bind,
+            EnemyStandardType.fogger_v2_bind,
+            EnemyStandardType.fogger_v3_bind,
+            EnemyStandardType.mervyn_v3_bind,
+            EnemyStandardType.minimerv_v1_bind,
+            EnemyStandardType.popper_v1_bind,
+            EnemyStandardType.popper_v3_bind,
+            EnemyStandardType.slammer_v1_bind,
+            EnemyStandardType.slammer_des_bind,
+            EnemyStandardType.slammer_v3_bind,
+            EnemyStandardType.spinner_v1_bind,
+            EnemyStandardType.spinner_v2_bind,
+            EnemyStandardType.spinner_v3_bind
                     };
 
         public HashSet<EnemyStandardType> GetDynaEnemyTypes()
@@ -2976,8 +2941,8 @@ namespace IndustrialPark.Randomizer
             return warpsRandomizer.Count != 0;
         }
 
-        private string musicDispAssetName => "IP_RANDO_DISP";
-        private string musicGroupAssetName => "IP_RANDO_GROUP";
+        private string MusicDispAssetName => "IP_RANDO_DISP";
+        private string MusicGroupAssetName => "IP_RANDO_GROUP";
 
         public bool RandomizePlaylistLocal()
         {
@@ -2994,7 +2959,7 @@ namespace IndustrialPark.Randomizer
                         if (link.EventSendID == (ushort)EventBFBB.PlayMusic)
                         {
                             link.EventSendID = (ushort)EventBFBB.Run;
-                            link.TargetAsset = musicGroupAssetName + "_01";
+                            link.TargetAsset = MusicGroupAssetName + "_01";
                         }
                     objectAsset.Links = links;
                 }
@@ -3006,12 +2971,12 @@ namespace IndustrialPark.Randomizer
 
         public bool RandomizePlaylist()
         {
-            if (ContainsAsset(new AssetID(musicDispAssetName + "_01")) && ContainsAsset(new AssetID(musicGroupAssetName + "_01")))
+            if (ContainsAsset(new AssetID(MusicDispAssetName + "_01")) && ContainsAsset(new AssetID(MusicGroupAssetName + "_01")))
                 return false;
 
-            var dpat = PlaceTemplate(musicDispAssetName, template: AssetTemplate.Dispatcher);
+            var dpat = PlaceTemplate(MusicDispAssetName, template: AssetTemplate.Dispatcher);
 
-            var group = (AssetGRUP)PlaceTemplate(musicGroupAssetName, template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(MusicGroupAssetName, template: AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -3109,18 +3074,16 @@ namespace IndustrialPark.Randomizer
                                 plat.PositionX = 87.481760f;
                                 plat.PositionZ = 9.643267f;
 
-                                string serializedObject = JsonConvert.SerializeObject(plat.BuildAHDR());
+                                string serializedObject = JsonConvert.SerializeObject(plat.BuildAHDR(platform.Endianness()));
                                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
-                                uint newAssetID = AddAssetWithUniqueID(AHDR, game, platform.Endianness());
-
-                                var plat2 = (AssetPLAT)GetFromAssetID(newAssetID);
+                                var plat2 = (AssetPLAT)AddAssetWithUniqueID(AHDR, game, platform.Endianness());
 
                                 plat2.PositionX = 87.692600f;
                                 plat2.PositionZ = 8.692189f;
 
                                 platAssetIDs.Add(numRightAssetID);
-                                platAssetIDs.Add(newAssetID);
+                                platAssetIDs.Add(plat2.assetID);
 
                                 plat.Links = new Link[] { new Link(game)
                                 {

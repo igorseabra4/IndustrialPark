@@ -75,32 +75,27 @@ namespace IndustrialPark
             }
         }
 
-        protected override byte[] SerializeDyna(Game game, Endianness endianness)
+        protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeDynaHudMeter(endianness));
-                writer.Write(EmptyModel);
-                writer.Write(EmptyOffset_X);
-                writer.Write(EmptyOffset_Y);
-                writer.Write(EmptyOffset_Z);
-                writer.Write(EmptyScale_X);
-                writer.Write(EmptyScale_Y);
-                writer.Write(EmptyScale_Z);
-                writer.Write(FullModel);
-                writer.Write(FullOffset_X);
-                writer.Write(FullOffset_Y);
-                writer.Write(FullOffset_Z);
-                writer.Write(FullScale_X);
-                writer.Write(FullScale_Y);
-                writer.Write(FullScale_Z);
-                writer.Write(Spacing_X);
-                writer.Write(Spacing_Y);
-                writer.Write(Spacing_Z);
-                writer.Write(MeterFillDirection);
-
-                return writer.ToArray();
-            }
+            SerializeDynaHudMeter(writer);
+            writer.Write(EmptyModel);
+            writer.Write(EmptyOffset_X);
+            writer.Write(EmptyOffset_Y);
+            writer.Write(EmptyOffset_Z);
+            writer.Write(EmptyScale_X);
+            writer.Write(EmptyScale_Y);
+            writer.Write(EmptyScale_Z);
+            writer.Write(FullModel);
+            writer.Write(FullOffset_X);
+            writer.Write(FullOffset_Y);
+            writer.Write(FullOffset_Z);
+            writer.Write(FullScale_X);
+            writer.Write(FullScale_Y);
+            writer.Write(FullScale_Z);
+            writer.Write(Spacing_X);
+            writer.Write(Spacing_Y);
+            writer.Write(Spacing_Z);
+            writer.Write(MeterFillDirection);
         }
     }
 }

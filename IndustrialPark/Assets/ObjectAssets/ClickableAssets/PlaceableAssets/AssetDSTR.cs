@@ -130,34 +130,30 @@ namespace IndustrialPark
             }
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness)
+        public override void Serialize(EndianBinaryWriter writer)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                writer.Write(SerializeEntity(game, endianness));
-                writer.Write(AnimationSpeed);
-                writer.Write(InitialAnimationState);
-                writer.Write(Health);
-                writer.Write(SpawnItem);
-                writer.Write(HitMask.FlagValueInt);
-                writer.Write(CollType);
-                writer.Write(FxType);
-                writer.Write((short)0);
-                writer.Write(BlastRadius);
-                writer.Write(BlastStrength);
+            base.Serialize(writer);
+            writer.Write(AnimationSpeed);
+            writer.Write(InitialAnimationState);
+            writer.Write(Health);
+            writer.Write(SpawnItem);
+            writer.Write(HitMask.FlagValueInt);
+            writer.Write(CollType);
+            writer.Write(FxType);
+            writer.Write((short)0);
+            writer.Write(BlastRadius);
+            writer.Write(BlastStrength);
 
-                if (game != Game.Scooby)
-                {
-                    writer.Write(DestroyShrapnel);
-                    writer.Write(HitShrapnel);
-                    writer.Write(DestroySFX);
-                    writer.Write(HitSFX);
-                    writer.Write(HitModel);
-                    writer.Write(DestroyModel);
-                }
-                writer.Write(SerializeLinks(endianness));
-                return writer.ToArray();
+            if (game != Game.Scooby)
+            {
+                writer.Write(DestroyShrapnel);
+                writer.Write(HitShrapnel);
+                writer.Write(DestroySFX);
+                writer.Write(HitSFX);
+                writer.Write(HitModel);
+                writer.Write(DestroyModel);
             }
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

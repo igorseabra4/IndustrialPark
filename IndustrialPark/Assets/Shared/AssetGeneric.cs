@@ -8,15 +8,21 @@ namespace IndustrialPark
     {
         private const string categoryName = "Generic Asset";
 
+        private Endianness endianness;
+
         [Category(categoryName)]
         public byte[] Data { get; set; }
 
-        public AssetGeneric(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetGeneric(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             Data = AHDR.data;
+            this.endianness = endianness;
         }
 
-        public override byte[] Serialize(Game game, Endianness endianness) => Data;
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(Data);
+        }
 
         [Category(categoryName)]
         public AssetID[] Data_AsHex

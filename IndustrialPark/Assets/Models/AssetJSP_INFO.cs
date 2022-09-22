@@ -7,9 +7,11 @@ namespace IndustrialPark
 {
     public class AssetJSP_INFO : AssetWithData
     {
-        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
-
-        public override byte[] Serialize(Game game, Endianness endianness) => Data;
+        public AssetJSP_INFO(Section_AHDR AHDR, Game game, GetJspAssetIDs getJspAssetIds) : base(AHDR, game)
+        {
+            this.getJspAssetIds = getJspAssetIds;
+            JSP_AssetIDs = this.getJspAssetIds(assetID);
+        }
 
         public int renderWareVersion;
 
@@ -23,6 +25,11 @@ namespace IndustrialPark
             }
             set => Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
         }
+
+        public delegate AssetID[] GetJspAssetIDs(uint jspInfoAssetId);
+        private GetJspAssetIDs getJspAssetIds;
+
+        public AssetID[] JSP_AssetIDs { get; set; }
 
         public void ApplyScale(Vector3 factor)
         {
