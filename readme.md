@@ -1,11 +1,12 @@
 # Industrial Park
-Industrial Park is a level viewer and editor for the following Heavy Iron Studios games:
+Industrial Park is an archive viewer and editor for the following Heavy Iron Studios games:
 
 * Spongebob Squarepants: Battle For Bikini Bottom
 * The Spongebob Squarepants Movie Game
 * Scooby-Doo: Night of 100 Frights
 * The Incredibles
 * The Incredibles: Rise of the Underminer
+* Ratatouille (January 18th, 2006 Prototype)
 
 for the following platforms:
 
