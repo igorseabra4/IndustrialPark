@@ -686,7 +686,7 @@ namespace IndustrialPark
 
             float singleFactor = (factor.X + factor.Y + factor.Z) / 3;
 
-            foreach (Asset a in assetDictionary.Values.Where(a => assetTypes == null || assetTypes.Contains(a.assetType)).ToList())
+            foreach (Asset a in assetDictionary.Values.Where(a => assetTypes == null || assetTypes.Contains(a.assetType)))
             {
                 if (a is IVolumeAsset volume)
                 {
@@ -765,8 +765,8 @@ namespace IndustrialPark
                     enemysb.PositionY *= factor.Y;
                     enemysb.PositionZ *= factor.Z;
 
-                    if (bakeNpcsVilScales)
-                        enemysb.Model = ApplyBakeScale(enemysb.Model, factor);
+                    //if (bakeNpcsVilScales)
+                    //    enemysb.Model = ApplyBakeScale(enemysb.Model, factor);
                 }
                 else if (a is DynaGObjectTrainCar tcar)
                 {
@@ -774,8 +774,8 @@ namespace IndustrialPark
                     tcar.PositionY *= factor.Y;
                     tcar.PositionZ *= factor.Z;
 
-                    if (bakeEntityUnproportionalScales)
-                        tcar.Model = ApplyBakeScale(tcar.Model, factor);
+                    //if (bakeEntityUnproportionalScales)
+                    //    tcar.Model = ApplyBakeScale(tcar.Model, factor);
                 }
                 else if (a is IClickableAsset ica && !(a is DynaGObjectTeleport))
                 {
@@ -930,90 +930,53 @@ namespace IndustrialPark
                 return modelAssetId;
             }
 
-            var bsmcs = new List<BakeScaleModelContainer>();
+            (ArchiveEditorFunctions, IAssetWithModel) bsmc = (null, null);
+            int count = 0;
+
             foreach (var ae in Program.MainForm.archiveEditors)
                 if (ae.archive.ContainsAsset(modelAssetId) && ae.archive.GetFromAssetID(modelAssetId) is IAssetWithModel model)
                 {
-                    bsmcs.Add(new BakeScaleModelContainer()
+                    bsmc = (ae.archive, model);
+                    count++;
+                    if (count > 1)
                     {
-                        archive = ae.archive,
-                        model = model
-                    });
+                        MessageBox.Show("Unable to bake scale: model found in more than one open archive.");
+                        return modelAssetId;
+                    }
                 }
 
-            if (bsmcs.Count == 0)
-            {
-                MessageBox.Show("Unable to find model in open archives.");
-            }
-            else if (bsmcs.Count == 1)
-            {
-                return bsmcs[0].archive.ApplyBakeScaleLocal(modelAssetId, scale);
-            }
-            else
-            {
-                BakeScale bs = new BakeScale(bsmcs);
-                bs.ShowDialog();
-                if (bs.OK)
-                    bs.GetSelectedArchive().ApplyBakeScaleLocal(modelAssetId, scale);
-            }
-
+            if (count == 0)
+                MessageBox.Show("Unable bake scale: model not found in open archives.");
+            else if (count == 1)
+                return bsmc.Item1.ApplyBakeScaleLocal(bsmc.Item2, scale);
+            
             return modelAssetId;
         }
 
-        public uint ApplyBakeScaleLocal(uint modelAssetId, Vector3 scale)
+        public uint ApplyBakeScaleLocal(IAssetWithModel model, Vector3 scale)
         {
-            if (ContainsAsset(modelAssetId) && GetFromAssetID(modelAssetId) is AssetMODL modl)
+            var AHDR = ((Asset)model).BuildAHDR(platform.Endianness());
+            var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
+            var newAssetId = Functions.BKDRHash(newAssetName);
+
+            if (!ContainsAsset(newAssetId))
             {
-                var AHDR = modl.BuildAHDR(platform.Endianness());
-                var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
-                var newAssetId = Functions.BKDRHash(newAssetName);
+                AHDR.ADBG.assetName = newAssetName;
+                AHDR.assetID = newAssetId;
 
-                if (!ContainsAsset(newAssetId))
-                {
-                    AHDR.ADBG.assetName = newAssetName;
-                    AHDR.assetID = newAssetId;
+                var prevLayerType = SelectedLayerIndex;
+                if (!NoLayers)
+                    SelectedLayerIndex = GetLayerFromAssetID(((Asset)model).assetID);
 
-                    var prevLayerType = SelectedLayerIndex;
-                    if (!NoLayers)
-                        SelectedLayerIndex = GetLayerFromAssetID(modelAssetId);
+                var newModel = (IAssetWithModel)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
 
-                    var asset = (AssetMODL)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
-
-                    if (!NoLayers)
-                        SelectedLayerIndex = prevLayerType;
-                    asset.ApplyScale(scale);
-                    UnsavedChanges = true;
-                }
-
-                return newAssetId;
+                if (!NoLayers)
+                    SelectedLayerIndex = prevLayerType;
+                newModel.ApplyScale(scale);
+                UnsavedChanges = true;
             }
-            else if (ContainsAsset(modelAssetId) && GetFromAssetID(modelAssetId) is AssetMINF minf)
-            {
-                var AHDR = minf.BuildAHDR(platform.Endianness());
-                var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
-                var newAssetId = Functions.BKDRHash(newAssetName);
 
-                if (!ContainsAsset(newAssetId))
-                {
-                    AHDR.ADBG.assetName = newAssetName;
-                    AHDR.assetID = newAssetId;
-
-                    var prevLayerType = SelectedLayerIndex;
-                    if (!NoLayers)
-                        SelectedLayerIndex = GetLayerFromAssetID(modelAssetId);
-
-                    var asset = (AssetMINF)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
-
-                    if (!NoLayers)
-                        SelectedLayerIndex = prevLayerType;
-
-                    asset.ApplyScale(scale);
-                    UnsavedChanges = true;
-                }
-
-                return newAssetId;
-            }
-            return modelAssetId;
+            return newAssetId;
         }
 
         public static void ExportScene(string folderName, Assimp.ExportFormatDescription format, string textureExtension, out string[] textureNames)

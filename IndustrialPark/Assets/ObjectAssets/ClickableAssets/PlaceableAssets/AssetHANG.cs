@@ -48,18 +48,16 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-                base.Serialize(writer);
-                writer.Write(HangFlags.FlagValueInt);
-                writer.Write(PivotOffset);
-                writer.Write(LeverArm);
-                writer.Write(Gravity);
-                writer.Write(Acceleration);
-                writer.Write(Decay);
-                writer.Write(GrabDelay);
-                writer.Write(StopDeceleration);
-                SerializeLinks(writer);
-                
+            base.Serialize(writer);
+            writer.Write(HangFlags.FlagValueInt);
+            writer.Write(PivotOffset);
+            writer.Write(LeverArm);
+            writer.Write(Gravity);
+            writer.Write(Acceleration);
+            writer.Write(Decay);
+            writer.Write(GrabDelay);
+            writer.Write(StopDeceleration);
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

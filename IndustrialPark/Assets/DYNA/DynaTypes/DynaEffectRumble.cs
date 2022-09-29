@@ -59,25 +59,22 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(Time);
-                writer.Write(Intensity);
-                writer.Write(ID);
-                writer.Write(Priority);
-                writer.Write(RumbleType);
-                writer.Write(RumbleInPause);
-                writer.Write((byte)0);
-                writer.Write(Param1);
-                writer.Write(Param2);
-                writer.Write(ShakeMagnitude);
-                writer.Write(ShakeCycleMax);
-                writer.Write(ShakeRotationalMagnitude);
-                writer.Write(ShakeY);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-
-                
+            writer.Write(Time);
+            writer.Write(Intensity);
+            writer.Write(ID);
+            writer.Write(Priority);
+            writer.Write(RumbleType);
+            writer.Write(RumbleInPause);
+            writer.Write((byte)0);
+            writer.Write(Param1);
+            writer.Write(Param2);
+            writer.Write(ShakeMagnitude);
+            writer.Write(ShakeCycleMax);
+            writer.Write(ShakeRotationalMagnitude);
+            writer.Write(ShakeY);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
         }
     }
 }

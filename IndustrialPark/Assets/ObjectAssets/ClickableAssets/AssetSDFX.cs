@@ -72,16 +72,14 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-                base.Serialize(writer);
-                writer.Write(_soundGroup);
-                writer.Write(Emitter);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(SDFXFlags.FlagValueInt);
-                SerializeLinks(writer);
-                
+            base.Serialize(writer);
+            writer.Write(_soundGroup);
+            writer.Write(Emitter);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(SDFXFlags.FlagValueInt);
+            SerializeLinks(writer);
         }
 
         private Matrix world;

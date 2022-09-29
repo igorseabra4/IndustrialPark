@@ -8,6 +8,7 @@ namespace IndustrialPark
 {
     public partial class AssetHeader : Form
     {
+        private bool programIsChangingStuff = false;
         System.Drawing.Color defaultColor;
 
         public AssetHeader()
@@ -26,24 +27,31 @@ namespace IndustrialPark
         {
             InitializeComponent();
 
+            programIsChangingStuff = true;
+
             if (AHDR.assetType == AssetType.Texture || AHDR.assetType == AssetType.TextureStream)
             {
                 comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Texture));
                 comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.TextureStream));
+
+                comboBoxAssetTypes.SelectedIndex = AHDR.assetType == AssetType.Texture ? 0 : 1;
             }
-            else if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.SoundStream)
-            {
-                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Sound));
-                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.SoundStream));
-            }
+            //else if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.SoundStream)
+            //{
+            //    comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Sound));
+            //    comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.SoundStream));
+            //}
             else if (AHDR.assetType == AssetType.SimpleObject || AHDR.assetType == AssetType.Track)
             {
                 comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.SimpleObject));
                 comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Track));
+
+                comboBoxAssetTypes.SelectedIndex = AHDR.assetType == AssetType.SimpleObject ? 0 : 1;
             }
             else
             {
                 comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AHDR.assetType));
+                comboBoxAssetTypes.SelectedIndex = 0;
             }
 
             TopMost = true;
@@ -66,6 +74,8 @@ namespace IndustrialPark
             textBoxAssetFileName.Text = AHDR.ADBG.assetFileName;
             labelRawDataSize.Text = "Raw Data Size: " + AHDR.data.Length.ToString();
             textBoxChecksum.Text = "0x" + AHDR.ADBG.checksum.ToString("X8");
+
+            programIsChangingStuff = false;
         }
 
         private static Section_AHDR GetAsset(AssetHeader a)
@@ -111,7 +121,7 @@ namespace IndustrialPark
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (comboBoxAssetTypes.Items.Count < 2)
+            if (programIsChangingStuff || comboBoxAssetTypes.Items.Count < 2)
                 return;
 
             var container = (AssetTypeContainer)comboBoxAssetTypes.SelectedItem;
@@ -129,6 +139,9 @@ namespace IndustrialPark
 
         private void textBoxAssetID_TextChanged(object sender, EventArgs e)
         {
+            if (programIsChangingStuff)
+                return;
+
             try
             {
                 textBoxAssetID.BackColor = defaultColor;
@@ -155,6 +168,9 @@ namespace IndustrialPark
 
         private void textBoxAssetName_TextChanged(object sender, EventArgs e)
         {
+            if (programIsChangingStuff)
+                return;
+
             if (textBoxAssetName.Text.Contains(";"))
                 textBoxAssetName.Text = textBoxAssetName.Text.Replace(";", "_");
             else
@@ -168,11 +184,17 @@ namespace IndustrialPark
 
         private void textBoxAssetFilename_TextChanged(object sender, EventArgs e)
         {
+            if (programIsChangingStuff)
+                return;
+
             assetFileName = textBoxAssetFileName.Text;
         }
 
         private void textBoxChecksum_TextChanged(object sender, EventArgs e)
         {
+            if (programIsChangingStuff)
+                return;
+
             try
             {
                 textBoxChecksum.BackColor = defaultColor;

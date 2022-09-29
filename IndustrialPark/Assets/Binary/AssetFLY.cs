@@ -39,7 +39,7 @@ namespace IndustrialPark
 
         public byte[] Serialize()
         {
-            List<byte> data = new List<byte>();
+            List<byte> data = new List<byte>(16 * 4);
 
             data.AddRange(BitConverter.GetBytes(FrameNumer));
             data.AddRange(BitConverter.GetBytes(CameraNormalizedRight.X));

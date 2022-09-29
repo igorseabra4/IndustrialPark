@@ -49,9 +49,6 @@ namespace IndustrialPark
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewConfigToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewControlsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addTextureFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.addTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.refreshTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.manageUserTemplatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.templatesPersistentShiniesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -81,7 +78,6 @@ namespace IndustrialPark
             this.enableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.disableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparatorAssetTypes = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.colorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resetColorsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundColorToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
@@ -127,6 +123,10 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripSeparator10 = new System.Windows.Forms.ToolStripSeparator();
+            this.addTextureFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.addTXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshTexturesAndModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -164,7 +164,7 @@ namespace IndustrialPark
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
-            this.newToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.newToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.newToolStripMenuItem.Text = "&New Editor";
             this.newToolStripMenuItem.Click += new System.EventHandler(this.newToolStripMenuItem_Click);
             // 
@@ -172,7 +172,7 @@ namespace IndustrialPark
             // 
             this.importLevelToolStripMenuItem.Name = "importLevelToolStripMenuItem";
             this.importLevelToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.I)));
-            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.importLevelToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.importLevelToolStripMenuItem.Text = "&Open Level...";
             this.importLevelToolStripMenuItem.Click += new System.EventHandler(this.importLevelToolStripMenuItem_Click);
             // 
@@ -180,14 +180,14 @@ namespace IndustrialPark
             // 
             this.closeAllEditorsToolStripMenuItem.Enabled = false;
             this.closeAllEditorsToolStripMenuItem.Name = "closeAllEditorsToolStripMenuItem";
-            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(179, 22);
+            this.closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.closeAllEditorsToolStripMenuItem.Text = "&Close All Editors";
             this.closeAllEditorsToolStripMenuItem.Click += new System.EventHandler(this.closeAllEditorsToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(176, 6);
+            this.toolStripSeparator3.Size = new System.Drawing.Size(177, 6);
             // 
             // projectToolStripMenuItem
             // 
@@ -259,9 +259,6 @@ namespace IndustrialPark
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.viewConfigToolStripMenuItem,
             this.viewControlsToolStripMenuItem,
-            this.addTextureFolderToolStripMenuItem,
-            this.addTXDArchiveToolStripMenuItem,
-            this.refreshTexturesToolStripMenuItem,
             this.toolStripSeparator4,
             this.manageUserTemplatesToolStripMenuItem,
             this.templatesPersistentShiniesToolStripMenuItem,
@@ -289,27 +286,6 @@ namespace IndustrialPark
             this.viewControlsToolStripMenuItem.Size = new System.Drawing.Size(301, 22);
             this.viewControlsToolStripMenuItem.Text = "View Controls...";
             this.viewControlsToolStripMenuItem.Click += new System.EventHandler(this.viewControlsToolStripMenuItem_Click);
-            // 
-            // addTextureFolderToolStripMenuItem
-            // 
-            this.addTextureFolderToolStripMenuItem.Name = "addTextureFolderToolStripMenuItem";
-            this.addTextureFolderToolStripMenuItem.Size = new System.Drawing.Size(301, 22);
-            this.addTextureFolderToolStripMenuItem.Text = "Add Texture Folder...";
-            this.addTextureFolderToolStripMenuItem.Click += new System.EventHandler(this.addTextureFolderToolStripMenuItem_Click);
-            // 
-            // addTXDArchiveToolStripMenuItem
-            // 
-            this.addTXDArchiveToolStripMenuItem.Name = "addTXDArchiveToolStripMenuItem";
-            this.addTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(301, 22);
-            this.addTXDArchiveToolStripMenuItem.Text = "Add TXD Archive...";
-            this.addTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.addTXDArchiveToolStripMenuItem_Click);
-            // 
-            // refreshTexturesToolStripMenuItem
-            // 
-            this.refreshTexturesToolStripMenuItem.Name = "refreshTexturesToolStripMenuItem";
-            this.refreshTexturesToolStripMenuItem.Size = new System.Drawing.Size(301, 22);
-            this.refreshTexturesToolStripMenuItem.Text = "Refresh Textures and Models";
-            this.refreshTexturesToolStripMenuItem.Click += new System.EventHandler(this.refreshTexturesToolStripMenuItem_Click);
             // 
             // toolStripSeparator4
             // 
@@ -500,7 +476,10 @@ namespace IndustrialPark
             // 
             this.displayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.assetTypesToolStripMenuItem,
-            this.toolStripSeparator1,
+            this.addTextureFolderToolStripMenuItem,
+            this.addTXDArchiveToolStripMenuItem,
+            this.refreshTexturesAndModelsToolStripMenuItem,
+            this.toolStripSeparator10,
             this.colorsToolStripMenuItem,
             this.noCullingCToolStripMenuItem,
             this.wireframeFToolStripMenuItem,
@@ -547,11 +526,6 @@ namespace IndustrialPark
             // 
             this.toolStripSeparatorAssetTypes.Name = "toolStripSeparatorAssetTypes";
             this.toolStripSeparatorAssetTypes.Size = new System.Drawing.Size(126, 6);
-            // 
-            // toolStripSeparator1
-            // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(238, 6);
             // 
             // colorsToolStripMenuItem
             // 
@@ -896,6 +870,32 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
+            // toolStripSeparator10
+            // 
+            this.toolStripSeparator10.Name = "toolStripSeparator10";
+            this.toolStripSeparator10.Size = new System.Drawing.Size(238, 6);
+            // 
+            // addTextureFolderToolStripMenuItem
+            // 
+            this.addTextureFolderToolStripMenuItem.Name = "addTextureFolderToolStripMenuItem";
+            this.addTextureFolderToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.addTextureFolderToolStripMenuItem.Text = "Add Texture Folder...";
+            this.addTextureFolderToolStripMenuItem.Click += new System.EventHandler(this.addTextureFolderToolStripMenuItem_Click);
+            // 
+            // addTXDArchiveToolStripMenuItem
+            // 
+            this.addTXDArchiveToolStripMenuItem.Name = "addTXDArchiveToolStripMenuItem";
+            this.addTXDArchiveToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.addTXDArchiveToolStripMenuItem.Text = "Add TXD Archive...";
+            this.addTXDArchiveToolStripMenuItem.Click += new System.EventHandler(this.addTXDArchiveToolStripMenuItem_Click);
+            // 
+            // refreshTexturesAndModelsToolStripMenuItem
+            // 
+            this.refreshTexturesAndModelsToolStripMenuItem.Name = "refreshTexturesAndModelsToolStripMenuItem";
+            this.refreshTexturesAndModelsToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
+            this.refreshTexturesAndModelsToolStripMenuItem.Text = "Refresh Textures and Models";
+            this.refreshTexturesAndModelsToolStripMenuItem.Click += new System.EventHandler(this.refreshTexturesToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -942,7 +942,6 @@ namespace IndustrialPark
         private ToolStripMenuItem archiveEditorToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem addTextureFolderToolStripMenuItem;
         private ToolStripMenuItem displayToolStripMenuItem;
 
         private ToolStripMenuItem colorsToolStripMenuItem;
@@ -964,7 +963,6 @@ namespace IndustrialPark
         private ToolStripMenuItem sFXInColorToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem1;
         private ToolStripMenuItem uIModeToolStripMenuItem;
-        private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem uIModeAutoSizeToolStripMenuItem;
         private ToolStripStatusLabel toolStripStatusLabel2;
         private ToolStripStatusLabel toolStripStatusLabelProject;
@@ -981,7 +979,6 @@ namespace IndustrialPark
         private ToolStripMenuItem positionLocalToolStripMenuItem;
         private ToolStripMenuItem researchToolStripMenuItem;
         private ToolStripMenuItem eventSearchToolStripMenuItem;
-        private ToolStripMenuItem addTXDArchiveToolStripMenuItem;
         private ToolStripMenuItem assetIDGeneratorToolStripMenuItem;
         private ToolStripMenuItem useLODTForRenderingToolStripMenuItem;
         private ToolStripMenuItem usePIPTForRenderingToolStripMenuItem;
@@ -998,7 +995,6 @@ namespace IndustrialPark
         private ToolStripMenuItem ensureAssociationsToolStripMenuItem;
         private ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem hideInvisibleMeshesToolStripMenuItem;
-        private ToolStripMenuItem refreshTexturesToolStripMenuItem;
         private ToolStripMenuItem downloadVgmstreamToolStripMenuItem;
         private ToolStripMenuItem stopSoundToolStripMenuItem;
         private ToolStripMenuItem templatesChainPointMVPTsToolStripMenuItem;
@@ -1027,6 +1023,10 @@ namespace IndustrialPark
         private ToolStripMenuItem useLegacyAssetTypeFormatToolStripMenuItem;
         private ToolStripMenuItem updateReferencesOnCopyPasteToolStripMenuItem;
         private ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
+        private ToolStripMenuItem addTextureFolderToolStripMenuItem;
+        private ToolStripMenuItem addTXDArchiveToolStripMenuItem;
+        private ToolStripMenuItem refreshTexturesAndModelsToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator10;
     }
 }
 

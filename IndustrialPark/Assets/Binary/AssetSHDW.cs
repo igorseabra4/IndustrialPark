@@ -71,13 +71,10 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            writer.Write(Entries.Length);
 
-                writer.Write(Entries.Length);
-
-                foreach (var l in Entries)
-                    l.Serialize(writer);
-
-                
+            foreach (var l in Entries)
+                l.Serialize(writer);
         }
 
         public void Merge(AssetSHDW asset)

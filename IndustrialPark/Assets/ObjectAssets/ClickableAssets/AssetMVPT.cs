@@ -120,28 +120,26 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            base.Serialize(writer);
 
-                base.Serialize(writer);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(Wt);
+            writer.Write(IsZone);
+            writer.Write(BezIndex);
+            writer.Write(Flg_Props);
+            writer.Write((byte)0);
+            writer.Write((ushort)NextMovePoints.Length);
+            if (game != Game.Scooby)
+                writer.Write(Delay);
+            writer.Write(_zoneRadius);
+            if (game != Game.Scooby)
+                writer.Write(_arenaRadius);
+            foreach (var i in NextMovePoints)
+                writer.Write(i);
 
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(Wt);
-                writer.Write(IsZone);
-                writer.Write(BezIndex);
-                writer.Write(Flg_Props);
-                writer.Write((byte)0);
-                writer.Write((ushort)NextMovePoints.Length);
-                if (game != Game.Scooby)
-                    writer.Write(Delay);
-                writer.Write(_zoneRadius);
-                if (game != Game.Scooby)
-                    writer.Write(_arenaRadius);
-                foreach (var i in NextMovePoints)
-                    writer.Write(i);
-
-                SerializeLinks(writer);
-                
+            SerializeLinks(writer);
         }
 
         private Matrix world;

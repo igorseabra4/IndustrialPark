@@ -191,26 +191,24 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-                base.Serialize(writer);
-                writer.Write(MinimumX);
-                writer.Write(MinimumY);
-                writer.Write(MinimumZ);
-                writer.Write(MaximumX);
-                writer.Write(MaximumY);
-                writer.Write(MaximumZ);
-                writer.Write(Position2X);
-                writer.Write(Position2Y);
-                writer.Write(Position2Z);
-                writer.Write(Position3X);
-                writer.Write(Position3Y);
-                writer.Write(Position3Z);
-                writer.Write(DirectionX);
-                writer.Write(DirectionY);
-                writer.Write(DirectionZ);
-                writer.Write(TriggerFlags.FlagValueInt);
-                SerializeLinks(writer);
-                
+            base.Serialize(writer);
+            writer.Write(MinimumX);
+            writer.Write(MinimumY);
+            writer.Write(MinimumZ);
+            writer.Write(MaximumX);
+            writer.Write(MaximumY);
+            writer.Write(MaximumZ);
+            writer.Write(Position2X);
+            writer.Write(Position2Y);
+            writer.Write(Position2Z);
+            writer.Write(Position3X);
+            writer.Write(Position3Y);
+            writer.Write(Position3Z);
+            writer.Write(DirectionX);
+            writer.Write(DirectionY);
+            writer.Write(DirectionZ);
+            writer.Write(TriggerFlags.FlagValueInt);
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

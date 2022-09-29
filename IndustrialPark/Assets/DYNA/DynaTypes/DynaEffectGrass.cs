@@ -53,20 +53,17 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(Orient);
-                writer.Write((byte)0);
-                writer.Write(EffectGrassFlags.FlagValueShort);
-                writer.Write(GrassMesh);
-                writer.Write(Model);
-                writer.Write(WidthScale);
-                writer.Write(HeightScale);
-                writer.Write(DensityScale);
-                writer.Write(WidthMin);
-                writer.Write(HightMin);
-                writer.Write(Animate);
-
-                
+            writer.Write(Orient);
+            writer.Write((byte)0);
+            writer.Write(EffectGrassFlags.FlagValueShort);
+            writer.Write(GrassMesh);
+            writer.Write(Model);
+            writer.Write(WidthScale);
+            writer.Write(HeightScale);
+            writer.Write(DensityScale);
+            writer.Write(WidthMin);
+            writer.Write(HightMin);
+            writer.Write(Animate);
         }
     }
 }

@@ -152,7 +152,7 @@ namespace IndustrialPark
             set => _color.W = value;
         }
         [Category(categoryName + " Color")]
-        public AssetColor ColorRBGA
+        public AssetColor ColorRGBA
         {
             get => AssetColor.FromVector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
             set
@@ -168,7 +168,7 @@ namespace IndustrialPark
         public AssetSingle ColorAlphaSpeed { get; set; }
 
         protected uint _model;
-        [Category(categoryName + " References"), Description("Model or ModelInfo asset"), ValidReferenceRequired]
+        [Category(categoryName + " References"), Description("Model or Model Info asset"), ValidReferenceRequired]
         public AssetID Model
         {
             get => _model;

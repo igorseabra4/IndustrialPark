@@ -13,5 +13,7 @@ namespace IndustrialPark
         bool SpecialBlendMode { get; }
 
         Matrix TransformMatrix { get; }
+
+        void ApplyScale(Vector3 factor);
     }
 }

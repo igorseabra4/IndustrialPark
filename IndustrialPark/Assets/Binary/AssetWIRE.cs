@@ -77,26 +77,23 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(hashID0);
+            writer.Write(hashID1);
 
-                writer.Write(0);
-                writer.Write(0);
-                writer.Write(0);
-                writer.Write(hashID0);
-                writer.Write(hashID1);
+            foreach (var p in Points)
+                p.Serialize(writer);
 
-                foreach (var p in Points)
-                    p.Serialize(writer);
+            foreach (var l in Lines)
+                l.Serialize(writer);
 
-                foreach (var l in Lines)
-                    l.Serialize(writer);
+            writer.BaseStream.Position = 0;
 
-                writer.BaseStream.Position = 0;
-
-                writer.Write((int)writer.BaseStream.Length);
-                writer.Write(Points.Length);
-                writer.Write(Lines.Length);
-
-                
+            writer.Write((int)writer.BaseStream.Length);
+            writer.Write(Points.Length);
+            writer.Write(Lines.Length);
         }
 
         public void ToObj(string fileName)

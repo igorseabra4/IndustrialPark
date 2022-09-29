@@ -5,25 +5,25 @@ namespace IndustrialPark
 {
     public class AssetVILP : Asset
     {
-        private const string vilpName = "VILP";
+        private const string categoryName = "VILP";
 
-        [Category(vilpName)]
+        [Category(categoryName)]
         public AssetID Unknown_00 { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public int Unknown_04 { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public int Unknown_08 { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public int Unknown_0C { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public int Unknown_10 { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public int Unknown_14 { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public int Unknown_18 { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public AssetSingle Unknown_1C { get; set; }
-        [Category(vilpName)]
+        [Category(categoryName)]
         public int Unknown_20 { get; set; }
 
         public AssetVILP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
@@ -44,18 +44,15 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-                writer.Write(Unknown_00);
-                writer.Write(Unknown_04);
-                writer.Write(Unknown_08);
-                writer.Write(Unknown_0C);
-                writer.Write(Unknown_10);
-                writer.Write(Unknown_14);
-                writer.Write(Unknown_18);
-                writer.Write(Unknown_1C);
-                writer.Write(Unknown_20);
-
-                
+            writer.Write(Unknown_00);
+            writer.Write(Unknown_04);
+            writer.Write(Unknown_08);
+            writer.Write(Unknown_0C);
+            writer.Write(Unknown_10);
+            writer.Write(Unknown_14);
+            writer.Write(Unknown_18);
+            writer.Write(Unknown_1C);
+            writer.Write(Unknown_20);
         }
     }
 }

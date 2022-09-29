@@ -96,33 +96,30 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            writer.WriteMagic("SKB1");
+            writer.Write(Flags.FlagValueInt);
 
-                writer.WriteMagic("SKB1");
-                writer.Write(Flags.FlagValueInt);
+            if (Offsets.Length > 0)
+                writer.Write((ushort)Offsets[0].Length);
+            else
+                writer.Write((ushort)0);
 
-                if (Offsets.Length > 0)
-                    writer.Write((ushort)Offsets[0].Length);
-                else
-                    writer.Write((ushort)0);
+            writer.Write((ushort)Times.Length);
+            writer.Write(KeyFrames.Length);
+            writer.Write(ScaleX);
+            writer.Write(ScaleY);
+            writer.Write(ScaleZ);
 
-                writer.Write((ushort)Times.Length);
-                writer.Write(KeyFrames.Length);
-                writer.Write(ScaleX);
-                writer.Write(ScaleY);
-                writer.Write(ScaleZ);
+            foreach (var k in KeyFrames)
+                k.Serialize(writer);
+            foreach (var t in Times)
+                writer.Write(t);
+            foreach (var o in Offsets)
+                foreach (var of in o)
+                    writer.Write(of);
 
-                foreach (var k in KeyFrames)
-                    k.Serialize(writer);
-                foreach (var t in Times)
-                    writer.Write(t);
-                foreach (var o in Offsets)
-                    foreach (var of in o)
-                        writer.Write(of);
-
-                while (writer.BaseStream.Length % 4 != 0)
-                    writer.Write((byte)0xCD);
-
-                
+            while (writer.BaseStream.Length % 4 != 0)
+                writer.Write((byte)0xCD);
         }
     }
 }

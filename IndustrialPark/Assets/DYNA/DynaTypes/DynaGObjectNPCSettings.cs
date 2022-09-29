@@ -91,25 +91,22 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write((int)BasisType);
-                writer.Write(AllowDetect);
-                writer.Write(AllowPatrol);
-                writer.Write(AllowWander);
-                writer.Write(ReduceCollide);
-                writer.Write(UseNavSplines);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(AllowChase);
-                writer.Write(AllowAttack);
-                writer.Write(AssumeLOS);
-                writer.Write(AssumeFOV);
-                writer.Write((int)DuploWaveMode);
-                writer.Write(DuploSpawnDelay);
-                writer.Write(DuploSpawnLifeMax);
-
-                
+            writer.Write((int)BasisType);
+            writer.Write(AllowDetect);
+            writer.Write(AllowPatrol);
+            writer.Write(AllowWander);
+            writer.Write(ReduceCollide);
+            writer.Write(UseNavSplines);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write(AllowChase);
+            writer.Write(AllowAttack);
+            writer.Write(AssumeLOS);
+            writer.Write(AssumeFOV);
+            writer.Write((int)DuploWaveMode);
+            writer.Write(DuploSpawnDelay);
+            writer.Write(DuploSpawnLifeMax);
         }
     }
 }

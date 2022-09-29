@@ -62,26 +62,23 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-                writer.Write(PickupHash);
-                writer.Write(Model);
-                writer.Write(PulseModel);
-                writer.Write(PulseTime);
-                writer.Write(PulseAddScale);
-                writer.Write(PulseMoveDown);
-                writer.Write(ColorRed);
-                writer.Write(ColorGreen);
-                writer.Write(ColorBlue);
-                writer.Write(Color);
-                writer.Write(FlyingSoundGroup);
-                writer.Write(PickupSoundGroup);
-                writer.Write(DeniedSoundGroup);
-                writer.Write(HealthValue);
-                writer.Write(PowerValue);
-                writer.Write(SaveFlag);
-                writer.Write(BInitialized);
-
-                
+            writer.Write(PickupHash);
+            writer.Write(Model);
+            writer.Write(PulseModel);
+            writer.Write(PulseTime);
+            writer.Write(PulseAddScale);
+            writer.Write(PulseMoveDown);
+            writer.Write(ColorRed);
+            writer.Write(ColorGreen);
+            writer.Write(ColorBlue);
+            writer.Write(Color);
+            writer.Write(FlyingSoundGroup);
+            writer.Write(PickupSoundGroup);
+            writer.Write(DeniedSoundGroup);
+            writer.Write(HealthValue);
+            writer.Write(PowerValue);
+            writer.Write(SaveFlag);
+            writer.Write(BInitialized);
         }
     }
 

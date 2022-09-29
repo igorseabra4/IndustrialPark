@@ -7,15 +7,26 @@ namespace IndustrialPark
     {
         [ValidReferenceRequired]
         public AssetID Surface { get; set; }
-        public AssetID Unknown { get; set; }
+        public int MeshIndex { get; set; }
 
         public EntryMAPR() { }
-        public override string ToString()
+
+        public EntryMAPR(EndianBinaryReader reader)
         {
-            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - [{HexUIntTypeConverter.StringFromAssetID(Unknown)}]";
+            Surface = reader.ReadUInt32();
+            MeshIndex = reader.ReadInt32();
         }
 
-        public override void Serialize(EndianBinaryWriter writer) { }
+        public override string ToString()
+        {
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {MeshIndex}]";
+        }
+
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(Surface);
+            writer.Write(MeshIndex);
+        }
     }
 
     public class AssetMAPR : Asset
@@ -39,11 +50,7 @@ namespace IndustrialPark
                 Entries = new EntryMAPR[maprCount];
 
                 for (int i = 0; i < Entries.Length; i++)
-                    Entries[i] = new EntryMAPR()
-                    {
-                        Surface = reader.ReadUInt32(),
-                        Unknown = reader.ReadUInt32()
-                    };
+                    Entries[i] = new EntryMAPR(reader);
             }
         }
 
@@ -52,10 +59,7 @@ namespace IndustrialPark
             writer.Write(assetID);
             writer.Write(Entries.Length);
             foreach (var entry in Entries)
-            {
-                writer.Write(entry.Surface);
-                writer.Write(entry.Unknown);
-            }
+                entry.Serialize(writer);
         }
     }
 }

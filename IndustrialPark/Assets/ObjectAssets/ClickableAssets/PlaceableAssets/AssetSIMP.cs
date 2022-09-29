@@ -130,16 +130,14 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            base.Serialize(writer);
 
-                base.Serialize(writer);
-
-                writer.Write(AnimSpeed);
-                writer.Write(InitialAnimState);
-                writer.Write(CollType.FlagValueByte);
-                writer.Write(SimpFlags.FlagValueByte);
-                writer.Write((short)0);
-                SerializeLinks(writer);
-                
+            writer.Write(AnimSpeed);
+            writer.Write(InitialAnimState);
+            writer.Write(CollType.FlagValueByte);
+            writer.Write(SimpFlags.FlagValueByte);
+            writer.Write((short)0);
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

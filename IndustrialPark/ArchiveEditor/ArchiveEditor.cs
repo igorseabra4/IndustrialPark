@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using System.Diagnostics;
-using RenderWareFile;
 
 namespace IndustrialPark
 {
@@ -846,6 +845,7 @@ namespace IndustrialPark
                                 ae.archive.ReplaceReferences(oldAssetID, AHDR.assetID);
                     }
 
+                    PopulateAssetListAndComboBox();
                     SetSelectedIndex(AHDR.assetID, true);
                 }
             }

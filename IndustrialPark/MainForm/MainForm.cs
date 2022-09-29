@@ -1016,16 +1016,12 @@ namespace IndustrialPark
 
         private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true, Multiselect = true };
-            if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                TextureManager.LoadTexturesFromFolder(openFile.FileNames);
+
         }
 
         private void addTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFile = new OpenFileDialog() { Filter = "TXD files|*.txd" };
-            if (openFile.ShowDialog() == DialogResult.OK)
-                TextureManager.LoadTexturesFromTXD(openFile.FileName);
+
         }
 
         private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1740,20 +1736,19 @@ namespace IndustrialPark
                             layerTypes[v.Key] = new HashSet<AssetType>();
                         foreach (var t in v.Value)
                         {
-
                             layerTypes[v.Key].Add(t);
                             if (v.Key == LayerType.SRAM && v.Value.Contains(AssetType.SoundInfo))
                                 MessageBox.Show(archive.currentlyOpenFilePath);
                         }
                     }
 
-                    var sndis = archive.GetAllAssets().Where(a => a.assetType == AssetType.SoundInfo);
-                    if (sndis.Any())
-                    {
-                        archive.SelectedLayerIndex = archive.GetLayerFromAssetID(sndis.FirstOrDefault().assetID);
-                        if (archive.GetLayerType() == (int)LayerType_BFBB.SRAM)
-                            MessageBox.Show(archive.currentlyOpenFilePath);
-                    }
+                    //var sndis = archive.GetAllAssets().Where(a => a.assetType == AssetType.SoundInfo);
+                    //if (sndis.Any())
+                    //{
+                    //    archive.SelectedLayerIndex = archive.GetLayerFromAssetID(sndis.FirstOrDefault().assetID);
+                    //    if (archive.GetLayerType() == (int)LayerType_BFBB.SRAM)
+                    //        MessageBox.Show(archive.currentlyOpenFilePath);
+                    //}
                     archive.Dispose(false);
                     p.PerformStep();
                 }

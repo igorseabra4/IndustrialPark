@@ -126,19 +126,16 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            writer.Write(Entries_SND.Length);
+            writer.Write(Entries_SNDS.Length);
+            writer.Write(Entries_Sound_CIN.Length);
 
-                writer.Write(Entries_SND.Length);
-                writer.Write(Entries_SNDS.Length);
-                writer.Write(Entries_Sound_CIN.Length);
-
-                foreach (var e in Entries_SND)
-                    writer.Write(e.Serialize());
-                foreach (var e in Entries_SNDS)
-                    writer.Write(e.Serialize());
-                foreach (var e in Entries_Sound_CIN)
-                    writer.Write(e.Serialize());
-
-                
+            foreach (var e in Entries_SND)
+                writer.Write(e.Serialize());
+            foreach (var e in Entries_SNDS)
+                writer.Write(e.Serialize());
+            foreach (var e in Entries_Sound_CIN)
+                writer.Write(e.Serialize());
         }
 
         public void AddEntry(byte[] soundData, uint assetID, AssetType assetType, out byte[] finalData)

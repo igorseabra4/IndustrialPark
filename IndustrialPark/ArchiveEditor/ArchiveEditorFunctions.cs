@@ -563,8 +563,8 @@ namespace IndustrialPark
         public IEnumerable<AssetType> ScalableAssetTypesOnArchive() =>
             (from Asset asset in assetDictionary.Values where
             asset is IClickableAsset ||
-            asset is AssetJSP ||
-            asset is AssetJSP_INFO ||
+            (game == Game.BFBB && asset is AssetJSP) ||
+            (game == Game.BFBB && asset is AssetJSP_INFO) ||
             asset is AssetLODT ||
             asset is AssetFLY
              select asset.assetType).Distinct();
@@ -680,14 +680,15 @@ namespace IndustrialPark
             {
                 case AssetType.Animation:
                 {
-                    if (AHDR.data.Length == 0)
-                        return new AssetGeneric(AHDR, game, endianness);
-                    var magic = AHDR.data.Take(4).ToArray();
-                    if (endianness == Endianness.Big)
-                        magic = magic.Reverse().ToArray();
-                    if (magic[0] == 'S' && magic[1] == 'K' && magic[2] == 'B' && magic[3] == '1')
-                        return new AssetANIM(AHDR, game, endianness);
-                    return new AssetGeneric(AHDR, game, endianness);
+                    if (AHDR.data.Length != 0)
+                    {
+                        var magic = AHDR.data.Take(4).ToArray();
+                        if (endianness == Endianness.Big)
+                            magic = magic.Reverse().ToArray();
+                        if (magic[0] == 'S' && magic[1] == 'K' && magic[2] == 'B' && magic[3] == '1')
+                            return new AssetANIM(AHDR, game, endianness);
+                    }
+                    throw new Exception($"Invalid Animation asset: {AHDR.ADBG.assetName}");
                 }
                 case AssetType.BSP:
                 case AssetType.JSP:
@@ -734,9 +735,7 @@ namespace IndustrialPark
                 case AssetType.Conditional:
                     return new AssetCOND(AHDR, game, endianness);
                 case AssetType.Credits:
-                    if (game == Game.BFBB)
-                        return new AssetCRDT(AHDR, game, endianness);
-                    return new AssetGeneric(AHDR, game, endianness); // unsupported CRDT for non bfbb
+                    return new AssetCRDT(AHDR, game, endianness);
                 case AssetType.CutsceneManager:
                     return new AssetCSNM(AHDR, game, endianness);
                 case AssetType.Destructible:

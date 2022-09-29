@@ -114,7 +114,6 @@ namespace IndustrialPark
 
             foreach (var l in Entries)
                 l.Serialize(writer);
-
         }
 
         public void UpdateDictionary()

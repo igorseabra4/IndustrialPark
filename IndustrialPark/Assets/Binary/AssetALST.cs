@@ -28,10 +28,8 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-                foreach (var i in Animations)
-                    writer.Write(i);
-                
+            foreach (var i in Animations)
+                writer.Write(i);
         }
 
         public override void Verify(ref List<string> result)

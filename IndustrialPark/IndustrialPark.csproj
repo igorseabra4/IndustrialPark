@@ -128,13 +128,6 @@
     <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />
     <Compile Include="ArchiveEditor\Other\LayerComparer.cs" />
     <Compile Include="ArchiveEditor\Other\AssetTypeContainer.cs" />
-    <Compile Include="ArchiveEditor\Other\BakeScaleModelContainer.cs" />
-    <Compile Include="ArchiveEditor\Dialogs\BakeScale.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\BakeScale.designer.cs">
-      <DependentUpon>BakeScale.cs</DependentUpon>
-    </Compile>
     <Compile Include="ArchiveEditor\Dialogs\ApplyVertexColors.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -538,9 +531,6 @@
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\BakeScale.resx">
-      <DependentUpon>BakeScale.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyVertexColors.resx">
       <DependentUpon>ApplyVertexColors.cs</DependentUpon>
     </EmbeddedResource>

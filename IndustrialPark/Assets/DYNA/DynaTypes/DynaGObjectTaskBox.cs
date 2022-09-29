@@ -13,13 +13,13 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]
-        public AssetByte Persistent { get; set; }
+        public bool Persistent { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte Loop { get; set; }
+        public bool Loop { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte Enable { get; set; }
+        public bool Enable { get; set; }
         [Category(dynaCategoryName)]
-        public AssetByte Retry { get; set; }
+        public bool Retry { get; set; }
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID TalkBox { get; set; }
         [Category(dynaCategoryName)]
@@ -43,10 +43,10 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = dynaDataStartPosition;
 
-                Persistent = reader.ReadByte();
-                Loop = reader.ReadByte();
-                Enable = reader.ReadByte();
-                Retry = reader.ReadByte();
+                Persistent = reader.ReadByteBool();
+                Loop = reader.ReadByteBool();
+                Enable = reader.ReadByteBool();
+                Retry = reader.ReadByteBool();
                 TalkBox = reader.ReadUInt32();
                 NextTaskBox = reader.ReadUInt32();
                 BeginText = reader.ReadUInt32();
@@ -60,21 +60,18 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(Persistent);
-                writer.Write(Loop);
-                writer.Write(Enable);
-                writer.Write(Retry);
-                writer.Write(TalkBox);
-                writer.Write(NextTaskBox);
-                writer.Write(BeginText);
-                writer.Write(DescriptionText);
-                writer.Write(ReminderText);
-                writer.Write(SuccessText);
-                writer.Write(FailureText);
-                writer.Write(End_TextID);
-
-                
+            writer.Write(Persistent);
+            writer.Write(Loop);
+            writer.Write(Enable);
+            writer.Write(Retry);
+            writer.Write(TalkBox);
+            writer.Write(NextTaskBox);
+            writer.Write(BeginText);
+            writer.Write(DescriptionText);
+            writer.Write(ReminderText);
+            writer.Write(SuccessText);
+            writer.Write(FailureText);
+            writer.Write(End_TextID);
         }
     }
 }

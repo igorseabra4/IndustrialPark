@@ -76,13 +76,10 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-                writer.WriteMagic("PICK");
-                writer.Write(_entries.Length);
-                foreach (var l in _entries)
-                    l.Serialize(writer);
-
-                
+            writer.WriteMagic("PICK");
+            writer.Write(_entries.Length);
+            foreach (var l in _entries)
+                l.Serialize(writer);
         }
 
         private void UpdateDictionary()
