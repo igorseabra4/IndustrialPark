@@ -37,7 +37,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int Unknown { get; set; }
 
-        private bool inc = false;
+        private bool incredibles = false;
 
         public static bool dontRender = false;
         protected override bool DontRender => dontRender;
@@ -62,7 +62,7 @@ namespace IndustrialPark
 
                 if (reader.BaseStream.Position - _links.Length * Link.sizeOfStruct != reader.BaseStream.Length)
                 {
-                    inc = true;
+                    incredibles = true;
                     Unknown = reader.ReadInt32();
                 }
 
@@ -88,7 +88,7 @@ namespace IndustrialPark
                 writer.Write(Damage);
                 writer.Write(Knockback);
 
-                if (inc)
+                if (incredibles)
                     writer.Write(Unknown);
 
                 

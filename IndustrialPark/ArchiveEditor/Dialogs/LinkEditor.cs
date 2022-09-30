@@ -54,6 +54,11 @@ namespace IndustrialPark
                     groupBoxSourceEvent.Text = "Time";
                     groupBoxSourceCheckOrFlags.Visible = false;
                 }
+                else if (linkType == LinkType.TimedRotu)
+                {
+                    groupBoxSourceEvent.Text = "Time";
+                    groupBoxSourceCheckOrFlags.Text = "Enabled";
+                }
                 else if (linkType == LinkType.Progress)
                 {
                     groupBoxSourceEvent.Text = "Percent";
@@ -149,13 +154,13 @@ namespace IndustrialPark
                     if (LinkListEditor.LinkType == LinkType.Normal)
                     {
                         link.Time = 0;
-                        link.Flags = 0;
+                        link.AdditionalValue = 0;
                     }
                     else
                     {
                         link.EventReceiveID = 0;
                         if (LinkListEditor.LinkType == LinkType.Timed)
-                            link.Flags = 0;
+                            link.AdditionalValue = 0;
                     }
 
                     listBoxLinks.Items.Add(link);
@@ -185,10 +190,12 @@ namespace IndustrialPark
                     textBoxTargetAsset.Text = GetAssetName(assetEvent.TargetAsset);
                     textBoxArgumentAsset.Text = GetAssetName(assetEvent.ArgumentAsset);
 
-                    if (groupBoxSourceCheckOrFlags.Text == "Flags")
-                        textBoxSourceCheckOrFlags.Text = assetEvent.Flags.ToString();
-                    else
+                    if (LinkListEditor.LinkType == LinkType.TimedRotu || LinkListEditor.LinkType == LinkType.Progress)
+                        textBoxSourceCheckOrFlags.Text = assetEvent.AdditionalValue.ToString();
+                    else if (LinkListEditor.LinkType == LinkType.Normal)
                         textBoxSourceCheckOrFlags.Text = GetAssetName(assetEvent.SourceCheckAsset);
+                    else
+                        textBoxSourceCheckOrFlags.Text = "";
 
                     numericUpDownTime.Value = (decimal)assetEvent.Time;
 
@@ -325,10 +332,10 @@ namespace IndustrialPark
 
                 try
                 {
-                    if (groupBoxSourceCheckOrFlags.Text == "Flags")
+                    if (LinkListEditor.LinkType == LinkType.TimedRotu || LinkListEditor.LinkType == LinkType.Progress)
                         foreach (int i in listBoxLinks.SelectedIndices)
-                            ((Link)listBoxLinks.Items[i]).Flags = Convert.ToInt32(textBoxSourceCheckOrFlags.Text);
-                    else
+                            ((Link)listBoxLinks.Items[i]).AdditionalValue = Convert.ToInt32(textBoxSourceCheckOrFlags.Text);
+                    else if (LinkListEditor.LinkType == LinkType.Normal)
                         foreach (int i in listBoxLinks.SelectedIndices)
                             ((Link)listBoxLinks.Items[i]).SourceCheckAsset = GetAssetID(textBoxSourceCheckOrFlags.Text);
                 }

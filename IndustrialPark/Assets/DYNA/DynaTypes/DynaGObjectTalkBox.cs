@@ -18,31 +18,31 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Quit_TextBoxID { get; set; }
         [Category(dynaCategoryName)]
-        public bool Trap { get; set; }
+        public byte Trap { get; set; }
         [Category(dynaCategoryName)]
-        public bool Pause { get; set; }
+        public byte Pause { get; set; }
         [Category(dynaCategoryName)]
-        public bool AllowQuit { get; set; }
+        public byte AllowQuit { get; set; }
         [Category(dynaCategoryName)]
         public byte TriggerPads { get; set; }
         [Category(dynaCategoryName)]
-        public bool Page { get; set; }
+        public byte Page { get; set; }
         [Category(dynaCategoryName)]
-        public bool Show { get; set; }
+        public byte Show { get; set; }
         [Category(dynaCategoryName)]
-        public bool Hide { get; set; }
+        public byte Hide { get; set; }
         [Category(dynaCategoryName)]
-        public bool AudioEffect { get; set; }
+        public byte AudioEffect { get; set; }
         [Category(dynaCategoryName)]
         public AssetID TeleportPointerID { get; set; }
         [Category(dynaCategoryName)]
-        public bool AutoWaitTypeTime { get; set; }
+        public byte AutoWaitTypeTime { get; set; }
         [Category(dynaCategoryName)]
-        public bool AutoWaitTypePrompt { get; set; }
+        public byte AutoWaitTypePrompt { get; set; }
         [Category(dynaCategoryName)]
-        public bool AutoWaitTypeSound { get; set; }
+        public byte AutoWaitTypeSound { get; set; }
         [Category(dynaCategoryName)]
-        public bool AutoWaitTypeEvent { get; set; }
+        public byte AutoWaitTypeEvent { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle AutoWaitDelay { get; set; }
         [Category(dynaCategoryName)]
@@ -63,7 +63,7 @@ namespace IndustrialPark
             if (checkpointTalkbox)
             {
                 Dialog_TextBoxID = 0x9BC49154;
-                AutoWaitTypeTime = true;
+                AutoWaitTypeTime = 1;
                 AutoWaitDelay = 2f;
             }
         }
@@ -77,19 +77,19 @@ namespace IndustrialPark
                 Dialog_TextBoxID = reader.ReadUInt32();
                 Prompt_TextBoxID = reader.ReadUInt32();
                 Quit_TextBoxID = reader.ReadUInt32();
-                Trap = reader.ReadByteBool();
-                Pause = reader.ReadByteBool();
-                AllowQuit = reader.ReadByteBool();
+                Trap = reader.ReadByte();
+                Pause = reader.ReadByte();
+                AllowQuit = reader.ReadByte();
                 TriggerPads = reader.ReadByte();
-                Page = reader.ReadByteBool();
-                Show = reader.ReadByteBool();
-                Hide = reader.ReadByteBool();
-                AudioEffect = reader.ReadByteBool();
+                Page = reader.ReadByte();
+                Show = reader.ReadByte();
+                Hide = reader.ReadByte();
+                AudioEffect = reader.ReadByte();
                 TeleportPointerID = reader.ReadUInt32();
-                AutoWaitTypeTime = reader.ReadByteBool();
-                AutoWaitTypePrompt = reader.ReadByteBool();
-                AutoWaitTypeSound = reader.ReadByteBool();
-                AutoWaitTypeEvent = reader.ReadByteBool();
+                AutoWaitTypeTime = reader.ReadByte();
+                AutoWaitTypePrompt = reader.ReadByte();
+                AutoWaitTypeSound = reader.ReadByte();
+                AutoWaitTypeEvent = reader.ReadByte();
                 AutoWaitDelay = reader.ReadSingle();
                 AutoWaitWhichEvent = reader.ReadInt32();
                 PromptSkip_TextID = reader.ReadUInt32();

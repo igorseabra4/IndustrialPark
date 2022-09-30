@@ -9,6 +9,7 @@ namespace IndustrialPark
     {
         Normal,
         Timed,
+        TimedRotu,
         Progress
     }
 
@@ -51,8 +52,8 @@ namespace IndustrialPark
         public AssetID ArgumentAsset { get; set; }
         public AssetID SourceCheckAsset { get; set; }
 
-        public float Time { get; set; } // only for timed
-        public int Flags { get; set; } // only for progress
+        public float Time { get; set; } // only for progress, timed and timed rotu
+        public int AdditionalValue { get; set; } // only for progress and timed rotu
 
         [JsonConstructor]
         private Link()
@@ -84,7 +85,7 @@ namespace IndustrialPark
             {
                 Time = reader.ReadSingle();
                 if (type == LinkType.Progress)
-                    Flags = reader.ReadInt32();
+                    AdditionalValue = reader.ReadInt32();
                 TargetAsset = reader.ReadUInt32();
                 EventSendID = (ushort)reader.ReadUInt32();
                 Parameter1 = reader.ReadUInt32();
@@ -93,6 +94,8 @@ namespace IndustrialPark
                 Parameter4 = reader.ReadUInt32();
                 ArgumentAsset = reader.ReadUInt32();
             }
+            if (type == LinkType.TimedRotu)
+                AdditionalValue = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer) { }
@@ -115,7 +118,7 @@ namespace IndustrialPark
             {
                 writer.Write(Time);
                 if (type == LinkType.Progress)
-                    writer.Write(Flags);
+                    writer.Write(AdditionalValue);
                 writer.Write(TargetAsset);
                 writer.Write((int)EventSendID);
                 writer.Write(Parameter1);
@@ -124,6 +127,8 @@ namespace IndustrialPark
                 writer.Write(Parameter4);
                 writer.Write(ArgumentAsset);
             }
+            if (type == LinkType.TimedRotu)
+                writer.Write(AdditionalValue);
         }
 
         public override string ToString()

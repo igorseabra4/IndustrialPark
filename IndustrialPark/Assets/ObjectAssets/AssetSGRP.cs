@@ -77,8 +77,8 @@ namespace IndustrialPark
             get => System.Text.Encoding.GetEncoding(1252).GetString(BitConverter.GetBytes(_pszGroupName));
             set
             {
-                if (value.Length != 4)
-                    throw new ArgumentException("Value must be 4 characters long");
+                while (value.Length < 4)
+                    value += "\0";
                 _pszGroupName = BitConverter.ToInt32(value.ToCharArray().Cast<byte>().ToArray(), 0);
             }
         }

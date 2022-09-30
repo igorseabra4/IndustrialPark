@@ -60,7 +60,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName), Description(incOnly)]
         public int UnknownInt54 { get; set; }
 
-        private bool inc = false;
+        private bool incredibles = false;
 
         public DynaSceneProperties(string assetName) : base(assetName, DynaType.SceneProperties)
         {
@@ -106,7 +106,7 @@ namespace IndustrialPark
 
                 if (reader.BaseStream.Length - Link.sizeOfStruct * _links.Length - idle03Extras.Length * 4 - idle04Extras.Length * 4 != reader.BaseStream.Position)
                 {
-                    inc = true;
+                    incredibles = true;
 
                     UnknownInt34 = reader.ReadInt32();
                     UnknownInt38 = reader.ReadInt32();
@@ -149,7 +149,7 @@ namespace IndustrialPark
             writer.Write(UnknownInt2C);
             writer.Write(UnknownInt30);
 
-            if (inc)
+            if (incredibles)
             {
                 writer.Write(UnknownInt34);
                 writer.Write(UnknownInt38);
@@ -184,7 +184,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (!inc)
+            if (!incredibles)
             {
                 dt.RemoveProperty("UnknownInt34");
                 dt.RemoveProperty("UnknownInt38");
