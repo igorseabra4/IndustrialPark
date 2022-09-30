@@ -39,28 +39,29 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int UnknownInt30 { get; set; }
 
-        private const string incOnly = "Incredibles only";
+        private const string incrediblesCategory = dynaCategoryName + " (Incredibles version only)";
 
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt34 { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt38 { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt3C { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt40 { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt44 { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt48 { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt4C { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt50 { get; set; }
-        [Category(dynaCategoryName), Description(incOnly)]
+        [Category(incrediblesCategory)]
         public int UnknownInt54 { get; set; }
 
-        private bool incredibles = false;
+        [Category(dynaCategoryName)]
+        public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
 
         public DynaSceneProperties(string assetName) : base(assetName, DynaType.SceneProperties)
         {
@@ -106,7 +107,7 @@ namespace IndustrialPark
 
                 if (reader.BaseStream.Length - Link.sizeOfStruct * _links.Length - idle03Extras.Length * 4 - idle04Extras.Length * 4 != reader.BaseStream.Position)
                 {
-                    incredibles = true;
+                    AssetVersion = EVersionIncrediblesOthers.Incredibles;
 
                     UnknownInt34 = reader.ReadInt32();
                     UnknownInt38 = reader.ReadInt32();
@@ -117,6 +118,10 @@ namespace IndustrialPark
                     UnknownInt4C = reader.ReadInt32();
                     UnknownInt50 = reader.ReadInt32();
                     UnknownInt54 = reader.ReadInt32();
+                }
+                else
+                {
+                    AssetVersion = EVersionIncrediblesOthers.Others;
                 }
 
                 reader.BaseStream.Position = idle03ExtraOffset;
@@ -149,7 +154,7 @@ namespace IndustrialPark
             writer.Write(UnknownInt2C);
             writer.Write(UnknownInt30);
 
-            if (incredibles)
+            if (AssetVersion == EVersionIncrediblesOthers.Incredibles)
             {
                 writer.Write(UnknownInt34);
                 writer.Write(UnknownInt38);
@@ -180,23 +185,6 @@ namespace IndustrialPark
             writer.Write(idle04Pos);
 
             writer.BaseStream.Position = dynaDataEnd;
-        }
-
-        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
-        {
-            if (!incredibles)
-            {
-                dt.RemoveProperty("UnknownInt34");
-                dt.RemoveProperty("UnknownInt38");
-                dt.RemoveProperty("UnknownInt3C");
-                dt.RemoveProperty("UnknownInt40");
-                dt.RemoveProperty("UnknownInt44");
-                dt.RemoveProperty("UnknownInt48");
-                dt.RemoveProperty("UnknownInt4C");
-                dt.RemoveProperty("UnknownInt50");
-                dt.RemoveProperty("UnknownInt54");
-            }
-            base.SetDynamicProperties(dt);
         }
     }
 }

@@ -47,10 +47,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetColor Color4 { get; set; }
 
-        [Category(dynaCategoryName), Description("This unusual field is present in Incredibles, but not Movie.")]
+        [Category(dynaCategoryName + " (Incredibles version only)")]
         public int Unknown { get; set; }
 
-        private bool extraFieldPresent = false;
+        [Category(dynaCategoryName)]
+        public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
 
         public DynaUIImage(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__image, game, endianness)
         {
@@ -78,9 +79,11 @@ namespace IndustrialPark
 
                 if (reader.BaseStream.Position != linkStartPosition(reader.BaseStream.Length, _links.Length))
                 {
-                    extraFieldPresent = true;
+                    AssetVersion = EVersionIncrediblesOthers.Incredibles;
                     Unknown = reader.ReadInt32();
                 }
+                else
+                    AssetVersion = EVersionIncrediblesOthers.Others;
             }
         }
 
@@ -105,7 +108,7 @@ namespace IndustrialPark
             writer.Write(Color3);
             writer.Write(Color4);
 
-            if (extraFieldPresent)
+            if (AssetVersion == EVersionIncrediblesOthers.Incredibles)
                 writer.Write(Unknown);
         }
     }

@@ -34,10 +34,11 @@ namespace IndustrialPark
         public AssetSingle Damage { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Knockback { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName + " (Incredibles version only)")]
         public int Unknown { get; set; }
 
-        private bool incredibles = false;
+        [Category(dynaCategoryName)]
+        public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
 
         public static bool dontRender = false;
         protected override bool DontRender => dontRender;
@@ -62,9 +63,11 @@ namespace IndustrialPark
 
                 if (reader.BaseStream.Position - _links.Length * Link.sizeOfStruct != reader.BaseStream.Length)
                 {
-                    incredibles = true;
+                    AssetVersion = EVersionIncrediblesOthers.Incredibles;
                     Unknown = reader.ReadInt32();
                 }
+                else
+                    AssetVersion = EVersionIncrediblesOthers.Others;
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -73,25 +76,22 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(DirectionX);
+            writer.Write(DirectionY);
+            writer.Write(DirectionZ);
+            writer.Write(ScaleX);
+            writer.Write(ScaleY);
+            writer.Write(ScaleZ);
+            writer.Write(HeatRandom);
+            writer.Write(Damage);
+            writer.Write(Knockback);
 
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(DirectionX);
-                writer.Write(DirectionY);
-                writer.Write(DirectionZ);
-                writer.Write(ScaleX);
-                writer.Write(ScaleY);
-                writer.Write(ScaleZ);
-                writer.Write(HeatRandom);
-                writer.Write(Damage);
-                writer.Write(Knockback);
-
-                if (incredibles)
-                    writer.Write(Unknown);
-
-                
+            if (AssetVersion == EVersionIncrediblesOthers.Incredibles)
+                writer.Write(Unknown);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

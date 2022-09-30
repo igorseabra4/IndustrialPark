@@ -36,7 +36,6 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Portal, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Progress_Script, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Script, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Script_ROTU, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Sound_Group, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Text, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Timer, eventHandler),
@@ -602,8 +601,6 @@ namespace IndustrialPark
                     return "Volume (Box)";
                 case AssetTemplate.Volume_Sphere:
                     return "Volume (Sphere)";
-                case AssetTemplate.Script_ROTU:
-                    return "Script (ROTU)";
             }
 
             return template.ToString().Replace('_', ' ');
@@ -799,9 +796,7 @@ namespace IndustrialPark
                 case AssetTemplate.Progress_Script:
                     return new AssetPGRS(assetName);
                 case AssetTemplate.Script:
-                    return new AssetSCRP(assetName, false);
-                case AssetTemplate.Script_ROTU:
-                    return new AssetSCRP(assetName, true);
+                    return new AssetSCRP(assetName);
                 case AssetTemplate.Sound_Group:
                     return new AssetSGRP(assetName);
                 case AssetTemplate.Text:
@@ -1387,7 +1382,7 @@ namespace IndustrialPark
                     return new DynaGObjectTalkBox(assetName, true);
                 case AssetTemplate.Checkpoint_Script:
                 {
-                    var scrp = new AssetSCRP(assetName, false);
+                    var scrp = new AssetSCRP(assetName);
 
                     var checkpointSdfx = (AssetSDFX)PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SFX", AssetTemplate.SDFX);
                     var checkpointSimp = PlaceTemplate(new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP_TSSM);

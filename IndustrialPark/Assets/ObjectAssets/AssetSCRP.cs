@@ -26,7 +26,7 @@ namespace IndustrialPark
         {
             get
             {
-                LinkListEditor.LinkType = IsRotu ? LinkType.TimedRotu : LinkType.Timed;
+                LinkListEditor.LinkType = TimedLinkType;
                 LinkListEditor.ThisAssetID = assetID;
                 LinkListEditor.Game = game;
 
@@ -38,14 +38,15 @@ namespace IndustrialPark
             }
         }
 
-        [DisplayName("Is ROTU type script")]
-        public bool IsRotu { get; private set; } = false;
+        [Category(categoryName)]
+        public EVersionROTUOthers AssetVersion { get; set; } = EVersionROTUOthers.Others;
 
-        public AssetSCRP(string assetName, bool isRotu) : base(assetName, AssetType.Script, BaseAssetType.Script)
+        private LinkType TimedLinkType => AssetVersion == EVersionROTUOthers.ROTU ? LinkType.TimedRotu : LinkType.Timed;
+
+        public AssetSCRP(string assetName) : base(assetName, AssetType.Script, BaseAssetType.Script)
         {
             _timedLinks = new Link[0];
             ScriptStartTime = 1f;
-            IsRotu = isRotu;
         }
 
         public AssetSCRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -68,15 +69,15 @@ namespace IndustrialPark
                 int timedLinkSize = (int)((reader.BaseStream.Length - reader.BaseStream.Position - Link.sizeOfStruct * _links.Length) / timedLinkCount);
 
                 if (timedLinkSize == 0x24)
-                    IsRotu = true;
+                    AssetVersion = EVersionROTUOthers.ROTU;
                 else if (timedLinkSize == 0x20)
-                    IsRotu = false;
+                    AssetVersion = EVersionROTUOthers.Others;
                 else
                     throw new Exception("Unsupported format");
 
                 _timedLinks = new Link[timedLinkCount];
                 for (int i = 0; i < _timedLinks.Length; i++)
-                    _timedLinks[i] = new Link(reader, IsRotu ? LinkType.TimedRotu : LinkType.Timed, game);
+                    _timedLinks[i] = new Link(reader, TimedLinkType, game);
             }
         }
 
@@ -95,7 +96,7 @@ namespace IndustrialPark
             }
 
             foreach (var l in _timedLinks)
-                l.Serialize(IsRotu ? LinkType.TimedRotu : LinkType.Timed, writer);
+                l.Serialize(TimedLinkType, writer);
             SerializeLinks(writer);
         }
 

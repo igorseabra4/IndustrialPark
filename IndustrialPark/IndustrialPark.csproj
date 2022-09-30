@@ -171,6 +171,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudImage.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectFlamethrower.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectVent.cs" />
+    <Compile Include="Assets\Shared\Enums\EVersion.cs" />
     <Compile Include="Assets\Shared\Enums\EBrainID.cs" />
     <Compile Include="Assets\Shared\Enums\EMinfParamType.cs" />
     <Compile Include="Assets\ObjectAssets\AssetRANM.cs" />

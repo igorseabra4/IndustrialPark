@@ -1006,33 +1006,32 @@ namespace IndustrialPark
                 case DynaType.Enemy__IN2__Enforcer:
                 case DynaType.Enemy__IN2__Scientist:
                 case DynaType.Enemy__IN2__Shooter:
-                case DynaType.Unknown_EBC04E7B: // incredibles and rotu
-
-                // rat proto
                 case DynaType.AnalogDeflection:
                 case DynaType.AnalogDirection:
+                case DynaType.Carrying_CarryableObject:
+                case DynaType.Carrying_CarryableProperty_GenericUseProperty:
+                case DynaType.Carrying_CarryableProperty_UsePropertyAttract:
+                case DynaType.Carrying_CarryableProperty_UsePropertyRepel:
+                case DynaType.Carrying_CarryableProperty_UsePropertySwipe:
+                case DynaType.ContextObject_PoleSwing:
+                case DynaType.ContextObject_Springboard:
+                case DynaType.ContextObject_Tightrope:
                 case DynaType.Enemy__NPC_Gate:
                 case DynaType.Enemy__NPC_Walls:
+                case DynaType.Enemy__RATS__LeftArm:
+                case DynaType.Enemy__RATS__RightArm:
+                case DynaType.Enemy__RATS__Swarm__Bug:
+                case DynaType.Enemy__RATS__Swarm__Owl:
+                case DynaType.Enemy__RATS__Thief:
+                case DynaType.Enemy__RATS__Waiter:
                 case DynaType.HUD_Compass_Object:
                 case DynaType.HUD_Compass_System:
                 case DynaType.logic__Mission:
                 case DynaType.logic__Task:
                 case DynaType.Pour_Widget:
                 case DynaType.Twiddler:
-                case DynaType.Unknown_0A21FFAD:
-                case DynaType.Unknown_105DFF22:
-                case DynaType.Unknown_1E175B3F:
-                case DynaType.Unknown_284375FD:
-                case DynaType.Unknown_2D0D198B:
-                case DynaType.Unknown_35F3B22A:
-                case DynaType.Unknown_45F261C6:
-                case DynaType.Unknown_544AA34C:
-                case DynaType.Unknown_544E0BCC:
-                case DynaType.Unknown_89F5441A:
-                case DynaType.Unknown_B34B0083:
-                case DynaType.Unknown_D9CA96BC:
-                case DynaType.Unknown_EF5FD10C:
-                case DynaType.Unknown_F5B8CC9C:
+
+                case DynaType.Unknown_EBC04E7B:
 
                 case DynaType.Null:
                     return new DynaGeneric(AHDR, type, game, endianness);

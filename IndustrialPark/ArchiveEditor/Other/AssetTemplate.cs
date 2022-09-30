@@ -15,7 +15,6 @@
         Portal,
         Progress_Script,
         Script,
-        Script_ROTU,
         Sound_Group,
         Text,
         Timer,

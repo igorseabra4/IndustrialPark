@@ -21,9 +21,13 @@ namespace IndustrialPark
         public AssetID TargetAsset { get; set; }
         public ushort EventReceiveID;
         public ushort EventSendID;
+        [IgnoreVerification]
         public AssetID Parameter1 { get; set; }
+        [IgnoreVerification]
         public AssetID Parameter2 { get; set; }
+        [IgnoreVerification]
         public AssetID Parameter3 { get; set; }
+        [IgnoreVerification]
         public AssetID Parameter4 { get; set; }
         [JsonIgnore]
         public float FloatParameter1
