@@ -1,12 +1,12 @@
+using HipHopFile;
+using RenderWareFile;
+using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using HipHopFile;
-using RenderWareFile;
-using RenderWareFile.Sections;
 using static HipHopFile.Functions;
 using static IndustrialPark.TextureIOHelper;
 
