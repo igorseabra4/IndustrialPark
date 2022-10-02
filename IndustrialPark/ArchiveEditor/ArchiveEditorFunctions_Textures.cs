@@ -1,12 +1,12 @@
-using HipHopFile;
-using RenderWareFile;
-using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using HipHopFile;
+using RenderWareFile;
+using RenderWareFile.Sections;
 using static HipHopFile.Functions;
 using static IndustrialPark.TextureIOHelper;
 
@@ -88,7 +88,7 @@ namespace IndustrialPark
                                     // Length indicates that the file may have been trimmed (TODO: check if trim length is always 31?)
                                     int trimLength = 31;
 
-                                    if (name.Length == trimLength && !name.EndsWith(".RW3")) 
+                                    if (name.Length == trimLength && !name.EndsWith(".RW3"))
                                     {
                                         if (name.EndsWith(".RW"))
                                             tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 3);
@@ -225,7 +225,7 @@ namespace IndustrialPark
                                         byte R = (byte)((value >> 8) & 0x0F);
                                         byte A = (byte)((value >> 12) & 0x0F);
 
-                                        bitmapData.Add(System.Drawing.Color.FromArgb(A << 4, R << 4, G << 4, B << 4));
+                                        bitmapData.Add(System.Drawing.Color.FromArgb(A * 0x10, R * 0x10, G * 0x10, B * 0x10));
                                     }
                                 }
                                 else
