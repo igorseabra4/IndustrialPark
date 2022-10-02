@@ -225,7 +225,17 @@ namespace IndustrialPark
                                         byte R = (byte)((value >> 8) & 0x0F);
                                         byte A = (byte)((value >> 12) & 0x0F);
 
-                                        bitmapData.Add(System.Drawing.Color.FromArgb(A * 0x10, R * 0x10, G * 0x10, B * 0x10));
+                                        double bNorm = (float)B / 15;
+                                        double gNorm = (float)G / 15;
+                                        double rNorm = (float)R / 15;
+                                        double aNorm = (float)A / 15;
+
+                                        B = (byte)(bNorm * 255);
+                                        G = (byte)(gNorm * 255);
+                                        R = (byte)(rNorm * 255);
+                                        A = (byte)(aNorm * 255);
+
+                                        bitmapData.Add(System.Drawing.Color.FromArgb(A, R, G, B));
                                     }
                                 }
                                 else
