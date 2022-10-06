@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportModel));
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.buttonImportRawData = new System.Windows.Forms.Button();
@@ -52,185 +53,129 @@
             // 
             // comboBoxAssetTypes
             // 
+            resources.ApplyResources(this.comboBoxAssetTypes, "comboBoxAssetTypes");
             this.comboBoxAssetTypes.FormattingEnabled = true;
-            this.comboBoxAssetTypes.Location = new System.Drawing.Point(6, 19);
             this.comboBoxAssetTypes.Name = "comboBoxAssetTypes";
-            this.comboBoxAssetTypes.Size = new System.Drawing.Size(248, 21);
-            this.comboBoxAssetTypes.TabIndex = 1;
             this.comboBoxAssetTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxAssetTypes_SelectedIndexChanged);
             // 
             // groupBox1
             // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.comboBoxAssetTypes);
-            this.groupBox1.Location = new System.Drawing.Point(225, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(260, 50);
-            this.groupBox1.TabIndex = 2;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Asset Type";
             // 
             // buttonImportRawData
             // 
-            this.buttonImportRawData.Location = new System.Drawing.Point(18, 12);
+            resources.ApplyResources(this.buttonImportRawData, "buttonImportRawData");
             this.buttonImportRawData.Name = "buttonImportRawData";
-            this.buttonImportRawData.Size = new System.Drawing.Size(190, 23);
-            this.buttonImportRawData.TabIndex = 4;
-            this.buttonImportRawData.Text = "Select Models...";
             this.buttonImportRawData.UseVisualStyleBackColor = true;
             this.buttonImportRawData.Click += new System.EventHandler(this.buttonImportRawData_Click);
             // 
             // buttonOK
             // 
+            resources.ApplyResources(this.buttonOK, "buttonOK");
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.buttonOK.Location = new System.Drawing.Point(295, 231);
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(92, 23);
-            this.buttonOK.TabIndex = 5;
-            this.buttonOK.Text = "Import";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
+            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(393, 231);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(92, 23);
-            this.buttonCancel.TabIndex = 6;
-            this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.listBox1);
-            this.groupBox2.Location = new System.Drawing.Point(12, 41);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(202, 213);
-            this.groupBox2.TabIndex = 3;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Assets";
             // 
             // listBox1
             // 
+            resources.ApplyResources(this.listBox1, "listBox1");
             this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(6, 19);
             this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(190, 184);
-            this.listBox1.TabIndex = 9;
             this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyDown);
             // 
             // checkBoxFlipUVs
             // 
-            this.checkBoxFlipUVs.AutoSize = true;
-            this.checkBoxFlipUVs.Location = new System.Drawing.Point(15, 19);
+            resources.ApplyResources(this.checkBoxFlipUVs, "checkBoxFlipUVs");
             this.checkBoxFlipUVs.Name = "checkBoxFlipUVs";
-            this.checkBoxFlipUVs.Size = new System.Drawing.Size(65, 17);
-            this.checkBoxFlipUVs.TabIndex = 7;
-            this.checkBoxFlipUVs.Text = "Flip UVs";
             this.checkBoxFlipUVs.UseVisualStyleBackColor = true;
             // 
             // checkBoxOverwrite
             // 
-            this.checkBoxOverwrite.AutoSize = true;
+            resources.ApplyResources(this.checkBoxOverwrite, "checkBoxOverwrite");
             this.checkBoxOverwrite.Checked = true;
             this.checkBoxOverwrite.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxOverwrite.Location = new System.Drawing.Point(150, 37);
             this.checkBoxOverwrite.Name = "checkBoxOverwrite";
-            this.checkBoxOverwrite.Size = new System.Drawing.Size(71, 17);
-            this.checkBoxOverwrite.TabIndex = 12;
-            this.checkBoxOverwrite.Text = "Overwrite";
             this.checkBoxOverwrite.UseVisualStyleBackColor = true;
             // 
             // checkBoxGenSimps
             // 
-            this.checkBoxGenSimps.AutoSize = true;
-            this.checkBoxGenSimps.Location = new System.Drawing.Point(15, 19);
+            resources.ApplyResources(this.checkBoxGenSimps, "checkBoxGenSimps");
             this.checkBoxGenSimps.Name = "checkBoxGenSimps";
-            this.checkBoxGenSimps.Size = new System.Drawing.Size(104, 17);
-            this.checkBoxGenSimps.TabIndex = 13;
-            this.checkBoxGenSimps.Text = "Generate SIMPs";
             this.checkBoxGenSimps.UseVisualStyleBackColor = true;
             this.checkBoxGenSimps.CheckedChanged += new System.EventHandler(this.checkBoxGenSimps_CheckedChanged);
             // 
             // checkBoxEnableVcolors
             // 
-            this.checkBoxEnableVcolors.AutoSize = true;
-            this.checkBoxEnableVcolors.Location = new System.Drawing.Point(150, 19);
+            resources.ApplyResources(this.checkBoxEnableVcolors, "checkBoxEnableVcolors");
             this.checkBoxEnableVcolors.Name = "checkBoxEnableVcolors";
-            this.checkBoxEnableVcolors.Size = new System.Drawing.Size(84, 17);
-            this.checkBoxEnableVcolors.TabIndex = 14;
-            this.checkBoxEnableVcolors.Text = "Create PIPT";
             this.checkBoxEnableVcolors.UseVisualStyleBackColor = true;
             // 
             // checkBoxIgnoreMeshColors
             // 
-            this.checkBoxIgnoreMeshColors.AutoSize = true;
+            resources.ApplyResources(this.checkBoxIgnoreMeshColors, "checkBoxIgnoreMeshColors");
             this.checkBoxIgnoreMeshColors.Checked = true;
             this.checkBoxIgnoreMeshColors.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIgnoreMeshColors.Location = new System.Drawing.Point(15, 37);
             this.checkBoxIgnoreMeshColors.Name = "checkBoxIgnoreMeshColors";
-            this.checkBoxIgnoreMeshColors.Size = new System.Drawing.Size(117, 17);
-            this.checkBoxIgnoreMeshColors.TabIndex = 15;
-            this.checkBoxIgnoreMeshColors.Text = "Ignore Mesh Colors";
             this.checkBoxIgnoreMeshColors.UseVisualStyleBackColor = true;
             // 
             // checkBoxLedgeGrab
             // 
-            this.checkBoxLedgeGrab.AutoSize = true;
-            this.checkBoxLedgeGrab.Enabled = false;
-            this.checkBoxLedgeGrab.Location = new System.Drawing.Point(43, 37);
+            resources.ApplyResources(this.checkBoxLedgeGrab, "checkBoxLedgeGrab");
             this.checkBoxLedgeGrab.Name = "checkBoxLedgeGrab";
-            this.checkBoxLedgeGrab.Size = new System.Drawing.Size(116, 17);
-            this.checkBoxLedgeGrab.TabIndex = 16;
-            this.checkBoxLedgeGrab.Text = "Ledge Grab SIMPs";
             this.checkBoxLedgeGrab.UseVisualStyleBackColor = true;
             // 
             // checkBoxSolidSimps
             // 
-            this.checkBoxSolidSimps.AutoSize = true;
+            resources.ApplyResources(this.checkBoxSolidSimps, "checkBoxSolidSimps");
             this.checkBoxSolidSimps.Checked = true;
             this.checkBoxSolidSimps.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSolidSimps.Enabled = false;
-            this.checkBoxSolidSimps.Location = new System.Drawing.Point(43, 55);
             this.checkBoxSolidSimps.Name = "checkBoxSolidSimps";
-            this.checkBoxSolidSimps.Size = new System.Drawing.Size(83, 17);
-            this.checkBoxSolidSimps.TabIndex = 17;
-            this.checkBoxSolidSimps.Text = "Solid SIMPs";
             this.checkBoxSolidSimps.UseVisualStyleBackColor = true;
             // 
             // grpImportSettings
             // 
+            resources.ApplyResources(this.grpImportSettings, "grpImportSettings");
             this.grpImportSettings.Controls.Add(this.checkBoxIgnoreMeshColors);
             this.grpImportSettings.Controls.Add(this.checkBoxFlipUVs);
             this.grpImportSettings.Controls.Add(this.checkBoxEnableVcolors);
             this.grpImportSettings.Controls.Add(this.checkBoxOverwrite);
-            this.grpImportSettings.Location = new System.Drawing.Point(225, 68);
             this.grpImportSettings.Name = "grpImportSettings";
-            this.grpImportSettings.Size = new System.Drawing.Size(261, 66);
-            this.grpImportSettings.TabIndex = 18;
             this.grpImportSettings.TabStop = false;
-            this.grpImportSettings.Text = "Import Settings";
             // 
             // grpSIMP
             // 
+            resources.ApplyResources(this.grpSIMP, "grpSIMP");
             this.grpSIMP.Controls.Add(this.checkBoxLedgeGrab);
             this.grpSIMP.Controls.Add(this.checkBoxGenSimps);
             this.grpSIMP.Controls.Add(this.checkBoxSolidSimps);
-            this.grpSIMP.Location = new System.Drawing.Point(225, 140);
             this.grpSIMP.Name = "grpSIMP";
-            this.grpSIMP.Size = new System.Drawing.Size(261, 82);
-            this.grpSIMP.TabIndex = 19;
             this.grpSIMP.TabStop = false;
-            this.grpSIMP.Text = "SIMP Settings";
             // 
             // ImportModel
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(497, 266);
             this.Controls.Add(this.grpSIMP);
             this.Controls.Add(this.grpImportSettings);
             this.Controls.Add(this.groupBox2);
@@ -243,8 +188,6 @@
             this.MaximizeBox = false;
             this.Name = "ImportModel";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Import Models";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.grpImportSettings.ResumeLayout(false);

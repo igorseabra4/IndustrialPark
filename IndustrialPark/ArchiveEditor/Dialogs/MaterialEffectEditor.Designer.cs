@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MaterialEffectEditor));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.listBoxMaterials = new System.Windows.Forms.ListBox();
             this.buttonOK = new System.Windows.Forms.Button();
@@ -46,121 +47,90 @@
             // 
             // groupBox1
             // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.listBoxMaterials);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(170, 383);
-            this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Materials";
             // 
             // listBoxMaterials
             // 
+            resources.ApplyResources(this.listBoxMaterials, "listBoxMaterials");
             this.listBoxMaterials.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxMaterials.FormattingEnabled = true;
-            this.listBoxMaterials.Location = new System.Drawing.Point(6, 19);
             this.listBoxMaterials.Name = "listBoxMaterials";
             this.listBoxMaterials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxMaterials.Size = new System.Drawing.Size(158, 353);
-            this.listBoxMaterials.TabIndex = 1;
             this.listBoxMaterials.SelectedIndexChanged += new System.EventHandler(this.listBoxMaterials_SelectedIndexChanged);
             // 
             // buttonOK
             // 
-            this.buttonOK.Location = new System.Drawing.Point(318, 401);
+            resources.ApplyResources(this.buttonOK, "buttonOK");
             this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(91, 23);
-            this.buttonOK.TabIndex = 18;
-            this.buttonOK.Text = "OK";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
+            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(415, 401);
             this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(91, 23);
-            this.buttonCancel.TabIndex = 19;
-            this.buttonCancel.Text = "Cancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
             // groupBox4
             // 
-            this.groupBox4.Location = new System.Drawing.Point(188, 65);
+            resources.ApplyResources(this.groupBox4, "groupBox4");
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(324, 125);
-            this.groupBox4.TabIndex = 3;
             this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Texture";
             // 
             // groupBox2
             // 
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.panelColor);
-            this.groupBox2.Location = new System.Drawing.Point(188, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(324, 47);
-            this.groupBox2.TabIndex = 21;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Material Color";
             // 
             // panelColor
             // 
-            this.panelColor.Location = new System.Drawing.Point(6, 19);
+            resources.ApplyResources(this.panelColor, "panelColor");
             this.panelColor.Name = "panelColor";
-            this.panelColor.Size = new System.Drawing.Size(312, 22);
-            this.panelColor.TabIndex = 20;
             this.panelColor.Click += new System.EventHandler(this.panelColor_Click);
             // 
             // propertyGridTextureInfo
             // 
-            this.propertyGridTextureInfo.HelpVisible = false;
-            this.propertyGridTextureInfo.Location = new System.Drawing.Point(194, 84);
+            resources.ApplyResources(this.propertyGridTextureInfo, "propertyGridTextureInfo");
             this.propertyGridTextureInfo.Name = "propertyGridTextureInfo";
             this.propertyGridTextureInfo.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridTextureInfo.Size = new System.Drawing.Size(312, 100);
-            this.propertyGridTextureInfo.TabIndex = 22;
             this.propertyGridTextureInfo.ToolbarVisible = false;
             this.propertyGridTextureInfo.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridTextureInfo_PropertyValueChanged);
             // 
             // groupBox3
             // 
+            resources.ApplyResources(this.groupBox3, "groupBox3");
             this.groupBox3.Controls.Add(this.comboBoxMatEffects);
             this.groupBox3.Controls.Add(this.propertyGridMatEffects);
-            this.groupBox3.Location = new System.Drawing.Point(188, 196);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(324, 199);
-            this.groupBox3.TabIndex = 21;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Material Effects";
             // 
             // comboBoxMatEffects
             // 
+            resources.ApplyResources(this.comboBoxMatEffects, "comboBoxMatEffects");
             this.comboBoxMatEffects.FormattingEnabled = true;
-            this.comboBoxMatEffects.Location = new System.Drawing.Point(6, 19);
             this.comboBoxMatEffects.Name = "comboBoxMatEffects";
-            this.comboBoxMatEffects.Size = new System.Drawing.Size(312, 21);
-            this.comboBoxMatEffects.TabIndex = 24;
             this.comboBoxMatEffects.SelectedIndexChanged += new System.EventHandler(this.comboBoxMatEffects_SelectedIndexChanged);
             // 
             // propertyGridMatEffects
             // 
-            this.propertyGridMatEffects.HelpVisible = false;
-            this.propertyGridMatEffects.Location = new System.Drawing.Point(6, 46);
+            resources.ApplyResources(this.propertyGridMatEffects, "propertyGridMatEffects");
             this.propertyGridMatEffects.Name = "propertyGridMatEffects";
             this.propertyGridMatEffects.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridMatEffects.Size = new System.Drawing.Size(312, 147);
-            this.propertyGridMatEffects.TabIndex = 23;
             this.propertyGridMatEffects.ToolbarVisible = false;
             // 
             // MaterialEffectEditor
             // 
             this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(520, 432);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.propertyGridTextureInfo);
             this.Controls.Add(this.groupBox2);
@@ -173,8 +143,6 @@
             this.MaximizeBox = false;
             this.Name = "MaterialEffectEditor";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Material Effects Editor";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);

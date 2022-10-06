@@ -51,51 +51,40 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(272, 145);
+            resources.ApplyResources(this.button1, "button1");
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 1;
-            this.button1.Text = "Apply";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
+            resources.ApplyResources(this.button2, "button2");
             this.button2.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.button2.Location = new System.Drawing.Point(355, 145);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 2;
-            this.button2.Text = "Cancel";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // groupBox1
             // 
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.colorPickerBtn);
             this.groupBox1.Controls.Add(this.numericUpDownW);
             this.groupBox1.Controls.Add(this.numericUpDownZ);
             this.groupBox1.Controls.Add(this.numericUpDownY);
             this.groupBox1.Controls.Add(this.numericUpDownX);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(354, 75);
-            this.groupBox1.TabIndex = 3;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Color (Red, Green, Blue, Alpha)";
             // 
             // colorPickerBtn
             // 
-            this.colorPickerBtn.Location = new System.Drawing.Point(237, 46);
+            resources.ApplyResources(this.colorPickerBtn, "colorPickerBtn");
             this.colorPickerBtn.Name = "colorPickerBtn";
-            this.colorPickerBtn.Size = new System.Drawing.Size(109, 23);
-            this.colorPickerBtn.TabIndex = 10;
-            this.colorPickerBtn.Text = "Color Picker...";
             this.colorPickerBtn.UseVisualStyleBackColor = true;
             this.colorPickerBtn.Click += new System.EventHandler(this.colorPickerBtn_Click);
             // 
             // numericUpDownW
             // 
+            resources.ApplyResources(this.numericUpDownW, "numericUpDownW");
             this.numericUpDownW.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownW.DecimalPlaces = 6;
             this.numericUpDownW.Increment = new decimal(new int[] {
@@ -103,10 +92,7 @@
             0,
             0,
             65536});
-            this.numericUpDownW.Location = new System.Drawing.Point(266, 19);
             this.numericUpDownW.Name = "numericUpDownW";
-            this.numericUpDownW.Size = new System.Drawing.Size(80, 20);
-            this.numericUpDownW.TabIndex = 7;
             this.numericUpDownW.Value = new decimal(new int[] {
             1,
             0,
@@ -115,6 +101,7 @@
             // 
             // numericUpDownZ
             // 
+            resources.ApplyResources(this.numericUpDownZ, "numericUpDownZ");
             this.numericUpDownZ.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownZ.DecimalPlaces = 6;
             this.numericUpDownZ.Increment = new decimal(new int[] {
@@ -122,10 +109,7 @@
             0,
             0,
             65536});
-            this.numericUpDownZ.Location = new System.Drawing.Point(178, 19);
             this.numericUpDownZ.Name = "numericUpDownZ";
-            this.numericUpDownZ.Size = new System.Drawing.Size(80, 20);
-            this.numericUpDownZ.TabIndex = 6;
             this.numericUpDownZ.Value = new decimal(new int[] {
             1,
             0,
@@ -135,6 +119,7 @@
             // 
             // numericUpDownY
             // 
+            resources.ApplyResources(this.numericUpDownY, "numericUpDownY");
             this.numericUpDownY.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownY.DecimalPlaces = 6;
             this.numericUpDownY.Increment = new decimal(new int[] {
@@ -142,10 +127,7 @@
             0,
             0,
             65536});
-            this.numericUpDownY.Location = new System.Drawing.Point(92, 19);
             this.numericUpDownY.Name = "numericUpDownY";
-            this.numericUpDownY.Size = new System.Drawing.Size(80, 20);
-            this.numericUpDownY.TabIndex = 5;
             this.numericUpDownY.Value = new decimal(new int[] {
             1,
             0,
@@ -155,6 +137,7 @@
             // 
             // numericUpDownX
             // 
+            resources.ApplyResources(this.numericUpDownX, "numericUpDownX");
             this.numericUpDownX.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numericUpDownX.DecimalPlaces = 6;
             this.numericUpDownX.Increment = new decimal(new int[] {
@@ -162,10 +145,7 @@
             0,
             0,
             65536});
-            this.numericUpDownX.Location = new System.Drawing.Point(6, 19);
             this.numericUpDownX.Name = "numericUpDownX";
-            this.numericUpDownX.Size = new System.Drawing.Size(80, 20);
-            this.numericUpDownX.TabIndex = 4;
             this.numericUpDownX.Value = new decimal(new int[] {
             1,
             0,
@@ -175,46 +155,34 @@
             // 
             // groupBox2
             // 
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.comboBoxOperation);
-            this.groupBox2.Location = new System.Drawing.Point(272, 92);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(164, 47);
-            this.groupBox2.TabIndex = 8;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Operation";
             // 
             // comboBoxOperation
             // 
+            resources.ApplyResources(this.comboBoxOperation, "comboBoxOperation");
             this.comboBoxOperation.FormattingEnabled = true;
-            this.comboBoxOperation.Location = new System.Drawing.Point(6, 19);
             this.comboBoxOperation.Name = "comboBoxOperation";
-            this.comboBoxOperation.Size = new System.Drawing.Size(150, 21);
-            this.comboBoxOperation.TabIndex = 9;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 90);
+            resources.ApplyResources(this.label1, "label1");
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(236, 78);
-            this.label1.TabIndex = 9;
-            this.label1.Text = resources.GetString("label1.Text");
             // 
             // pnlColorPreview
             // 
+            resources.ApplyResources(this.pnlColorPreview, "pnlColorPreview");
             this.pnlColorPreview.BackColor = System.Drawing.Color.White;
-            this.pnlColorPreview.Location = new System.Drawing.Point(380, 15);
             this.pnlColorPreview.Name = "pnlColorPreview";
-            this.pnlColorPreview.Size = new System.Drawing.Size(50, 50);
-            this.pnlColorPreview.TabIndex = 10;
             // 
             // ApplyVertexColors
             // 
             this.AcceptButton = this.button1;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.button2;
-            this.ClientSize = new System.Drawing.Size(442, 180);
             this.Controls.Add(this.pnlColorPreview);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.button1);
@@ -227,7 +195,6 @@
             this.Name = "ApplyVertexColors";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.Text = "Apply Vertex Colors";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ApplyVertexColors_FormClosing);
             this.Shown += new System.EventHandler(this.ApplyVertexColors_Shown);
             this.groupBox1.ResumeLayout(false);
