@@ -42,7 +42,12 @@ namespace IndustrialPark
 
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
-                System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.GetCode().ToString());
+            {
+                string wikiPath = asset.assetType.GetCode().ToString();
+                if (wikiPath == "DYNA")
+                    wikiPath += $"/{asset.TypeString}";
+                System.Diagnostics.Process.Start(AboutBox.WikiLink + wikiPath);
+            };
             tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
 
             Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
