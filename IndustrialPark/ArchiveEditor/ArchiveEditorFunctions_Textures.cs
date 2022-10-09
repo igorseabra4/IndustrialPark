@@ -88,7 +88,7 @@ namespace IndustrialPark
                                     // Length indicates that the file may have been trimmed (TODO: check if trim length is always 31?)
                                     int trimLength = 31;
 
-                                    if (name.Length == trimLength && !name.EndsWith(".RW3")) 
+                                    if (name.Length == trimLength && !name.EndsWith(".RW3"))
                                     {
                                         if (name.EndsWith(".RW"))
                                             tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 3);
@@ -225,7 +225,17 @@ namespace IndustrialPark
                                         byte R = (byte)((value >> 8) & 0x0F);
                                         byte A = (byte)((value >> 12) & 0x0F);
 
-                                        bitmapData.Add(System.Drawing.Color.FromArgb(A << 4, R << 4, G << 4, B << 4));
+                                        double bNorm = (float)B / 15;
+                                        double gNorm = (float)G / 15;
+                                        double rNorm = (float)R / 15;
+                                        double aNorm = (float)A / 15;
+
+                                        B = (byte)(bNorm * 255);
+                                        G = (byte)(gNorm * 255);
+                                        R = (byte)(rNorm * 255);
+                                        A = (byte)(aNorm * 255);
+
+                                        bitmapData.Add(System.Drawing.Color.FromArgb(A, R, G, B));
                                     }
                                 }
                                 else
