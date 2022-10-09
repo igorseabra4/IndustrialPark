@@ -117,13 +117,1592 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+  <data name="&gt;&gt;toolStripMenuItem_MultiEdit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;AssetNameCol.Name" xml:space="preserve">
+    <value>AssetNameCol</value>
+  </data>
+  <data name="&gt;&gt;applyScaleToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="openToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Open</value>
+  </data>
+  <data name="&gt;&gt;buttonAddAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Text" xml:space="preserve">
+    <value>Template
+Focus</value>
+  </data>
+  <data name="toolStripMenuItem_Export.Text" xml:space="preserve">
+    <value>Export Raw</value>
+  </data>
+  <data name="buttonInternalEdit.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="buttonDuplicate.Text" xml:space="preserve">
+    <value>Duplicate</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="textBoxFindAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="exportNoRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export (No RW3)</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_EditHeader.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AssetLinksCol.Text" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonInternalEdit.Text" xml:space="preserve">
+    <value>Edit Data</value>
+  </data>
+  <data name="&gt;&gt;buttonView.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="listViewAssets.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 62</value>
+  </data>
+  <data name="listViewAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>760, 462</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Remove.Name" xml:space="preserve">
+    <value>toolStripMenuItem_Remove</value>
+  </data>
+  <data name="comboBoxLayerTypes.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="buttonMultiEdit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="toolStripMenuItem_Paste.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="buttonAddAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="hideLayersToolStripMenuItem.Text" xml:space="preserve">
+    <value>No Layers</value>
+  </data>
+  <data name="buttonAddLayer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;importHIPArchiveToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonAddLayer.Text" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="AssetInfoCol.Text" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="comboBoxAssetTypes.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRaw.Name" xml:space="preserve">
+    <value>buttonExportRaw</value>
+  </data>
+  <data name="buttonRemoveAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_View.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPaste.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="importHIPArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="buttonView.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
+  </data>
+  <data name="editPACKToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="groupBoxLayers.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="&gt;&gt;organizeLayersToolStripMenuItem.Name" xml:space="preserve">
+    <value>organizeLayersToolStripMenuItem</value>
+  </data>
+  <data name="checkBoxTemplateFocus.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="buttonInternalEdit.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEdit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;AssetLinksCol.Name" xml:space="preserve">
+    <value>AssetLinksCol</value>
+  </data>
+  <data name="buttonExportRaw.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
+  </data>
+  <data name="buttonPaste.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Duplicate.Name" xml:space="preserve">
+    <value>toolStripMenuItem_Duplicate</value>
+  </data>
+  <data name="&gt;&gt;buttonPaste.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="label2.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="buttonAddAsset.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AssetNameCol.Text" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="importNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>251, 34</value>
+  </data>
+  <data name="buttonExportRaw.TabIndex" type="System.Int32, mscorlib">
+    <value>13</value>
+  </data>
+  <data name="exportAudioToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export Audio</value>
+  </data>
+  <data name="tXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="importTexturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="buttonPaste.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="addTemplateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="buttonCopy.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicate.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="buttonAddAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="buttonCopy.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="buttonArrowDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 34</value>
+  </data>
+  <data name="saveToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="buttonAddLayer.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="buttonArrowUp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="openToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="&gt;&gt;editPACKToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_EditData.Name" xml:space="preserve">
+    <value>toolStripMenuItem_EditData</value>
+  </data>
+  <data name="buttonRemoveLayer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>706, 29</value>
+  </data>
+  <data name="&gt;&gt;hipHopToolExportToolStripMenuItem.Name" xml:space="preserve">
+    <value>hipHopToolExportToolStripMenuItem</value>
+  </data>
+  <data name="buttonDuplicate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 106</value>
+  </data>
+  <data name="&gt;&gt;hipHopToolExportToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonView.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;openToolStripMenuItem.Name" xml:space="preserve">
+    <value>openToolStripMenuItem</value>
+  </data>
+  <data name="toolStripMenuItem_View.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Models</value>
+  </data>
+  <data name="&gt;&gt;newToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Name" xml:space="preserve">
+    <value>textBoxFindAsset</value>
+  </data>
+  <data name="&gt;&gt;AssetNameCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonPaste.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
+  </data>
+  <data name="textBoxFindAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>444, 20</value>
+  </data>
+  <data name="buttonRemoveAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;mergeSimilarAssetsToolStripMenuItem.Name" xml:space="preserve">
+    <value>mergeSimilarAssetsToolStripMenuItem</value>
+  </data>
+  <data name="AssetLinksCol.Width" type="System.Int32, mscorlib">
+    <value>37</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="groupBoxAssets.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="label3.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonInternalEdit.Name" xml:space="preserve">
+    <value>buttonInternalEdit</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="buttonAddLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 32</value>
+  </data>
+  <data name="buttonArrowDown.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_MultiEdit.Name" xml:space="preserve">
+    <value>toolStripMenuItem_MultiEdit</value>
+  </data>
+  <data name="&gt;&gt;importNoRW3ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AssetIDCol.Width" type="System.Int32, mscorlib">
+    <value>66</value>
+  </data>
+  <data name="mergeSimilarAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Merge Similar Assets</value>
+  </data>
+  <data name="&gt;&gt;importRW3ToolStripMenuItem.Name" xml:space="preserve">
+    <value>importRW3ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;organizeLayersToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="toolStripMenuItem_Remove.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;buttonAddAsset.Name" xml:space="preserve">
+    <value>buttonAddAsset</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Add.Name" xml:space="preserve">
+    <value>toolStripMenuItem_Add</value>
+  </data>
+  <data name="applyScaleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="&gt;&gt;tXDArchiveToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="toolStripMenuItem_EditHeader.Text" xml:space="preserve">
+    <value>Edit Header (Ctrl + H)</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="toolStripMenuItem_MultiEdit.Text" xml:space="preserve">
+    <value>Multi Edit</value>
+  </data>
+  <data name="&gt;&gt;fileToolStripMenuItem.Name" xml:space="preserve">
+    <value>fileToolStripMenuItem</value>
+  </data>
+  <data name="comboBoxLayerTypes.Location" type="System.Drawing.Point, System.Drawing">
+    <value>444, 29</value>
+  </data>
+  <data name="&gt;&gt;ToolStripMenuItem_CreateGroup.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="applyScaleToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>936, 697</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>267, 6</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="fileToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;File</value>
+  </data>
+  <data name="exportAudioToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="hipHopToolExportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="&gt;&gt;layersToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="comboBoxLayers.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Add.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="importTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="buttonDuplicate.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.Name" xml:space="preserve">
+    <value>buttonArrowDown</value>
+  </data>
+  <data name="AssetNameCol.DisplayIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="buttonExportRaw.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Type:</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator3.Name" xml:space="preserve">
+    <value>toolStripSeparator3</value>
+  </data>
+  <data name="&gt;&gt;AssetInfoCol.Name" xml:space="preserve">
+    <value>AssetInfoCol</value>
+  </data>
+  <data name="toolStripStatusLabelSelectionCount.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 25</value>
+  </data>
+  <data name="&gt;&gt;importHIPArchiveToolStripMenuItem.Name" xml:space="preserve">
+    <value>importHIPArchiveToolStripMenuItem</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>384, 35</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Paste.Name" xml:space="preserve">
+    <value>toolStripMenuItem_Paste</value>
+  </data>
+  <data name="buttonEditAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="toolStripMenuItem_Add.Text" xml:space="preserve">
+    <value>Import (Ctrl + I)</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRaw.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;toolsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="importNoRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import (No RW3)</value>
+  </data>
+  <data name="buttonEditAsset.Text" xml:space="preserve">
+    <value>Edit Header</value>
+  </data>
+  <data name="toolStripMenuItem_View.Text" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="buttonMultiEdit.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="newToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;New</value>
+  </data>
+  <data name="toolStripStatusLabel2.Text" xml:space="preserve">
+    <value>|</value>
+  </data>
+  <data name="&gt;&gt;buttonInternalEdit.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="AssetTypeCol.Width" type="System.Int32, mscorlib">
+    <value>57</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 44</value>
+  </data>
+  <data name="AssetNameCol.Width" type="System.Int32, mscorlib">
+    <value>232</value>
+  </data>
+  <data name="&gt;&gt;fileToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="toolStripMenuItem_MultiEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="buttonRemoveAsset.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="buttonEditAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="applyScaleToolStripMenuItem.Text" xml:space="preserve">
+    <value>Apply Scale</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="checkBoxTemplateFocus.TabIndex" type="System.Int32, mscorlib">
+    <value>21</value>
+  </data>
+  <data name="exportRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>251, 34</value>
+  </data>
+  <data name="buttonMultiEdit.TabIndex" type="System.Int32, mscorlib">
+    <value>22</value>
+  </data>
+  <data name="textBoxFindAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>324, 26</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="toolStripMenuItem_Copy.Text" xml:space="preserve">
+    <value>Copy (Ctrl + C)</value>
+  </data>
+  <data name="buttonView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="closeToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Close</value>
+  </data>
+  <data name="addTemplateToolStripMenuItem.Text" xml:space="preserve">
+    <value>Add Template</value>
+  </data>
+  <data name="buttonRemoveAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="&gt;&gt;toolsToolStripMenuItem.Name" xml:space="preserve">
+    <value>toolsToolStripMenuItem</value>
+  </data>
+  <data name="buttonRemoveAsset.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="groupBoxAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="&gt;&gt;viewToolStripMenuItem.Name" xml:space="preserve">
+    <value>viewToolStripMenuItem</value>
+  </data>
+  <data name="viewToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;View</value>
+  </data>
+  <data name="buttonCopy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="&gt;&gt;editPACKToolStripMenuItem.Name" xml:space="preserve">
+    <value>editPACKToolStripMenuItem</value>
+  </data>
+  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>54, 29</value>
+  </data>
+  <data name="buttonDuplicate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="buttonPaste.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="buttonArrowDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>852, 29</value>
+  </data>
+  <data name="&gt;&gt;buttonAddAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importMultipleAssetsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="groupBoxLayers.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonView.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="tXDArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="importHIPArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import HIP/HOP Archive</value>
+  </data>
+  <data name="buttonDuplicate.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="buttonMultiEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>58, 29</value>
+  </data>
+  <data name="&gt;&gt;buttonCopy.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="mergeSimilarAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>9, 20</value>
+  </data>
+  <data name="&gt;&gt;importTexturesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.Name" xml:space="preserve">
+    <value>checkBoxTemplateFocus</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Save &amp;As...</value>
+  </data>
+  <data name="checkBoxTemplateFocus.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="buttonEditAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="statusStrip1.Text" xml:space="preserve">
+    <value>statusStrip1</value>
+  </data>
+  <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="tXDArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>TXD Archive</value>
+  </data>
+  <data name="groupBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>900, 535</value>
+  </data>
+  <data name="buttonArrowUp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 34</value>
+  </data>
+  <data name="verifyArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;buttonPaste.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEdit.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="groupBoxLayers.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="groupBoxAssets.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 123</value>
+  </data>
+  <data name="buttonAddAsset.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;AssetIDCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;addTemplateToolStripMenuItem.Name" xml:space="preserve">
+    <value>addTemplateToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importModelsToolStripMenuItem.Name" xml:space="preserve">
+    <value>importModelsToolStripMenuItem</value>
+  </data>
+  <data name="comboBoxAssetTypes.Location" type="System.Drawing.Point, System.Drawing">
+    <value>69, 20</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="toolStripStatusLabelFileSize.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 25</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 20</value>
+  </data>
+  <data name="buttonView.Text" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>16, 25</value>
+  </data>
+  <data name="hideButtonsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Hide Buttons</value>
+  </data>
+  <data name="buttonRemoveAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 240</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelCurrentFilename.Name" xml:space="preserve">
+    <value>toolStripStatusLabelCurrentFilename</value>
+  </data>
+  <data name="layersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="&gt;&gt;exportNoRW3ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Copy.Name" xml:space="preserve">
+    <value>toolStripMenuItem_Copy</value>
+  </data>
+  <data name="&gt;&gt;buttonInternalEdit.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="buttonCopy.Text" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="saveToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Save</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelSelectionCount.Name" xml:space="preserve">
+    <value>toolStripStatusLabelSelectionCount</value>
+  </data>
+  <data name="toolStripMenuItem_Add.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="exportNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>251, 34</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 20</value>
+  </data>
+  <data name="buttonRemoveLayer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>390, 25</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>ArchiveEditor</value>
+  </data>
+  <data name="buttonAddLayer.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="buttonMultiEdit.Text" xml:space="preserve">
+    <value>Multi Edit</value>
+  </data>
+  <data name="mergeSimilarAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="importTexturesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Textures</value>
+  </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>304, 6</value>
+  </data>
+  <data name="groupBoxLayers.Text" xml:space="preserve">
+    <value>Layer</value>
+  </data>
+  <data name="&gt;&gt;hideButtonsToolStripMenuItem.Name" xml:space="preserve">
+    <value>hideButtonsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importTexturesToolStripMenuItem.Name" xml:space="preserve">
+    <value>importTexturesToolStripMenuItem</value>
+  </data>
+  <data name="comboBoxAssetTypes.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="toolStripMenuItem_Copy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="buttonAddAsset.Text" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 665</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;AssetTypeCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="contextMenuStrip_ListBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>308, 400</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 25</value>
+  </data>
+  <data name="hideButtonsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 34</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="comboBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>364, 28</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Name" xml:space="preserve">
+    <value>editToolStripMenuItem</value>
+  </data>
+  <data name="buttonExportRaw.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="buttonView.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="&gt;&gt;verifyArchiveToolStripMenuItem.Name" xml:space="preserve">
+    <value>verifyArchiveToolStripMenuItem</value>
+  </data>
+  <data name="buttonInternalEdit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="generateToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Generate Report</value>
+  </data>
+  <data name="buttonDuplicate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEdit.Name" xml:space="preserve">
+    <value>buttonMultiEdit</value>
+  </data>
+  <data name="exportAudioToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="&gt;&gt;generateToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="editPACKToolStripMenuItem.Text" xml:space="preserve">
+    <value>Convert Archive</value>
+  </data>
+  <data name="buttonMultiEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="toolStripStatusLabel1.Text" xml:space="preserve">
+    <value>|</value>
+  </data>
+  <data name="buttonRemoveAsset.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
+  </data>
+  <data name="AssetInfoCol.Width" type="System.Int32, mscorlib">
+    <value>96</value>
+  </data>
+  <data name="&gt;&gt;closeToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tools</value>
+  </data>
+  <data name="buttonRemoveLayer.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="statusStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>2, 0, 21, 0</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEdit.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="buttonArrowDown.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Export.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Name" xml:space="preserve">
+    <value>statusStrip1</value>
+  </data>
+  <data name="&gt;&gt;openToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonCopy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="textBoxFindAsset.TabIndex" type="System.Int32, mscorlib">
+    <value>10</value>
+  </data>
+  <data name="buttonPaste.Text" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel1.Name" xml:space="preserve">
+    <value>toolStripStatusLabel1</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="buttonInternalEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.Name" xml:space="preserve">
+    <value>buttonRemoveAsset</value>
+  </data>
+  <data name="&gt;&gt;AssetIDCol.Name" xml:space="preserve">
+    <value>AssetIDCol</value>
+  </data>
+  <data name="&gt;&gt;tXDArchiveToolStripMenuItem.Name" xml:space="preserve">
+    <value>tXDArchiveToolStripMenuItem</value>
+  </data>
+  <data name="toolStripMenuItem_Paste.Text" xml:space="preserve">
+    <value>Paste (Ctrl + V)</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Name" xml:space="preserve">
+    <value>contextMenuStrip_ListBoxAssets</value>
+  </data>
+  <data name="buttonAddAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="comboBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 29</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;exportAudioToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;saveToolStripMenuItem.Name" xml:space="preserve">
+    <value>saveToolStripMenuItem</value>
+  </data>
+  <data name="hipHopToolExportToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>306, 6</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Name" xml:space="preserve">
+    <value>listViewAssets</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Duplicate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_EditData.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportAudioToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportAudioToolStripMenuItem</value>
+  </data>
+  <data name="AssetIDCol.Text" xml:space="preserve">
+    <value>ID</value>
+  </data>
+  <data name="&gt;&gt;saveToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonAddAsset.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="groupBoxAssets.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="listViewAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="buttonArrowUp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>810, 29</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Export.Name" xml:space="preserve">
+    <value>toolStripMenuItem_Export</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.Name" xml:space="preserve">
+    <value>comboBoxLayerTypes</value>
+  </data>
+  <data name="&gt;&gt;exportRW3ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel2.Name" xml:space="preserve">
+    <value>toolStripStatusLabel2</value>
+  </data>
+  <data name="toolStripMenuItem_Remove.Text" xml:space="preserve">
+    <value>Remove (Del)</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Find:</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Multiple Assets</value>
+  </data>
+  <data name="&gt;&gt;ToolStripMenuItem_CreateGroup.Name" xml:space="preserve">
+    <value>ToolStripMenuItem_CreateGroup</value>
+  </data>
+  <data name="verifyArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Verify Archive</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.Name" xml:space="preserve">
+    <value>comboBoxAssetTypes</value>
+  </data>
+  <data name="comboBoxLayers.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;AssetInfoCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportNoRW3ToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportNoRW3ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Type:</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="buttonInternalEdit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 445</value>
+  </data>
+  <data name="comboBoxLayerTypes.Size" type="System.Drawing.Size, System.Drawing">
+    <value>170, 28</value>
+  </data>
+  <data name="buttonPaste.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 195</value>
+  </data>
+  <data name="importRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>251, 34</value>
+  </data>
+  <data name="&gt;&gt;layersToolStripMenuItem.Name" xml:space="preserve">
+    <value>layersToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;saveAsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="saveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="buttonEditAsset.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="groupBoxLayers.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRaw.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicate.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
+    <value>toolStripSeparator2</value>
+  </data>
+  <data name="groupBoxAssets.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+N</value>
+  </data>
+  <data name="organizeLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="AssetTypeCol.Text" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.Name" xml:space="preserve">
+    <value>buttonRemoveLayer</value>
+  </data>
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="hideLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>936, 35</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.Name" xml:space="preserve">
+    <value>buttonAddLayer</value>
+  </data>
+  <data name="&gt;&gt;applyScaleToolStripMenuItem.Name" xml:space="preserve">
+    <value>applyScaleToolStripMenuItem</value>
+  </data>
+  <data name="buttonArrowUp.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="listViewAssets.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;hideLayersToolStripMenuItem.Name" xml:space="preserve">
+    <value>hideLayersToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;buttonInternalEdit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripMenuItem_EditData.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>589, 354</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
+    <value>toolStripSeparator4</value>
+  </data>
+  <data name="buttonCopy.TabIndex" type="System.Int32, mscorlib">
+    <value>19</value>
+  </data>
+  <data name="groupBoxAssets.Text" xml:space="preserve">
+    <value>Assets</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>270, 34</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelFileSize.Name" xml:space="preserve">
+    <value>toolStripStatusLabelFileSize</value>
+  </data>
+  <data name="&gt;&gt;buttonCopy.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;importMultipleAssetsToolStripMenuItem.Name" xml:space="preserve">
+    <value>importMultipleAssetsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicate.Name" xml:space="preserve">
+    <value>buttonDuplicate</value>
+  </data>
+  <data name="organizeLayersToolStripMenuItem.Text" xml:space="preserve">
+    <value>Organize</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.StatusStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRaw.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonArrowUp.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripMenuItem_EditHeader.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.Name" xml:space="preserve">
+    <value>buttonEditAsset</value>
+  </data>
+  <data name="hipHopToolExportToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export Assets + INI</value>
+  </data>
+  <data name="buttonArrowDown.Text" xml:space="preserve">
+    <value>▼</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="buttonView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 311</value>
+  </data>
+  <data name="&gt;&gt;generateToolStripMenuItem.Name" xml:space="preserve">
+    <value>generateToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.Name" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Paste.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonArrowUp.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="verifyArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="editPACKToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="exportRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export (RW3)</value>
+  </data>
+  <data name="buttonAddAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 62</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Archive Editor</value>
+  </data>
+  <data name="&gt;&gt;hideLayersToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonView.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="layersToolStripMenuItem.Text" xml:space="preserve">
+    <value>Layers</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="toolStripMenuItem_EditData.Text" xml:space="preserve">
+    <value>Edit Data (Ctrl + G)</value>
+  </data>
+  <data name="&gt;&gt;importRW3ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_EditHeader.Name" xml:space="preserve">
+    <value>toolStripMenuItem_EditHeader</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="buttonAddLayer.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Edit</value>
+  </data>
+  <data name="&gt;&gt;viewToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonInternalEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="buttonMultiEdit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 489</value>
+  </data>
+  <data name="toolStripMenuItem_Duplicate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="buttonEditAsset.TabIndex" type="System.Int32, mscorlib">
+    <value>12</value>
+  </data>
+  <data name="buttonRemoveLayer.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="ToolStripMenuItem_CreateGroup.Text" xml:space="preserve">
+    <value>Create Group From Selected</value>
+  </data>
+  <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
+    <value>CenterParent</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelCurrentFilename.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>780, 12</value>
+  </data>
+  <data name="groupBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>900, 72</value>
+  </data>
+  <data name="buttonRemoveLayer.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="listViewAssets.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelFileSize.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPaste.Name" xml:space="preserve">
+    <value>buttonPaste</value>
+  </data>
+  <data name="&gt;&gt;mergeSimilarAssetsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="groupBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>18, 42</value>
+  </data>
+  <data name="&gt;&gt;verifyArchiveToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="buttonDuplicate.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>304, 6</value>
+  </data>
+  <data name="buttonAddLayer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>626, 29</value>
+  </data>
+  <data name="&gt;&gt;closeToolStripMenuItem.Name" xml:space="preserve">
+    <value>closeToolStripMenuItem</value>
+  </data>
+  <data name="buttonArrowUp.Text" xml:space="preserve">
+    <value>▲</value>
+  </data>
+  <data name="&gt;&gt;AssetTypeCol.Name" xml:space="preserve">
+    <value>AssetTypeCol</value>
+  </data>
+  <data name="&gt;&gt;importModelsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="importRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import (RW3)</value>
+  </data>
+  <data name="&gt;&gt;buttonView.Name" xml:space="preserve">
+    <value>buttonView</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.Name" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;saveAsToolStripMenuItem.Name" xml:space="preserve">
+    <value>saveAsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hideButtonsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="comboBoxLayerTypes.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="buttonRemoveLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>94, 32</value>
+  </data>
+  <data name="buttonExportRaw.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 355</value>
+  </data>
+  <data name="label2.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>65, 29</value>
+  </data>
+  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>936, 32</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Remove.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelSelectionCount.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonCopy.Name" xml:space="preserve">
+    <value>buttonCopy</value>
+  </data>
+  <data name="buttonRemoveLayer.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
+  </data>
+  <data name="textBoxFindAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="AssetIDCol.DisplayIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;exportRW3ToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportRW3ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.Name" xml:space="preserve">
+    <value>comboBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_Copy.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonArrowDown.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="toolStripMenuItem_Export.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="comboBoxLayerTypes.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left, Right</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonCopy.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Right</value>
+  </data>
+  <data name="generateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>242, 34</value>
+  </data>
+  <data name="toolStripStatusLabelCurrentFilename.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 25</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="buttonExportRaw.Size" type="System.Drawing.Size, System.Drawing">
+    <value>112, 35</value>
+  </data>
+  <data name="toolStripMenuItem_Duplicate.Text" xml:space="preserve">
+    <value>Duplicate (Ctrl + D)</value>
+  </data>
+  <data name="closeToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+W</value>
+  </data>
+  <data name="&gt;&gt;AssetLinksCol.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ColumnHeader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="buttonEditAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 400</value>
+  </data>
+  <data name="buttonPaste.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>16, 25</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>309, 34</value>
+  </data>
+  <data name="importHIPArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="buttonExportRaw.Text" xml:space="preserve">
+    <value>Export Raw</value>
+  </data>
+  <data name="comboBoxAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
+    <value>304, 28</value>
+  </data>
+  <data name="buttonCopy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>778, 151</value>
+  </data>
+  <data name="checkBoxTemplateFocus.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>MiddleCenter</value>
+  </data>
+  <data name="&gt;&gt;addTemplateToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;newToolStripMenuItem.Name" xml:space="preserve">
+    <value>newToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="buttonArrowDown.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_View.Name" xml:space="preserve">
+    <value>toolStripMenuItem_View</value>
+  </data>
+  <data name="ToolStripMenuItem_CreateGroup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>307, 32</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>69, 29</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.Name" xml:space="preserve">
+    <value>buttonArrowUp</value>
+  </data>
+  <data name="&gt;&gt;importNoRW3ToolStripMenuItem.Name" xml:space="preserve">
+    <value>importNoRW3ToolStripMenuItem</value>
+  </data>
+  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>en-GB</value>
   </metadata>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
   <metadata name="contextMenuStrip_ListBoxAssets.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
+  </metadata>
+  <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
   </metadata>
 </root>

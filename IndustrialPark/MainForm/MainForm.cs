@@ -262,7 +262,7 @@ namespace IndustrialPark
             }
 
             // updates presence so that it doesn't get stuck on the previously focused window name
-            DiscordRPCController.setPresence("a project");
+            DiscordRPCController.setPresence(idling: true);
 
             currentProjectPath = null;
             ApplyProject(new ProjectJson());
@@ -283,7 +283,7 @@ namespace IndustrialPark
             }
 
             // updates presence so that it doesn't get stuck on the previously focused window name
-            DiscordRPCController.setPresence("a project");
+            DiscordRPCController.setPresence(idling: true);
 
             OpenFileDialog openFile = new OpenFileDialog()
             { Filter = "JSON files|*.json" };
