@@ -182,17 +182,17 @@
             // button2
             // 
             this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(60, 3);
+            this.button2.Location = new System.Drawing.Point(103, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(94, 22);
+            this.button2.Size = new System.Drawing.Size(51, 22);
             this.button2.TabIndex = 28;
-            this.button2.Text = "Join on Discord!";
+            this.button2.Text = "Discord";
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button4
             // 
             this.button4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button4.Location = new System.Drawing.Point(6, 3);
+            this.button4.Location = new System.Drawing.Point(49, 3);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(48, 22);
             this.button4.TabIndex = 29;

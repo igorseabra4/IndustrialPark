@@ -121,7 +121,7 @@
   <data name="logoPictureBox.InitialImage" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAAIMAAAEDCAIAAACZOCBdAAAABGdBTUEAALGPC/xhBQAAAAlwSFlzAAAO
-        vgAADr4B6kKxwAAA/7JJREFUeF6U/QV0JFmSJQx71XRPVyVKSjEmSQmCAIWYmSlTzMzMUoqZmSEUChYz
+        vQAADr0BR/uQrQAA/7JJREFUeF6U/QV0JFmSJQx71XRPVyVKSjEmSQmCAIWYmSlTzMzMUoqZmSEUChYz
         K6GSmbOwu6uxuKq7d2d2Zr7Znfrv88jKzqnZ/b79z7HjxyPk7vHcrtm1a89fhKhwU7U4O71Ym1NBxkeC
         OUdDTOTDTJWibXViHfXinGG6cU56xJz14h114+1PRVtrRZqpRVpqhuBgzlHsRNrohHGU4mxPR1tpBhkf
         CDR+/z/bgUD2+0HM90MY7wezD0dYqkdZaQUzjwQzD+PNYJMj0TbHw8yVgjmHsR/MORRpoZropB9upZHs
@@ -1439,25 +1439,29 @@ It is a HIP/HOP archive viewer and editor for the following games:
 - Scooby-Doo: Night of 100 Frights
 - The Incredibles
 - The Incredibles: Rise of the Underminer
+- Ratatouille (Jan 18th, 2006 Prototype)
 by Heavy Iron Studios for GameCube, Xbox, PlayStation 2, PC.
 
 Additional credits go to:
 - actualchatterteeth
 - Dark
 - EnergyDrink
+- Joey
 - MinecraftFreak73
 - Pepperpot
 - Seil
 - Suprnova123
 - TetraxZ
-and other members of the games' online communities for contributions on findings and code
-
-Flag icons courtesy of Flagpedia.net
+and other members of the games' online communities for contributions on findings and code.
 
 External tools used:
 - TxdGen
 - vgmstream
+Flag icons courtesy of Flagpedia.net
 
-For questions, suggestions, problems or any other reasons you can contact me at Heavy Iron Modding, GitHub, YouTube, or even better, on Discord: please join the Heavy Iron Modding server. ~igorseabra4</value>
+For documentation and user guide, please consult the Heavy Iron Modding wiki, linked below.
+For questions, suggestions, problems or any other reasons, you can reach me and the rest of the community on Discord: please join the Heavy Iron Modding server, linked below.
+For the source code, the GitHub repository is linked below.
+~igorseabra4</value>
   </data>
 </root>
