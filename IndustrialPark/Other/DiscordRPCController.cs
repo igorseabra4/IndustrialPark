@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using DiscordRPC;
+using DiscordRPC.Logging;
 using HipHopFile;
 
 namespace IndustrialPark
@@ -56,13 +57,16 @@ namespace IndustrialPark
             // it can be replaced with any other application ID as long as 
             // the name is "Industrial Park" and the image of the logo has 
             // the name of "icon"
-            client = new DiscordRpcClient("734104261876514836");
+            client = new DiscordRpcClient("734104261876514836")
+            {
+                Logger = new ConsoleLogger() { Level = LogLevel.Warning }
+            };
             client.Initialize();
             timer1.Start();
-            setPresence(idling: true);
+            SetPresence(idling: true);
         }
 
-        public static void setPresence(ArchiveEditor archiveEditor = null, bool idling = false)
+        public static void SetPresence(ArchiveEditor archiveEditor = null, bool idling = false)
         {
             try
             {
@@ -90,7 +94,7 @@ namespace IndustrialPark
                     }
                     currentArchiveEditor = archiveEditor.Text;
                     
-                    game = gameHandler(archiveEditor);
+                    game = GameHandler(archiveEditor);
 
                     switch (game)
                     {
@@ -161,7 +165,7 @@ namespace IndustrialPark
             }
         }
 
-        private static string gameHandler(ArchiveEditor archiveEditor)
+        private static string GameHandler(ArchiveEditor archiveEditor)
         {
             Game game = archiveEditor.archive.game;
             switch (game) 
@@ -204,11 +208,11 @@ namespace IndustrialPark
                 // ensures that it only updates to archives
                 if (activeEditorName.EndsWith(".hip", StringComparison.InvariantCultureIgnoreCase) || activeEditorName.EndsWith(".hop", StringComparison.InvariantCultureIgnoreCase))
                 {
-                    setPresence(activeEditor);
+                    SetPresence(activeEditor);
                 }
             }
             else if (archiveEditors.Count == 0)
-                setPresence(idling: true);
+                SetPresence(idling: true);
         }
     }
 }
