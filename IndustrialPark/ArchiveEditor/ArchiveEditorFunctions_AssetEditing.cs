@@ -526,7 +526,7 @@ namespace IndustrialPark
                     }
                     case AssetType.JSPInfo:
                     {
-                        jspInfoLayers.Add(new Layer(LayerType.JSPINFO) { AssetIDs = new List<uint>() {a.assetID } });
+                        jspInfoLayers.Add(new Layer(LayerType.JSPINFO) { AssetIDs = new List<uint>() { a.assetID } });
                         break;
                     }
                     case AssetType.Model:
@@ -691,6 +691,10 @@ namespace IndustrialPark
                 if (a is IVolumeAsset volume)
                 {
                     volume.ApplyScale(factor, singleFactor);
+                }
+                else if (a is AssetVOLU volu)
+                {
+                    volu.ApplyScale(factor, singleFactor);
                 }
                 else if (a is AssetMVPT MVPT)
                 {
