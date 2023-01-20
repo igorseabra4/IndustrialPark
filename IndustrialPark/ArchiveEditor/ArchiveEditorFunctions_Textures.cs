@@ -99,6 +99,9 @@ namespace IndustrialPark
                                     }
                                     else if (name.EndsWith(".RW3"))
                                         tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 4);
+                                    else
+                                        tn.textureNativeStruct.textureName = name;
+
                                     textNativeList.Add(tn);
                                 }
                     }
