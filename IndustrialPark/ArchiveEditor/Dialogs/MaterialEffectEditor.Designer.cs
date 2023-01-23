@@ -40,6 +40,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.comboBoxMatEffects = new System.Windows.Forms.ComboBox();
             this.propertyGridMatEffects = new System.Windows.Forms.PropertyGrid();
+            this.buttonAddTexture = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -47,16 +48,16 @@
             // 
             // groupBox1
             // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.listBoxMaterials);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
             // listBoxMaterials
             // 
-            resources.ApplyResources(this.listBoxMaterials, "listBoxMaterials");
             this.listBoxMaterials.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBoxMaterials.FormattingEnabled = true;
+            resources.ApplyResources(this.listBoxMaterials, "listBoxMaterials");
             this.listBoxMaterials.Name = "listBoxMaterials";
             this.listBoxMaterials.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
             this.listBoxMaterials.SelectedIndexChanged += new System.EventHandler(this.listBoxMaterials_SelectedIndexChanged);
@@ -70,8 +71,8 @@
             // 
             // buttonCancel
             // 
-            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
@@ -84,8 +85,8 @@
             // 
             // groupBox2
             // 
-            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.panelColor);
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
             // 
@@ -105,16 +106,16 @@
             // 
             // groupBox3
             // 
-            resources.ApplyResources(this.groupBox3, "groupBox3");
             this.groupBox3.Controls.Add(this.comboBoxMatEffects);
             this.groupBox3.Controls.Add(this.propertyGridMatEffects);
+            resources.ApplyResources(this.groupBox3, "groupBox3");
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.TabStop = false;
             // 
             // comboBoxMatEffects
             // 
-            resources.ApplyResources(this.comboBoxMatEffects, "comboBoxMatEffects");
             this.comboBoxMatEffects.FormattingEnabled = true;
+            resources.ApplyResources(this.comboBoxMatEffects, "comboBoxMatEffects");
             this.comboBoxMatEffects.Name = "comboBoxMatEffects";
             this.comboBoxMatEffects.SelectedIndexChanged += new System.EventHandler(this.comboBoxMatEffects_SelectedIndexChanged);
             // 
@@ -125,12 +126,20 @@
             this.propertyGridMatEffects.PropertySort = System.Windows.Forms.PropertySort.NoSort;
             this.propertyGridMatEffects.ToolbarVisible = false;
             // 
+            // buttonAddTexture
+            // 
+            resources.ApplyResources(this.buttonAddTexture, "buttonAddTexture");
+            this.buttonAddTexture.Name = "buttonAddTexture";
+            this.buttonAddTexture.UseVisualStyleBackColor = true;
+            this.buttonAddTexture.Click += new System.EventHandler(this.buttonAddTexture_Click);
+            // 
             // MaterialEffectEditor
             // 
             this.AcceptButton = this.buttonOK;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
+            this.Controls.Add(this.buttonAddTexture);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.propertyGridTextureInfo);
             this.Controls.Add(this.groupBox2);
@@ -163,5 +172,6 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.PropertyGrid propertyGridMatEffects;
         private System.Windows.Forms.ComboBox comboBoxMatEffects;
+        private System.Windows.Forms.Button buttonAddTexture;
     }
 }

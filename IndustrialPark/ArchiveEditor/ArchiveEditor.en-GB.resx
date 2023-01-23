@@ -119,33 +119,331 @@
   </resheader>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 34</value>
+    <value>180, 22</value>
   </data>
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 34</value>
+    <value>180, 22</value>
   </data>
   <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 34</value>
+    <value>180, 22</value>
   </data>
   <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 34</value>
+    <value>180, 22</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 6</value>
+    <value>177, 6</value>
   </data>
   <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>225, 34</value>
+    <value>180, 22</value>
   </data>
-  <data name="organizeLayersToolStripMenuItem.Text" xml:space="preserve">
-    <value>Organise</value>
+  <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>37, 22</value>
+  </data>
+  <data name="editPACKToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="hideLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>126, 22</value>
+  </data>
+  <data name="organizeLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>126, 22</value>
+  </data>
+  <data name="layersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="mergeSimilarAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="applyScaleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="verifyArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>202, 6</value>
+  </data>
+  <data name="hipHopToolExportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="exportAudioToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="importHIPArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="importTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="exportRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 22</value>
+  </data>
+  <data name="importRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 22</value>
+  </data>
+  <data name="exportNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 22</value>
+  </data>
+  <data name="importNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>164, 22</value>
+  </data>
+  <data name="tXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>205, 22</value>
+  </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 22</value>
   </data>
   <data name="generateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>270, 34</value>
+    <value>159, 22</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 22</value>
   </data>
   <data name="hideButtonsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>270, 34</value>
+    <value>143, 22</value>
+  </data>
+  <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 22</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 1, 0, 1</value>
   </data>
   <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>936, 33</value>
+    <value>624, 24</value>
+  </data>
+  <data name="toolStripStatusLabelCurrentFilename.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
+  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>10, 17</value>
+  </data>
+  <data name="toolStripStatusLabelSelectionCount.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
+  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>10, 17</value>
+  </data>
+  <data name="toolStripStatusLabelFileSize.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
+  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 431</value>
+  </data>
+  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 22</value>
+  </data>
+  <data name="buttonArrowDown.Location" type="System.Drawing.Point, System.Drawing">
+    <value>568, 19</value>
+  </data>
+  <data name="buttonArrowDown.Size" type="System.Drawing.Size, System.Drawing">
+    <value>22, 22</value>
+  </data>
+  <data name="buttonArrowUp.Location" type="System.Drawing.Point, System.Drawing">
+    <value>540, 19</value>
+  </data>
+  <data name="buttonArrowUp.Size" type="System.Drawing.Size, System.Drawing">
+    <value>22, 22</value>
+  </data>
+  <data name="comboBoxLayerTypes.Location" type="System.Drawing.Point, System.Drawing">
+    <value>296, 19</value>
+  </data>
+  <data name="comboBoxLayerTypes.Size" type="System.Drawing.Size, System.Drawing">
+    <value>115, 21</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>256, 23</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>34, 13</value>
+  </data>
+  <data name="buttonRemoveLayer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>471, 19</value>
+  </data>
+  <data name="buttonRemoveLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 21</value>
+  </data>
+  <data name="buttonAddLayer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>417, 19</value>
+  </data>
+  <data name="buttonAddLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 21</value>
+  </data>
+  <data name="comboBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="comboBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>244, 21</value>
+  </data>
+  <data name="groupBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 27</value>
+  </data>
+  <data name="groupBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>600, 47</value>
+  </data>
+  <data name="buttonMultiEdit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 318</value>
+  </data>
+  <data name="buttonMultiEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Location" type="System.Drawing.Point, System.Drawing">
+    <value>520, 8</value>
+  </data>
+  <data name="checkBoxTemplateFocus.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 30</value>
+  </data>
+  <data name="listViewAssets.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 40</value>
+  </data>
+  <data name="listViewAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>507, 301</value>
+  </data>
+  <data name="buttonCopy.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 98</value>
+  </data>
+  <data name="buttonCopy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonPaste.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 127</value>
+  </data>
+  <data name="buttonPaste.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="textBoxFindAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>296, 13</value>
+  </data>
+  <data name="textBoxFindAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>217, 20</value>
+  </data>
+  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
+    <value>260, 16</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>30, 13</value>
+  </data>
+  <data name="buttonInternalEdit.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 289</value>
+  </data>
+  <data name="buttonInternalEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonView.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 202</value>
+  </data>
+  <data name="buttonView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonExportRaw.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 231</value>
+  </data>
+  <data name="buttonExportRaw.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonEditAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 260</value>
+  </data>
+  <data name="buttonEditAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonDuplicate.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 69</value>
+  </data>
+  <data name="buttonDuplicate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonRemoveAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 156</value>
+  </data>
+  <data name="buttonRemoveAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="buttonAddAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>519, 40</value>
+  </data>
+  <data name="buttonAddAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="comboBoxAssetTypes.Location" type="System.Drawing.Point, System.Drawing">
+    <value>46, 13</value>
+  </data>
+  <data name="comboBoxAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
+    <value>204, 21</value>
+  </data>
+  <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 16</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>34, 13</value>
+  </data>
+  <data name="groupBoxAssets.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 80</value>
+  </data>
+  <data name="groupBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>600, 348</value>
+  </data>
+  <data name="addTemplateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="ToolStripMenuItem_CreateGroup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 6</value>
+  </data>
+  <data name="toolStripMenuItem_Add.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_Duplicate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_Copy.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_Paste.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_Remove.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 6</value>
+  </data>
+  <data name="toolStripMenuItem_View.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_Export.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_EditHeader.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_EditData.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_MultiEdit.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="contextMenuStrip_ListBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>223, 280</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>624, 453</value>
+  </data>
+  <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
+    <value>398, 244</value>
   </data>
 </root>

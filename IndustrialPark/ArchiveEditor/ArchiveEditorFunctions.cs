@@ -125,11 +125,11 @@ namespace IndustrialPark
                 platform = getNewArchive.Value.platform;
                 game = getNewArchive.Value.game;
 
-                if (getNewArchive.Value.addDefaultAssets)
-                    PlaceDefaultAssets();
-
                 if (getNewArchive.Value.noLayers)
                     NoLayers = true;
+
+                if (getNewArchive.Value.addDefaultAssets)
+                    PlaceDefaultAssets();
 
                 UnsavedChanges = true;
                 RecalculateAllMatrices();

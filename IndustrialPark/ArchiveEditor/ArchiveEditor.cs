@@ -1009,6 +1009,8 @@ namespace IndustrialPark
                 }
 
             var firstOrDefault = assetIDs.FirstOrDefault();
+            if (firstOrDefault != 0)
+                PopulateAssetListAndComboBox();
             AssetType assetType = archive.GetFromAssetID(firstOrDefault).assetType;
 
             if (!archive.NoLayers && archive.GetLayerFromAssetID(firstOrDefault) != archive.SelectedLayerIndex)

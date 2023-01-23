@@ -544,11 +544,20 @@
     <Compile Include="Models\Vertex.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.en-GB.resx">
+      <DependentUpon>ArchiveEditor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyVertexColors.resx">
       <DependentUpon>ApplyVertexColors.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.en-GB.resx">
+      <DependentUpon>ImportModel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportTextures.resx">
       <DependentUpon>ImportTextures.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\MaterialEffectEditor.en-GB.resx">
+      <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\MaterialEffectEditor.resx">
       <DependentUpon>MaterialEffectEditor.cs</DependentUpon>

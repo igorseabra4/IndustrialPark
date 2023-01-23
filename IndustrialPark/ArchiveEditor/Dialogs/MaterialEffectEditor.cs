@@ -71,7 +71,7 @@ namespace IndustrialPark
                 currentMaterials[0].materialStruct.color.G,
                 currentMaterials[0].materialStruct.color.B);
 
-            propertyGridTextureInfo.SelectedObjects = (from Material_0007 mat in currentMaterials select mat.texture).ToArray();
+            propertyGridTextureInfo.SelectedObjects = (from Material_0007 mat in currentMaterials where mat.texture != null select mat.texture).ToArray();
             
             if (currentMaterials.Count() == 1)
             {
@@ -92,6 +92,7 @@ namespace IndustrialPark
                     comboBoxMatEffects.SelectedItem = null;
                     propertyGridMatEffects.SelectedObject = null;
                 }
+                buttonAddTexture.Enabled = currentMaterials[0].texture == null;
             }
             else
             {
@@ -99,6 +100,7 @@ namespace IndustrialPark
                 propertyGridMatEffects.Enabled = false;
                 comboBoxMatEffects.SelectedItem = null;
                 propertyGridMatEffects.SelectedObject = null;
+                buttonAddTexture.Enabled = false;
             }
 
             programIsChangingStuff = false;
@@ -164,6 +166,19 @@ namespace IndustrialPark
             {
                 listBoxMaterials.Items[i] = listBoxMaterials.Items[i];
                 listBoxMaterials.SetSelected(i, selectedIndices.Contains(i));
+            }
+        }
+
+        private void buttonAddTexture_Click(object sender, EventArgs e)
+        {
+            if (currentMaterials.Count() == 1)
+            {
+                currentMaterials[0].texture = new Texture_0006
+                {
+                    diffuseTextureName = new String_0002("default")
+                };
+                currentMaterials[0].materialStruct.isTextured = 1;
+                propertyGridTextureInfo_PropertyValueChanged(sender, null);
             }
         }
     }
