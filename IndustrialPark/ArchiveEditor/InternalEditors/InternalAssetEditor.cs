@@ -250,15 +250,14 @@ namespace IndustrialPark
             Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
             buttonExport.Click += (object sender, EventArgs e) =>
             {
-                (Assimp.ExportFormatDescription format, string textureExtension) = ChooseTarget.GetTarget();
+                (bool ok, Assimp.ExportFormatDescription format, string textureExtension) = ChooseTarget.GetTarget();
 
-                if (format != null)
+                if (ok)
                 {
                     SaveFileDialog a = new SaveFileDialog()
                     {
-                        Filter = format == null ? "RenderWare BSP|*.bsp" : format.Description + "|*." + format.FileExtension,
+                        Filter = format == null ? "RenderWare BSP/DFF|*.bsp;*.dff" : format.Description + "|*." + format.FileExtension,
                     };
-
                     if (a.ShowDialog() == DialogResult.OK)
                     {
                         if (format == null)

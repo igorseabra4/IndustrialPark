@@ -1654,10 +1654,10 @@ namespace IndustrialPark
             Assimp.ExportFormatDescription format = null;
 
             string textureExtension = null;
-
-            while (format == null)
+            bool ok = false;
+            while (format == null && !ok)
             {
-                (format, textureExtension) = Models.ChooseTarget.GetTarget();
+                (ok, format, textureExtension) = Models.ChooseTarget.GetTarget();
 
                 if (format == null || textureExtension == null)
                     MessageBox.Show("Unuspported format for exporting scene");

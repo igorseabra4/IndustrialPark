@@ -35,14 +35,14 @@ namespace IndustrialPark.Models
             return null;
         }
 
-        public static (ExportFormatDescription format, string textureExtension) GetTarget()
+        public static (bool ok, ExportFormatDescription format, string textureExtension) GetTarget()
         {
             ChooseTarget c = new ChooseTarget();
             DialogResult d = c.ShowDialog();
 
             if (c.OKed || d == DialogResult.OK)
-                return (c.comboBoxFormat.SelectedIndex == 0 ? null : c.formats[c.comboBoxFormat.SelectedIndex - 1], "." + c.textBoxExtension.Text);
-            return (null, null);
+                return (true, c.comboBoxFormat.SelectedIndex == 0 ? null : c.formats[c.comboBoxFormat.SelectedIndex - 1], "." + c.textBoxExtension.Text);
+            return (false, null, null);
         }
 
         bool OKed = false;
