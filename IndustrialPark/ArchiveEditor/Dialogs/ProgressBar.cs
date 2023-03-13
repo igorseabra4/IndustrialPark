@@ -27,14 +27,14 @@ namespace IndustrialPark
 
         private delegate void SetValue(int min, int max, int step);
 
-        public void PerformStep()
+        public void PerformStep(string label = "")
         {
             if (InvokeRequired)
-                Invoke(new Action(PerformStep));
+                Invoke(new Action<string>(PerformStep), label);
             else
             {
                 pBar.PerformStep();
-                labelLoading.Text = $"Progress: {100 * pBar.Value / pBar.Maximum}%";
+                labelLoading.Text = $"Progress: {100 * pBar.Value / pBar.Maximum}%{label}";
                 if (pBar.Value >= pBar.Maximum)
                     Close();
             }

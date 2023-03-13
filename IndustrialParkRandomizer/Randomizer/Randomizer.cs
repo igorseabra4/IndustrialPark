@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -106,7 +107,7 @@ namespace IndustrialPark.Randomizer
                     }
                 }
 
-                if (archive.needToAddNumbers)
+                if (settings.Shiny_Object_Gates || settings.Spatula_Gates)
                     message += "\n* Due to Shiny_Object_Gates or Spatula_Gates, you need to import the numbers.HIP file to the HOP";
 
                 MessageBox.Show(message);
@@ -136,7 +137,8 @@ namespace IndustrialPark.Randomizer
                 settings.skipFiles = skipFiles.ToArray();
             }
 
-            List<(RandomizableArchive, RandomizableArchive)> levelPairs = new List<(RandomizableArchive, RandomizableArchive)>(); // HIP/HOP file pairs
+            List<RandomizableArchive> levels = new List<RandomizableArchive>(); // HIP/HOP file pairs
+            bool deleteHops = false;
             List<(string, string)> levelPathPairs = new List<(string, string)>(); // HIP/HOP path pairs
 
             string firstDir = string.IsNullOrEmpty(backupDir) ? rootDir : backupDir;
@@ -155,7 +157,7 @@ namespace IndustrialPark.Randomizer
                     hipPaths.Add(hipPath);
                 }
 
-            progressBar.SetProgressBar(0, hipPaths.Count * 4 + 3, 1);
+            progressBar.SetProgressBar(0, hipPaths.Count * 3 + 3, 1);
 
             List<string> warpNames = new List<string>(); // Names of all warps in the game for the Warps randomizer
             List<string> namesForBoot = new List<string>(); // Names of all levels in the game for sb.ini boot level randomizer
@@ -174,8 +176,9 @@ namespace IndustrialPark.Randomizer
             {
                 RandomizableArchive hip = new RandomizableArchive();
                 hip.OpenFile(hipPath, false, scoobyPlatform);
+                hip.NoLayers = true;
 
-                progressBar.PerformStep();
+                progressBar.PerformStep($" | Opening {Path.GetFileNameWithoutExtension(hip.currentlyOpenFilePath)}...");
 
                 // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
                 if (!platformVerified)
@@ -199,28 +202,29 @@ namespace IndustrialPark.Randomizer
                 if (settings.Warps && !FileInSecondBox(hipPath))
                     warpNames.AddRange(hip.GetWarpNames(toSkip));
 
-                RandomizableArchive hop = null;
+                //RandomizableArchive hop = null;
                 string hopPath = Path.ChangeExtension(hipPath, ".HOP");
 
                 if (File.Exists(hopPath))
                 {
-                    hop = new RandomizableArchive();
-                    hop.OpenFile(hopPath, false, scoobyPlatform);
+                    hip.ImportHip(hopPath, true);
+                    //hop = new RandomizableArchive();
+                    //hop.OpenFile(hopPath, false, scoobyPlatform);
+                    //hop.NoLayers = true;
 
-                    levelPairs.Add((hip, hop));
+                    levels.Add(hip);
+                    deleteHops = true;
 
                     if (!FileInSecondBox(hipPath))
                         levelPathPairs.Add((hipPath, hopPath));
                 }
                 else
                 {
-                    levelPairs.Add((hip, null));
+                    levels.Add(hip);
 
                     if (!FileInSecondBox(hipPath))
                         levelPathPairs.Add((hipPath, null));
                 }
-
-                progressBar.PerformStep();
 
                 string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
                 if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
@@ -236,6 +240,8 @@ namespace IndustrialPark.Randomizer
                 warpNames.AddRange(uinqueWarpNames);
             }
 
+            progressBar.PerformStep(" | Patching boot.hip...");
+
             // Perform things on boot.hip
             if (settings.Music || settings.bootHipLodtMulti || settings.UnlockCharacters || settings.RandomCharacters)
             {
@@ -244,6 +250,7 @@ namespace IndustrialPark.Randomizer
                 {
                     var boot = new RandomizableArchive();
                     boot.OpenFile(bootPath, false, scoobyPlatform);
+                    boot.NoLayers = true;
 
                     bool shouldSave = false;
 
@@ -278,7 +285,7 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
-            progressBar.PerformStep();
+            progressBar.PerformStep(" | Patching mnu5.hip...");
 
             if (settings.restoreRobotLaugh)
             {
@@ -287,6 +294,7 @@ namespace IndustrialPark.Randomizer
                 {
                     var mnu5 = new RandomizableArchive();
                     mnu5.OpenFile(mnu5path, false, scoobyPlatform);
+                    mnu5.NoLayers = true;
 
                     if (mnu5.RestoreRobotLaugh())
                     {
@@ -298,7 +306,7 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
-            progressBar.PerformStep();
+            progressBar.PerformStep(" | Patching mnu4.hip...");
 
             if (settings.widescreenMenu)
             {
@@ -307,7 +315,8 @@ namespace IndustrialPark.Randomizer
                 {
                     var mnu4 = new RandomizableArchive();
                     mnu4.OpenFile(mnu4path, false, scoobyPlatform);
-                    
+                    mnu4.NoLayers = true;
+
                     if (mnu4.WidescreenMenu())
                     {
                         if (string.IsNullOrEmpty(backupDir))
@@ -318,108 +327,40 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
-            progressBar.PerformStep();
-
             // Time for the actual randomization process!
 
             List<(string, string, string)> warpRandomizerOutput = new List<(string, string, string)>();
 
-            while (levelPairs.Count != 0)
+            while (levels.Count != 0)
             {
-                bool item1shuffled = false;
+                progressBar.PerformStep($" | Randomizing {Path.GetFileNameWithoutExtension(levels[0].currentlyOpenFilePath)}...");
 
                 if (settings.UnlockCharacters)
                 {
-                    item1shuffled |= levelPairs[0].Item1.UnimportCharacters();
-                    item1shuffled |= levelPairs[0].Item1.FixTreedome();
+                    levels[0].UnimportCharacters();
+                    levels[0].FixTreedome();
                 }
 
                 if (settings.UnlockCharacters || settings.disableCutscenes)
-                    item1shuffled |= levelPairs[0].Item1.KillFinalBossCutscenes();
+                    levels[0].KillFinalBossCutscenes();
 
-                if (settings.Warps && !FileInSecondBox(levelPairs[0].Item1.currentlyOpenFilePath))
-                    item1shuffled |= levelPairs[0].Item1.SetWarpNames(ref warpNames, ref warpRandomizerOutput, uinqueWarpNames);
+                if (settings.Warps && !FileInSecondBox(levels[0].currentlyOpenFilePath))
+                    levels[0].SetWarpNames(ref warpNames, ref warpRandomizerOutput, uinqueWarpNames);
 
-                item1shuffled |= levelPairs[0].Item1.Randomize(settings);
+                levels[0].Randomize(settings);
 
-                progressBar.PerformStep();
+                progressBar.PerformStep($" | Saving {Path.GetFileNameWithoutExtension(levels[0].currentlyOpenFilePath)}...");
 
-                HashSet<NpcType_BFBB> enemyVils = levelPairs[0].Item1.GetEnemyTypes();
-                HashSet<EnemySupplyCrateType> crateTypes = levelPairs[0].Item1.GetDynaCrateTypes();
-                HashSet<EnemyStandardType> enemyTypes = levelPairs[0].Item1.GetDynaEnemyTypes();
-
-                bool item2shuffled = false;
-                if (levelPairs[0].Item2 != null)
-                {
-                    if (enemyVils.Count != 0)
-                        item2shuffled |= levelPairs[0].Item2.ImportEnemyTypes(enemyVils);
-
-                    if (crateTypes.Count != 0)
-                    {
-                        item1shuffled |= levelPairs[0].Item1.ImportCrateTypes(crateTypes, true);
-                        item2shuffled |= levelPairs[0].Item2.ImportCrateTypes(crateTypes, false);
-                    }
-
-                    if (enemyTypes.Count != 0)
-                    {
-                        item1shuffled |= levelPairs[0].Item1.ImportDynaEnemyTypes(enemyTypes, true);
-                        item2shuffled |= levelPairs[0].Item2.ImportDynaEnemyTypes(enemyTypes, false);
-                    }
-
-                    if (levelPairs[0].Item1.needToAddNumbers)
-                        item2shuffled |= levelPairs[0].Item2.ImportNumbers();
-
-                    if (settings.UnlockCharacters)
-                        item2shuffled = levelPairs[0].Item2.UnimportCharacters();
-
-                    item2shuffled |= levelPairs[0].Item2.Randomize(settings);
-                }
-
-                progressBar.PerformStep();
-
-                // Save to a random different path (level files randomizer)
-                if (settings.Level_Files && !FileInSecondBox(levelPairs[0].Item1.currentlyOpenFilePath))
-                {
-                    int newPathIndex = RandomizableArchive.random.Next(0, levelPathPairs.Count);
-
-                    levelPairs[0].Item1.Save(levelPathPairs[newPathIndex].Item1);
-
-                    if (string.IsNullOrEmpty(backupDir))
-                        levelPairs[0].Item1.Save(levelPathPairs[newPathIndex].Item1);
-                    else
-                        levelPairs[0].Item1.Save(levelPathPairs[newPathIndex].Item1.Replace(backupDir, rootDir));
-
-                    if (levelPairs[0].Item2 != null)
-                    {
-                        if (string.IsNullOrEmpty(backupDir))
-                            levelPairs[0].Item2.Save(levelPathPairs[newPathIndex].Item2);
-                        else
-                            levelPairs[0].Item2.Save(levelPathPairs[newPathIndex].Item2.Replace(backupDir, rootDir));
-                    }
-
-                    levelPathPairs.RemoveAt(newPathIndex);
-                }
-                // Save to the same path (non level files or file set to not randomize warps)
+                if (string.IsNullOrEmpty(backupDir))
+                    levels[0].Save();
                 else
-                {
-                    if (item1shuffled)
-                    {
-                        if (string.IsNullOrEmpty(backupDir))
-                            levelPairs[0].Item1.Save();
-                        else
-                            levelPairs[0].Item1.Save(levelPairs[0].Item1.currentlyOpenFilePath.Replace(backupDir, rootDir));
-                    }
+                    levels[0].Save(levels[0].currentlyOpenFilePath.Replace(backupDir, rootDir));
 
-                    if (item2shuffled)
-                    {
-                        if (string.IsNullOrEmpty(backupDir))
-                            levelPairs[0].Item2.Save();
-                        else
-                            levelPairs[0].Item2.Save(levelPairs[0].Item2.currentlyOpenFilePath.Replace(backupDir, rootDir));
-                    }
-                }
+                string hopPath = Path.ChangeExtension(levels[0].currentlyOpenFilePath, ".HOP");
+                if (deleteHops && File.Exists(hopPath))
+                    File.Delete(hopPath);
 
-                levelPairs.RemoveAt(0);
+                levels.RemoveAt(0);
             }
 
             string message = "Randomization complete!";

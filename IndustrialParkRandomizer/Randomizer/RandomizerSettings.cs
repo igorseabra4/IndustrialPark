@@ -36,8 +36,6 @@ namespace IndustrialPark.Randomizer
 
         [Category("Randomizer (Not recommended)"), DisplayName("Mix Sound Types"), Description("NOT RECOMMENDED\nMixes sound effects and voices.")]
         public bool Mix_Sound_Types { get; set; }
-        [Category("Randomizer (Not recommended)"), DisplayName("Level Files"), Description("NOT RECOMMENDED\nRandomizes level files with each other. WILL break multiple levels and tasks and cause softlocks.")]
-        public bool Level_Files { get; set; }
 
 
         [Category("Warps"), Description("Randomizes destination of level warps.")]
@@ -268,7 +266,6 @@ namespace IndustrialPark.Randomizer
             Textures_Special = false;
             Sounds = false;
             Mix_Sound_Types = false;
-            Level_Files = false;
             Warps = true;
             Scale_Of_Things = false;
             Texture_Animations = true;
@@ -435,7 +432,6 @@ namespace IndustrialPark.Randomizer
             Mix_Sound_Types = false;
             FloatingBlockChallenge = false;
             Timers = false;
-            Level_Files = false;
             brightColors = false;
             strongColors = false;
             PlayerCharacters = false;

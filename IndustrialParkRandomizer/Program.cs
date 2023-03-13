@@ -1,5 +1,6 @@
 ﻿using IndustrialPark.Randomizer;
 using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace IndustrialParkRandomizer

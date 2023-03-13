@@ -58,7 +58,7 @@
             this.ControlBox = false;
             this.Controls.Add(this.labelLoading);
             this.Controls.Add(this.pBar);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProgressBar";

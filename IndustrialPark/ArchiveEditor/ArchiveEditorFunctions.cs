@@ -168,9 +168,6 @@ namespace IndustrialPark
                 throw e;
             }
 
-            if (hipFile.HIPB != null && hipFile.HIPB.HasNoLayers != 0)
-                NoLayers = true;
-
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
 
             this.game = game;
@@ -212,6 +209,9 @@ namespace IndustrialPark
 
             if (assetsWithError != "")
                 MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
+
+            if (hipFile.HIPB != null && hipFile.HIPB.HasNoLayers != 0)
+                NoLayers = true;
 
             SetupTextureDisplay();
             RecalculateAllMatrices();
@@ -551,7 +551,7 @@ namespace IndustrialPark
                 dtrk.Dispose();
             else if (asset is AssetGRSM grsm)
                 grsm.Dispose();
-            else if (asset is AssetRWTX rwtx)
+            else if (asset is AssetRWTX rwtx && !SkipTextureDisplay)
                 TextureManager.RemoveTexture(rwtx.Name, this, rwtx.assetID);
         }
 
@@ -653,7 +653,7 @@ namespace IndustrialPark
                 autoCompleteSource.Add(asset.assetName);
         }
 
-        private Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
+        protected virtual Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
         {
             //return CreateAsset(AHDR, game, endianness);
             try
@@ -665,13 +665,13 @@ namespace IndustrialPark
                 error = $"[{AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
 
                 if (showMessageBox)
-                    MessageBox.Show($"There was an error loading asset {error}:" + ex.Message + " and editing has been disabled for it.");
+                    MessageBox.Show($"There was an error loading asset {error} and editing has been disabled for it.");
 
                 return new AssetGeneric(AHDR, game, endianness);
             }
         }
 
-        private Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness)
+        protected Asset CreateAsset(Section_AHDR AHDR, Game game, Endianness endianness)
         {
             if (AHDR.IsDyna)
                 return CreateDYNA(AHDR, game, endianness);
@@ -694,7 +694,7 @@ namespace IndustrialPark
                 case AssetType.JSP:
                     return new AssetJSP(AHDR, game, endianness, Program.Renderer);
                 case AssetType.JSPInfo:
-                    return new AssetJSP_INFO(AHDR, game, GetJspAssetIDs);
+                    return new AssetJSP_INFO(AHDR, game, defaultJspAssetIds ?? GetJspAssetIDs(AHDR.assetID));
                 case AssetType.Model:
                     return new AssetMODL(AHDR, game, endianness, Program.Renderer);
                 case AssetType.Texture:
@@ -1443,6 +1443,8 @@ namespace IndustrialPark
                 return MRKR;
             return null;
         }
+
+        protected AssetID[] defaultJspAssetIds = null;
 
         private AssetID[] GetJspAssetIDs(uint jspInfo)
         {

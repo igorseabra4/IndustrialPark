@@ -7,10 +7,9 @@ namespace IndustrialPark
 {
     public class AssetJSP_INFO : AssetWithData
     {
-        public AssetJSP_INFO(Section_AHDR AHDR, Game game, GetJspAssetIDs getJspAssetIds) : base(AHDR, game)
+        public AssetJSP_INFO(Section_AHDR AHDR, Game game, AssetID[] jspAssetIds) : base(AHDR, game)
         {
-            this.getJspAssetIds = getJspAssetIds;
-            JSP_AssetIDs = this.getJspAssetIds(assetID);
+            JSP_AssetIDs = jspAssetIds;
         }
 
         public int renderWareVersion;
@@ -25,9 +24,6 @@ namespace IndustrialPark
             }
             set => Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
         }
-
-        public delegate AssetID[] GetJspAssetIDs(uint jspInfoAssetId);
-        private GetJspAssetIDs getJspAssetIds;
 
         public AssetID[] JSP_AssetIDs { get; set; }
 

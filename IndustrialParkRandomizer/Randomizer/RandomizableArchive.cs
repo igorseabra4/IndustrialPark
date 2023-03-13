@@ -12,15 +12,24 @@ namespace IndustrialPark.Randomizer
 {
     public class RandomizableArchive : ArchiveEditorFunctions
     {
+        protected override Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
+        {
+            try
+            {
+                return CreateAsset(AHDR, game, endianness);
+            }
+            catch
+            {
+                return new AssetGeneric(AHDR, game, endianness);
+            }
+        }
+
         public RandomizableArchive()
         {
-            NoLayers = true;
             SkipTextureDisplay = true;
         }
 
         public static Random random;
-
-        public bool needToAddNumbers = false;
 
         public bool Randomize(RandomizerSettings settings)
         {
@@ -43,32 +52,17 @@ namespace IndustrialPark.Randomizer
                     shuffled = true;
                 }
 
-            if (settings.Set_Scale)
-            {
-                shuffled |= true;
-                ApplyScale(new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
-            }
-
             if (settings.Disco_Floors && ContainsAssetWithType(AssetType.DiscoFloor))
                 shuffled |= RandomizeDisco();
 
-            if (settings.Textures && ContainsAssetWithType(AssetType.Texture))
-                shuffled |= RandomizeTextures(settings.Textures_Special);
-
             if (settings.BoulderSettings && ContainsAssetWithType(AssetType.Boulder))
                 shuffled |= RandomizeBoulderSettings(settings);
-
-            if (settings.Sounds && ContainsAssetWithType(AssetType.SoundInfo))
-                shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
 
             if (settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
                 shuffled |= RandomizePickupPositions();
 
             if (settings.Shiny_Object_Gates && game == Game.Scooby && ContainsAssetWithType(AssetType.Pickup))
                 shuffled |= RandomizeSnackGates(settings.shinyReqMin, settings.shinyReqMax);
-
-            if (settings.MovePoint_Radius && ContainsAssetWithType(AssetType.MovePoint))
-                shuffled |= RandomizeMovePointRadius(settings);
 
             if (game == Game.BFBB)
             {
@@ -302,6 +296,9 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
+            if (settings.MovePoint_Radius && ContainsAssetWithType(AssetType.MovePoint))
+                shuffled |= RandomizeMovePointRadius(settings);
+
             if (settings.Markers
                 && !new string[] { "hb02", "b101", "b201", "b302", "b303" }.Contains(LevelName))
                 shuffled |= ShuffleMRKRPositions(
@@ -311,9 +308,6 @@ namespace IndustrialPark.Randomizer
                     settings.Bus_Stop_Trigger_Positions,
                     settings.Teleport_Box_Positions,
                     settings.Taxi_Trigger_Positions);
-
-            if (settings.PlatformSpeed && ContainsAssetWithType(AssetType.Platform))
-                shuffled |= ShufflePlatSpeeds(settings);
 
             if (settings.Cameras && ContainsAssetWithType(AssetType.Camera))
                 shuffled |= ShuffleCameras();
@@ -331,7 +325,11 @@ namespace IndustrialPark.Randomizer
             if (game == Game.Incredibles && settings.CombatArenaCounts && ContainsAssetWithType(AssetType.Counter))
                 shuffled |= ShuffleCombatArenas(settings.combatMin, settings.combatMax);
 
-            needToAddNumbers = shinyNumbers || spatNumbers;
+            if (settings.PlatformSpeed && ContainsAssetWithType(AssetType.Platform))
+                shuffled |= ShufflePlatSpeeds(settings);
+
+            if (shinyNumbers || spatNumbers)
+                ImportNumbers();
 
             if (settings.Scale_Of_Things)
                 shuffled |= ShuffleScales(settings);
@@ -368,6 +366,18 @@ namespace IndustrialPark.Randomizer
 
             if (settings.invisibleObjects && ContainsAssetWithType(AssetType.SimpleObject))
                 shuffled |= MakeObjectsInvisible();
+
+            if (settings.Set_Scale)
+            {
+                shuffled |= true;
+                ApplyScale(new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
+            }
+
+            if (settings.Textures && ContainsAssetWithType(AssetType.Texture))
+                shuffled |= RandomizeTextures(settings.Textures_Special);
+
+            if (settings.Sounds && ContainsAssetWithType(AssetType.SoundInfo))
+                shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
 
             return shuffled;
         }
@@ -1167,9 +1177,80 @@ namespace IndustrialPark.Randomizer
 
                 if (a.NpcType_BFBB == NpcType_BFBB.robot_arf_bind || a.NpcType_BFBB == NpcType_BFBB.tubelet_bind)
                     CreateKids(a);
+
+                ImportNpcFile(a.NpcType_BFBB);
             }
 
             return assets.Count != 0;
+        }
+
+        public void ImportNpcFile(NpcType_BFBB npcType)
+        {
+            if (ContainsAsset(new AssetID(npcType.ToString().Replace("sleepytime", "sleepy-time") + ".MINF")))
+                return;
+
+            string hipFileName;
+            switch (npcType)
+            {
+                case NpcType_BFBB.g_love_bind:
+                    hipFileName = "g-love.HIP";
+                    break;
+                case NpcType_BFBB.ham_bind:
+                    hipFileName = "ham-mer.HIP";
+                    break;
+                case NpcType_BFBB.robot_0a_bomb_bind:
+                    hipFileName = "bomb-bot.HIP";
+                    break;
+                case NpcType_BFBB.robot_0a_bzzt_bind:
+                    hipFileName = "bzzt-bot.HIP";
+                    break;
+                case NpcType_BFBB.robot_0a_chomper_bind:
+                    hipFileName = "chomp-bot.HIP";
+                    break;
+                case NpcType_BFBB.robot_0a_fodder_bind:
+                    hipFileName = "fodder.HIP";
+                    break;
+                case NpcType_BFBB.robot_4a_monsoon_bind:
+                    hipFileName = "monsoon.HIP";
+                    break;
+                case NpcType_BFBB.robot_9a_bind:
+                    hipFileName = "slick.HIP";
+                    break;
+                case NpcType_BFBB.robot_chuck_bind:
+                    hipFileName = "chuck.HIP";
+                    break;
+                case NpcType_BFBB.robot_sleepytime_bind:
+                    hipFileName = "sleepytime.HIP";
+                    break;
+                case NpcType_BFBB.robot_tar_bind:
+                    hipFileName = "tar-tar.HIP";
+                    break;
+                case NpcType_BFBB.robot_arf_bind:
+                    hipFileName = "arf_arf-dawg.HIP";
+                    break;
+                case NpcType_BFBB.tubelet_bind:
+                    hipFileName = "tubelet.HIP";
+                    break;
+                case NpcType_BFBB.tiki_wooden_bind:
+                    hipFileName = "tiki_wooden.HIP";
+                    break;
+                case NpcType_BFBB.tiki_lovey_dovey_bind:
+                    hipFileName = "tiki_floating.HIP";
+                    break;
+                case NpcType_BFBB.tiki_thunder_bind:
+                    hipFileName = "tiki_thunder.HIP";
+                    break;
+                case NpcType_BFBB.tiki_stone_bind:
+                    hipFileName = "tiki_stone.HIP";
+                    break;
+                case NpcType_BFBB.tiki_shhhh_bind:
+                    hipFileName = "tiki_shhh.HIP";
+                    break;
+                default:
+                    throw new Exception("Invalid VilType");
+            }
+
+            ProgImportHip(npcType.ToString().Contains("tiki") ? "Utility" : "Enemies", hipFileName);
         }
 
         private void KillKids(AssetVIL vil)
@@ -1263,9 +1344,43 @@ namespace IndustrialPark.Randomizer
             {
                 int index = random.Next(0, setTo.Count);
                 a.CrateType = setTo[index];
+                ImportCrateType(a.CrateType, false);
             }
 
             return assets.Count != 0;
+        }
+
+        public void ImportCrateType(EnemySupplyCrateType v, bool unimport)
+        {
+            if (ContainsAsset(new AssetID(v.ToString() + ".MINF")))
+                return;
+
+            string hipFileName;
+            switch (v)
+            {
+                case EnemySupplyCrateType.crate_wood_bind:
+                    hipFileName = "crate_wood.hip";
+                    break;
+                case EnemySupplyCrateType.crate_hover_bind:
+                    hipFileName = "crate_hover.hip";
+                    break;
+                case EnemySupplyCrateType.crate_explode_bind:
+                    hipFileName = "crate_explode.hip";
+                    break;
+                case EnemySupplyCrateType.crate_shrink_bind:
+                    hipFileName = "crate_shrink.hip";
+                    break;
+                case EnemySupplyCrateType.crate_steel_bind:
+                    hipFileName = "crate_steel.hip";
+                    break;
+                default:
+                    throw new Exception("Invalid Crate Type");
+            }
+
+            if (unimport)
+                ProgUnimportHip("Utility", hipFileName);
+            else
+                ProgImportHip("Utility", hipFileName);
         }
 
         private bool ShuffleEnemyDynaTypes(List<EnemyStandardType> chooseFrom, List<EnemyStandardType> setTo, bool veryRandom)
@@ -1298,9 +1413,94 @@ namespace IndustrialPark.Randomizer
                     a.EnemyType = altSetTo[index];
                     altSetTo.RemoveAt(index);
                 }
+                ImportDynaEnemyTypes(a.EnemyType, false);
             }
 
             return assets.Count != 0;
+        }
+
+        public void ImportDynaEnemyTypes(EnemyStandardType v, bool unimport)
+        {
+            if (ContainsAsset(new AssetID(v.ToString() + ".MINF")))
+                return;
+
+            string hipFileName;
+            switch (v)
+            {
+                case EnemyStandardType.flinger_v1_bind:
+                    hipFileName = "flinger_desert.hip";
+                    break;
+                case EnemyStandardType.flinger_v2_bind:
+                    hipFileName = "flinger_trench.hip";
+                    break;
+                case EnemyStandardType.flinger_v3_bind:
+                    hipFileName = "flinger_junkyard.hip";
+                    break;
+                case EnemyStandardType.fogger_de_bind:
+                    hipFileName = "fogger_desert.HIP";
+                    break;
+                case EnemyStandardType.fogger_gg_bind:
+                    hipFileName = "fogger_goofy_goober.HIP";
+                    break;
+                case EnemyStandardType.fogger_jk_bind:
+                    hipFileName = "fogger_junkyard.hip";
+                    break;
+                case EnemyStandardType.fogger_pt_bind:
+                    hipFileName = "fogger_planktopolis.hip";
+                    break;
+                case EnemyStandardType.fogger_tr_bind:
+                    hipFileName = "fogger_trench.hip";
+                    break;
+                case EnemyStandardType.fogger_tt_bind:
+                    hipFileName = "fogger_thugtug.hip";
+                    break;
+                case EnemyStandardType.fogger_v1_bind:
+                    hipFileName = "fogger_v1.hip";
+                    break;
+                case EnemyStandardType.fogger_v2_bind:
+                    hipFileName = "fogger_v2.hip";
+                    break;
+                case EnemyStandardType.fogger_v3_bind:
+                    hipFileName = "fogger_v3.hip";
+                    break;
+                case EnemyStandardType.mervyn_v3_bind:
+                    hipFileName = "mervyn.hip";
+                    break;
+                case EnemyStandardType.minimerv_v1_bind:
+                    hipFileName = "mini_merv.hip";
+                    break;
+                case EnemyStandardType.popper_v1_bind:
+                    hipFileName = "popper_trench.hip";
+                    break;
+                case EnemyStandardType.popper_v3_bind:
+                    hipFileName = "popper_planktopolis.hip";
+                    break;
+                case EnemyStandardType.slammer_v1_bind:
+                    hipFileName = "slammer_goofy_goober.hip";
+                    break;
+                case EnemyStandardType.slammer_des_bind:
+                    hipFileName = "slammer_desert.hip";
+                    break;
+                case EnemyStandardType.slammer_v3_bind:
+                    hipFileName = "slammer_thugtug.hip";
+                    break;
+                case EnemyStandardType.spinner_v1_bind:
+                    hipFileName = "spinner_thugtug.hip";
+                    break;
+                case EnemyStandardType.spinner_v2_bind:
+                    hipFileName = "spinner_junkyard.hip";
+                    break;
+                case EnemyStandardType.spinner_v3_bind:
+                    hipFileName = "spinner_planktopolis.hip";
+                    break;
+                default:
+                    throw new Exception("Invalid Enemy Type");
+            }
+
+            if (unimport)
+                ProgUnimportHip("Enemies", hipFileName);
+            else
+                ProgImportHip("Enemies", hipFileName);
         }
 
         private bool ShuffleCombatArenas(int combatMin, int combatMax)
@@ -2411,234 +2611,6 @@ namespace IndustrialPark.Randomizer
                     outSet.Add(a.NpcType_BFBB);
             }
             return outSet;
-        }
-
-
-        private static readonly EnemySupplyCrateType[] importCrateTypes = new EnemySupplyCrateType[] {
-            EnemySupplyCrateType.crate_wood_bind,
-            EnemySupplyCrateType.crate_hover_bind,
-            EnemySupplyCrateType.crate_explode_bind,
-            EnemySupplyCrateType.crate_shrink_bind,
-            EnemySupplyCrateType.crate_steel_bind,
-        };
-
-        public HashSet<EnemySupplyCrateType> GetDynaCrateTypes()
-        {
-            var outSet = new HashSet<EnemySupplyCrateType>();
-
-            foreach (var a in from asset in assetDictionary.Values
-                              where asset is DynaEnemySupplyCrate crate && importCrateTypes.Contains(crate.CrateType)
-                              select (DynaEnemySupplyCrate)asset)
-                if (!ContainsAsset(new AssetID(a.Type.ToString() + ".MINF")))
-                    outSet.Add(a.CrateType);
-
-            return outSet;
-        }
-
-        private static readonly EnemyStandardType[] importEnemyTypes = new EnemyStandardType[] {
-            EnemyStandardType.flinger_v1_bind,
-            EnemyStandardType.flinger_v2_bind,
-            EnemyStandardType.flinger_v3_bind,
-            EnemyStandardType.fogger_de_bind,
-            EnemyStandardType.fogger_gg_bind,
-            EnemyStandardType.fogger_jk_bind,
-            EnemyStandardType.fogger_pt_bind,
-            EnemyStandardType.fogger_tr_bind,
-            EnemyStandardType.fogger_tt_bind,
-            EnemyStandardType.fogger_v1_bind,
-            EnemyStandardType.fogger_v2_bind,
-            EnemyStandardType.fogger_v3_bind,
-            EnemyStandardType.mervyn_v3_bind,
-            EnemyStandardType.minimerv_v1_bind,
-            EnemyStandardType.popper_v1_bind,
-            EnemyStandardType.popper_v3_bind,
-            EnemyStandardType.slammer_v1_bind,
-            EnemyStandardType.slammer_des_bind,
-            EnemyStandardType.slammer_v3_bind,
-            EnemyStandardType.spinner_v1_bind,
-            EnemyStandardType.spinner_v2_bind,
-            EnemyStandardType.spinner_v3_bind
-                    };
-
-        public HashSet<EnemyStandardType> GetDynaEnemyTypes()
-        {
-            var outSet = new HashSet<EnemyStandardType>();
-
-            foreach (var a in from asset in assetDictionary.Values
-                              where asset is DynaEnemyStandard enemy
-                              && importEnemyTypes.Contains(enemy.EnemyType)
-                              select (DynaEnemyStandard)asset)
-                if (!ContainsAsset(new AssetID(a.Type.ToString() + ".MINF")))
-                    outSet.Add(a.EnemyType);
-
-            return outSet;
-        }
-
-        public bool ImportEnemyTypes(HashSet<NpcType_BFBB> inSet)
-        {
-            bool imported = false;
-
-            foreach (NpcType_BFBB v in inSet)
-            {
-                if (ContainsAsset(new AssetID(v.ToString().Replace("sleepytime", "sleepy-time") + ".MINF")))
-                    continue;
-
-                string hipFileName = null;
-                switch (v)
-                {
-                    case NpcType_BFBB.g_love_bind:
-                        hipFileName = "g-love.HIP"; break;
-                    case NpcType_BFBB.ham_bind:
-                        hipFileName = "ham-mer.HIP"; break;
-                    case NpcType_BFBB.robot_0a_bomb_bind:
-                        hipFileName = "bomb-bot.HIP"; break;
-                    case NpcType_BFBB.robot_0a_bzzt_bind:
-                        hipFileName = "bzzt-bot.HIP"; break;
-                    case NpcType_BFBB.robot_0a_chomper_bind:
-                        hipFileName = "chomp-bot.HIP"; break;
-                    case NpcType_BFBB.robot_0a_fodder_bind:
-                        hipFileName = "fodder.HIP"; break;
-                    case NpcType_BFBB.robot_4a_monsoon_bind:
-                        hipFileName = "monsoon.HIP"; break;
-                    case NpcType_BFBB.robot_9a_bind:
-                        hipFileName = "slick.HIP"; break;
-                    case NpcType_BFBB.robot_chuck_bind:
-                        hipFileName = "chuck.HIP"; break;
-                    case NpcType_BFBB.robot_sleepytime_bind:
-                        hipFileName = "sleepytime.HIP"; break;
-                    case NpcType_BFBB.robot_tar_bind:
-                        hipFileName = "tar-tar.HIP"; break;
-                    case NpcType_BFBB.robot_arf_bind:
-                        hipFileName = "arf_arf-dawg.HIP"; break;
-                    case NpcType_BFBB.tubelet_bind:
-                        hipFileName = "tubelet.HIP"; break;
-                    case NpcType_BFBB.tiki_wooden_bind:
-                        hipFileName = "tiki_wooden.HIP"; break;
-                    case NpcType_BFBB.tiki_lovey_dovey_bind:
-                        hipFileName = "tiki_floating.HIP"; break;
-                    case NpcType_BFBB.tiki_thunder_bind:
-                        hipFileName = "tiki_thunder.HIP"; break;
-                    case NpcType_BFBB.tiki_stone_bind:
-                        hipFileName = "tiki_stone.HIP"; break;
-                    case NpcType_BFBB.tiki_shhhh_bind:
-                        hipFileName = "tiki_shhh.HIP"; break;
-                    default:
-                        throw new Exception("Invalid VilType");
-                }
-
-                ProgImportHip(v.ToString().Contains("tiki") ? "Utility" : "Enemies", hipFileName);
-                imported = true;
-            }
-
-            return imported;
-        }
-
-        public bool ImportCrateTypes(HashSet<EnemySupplyCrateType> inSet, bool unimport)
-        {
-            bool imported = false;
-
-            foreach (EnemySupplyCrateType v in inSet)
-            {
-                if (ContainsAsset(new AssetID(v.ToString() + ".MINF")))
-                    continue;
-
-                string hipFileName = null;
-                switch (v)
-                {
-                    case EnemySupplyCrateType.crate_wood_bind:
-                        hipFileName = "crate_wood.hip"; break;
-                    case EnemySupplyCrateType.crate_hover_bind:
-                        hipFileName = "crate_hover.hip"; break;
-                    case EnemySupplyCrateType.crate_explode_bind:
-                        hipFileName = "crate_explode.hip"; break;
-                    case EnemySupplyCrateType.crate_shrink_bind:
-                        hipFileName = "crate_shrink.hip"; break;
-                    case EnemySupplyCrateType.crate_steel_bind:
-                        hipFileName = "crate_steel.hip"; break;
-                    default:
-                        throw new Exception("Invalid Crate Type");
-                }
-
-                if (unimport)
-                    ProgUnimportHip("Utility", hipFileName);
-                else
-                    ProgImportHip("Utility", hipFileName);
-
-                imported = true;
-            }
-
-            return imported;
-        }
-
-        public bool ImportDynaEnemyTypes(HashSet<EnemyStandardType> inSet, bool unimport)
-        {
-            bool imported = false;
-
-            foreach (EnemyStandardType v in inSet)
-            {
-                if (ContainsAsset(new AssetID(v.ToString() + ".MINF")))
-                    continue;
-
-                string hipFileName = null;
-                switch (v)
-                {
-                    case EnemyStandardType.flinger_v1_bind:
-                        hipFileName = "flinger_desert.hip"; break;
-                    case EnemyStandardType.flinger_v2_bind:
-                        hipFileName = "flinger_trench.hip"; break;
-                    case EnemyStandardType.flinger_v3_bind:
-                        hipFileName = "flinger_junkyard.hip"; break;
-                    case EnemyStandardType.fogger_de_bind:
-                        hipFileName = "fogger_desert.HIP"; break;
-                    case EnemyStandardType.fogger_gg_bind:
-                        hipFileName = "fogger_goofy_goober.HIP"; break;
-                    case EnemyStandardType.fogger_jk_bind:
-                        hipFileName = "fogger_junkyard.hip"; break;
-                    case EnemyStandardType.fogger_pt_bind:
-                        hipFileName = "fogger_planktopolis.hip"; break;
-                    case EnemyStandardType.fogger_tr_bind:
-                        hipFileName = "fogger_trench.hip"; break;
-                    case EnemyStandardType.fogger_tt_bind:
-                        hipFileName = "fogger_thugtug.hip"; break;
-                    case EnemyStandardType.fogger_v1_bind:
-                        hipFileName = "fogger_v1.hip"; break;
-                    case EnemyStandardType.fogger_v2_bind:
-                        hipFileName = "fogger_v2.hip"; break;
-                    case EnemyStandardType.fogger_v3_bind:
-                        hipFileName = "fogger_v3.hip"; break;
-                    case EnemyStandardType.mervyn_v3_bind:
-                        hipFileName = "mervyn.hip"; break;
-                    case EnemyStandardType.minimerv_v1_bind:
-                        hipFileName = "mini_merv.hip"; break;
-                    case EnemyStandardType.popper_v1_bind:
-                        hipFileName = "popper_trench.hip"; break;
-                    case EnemyStandardType.popper_v3_bind:
-                        hipFileName = "popper_planktopolis.hip"; break;
-                    case EnemyStandardType.slammer_v1_bind:
-                        hipFileName = "slammer_goofy_goober.hip"; break;
-                    case EnemyStandardType.slammer_des_bind:
-                        hipFileName = "slammer_desert.hip"; break;
-                    case EnemyStandardType.slammer_v3_bind:
-                        hipFileName = "slammer_thugtug.hip"; break;
-                    case EnemyStandardType.spinner_v1_bind:
-                        hipFileName = "spinner_thugtug.hip"; break;
-                    case EnemyStandardType.spinner_v2_bind:
-                        hipFileName = "spinner_junkyard.hip"; break;
-                    case EnemyStandardType.spinner_v3_bind:
-                        hipFileName = "spinner_planktopolis.hip"; break;
-                    default:
-                        throw new Exception("Invalid Enemy Type");
-                }
-
-                if (unimport)
-                    ProgUnimportHip("Enemies", hipFileName);
-                else
-                    ProgImportHip("Enemies", hipFileName);
-
-                imported = true;
-            }
-
-            return imported;
         }
 
         public bool ImportNumbers()

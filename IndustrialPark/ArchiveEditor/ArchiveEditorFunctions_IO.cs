@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -48,6 +49,8 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in hip.Item1.DICT.ATOC.AHDRList)
             {
+                defaultJspAssetIds = null;
+
                 if (AHDR.assetType == AssetType.CollisionTable && ContainsAssetWithType(AssetType.CollisionTable))
                 {
                     foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
@@ -107,6 +110,15 @@ namespace IndustrialPark
 
                     continue;
                 }
+                else if (AHDR.assetType == AssetType.JSPInfo)
+                {
+                    for (int i = 0; i < hip.Item1.DICT.LTOC.LHDRList.Count; i++)
+                        if (hip.Item1.DICT.LTOC.LHDRList[i].assetIDlist.Contains(AHDR.assetID))
+                        {
+                            setDefaultJspAssetIds(hip.Item1.DICT, i);
+                            break;
+                        }
+                }
 
                 if (ContainsAsset(AHDR.assetID))
                 {
@@ -128,6 +140,8 @@ namespace IndustrialPark
                 }
             }
 
+            defaultJspAssetIds = null;
+
             if (!NoLayers)
             {
                 foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
@@ -138,6 +152,33 @@ namespace IndustrialPark
 
             if (!forceOverwrite)
                 RecalculateAllMatrices();
+        }
+
+        private void setDefaultJspAssetIds(Section_DICT DICT, int jspInfoLayerIndex)
+        {
+            var result = new List<AssetID>();
+            for (int j = jspInfoLayerIndex - 3; j < jspInfoLayerIndex; j++)
+                if (j > 0 && j < DICT.LTOC.LHDRList.Count)
+                {
+                    LayerType layerType;
+                    if (game == Game.Incredibles || DICT.LTOC.LHDRList[j].layerType < 2)
+                        layerType = (LayerType)DICT.LTOC.LHDRList[j].layerType;
+                    else
+                        layerType = (LayerType)(DICT.LTOC.LHDRList[j].layerType + 1);
+
+                    if (layerType == LayerType.BSP)
+                    {
+                        foreach (var u in DICT.LTOC.LHDRList[j].assetIDlist)
+                        {
+                            foreach (var asset in DICT.ATOC.AHDRList.Where(a => a.assetID == u))
+                                if (asset.assetType == AssetType.JSP)
+                                    result.Add(u);
+                        }
+                    }
+                    else if (layerType == LayerType.JSPINFO)
+                        result.Clear();
+                }
+            defaultJspAssetIds = result.ToArray();
         }
     }
 }
