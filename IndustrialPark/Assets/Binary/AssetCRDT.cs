@@ -1,9 +1,7 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.IO;
 
 namespace IndustrialPark
 {
@@ -245,20 +243,17 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            writer.Write(0xBEEEEEEF);
+            writer.Write(Version);
+            writer.Write(CrdId);
+            writer.Write(State);
+            writer.Write(total_time);
+            writer.Write(0); // size
+            foreach (var s in Sections)
+                s.Serialize(writer);
 
-                writer.Write(0xBEEEEEEF);
-                writer.Write(Version);
-                writer.Write(CrdId);
-                writer.Write(State);
-                writer.Write(total_time);
-                writer.Write(0); // size
-                foreach (var s in Sections)
-                    s.Serialize(writer);
-
-                writer.BaseStream.Position = 0x14;
-                writer.Write((int)writer.BaseStream.Length);
-
-                
+            writer.BaseStream.Position = 0x14;
+            writer.Write((int)writer.BaseStream.Length);
         }
     }
 }

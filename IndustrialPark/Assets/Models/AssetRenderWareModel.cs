@@ -1,10 +1,12 @@
 ﻿using HipHopFile;
+using IndustrialPark.Models;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Drawing.Design;
 using System.Linq;
 
@@ -366,8 +368,8 @@ namespace IndustrialPark
             for (int i = 0; i < geometryStruct.morphTargets.Length; i++)
             {
                 geometryStruct.morphTargets[i].sphereCenter.X *= factor.X;
-                geometryStruct.morphTargets[i].sphereCenter.Y *= factor.X;
-                geometryStruct.morphTargets[i].sphereCenter.X *= factor.X;
+                geometryStruct.morphTargets[i].sphereCenter.Y *= factor.Y;
+                geometryStruct.morphTargets[i].sphereCenter.Z *= factor.Z;
                 geometryStruct.morphTargets[i].radius *= singleFactor;
 
                 if (geometryStruct.morphTargets[i].hasVertices != 0)
@@ -432,6 +434,178 @@ namespace IndustrialPark
                 ApplyScale(factor, atomicR);
             else if (plane.rightSection is PlaneSector_000A planeR)
                 ApplyScale(factor, planeR);
+        }
+
+        public virtual void ApplyRotation(float yaw, float pitch, float roll)
+        {
+            var matrix = Matrix.RotationYawPitchRoll(yaw, pitch, roll);
+            var transform = new Func<float, float, float, Vertex3>((float x, float y, float z) =>
+            {
+                var vector = Vector3.Transform(new Vector3(x, y, z), matrix);
+                return new Vertex3(vector.X, vector.Y, vector.Z);
+            });
+            ApplyTransformation(transform);
+        }
+
+        private void ApplyTransformation(Func<float, float, float, Vertex3> transform)
+        {
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            var renderWareVersion = sections[0].renderWareVersion;
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                {
+                    StripClump(clump);
+                    foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                        ApplyTransformation(transform, geo);
+                }
+                else if (rws is World_000B world)
+                {
+                    if (world.firstWorldChunk is AtomicSector_0009 atomic)
+                        ApplyTransformation(transform, atomic);
+                    else if (world.firstWorldChunk is PlaneSector_000A plane)
+                        ApplyTransformation(transform, plane);
+                }
+
+            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+            Setup(Program.Renderer);
+        }
+
+        private void StripClump(Clump_0010 clump)
+        {
+            foreach (var extension in clump.frameList.extensionList)
+                for (int i = 0; i < extension.extensionSectionList.Count; i++)
+                    if (extension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.HAnimPLG)
+                        extension.extensionSectionList.RemoveAt(i--);
+            foreach (var geo in clump.geometryList.geometryList)
+                for (int i = 0; i < geo.geometryExtension.extensionSectionList.Count; i++)
+                    if (geo.geometryExtension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.MorphPLG || geo.geometryExtension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.CollisionPLG)
+                        geo.geometryExtension.extensionSectionList.RemoveAt(i--);
+        }
+
+        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, Geometry_000F geo)
+        {
+            if ((geo.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) == 0)
+            {
+                ApplyTransformation(transform, geo.geometryStruct, out _);
+                geo.geometryStruct.sphereCenterX = 0;
+                geo.geometryStruct.sphereCenterY = 0;
+                geo.geometryStruct.sphereCenterZ = 0;
+                geo.geometryStruct.sphereRadius = 0;
+            }
+            else
+            {
+                BoundingSphere? bounds = null;
+                foreach (var ex in geo.geometryExtension.extensionSectionList)
+                    if (ex is NativeDataPLG_0510 nativeData)
+                        if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
+                        {
+                            ApplyTransformation(transform, nativeData, out BoundingSphere? localBounds);
+                            bounds = bounds.HasValue ? BoundingSphere.Merge(bounds.Value, localBounds.Value) : localBounds;
+                        }
+                if (bounds.HasValue)
+                {
+                    geo.geometryStruct.sphereCenterX = bounds.Value.Center.X;
+                    geo.geometryStruct.sphereCenterY = bounds.Value.Center.Y;
+                    geo.geometryStruct.sphereCenterZ = bounds.Value.Center.Z;
+                    geo.geometryStruct.sphereRadius = bounds.Value.Radius;
+                }
+            }
+        }
+
+        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, GeometryStruct_0001 geometryStruct, out BoundingSphere? bounds)
+        {
+            bounds = null;
+            for (int i = 0; i < geometryStruct.morphTargets.Length; i++)
+            {
+                BoundingSphere localBounds = new BoundingSphere();
+                if (geometryStruct.morphTargets[i].hasVertices != 0)
+                { 
+                    for (int j = 0; j < geometryStruct.morphTargets[i].vertices.Length; j++)
+                        geometryStruct.morphTargets[i].vertices[j] = transform(geometryStruct.morphTargets[i].vertices[j].X, geometryStruct.morphTargets[i].vertices[j].Y, geometryStruct.morphTargets[i].vertices[j].Z);
+                    localBounds = GetBoundingSphere(geometryStruct.morphTargets[i].vertices);
+                    bounds = bounds.HasValue ? BoundingSphere.Merge(bounds.Value, localBounds) : localBounds;
+                }
+                geometryStruct.morphTargets[i].sphereCenter.X = localBounds.Center.X;
+                geometryStruct.morphTargets[i].sphereCenter.Y = localBounds.Center.Y;
+                geometryStruct.morphTargets[i].sphereCenter.Z = localBounds.Center.Z;
+                geometryStruct.morphTargets[i].radius = localBounds.Radius;
+            }
+        }
+
+        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, NativeDataPLG_0510 nativeData, out BoundingSphere? bounds)
+        {
+            bounds = null;
+            for (int i = 0; i < nativeData.nativeDataStruct.nativeData.declarations.Length; i++)
+                if (nativeData.nativeDataStruct.nativeData.declarations[i].declarationType == Declarations.Vertex)
+                {
+                    var vd = (Vertex3Declaration)nativeData.nativeDataStruct.nativeData.declarations[i];
+                    for (int j = 0; j < vd.entryList.Count; j++)
+                        vd.entryList[j] = transform(vd.entryList[j].X, vd.entryList[j].Y, vd.entryList[j].Z);
+                    var newBounds = GetBoundingSphere(vd.entryList);
+                    bounds = bounds.HasValue ? BoundingSphere.Merge(bounds.Value, newBounds) : newBounds;
+                }
+        }
+
+        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, AtomicSector_0009 atomic)
+        {
+            BoundingSphere? bounds = null;
+            if (atomic.atomicSectorStruct.isNativeData)
+            {
+                foreach (var ex in atomic.atomicSectorExtension.extensionSectionList)
+                    if (ex is NativeDataPLG_0510 nativeData)
+                        if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
+                            ApplyTransformation(transform, nativeData, out bounds);
+            }
+            else
+            {
+                for (int i = 0; i < atomic.atomicSectorStruct.vertexArray.Length; i++)
+                    atomic.atomicSectorStruct.vertexArray[i] = transform(atomic.atomicSectorStruct.vertexArray[i].X, atomic.atomicSectorStruct.vertexArray[i].Y, atomic.atomicSectorStruct.vertexArray[i].Z);
+                bounds = GetBoundingSphere(atomic.atomicSectorStruct.vertexArray);
+            }
+
+            if (bounds.HasValue)
+            {
+                var bb = BoundingBox.FromSphere(bounds.Value);
+                atomic.atomicSectorStruct.boxMaximum = new Vertex3(bb.Maximum.X, bb.Maximum.Y, bb.Maximum.Z);
+                atomic.atomicSectorStruct.boxMinimum = new Vertex3(bb.Minimum.X, bb.Minimum.Y, bb.Minimum.Z);
+            }
+        }
+
+        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, PlaneSector_000A plane)
+        {
+            if (plane.leftSection is AtomicSector_0009 atomicL)
+                ApplyTransformation(transform, atomicL);
+            else if (plane.leftSection is PlaneSector_000A planeL)
+                ApplyTransformation(transform, planeL);
+            if (plane.rightSection is AtomicSector_0009 atomicR)
+                ApplyTransformation(transform, atomicR);
+            else if (plane.rightSection is PlaneSector_000A planeR)
+                ApplyTransformation(transform, planeR);
+        }
+
+        private static BoundingSphere GetBoundingSphere(IEnumerable<Vertex3> vertices)
+        {
+            var first = vertices.FirstOrDefault();
+            var min = new Vector3(first.X, first.Y, first.Z);
+            var max = new Vector3(first.X, first.Y, first.Z);
+
+            foreach (var v in vertices)
+            {
+                if (v.X < min.X)
+                    min.X = v.X;
+                if (v.Y < min.Y)
+                    min.Y = v.Y;
+                if (v.Z < min.Z)
+                    min.Z = v.Z;
+                if (v.X > max.X)
+                    max.X = v.X;
+                if (v.Y > max.Y)
+                    max.Y = v.Y;
+                if (v.Z > max.Z)
+                    max.Z = v.Z;
+            }
+
+            return new BoundingSphere(max + min / 2f, (max - min).Length());
         }
     }
 }

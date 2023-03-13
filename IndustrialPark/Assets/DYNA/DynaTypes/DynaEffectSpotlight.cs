@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using System.Collections.Generic;
@@ -83,27 +82,24 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(OriginEntity);
-                writer.Write(TargetEntity);
-                writer.Write(AttachBone);
-                writer.Write(TargetBone);
-                writer.Write((short)0);
-                writer.Write(Radius);
-                writer.Write(ViewAngle_Rad);
-                writer.Write(MaxDist);
-                writer.Write(LightColor);
-                writer.Write(AuraColor);
-                writer.Write(FlareTexture);
-                writer.Write(FlareColor);
-                writer.Write(SizeMin);
-                writer.Write(SizeMax);
-                writer.Write(GlowMin);
-                writer.Write(GlowMax);
-                writer.Write((short)0);
-
-                
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(OriginEntity);
+            writer.Write(TargetEntity);
+            writer.Write(AttachBone);
+            writer.Write(TargetBone);
+            writer.Write((short)0);
+            writer.Write(Radius);
+            writer.Write(ViewAngle_Rad);
+            writer.Write(MaxDist);
+            writer.Write(LightColor);
+            writer.Write(AuraColor);
+            writer.Write(FlareTexture);
+            writer.Write(FlareColor);
+            writer.Write(SizeMin);
+            writer.Write(SizeMax);
+            writer.Write(GlowMin);
+            writer.Write(GlowMax);
+            writer.Write((short)0);
         }
     }
 }

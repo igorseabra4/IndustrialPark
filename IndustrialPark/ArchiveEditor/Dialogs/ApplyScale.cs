@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using static IndustrialPark.ArchiveEditor;
 
 namespace IndustrialPark
 {
@@ -12,7 +11,7 @@ namespace IndustrialPark
     {
         private static Vector3 SavedValue = new Vector3(1f, 1f, 1f);
 
-        private ApplyScale(bool hasAssets)
+        private ApplyScale(bool hasAssets, bool isRotation = false)
         {
             InitializeComponent();
             TopMost = true;
@@ -27,7 +26,7 @@ namespace IndustrialPark
             System.Drawing.Point SubHeight(System.Drawing.Point prevLocation) =>
                 new System.Drawing.Point(prevLocation.X, prevLocation.Y - DecreaseHeight);
 
-            if (!hasAssets)
+            if (!hasAssets || isRotation)
             {
                 label2.Visible = false;
                 checkedListBoxAssetTypes.Visible = false;
@@ -36,6 +35,14 @@ namespace IndustrialPark
                 Height -= DecreaseHeight;
                 button1.Location = SubHeight(button1.Location);
                 button2.Location = SubHeight(button2.Location);
+
+                if (isRotation)
+                {
+                    Text = "Apply Rotation";
+                    groupBox1.Text = "Rotation in Degrees (Yaw, Pitch, Roll)";
+                    label1.Visible = false;
+                    SavedValue = new Vector3(0f, 0f, 0f);
+                }
             }
 
             numericUpDownX.Value = (decimal)SavedValue.X;
@@ -53,9 +60,9 @@ namespace IndustrialPark
                 checkedListBoxAssetTypes.Items.Add(assetType, true);
         }
 
-        public static Vector3? GetVector()
+        public static Vector3? GetVector(bool isRotation)
         {
-            ApplyScale edit = new ApplyScale(false);
+            ApplyScale edit = new ApplyScale(false, isRotation);
             edit.ShowDialog();
 
             if (edit.OK)

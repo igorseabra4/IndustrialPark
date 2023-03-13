@@ -185,10 +185,24 @@ namespace IndustrialPark
             };
             tableLayoutPanel1.Controls.Add(buttonApplyVertexColors, 0, rowIndex);
 
+            rowIndex = AddRow(ButtonSize);
+
+            Button buttonApplyRotation = new Button() { Dock = DockStyle.Fill, Text = "Apply Rotation", AutoSize = true };
+            buttonApplyRotation.Click += (object sender, EventArgs e) =>
+            {
+                var factor = ApplyScale.GetVector(true);
+                if (factor.HasValue)
+                {
+                    asset.ApplyRotation(MathUtil.DegreesToRadians(factor.Value.X), MathUtil.DegreesToRadians(factor.Value.Y), MathUtil.DegreesToRadians(factor.Value.Z));
+                    archive.UnsavedChanges = true;
+                }
+            };
+            tableLayoutPanel1.Controls.Add(buttonApplyRotation, 0, rowIndex);
+
             Button buttonApplyScale = new Button() { Dock = DockStyle.Fill, Text = "Apply Scale", AutoSize = true };
             buttonApplyScale.Click += (object sender, EventArgs e) =>
             {
-                var factor = ApplyScale.GetVector();
+                var factor = ApplyScale.GetVector(false);
                 if (factor.HasValue)
                 {
                     asset.ApplyScale(factor.Value);

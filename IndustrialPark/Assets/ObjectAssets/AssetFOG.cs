@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
@@ -51,22 +50,20 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            base.Serialize(writer);
 
-                base.Serialize(writer);
+            writer.Write(EndColor);
+            writer.Write(StartColor);
+            writer.Write(FogDensity);
+            writer.Write(StartDistance);
+            writer.Write(EndDistance);
+            writer.Write(TransitionTime);
+            writer.Write(FogType);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
+            writer.Write((byte)0);
 
-                writer.Write(EndColor);
-                writer.Write(StartColor);
-                writer.Write(FogDensity);
-                writer.Write(StartDistance);
-                writer.Write(EndDistance);
-                writer.Write(TransitionTime);
-                writer.Write(FogType);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-
-                SerializeLinks(writer);
-                
+            SerializeLinks(writer);
         }
     }
 }

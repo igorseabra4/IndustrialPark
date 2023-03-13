@@ -1,15 +1,16 @@
-﻿using SharpDX;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Windows.Forms.Design;
 
 namespace IndustrialPark
 {
-    public class BakeScaleEditor : UITypeEditor
+    public class BakeRotationEditor : UITypeEditor
     {
         public static uint modelAssetId;
-        public static Vector3 scale;
+        public static float yaw;
+        public static float pitch;
+        public static float roll;
 
         private IWindowsFormsEditorService service;
 
@@ -24,8 +25,8 @@ namespace IndustrialPark
                 service = (IWindowsFormsEditorService)provider.GetService(typeof(IWindowsFormsEditorService));
 
             if (service != null)
-                return ArchiveEditorFunctions.ApplyBakeScale(modelAssetId, scale).ToString();
-
+                return ArchiveEditorFunctions.ApplyBakeRotation(modelAssetId, yaw, pitch, roll).ToString();
+            
             return "unchanged";
         }
     }

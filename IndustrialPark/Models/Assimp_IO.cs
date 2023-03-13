@@ -427,21 +427,21 @@ namespace IndustrialPark.Models
             Vertex3 Max = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
             Vertex3 Min = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
 
-            foreach (Vertex3 i in vertices)
-            {
-                if (i.X > Max.X)
-                    Max.X = i.X;
-                if (i.Y > Max.Y)
-                    Max.Y = i.Y;
-                if (i.Z > Max.Z)
-                    Max.Z = i.Z;
-                if (i.X < Min.X)
-                    Min.X = i.X;
-                if (i.Y < Min.Y)
-                    Min.Y = i.Y;
-                if (i.Z < Min.Z)
-                    Min.Z = i.Z;
-            }
+            //foreach (Vertex3 i in vertices)
+            //{
+            //    if (i.X > Max.X)
+            //        Max.X = i.X;
+            //    if (i.Y > Max.Y)
+            //        Max.Y = i.Y;
+            //    if (i.Z > Max.Z)
+            //        Max.Z = i.Z;
+            //    if (i.X < Min.X)
+            //        Min.X = i.X;
+            //    if (i.Y < Min.Y)
+            //        Min.Y = i.Y;
+            //    if (i.Z < Min.Z)
+            //        Min.Z = i.Z;
+            //}
 
             Max = new Vertex3(MaximumBoundary, MaximumBoundary, MaximumBoundary);
             Min = new Vertex3(-MaximumBoundary, -MaximumBoundary, -MaximumBoundary);

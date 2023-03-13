@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 

@@ -137,6 +137,7 @@
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
+    <Compile Include="Assets\Shared\Editors\BakeRotationEditor.cs" />
     <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />
     <Compile Include="ArchiveEditor\Other\LayerComparer.cs" />
     <Compile Include="ArchiveEditor\Other\AssetTypeContainer.cs" />

@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -155,53 +154,50 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(LaserBeamFlags.FlagValueInt);
-                writer.Write(Attach);
-                writer.Write(Target);
-                writer.Write(OriginEmitter);
-                writer.Write(StrikeEmitter);
-                writer.Write(OriginX);
-                writer.Write(OriginY);
-                writer.Write(OriginZ);
-                writer.Write(Speed);
-                writer.Write(SegmentDist);
-                writer.Write(Knockback);
-                writer.Write(Movement);
-                writer.Write(AttachBone);
-                writer.Write(TargetBone);
-                writer.Write(ColorAnimType);
-                writer.Write(FadeInType);
-                writer.Write(FadeOutType);
-                writer.Write((short)0);
-                writer.Write(FadeInTime);
-                writer.Write(FadeOutTime);
-                writer.Write(DamagePlayer);
-                writer.Write(DamageNPC);
-                writer.Write(DamageOther);
-                writer.Write(BeamTexture);
-                writer.Write(BeamThickness);
-                writer.Write(BeamFadeDist);
-                writer.Write(BeamMaxDist);
-                writer.Write(BeamTaper);
-                writer.Write(BeamVolume);
-                writer.Write(BeamBlendMode);
-                writer.Write((short)0);
-                writer.Write(BeamColor);
-                writer.Write(RibbonTexture);
-                writer.Write(RibbonLifeTime);
-                writer.Write(RibbonScale);
-                writer.Write(RibbonOrient);
-                writer.Write(RibbonResponseCurve);
-                writer.Write(RibbonBlendMode);
-                writer.Write(RibbonGlow);
-                writer.Write(ColorAnimPulseFrequency);
-                writer.Write(ColorAnimPulseIntensityMin);
-                writer.Write(ColorAnimPulseIntensityMax);
-                writer.Write(ColorAnimPulseGlowMin);
-                writer.Write(ColorAnimPulseGlowMax);
-
-                
+            writer.Write(LaserBeamFlags.FlagValueInt);
+            writer.Write(Attach);
+            writer.Write(Target);
+            writer.Write(OriginEmitter);
+            writer.Write(StrikeEmitter);
+            writer.Write(OriginX);
+            writer.Write(OriginY);
+            writer.Write(OriginZ);
+            writer.Write(Speed);
+            writer.Write(SegmentDist);
+            writer.Write(Knockback);
+            writer.Write(Movement);
+            writer.Write(AttachBone);
+            writer.Write(TargetBone);
+            writer.Write(ColorAnimType);
+            writer.Write(FadeInType);
+            writer.Write(FadeOutType);
+            writer.Write((short)0);
+            writer.Write(FadeInTime);
+            writer.Write(FadeOutTime);
+            writer.Write(DamagePlayer);
+            writer.Write(DamageNPC);
+            writer.Write(DamageOther);
+            writer.Write(BeamTexture);
+            writer.Write(BeamThickness);
+            writer.Write(BeamFadeDist);
+            writer.Write(BeamMaxDist);
+            writer.Write(BeamTaper);
+            writer.Write(BeamVolume);
+            writer.Write(BeamBlendMode);
+            writer.Write((short)0);
+            writer.Write(BeamColor);
+            writer.Write(RibbonTexture);
+            writer.Write(RibbonLifeTime);
+            writer.Write(RibbonScale);
+            writer.Write(RibbonOrient);
+            writer.Write(RibbonResponseCurve);
+            writer.Write(RibbonBlendMode);
+            writer.Write(RibbonGlow);
+            writer.Write(ColorAnimPulseFrequency);
+            writer.Write(ColorAnimPulseIntensityMin);
+            writer.Write(ColorAnimPulseIntensityMax);
+            writer.Write(ColorAnimPulseGlowMin);
+            writer.Write(ColorAnimPulseGlowMax);
         }
     }
 }

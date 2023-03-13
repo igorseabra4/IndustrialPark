@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using System;
@@ -76,6 +75,38 @@ namespace IndustrialPark
         {
             get => MathUtil.RadiansToDegrees(_roll);
             set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+        }
+
+        [Category(categoryName),
+            Description("A copy of the model with the rotation baked into will be created. " +
+            "The asset will then use the new rotated model and the rotation values will be set to (0, 0, 0). " +
+            "It's, for most part, only needed when rotating TRACK assets (used for custom slides). " + 
+            "This only works with Model assets."),
+            Editor(typeof(BakeRotationEditor), typeof(UITypeEditor))]
+        public virtual string BakeRotation
+        {
+            get
+            {
+                BakeRotationEditor.modelAssetId = Model;
+                BakeRotationEditor.yaw = _yaw;
+                BakeRotationEditor.pitch = _pitch;
+                BakeRotationEditor.roll = _roll;
+                return "Click here ->";
+            }
+            set
+            {
+                if (value == "unchanged")
+                    return;
+                var newValue = Convert.ToUInt32(value);
+                if (newValue != _model)
+                {
+                    _model = newValue;
+                    _yaw = 0;
+                    _pitch = 0;
+                    _roll = 0;
+                    CreateTransformMatrix();
+                }
+            }
         }
 
         protected Vector3 _scale;

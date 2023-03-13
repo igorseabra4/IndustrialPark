@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -119,42 +118,39 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(DefaultTextID);
-                writer.Write(XPosition);
-                writer.Write(YPosition);
-                writer.Write(Width);
-                writer.Write(Height);
-                writer.Write((int)Font);
-                writer.Write(TextWidth);
-                writer.Write(TextHeight);
-                writer.Write(CharSpacingX);
-                writer.Write(CharSpacingY);
-                writer.Write(Color);
-                writer.Write(LeftMargin);
-                writer.Write(TopMargin);
-                writer.Write(RightMargin);
-                writer.Write(BottomMargin);
-                writer.Write(XAlignment);
-                if (Version == 3)
-                    writer.Write(YAlignment);
-                writer.Write(ExpandMode);
-                writer.Write(MaxHeight);
-                writer.Write(BackgroundMode);
-                writer.Write(BackdropColor);
-                writer.Write(BackgroundTextureID);
-                if (Version == 3)
-                {
-                    writer.Write(BackgroundBorderU);
-                    writer.Write(BackgroundBorderV);
-                    writer.Write(BackgroundBorderWidth);
-                    writer.Write(BackgroundBorderHeight);
-                    writer.Write(ShadowColor);
-                    writer.Write(ShadowOffsetX);
-                    writer.Write(ShadowOffsetY);
-                }
-
-                
+            writer.Write(DefaultTextID);
+            writer.Write(XPosition);
+            writer.Write(YPosition);
+            writer.Write(Width);
+            writer.Write(Height);
+            writer.Write((int)Font);
+            writer.Write(TextWidth);
+            writer.Write(TextHeight);
+            writer.Write(CharSpacingX);
+            writer.Write(CharSpacingY);
+            writer.Write(Color);
+            writer.Write(LeftMargin);
+            writer.Write(TopMargin);
+            writer.Write(RightMargin);
+            writer.Write(BottomMargin);
+            writer.Write(XAlignment);
+            if (Version == 3)
+                writer.Write(YAlignment);
+            writer.Write(ExpandMode);
+            writer.Write(MaxHeight);
+            writer.Write(BackgroundMode);
+            writer.Write(BackdropColor);
+            writer.Write(BackgroundTextureID);
+            if (Version == 3)
+            {
+                writer.Write(BackgroundBorderU);
+                writer.Write(BackgroundBorderV);
+                writer.Write(BackgroundBorderWidth);
+                writer.Write(BackgroundBorderHeight);
+                writer.Write(ShadowColor);
+                writer.Write(ShadowOffsetX);
+                writer.Write(ShadowOffsetY);
+            }
         }
     }
 }

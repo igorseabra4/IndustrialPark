@@ -952,14 +952,14 @@ namespace IndustrialPark
             if (count == 0)
                 MessageBox.Show("Unable bake scale: model not found in open archives.");
             else if (count == 1)
-                return bsmc.Item1.ApplyBakeScaleLocal(bsmc.Item2, scale);
-            
+                return bsmc.Item1.ApplyBakeScaleLocal((Asset)bsmc.Item2, scale);
+
             return modelAssetId;
         }
 
-        public uint ApplyBakeScaleLocal(IAssetWithModel model, Vector3 scale)
+        public uint ApplyBakeScaleLocal(Asset model, Vector3 scale)
         {
-            var AHDR = ((Asset)model).BuildAHDR(platform.Endianness());
+            var AHDR = model.BuildAHDR(platform.Endianness());
             var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
             var newAssetId = Functions.BKDRHash(newAssetName);
 
@@ -970,7 +970,7 @@ namespace IndustrialPark
 
                 var prevLayerType = SelectedLayerIndex;
                 if (!NoLayers)
-                    SelectedLayerIndex = GetLayerFromAssetID(((Asset)model).assetID);
+                    SelectedLayerIndex = GetLayerFromAssetID(model.assetID);
 
                 var newModel = (IAssetWithModel)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
 
@@ -983,7 +983,70 @@ namespace IndustrialPark
             return newAssetId;
         }
 
-        public static void ExportScene(string folderName, Assimp.ExportFormatDescription format, string textureExtension, out string[] textureNames)
+        public static uint ApplyBakeRotation(uint modelAssetId, float yaw, float pitch, float roll)
+        {
+            if (yaw == 0f && pitch == 0f && roll == 0f)
+            {
+                MessageBox.Show("Bake rotation not applied as the rotation vector is (0, 0, 0).");
+                return modelAssetId;
+            }
+
+            if (Program.MainForm == null)
+            {
+                MessageBox.Show("Cannot bake rotation on standalone Archive Editor.\nPlease do it manually by manually creating a copy of the model and changing the rotation there.");
+                return modelAssetId;
+            }
+
+            (ArchiveEditorFunctions, AssetMODL) bsmc = (null, null);
+            int count = 0;
+
+            foreach (var ae in Program.MainForm.archiveEditors)
+                if (ae.archive.ContainsAsset(modelAssetId) && ae.archive.GetFromAssetID(modelAssetId) is AssetMODL model)
+                {
+                    bsmc = (ae.archive, model);
+                    count++;
+                    if (count > 1)
+                    {
+                        MessageBox.Show("Unable to bake rotation: model found in more than one open archive.");
+                        return modelAssetId;
+                    }
+                }
+
+            if (count == 0)
+                MessageBox.Show("Unable bake rotation: model not found in open archives.");
+            else if (count == 1)
+                return bsmc.Item1.ApplyBakeRotationLocal(bsmc.Item2, yaw, pitch, roll);
+
+            return modelAssetId;
+        }
+
+        public uint ApplyBakeRotationLocal(AssetMODL model, float yaw, float pitch, float roll)
+        {
+            var AHDR = model.BuildAHDR(platform.Endianness());
+            var newAssetName = AHDR.ADBG.assetName + $"_{MathUtil.RadiansToDegrees(yaw):.0###########}_{MathUtil.RadiansToDegrees(pitch):.0###########}_{MathUtil.RadiansToDegrees(roll):.0###########}";
+            var newAssetId = Functions.BKDRHash(newAssetName);
+
+            if (!ContainsAsset(newAssetId))
+            {
+                AHDR.ADBG.assetName = newAssetName;
+                AHDR.assetID = newAssetId;
+
+                var prevLayerType = SelectedLayerIndex;
+                if (!NoLayers)
+                    SelectedLayerIndex = GetLayerFromAssetID(model.assetID);
+
+                var newModel = (AssetMODL)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+
+                if (!NoLayers)
+                    SelectedLayerIndex = prevLayerType;
+                newModel.ApplyRotation(yaw, pitch, roll);
+                UnsavedChanges = true;
+            }
+
+            return newAssetId;
+        }
+
+        public static void ExportScene(string folderName, ExportFormatDescription format, string textureExtension, out string[] textureNames)
         {
             List<string> textureNamesList = new List<string>();
 

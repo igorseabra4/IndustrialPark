@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -116,39 +115,36 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(BaseObject);
-                writer.Write(GunObject);
-                writer.Write(YawRange);
-                writer.Write(YawSpeed);
-                writer.Write(PitchRange);
-                writer.Write(PitchSpeed);
-                writer.Write(RecoveryTime);
-                writer.Write(OverheatFraction);
-                writer.Write(CoolingSpeed);
-                writer.Write(OverheatTime);
-                writer.Write(HitPoints);
-                writer.Write(Damage);
-                writer.Write(CameraOffsetX);
-                writer.Write(CameraOffsetY);
-                writer.Write(CameraOffsetZ);
-                writer.Write(FinalPointer);
-                writer.Write(LaserColor);
-                writer.Write(Offset1X);
-                writer.Write(Offset1Y);
-                writer.Write(Offset1Z);
-                writer.Write(Offset2X);
-                writer.Write(Offset2Y);
-                writer.Write(Offset2Z);
-                writer.Write(LaserLength);
-                writer.Write(LaserThickness);
-                writer.Write(LaserSpeed);
-                writer.Write(LaserSoundGroup);
-                writer.Write(TargetTexture);
-                writer.Write(TargetTextureSizeX);
-                writer.Write(TargetTextureSizeY);
-
-                
+            writer.Write(BaseObject);
+            writer.Write(GunObject);
+            writer.Write(YawRange);
+            writer.Write(YawSpeed);
+            writer.Write(PitchRange);
+            writer.Write(PitchSpeed);
+            writer.Write(RecoveryTime);
+            writer.Write(OverheatFraction);
+            writer.Write(CoolingSpeed);
+            writer.Write(OverheatTime);
+            writer.Write(HitPoints);
+            writer.Write(Damage);
+            writer.Write(CameraOffsetX);
+            writer.Write(CameraOffsetY);
+            writer.Write(CameraOffsetZ);
+            writer.Write(FinalPointer);
+            writer.Write(LaserColor);
+            writer.Write(Offset1X);
+            writer.Write(Offset1Y);
+            writer.Write(Offset1Z);
+            writer.Write(Offset2X);
+            writer.Write(Offset2Y);
+            writer.Write(Offset2Z);
+            writer.Write(LaserLength);
+            writer.Write(LaserThickness);
+            writer.Write(LaserSpeed);
+            writer.Write(LaserSoundGroup);
+            writer.Write(TargetTexture);
+            writer.Write(TargetTextureSizeX);
+            writer.Write(TargetTextureSizeY);
         }
     }
 }

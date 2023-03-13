@@ -1,5 +1,4 @@
-﻿using AssetEditorColors;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
@@ -36,13 +35,10 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(Color);
-                writer.Write(FadeDownTime);
-                writer.Write(WaitTime);
-                writer.Write(FadeUpTime);
-
-                
+            writer.Write(Color);
+            writer.Write(FadeDownTime);
+            writer.Write(WaitTime);
+            writer.Write(FadeUpTime);
         }
     }
 }
