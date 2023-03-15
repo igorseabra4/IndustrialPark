@@ -54,6 +54,7 @@ namespace IndustrialPark
                         {
                                 "",
                                 "/lib",
+                                "/lib/en-GB",
                                 "/Resources",
                                 "/Resources/Models",
                                 "/Resources/Scripts",
