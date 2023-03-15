@@ -15,7 +15,7 @@ namespace IndustrialPark
         public void SetProgressBar(int min, int max, int step)
         {
             if (InvokeRequired)
-                Invoke(new SetValue(SetProgressBar), min, max, step);
+                Invoke(new Action<int, int, int>(SetProgressBar), min, max, step);
             else
             {
                 pBar.Minimum = min;
@@ -24,8 +24,6 @@ namespace IndustrialPark
                 pBar.Value = 0;
             }
         }
-
-        private delegate void SetValue(int min, int max, int step);
 
         public void PerformStep(string label = "")
         {

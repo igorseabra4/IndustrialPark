@@ -680,14 +680,13 @@ namespace IndustrialPark
             {
                 case AssetType.Animation:
                 {
-                    if (AHDR.data.Length != 0)
-                    {
-                        var magic = AHDR.data.Take(4).ToArray();
-                        if (endianness == Endianness.Big)
-                            magic = magic.Reverse().ToArray();
-                        if (magic[0] == 'S' && magic[1] == 'K' && magic[2] == 'B' && magic[3] == '1')
-                            return new AssetANIM(AHDR, game, endianness);
-                    }
+                    if (AHDR.data.Length == 0)
+                        return new AssetGeneric(AHDR, game, endianness);
+                    var magic = AHDR.data.Take(4).ToArray();
+                    if (endianness == Endianness.Big)
+                        magic = magic.Reverse().ToArray();
+                    if (magic[0] == 'S' && magic[1] == 'K' && magic[2] == 'B' && magic[3] == '1')
+                        return new AssetANIM(AHDR, game, endianness);
                     throw new Exception($"Invalid Animation asset: {AHDR.ADBG.assetName}");
                 }
                 case AssetType.BSP:
@@ -819,7 +818,7 @@ namespace IndustrialPark
                 case AssetType.Script:
                     return new AssetSCRP(AHDR, game, endianness);
                 case AssetType.SDFX:
-                    return new AssetSDFX(AHDR, game, endianness);
+                    return new AssetSDFX(AHDR, game, endianness, GetSGRP);
                 case AssetType.SFX:
                     return new AssetSFX(AHDR, game, endianness);
                 case AssetType.SoundGroup:
@@ -1156,11 +1155,6 @@ namespace IndustrialPark
                 RemoveAsset(u);
         }
 
-        public void RemoveAsset(Asset asset)
-        {
-            RemoveAsset(asset.assetID);
-        }
-
         public void RemoveAsset(uint assetID, bool removeSound = true)
         {
             DisposeOfAsset(assetID);
@@ -1168,8 +1162,12 @@ namespace IndustrialPark
 
             Layers.ForEach(l => l.AssetIDs.Remove(assetID));
 
-            if (removeSound && GetFromAssetID(assetID).assetType.ToString().Contains("SND"))
-                RemoveSoundFromSNDI(assetID);
+            if (removeSound)
+            {
+                var assetType = GetFromAssetID(assetID).assetType;
+                if (assetType == AssetType.Sound || assetType == AssetType.SoundStream)
+                    RemoveSoundFromSNDI(assetID);
+            }
 
             assetDictionary.Remove(assetID);
         }
@@ -1268,7 +1266,7 @@ namespace IndustrialPark
                     try
                     {
                         AddSoundToSNDI(sound.Data, sound.assetID, sound.assetType, out byte[] soundData);
-                        sound.Data = soundData;
+                        AHDR.data = soundData;
                     }
                     catch (Exception ex)
                     {
@@ -1288,7 +1286,7 @@ namespace IndustrialPark
             {
                 var AHDR = clipboard.assets[i];
                 string error = "";
-                
+
                 assetDictionary[AHDR.assetID] = TryCreateAsset(AHDR, clipboard.games[i], clipboard.endiannesses[i], true, ref error);
             }
         }
@@ -1441,6 +1439,13 @@ namespace IndustrialPark
         {
             if (ContainsAsset(mrkr) && GetFromAssetID(mrkr) is AssetMRKR MRKR)
                 return MRKR;
+            return null;
+        }
+
+        public AssetSGRP GetSGRP(uint sgrp)
+        {
+            if (ContainsAsset(sgrp) && GetFromAssetID(sgrp) is AssetSGRP SGRP)
+                return SGRP;
             return null;
         }
 

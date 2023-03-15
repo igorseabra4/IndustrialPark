@@ -1086,7 +1086,7 @@ namespace IndustrialPark
                 case AssetTemplate.Cauldron_Sfx:
                     return new AssetSFX(assetName, position, game, template);
                 case AssetTemplate.SDFX:
-                    return new AssetSDFX(assetName, position);
+                    return new AssetSDFX(assetName, position, GetSGRP);
                 case AssetTemplate.Light:
                 case AssetTemplate.Cauldron_Light:
                     return new AssetLITE(assetName, position, template);

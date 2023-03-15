@@ -305,8 +305,6 @@ namespace IndustrialPark
 
         DefaultRenderData renderData;
 
-        public delegate void DrawGeneric(Matrix world, bool isSelected, float multiplier);
-
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;

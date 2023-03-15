@@ -1,6 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
+using System;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         private const string categoryName = "SDFX";
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(SoundGroup);
-
+        
         private uint _soundGroup;
         [Category(categoryName), ValidReferenceRequired]
         public AssetID SoundGroup
@@ -46,16 +46,22 @@ namespace IndustrialPark
             null,
             "Play from Entity");
 
-        public AssetSDFX(string assetName, Vector3 position) : base(assetName, AssetType.SDFX, BaseAssetType.SDFX)
+        private Func<uint, AssetSGRP> GetSGRP;
+
+        public AssetSDFX(string assetName, Vector3 position, Func<uint, AssetSGRP> getSGRP) : base(assetName, AssetType.SDFX, BaseAssetType.SDFX)
         {
+            GetSGRP = getSGRP;
+
             _position = position;
 
             CreateTransformMatrix();
             ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public AssetSDFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSDFX(Section_AHDR AHDR, Game game, Endianness endianness, Func<uint, AssetSGRP> getSGRP) : base(AHDR, game, endianness)
         {
+            GetSGRP = getSGRP;
+
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
@@ -140,25 +146,12 @@ namespace IndustrialPark
 
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - _radius;
 
-        private AssetSGRP soundGroup
-        {
-            get
-            {
-                if (Program.MainForm != null)
-                    foreach (var ae in Program.MainForm.archiveEditors)
-                        if (ae.archive.ContainsAsset(SoundGroup))
-                            if (ae.archive.GetFromAssetID(SoundGroup) is AssetSGRP sgrp)
-                                return sgrp;
-                return null;
-            }
-        }
-
         private float _radius
         {
             get
             {
-                var sg = soundGroup;
-                return sg == null ? 1f : (float)sg.InnerRadius;
+                var soundGroup = GetSGRP(_soundGroup);
+                return soundGroup == null ? 1f : (float)soundGroup.InnerRadius;
             }
         }
 
@@ -166,8 +159,8 @@ namespace IndustrialPark
         {
             get
             {
-                var sg = soundGroup;
-                return sg == null ? 1f : (float)sg.OuterRadius;
+                var soundGroup = GetSGRP(_soundGroup);
+                return soundGroup == null ? 1f : (float)soundGroup.OuterRadius;
             }
         }
     }

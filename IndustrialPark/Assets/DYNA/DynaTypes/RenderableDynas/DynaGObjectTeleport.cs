@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using IndustrialPark.Models;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using static IndustrialPark.ArchiveEditorFunctions;
@@ -48,17 +49,16 @@ namespace IndustrialPark
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID TargetTeleportBox { get; set; }
 
-        public DynaGObjectTeleport(string assetName, uint mrkrId, DynaGObjectTeleportGetMRKR getMRKR) : base(assetName, DynaType.game_object__Teleport, Vector3.Zero)
+        public DynaGObjectTeleport(string assetName, uint mrkrId, Func<uint, AssetMRKR> getMRKR) : base(assetName, DynaType.game_object__Teleport, Vector3.Zero)
         {
             _mrkr = mrkrId;
             GetMRKR = getMRKR;
             Version = 2;
         }
 
-        public delegate AssetMRKR DynaGObjectTeleportGetMRKR(uint mrkr);
-        private DynaGObjectTeleportGetMRKR GetMRKR;
+        private Func<uint, AssetMRKR> GetMRKR;
 
-        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness, DynaGObjectTeleportGetMRKR getMRKR) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
+        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness, Func<uint, AssetMRKR> getMRKR) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
         {
             GetMRKR = getMRKR;
 
@@ -80,32 +80,24 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(_mrkr);
-                writer.Write(Opened ? 1 : 0);
-                writer.Write(_launchAngle);
-                if (game != Game.Incredibles && Version > 1)
-                    writer.Write(CameraAngle);
-                writer.Write(TargetTeleportBox);
-
-                
-        }
-
-        private void ValidateMRKR()
-        {
-            MRKR = GetMRKR(_mrkr);
+            writer.Write(_mrkr);
+            writer.Write(Opened ? 1 : 0);
+            writer.Write(_launchAngle);
+            if (game != Game.Incredibles && Version > 1)
+                writer.Write(CameraAngle);
+            writer.Write(TargetTeleportBox);
         }
 
         public override AssetSingle PositionX
         {
             get
             {
-                ValidateMRKR();
+                var MRKR = GetMRKR(_mrkr);
                 return MRKR != null ? MRKR.PositionX : 0;
             }
             set
             {
-                ValidateMRKR();
+                var MRKR = GetMRKR(_mrkr);
                 if (MRKR != null)
                     MRKR.PositionX = value;
                 CreateTransformMatrix();
@@ -116,12 +108,12 @@ namespace IndustrialPark
         {
             get
             {
-                ValidateMRKR();
+                var MRKR = GetMRKR(_mrkr);
                 return MRKR != null ? MRKR.PositionY : 0;
             }
             set
             {
-                ValidateMRKR();
+                var MRKR = GetMRKR(_mrkr);
                 if (MRKR != null)
                     MRKR.PositionY = value;
                 CreateTransformMatrix();
@@ -132,12 +124,12 @@ namespace IndustrialPark
         {
             get
             {
-                ValidateMRKR();
+                var MRKR = GetMRKR(_mrkr);
                 return MRKR != null ? MRKR.PositionZ : 0;
             }
             set
             {
-                ValidateMRKR();
+                var MRKR = GetMRKR(_mrkr);
                 if (MRKR != null)
                     MRKR.PositionZ = value;
                 CreateTransformMatrix();
@@ -149,8 +141,6 @@ namespace IndustrialPark
         protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
 
         private static readonly uint _modelAssetID = Functions.BKDRHash("teleportation_box_bind");
-
-        private AssetMRKR MRKR;
 
         public override void CreateTransformMatrix()
         {
