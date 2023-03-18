@@ -143,12 +143,6 @@ namespace IndustrialPark.Randomizer
 
             string firstDir = string.IsNullOrEmpty(backupDir) ? rootDir : backupDir;
             List<string> hipPaths = new List<string>();
-            foreach (string hipPath in Directory.GetFiles(firstDir))
-            {
-                if (Path.GetExtension(hipPath).ToLower() != ".hip" || FileInFirstBox(hipPath) || Path.GetFileNameWithoutExtension(hipPath).ToLower().Contains("us"))
-                    continue;
-                hipPaths.Add(hipPath);
-            }
             foreach (string dir in Directory.GetDirectories(firstDir))
                 foreach (string hipPath in Directory.GetFiles(dir))
                 {
@@ -382,8 +376,13 @@ namespace IndustrialPark.Randomizer
             MessageBox.Show(message);
         }
 
+        private readonly string[] skipHips = new string[] { "mn", "sp", "pl" };
+
         private bool FileInFirstBox(string levelName)
         {
+            foreach (string s in skipHips)
+                if (Path.GetFileNameWithoutExtension(levelName).ToLower().Contains(s.ToLower()))
+                    return true;
             foreach (string s in settings.skipFiles)
                 if (Path.GetFileNameWithoutExtension(levelName).ToLower().Contains(s.ToLower()))
                     return true;

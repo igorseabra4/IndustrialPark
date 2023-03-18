@@ -34,7 +34,7 @@ namespace IndustrialPark.Randomizer
         public bool Randomize(RandomizerSettings settings)
         {
             if (LevelName == "hb09")
-                return false;
+                return RandomizePoliceStation(settings);
 
             bool shuffled = false;
 
@@ -3770,6 +3770,40 @@ namespace IndustrialPark.Randomizer
                 ((EntityAsset)GetFromAssetID(assetID)).Model = modelName;
             else
                 MessageBox.Show("Placeable asset " + assetID.ToString("X8") + " not found on file " + LevelName);
+        }
+
+        public bool RandomizePoliceStation(RandomizerSettings settings)
+        {
+            bool shuffled = false;
+
+            if (settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
+                shuffled |= RandomizePickupPositions();
+
+            if (settings.Colors)
+                shuffled |=
+                    ShufflePlaceableColors(settings.brightColors, settings.strongColors) |
+                    ShufflePlaceableDynaColors(settings.brightColors, settings.strongColors) |
+                    ShuffleLevelModelColors(settings.brightColors, settings.strongColors, settings.VertexColors);
+
+            if (settings.invisibleLevel && ContainsAssetWithType(AssetType.JSP))
+                shuffled |= MakeLevelInvisible();
+
+            if (settings.invisibleObjects && ContainsAssetWithType(AssetType.SimpleObject))
+                shuffled |= MakeObjectsInvisible();
+
+            if (settings.Set_Scale)
+            {
+                shuffled |= true;
+                ApplyScale(new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
+            }
+
+            if (settings.Textures && ContainsAssetWithType(AssetType.Texture))
+                shuffled |= RandomizeTextures(settings.Textures_Special);
+
+            if (settings.Sounds && ContainsAssetWithType(AssetType.SoundInfo))
+                shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
+
+            return shuffled;
         }
     }
 }

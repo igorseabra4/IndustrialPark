@@ -318,7 +318,7 @@ namespace IndustrialPark.Randomizer
             scaleFactorY = 1f;
             scaleFactorZ = 1f;
 
-            skipFiles = new string[] { "font", "boot", "plat", "mn", "sp", "pl", "hb10", "db05", "b301", "s006", "b402" };
+            skipFiles = new string[] { "hb10", "db05", "b301", "s006", "b402" };
             skipFilesWarps = new string[] { "hb00", "gy04", "b3", "pg", "s005" };
 
             TikiProbabilities = new TikiProbabilities();
