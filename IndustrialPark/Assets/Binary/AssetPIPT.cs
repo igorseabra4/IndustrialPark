@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using static Assimp.Metadata;
 
 namespace IndustrialPark
 {
@@ -383,6 +384,29 @@ namespace IndustrialPark
             foreach (var i in items)
                 if (!entries.Any(e => e.Model == i))
                     entries.Add(new PipeInfo() { Model = i, PipeFlags_Preset = PiptPreset.AlphaBlend });
+            Entries = entries.ToArray();
+        }
+
+        public void AddEntry(PipeInfo entry)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Model == entry.Model)
+                {
+                    entries[i] = entry;
+                    Entries = entries.ToArray();
+                    return;
+                }
+            entries.Add(entry);
+            Entries = entries.ToArray();
+        }
+
+        public void RemoveEntry(uint assetID)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Model == assetID)
+                    entries.RemoveAt(i--);
             Entries = entries.ToArray();
         }
     }

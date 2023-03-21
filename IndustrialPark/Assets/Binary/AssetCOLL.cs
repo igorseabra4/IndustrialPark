@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -50,14 +51,14 @@ namespace IndustrialPark
 
     public class AssetCOLL : Asset, IAssetAddSelected
     {
-        public override string AssetInfo => $"{CollisionTable_Entries.Length} entries";
+        public override string AssetInfo => $"{Entries.Length} entries";
 
         [Category("Collision Table")]
-        public EntryCOLL[] CollisionTable_Entries { get; set; }
+        public EntryCOLL[] Entries { get; set; }
 
         public AssetCOLL(string assetName) : base(assetName, AssetType.CollisionTable)
         {
-            CollisionTable_Entries = new EntryCOLL[0];
+            Entries = new EntryCOLL[0];
         }
 
         public AssetCOLL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
@@ -69,29 +70,29 @@ namespace IndustrialPark
                 for (int i = 0; i < entries.Length; i++)
                     entries[i] = new EntryCOLL(reader);
 
-                CollisionTable_Entries = entries;
+                Entries = entries;
             }
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write(CollisionTable_Entries.Length);
+            writer.Write(Entries.Length);
 
-            foreach (var entry in CollisionTable_Entries)
+            foreach (var entry in Entries)
                 entry.Serialize(writer);
         }
 
         public void Merge(AssetCOLL asset)
         {
-            var entries = CollisionTable_Entries.ToList();
+            var entries = Entries.ToList();
 
-            foreach (var entry in asset.CollisionTable_Entries)
+            foreach (var entry in asset.Entries)
             {
                 entries.Remove(entry);
                 entries.Add(entry);
             }
 
-            CollisionTable_Entries = entries.ToArray();
+            Entries = entries.ToArray();
         }
 
         [Browsable(false)]
@@ -99,11 +100,34 @@ namespace IndustrialPark
 
         public void AddItems(List<uint> items)
         {
-            var entries = CollisionTable_Entries.ToList();
+            var entries = Entries.ToList();
             foreach (var i in items)
                 if (!entries.Any(e => e.Model == i))
                     entries.Add(new EntryCOLL() { Model = i });
-            CollisionTable_Entries = entries.ToArray();
+            Entries = entries.ToArray();
+        }
+
+        public void AddEntry(EntryCOLL entry)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Model == entry.Model)
+                {
+                    entries[i] = entry;
+                    Entries = entries.ToArray();
+                    return;
+                }
+            entries.Add(entry);
+            Entries = entries.ToArray();
+        }
+
+        public void RemoveEntry(uint assetID)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Model == assetID)
+                    entries.RemoveAt(i--);
+            Entries = entries.ToArray();
         }
     }
 }

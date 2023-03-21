@@ -7,13 +7,14 @@ namespace IndustrialPark
 {
     public partial class InternalFlyEditor : Form, IInternalEditor
     {
-        public InternalFlyEditor(AssetFLY asset, ArchiveEditorFunctions archive)
+        public InternalFlyEditor(AssetFLY asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
             TopMost = true;
 
             this.asset = asset;
             this.archive = archive;
+            this.updateListView = updateListView;
 
             Text = $"[{asset.assetType}] {asset}";
             UpdateListbox();
@@ -25,7 +26,9 @@ namespace IndustrialPark
             propertyGridSpecific.Refresh();
         }
 
+        private readonly AssetFLY asset;
         private readonly ArchiveEditorFunctions archive;
+        private readonly Action<Asset> updateListView;
 
         private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -49,8 +52,6 @@ namespace IndustrialPark
         {
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
-
-        private readonly AssetFLY asset;
 
         private void UpdateListbox()
         {
@@ -105,6 +106,7 @@ namespace IndustrialPark
             var entry = new FlyFrame() { FrameNumer = listBoxFlyEntries.Items.Count };
             SetViewToFly(entry);
             listBoxFlyEntries.Items.Add(entry);
+            updateListView(asset);
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
@@ -114,6 +116,7 @@ namespace IndustrialPark
                 listBoxFlyEntries.Items.RemoveAt(listBoxFlyEntries.SelectedIndex);
                 UpdateAssetEntries();
             }
+            updateListView(asset);
         }
 
         private void propertyGridSpecific_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)

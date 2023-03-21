@@ -36,6 +36,7 @@ namespace IndustrialPark
         }
 
         private Dictionary<uint, (BlendOption, BlendOption)> blendModes;
+        [Browsable(false)]
         public bool SpecialBlendMode { get; private set; }
 
         [Browsable(false)]

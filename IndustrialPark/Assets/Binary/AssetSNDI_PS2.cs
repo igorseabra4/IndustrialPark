@@ -55,6 +55,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public EntrySoundInfo_PS2[] Entries_SNDS { get; set; }
 
+        [Category(categoryName)]
+        public EVersionIncrediblesROTUOthers AssetVersion { get; set; } = EVersionIncrediblesROTUOthers.ScoobyBfbbMovie;
+
         public AssetSNDI_PS2(string assetName) : base(assetName, AssetType.SoundInfo)
         {
             Entries_SND = new EntrySoundInfo_PS2[0];
@@ -65,6 +68,17 @@ namespace IndustrialPark
         {
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
             {
+                var maybeAssetId = reader.ReadUInt32();
+                if (maybeAssetId == assetID)
+                {
+                    AssetVersion = EVersionIncrediblesROTUOthers.IncrediblesRotu;
+                }
+                else
+                {
+                    AssetVersion = EVersionIncrediblesROTUOthers.ScoobyBfbbMovie;
+                    reader.BaseStream.Position = 0;
+                }
+
                 int entriesSndAmount = reader.ReadInt32();
                 int entriesSndsAmount = reader.ReadInt32();
 
@@ -80,6 +94,9 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            if (AssetVersion == EVersionIncrediblesROTUOthers.IncrediblesRotu)
+                writer.Write(assetID);
+
             writer.Write(Entries_SND.Length);
             writer.Write(Entries_SNDS.Length);
 

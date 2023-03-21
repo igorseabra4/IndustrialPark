@@ -1087,7 +1087,7 @@ namespace IndustrialPark.Randomizer
 
         public bool RandomizePlayerOnSpawn()
         {
-            var group = (AssetGRUP)PlaceTemplate("IP_RANDO_PLAYER_GRUP", template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate("IP_RANDO_PLAYER_GRUP", AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -1102,7 +1102,7 @@ namespace IndustrialPark.Randomizer
             var outAssetIDs = new List<uint>();
             for (int i = 0; i < 3; i++)
             {
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", template: AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 timer.Links = new Link[]
                 {
@@ -2438,7 +2438,7 @@ namespace IndustrialPark.Randomizer
         {
             if (LevelName == "hb01")
             {
-                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), template: AssetTemplate.Spatula);
+                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), "SPATULA_EXTRA_FIX", AssetTemplate.Spatula);
                 spatula.Links = new Link[]
                 {
                     new Link(game)
@@ -2466,7 +2466,7 @@ namespace IndustrialPark.Randomizer
                     if (ContainsAsset(dpat) && GetFromAssetID(dpat) is AssetDPAT dispatcher)
                     {
                         dispatcher.EnabledOnStart = false;
-                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(template: AssetTemplate.Timer);
+                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(AssetTemplate.Timer);
                         timer.Time = 1f;
                         uint boss = new AssetID("BOSS_NPC");
                         if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
@@ -2946,9 +2946,9 @@ namespace IndustrialPark.Randomizer
             if (ContainsAsset(new AssetID(MusicDispAssetName + "_01")) && ContainsAsset(new AssetID(MusicGroupAssetName + "_01")))
                 return false;
 
-            var dpat = PlaceTemplate(MusicDispAssetName, template: AssetTemplate.Dispatcher);
+            var dpat = PlaceTemplate(MusicDispAssetName, AssetTemplate.Dispatcher);
 
-            var group = (AssetGRUP)PlaceTemplate(MusicGroupAssetName, template: AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(MusicGroupAssetName, AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {

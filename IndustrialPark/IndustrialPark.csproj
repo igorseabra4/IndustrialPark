@@ -135,6 +135,12 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.Designer.cs">
+      <DependentUpon>InternalModelEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
     <Compile Include="Assets\Shared\Editors\BakeRotationEditor.cs" />
@@ -219,7 +225,6 @@
     <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.Designer.cs">
       <DependentUpon>InternalMultiAssetEditor.cs</DependentUpon>
     </Compile>
-    <Compile Include="Assets\Shared\Editors\MaterialListEditor.cs" />
     <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
@@ -568,6 +573,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
+      <DependentUpon>InternalModelEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.resx">
       <DependentUpon>InternalMultiAssetEditor.cs</DependentUpon>

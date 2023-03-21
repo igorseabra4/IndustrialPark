@@ -1,9 +1,11 @@
 ﻿using HipHopFile;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
     public class AssetWithData : Asset
     {
+        [Browsable(false)]
         public byte[] Data { get; set; }
 
         public override string AssetInfo => Data.Length.ToString() + " B";

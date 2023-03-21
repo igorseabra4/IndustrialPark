@@ -1,7 +1,6 @@
 ﻿using Assimp;
 using HipHopFile;
 using IndustrialPark.Models;
-using Newtonsoft.Json;
 using RenderWareFile;
 using SharpDX;
 using System;
@@ -56,21 +55,26 @@ namespace IndustrialPark
 
             switch (asset.assetType)
             {
+                case AssetType.Model:
+                case AssetType.BSP:
+                case AssetType.JSP:
+                    internalEditors.Add(new InternalModelEditor((AssetRenderWareModel)asset, this, updateListView));
+                    break;
                 case AssetType.Flythrough:
-                    internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this));
+                    internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this, updateListView));
                     break;
                 case AssetType.Texture:
                     if (asset is AssetRWTX rwtx)
-                        internalEditors.Add(new InternalTextureEditor(rwtx, this));
+                        internalEditors.Add(new InternalTextureEditor(rwtx, this, updateListView));
                     else
                         internalEditors.Add(new InternalAssetEditor(asset, this, updateListView));
                     break;
                 case AssetType.Sound:
                 case AssetType.SoundStream:
-                    internalEditors.Add(new InternalSoundEditor((AssetSound)asset, this));
+                    internalEditors.Add(new InternalSoundEditor((AssetSound)asset, this, updateListView));
                     break;
                 case AssetType.Text:
-                    internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this));
+                    internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this, updateListView));
                     break;
                 default:
                     internalEditors.Add(new InternalAssetEditor(asset, this, updateListView));
@@ -107,6 +111,37 @@ namespace IndustrialPark
         {
             foreach (var ie in internalEditors)
                 ie.TopMost = value;
+        }
+
+        public AssetPIPT GetPIPT(bool create = false) => (AssetPIPT)GetAssetOfType(AssetType.PipeInfoTable, AssetTemplate.Pipe_Info_Table, create);
+
+        public AssetCOLL GetCOLL(bool create = false) => (AssetCOLL)GetAssetOfType(AssetType.CollisionTable, AssetTemplate.Collision_Table, create);
+
+        public AssetLODT GetLODT(bool create = false) => (AssetLODT)GetAssetOfType(AssetType.LevelOfDetailTable, AssetTemplate.Level_Of_Detail_Table, create);
+
+        public AssetSHDW GetSHDW(bool create = false) => (AssetSHDW)GetAssetOfType(AssetType.ShadowTable, AssetTemplate.Shadow_Table, create);
+
+        private Asset GetAssetOfType(AssetType assetType, AssetTemplate assetTemplate, bool create)
+        {
+            if (!ContainsAssetWithType(assetType))
+            {
+                if (!create)
+                    return null;
+
+                var prevIndex = SelectedLayerIndex;
+
+                if (!NoLayers)
+                    SelectedLayerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
+
+                PlaceTemplate(assetTemplate);
+                if (!standalone)
+                    foreach (var ae in Program.MainForm.archiveEditors)
+                        ae.PopulateAssetListAndComboBox();
+
+                if (!NoLayers)
+                    SelectedLayerIndex = prevIndex;
+            }
+            return (from asset in assetDictionary.Values where asset.assetType == assetType select asset).FirstOrDefault();
         }
 
         public static Vector3 GetRayInterserctionPosition(SharpRenderer renderer, Ray ray, uint assetIdSkip = 0)

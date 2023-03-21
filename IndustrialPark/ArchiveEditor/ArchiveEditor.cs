@@ -1372,8 +1372,8 @@ namespace IndustrialPark
 
         internal void RefreshHop(SharpRenderer renderer)
         {
-            archive.ResetModels(renderer);
             archive.SetupTextureDisplay();
+            archive.ResetModels(renderer);
             archive.RecalculateAllMatrices();
         }
 

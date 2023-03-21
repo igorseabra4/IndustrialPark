@@ -145,7 +145,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Model Data"), Editor(typeof(MaterialListEditor), typeof(UITypeEditor))]
+        [Browsable(false)]
         public Material_0007[] Materials
         {
             get

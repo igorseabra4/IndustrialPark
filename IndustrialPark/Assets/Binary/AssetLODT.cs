@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -150,6 +151,29 @@ namespace IndustrialPark
             foreach (var i in items)
                 if (!entries.Any(e => e.BaseModel == i))
                     entries.Add(new EntryLODT() { BaseModel = i, MaxDistance = 100f });
+            Entries = entries.ToArray();
+        }
+
+        public void AddEntry(EntryLODT entry)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].BaseModel == entry.BaseModel)
+                {
+                    entries[i] = entry;
+                    Entries = entries.ToArray();
+                    return;
+                }
+            entries.Add(entry);
+            Entries = entries.ToArray();
+        }
+
+        public void RemoveEntry(uint assetID)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].BaseModel == assetID)
+                    entries.RemoveAt(i--);
             Entries = entries.ToArray();
         }
     }

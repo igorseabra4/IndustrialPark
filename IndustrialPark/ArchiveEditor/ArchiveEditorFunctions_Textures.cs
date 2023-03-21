@@ -28,19 +28,21 @@ namespace IndustrialPark
                 if (!Directory.Exists(tempPcTxdsDir))
                     Directory.CreateDirectory(tempPcTxdsDir);
 
-                try
-                {
+                //try
+                //{
                     ExportTextureDictionary(pathToGcTXD, CheckState.Indeterminate);
                     PerformTXDConversionExternal(platform);
                     TextureManager.LoadTexturesFromTXD(pathToPcTXD);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Unable to setup texture display: " + ex.Message);
-                }
+                //}
+                //catch (Exception ex)
+                //{
+                //    MessageBox.Show("Unable to setup texture display: " + ex.Message);
+                //}
 
-                File.Delete(pathToGcTXD);
-                File.Delete(pathToPcTXD);
+                if (File.Exists(pathToGcTXD))
+                    File.Delete(pathToGcTXD);
+                if (File.Exists(pathToPcTXD))
+                    File.Delete(pathToPcTXD);
             }
         }
 
@@ -59,8 +61,10 @@ namespace IndustrialPark
 
                 TextureManager.LoadTexturesFromTXD(pathToPcTXD);
 
-                File.Delete(pathToGcTXD);
-                File.Delete(pathToPcTXD);
+                if (File.Exists(pathToGcTXD))
+                    File.Delete(pathToGcTXD);
+                if (File.Exists(pathToPcTXD))
+                    File.Delete(pathToPcTXD);
             }
         }
 

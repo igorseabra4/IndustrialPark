@@ -101,5 +101,28 @@ namespace IndustrialPark
                     entries.Add(new EntrySHDW() { Model = i });
             Entries = entries.ToArray();
         }
+
+        public void AddEntry(EntrySHDW entry)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Model == entry.Model)
+                {
+                    entries[i] = entry;
+                    Entries = entries.ToArray();
+                    return;
+                }
+            entries.Add(entry);
+            Entries = entries.ToArray();
+        }
+
+        public void RemoveEntry(uint assetID)
+        {
+            var entries = Entries.ToList();
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Model == assetID)
+                    entries.RemoveAt(i--);
+            Entries = entries.ToArray();
+        }
     }
 }

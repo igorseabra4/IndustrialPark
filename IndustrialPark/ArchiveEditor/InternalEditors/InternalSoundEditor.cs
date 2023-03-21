@@ -11,13 +11,14 @@ namespace IndustrialPark
 {
     public partial class InternalSoundEditor : Form, IInternalEditor
     {
-        public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive)
+        public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
             TopMost = true;
 
             this.asset = asset;
             this.archive = archive;
+            this.updateListView = updateListView;
 
             Text = $"[{asset.assetType}] {asset}";
         }
@@ -36,6 +37,7 @@ namespace IndustrialPark
 
         private readonly AssetSound asset;
         private readonly ArchiveEditorFunctions archive;
+        private readonly Action<Asset> updateListView;
 
         public uint GetAssetID()
         {
@@ -69,6 +71,7 @@ namespace IndustrialPark
                     asset.Data = file;
                 }
                 archive.UnsavedChanges = true;
+                updateListView(asset);
             }
         }
 
@@ -114,6 +117,7 @@ namespace IndustrialPark
                 }
 
                 archive.UnsavedChanges = true;
+                updateListView(asset);
             }
         }
 

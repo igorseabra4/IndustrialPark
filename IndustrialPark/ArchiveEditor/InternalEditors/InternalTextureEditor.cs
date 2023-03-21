@@ -12,13 +12,14 @@ namespace IndustrialPark
 {
     public partial class InternalTextureEditor : Form, IInternalEditor
     {
-        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive)
+        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
             TopMost = true;
 
             this.asset = asset;
             this.archive = archive;
+            this.updateListView = updateListView;
 
             propertyGridAsset.SelectedObject = asset;
             Text = $"[{asset.assetType}] {asset}";
@@ -36,6 +37,8 @@ namespace IndustrialPark
 
             tableLayoutPanel1.RowStyles[1].SizeType = SizeType.Absolute;
             tableLayoutPanel1.RowStyles[1].Height = b.Height + 16;
+
+            updateListView(asset);
         }
 
         private void InternalTextureEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -44,9 +47,10 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private AssetRWTX asset;
-        private ArchiveEditorFunctions archive;
+        private readonly AssetRWTX asset;
+        private readonly ArchiveEditorFunctions archive;
         private Bitmap b;
+        private readonly Action<Asset> updateListView;
 
         public uint GetAssetID()
         {

@@ -1,4 +1,5 @@
-﻿using DiscordRPC;
+﻿using Assimp;
+using DiscordRPC;
 using HipHopFile;
 using Newtonsoft.Json;
 using RenderWareFile;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using static HipHopFile.Functions;
 
@@ -700,12 +702,17 @@ namespace IndustrialPark
             return null;
         }
 
-        public Asset PlaceTemplate(string customName = "", AssetTemplate template = AssetTemplate.Null)
+        public Asset PlaceTemplate(AssetTemplate template)
+        {
+            return PlaceTemplate(new Vector3(), null, template);
+        }
+
+        public Asset PlaceTemplate(string customName, AssetTemplate template)
         {
             return PlaceTemplate(new Vector3(), customName, template);
         }
 
-        public Asset PlaceTemplate(Vector3 position, string customName = "", AssetTemplate template = AssetTemplate.Null)
+        public Asset PlaceTemplate(Vector3 position, string customName, AssetTemplate template)
         {
             var assetIDs = new List<uint>();
             return PlaceTemplate(position, ref assetIDs, customName, template);
@@ -764,6 +771,8 @@ namespace IndustrialPark
             assetName = GetUniqueAssetName(assetName, BKDRHash(assetName), giveIdRegardless, ignoreNumber);
 
             Asset asset = CreateFromTemplate(template, assetName, position, ref assetIDs);
+
+            AssignDefaultModelToTemplate(template, asset);
 
             if (asset == null)
                 return null;
@@ -1555,28 +1564,49 @@ namespace IndustrialPark
 
             AssetPLYR player = (AssetPLYR)PlaceTemplate(template: AssetTemplate.Player);
 
-            AssetENV env = (AssetENV)PlaceTemplate(customName: environmentName, template: AssetTemplate.Environment);
+            AssetENV env = (AssetENV)PlaceTemplate(environmentName, AssetTemplate.Environment);
 
-            env.StartCamera = PlaceTemplate(new Vector3(0, 100, 100), customName: startCamName, template: AssetTemplate.Start_Camera).assetID;
+            env.StartCamera = PlaceTemplate(new Vector3(0, 100, 100), startCamName, AssetTemplate.Start_Camera).assetID;
 
             if (game != Game.Incredibles)
             {
                 env.BSP = bsp.assetID;
-                PlaceTemplate(pkupsMinfName, template: AssetTemplate.Model_Info);
+                PlaceTemplate(pkupsMinfName, AssetTemplate.Model_Info);
             }
 
             if (game == Game.BFBB)
             {
-                env.Object_LightKit = PlaceTemplate(customName: "lights", template: AssetTemplate.LKIT_lights).assetID;
-                player.LightKit = PlaceTemplate(customName: "JF_SB_lights", template: AssetTemplate.LKIT_JF_SB_lights).assetID;
+                env.Object_LightKit = PlaceTemplate("lights", AssetTemplate.LKIT_lights).assetID;
+                player.LightKit = PlaceTemplate("JF_SB_lights", AssetTemplate.LKIT_JF_SB_lights).assetID;
             }
             else if (game == Game.Incredibles)
             {
-                var light_kit = (AssetLKIT)PlaceTemplate(customName: "jf01_light_kit", template: AssetTemplate.LKIT_lights);
+                var light_kit = (AssetLKIT)PlaceTemplate("jf01_light_kit", AssetTemplate.LKIT_lights);
                 player.LightKit = light_kit.assetID;
                 env.Object_LightKit = light_kit.assetID;
 
-                PlaceTemplate(customName: "DEFAULT_GLOW_SCENE_PROP", template: AssetTemplate.DefaultGlowSceneProp);
+                PlaceTemplate("DEFAULT_GLOW_SCENE_PROP", AssetTemplate.DefaultGlowSceneProp);
+            }
+        }
+
+        private void AssignDefaultModelToTemplate(AssetTemplate template, Asset asset)
+        {
+            if (new AssetTemplate[]
+            {
+                AssetTemplate.Boulder,
+                AssetTemplate.Button,
+                AssetTemplate.Destructible_Object,
+                AssetTemplate.Electric_Arc_Generator,
+                AssetTemplate.Hangable,
+                AssetTemplate.Pendulum,
+                AssetTemplate.Platform,
+                AssetTemplate.Simple_Object,
+                AssetTemplate.User_Interface
+            }.Contains(template) && asset is EntityAsset entity && entity.Model == 0)
+            {
+                foreach (var ie in internalEditors)
+                    if (ie is InternalModelEditor ime && ime.CheckedForTemplate)
+                        entity.Model = ime.GetAssetID();
             }
         }
     }
