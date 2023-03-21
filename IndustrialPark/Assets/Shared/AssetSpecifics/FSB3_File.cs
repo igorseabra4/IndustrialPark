@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using static DiscordRPC.User;
 
 namespace IndustrialPark
 {
@@ -89,7 +90,7 @@ namespace IndustrialPark
         public float maxdistance { get; set; }
 
         [Category("Other")]
-        public EntrySoundInfo_GCN_V2[] soundEntries { get; set; }
+        public GcWavInfo[] soundEntries { get; set; }
 
         public FSB3_File()
         {
@@ -107,43 +108,43 @@ namespace IndustrialPark
             sampleHeaderMode = 33558561;
             size = 126;
 
-            soundEntries = new EntrySoundInfo_GCN_V2[0];
+            soundEntries = new GcWavInfo[0];
         }
 
-        public FSB3_File(BinaryReader binaryReader)
+        public FSB3_File(BinaryReader reader, bool condensed = false)
         {
-            if ((binaryReader.ReadChar() != 'F') |
-                (binaryReader.ReadChar() != 'S') |
-                (binaryReader.ReadChar() != 'B') |
-                (binaryReader.ReadChar() != '3'))
+            if ((reader.ReadChar() != 'F') ||
+                (reader.ReadChar() != 'S') ||
+                (reader.ReadChar() != 'B') ||
+                (reader.ReadChar() != '3'))
                 throw new Exception("Error reading FSB3 file");
 
-            int numSamples = binaryReader.ReadInt32();
-            int totalHeadersSize = binaryReader.ReadInt32();
-            int totalDataSize = binaryReader.ReadInt32();
-            version = binaryReader.ReadInt32();
-            mode = binaryReader.ReadInt32();
+            int numSamples = reader.ReadInt32();
+            int totalHeadersSize = reader.ReadInt32();
+            int totalDataSize = reader.ReadInt32();
+            version = reader.ReadInt32();
+            mode = reader.ReadInt32();
 
-            size = binaryReader.ReadUInt16();
-            name = new string(binaryReader.ReadChars(30));
-            int lengthsamples = binaryReader.ReadInt32();
-            int templengthcompressedbytes = binaryReader.ReadInt32();
-            loopstart = binaryReader.ReadUInt32();
-            uint loopend = binaryReader.ReadUInt32();
-            sampleHeaderMode = binaryReader.ReadUInt32();
-            deffreq = binaryReader.ReadInt32();
-            defvol = binaryReader.ReadUInt16();
-            defpan = binaryReader.ReadInt16();
-            defpri = binaryReader.ReadUInt16();
-            numchannels = binaryReader.ReadUInt16();
-            mindistance = binaryReader.ReadSingle();
-            maxdistance = binaryReader.ReadSingle();
+            size = reader.ReadUInt16();
+            name = new string(reader.ReadChars(30));
+            int lengthsamples = reader.ReadInt32();
+            int templengthcompressedbytes = reader.ReadInt32();
+            loopstart = reader.ReadUInt32();
+            uint loopend = reader.ReadUInt32();
+            sampleHeaderMode = reader.ReadUInt32();
+            deffreq = reader.ReadInt32();
+            defvol = reader.ReadUInt16();
+            defpan = reader.ReadInt16();
+            defpri = reader.ReadUInt16();
+            numchannels = reader.ReadUInt16();
+            mindistance = reader.ReadSingle();
+            maxdistance = reader.ReadSingle();
 
-            soundEntries = new EntrySoundInfo_GCN_V2[numSamples];
+            soundEntries = new GcWavInfo[numSamples];
             for (int i = 0; i < numSamples; i++)
             {
-                soundEntries[i] = new EntrySoundInfo_GCN_V2();
-                soundEntries[i].SetEntryPartOne(binaryReader);
+                soundEntries[i] = new GcWavInfo();
+                soundEntries[i].SetEntryPartOne(reader);
             }
 
             if (numSamples > 0)
@@ -153,49 +154,82 @@ namespace IndustrialPark
             }
 
             for (int i = 0; i < numSamples; i++)
-                soundEntries[i].Data = binaryReader.ReadBytes(soundEntries[i].templengthcompressedbytes);
+                soundEntries[i].Data = reader.ReadBytes(soundEntries[i].templengthcompressedbytes);
+
+            if (condensed)
+            {
+                var assetID = reader.ReadUInt32();
+                var uFlags = reader.ReadByte();
+                var uAudioSampleIndex = reader.ReadByte();
+                var uFSBIndex = reader.ReadByte();
+                var uSoundInfoIndex = reader.ReadByte();
+                soundEntries[uAudioSampleIndex].SetEntryPartTwo(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+            }
         }
 
-        public IEnumerable<byte> ToByteArray(int index)
+        public byte[] ToByteArray(int index, bool everyEntry = true, int entryIndex = -1)
         {
-            List<byte> list = new List<byte>(totalHeadersSize + totalDataSize + 0x18);
-
-            list.AddRange(new byte[] { (byte)'F', (byte)'S', (byte)'B', (byte)'3', });
-            list.AddRange(BitConverter.GetBytes(numSamples));
-            list.AddRange(BitConverter.GetBytes(totalHeadersSize));
-            list.AddRange(BitConverter.GetBytes(totalDataSize));
-            list.AddRange(BitConverter.GetBytes(version));
-            list.AddRange(BitConverter.GetBytes(mode));
-
-            list.AddRange(BitConverter.GetBytes(size));
-            foreach (char c in name)
-                list.Add((byte)c);
-            for (int i = name.Length; i < 30; i++)
-                list.Add(0);
-            list.AddRange(BitConverter.GetBytes(lengthsamples));
-            list.AddRange(BitConverter.GetBytes(lengthcompressedbytes));
-            list.AddRange(BitConverter.GetBytes(loopstart));
-            list.AddRange(BitConverter.GetBytes(loopend));
-            list.AddRange(BitConverter.GetBytes(sampleHeaderMode));
-            list.AddRange(BitConverter.GetBytes(deffreq));
-            list.AddRange(BitConverter.GetBytes(defvol));
-            list.AddRange(BitConverter.GetBytes(defpan));
-            list.AddRange(BitConverter.GetBytes(defpri));
-            list.AddRange(BitConverter.GetBytes(numchannels));
-            list.AddRange(BitConverter.GetBytes(mindistance));
-            list.AddRange(BitConverter.GetBytes(maxdistance));
-
-            for (int i = 0; i < numSamples; i++)
+            using (var writer = new EndianBinaryWriter(Endianness.Little))
             {
-                list.AddRange(soundEntries[i].PartOneToByteArray(i));
-                soundEntries[i].index = (byte)i;
-                soundEntries[i].fileIndex = (byte)index;
+                writer.Write((byte)'F');
+                writer.Write((byte)'S');
+                writer.Write((byte)'B');
+                writer.Write((byte)'3');
+                writer.Write(numSamples);
+                writer.Write(totalHeadersSize);
+                writer.Write(totalDataSize);
+                writer.Write(version);
+                writer.Write(mode);
+
+                writer.Write(size);
+                for (int i = 0; i < 30; i++)
+                    if (i < name.Length)
+                        writer.Write((byte)name[i]);
+                    else
+                        writer.Write((byte)0);
+                writer.Write(lengthsamples);
+                writer.Write(lengthcompressedbytes);
+                writer.Write(loopstart);
+                writer.Write(loopend);
+                writer.Write(sampleHeaderMode);
+                writer.Write(deffreq);
+                writer.Write(defvol);
+                writer.Write(defpan);
+                writer.Write(defpri);
+                writer.Write(numchannels);
+                writer.Write(mindistance);
+                writer.Write(maxdistance);
+
+                if (everyEntry)
+                {
+                    for (int i = 0; i < numSamples; i++)
+                    {
+                        soundEntries[i].PartOneToByteArray(writer, i);
+                        soundEntries[i].uAudioSampleIndex = (byte)i;
+                        soundEntries[i].uFSBIndex = (byte)index;
+                    }
+                    for (int i = 0; i < soundEntries.Length; i++)
+                        writer.Write(soundEntries[i].Data);
+                }
+                else
+                {
+                    soundEntries[entryIndex].PartOneToByteArray(writer, -1);
+                    soundEntries[entryIndex].uAudioSampleIndex = 0;
+                    soundEntries[entryIndex].uFSBIndex = 0;
+                    writer.Write(soundEntries[entryIndex].Data);
+                }
+
+                if (!everyEntry)
+                {
+                    writer.Write(soundEntries[entryIndex].Sound);
+                    writer.Write(soundEntries[entryIndex].uFlags);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write(soundEntries[entryIndex].uSoundInfoIndex);
+                }
+                
+                return writer.ToArray();
             }
-
-            foreach (EntrySoundInfo_GCN_V2 i in soundEntries)
-                list.AddRange(i.Data);
-
-            return list;
         }
 
         [Category("Other"), ReadOnly(true)]
@@ -203,201 +237,19 @@ namespace IndustrialPark
 
         public void Merge(FSB3_File file)
         {
-            List<EntrySoundInfo_GCN_V2> list = soundEntries.ToList();
+            List<GcWavInfo> list = soundEntries.ToList();
 
             List<uint> existingSounds = new List<uint>(soundEntries.Length);
-            foreach (EntrySoundInfo_GCN_V2 s in soundEntries)
+            foreach (GcWavInfo s in soundEntries)
                 existingSounds.Add(s.Sound);
 
-            foreach (EntrySoundInfo_GCN_V2 s in file.soundEntries)
+            foreach (GcWavInfo s in file.soundEntries)
                 if (!existingSounds.Contains(s.Sound))
                     list.Add(s);
 
             soundEntries = list.ToArray();
         }
-    }
 
-    public class EntrySoundInfo_GCN_V2 : GenericAssetDataContainer
-    {
-        public override void Serialize(EndianBinaryWriter writer) { }
-
-        public int templengthcompressedbytes;
-
-        public int lengthsamples { get; set; }
-        public int lengthcompressedbytes => Data.Length;
-
-        public uint UnknownUInt08 { get; set; }
-        public uint UnknownUInt0C { get; set; }
-        public uint UnknownUInt10 { get; set; }
-        public uint UnknownUInt14 { get; set; }
-        public uint UnknownUInt18 { get; set; }
-        public uint UnknownUInt1C { get; set; }
-        public uint UnknownUInt20 { get; set; }
-        public uint UnknownUInt24 { get; set; }
-
-        public byte UnknownByte28 { get; set; }
-        public byte UnknownByte29 { get; set; }
-        public byte UnknownByte2A { get; set; }
-        public byte UnknownByte2B { get; set; }
-        public byte UnknownByte2C { get; set; }
-        public byte UnknownByte2D { get; set; }
-        public byte UnknownByte2E { get; set; }
-        public byte UnknownByte2F { get; set; }
-        public byte UnknownByte30 { get; set; }
-        public byte UnknownByte31 { get; set; }
-        public byte UnknownByte32 { get; set; }
-        public byte UnknownByte33 { get; set; }
-
-        public byte UnknownByte34 { get; set; }
-        public byte UnknownByte35 { get; set; }
-
-        public byte[] Data { get; set; }
-
-        public EntrySoundInfo_GCN_V2()
-        {
-            Data = new byte[0];
-        }
-
-        public void SetEntryPartOne(BinaryReader binaryReader)
-        {
-            lengthsamples = binaryReader.ReadInt32();
-            templengthcompressedbytes = binaryReader.ReadInt32();
-
-            UnknownUInt08 = binaryReader.ReadUInt32();
-            UnknownUInt0C = binaryReader.ReadUInt32();
-            UnknownUInt10 = binaryReader.ReadUInt32();
-            UnknownUInt14 = binaryReader.ReadUInt32();
-            UnknownUInt18 = binaryReader.ReadUInt32();
-            UnknownUInt1C = binaryReader.ReadUInt32();
-            UnknownUInt20 = binaryReader.ReadUInt32();
-            UnknownUInt24 = binaryReader.ReadUInt32();
-
-            UnknownByte28 = binaryReader.ReadByte();
-            UnknownByte29 = binaryReader.ReadByte();
-            UnknownByte2A = binaryReader.ReadByte();
-            UnknownByte2B = binaryReader.ReadByte();
-            UnknownByte2C = binaryReader.ReadByte();
-            UnknownByte2D = binaryReader.ReadByte();
-            UnknownByte2E = binaryReader.ReadByte();
-            UnknownByte2F = binaryReader.ReadByte();
-            UnknownByte30 = binaryReader.ReadByte();
-            UnknownByte31 = binaryReader.ReadByte();
-            UnknownByte32 = binaryReader.ReadByte();
-            UnknownByte33 = binaryReader.ReadByte();
-
-            UnknownByte34 = binaryReader.ReadByte();
-            UnknownByte35 = binaryReader.ReadByte();
-        }
-
-        public IEnumerable<byte> PartOneToByteArray(int index)
-        {
-            List<byte> list = new List<byte>(0x36);
-
-            if (index == 0)
-            {
-                list.AddRange(BitConverter.GetBytes(0));
-                list.AddRange(BitConverter.GetBytes(0));
-            }
-            else
-            {
-                list.AddRange(BitConverter.GetBytes(lengthsamples));
-                list.AddRange(BitConverter.GetBytes(lengthcompressedbytes));
-            }
-
-            list.AddRange(BitConverter.GetBytes(UnknownUInt08));
-            list.AddRange(BitConverter.GetBytes(UnknownUInt0C));
-            list.AddRange(BitConverter.GetBytes(UnknownUInt10));
-            list.AddRange(BitConverter.GetBytes(UnknownUInt14));
-            list.AddRange(BitConverter.GetBytes(UnknownUInt18));
-            list.AddRange(BitConverter.GetBytes(UnknownUInt1C));
-            list.AddRange(BitConverter.GetBytes(UnknownUInt20));
-            list.AddRange(BitConverter.GetBytes(UnknownUInt24));
-
-            list.Add(UnknownByte28);
-            list.Add(UnknownByte29);
-            list.Add(UnknownByte2A);
-            list.Add(UnknownByte2B);
-            list.Add(UnknownByte2C);
-            list.Add(UnknownByte2D);
-            list.Add(UnknownByte2E);
-            list.Add(UnknownByte2F);
-            list.Add(UnknownByte30);
-            list.Add(UnknownByte31);
-            list.Add(UnknownByte32);
-            list.Add(UnknownByte33);
-
-            list.Add(UnknownByte34);
-            list.Add(UnknownByte35);
-
-            return list;
-        }
-
-        public uint _assetID;
-        [ValidReferenceRequired]
-        public AssetID Sound { get => _assetID; set => _assetID = value; }
-        public byte loop { get; set; }
-        public byte index { get; set; }
-        public byte fileIndex { get; set; }
-        public byte unk2 { get; set; }
-
-        public void SetEntryPartTwo(BinaryReader binaryReader)
-        {
-            Sound = BitConverter.ToUInt32(BitConverter.GetBytes(binaryReader.ReadUInt32()).Reverse().ToArray(), 0);
-            loop = binaryReader.ReadByte();
-            index = binaryReader.ReadByte();
-            fileIndex = binaryReader.ReadByte();
-            unk2 = binaryReader.ReadByte();
-        }
-
-        public void SetEntryPartTwo(EntrySoundInfo_GCN_V2 tempEntry)
-        {
-            Sound = tempEntry.Sound;
-            loop = tempEntry.loop;
-            index = tempEntry.index;
-            fileIndex = tempEntry.fileIndex;
-            unk2 = tempEntry.unk2;
-        }
-
-        public IEnumerable<byte> PartTwoToByteArray()
-        {
-            List<byte> list = new List<byte>(8);
-
-            list.AddRange(BitConverter.GetBytes(Sound).Reverse());
-            list.Add(loop);
-            list.Add(index);
-            list.Add(fileIndex);
-            list.Add(unk2);
-
-            return list;
-        }
-
-        public byte[] Serialize()
-        {
-            List<byte> list = new List<byte>();
-
-            list.AddRange(PartOneToByteArray(1));
-            list.AddRange(PartTwoToByteArray());
-            list.AddRange(Data);
-
-            return list.ToArray();
-        }
-
-        public static EntrySoundInfo_GCN_V2 Deserialize(byte[] soundData)
-        {
-            EntrySoundInfo_GCN_V2 temp = new EntrySoundInfo_GCN_V2();
-
-            BinaryReader binaryReader = new BinaryReader(new MemoryStream(soundData));
-
-            temp.SetEntryPartOne(binaryReader);
-            temp.SetEntryPartTwo(binaryReader);
-            temp.Data = binaryReader.ReadBytes(temp.templengthcompressedbytes);
-
-            return temp;
-        }
-
-        public override string ToString()
-        {
-            return HexUIntTypeConverter.StringFromAssetID(Sound);
-        }
+        public byte[] SerializeSingleEntry(int index) => ToByteArray(0, false, index);
     }
 }

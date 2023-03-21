@@ -148,7 +148,9 @@
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\LodtWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\PipeInfoWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
+    <Compile Include="Assets\Binary\AssetSNDI_GCN_V3.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\GcWavInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
     <Compile Include="Assets\Shared\Editors\BakeRotationEditor.cs" />
     <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
