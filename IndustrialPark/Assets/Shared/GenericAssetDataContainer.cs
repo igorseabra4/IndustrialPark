@@ -56,6 +56,9 @@ namespace IndustrialPark
 
         public virtual void ReplaceReferences(uint oldAssetId, uint newAssetId)
         {
+            if (oldAssetId == 0)
+                return;
+
             var typeProperties = GetType().GetProperties();
 
             foreach (var prop in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID)) && ((AssetID)prop.GetValue(this)).Equals(oldAssetId)))

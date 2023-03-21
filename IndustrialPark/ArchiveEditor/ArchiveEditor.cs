@@ -759,6 +759,7 @@ namespace IndustrialPark
             if (!archive.NoLayers)
                 comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
 
+            PopulateAssetListAndComboBox();
             SetSelectedIndices(finalIndices, true);
             SetupAssetVisibilityButtons();
         }

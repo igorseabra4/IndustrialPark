@@ -66,14 +66,17 @@ namespace IndustrialPark
                     Flag4 = reader.ReadByte();
                 }
 
-                int timedLinkSize = (int)((reader.BaseStream.Length - reader.BaseStream.Position - Link.sizeOfStruct * _links.Length) / timedLinkCount);
+                if (timedLinkCount != 0)
+                {
+                    int timedLinkSize = (int)((reader.BaseStream.Length - reader.BaseStream.Position - Link.sizeOfStruct * _links.Length) / timedLinkCount);
 
-                if (timedLinkSize == 0x24)
-                    AssetVersion = EVersionROTUOthers.ROTU;
-                else if (timedLinkSize == 0x20)
-                    AssetVersion = EVersionROTUOthers.Others;
-                else
-                    throw new Exception("Unsupported format");
+                    if (timedLinkSize == 0x24)
+                        AssetVersion = EVersionROTUOthers.ROTU;
+                    else if (timedLinkSize == 0x20)
+                        AssetVersion = EVersionROTUOthers.Others;
+                    else
+                        throw new Exception("Unsupported format");
+                }
 
                 _timedLinks = new Link[timedLinkCount];
                 for (int i = 0; i < _timedLinks.Length; i++)

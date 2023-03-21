@@ -1259,7 +1259,8 @@ namespace IndustrialPark
 
                 asset.SetGame(game);
 
-                referenceUpdate.Add(previousAssetID, asset.assetID);
+                if (previousAssetID != 0)
+                    referenceUpdate.Add(previousAssetID, asset.assetID);
 
                 if (asset is AssetSound sound)
                 {
