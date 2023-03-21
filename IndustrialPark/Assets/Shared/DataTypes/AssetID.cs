@@ -1,10 +1,11 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
-    [TypeConverter(typeof(HexUIntTypeConverter))]
+    [TypeConverter(typeof(HexUIntTypeConverter)), Editor(typeof(AssetIDEditor), typeof(UITypeEditor))]
     public struct AssetID
     {
         [JsonConstructor]

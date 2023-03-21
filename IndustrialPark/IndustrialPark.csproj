@@ -135,15 +135,20 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\CollWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.Designer.cs">
       <DependentUpon>InternalModelEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\LodtWrapper.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\PipeInfoWrapper.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
     <Compile Include="Assets\Shared\Editors\BakeRotationEditor.cs" />
+    <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
     <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />
     <Compile Include="ArchiveEditor\Other\LayerComparer.cs" />
     <Compile Include="ArchiveEditor\Other\AssetTypeContainer.cs" />

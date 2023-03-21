@@ -11,7 +11,10 @@ using HipHopFile;
 using Assimp;
 using System.Linq;
 using RenderWareFile.Sections;
-using System.ComponentModel;
+using System.Collections.Generic;
+using static Assimp.Metadata;
+using System.Reflection;
+using System.Net.NetworkInformation;
 
 namespace IndustrialPark
 {
@@ -31,11 +34,7 @@ namespace IndustrialPark
             SetupTexturesBox();
             if (asset.assetType == AssetType.Model)
             {
-                comboBoxPiptPreset.Items.Clear();
-                foreach (PiptPreset v in Enum.GetValues(typeof(PiptPreset)))
-                    comboBoxPiptPreset.Items.Add(v);
-
-                SetupPiptBox();
+                SetupPiptBox(0);
                 SetupLodtBox();
                 SetupCollBox();
                 SetupShdwBox();
@@ -241,63 +240,86 @@ namespace IndustrialPark
             }
         }
 
-        private void SetupPiptBox()
+
+        private List<PipeInfo> pipeInfos = null;
+        private int currentPipeInfo = -1;
+
+        private void GetPipeInfos()
         {
-            var pipt = archive.GetPIPT();
+            var pipt = archive.GetPIPT(false);
+            pipeInfos = new List<PipeInfo>();
             if (pipt != null)
-            {
-                foreach (var entry in pipt.Entries)
-                    if (entry.Model == asset.assetID)
-                    {
-                        buttonCreatePipeInfo.Text = "Remove";
-                        propertyGridPipeInfo.Enabled = true;
-                        comboBoxPiptPreset.Enabled = true;
-                        propertyGridPipeInfo.SelectedObject = new PipeInfoWrapper(entry);
-                        return;
-                    }
-            }
-            propertyGridPipeInfo.SelectedObject = null;
-            comboBoxPiptPreset.Enabled = false;
+                foreach (var pipeInfo in pipt.Entries)
+                    if (pipeInfo.Model == GetAssetID())
+                        pipeInfos.Add(pipeInfo);
         }
 
-        private void buttonCreatePipeInfo_Click(object sender, EventArgs e)
+        private void SetupPiptBox(int index)
         {
-            var pipt = archive.GetPIPT(true);
-            if (propertyGridPipeInfo.SelectedObject == null)
+            GetPipeInfos();
+            if (pipeInfos.Count > 0 && index > -1 && index < pipeInfos.Count)
             {
-                var entry = new PipeInfo()
-                {
-                    Model = asset.assetID
-                };
-                entry.SetGame(asset.game);
-                pipt.AddEntry(entry);
-                SetupPiptBox();
+                propertyGridPipeInfo.Enabled = true;
+                propertyGridPipeInfo.SelectedObject = new PipeInfoWrapper(pipeInfos[index]);
+                currentPipeInfo = index;
+                labelPipeInfos.Text = $"{index + 1}/{pipeInfos.Count} entries";
             }
             else
             {
-                pipt.RemoveEntry(asset.assetID);
-                buttonCreatePipeInfo.Text = "Create";
+                currentPipeInfo = -1;
+                labelPipeInfos.Text = $"0/0 entries";
                 propertyGridPipeInfo.SelectedObject = null;
                 propertyGridPipeInfo.Enabled = false;
-                comboBoxPiptPreset.Enabled = false;
             }
+            SetupArrowVisibility();
+        }
+        
+        private void buttonCreatePipeInfo_Click(object sender, EventArgs e)
+        {
+            var pipt = archive.GetPIPT(true);
+            var entry = new PipeInfo()
+            {
+                Model = GetAssetID()
+            };
+            entry.SetGame(asset.game);
+            pipt.AddEntry(entry);
+            SetupPiptBox(pipeInfos.Count);
+        }
+
+        private void buttonDeletePipeInfo_Click(object sender, EventArgs e)
+        {
+            if (pipeInfos.Count > 0 && currentPipeInfo > -1 && currentPipeInfo < pipeInfos.Count)
+            {
+                pipeInfos.RemoveAt(currentPipeInfo);
+                var pipt = archive.GetPIPT();
+                pipt.RemoveEntry(GetAssetID());
+                pipt.AddEntries(pipeInfos);
+                SetupPiptBox(currentPipeInfo < 1 ? 0 : currentPipeInfo - 1);
+            }
+        }
+
+        private void SetupArrowVisibility()
+        {
+            buttonArrowUp.Enabled = currentPipeInfo != 0;
+            buttonArrowDown.Enabled = currentPipeInfo < pipeInfos.Count - 1;
+            buttonDeletePipeInfo.Enabled = pipeInfos.Any();
+        }
+
+        private void buttonArrowUp_Click(object sender, EventArgs e)
+        {
+            SetupPiptBox(currentPipeInfo - 1);
+        }
+
+        private void buttonArrowDown_Click(object sender, EventArgs e)
+        {
+            SetupPiptBox(currentPipeInfo + 1);
         }
 
         private void propertyGridPipeInfo_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            if (propertyGridPipeInfo.SelectedObject == null)
-                return;
             var pipt = archive.GetPIPT();
-            pipt.AddEntry(((PipeInfoWrapper)propertyGridPipeInfo.SelectedObject).Entry);
-        }
-
-        private void comboBoxPiptPreset_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (propertyGridPipeInfo.SelectedObject == null)
-                return;
-            ((PipeInfoWrapper)propertyGridPipeInfo.SelectedObject).PipeFlags_Preset = (PiptPreset)comboBoxPiptPreset.SelectedItem;
-            propertyGridPipeInfo_PropertyValueChanged(sender, null);
-            propertyGridPipeInfo.Refresh();
+            pipt.RemoveEntry(GetAssetID());
+            pipt.AddEntries(pipeInfos);
         }
 
         private void SetupLodtBox()
@@ -306,7 +328,7 @@ namespace IndustrialPark
             if (lodt != null)
             {
                 foreach (var entry in lodt.Entries)
-                    if (entry.BaseModel == asset.assetID)
+                    if (entry.BaseModel == GetAssetID())
                     {
                         buttonCreateLevelOfDetail.Text = "Remove";
                         propertyGridLevelOfDetail.Enabled = true;
@@ -315,6 +337,7 @@ namespace IndustrialPark
                     }
             }
             propertyGridLevelOfDetail.SelectedObject = null;
+            propertyGridLevelOfDetail.Enabled = false;
         }
 
         private void buttonCreateLevelOfDetail_Click(object sender, EventArgs e)
@@ -324,7 +347,7 @@ namespace IndustrialPark
             {
                 var entry = new EntryLODT()
                 {
-                    BaseModel = asset.assetID
+                    BaseModel = GetAssetID()
                 };
                 entry.SetGame(asset.game);
                 lodt.AddEntry(entry);
@@ -332,7 +355,7 @@ namespace IndustrialPark
             }
             else
             {
-                lodt.RemoveEntry(asset.assetID);
+                lodt.RemoveEntry(GetAssetID());
                 buttonCreateLevelOfDetail.Text = "Create";
                 propertyGridLevelOfDetail.SelectedObject = null;
                 propertyGridLevelOfDetail.Enabled = false;
@@ -353,7 +376,7 @@ namespace IndustrialPark
             if (coll != null)
             {
                 foreach (var entry in coll.Entries)
-                    if (entry.Model == asset.assetID)
+                    if (entry.Model == GetAssetID())
                     {
                         buttonCreateCollision.Text = "Remove";
                         propertyGridCollision.Enabled = true;
@@ -362,6 +385,7 @@ namespace IndustrialPark
                     }
             }
             propertyGridCollision.SelectedObject = null;
+            propertyGridCollision.Enabled = false;
         }
 
         private void buttonCreateCollision_Click(object sender, EventArgs e)
@@ -371,7 +395,7 @@ namespace IndustrialPark
             {
                 var entry = new EntryCOLL()
                 {
-                    Model = asset.assetID
+                    Model = GetAssetID()
                 };
                 entry.SetGame(asset.game);
                 coll.AddEntry(entry);
@@ -379,7 +403,7 @@ namespace IndustrialPark
             }
             else
             {
-                coll.RemoveEntry(asset.assetID);
+                coll.RemoveEntry(GetAssetID());
                 buttonCreateCollision.Text = "Create";
                 propertyGridCollision.SelectedObject = null;
                 propertyGridCollision.Enabled = false;
@@ -400,7 +424,7 @@ namespace IndustrialPark
             if (shdw != null)
             {
                 foreach (var entry in shdw.Entries)
-                    if (entry.Model == asset.assetID)
+                    if (entry.Model == GetAssetID())
                     {
                         buttonCreateShadow.Text = "Remove";
                         propertyGridShadow.Enabled = true;
@@ -409,6 +433,7 @@ namespace IndustrialPark
                     }
             }
             propertyGridShadow.SelectedObject = null;
+            propertyGridShadow.Enabled = false;
         }
 
         private void buttonCreateShadow_Click(object sender, EventArgs e)
@@ -418,7 +443,7 @@ namespace IndustrialPark
             {
                 var entry = new EntrySHDW()
                 {
-                    Model = asset.assetID
+                    Model = GetAssetID()
                 };
                 entry.SetGame(asset.game);
                 shdw.AddEntry(entry);
@@ -426,7 +451,7 @@ namespace IndustrialPark
             }
             else
             {
-                shdw.RemoveEntry(asset.assetID);
+                shdw.RemoveEntry(GetAssetID());
                 buttonCreateShadow.Text = "Create";
                 propertyGridShadow.SelectedObject = null;
                 propertyGridShadow.Enabled = false;
@@ -442,201 +467,5 @@ namespace IndustrialPark
         }
 
         public bool CheckedForTemplate => checkBoxUseTemplates.Checked;
-    }
-
-    public class PipeInfoWrapper
-    {
-        public PipeInfo Entry;
-
-        public PipeInfoWrapper(PipeInfo entry)
-        {
-            Entry = entry;
-        }
-
-        public FlagBitmask SubObjectBits
-        {
-            get => Entry.SubObjectBits;
-            set => Entry.SubObjectBits = value;
-        }
-
-        public int PipeFlags
-        {
-            get => Entry.PipeFlags;
-            set => Entry.PipeFlags = value;
-        }
-
-        [ReadOnly(true)]
-        public PiptPreset PipeFlags_Preset
-        {
-            get => Entry.PipeFlags_Preset;
-            set => Entry.PipeFlags_Preset = value;
-        }
-
-        [DisplayName("AlphaCompareValue (0 - 255)")]
-        public byte AlphaCompareValue
-        {
-            get => Entry.AlphaCompareValue;
-            set => Entry.AlphaCompareValue = value;
-        }
-
-        [DisplayName("UnknownFlagB (0 - 15)")]
-        public byte UnknownFlagB
-        {
-            get => Entry.UnknownFlagB;
-            set => Entry.UnknownFlagB = value;
-        }
-
-        [DisplayName("UnknownFlagC (0 - 7)")]
-        public byte UnknownFlagC
-        {
-            get => Entry.UnknownFlagC;
-            set => Entry.UnknownFlagC = value;
-        }
-
-        public bool IgnoreFog
-        {
-            get => Entry.IgnoreFog;
-            set => Entry.IgnoreFog = value;
-        }
-
-        public BlendFactorType DestinationBlend
-        {
-            get => Entry.DestinationBlend;
-            set => Entry.DestinationBlend = value;
-        }
-
-        public BlendFactorType SourceBlend
-        {
-            get => Entry.SourceBlend;
-            set => Entry.SourceBlend = value;
-        }
-
-        public LightingMode LightingMode
-        {
-            get => Entry.LightingMode;
-            set => Entry.LightingMode = value;
-        }
-
-        public PiptCullMode CullMode
-        {
-            get => Entry.CullMode;
-            set => Entry.CullMode = value;
-        }
-
-        public ZWriteMode ZWriteMode
-        {
-            get => Entry.ZWriteMode;
-            set => Entry.ZWriteMode = value;
-        }
-
-        [DisplayName("UnknownFlagJ (0 - 3)")]
-        public byte UnknownFlagJ
-        {
-            get => Entry.UnknownFlagJ;
-            set => Entry.UnknownFlagJ = value;
-        }
-
-        [DisplayName("Unknown (Movie/Incredibles only)")]
-        public int Unknown
-        {
-            get => Entry.Unknown;
-            set => Entry.Unknown = value;
-        }
-    }
-
-    public class LodtWrapper
-    {
-        public EntryLODT Entry;
-
-        public LodtWrapper(EntryLODT entry)
-        {
-            Entry = entry;
-        }
-
-        public AssetSingle MaxDistance
-        {
-            get => Entry.MaxDistance;
-            set => Entry.MaxDistance = value;
-        }
-        public AssetID LOD1_Model
-        {
-            get => Entry.LOD1_Model;
-            set => Entry.LOD1_Model = value;
-        }
-        public AssetSingle LOD1_MinDistance
-        {
-            get => Entry.LOD1_MinDistance;
-            set => Entry.LOD1_MinDistance = value;
-        }
-        public AssetID LOD2_Model
-        {
-            get => Entry.LOD2_Model;
-            set => Entry.LOD2_Model = value;
-        }
-        public AssetSingle LOD2_MinDistance
-        {
-            get => Entry.LOD2_MinDistance;
-            set => Entry.LOD2_MinDistance = value;
-        }
-        public AssetID LOD3_Model
-        {
-            get => Entry.LOD3_Model;
-            set => Entry.LOD3_Model = value;
-        }
-        public AssetSingle LOD3_MinDistance
-        {
-            get => Entry.LOD3_MinDistance;
-            set => Entry.LOD3_MinDistance = value;
-        }
-        [DisplayName("Unknown - Movie/Incredibles only")]
-        public AssetSingle Unknown
-        {
-            get => Entry.Unknown;
-            set => Entry.Unknown = value;
-        }
-    }
-
-    public class CollWrapper
-    {
-        public EntryCOLL Entry;
-
-        public CollWrapper(EntryCOLL entry)
-        {
-            Entry = entry;
-        }
-
-        public AssetID CollisionModel
-        {
-            get => Entry.CollisionModel;
-            set => Entry.CollisionModel = value;
-        }
-
-        public AssetID CameraCollisionModel
-        {
-            get => Entry.CameraCollisionModel;
-            set => Entry.CameraCollisionModel = value;
-        }
-    }
-
-    public class ShdwWrapper
-    {
-        public EntrySHDW Entry;
-
-        public ShdwWrapper(EntrySHDW entry)
-        {
-            Entry = entry;
-        }
-
-        public AssetID ShadowModel
-        {
-            get => Entry.ShadowModel;
-            set => Entry.ShadowModel = value;
-        }
-
-        public int Unknown
-        {
-            get => Entry.Unknown;
-            set => Entry.Unknown = value;
-        }
     }
 }

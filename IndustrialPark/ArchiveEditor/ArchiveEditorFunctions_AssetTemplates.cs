@@ -1554,12 +1554,11 @@ namespace IndustrialPark
             Asset bsp = null;
             if (game != Game.Incredibles)
             {
+                AddLayer(LayerType.BSP);
                 SelectedLayerIndex = 0;
                 bsp = PlaceTemplate("empty_bsp", AssetTemplate.Empty_BSP);
-                AddLayer(LayerType.BSP);
             }
             AddLayer();
-
             SelectedLayerIndex = game == Game.Incredibles ? 0 : 1;
 
             AssetPLYR player = (AssetPLYR)PlaceTemplate(template: AssetTemplate.Player);

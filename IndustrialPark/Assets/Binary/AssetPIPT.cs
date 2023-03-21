@@ -390,14 +390,14 @@ namespace IndustrialPark
         public void AddEntry(PipeInfo entry)
         {
             var entries = Entries.ToList();
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].Model == entry.Model)
-                {
-                    entries[i] = entry;
-                    Entries = entries.ToArray();
-                    return;
-                }
             entries.Add(entry);
+            Entries = entries.ToArray();
+        }
+
+        public void AddEntries(List<PipeInfo> entries2)
+        {
+            var entries = Entries.ToList();
+            entries.AddRange(entries2);
             Entries = entries.ToArray();
         }
 

@@ -47,8 +47,6 @@
             this.tableLayoutPanelAtomics = new System.Windows.Forms.TableLayoutPanel();
             this.buttonEditAtomics = new System.Windows.Forms.Button();
             this.groupBoxPipeInfo = new System.Windows.Forms.GroupBox();
-            this.comboBoxPiptPreset = new System.Windows.Forms.ComboBox();
-            this.labelPreset = new System.Windows.Forms.Label();
             this.propertyGridPipeInfo = new System.Windows.Forms.PropertyGrid();
             this.buttonCreatePipeInfo = new System.Windows.Forms.Button();
             this.groupBoxLevelOfDetail = new System.Windows.Forms.GroupBox();
@@ -61,6 +59,10 @@
             this.propertyGridCollision = new System.Windows.Forms.PropertyGrid();
             this.buttonCreateCollision = new System.Windows.Forms.Button();
             this.checkBoxUseTemplates = new System.Windows.Forms.CheckBox();
+            this.buttonDeletePipeInfo = new System.Windows.Forms.Button();
+            this.buttonArrowDown = new System.Windows.Forms.Button();
+            this.buttonArrowUp = new System.Windows.Forms.Button();
+            this.labelPipeInfos = new System.Windows.Forms.Label();
             this.groupBoxImport.SuspendLayout();
             this.groupBoxExport.SuspendLayout();
             this.groupBoxTextures.SuspendLayout();
@@ -274,8 +276,10 @@
             // 
             // groupBoxPipeInfo
             // 
-            this.groupBoxPipeInfo.Controls.Add(this.comboBoxPiptPreset);
-            this.groupBoxPipeInfo.Controls.Add(this.labelPreset);
+            this.groupBoxPipeInfo.Controls.Add(this.labelPipeInfos);
+            this.groupBoxPipeInfo.Controls.Add(this.buttonArrowDown);
+            this.groupBoxPipeInfo.Controls.Add(this.buttonArrowUp);
+            this.groupBoxPipeInfo.Controls.Add(this.buttonDeletePipeInfo);
             this.groupBoxPipeInfo.Controls.Add(this.propertyGridPipeInfo);
             this.groupBoxPipeInfo.Controls.Add(this.buttonCreatePipeInfo);
             this.groupBoxPipeInfo.Location = new System.Drawing.Point(12, 12);
@@ -285,36 +289,16 @@
             this.groupBoxPipeInfo.TabStop = false;
             this.groupBoxPipeInfo.Text = "Pipe Info";
             // 
-            // comboBoxPiptPreset
-            // 
-            this.comboBoxPiptPreset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxPiptPreset.FormattingEnabled = true;
-            this.comboBoxPiptPreset.Location = new System.Drawing.Point(123, 18);
-            this.comboBoxPiptPreset.Name = "comboBoxPiptPreset";
-            this.comboBoxPiptPreset.Size = new System.Drawing.Size(122, 21);
-            this.comboBoxPiptPreset.TabIndex = 44;
-            this.comboBoxPiptPreset.SelectedIndexChanged += new System.EventHandler(this.comboBoxPiptPreset_SelectedIndexChanged);
-            // 
-            // labelPreset
-            // 
-            this.labelPreset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.labelPreset.AutoSize = true;
-            this.labelPreset.Location = new System.Drawing.Point(77, 21);
-            this.labelPreset.Name = "labelPreset";
-            this.labelPreset.Size = new System.Drawing.Size(40, 13);
-            this.labelPreset.TabIndex = 44;
-            this.labelPreset.Text = "Preset:";
-            // 
             // propertyGridPipeInfo
             // 
             this.propertyGridPipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.propertyGridPipeInfo.Enabled = false;
             this.propertyGridPipeInfo.HelpVisible = false;
-            this.propertyGridPipeInfo.Location = new System.Drawing.Point(6, 45);
+            this.propertyGridPipeInfo.Location = new System.Drawing.Point(6, 44);
             this.propertyGridPipeInfo.Name = "propertyGridPipeInfo";
-            this.propertyGridPipeInfo.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridPipeInfo.Size = new System.Drawing.Size(239, 207);
+            this.propertyGridPipeInfo.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            this.propertyGridPipeInfo.Size = new System.Drawing.Size(239, 208);
             this.propertyGridPipeInfo.TabIndex = 42;
             this.propertyGridPipeInfo.ToolbarVisible = false;
             this.propertyGridPipeInfo.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridPipeInfo_PropertyValueChanged);
@@ -323,11 +307,11 @@
             // 
             this.buttonCreatePipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCreatePipeInfo.Location = new System.Drawing.Point(6, 16);
+            this.buttonCreatePipeInfo.Location = new System.Drawing.Point(223, 16);
             this.buttonCreatePipeInfo.Name = "buttonCreatePipeInfo";
-            this.buttonCreatePipeInfo.Size = new System.Drawing.Size(65, 22);
+            this.buttonCreatePipeInfo.Size = new System.Drawing.Size(22, 22);
             this.buttonCreatePipeInfo.TabIndex = 42;
-            this.buttonCreatePipeInfo.Text = "Create";
+            this.buttonCreatePipeInfo.Text = "+";
             this.buttonCreatePipeInfo.UseVisualStyleBackColor = true;
             this.buttonCreatePipeInfo.Click += new System.EventHandler(this.buttonCreatePipeInfo_Click);
             // 
@@ -351,7 +335,7 @@
             this.propertyGridLevelOfDetail.HelpVisible = false;
             this.propertyGridLevelOfDetail.Location = new System.Drawing.Point(6, 45);
             this.propertyGridLevelOfDetail.Name = "propertyGridLevelOfDetail";
-            this.propertyGridLevelOfDetail.PropertySort = System.Windows.Forms.PropertySort.NoSort;
+            this.propertyGridLevelOfDetail.PropertySort = System.Windows.Forms.PropertySort.Categorized;
             this.propertyGridLevelOfDetail.Size = new System.Drawing.Size(239, 207);
             this.propertyGridLevelOfDetail.TabIndex = 42;
             this.propertyGridLevelOfDetail.ToolbarVisible = false;
@@ -449,6 +433,53 @@
             this.checkBoxUseTemplates.Text = "Use this model when placing a template";
             this.checkBoxUseTemplates.UseVisualStyleBackColor = true;
             // 
+            // buttonDeletePipeInfo
+            // 
+            this.buttonDeletePipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDeletePipeInfo.Location = new System.Drawing.Point(195, 16);
+            this.buttonDeletePipeInfo.Name = "buttonDeletePipeInfo";
+            this.buttonDeletePipeInfo.Size = new System.Drawing.Size(22, 22);
+            this.buttonDeletePipeInfo.TabIndex = 43;
+            this.buttonDeletePipeInfo.Text = "-";
+            this.buttonDeletePipeInfo.UseVisualStyleBackColor = true;
+            this.buttonDeletePipeInfo.Click += new System.EventHandler(this.buttonDeletePipeInfo_Click);
+            // 
+            // buttonArrowDown
+            // 
+            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowDown.Enabled = false;
+            this.buttonArrowDown.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.buttonArrowDown.Location = new System.Drawing.Point(161, 16);
+            this.buttonArrowDown.Name = "buttonArrowDown";
+            this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowDown.TabIndex = 45;
+            this.buttonArrowDown.Text = "▼";
+            this.buttonArrowDown.UseVisualStyleBackColor = true;
+            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
+            // 
+            // buttonArrowUp
+            // 
+            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowUp.Enabled = false;
+            this.buttonArrowUp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.buttonArrowUp.Location = new System.Drawing.Point(133, 16);
+            this.buttonArrowUp.Name = "buttonArrowUp";
+            this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowUp.TabIndex = 44;
+            this.buttonArrowUp.Text = "▲";
+            this.buttonArrowUp.UseVisualStyleBackColor = true;
+            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
+            // 
+            // labelPipeInfos
+            // 
+            this.labelPipeInfos.AutoSize = true;
+            this.labelPipeInfos.Location = new System.Drawing.Point(6, 21);
+            this.labelPipeInfos.Name = "labelPipeInfos";
+            this.labelPipeInfos.Size = new System.Drawing.Size(73, 13);
+            this.labelPipeInfos.TabIndex = 46;
+            this.labelPipeInfos.Text = "labelPipeInfos";
+            // 
             // InternalModelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -516,8 +547,6 @@
         private System.Windows.Forms.GroupBox groupBoxLevelOfDetail;
         private System.Windows.Forms.PropertyGrid propertyGridLevelOfDetail;
         private System.Windows.Forms.Button buttonCreateLevelOfDetail;
-        private System.Windows.Forms.ComboBox comboBoxPiptPreset;
-        private System.Windows.Forms.Label labelPreset;
         private System.Windows.Forms.GroupBox groupBoxShadow;
         private System.Windows.Forms.PropertyGrid propertyGridShadow;
         private System.Windows.Forms.Button buttonCreateShadow;
@@ -525,5 +554,9 @@
         private System.Windows.Forms.PropertyGrid propertyGridCollision;
         private System.Windows.Forms.Button buttonCreateCollision;
         private System.Windows.Forms.CheckBox checkBoxUseTemplates;
+        private System.Windows.Forms.Button buttonDeletePipeInfo;
+        private System.Windows.Forms.Button buttonArrowDown;
+        private System.Windows.Forms.Button buttonArrowUp;
+        private System.Windows.Forms.Label labelPipeInfos;
     }
 }
