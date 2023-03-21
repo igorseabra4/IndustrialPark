@@ -121,6 +121,8 @@ namespace IndustrialPark
 
         public AssetSHDW GetSHDW(bool create = false) => (AssetSHDW)GetAssetOfType(AssetType.ShadowTable, AssetTemplate.Shadow_Table, create);
 
+        public Asset GetSNDI() => GetAssetOfType(AssetType.SoundInfo, AssetTemplate.Sound_Info, false);
+
         private Asset GetAssetOfType(AssetType assetType, AssetTemplate assetTemplate, bool create)
         {
             if (!ContainsAssetWithType(assetType))

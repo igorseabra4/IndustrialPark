@@ -21,10 +21,62 @@ namespace IndustrialPark
             this.updateListView = updateListView;
 
             Text = $"[{asset.assetType}] {asset}";
+
+            RefreshPropertyGrid();
         }
 
         public void RefreshPropertyGrid()
         {
+            var sndi = archive.GetSNDI();
+            if (sndi != null)
+            {
+                if (sndi is AssetSNDI_PS2 ps2)
+                {
+                    var header = ps2.GetHeader(asset.assetID, asset.assetType);
+                    propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(header);
+                    return;
+                }
+                if (sndi is AssetSNDI_XBOX xbox)
+                {
+                    var entry = xbox.GetEntry(asset.assetID, asset.assetType);
+                    propertyGridSoundData.SelectedObject = new SoundInfoXboxWrapper(entry);
+                    return;
+                }
+                if (sndi is AssetSNDI_GCN_V1 gcn1)
+                {
+                    var header = gcn1.GetHeader(asset.assetID, asset.assetType);
+                    propertyGridSoundData.SelectedObject = new SoundInfoGcn1Wrapper(header);
+                    return;
+                }
+            }
+            propertyGridSoundData.SelectedObject = null;
+        }
+
+        private void propertyGridSoundData_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            if (propertyGridSoundData.SelectedObject == null)
+                return;
+            var sndi = archive.GetSNDI();
+            if (sndi != null)
+            {
+                if (sndi is AssetSNDI_PS2 ps2)
+                {
+                    ps2.AddEntry(((SoundInfoPs2Wrapper)propertyGridSoundData.SelectedObject).ToByteArray(), GetAssetID(), asset.assetType, out _);
+                    archive.UnsavedChanges = true;
+                }
+                else if (sndi is AssetSNDI_XBOX xbox)
+                {
+                    xbox.SetEntry(((SoundInfoXboxWrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
+                    archive.UnsavedChanges = true;
+                }
+                else if (sndi is AssetSNDI_GCN_V1 gcn1)
+                {
+                    gcn1.AddEntry(((SoundInfoGcn1Wrapper)propertyGridSoundData.SelectedObject).ToByteArray(), GetAssetID(), asset.assetType, out _);
+                    archive.UnsavedChanges = true;
+                }
+                soundData = null;
+                converterInitialized = false;
+            }
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)

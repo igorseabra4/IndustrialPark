@@ -135,6 +135,9 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoGcn1Wrapper.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoXboxWrapper.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoPs2Wrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\CollWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.cs">
       <SubType>Form</SubType>

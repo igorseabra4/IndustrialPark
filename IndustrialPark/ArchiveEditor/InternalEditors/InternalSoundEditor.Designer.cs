@@ -38,6 +38,7 @@
             this.checkBoxSendToSNDI = new System.Windows.Forms.CheckBox();
             this.buttonImportJawData = new System.Windows.Forms.Button();
             this.buttonPlay = new System.Windows.Forms.Button();
+            this.propertyGridSoundData = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,24 +47,25 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.button2, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.button2, 0, 4);
             this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.button1, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxSendToSNDI, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.buttonImportJawData, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 1, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 1, 4);
+            this.tableLayoutPanel1.Controls.Add(this.propertyGridSoundData, 0, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 5;
+            this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
@@ -71,9 +73,9 @@
             // 
             this.buttonHelp.AutoSize = true;
             this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 416);
+            this.buttonHelp.Location = new System.Drawing.Point(3, 415);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(166, 22);
+            this.buttonHelp.Size = new System.Drawing.Size(166, 23);
             this.buttonHelp.TabIndex = 17;
             this.buttonHelp.Text = "Open Wiki Page";
             this.buttonHelp.UseVisualStyleBackColor = true;
@@ -83,9 +85,9 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(175, 416);
+            this.buttonFindCallers.Location = new System.Drawing.Point(175, 415);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(166, 22);
+            this.buttonFindCallers.Size = new System.Drawing.Size(166, 23);
             this.buttonFindCallers.TabIndex = 11;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -94,7 +96,7 @@
             // button2
             // 
             this.button2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button2.Location = new System.Drawing.Point(3, 388);
+            this.button2.Location = new System.Drawing.Point(3, 387);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(166, 22);
             this.button2.TabIndex = 10;
@@ -109,7 +111,7 @@
             this.richTextBox1.Location = new System.Drawing.Point(3, 53);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(338, 329);
+            this.richTextBox1.Size = new System.Drawing.Size(338, 161);
             this.richTextBox1.TabIndex = 9;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
@@ -151,13 +153,26 @@
             // buttonPlay
             // 
             this.buttonPlay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonPlay.Location = new System.Drawing.Point(175, 388);
+            this.buttonPlay.Location = new System.Drawing.Point(175, 387);
             this.buttonPlay.Name = "buttonPlay";
             this.buttonPlay.Size = new System.Drawing.Size(166, 22);
             this.buttonPlay.TabIndex = 18;
             this.buttonPlay.Text = "Play";
             this.buttonPlay.UseVisualStyleBackColor = true;
             this.buttonPlay.Click += new System.EventHandler(this.buttonPlay_Click);
+            // 
+            // propertyGridSoundData
+            // 
+            this.tableLayoutPanel1.SetColumnSpan(this.propertyGridSoundData, 2);
+            this.propertyGridSoundData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.propertyGridSoundData.HelpVisible = false;
+            this.propertyGridSoundData.Location = new System.Drawing.Point(3, 220);
+            this.propertyGridSoundData.Name = "propertyGridSoundData";
+            this.propertyGridSoundData.PropertySort = System.Windows.Forms.PropertySort.NoSort;
+            this.propertyGridSoundData.Size = new System.Drawing.Size(338, 161);
+            this.propertyGridSoundData.TabIndex = 19;
+            this.propertyGridSoundData.ToolbarVisible = false;
+            this.propertyGridSoundData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridSoundData_PropertyValueChanged);
             // 
             // InternalSoundEditor
             // 
@@ -187,5 +202,6 @@
         private System.Windows.Forms.Button buttonImportJawData;
         private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.Button buttonPlay;
+        private System.Windows.Forms.PropertyGrid propertyGridSoundData;
     }
 }

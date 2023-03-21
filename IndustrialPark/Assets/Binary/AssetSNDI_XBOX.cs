@@ -8,18 +8,18 @@ namespace IndustrialPark
 {
     public class EntrySoundInfo_XBOX : GenericAssetDataContainer
     {
-        public short fmtId { get; set; }
-        public short fmtChannels { get; set; }
-        public int fmtSampleRate { get; set; }
-        public int fmtBytesPerSecond { get; set; }
-        public short fmtBlockAlignment { get; set; }
-        public short fmtBitsPerSample { get; set; }
-        public short fmtExtBytes { get; set; }
-        public short fmtExtData { get; set; }
+        public short wFormatTag { get; set; }
+        public short nChannels { get; set; }
+        public int nSamplesPerSec { get; set; }
+        public int nAvgBytesPerSec { get; set; }
+        public short nBlockAlign { get; set; }
+        public short wBitsPerSample { get; set; }
+        public short cbSize { get; set; }
+        public short NibblesPerBlock { get; set; }
         public int dataSize { get; set; }
         [ValidReferenceRequired]
         public AssetID Sound { get; set; }
-        public int unknown { get; set; }
+        public int flag_loop { get; set; }
 
         public static int StructSize = 0x2C;
 
@@ -31,17 +31,17 @@ namespace IndustrialPark
 
         private void Read(EndianBinaryReader reader)
         {
-            fmtId = reader.ReadInt16();
-            fmtChannels = reader.ReadInt16();
-            fmtSampleRate = reader.ReadInt32();
-            fmtBytesPerSecond = reader.ReadInt32();
-            fmtBlockAlignment = reader.ReadInt16();
-            fmtBitsPerSample = reader.ReadInt16();
-            fmtExtBytes = reader.ReadInt16();
-            fmtExtData = reader.ReadInt16();
+            wFormatTag = reader.ReadInt16();
+            nChannels = reader.ReadInt16();
+            nSamplesPerSec = reader.ReadInt32();
+            nAvgBytesPerSec = reader.ReadInt32();
+            nBlockAlign = reader.ReadInt16();
+            wBitsPerSample = reader.ReadInt16();
+            cbSize = reader.ReadInt16();
+            NibblesPerBlock = reader.ReadInt16();
             dataSize = reader.ReadInt32();
             Sound = reader.ReadUInt32();
-            unknown = reader.ReadInt32();
+            flag_loop = reader.ReadInt32();
 
             reader.BaseStream.Position += 12;
         }
@@ -52,17 +52,17 @@ namespace IndustrialPark
         {
             List<byte> array = new List<byte>();
 
-            array.AddRange(BitConverter.GetBytes(fmtId));
-            array.AddRange(BitConverter.GetBytes(fmtChannels));
-            array.AddRange(BitConverter.GetBytes(fmtSampleRate));
-            array.AddRange(BitConverter.GetBytes(fmtBytesPerSecond));
-            array.AddRange(BitConverter.GetBytes(fmtBlockAlignment));
-            array.AddRange(BitConverter.GetBytes(fmtBitsPerSample));
-            array.AddRange(BitConverter.GetBytes(fmtExtBytes));
-            array.AddRange(BitConverter.GetBytes(fmtExtData));
+            array.AddRange(BitConverter.GetBytes(wFormatTag));
+            array.AddRange(BitConverter.GetBytes(nChannels));
+            array.AddRange(BitConverter.GetBytes(nSamplesPerSec));
+            array.AddRange(BitConverter.GetBytes(nAvgBytesPerSec));
+            array.AddRange(BitConverter.GetBytes(nBlockAlign));
+            array.AddRange(BitConverter.GetBytes(wBitsPerSample));
+            array.AddRange(BitConverter.GetBytes(cbSize));
+            array.AddRange(BitConverter.GetBytes(NibblesPerBlock));
             array.AddRange(BitConverter.GetBytes(dataSize));
             array.AddRange(BitConverter.GetBytes(Sound));
-            array.AddRange(BitConverter.GetBytes(unknown));
+            array.AddRange(BitConverter.GetBytes(flag_loop));
             array.AddRange(new byte[12]);
 
             return array.ToArray();
@@ -214,26 +214,26 @@ namespace IndustrialPark
                     0x14, 0, 0, 0
                 };
 
-            if (entry.fmtId == 0x0001)
+            if (entry.wFormatTag == 0x0001)
             {
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtId));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtExtBytes));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtExtData));
+                bytes.AddRange(BitConverter.GetBytes(entry.wFormatTag));
+                bytes.AddRange(BitConverter.GetBytes(entry.nChannels));
+                bytes.AddRange(BitConverter.GetBytes(entry.nSamplesPerSec));
+                bytes.AddRange(BitConverter.GetBytes(entry.nAvgBytesPerSec));
+                bytes.AddRange(BitConverter.GetBytes(entry.nBlockAlign));
+                bytes.AddRange(BitConverter.GetBytes(entry.wBitsPerSample));
+                bytes.AddRange(BitConverter.GetBytes(entry.cbSize));
+                bytes.AddRange(BitConverter.GetBytes(entry.NibblesPerBlock));
             }
-            else if (entry.fmtId == 0x0069)
+            else if (entry.wFormatTag == 0x0069)
             {
                 bytes.AddRange(BitConverter.GetBytes((short)0x0011));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtChannels));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtSampleRate * 65 / 64));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtBytesPerSecond));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtBlockAlignment));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtBitsPerSample));
-                bytes.AddRange(BitConverter.GetBytes(entry.fmtExtBytes));
+                bytes.AddRange(BitConverter.GetBytes(entry.nChannels));
+                bytes.AddRange(BitConverter.GetBytes(entry.nSamplesPerSec * 65 / 64));
+                bytes.AddRange(BitConverter.GetBytes(entry.nAvgBytesPerSec));
+                bytes.AddRange(BitConverter.GetBytes(entry.nBlockAlign));
+                bytes.AddRange(BitConverter.GetBytes(entry.wBitsPerSample));
+                bytes.AddRange(BitConverter.GetBytes(entry.cbSize));
                 bytes.AddRange(BitConverter.GetBytes((short)0x0041));
             }
 
@@ -244,6 +244,66 @@ namespace IndustrialPark
             bytes.AddRange(BitConverter.GetBytes(entry.dataSize));
 
             return bytes.ToArray();
+        }
+
+        public EntrySoundInfo_XBOX GetEntry(uint assetID, AssetType assetType)
+        {
+            List<EntrySoundInfo_XBOX> entries;
+            if (assetType == AssetType.Sound)
+                entries = Entries_SND.ToList();
+            else
+                entries = Entries_SNDS.ToList();
+
+            EntrySoundInfo_XBOX entry = null;
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Sound == assetID)
+                    entry = entries[i];
+
+            if (entry == null)
+            {
+                entries = Entries_Sound_CIN.ToList();
+
+                for (int i = 0; i < entries.Count; i++)
+                    if (entries[i].Sound == assetID)
+                        entry = entries[i];
+            }
+
+            if (entry == null)
+                throw new Exception($"Error: Sound Info asset does not contain {assetType} sound header for asset [{assetID:X8}]");
+
+            return entry;
+        }
+
+        public void SetEntry(EntrySoundInfo_XBOX entry, AssetType assetType)
+        {
+            List<EntrySoundInfo_XBOX> entries;
+            if (assetType == AssetType.Sound)
+                entries = Entries_SND.ToList();
+            else
+                entries = Entries_SNDS.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Sound == entry.Sound)
+                {
+                    entries[i] = entry;
+
+                    if (assetType == AssetType.Sound)
+                        Entries_SND = entries.ToArray();
+                    else
+                        Entries_SNDS = entries.ToArray();
+                    return;
+                }
+
+            entries = Entries_Sound_CIN.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Sound == assetID)
+                {
+                    entries[i] = entry;
+                    Entries_Sound_CIN = entries.ToArray();
+                    return;
+                }
         }
 
         public void Merge(AssetSNDI_XBOX assetSNDI)
