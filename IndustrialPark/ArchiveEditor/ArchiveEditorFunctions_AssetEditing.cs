@@ -482,11 +482,11 @@ namespace IndustrialPark
             }
         }
 
-        public bool OrganizeLayers()
+        public bool OrganizeLayers(bool legacy)
         {
             try
             {
-                Layers = BuildLayers();
+                Layers = BuildLayers(legacy);
                 UnsavedChanges = true;
                 return true;
             }
@@ -497,7 +497,7 @@ namespace IndustrialPark
             }
         }
 
-        private List<Layer> BuildLayers()
+        private List<Layer> BuildLayers(bool legacy = false)
         {
             Layer textureLayer0 = new Layer(LayerType.TEXTURE);
             Layer textureLayer1 = new Layer(LayerType.TEXTURE);
@@ -538,7 +538,7 @@ namespace IndustrialPark
                                 textureLayer2.AssetIDs.Add(a.assetID);
                                 break;
                         }
-                        if (game != Game.Scooby)
+                        if (game != Game.Scooby && !legacy)
                             textureIndex = (textureIndex + 1) % 3;
                         break;
                     }
@@ -578,7 +578,7 @@ namespace IndustrialPark
                                 modelLayer2.AssetIDs.Add(a.assetID);
                                 break;
                         }
-                        if (game != Game.Scooby)
+                        if (game != Game.Scooby && !legacy)
                             modelIndex = (modelIndex + 1) % 3;
                         break;
                     }

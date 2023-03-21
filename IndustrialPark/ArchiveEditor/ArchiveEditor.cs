@@ -202,6 +202,7 @@ namespace IndustrialPark
             buttonAddLayer.Enabled = true;
             editPACKToolStripMenuItem.Enabled = true;
             organizeLayersToolStripMenuItem.Enabled = true;
+            organizeLegacyToolStripMenuItem.Enabled = true;
             mergeSimilarAssetsToolStripMenuItem.Enabled = true;
             verifyArchiveToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
@@ -466,6 +467,7 @@ namespace IndustrialPark
                 buttonPaste.Enabled = false;
                 buttonRemoveLayer.Enabled = false;
                 organizeLayersToolStripMenuItem.Enabled = false;
+                organizeLegacyToolStripMenuItem.Enabled = false;
                 mergeSimilarAssetsToolStripMenuItem.Enabled = false;
                 verifyArchiveToolStripMenuItem.Enabled = false;
                 applyScaleToolStripMenuItem.Enabled = false;
@@ -1106,10 +1108,20 @@ namespace IndustrialPark
 
         private void organizeLayersToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            OrganizeLayersClick(false, sender, e);
+        }
+
+        private void organizeLegacyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OrganizeLayersClick(true, sender, e);
+        }
+
+        private void OrganizeLayersClick(bool legacy, object sender, EventArgs e)
+        {
             if (archive.NoLayers)
                 return;
 
-            if (archive.OrganizeLayers())
+            if (archive.OrganizeLayers(legacy))
             {
                 PopulateLayerComboBox();
                 comboBoxLayers.SelectedIndex = -1;
@@ -1763,6 +1775,7 @@ namespace IndustrialPark
                 addTemplateToolStripMenuItem.Enabled = true;
 
                 organizeLayersToolStripMenuItem.Enabled = false;
+                organizeLegacyToolStripMenuItem.Enabled = false;
             }
             else
             {
@@ -1791,6 +1804,7 @@ namespace IndustrialPark
                 addTemplateToolStripMenuItem.Enabled = false;
 
                 organizeLayersToolStripMenuItem.Enabled = true;
+                organizeLegacyToolStripMenuItem.Enabled = true;
             }
 
             PopulateAssetListAndComboBox();
