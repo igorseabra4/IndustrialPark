@@ -146,7 +146,7 @@ namespace IndustrialPark
             {
                 foreach (Section_LHDR LHDR in hip.Item1.DICT.LTOC.LHDRList)
                     if (LHDR.assetIDlist.Count != 0)
-                        Layers.Add(LHDRToLayer(LHDR));
+                        Layers.Add(LHDRToLayer(LHDR, hip.Item2));
                 Layers = Layers.OrderBy(f => (int)f.Type, new LayerComparer(game)).ToList();
             }
 

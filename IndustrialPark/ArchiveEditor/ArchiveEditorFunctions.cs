@@ -188,7 +188,7 @@ namespace IndustrialPark
 
             Layers = new List<Layer>();
             foreach (Section_LHDR LHDR in hipFile.DICT.LTOC.LHDRList)
-                Layers.Add(LHDRToLayer(LHDR));
+                Layers.Add(LHDRToLayer(LHDR, game));
 
             foreach (var l in Layers)
                 foreach (var u in l.AssetIDs)
@@ -232,9 +232,9 @@ namespace IndustrialPark
 #endif
         }
 
-        private Layer LHDRToLayer(Section_LHDR LHDR)
+        private static Layer LHDRToLayer(Section_LHDR LHDR, Game game)
         {
-            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType), LHDR.assetIDlist.Count);
+            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType, game), LHDR.assetIDlist.Count);
             foreach (var u in LHDR.assetIDlist)
                 layer.AssetIDs.Add(u);
             return layer;
@@ -314,7 +314,7 @@ namespace IndustrialPark
             foreach (var layer in NoLayers ? BuildLayers() : Layers)
                 DICT.LTOC.LHDRList.Add(new Section_LHDR()
                 {
-                    layerType = LayerTypeGenericToSpecific(layer.Type),
+                    layerType = LayerTypeGenericToSpecific(layer.Type, game),
                     assetIDlist = layer.AssetIDs,
                     LDBG = new Section_LDBG(-1)
                 });
@@ -325,14 +325,14 @@ namespace IndustrialPark
             };
         }
 
-        private int LayerTypeGenericToSpecific(LayerType layerType)
+        private static int LayerTypeGenericToSpecific(LayerType layerType, Game game)
         {
             if (game == Game.Incredibles || layerType < LayerType.BSP)
                 return (int)layerType;
             return (int)layerType - 1;
         }
 
-        private LayerType LayerTypeSpecificToGeneric(int layerType)
+        private static LayerType LayerTypeSpecificToGeneric(int layerType, Game game)
         {
             if (game == Game.Incredibles || layerType < 2)
                 return (LayerType)layerType;
@@ -398,9 +398,9 @@ namespace IndustrialPark
 
         public int LayerCount => Layers.Count;
 
-        public int GetLayerType() => LayerTypeGenericToSpecific(Layers[SelectedLayerIndex].Type);
+        public int GetLayerType() => LayerTypeGenericToSpecific(Layers[SelectedLayerIndex].Type, game);
 
-        public void SetLayerType(int type) => Layers[SelectedLayerIndex].Type = LayerTypeSpecificToGeneric(type);
+        public void SetLayerType(int type) => Layers[SelectedLayerIndex].Type = LayerTypeSpecificToGeneric(type, game);
 
         public string LayerToString() => LayerToString(SelectedLayerIndex);
 
