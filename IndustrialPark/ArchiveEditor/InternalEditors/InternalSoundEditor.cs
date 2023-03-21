@@ -143,6 +143,8 @@ namespace IndustrialPark
             }
             catch (Exception ex)
             {
+                soundData = null;
+                converterInitialized = false;
                 MessageBox.Show("Unable to play sound: " + ex);
             }
         }

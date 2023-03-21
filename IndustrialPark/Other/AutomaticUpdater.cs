@@ -195,8 +195,8 @@ namespace IndustrialPark
         public static void DownloadVgmstream()
         {
             DownloadAndUnzip(
-                "https://github.com/losnoco/vgmstream/releases/download/r1050-2908-g14dc8566/test.zip",
-                Application.StartupPath + "/Resources/vgmstream.zip",
+                "https://github.com/vgmstream/vgmstream/releases/download/r1810/vgmstream-win.zip",
+                Application.StartupPath + "/Resources/vgmstream-win.zip",
                 Application.StartupPath + "/Resources/vgmstream/",
                 "vgmstream");
         }
@@ -215,7 +215,7 @@ namespace IndustrialPark
                 ZipFile.ExtractToDirectory(destZipPath, destFolder);
 
                 File.Delete(destZipPath);
-
+                
                 MessageBox.Show("Downloaded " + downloadName + " from " + zipUrl + " to " + destFolder);
             }
             catch (Exception ex)

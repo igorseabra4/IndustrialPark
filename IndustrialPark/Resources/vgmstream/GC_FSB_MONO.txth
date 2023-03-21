@@ -1,0 +1,13 @@
+id_value = 0x46534233
+id_check = @0x00:BE$4
+id_value = 1
+id_check = @0x56:LE$2
+
+codec = NGC_DSP
+num_samples = @0x38:LE$4
+sample_rate = @0x4C:LE$4
+channels = 1
+coef_offset = 0x68
+coef_endianness = BE
+start_offset = 0x96
+

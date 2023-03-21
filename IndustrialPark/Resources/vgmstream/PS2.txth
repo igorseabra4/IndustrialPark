@@ -1,0 +1,10 @@
+id_value = 0x56414770
+id_check = @0x00:BE$4
+id_value = 0
+id_check = @0x30:BE$4
+
+codec = PSX
+sample_rate = @0x10:LE$4
+channels = 1
+start_offset = 0x40
+num_samples = data_size
