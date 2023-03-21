@@ -639,15 +639,28 @@ namespace IndustrialPark
             {
                 if (GetFromAssetID(l.AssetIDs[0]) is AssetJSP_INFO jspInfo)
                 {
-                    for (int i = 0; i < 3; i++)
+                    if (legacy)
                     {
                         var assetIDs = new List<uint>(1);
-                        if (i < jspInfo.JSP_AssetIDs.Length)
+                        foreach (var assetId in jspInfo.JSP_AssetIDs)
                         {
-                            assetIDs.Add(jspInfo.JSP_AssetIDs[i]);
-                            doneJsps.Add(jspInfo.JSP_AssetIDs[i]);
+                            assetIDs.Add(assetId);
+                            doneJsps.Add(assetId);
                         }
                         list.Add(new Layer(LayerType.BSP) { AssetIDs = assetIDs });
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 3; i++)
+                        {
+                            var assetIDs = new List<uint>(1);
+                            if (i < jspInfo.JSP_AssetIDs.Length)
+                            {
+                                assetIDs.Add(jspInfo.JSP_AssetIDs[i]);
+                                doneJsps.Add(jspInfo.JSP_AssetIDs[i]);
+                            }
+                            list.Add(new Layer(LayerType.BSP) { AssetIDs = assetIDs });
+                        }
                     }
                 }
                 list.Add(l);
