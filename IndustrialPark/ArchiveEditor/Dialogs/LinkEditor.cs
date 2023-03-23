@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
+
 namespace IndustrialPark
 {
     public partial class LinkEditor : Form
@@ -70,6 +71,9 @@ namespace IndustrialPark
             }
 
             this.game = game;
+            
+            buttonEventHack.Enabled = game == Game.Incredibles;
+            
 
             foreach (var o in Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)))
             {
@@ -555,6 +559,57 @@ namespace IndustrialPark
             catch
             {
                 MessageBox.Show("Unable to find sequence number in asset name");
+            }
+        }
+
+        private void buttonEventHack_Click(object sender, EventArgs e)
+        {
+            EventHack eventHackDialog = new EventHack();
+            eventHackDialog.ShowDialog();
+            List<Link> linksToAdd;
+
+            // Don't do anything if the user presses cancel in the EventHack dialog.
+            if (eventHackDialog.DialogResult != DialogResult.OK)
+            {
+                return;
+            }
+
+            // Get generated links.
+            linksToAdd = eventHackDialog.Links;
+
+            foreach (var link in linksToAdd)
+            {
+                listBoxLinks.Items.Add(link);
+            }
+
+            listBoxLinks.SelectedIndices.Clear();
+            listBoxLinks.SelectedIndex = listBoxLinks.Items.Count - 1;
+        }
+
+        private void listBoxLinks_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Check event to see if Delete key was pressed
+            if (e.KeyCode == Keys.Delete)
+            {
+                int maxIndex = 0;
+
+                
+                // Delete selected items
+                while (listBoxLinks.SelectedIndices.Count > 0)
+                {
+                    maxIndex = listBoxLinks.SelectedIndices.Cast<int>().Max();
+                    
+                    listBoxLinks.Items.RemoveAt(listBoxLinks.SelectedIndices[0]);
+                }
+
+                listBoxLinks.SelectedIndex = Math.Min(maxIndex, listBoxLinks.Items.Count - 1);
+            } else if (e.Control && e.KeyCode == Keys.A)
+            {
+                // Select all indices
+                for (int i = 0; i < listBoxLinks.Items.Count; i++)
+                {
+                    listBoxLinks.SetSelected(i, true);
+                }
             }
         }
     }
