@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 
@@ -15,7 +16,7 @@ namespace IndustrialPark
         {
             if (value is AssetID assetID && Program.MainForm != null && assetID != 0)
                 foreach (ArchiveEditor archiveEditor in Program.MainForm.archiveEditors)
-                    archiveEditor.OpenInternalEditors(new System.Collections.Generic.List<uint>() { assetID }, true);
+                    archiveEditor.OpenInternalEditors(new List<uint>() { assetID }, true);
 
             return value;
         }

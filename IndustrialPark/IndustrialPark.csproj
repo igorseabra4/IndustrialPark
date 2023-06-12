@@ -152,6 +152,7 @@
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\GcWavInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
+    <Compile Include="Assets\Shared\Editors\TransformationEditor.cs" />
     <Compile Include="Assets\Shared\Editors\BakeRotationEditor.cs" />
     <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
     <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />

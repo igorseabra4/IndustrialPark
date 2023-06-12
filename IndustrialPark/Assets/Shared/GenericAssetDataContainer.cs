@@ -15,7 +15,7 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public Game game => _game;
-        
+
         public void SetGame(Game game)
         {
             _game = game;
@@ -104,7 +104,7 @@ namespace IndustrialPark
         protected static void Verify(uint assetID, string propName, bool validReferenceRequired, ref List<string> result)
         {
             if (assetID != 0 && !Program.MainForm.AssetExists(assetID))
-                result.Add("Referenced asset 0x" + assetID.ToString("X8") + " was not found in any open archive.");
+                result.Add($"Asset 0x{assetID:X8} referenced in {propName} was not found in any open archive.");
             if (validReferenceRequired && assetID == 0)
                 result.Add($"{propName} is 0");
         }

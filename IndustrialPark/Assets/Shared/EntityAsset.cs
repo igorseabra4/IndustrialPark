@@ -14,15 +14,17 @@ namespace IndustrialPark
         private const string categoryName = "Entity";
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Model);
 
-        [Category(categoryName)]
+        private const string categoryNameFlags = "Entity Flags";
+
+        [Category(categoryNameFlags)]
         public FlagBitmask VisibilityFlags { get; set; } = ByteFlagsDescriptor(
             "Visible",
             "Stackable");
-        [Category(categoryName)]
+        [Category(categoryNameFlags)]
         public AssetByte TypeFlag { get; set; }
-        [Category(categoryName)]
+        [Category(categoryNameFlags)]
         public FlagBitmask Flag0A { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
+        [Category(categoryNameFlags)]
         public FlagBitmask SolidityFlags { get; set; } = ByteFlagsDescriptor(
             "Diggable",
             "Precise Collision",
@@ -77,10 +79,88 @@ namespace IndustrialPark
             set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
-        [Category(categoryName),
+        protected Vector3 _scale;
+        [Category(categoryName)]
+        public virtual AssetSingle ScaleX
+        {
+            get => _scale.X;
+            set { _scale.X = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName)]
+        public virtual AssetSingle ScaleY
+        {
+            get => _scale.Y;
+            set { _scale.Y = value; CreateTransformMatrix(); }
+        }
+        [Category(categoryName)]
+        public virtual AssetSingle ScaleZ
+        {
+            get => _scale.Z;
+            set { _scale.Z = value; CreateTransformMatrix(); }
+        }
+
+        private const string categoryNameTools = "Entity Tools";
+
+        [Category(categoryNameTools),
+            DisplayName("Copy Transformation"),
+            Description("Click on the button to copy the position, rotation and scale values to clipboard."),
+            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
+        public virtual string CopyTransformation
+        {
+            get
+            {
+                TransformationEditor.isCopy = true;
+                TransformationEditor.transformation = new Transformation()
+                {
+                    _positionX = _position.X,
+                    _positionY = _position.Y,
+                    _positionZ = _position.Z,
+                    _yaw = _yaw,
+                    _pitch = _pitch,
+                    _roll = _roll,
+                    _scaleX = _scale.X,
+                    _scaleY = _scale.Y,
+                    _scaleZ = _scale.Z,
+                };
+                return "Click here ->";
+            }
+            set { }
+        }
+
+        [Category(categoryNameTools),
+            DisplayName("Paste Transformation"),
+            Description("Click on the button to paste copied position, rotation and scale values."),
+            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
+        public virtual string PasteTransformation
+        {
+            get
+            {
+                TransformationEditor.isCopy = false;
+                return "Click here ->";
+            }
+            set
+            {
+                if (value == "transformed")
+                {
+                    _position.X = TransformationEditor.transformation._positionX;
+                    _position.Y = TransformationEditor.transformation._positionY;
+                    _position.Z = TransformationEditor.transformation._positionZ;
+                    _yaw = TransformationEditor.transformation._yaw;
+                    _pitch = TransformationEditor.transformation._pitch;
+                    _roll = TransformationEditor.transformation._roll;
+                    _scale.X = TransformationEditor.transformation._scaleX;
+                    _scale.Y = TransformationEditor.transformation._scaleY;
+                    _scale.Z = TransformationEditor.transformation._scaleZ;
+                    CreateTransformMatrix();
+                }
+            }
+        }
+
+        [Category(categoryNameTools),
+            DisplayName("Bake Rotation"),
             Description("A copy of the model with the rotation baked into will be created. " +
             "The asset will then use the new rotated model and the rotation values will be set to (0, 0, 0). " +
-            "It's, for most part, only needed when rotating TRACK assets (used for custom slides). " + 
+            "It's, for most part, only needed when rotating TRACK assets (used for custom slides). " +
             "This only works with Model assets."),
             Editor(typeof(BakeRotationEditor), typeof(UITypeEditor))]
         public virtual string BakeRotation
@@ -109,27 +189,8 @@ namespace IndustrialPark
             }
         }
 
-        protected Vector3 _scale;
-        [Category(categoryName)]
-        public virtual AssetSingle ScaleX
-        {
-            get => _scale.X;
-            set { _scale.X = value; CreateTransformMatrix(); }
-        }
-        [Category(categoryName)]
-        public virtual AssetSingle ScaleY
-        {
-            get => _scale.Y;
-            set { _scale.Y = value; CreateTransformMatrix(); }
-        }
-        [Category(categoryName)]
-        public virtual AssetSingle ScaleZ
-        {
-            get => _scale.Z;
-            set { _scale.Z = value; CreateTransformMatrix(); }
-        }
-
-        [Category(categoryName),
+        [Category(categoryNameTools),
+            DisplayName("Bake Scale"),
             Description("A copy of the model with the scale baked into will be created. " +
             "The asset will then use the new scaled model and the scale values will be set to (1, 1, 1). " +
             "Use this to prevent collision glitches. " +
@@ -157,32 +218,34 @@ namespace IndustrialPark
             }
         }
 
+        private const string categoryNameColor = "Entity Color";
+
         protected Vector4 _color;
-        [Category(categoryName + " Color"), DisplayName("Red (0 - 1)")]
+        [Category(categoryNameColor), DisplayName("Red (0 - 1)")]
         public AssetSingle ColorRed
         {
             get => _color.X;
             set => _color.X = value;
         }
-        [Category(categoryName + " Color"), DisplayName("Green (0 - 1)")]
+        [Category(categoryNameColor), DisplayName("Green (0 - 1)")]
         public AssetSingle ColorGreen
         {
             get => _color.Y;
             set => _color.Y = value;
         }
-        [Category(categoryName + " Color"), DisplayName("Blue (0 - 1)")]
+        [Category(categoryNameColor), DisplayName("Blue (0 - 1)")]
         public AssetSingle ColorBlue
         {
             get => _color.Z;
             set => _color.Z = value;
         }
-        [Category(categoryName + " Color"), DisplayName("Alpha (0 - 1)")]
+        [Category(categoryNameColor), DisplayName("Alpha (0 - 1)")]
         public AssetSingle ColorAlpha
         {
             get => _color.W;
             set => _color.W = value;
         }
-        [Category(categoryName + " Color")]
+        [Category(categoryNameColor)]
         public AssetColor ColorRGBA
         {
             get => AssetColor.FromVector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
@@ -195,7 +258,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName + " Color")]
+        [Category(categoryNameColor)]
         public AssetSingle ColorAlphaSpeed { get; set; }
 
         protected uint _model;
@@ -418,7 +481,8 @@ namespace IndustrialPark
                     PlatID = link.TargetAsset;
                 else if ((EventBFBB)link.EventSendID == EventBFBB.Mount)
                     PlatID = link.ArgumentAsset;
-                else continue;
+                else
+                    continue;
 
                 foreach (var ae in Program.MainForm.archiveEditors)
                     if (ae.archive.ContainsAsset(PlatID))
