@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using static DiscordRPC.User;
 
 namespace IndustrialPark
 {
@@ -73,7 +72,40 @@ namespace IndustrialPark
             }
         }
         [Category("Sample Header")]
-        public uint sampleHeaderMode { get; set; }
+        public FlagBitmask sampleHeaderMode { get; set; } = IntFlagsDescriptor(
+            "FSOUND_LOOP_OFF",
+            null,
+            null,
+            null,
+            "FSOUND_16BITS",
+            "FSOUND_MONO",
+            "FSOUND_STEREO",
+            null,
+            "FSOUND_SIGNED",
+            "FSOUND_MPEG",
+            null,
+            null,
+            "FSOUND_HW3D",
+            "FSOUND_2D",
+            "FSOUND_SYNCPOINTS_NONAMES",
+            "FSOUND_DUPLICATE",
+            null,
+            null,
+            null,
+            "FSOUND_HW2D",
+            "FSOUND_3D",
+            null,
+            "FSOUND_IMAADPCM",
+            null,
+            "FSOUND_XMA",
+            "FSOUND_GCADPCM",
+            "FSOUND_MULTICHANNEL",
+            null,
+            "FSOUND_MPEG_LAYER3",
+            "FSOUND_IMAADPCMSTEREO",
+            null,
+            "FSOUND_SYNCPOINTS");
+
         [Category("Sample Header")]
         public int deffreq { get; set; }
         [Category("Sample Header")]
@@ -105,7 +137,7 @@ namespace IndustrialPark
             maxdistance = 1000000f;
             name = "empty";
             numchannels = 1;
-            sampleHeaderMode = 33558561;
+            sampleHeaderMode.FlagValueInt = 33558561;
             size = 126;
 
             soundEntries = new GcWavInfo[0];
@@ -131,7 +163,7 @@ namespace IndustrialPark
             int templengthcompressedbytes = reader.ReadInt32();
             loopstart = reader.ReadUInt32();
             uint loopend = reader.ReadUInt32();
-            sampleHeaderMode = reader.ReadUInt32();
+            sampleHeaderMode.FlagValueInt = reader.ReadUInt32();
             deffreq = reader.ReadInt32();
             defvol = reader.ReadUInt16();
             defpan = reader.ReadInt16();
@@ -191,7 +223,7 @@ namespace IndustrialPark
                 writer.Write(lengthcompressedbytes);
                 writer.Write(loopstart);
                 writer.Write(loopend);
-                writer.Write(sampleHeaderMode);
+                writer.Write(sampleHeaderMode.FlagValueInt);
                 writer.Write(deffreq);
                 writer.Write(defvol);
                 writer.Write(defpan);
@@ -227,13 +259,15 @@ namespace IndustrialPark
                     writer.Write((byte)0);
                     writer.Write(soundEntries[entryIndex].uSoundInfoIndex);
                 }
-                
+
                 return writer.ToArray();
             }
         }
 
         [Category("Other"), ReadOnly(true)]
         public int offset { get; set; }
+        [Category("Other")]
+        public int UnknownEndValue { get; set; }
 
         public void Merge(FSB3_File file)
         {

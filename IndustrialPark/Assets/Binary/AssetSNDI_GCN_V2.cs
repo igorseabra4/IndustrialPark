@@ -45,12 +45,19 @@ namespace IndustrialPark
 
                 reader.BaseStream.Position = totalSize + 0x20;
 
-                List<FSB3_File> entries = new List<FSB3_File>();
+                var offsets = new uint[nFSBFiles];
                 for (int i = 0; i < nFSBFiles; i++)
-                    using (var reader2 = new EndianBinaryReader(AHDR.data, Endianness.Little))
+                    offsets[i] = reader.ReadUInt32() + 0x20;
+
+                List<FSB3_File> entries = new List<FSB3_File>();
+                for (int i = 0; i < offsets.Length; i++)
+                    using (var fsbReader = new EndianBinaryReader(AHDR.data, Endianness.Little))
                     {
-                        reader2.BaseStream.Position = reader.ReadUInt32() + 0x20;
-                        entries.Add(new FSB3_File(reader2));
+                        fsbReader.BaseStream.Position = offsets[i];
+                        var fsb3file = new FSB3_File(fsbReader);
+                        fsbReader.BaseStream.Position = (i + 1 < offsets.Length) ? (offsets[i + 1] - 0x04) : (totalSize + 0x1C);
+                        fsb3file.UnknownEndValue = fsbReader.ReadInt32();
+                        entries.Add(fsb3file);
                     }
 
                 for (int i = 0; i < nWavFiles; i++)
@@ -79,7 +86,15 @@ namespace IndustrialPark
                 writer.Write(Entries[i].ToByteArray(i));
                 while (writer.BaseStream.Position % 0x20 != 0)
                     writer.BaseStream.Position++;
-                writer.BaseStream.Position -= 0x04;
+                if (Entries[i].UnknownEndValue != 0)
+                {
+                    writer.BaseStream.Position -= 4;
+                    var ukbs = BitConverter.GetBytes(Entries[i].UnknownEndValue);
+                    writer.Write(ukbs[0]);
+                    writer.Write(ukbs[1]);
+                    writer.Write(ukbs[2]);
+                    writer.Write(ukbs[3]);
+                }
             }
 
             int footerOffset = (int)(writer.BaseStream.Position - 0x20);
@@ -136,7 +151,7 @@ namespace IndustrialPark
                 FSB3_File temp = new FSB3_File(reader2, true);
                 List<FSB3_File> newEntries = Entries.ToList();
 
-                if (temp.soundEntries[0].uFlags == 2)
+                if ((temp.soundEntries[0].uFlags & 2) != 0)
                 {
                     newEntries.Add(temp);
                 }

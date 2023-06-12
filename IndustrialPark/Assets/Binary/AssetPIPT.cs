@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using static Assimp.Metadata;
 
 namespace IndustrialPark
 {
@@ -57,7 +56,7 @@ namespace IndustrialPark
         Dual = 2,
         Unknown = 3
     }
-    
+
     public class PipeInfo : GenericAssetDataContainer
     {
         private const string categoryName = "Pipe Info";
@@ -234,7 +233,7 @@ namespace IndustrialPark
         }
 
         [Category(categoryName + " (Movie/Incredibles only)")]
-        public int Unknown { get; set; }
+        public AssetID Unknown { get; set; }
 
         public PipeInfo()
         {
@@ -270,7 +269,7 @@ namespace IndustrialPark
             SubObjectBits.FlagValueInt = reader.ReadUInt32();
             PipeFlags = reader.ReadInt32();
             if (game == Game.Incredibles)
-                Unknown = reader.ReadInt32();
+                Unknown = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
