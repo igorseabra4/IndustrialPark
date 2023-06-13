@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -124,9 +124,25 @@ namespace IndustrialPark
         [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AnimationEffect[] AnimationEffects { get; set; }
 
+        [DisplayName("Add Animation Effect"), Editor(typeof(AtblAddEditor), typeof(UITypeEditor))]
+        public string AddEffect
+        {
+            get => "Click here ->";
+            set
+            {
+                if (value == "add_state_effect")
+                {
+                    var effects = AnimationEffects.ToList();
+                    effects.Add(new AnimationEffect(game));
+                    AnimationEffects = effects.ToArray();
+                }
+            }
+        }
+
         public AnimationState(Game game)
         {
             _game = game;
+            AnimationEffects = new AnimationEffect[0];
         }
 
         public AnimationState(EndianBinaryReader reader, Game game) : this(game)
@@ -314,6 +330,20 @@ namespace IndustrialPark
 
         [Category(categoryName), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AnimationState[] AnimationStates { get; set; }
+        [Category(categoryName), DisplayName("Add Animation State"), Editor(typeof(AtblAddEditor), typeof(UITypeEditor))]
+        public string AddState
+        {
+            get => "Click here ->";
+            set
+            {
+                if (value == "add_state_effect")
+                {
+                    var states = AnimationStates.ToList();
+                    states.Add(new AnimationState(game));
+                    AnimationStates = states.ToArray();
+                }
+            }
+        }
 
         public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
