@@ -221,13 +221,11 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Floating_Block, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Floating_Block_Spiked, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Scale_Block, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Scale_Block_Spiked, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Scale_Block_Driven, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Scale_Block_Spiked_Driven, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Ice_Block, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Ice_Block_Spiked, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Trampoline_Block, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Trampoline_Block_Spiked, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Trampoline_Block_Driven, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Trampoline_Block_Spiked_Driven, eventHandler),
                 new ToolStripSeparator(),
@@ -623,16 +621,12 @@ namespace IndustrialPark
                     return "Volume (Sphere)";
                 case AssetTemplate.Floating_Block_Spiked:
                     return "Floating Block (spiked)";
-                case AssetTemplate.Scale_Block_Spiked:
-                    return "Scale Block (spiked)";
                 case AssetTemplate.Scale_Block_Driven:
                     return "Scale Block (with driver)";
                 case AssetTemplate.Scale_Block_Spiked_Driven:
                     return "Scale Block (spiked with driver)";
                 case AssetTemplate.Ice_Block_Spiked:
                     return "Ice Block (spiked)";
-                case AssetTemplate.Trampoline_Block_Spiked:
-                    return "Trampoline Block (spiked)";
                 case AssetTemplate.Trampoline_Block_Driven:
                     return "Trampoline Block (with driver)";
                 case AssetTemplate.Trampoline_Block_Spiked_Driven:
@@ -841,6 +835,7 @@ namespace IndustrialPark
                 case AssetTemplate.Progress_Script:
                     return new AssetPGRS(assetName);
                 case AssetTemplate.Script:
+                case AssetTemplate.Scale_Block_Script:
                     return new AssetSCRP(assetName);
                 case AssetTemplate.Sound_Group:
                     return new AssetSGRP(assetName);
@@ -1132,6 +1127,7 @@ namespace IndustrialPark
                 case AssetTemplate.Cauldron_Sfx:
                     return new AssetSFX(assetName, position, game, template);
                 case AssetTemplate.SDFX:
+                case AssetTemplate.Scale_Block_Sdfx:
                     return new AssetSDFX(assetName, position, GetSGRP);
                 case AssetTemplate.Light:
                 case AssetTemplate.Cauldron_Light:
@@ -1506,24 +1502,21 @@ namespace IndustrialPark
                 case AssetTemplate.Floating_Block:
                 case AssetTemplate.Floating_Block_Spiked:
                 case AssetTemplate.Scale_Block:
-                case AssetTemplate.Scale_Block_Spiked:
                 case AssetTemplate.Scale_Block_Driven:
                 case AssetTemplate.Scale_Block_Spiked_Driven:
                 case AssetTemplate.Ice_Block:
                 case AssetTemplate.Ice_Block_Spiked:
                 case AssetTemplate.Trampoline_Block:
-                case AssetTemplate.Trampoline_Block_Spiked:
                 case AssetTemplate.Trampoline_Block_Driven:
                 case AssetTemplate.Trampoline_Block_Spiked_Driven:
                 case AssetTemplate.Wooden_Platform:
                 case AssetTemplate.Block_Driver:
                     var block = new AssetPLAT(assetName, position, template);
+
                     if (new AssetTemplate[] {
                         AssetTemplate.Floating_Block_Spiked,
                         AssetTemplate.Ice_Block_Spiked,
-                        AssetTemplate.Scale_Block_Spiked,
                         AssetTemplate.Scale_Block_Spiked_Driven,
-                        AssetTemplate.Trampoline_Block_Spiked,
                         AssetTemplate.Trampoline_Block_Spiked_Driven
                     }.Contains(template))
                     {
@@ -1539,6 +1532,7 @@ namespace IndustrialPark
                             }
                         };
                     }
+
                     if (new AssetTemplate[] {
                         AssetTemplate.Scale_Block_Driven,
                         AssetTemplate.Scale_Block_Spiked_Driven,
@@ -1554,8 +1548,53 @@ namespace IndustrialPark
                                 EventReceiveID = (ushort)EventTSSM.ScenePrepare,
                                 EventSendID = (ushort)EventTSSM.Drivenby,
                                 TargetAsset = driver.assetID,
+                                FloatParameter1 = 1f
                             }
                         };
+                    }
+
+                    if (new AssetTemplate[] {
+                        AssetTemplate.Scale_Block,
+                        AssetTemplate.Scale_Block_Driven,
+                        AssetTemplate.Scale_Block_Spiked_Driven
+                    }.Contains(template))
+                    {
+                        var sdfx = (AssetSDFX)PlaceTemplate(position, ref assetIDs, block.assetName + "_SDFX", AssetTemplate.Scale_Block_Sdfx);
+                        sdfx.SoundGroup = "SHRINK_SGRP";
+                        sdfx.Emitter = block.assetID;
+                        sdfx.SDFXFlags.FlagValueInt = 4;
+
+                        var script = (AssetSCRP)PlaceTemplate(position, ref assetIDs, block.assetName + "_SCRIPT", AssetTemplate.Scale_Block_Script);
+                        script.TimedLinks = new Link[]
+                        {
+                            new Link(game)
+                            {
+                                Time = 0,
+                                EventSendID = (ushort)EventTSSM.Run,
+                                TargetAsset = block.assetID
+                            },
+                            new Link(game)
+                            {
+                                Time = 1,
+                                EventSendID = (ushort)EventTSSM.CollisionVisibleOff,
+                                TargetAsset = block.assetID
+                            },
+                            new Link(game)
+                            {
+                                Time = 1,
+                                EventSendID = (ushort)EventTSSM.Play,
+                                TargetAsset = sdfx.assetID
+                            },
+                        };
+
+                        var links = block.Links.ToList();
+                        links.Add(new Link(game)
+                        {
+                            EventReceiveID = (ushort)EventTSSM.Mount,
+                            EventSendID = (ushort)EventTSSM.Run,
+                            TargetAsset = script.assetID,
+                        });
+                        block.Links = links.ToArray();
                     }
                     return block;
             }

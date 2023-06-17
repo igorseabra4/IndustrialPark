@@ -199,18 +199,19 @@
         Floating_Block,
         Floating_Block_Spiked,
         Scale_Block,
-        Scale_Block_Spiked,
         Scale_Block_Driven,
         Scale_Block_Spiked_Driven,
         Ice_Block,
         Ice_Block_Spiked,
         Trampoline_Block,
-        Trampoline_Block_Spiked,
         Trampoline_Block_Driven,
         Trampoline_Block_Spiked_Driven,
         Wooden_Platform,
         Block_Spikes,
+
         Block_Driver,
+        Scale_Block_Script,
+        Scale_Block_Sdfx,
 
         // ...but not for user
         Pressure_Plate_Base,

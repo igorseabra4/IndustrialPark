@@ -172,7 +172,6 @@ namespace IndustrialPark
                     SolidityFlags.FlagValueByte = 0x82;
                     break;
                 case AssetTemplate.Scale_Block:
-                case AssetTemplate.Scale_Block_Spiked:
                 case AssetTemplate.Scale_Block_Driven:
                 case AssetTemplate.Scale_Block_Spiked_Driven:
                     _scale = new Vector3(1.9f, 1.9f, 1.9f);
@@ -185,6 +184,7 @@ namespace IndustrialPark
                         ScaleAmount = 0.01f,
                         ScaleDuration = 1f
                     };
+                    Motion.MotionFlags.FlagValueShort = 0x04;
                     Model = "block_scale";
                     Surface = "WALLHANG_SURF";
                     SolidityFlags.FlagValueByte = 0x82;
@@ -204,7 +204,6 @@ namespace IndustrialPark
                     SolidityFlags.FlagValueByte = 0x82;
                     break;
                 case AssetTemplate.Trampoline_Block:
-                case AssetTemplate.Trampoline_Block_Spiked:
                 case AssetTemplate.Trampoline_Block_Driven:
                 case AssetTemplate.Trampoline_Block_Spiked_Driven:
                     _scale = new Vector3(1.9f, 1.9f, 1.9f);
