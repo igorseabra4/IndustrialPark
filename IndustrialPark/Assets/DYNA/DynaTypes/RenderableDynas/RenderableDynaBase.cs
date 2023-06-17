@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public abstract class RenderableDynaBase : AssetDYNA, IRenderableAsset, IClickableAsset`, IAssetCopyPasteTransformation
+    public abstract class RenderableDynaBase : AssetDYNA, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
         private const string dynaCategoryName = "DYNA Placement";
 

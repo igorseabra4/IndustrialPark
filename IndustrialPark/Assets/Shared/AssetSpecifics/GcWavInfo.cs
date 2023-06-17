@@ -83,7 +83,7 @@ namespace IndustrialPark
         public byte uFSBIndex;
         public byte uSoundInfoIndex;
 
-        [Category("Settings")]
+        [Category("Flags")]
         public bool Looped
         {
             get => (uFlags & 1) != 0;
@@ -96,6 +96,23 @@ namespace IndustrialPark
                 else
                 {
                     uFlags = (byte)(uFlags & 254);
+                }
+            }
+        }
+
+        [Category("Flags")]
+        public bool StreamedSound
+        {
+            get => (uFlags & 2) != 0;
+            set
+            {
+                if (value)
+                {
+                    uFlags |= 2;
+                }
+                else
+                {
+                    uFlags = (byte)(uFlags & 253);
                 }
             }
         }
