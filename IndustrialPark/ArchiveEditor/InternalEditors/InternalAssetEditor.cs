@@ -1,15 +1,8 @@
-﻿using IndustrialPark.Models;
-using RenderWareFile;
-using SharpDX;
+﻿using HipHopFile;
 using System;
-using System.IO;
-using System.Windows.Forms;
-using static IndustrialPark.Models.Assimp_IO;
-using static IndustrialPark.Models.BSP_IO;
-using static IndustrialPark.Models.BSP_IO_Shared;
-using HipHopFile;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -30,12 +23,29 @@ namespace IndustrialPark
 
             Text = $"[{asset.assetType}] {asset}";
 
-            if (asset is AssetCAM cam) SetupForCam(cam);
+            if (asset is IAssetCopyPasteTransformation iacpt)
+                SetupForCopyPasteTransformation(iacpt);
+
+            if (asset is AssetCAM cam)
+                SetupForCam(cam);
             //else if (asset is AssetCSN csn) SetupForCsn(csn);
-            else if (asset is IAssetAddSelected aas) SetupForAddSelected(aas);
-            else if (asset is AssetSHRP shrp) SetupForShrp(shrp);
-            else if (asset is AssetUIM uim) SetupForUim(uim);
-            else if (asset is AssetWIRE wire) SetupForWire(wire);
+            else if (asset is IAssetAddSelected aas)
+                SetupForAddSelected(aas);
+            else if (asset is AssetSHRP shrp)
+                SetupForShrp(shrp);
+            else if (asset is AssetUIM uim)
+                SetupForUim(uim);
+            else if (asset is AssetWIRE wire)
+                SetupForWire(wire);
+
+            if (asset is EntityAsset entity && !new AssetType[] {
+                AssetType.Trigger,
+                AssetType.Pickup,
+                AssetType.Player,
+                AssetType.UserInterface,
+                AssetType.UserInterfaceFont
+            }.Contains(asset.assetType))
+                SetupForBakeScaleRot(entity);
 
             AddRow(ButtonSize);
 
@@ -253,6 +263,47 @@ namespace IndustrialPark
                     asset.ToObj(saveFile.FileName);
             };
             tableLayoutPanel1.Controls.Add(buttonExport, 1, rowIndex);
+        }
+
+        private void SetupForCopyPasteTransformation(IAssetCopyPasteTransformation asset)
+        {
+            var rowIndex = AddRow(ButtonSize);
+
+            Button buttonCopyTrans = new Button() { Dock = DockStyle.Fill, Text = "Copy Transformation", AutoSize = true };
+            buttonCopyTrans.Click += (object sender, EventArgs e) =>
+            {
+                asset.CopyTransformation();
+            };
+            tableLayoutPanel1.Controls.Add(buttonCopyTrans, 0, rowIndex);
+
+            Button buttonPasteTransformation = new Button() { Dock = DockStyle.Fill, Text = "Paste Transformation", AutoSize = true };
+            buttonPasteTransformation.Click += (object sender, EventArgs e) =>
+            {
+                asset.PasteTransformation();
+                propertyGridAsset.Refresh();
+            };
+            tableLayoutPanel1.Controls.Add(buttonPasteTransformation, 1, rowIndex);
+        }
+
+        private void SetupForBakeScaleRot(EntityAsset asset)
+        {
+            var rowIndex = AddRow(ButtonSize);
+
+            Button buttonBakeRotation = new Button() { Dock = DockStyle.Fill, Text = "Bake Rotation", AutoSize = true };
+            buttonBakeRotation.Click += (object sender, EventArgs e) =>
+            {
+                asset.ApplyBakeRotation();
+                propertyGridAsset.Refresh();
+            };
+            tableLayoutPanel1.Controls.Add(buttonBakeRotation, 0, rowIndex);
+
+            Button buttonBakeScale = new Button() { Dock = DockStyle.Fill, Text = "Bake Scale", AutoSize = true };
+            buttonBakeScale.Click += (object sender, EventArgs e) =>
+            {
+                asset.ApplyBakeScale();
+                propertyGridAsset.Refresh();
+            };
+            tableLayoutPanel1.Controls.Add(buttonBakeScale, 1, rowIndex);
         }
     }
 }

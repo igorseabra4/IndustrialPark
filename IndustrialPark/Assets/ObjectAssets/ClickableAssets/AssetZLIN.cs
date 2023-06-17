@@ -1,12 +1,13 @@
 ﻿using HipHopFile;
+using Newtonsoft.Json;
 using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public class AssetZLIN: BaseAsset, IRenderableAsset, IClickableAsset
+    public class AssetZLIN : BaseAsset, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
         private const string categoryName = "Zip Line";
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Spline);
@@ -145,5 +146,33 @@ namespace IndustrialPark
         public BoundingBox GetBoundingBox() => boundingBox;
 
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position);
+
+        public void CopyTransformation()
+        {
+            var transformation = new Transformation()
+            {
+                _positionX = _position.X,
+                _positionY = _position.Y,
+                _positionZ = _position.Z,
+            };
+            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
+        }
+
+        public void PasteTransformation()
+        {
+            try
+            {
+                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
+                _position.X = transformation._positionX;
+                _position.Y = transformation._positionY;
+                _position.Z = transformation._positionZ;
+
+                CreateTransformMatrix();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
+            }
+        }
     }
 }

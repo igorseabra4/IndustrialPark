@@ -153,8 +153,7 @@
     <Compile Include="Assets\Shared\AssetSpecifics\GcWavInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
     <Compile Include="Assets\Shared\Editors\AtblAddEditor.cs" />
-    <Compile Include="Assets\Shared\Editors\TransformationEditor.cs" />
-    <Compile Include="Assets\Shared\Editors\BakeRotationEditor.cs" />
+    <Compile Include="ArchiveEditor\InternalEditors\Transformation.cs" />
     <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
     <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />
     <Compile Include="ArchiveEditor\Other\LayerComparer.cs" />
@@ -212,7 +211,6 @@
     <Compile Include="Assets\Shared\AssetSound.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\UIMCommand.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\VolumeSpecific.cs" />
-    <Compile Include="Assets\Shared\Editors\BakeScaleEditor.cs" />
     <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableRotatableDynaBase.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableDynaBase.cs" />
@@ -365,6 +363,7 @@
     <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
     <Compile Include="Assets\Shared\DataTypes\FlagField.cs" />
     <Compile Include="Assets\Shared\Interfaces\IAssetAddSelected.cs" />
+    <Compile Include="Assets\Shared\Interfaces\IAssetCopyPasteTransformation.cs" />
     <Compile Include="Assets\Shared\Interfaces\IVolumeAsset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
     <Compile Include="Links\Enums\EventScooby.cs" />

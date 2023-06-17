@@ -1,12 +1,15 @@
 ﻿using HipHopFile;
+using Newtonsoft.Json;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetAddSelected
+    public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetAddSelected, IAssetCopyPasteTransformation
     {
         private const string categoryName = "Move Point";
         public override string AssetInfo => IsZone == 0 ? "Arena" : "Zone";
@@ -272,6 +275,38 @@ namespace IndustrialPark
                 if (!items.Contains(i))
                     items.Add(i);
             NextMovePoints = items.ToArray();
+        }
+
+        public void CopyTransformation()
+        {
+            var transformation = new Transformation()
+            {
+                _positionX = _position.X,
+                _positionY = _position.Y,
+                _positionZ = _position.Z,
+                _scaleSingle = GetScale(),
+                _scaleSfxMin = GetScale(),
+                _scaleSfxMax = GetScale(),
+            };
+            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
+        }
+
+        public void PasteTransformation()
+        {
+            try
+            {
+                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
+                _position.X = transformation._positionX;
+                _position.Y = transformation._positionY;
+                _position.Z = transformation._positionZ;
+                SetScale(transformation._scaleSingle);
+
+                CreateTransformMatrix();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
+            }
         }
     }
 }

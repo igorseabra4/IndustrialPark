@@ -1,14 +1,15 @@
 ﻿using HipHopFile;
+using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
+using System.Windows.Forms;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public abstract class DynaEnemySB : AssetDYNA, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
+    public abstract class DynaEnemySB : AssetDYNA, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset, IAssetCopyPasteTransformation
     {
         private const string dynaCategoryName = "Enemy:SB";
 
@@ -169,61 +170,6 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName + " Entity References")]
         public AssetID Surface { get; set; }
-
-        [Category(dynaCategoryName + " Entity Tools"),
-            DisplayName("Copy Transformation"),
-            Description("Click on the button to copy the position, rotation and scale values to clipboard."),
-            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
-        public virtual string CopyTransformation
-        {
-            get
-            {
-                TransformationEditor.isCopy = true;
-                TransformationEditor.transformation = new Transformation()
-                {
-                    _positionX = _position.X,
-                    _positionY = _position.Y,
-                    _positionZ = _position.Z,
-                    _yaw = _yaw,
-                    _pitch = _pitch,
-                    _roll = _roll,
-                    _scaleX = _scale.X,
-                    _scaleY = _scale.Y,
-                    _scaleZ = _scale.Z,
-                };
-                return "Click here ->";
-            }
-            set { }
-        }
-
-        [Category(dynaCategoryName + " Entity Tools"),
-            DisplayName("Paste Transformation"),
-            Description("Click on the button to paste copied position, rotation and scale values."),
-            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
-        public virtual string PasteTransformation
-        {
-            get
-            {
-                TransformationEditor.isCopy = false;
-                return "Click here ->";
-            }
-            set
-            {
-                if (value == "transformed")
-                {
-                    _position.X = TransformationEditor.transformation._positionX;
-                    _position.Y = TransformationEditor.transformation._positionY;
-                    _position.Z = TransformationEditor.transformation._positionZ;
-                    _yaw = TransformationEditor.transformation._yaw;
-                    _pitch = TransformationEditor.transformation._pitch;
-                    _roll = TransformationEditor.transformation._roll;
-                    _scale.X = TransformationEditor.transformation._scaleX;
-                    _scale.Y = TransformationEditor.transformation._scaleY;
-                    _scale.Z = TransformationEditor.transformation._scaleZ;
-                    CreateTransformMatrix();
-                }
-            }
-        }
 
         protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
 
@@ -396,6 +342,45 @@ namespace IndustrialPark
         public float GetDistanceFrom(Vector3 cameraPosition)
         {
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
+        }
+
+        public void CopyTransformation()
+        {
+            var transformation = new Transformation()
+            {
+                _positionX = _position.X,
+                _positionY = _position.Y,
+                _positionZ = _position.Z,
+                _yaw = _yaw,
+                _pitch = _pitch,
+                _roll = _roll,
+                _scaleX = _scale.X,
+                _scaleY = _scale.Y,
+                _scaleZ = _scale.Z,
+            };
+            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
+        }
+
+        public void PasteTransformation()
+        {
+            try
+            {
+                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
+                _position.X = transformation._positionX;
+                _position.Y = transformation._positionY;
+                _position.Z = transformation._positionZ;
+                _yaw = transformation._yaw;
+                _pitch = transformation._pitch;
+                _roll = transformation._roll;
+                _scale.X = transformation._scaleX;
+                _scale.Y = transformation._scaleY;
+                _scale.Z = transformation._scaleZ;
+                CreateTransformMatrix();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
+            }
         }
     }
 }

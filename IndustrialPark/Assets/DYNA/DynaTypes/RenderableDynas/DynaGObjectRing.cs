@@ -103,28 +103,25 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(OffsetX);
-                writer.Write(OffsetY);
-                writer.Write(OffsetZ);
-                writer.Write(_scale.X);
-                writer.Write(_scale.Y);
-                writer.Write(_scale.Z);
-                writer.Write(TriggerBoundsType);
-                writer.Write(Radius);
-                writer.Write(Width);
-                writer.Write(Height);
-                writer.Write(NormalTimer);
-                writer.Write(RedTimer);
-                writer.Write(DriverPlatform);
-
-                
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(OffsetX);
+            writer.Write(OffsetY);
+            writer.Write(OffsetZ);
+            writer.Write(_scale.X);
+            writer.Write(_scale.Y);
+            writer.Write(_scale.Z);
+            writer.Write(TriggerBoundsType);
+            writer.Write(Radius);
+            writer.Write(Width);
+            writer.Write(Height);
+            writer.Write(NormalTimer);
+            writer.Write(RedTimer);
+            writer.Write(DriverPlatform);
         }
 
         public override void CreateTransformMatrix()

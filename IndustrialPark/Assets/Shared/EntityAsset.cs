@@ -1,15 +1,16 @@
 ﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
+using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
+using System.Windows.Forms;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public abstract class EntityAsset : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset
+    public abstract class EntityAsset : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset, IAssetCopyPasteTransformation
     {
         private const string categoryName = "Entity";
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Model);
@@ -97,125 +98,6 @@ namespace IndustrialPark
         {
             get => _scale.Z;
             set { _scale.Z = value; CreateTransformMatrix(); }
-        }
-
-        private const string categoryNameTools = "Entity Tools";
-
-        [Category(categoryNameTools),
-            DisplayName("Copy Transformation"),
-            Description("Click on the button to copy the position, rotation and scale values to clipboard."),
-            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
-        public virtual string CopyTransformation
-        {
-            get
-            {
-                TransformationEditor.isCopy = true;
-                TransformationEditor.transformation = new Transformation()
-                {
-                    _positionX = _position.X,
-                    _positionY = _position.Y,
-                    _positionZ = _position.Z,
-                    _yaw = _yaw,
-                    _pitch = _pitch,
-                    _roll = _roll,
-                    _scaleX = _scale.X,
-                    _scaleY = _scale.Y,
-                    _scaleZ = _scale.Z,
-                };
-                return "Click here ->";
-            }
-            set { }
-        }
-
-        [Category(categoryNameTools),
-            DisplayName("Paste Transformation"),
-            Description("Click on the button to paste copied position, rotation and scale values."),
-            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
-        public virtual string PasteTransformation
-        {
-            get
-            {
-                TransformationEditor.isCopy = false;
-                return "Click here ->";
-            }
-            set
-            {
-                if (value == "transformed")
-                {
-                    _position.X = TransformationEditor.transformation._positionX;
-                    _position.Y = TransformationEditor.transformation._positionY;
-                    _position.Z = TransformationEditor.transformation._positionZ;
-                    _yaw = TransformationEditor.transformation._yaw;
-                    _pitch = TransformationEditor.transformation._pitch;
-                    _roll = TransformationEditor.transformation._roll;
-                    _scale.X = TransformationEditor.transformation._scaleX;
-                    _scale.Y = TransformationEditor.transformation._scaleY;
-                    _scale.Z = TransformationEditor.transformation._scaleZ;
-                    CreateTransformMatrix();
-                }
-            }
-        }
-
-        [Category(categoryNameTools),
-            DisplayName("Bake Rotation"),
-            Description("A copy of the model with the rotation baked into will be created. " +
-            "The asset will then use the new rotated model and the rotation values will be set to (0, 0, 0). " +
-            "It's, for most part, only needed when rotating TRACK assets (used for custom slides). " +
-            "This only works with Model assets."),
-            Editor(typeof(BakeRotationEditor), typeof(UITypeEditor))]
-        public virtual string BakeRotation
-        {
-            get
-            {
-                BakeRotationEditor.modelAssetId = Model;
-                BakeRotationEditor.yaw = _yaw;
-                BakeRotationEditor.pitch = _pitch;
-                BakeRotationEditor.roll = _roll;
-                return "Click here ->";
-            }
-            set
-            {
-                if (value == "unchanged")
-                    return;
-                var newValue = Convert.ToUInt32(value);
-                if (newValue != _model)
-                {
-                    _model = newValue;
-                    _yaw = 0;
-                    _pitch = 0;
-                    _roll = 0;
-                    CreateTransformMatrix();
-                }
-            }
-        }
-
-        [Category(categoryNameTools),
-            DisplayName("Bake Scale"),
-            Description("A copy of the model with the scale baked into will be created. " +
-            "The asset will then use the new scaled model and the scale values will be set to (1, 1, 1). " +
-            "Use this to prevent collision glitches. " +
-            "It's only needed when the scale axes are not equal to each other or when scaling models with MINFs (Model Infos)."),
-            Editor(typeof(BakeScaleEditor), typeof(UITypeEditor))]
-        public virtual string BakeScale
-        {
-            get
-            {
-                BakeScaleEditor.modelAssetId = Model;
-                BakeScaleEditor.scale = _scale;
-                return "Click here ->";
-            }
-            set
-            {
-                if (value == "unchanged")
-                    return;
-                var newValue = Convert.ToUInt32(value);
-                if (newValue != _model)
-                {
-                    _model = newValue;
-                    _scale = new Vector3(1f, 1f, 1f);
-                    CreateTransformMatrix();
-                }
-            }
         }
 
         private const string categoryNameColor = "Entity Color";
@@ -467,6 +349,86 @@ namespace IndustrialPark
                     min = d;
 
             return min;
+        }
+
+        public void ApplyBakeRotation()
+        {
+            var result = MessageBox.Show("A copy of the model with the rotation baked into will be created. " +
+            "The asset will then use the new rotated model and the rotation values will be set to (0, 0, 0). " +
+            "It's, for most part, only needed when rotating TRACK assets (used for custom slides). " +
+            "This only works with Model assets.", "Bake Rotation", MessageBoxButtons.OKCancel);
+            if (result == DialogResult.OK)
+            {
+                var newValue = ArchiveEditorFunctions.ApplyBakeRotation(_model, _yaw, _pitch, _roll);
+                if (newValue != _model)
+                {
+                    _model = newValue;
+                    _yaw = 0;
+                    _pitch = 0;
+                    _roll = 0;
+                    CreateTransformMatrix();
+                }
+            }
+        }
+
+        public void ApplyBakeScale()
+        {
+            var result = MessageBox.Show("A copy of the model with the scale baked into will be created. " +
+            "The asset will then use the new scaled model and the scale values will be set to (1, 1, 1). " +
+            "Use this to prevent collision glitches. " +
+            "It's only needed when the scale axes are not equal to each other or when scaling models with MINFs (Model Infos).", "Bake Scale", MessageBoxButtons.OKCancel);
+            if (result == DialogResult.OK)
+            {
+                var newValue = ArchiveEditorFunctions.ApplyBakeScale(_model, _scale);
+                if (newValue != _model)
+                {
+                    _model = newValue;
+                    _scale = new Vector3(1f, 1f, 1f);
+                    CreateTransformMatrix();
+                }
+            }
+        }
+
+        public virtual void CopyTransformation()
+        {
+            var transformation = new Transformation()
+            {
+                _positionX = _position.X,
+                _positionY = _position.Y,
+                _positionZ = _position.Z,
+                _yaw = _yaw,
+                _pitch = _pitch,
+                _roll = _roll,
+                _scaleX = _scale.X,
+                _scaleY = _scale.Y,
+                _scaleZ = _scale.Z,
+            };
+            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
+        }
+
+        public virtual void PasteTransformation()
+        {
+            try
+            {
+                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
+                _position.X = transformation._positionX;
+                _position.Y = transformation._positionY;
+                _position.Z = transformation._positionZ;
+                _yaw = transformation._yaw;
+                _pitch = transformation._pitch;
+                _roll = transformation._roll;
+                if (assetType != AssetType.Player && assetType != AssetType.Pickup)
+                {
+                    _scale.X = transformation._scaleX;
+                    _scale.Y = transformation._scaleY;
+                    _scale.Z = transformation._scaleZ;
+                }
+                CreateTransformMatrix();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
+            }
         }
 
         public static bool movementPreview = false;
