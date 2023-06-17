@@ -522,7 +522,7 @@ namespace IndustrialPark.Randomizer
             switch (LevelName)
             {
                 case "hb01":
-                    RemoveAssetsFrom(ref assets, "GREENSHINY_PICKUP_02", "GREENSHINY_PICKUP_03", "GREENSHINY_PICKUP_18", "GREENSHINY_PICKUP_20");
+                    RemoveAssetsFrom(ref assets, "GREENSHINY_PICKUP_02", "GREENSHINY_PICKUP_03", "GREENSHINY_PICKUP_18", "GREENSHINY_PICKUP_20", "YELLOWSHINY_PICKUP_21");
                     RemoveAssetsFromContains(ref assets, "GS_MRKRABS_PICKUP", "GS_PATRICK_PICKUP");
                     break;
                 case "hb02":
@@ -896,7 +896,8 @@ namespace IndustrialPark.Randomizer
                 {
                     if (vertexColors)
                     {
-                        var performOperation = new Func<Vector4, Vector4>((Vector4 oldColor) => {
+                        var performOperation = new Func<Vector4, Vector4>((Vector4 oldColor) =>
+                        {
                             var v = (Vector4)GetRandomColor(brightColors, strongColors);
                             v.W = oldColor.W;
                             return v;
@@ -1170,7 +1171,8 @@ namespace IndustrialPark.Randomizer
                         "robot_sleepy-time_bind.MINF" :
                         a.NpcType_BFBB.ToString() + ".MINF";
 
-                else a.Model = models[model_value];
+                else
+                    a.Model = models[model_value];
 
                 viltypes.RemoveAt(viltypes_value);
                 models.RemoveAt(model_value);
@@ -1652,53 +1654,53 @@ namespace IndustrialPark.Randomizer
             switch (LevelName)
             {
                 case "b101":
+                {
+                    uint dpat1 = new AssetID("AUTOSAVE_DONE_DISP");
+                    if (ContainsAsset(dpat1))
                     {
-                        uint dpat1 = new AssetID("AUTOSAVE_DONE_DISP");
-                        if (ContainsAsset(dpat1))
-                        {
-                            var a2 = (BaseAsset)GetFromAssetID(dpat1);
-                            var a3 = a2.Links;
-                            a3[0].EventSendID = (ushort)EventTSSM.Run;
-                            a3[0].TargetAsset = "FRENCH_NARR2PORTAL_SCRIPT";
-                            a2.Links = a3;
-                        }
-                        uint dpat2 = new AssetID("BOSS_DEATH_HAVE_TOKEN_SCRIPT");
-                        if (ContainsAsset(dpat2))
-                        {
-                            var a2 = (AssetSCRP)GetFromAssetID(dpat2);
-                            var a3 = a2.TimedLinks;
-                            a3[0].EventSendID = (ushort)EventTSSM.Run;
-                            a3[0].TargetAsset = "FRENCH_NARR2PORTAL_SCRIPT";
-                            a2.TimedLinks = a3;
-                        }
-                        uint dpat3 = new AssetID("CIN_PLAY_DISP");
-                        if (ContainsAsset(dpat3))
-                        {
-                            var a2 = (AssetDPAT)GetFromAssetID(dpat3);
-                            var a3 = a2.Links;
-                            a3[0].EventSendID = (ushort)EventTSSM.BossStageSet;
-                            a3[0].TargetAsset = "FROG_FISH_NME";
-                            a2.Links = a3;
-                        }
-                        return true;
+                        var a2 = (BaseAsset)GetFromAssetID(dpat1);
+                        var a3 = a2.Links;
+                        a3[0].EventSendID = (ushort)EventTSSM.Run;
+                        a3[0].TargetAsset = "FRENCH_NARR2PORTAL_SCRIPT";
+                        a2.Links = a3;
                     }
+                    uint dpat2 = new AssetID("BOSS_DEATH_HAVE_TOKEN_SCRIPT");
+                    if (ContainsAsset(dpat2))
+                    {
+                        var a2 = (AssetSCRP)GetFromAssetID(dpat2);
+                        var a3 = a2.TimedLinks;
+                        a3[0].EventSendID = (ushort)EventTSSM.Run;
+                        a3[0].TargetAsset = "FRENCH_NARR2PORTAL_SCRIPT";
+                        a2.TimedLinks = a3;
+                    }
+                    uint dpat3 = new AssetID("CIN_PLAY_DISP");
+                    if (ContainsAsset(dpat3))
+                    {
+                        var a2 = (AssetDPAT)GetFromAssetID(dpat3);
+                        var a3 = a2.Links;
+                        a3[0].EventSendID = (ushort)EventTSSM.BossStageSet;
+                        a3[0].TargetAsset = "FROG_FISH_NME";
+                        a2.Links = a3;
+                    }
+                    return true;
+                }
                 case "b201":
+                {
+                    uint dpat1 = new AssetID("INTRO_CINE_DISP_01");
+                    if (ContainsAsset(dpat1))
+                        RemoveAsset(dpat1);
+
+                    uint scrp1 = new AssetID("PRE_END_CUTSCENE_SCRIPT");
+                    if (ContainsAsset(scrp1))
                     {
-                        uint dpat1 = new AssetID("INTRO_CINE_DISP_01");
-                        if (ContainsAsset(dpat1))
-                            RemoveAsset(dpat1);
+                        var a3 = (AssetSCRP)GetFromAssetID(scrp1);
+                        var a4 = a3.TimedLinks;
 
-                        uint scrp1 = new AssetID("PRE_END_CUTSCENE_SCRIPT");
-                        if (ContainsAsset(scrp1))
-                        {
-                            var a3 = (AssetSCRP)GetFromAssetID(scrp1);
-                            var a4 = a3.TimedLinks;
-
-                            a4[6].EventSendID = (ushort)EventTSSM.Done;
-                            a3.TimedLinks = a4;
-                        }
-                        return true;
+                        a4[6].EventSendID = (ushort)EventTSSM.Done;
+                        a3.TimedLinks = a4;
                     }
+                    return true;
+                }
             }
 
             return false;
@@ -1980,11 +1982,11 @@ namespace IndustrialPark.Randomizer
             var entries = sndi.Entries;
 
             foreach (var v in entries)
-                foreach (var u in v.soundEntries)
+                foreach (var u in v.SoundEntries)
                     assetIDs.Add(u.Sound);
 
             foreach (var v in entries)
-                foreach (var u in v.soundEntries)
+                foreach (var u in v.SoundEntries)
                 {
                     int index = random.Next(0, assetIDs.Count);
                     u.Sound = assetIDs[index];
@@ -2533,41 +2535,59 @@ namespace IndustrialPark.Randomizer
                 switch (v)
                 {
                     case NpcType_BFBB.g_love_bind:
-                        hipFileName = "g-love.HIP"; break;
+                        hipFileName = "g-love.HIP";
+                        break;
                     case NpcType_BFBB.ham_bind:
-                        hipFileName = "ham-mer.HIP"; break;
+                        hipFileName = "ham-mer.HIP";
+                        break;
                     case NpcType_BFBB.robot_0a_bomb_bind:
-                        hipFileName = "bomb-bot.HIP"; break;
+                        hipFileName = "bomb-bot.HIP";
+                        break;
                     case NpcType_BFBB.robot_0a_bzzt_bind:
-                        hipFileName = "bzzt-bot.HIP"; break;
+                        hipFileName = "bzzt-bot.HIP";
+                        break;
                     case NpcType_BFBB.robot_0a_chomper_bind:
-                        hipFileName = "chomp-bot.HIP"; break;
+                        hipFileName = "chomp-bot.HIP";
+                        break;
                     case NpcType_BFBB.robot_0a_fodder_bind:
-                        hipFileName = "fodder.HIP"; break;
+                        hipFileName = "fodder.HIP";
+                        break;
                     case NpcType_BFBB.robot_4a_monsoon_bind:
-                        hipFileName = "monsoon.HIP"; break;
+                        hipFileName = "monsoon.HIP";
+                        break;
                     case NpcType_BFBB.robot_9a_bind:
-                        hipFileName = "slick.HIP"; break;
+                        hipFileName = "slick.HIP";
+                        break;
                     case NpcType_BFBB.robot_chuck_bind:
-                        hipFileName = "chuck.HIP"; break;
+                        hipFileName = "chuck.HIP";
+                        break;
                     case NpcType_BFBB.robot_sleepytime_bind:
-                        hipFileName = "sleepytime.HIP"; break;
+                        hipFileName = "sleepytime.HIP";
+                        break;
                     case NpcType_BFBB.robot_tar_bind:
-                        hipFileName = "tar-tar.HIP"; break;
+                        hipFileName = "tar-tar.HIP";
+                        break;
                     case NpcType_BFBB.robot_arf_bind:
-                        hipFileName = "arf_arf-dawg.HIP"; break;
+                        hipFileName = "arf_arf-dawg.HIP";
+                        break;
                     case NpcType_BFBB.tubelet_bind:
-                        hipFileName = "tubelet.HIP"; break;
+                        hipFileName = "tubelet.HIP";
+                        break;
                     case NpcType_BFBB.tiki_wooden_bind:
-                        hipFileName = "tiki_wooden.HIP"; break;
+                        hipFileName = "tiki_wooden.HIP";
+                        break;
                     case NpcType_BFBB.tiki_lovey_dovey_bind:
-                        hipFileName = "tiki_floating.HIP"; break;
+                        hipFileName = "tiki_floating.HIP";
+                        break;
                     case NpcType_BFBB.tiki_thunder_bind:
-                        hipFileName = "tiki_thunder.HIP"; break;
+                        hipFileName = "tiki_thunder.HIP";
+                        break;
                     case NpcType_BFBB.tiki_stone_bind:
-                        hipFileName = "tiki_stone.HIP"; break;
+                        hipFileName = "tiki_stone.HIP";
+                        break;
                     case NpcType_BFBB.tiki_shhhh_bind:
-                        hipFileName = "tiki_shhh.HIP"; break;
+                        hipFileName = "tiki_shhh.HIP";
+                        break;
                     default:
                         throw new Exception("Invalid VilType");
                 }
@@ -3025,39 +3045,39 @@ namespace IndustrialPark.Randomizer
             switch (LevelName)
             {
                 case "hb01":
+                {
+                    if (!shuffleSpatulaGates)
+                        return false;
+                    // Downtown
                     {
-                        if (!shuffleSpatulaGates)
-                            return false;
-                        // Downtown
+                        uint spatMechAssetID = new AssetID("SPATULA_BB_MECH_01");
+                        if (ContainsAsset(spatMechAssetID))
                         {
-                            uint spatMechAssetID = new AssetID("SPATULA_BB_MECH_01");
-                            if (ContainsAsset(spatMechAssetID))
-                            {
-                                ((AssetPLAT)GetFromAssetID(spatMechAssetID)).PositionX = 87.315510f;
-                                ((AssetPLAT)GetFromAssetID(spatMechAssetID)).PositionZ = 10.411270f;
-                            }
+                            ((AssetPLAT)GetFromAssetID(spatMechAssetID)).PositionX = 87.315510f;
+                            ((AssetPLAT)GetFromAssetID(spatMechAssetID)).PositionZ = 10.411270f;
+                        }
 
-                            List<uint> platAssetIDs = new List<uint>();
+                        List<uint> platAssetIDs = new List<uint>();
 
-                            uint numRightAssetID = new AssetID("NUMBER_5_BB_MECH_01");
-                            if (ContainsAsset(numRightAssetID))
-                            {
-                                AssetPLAT plat = (AssetPLAT)GetFromAssetID(numRightAssetID);
-                                plat.PositionX = 87.481760f;
-                                plat.PositionZ = 9.643267f;
+                        uint numRightAssetID = new AssetID("NUMBER_5_BB_MECH_01");
+                        if (ContainsAsset(numRightAssetID))
+                        {
+                            AssetPLAT plat = (AssetPLAT)GetFromAssetID(numRightAssetID);
+                            plat.PositionX = 87.481760f;
+                            plat.PositionZ = 9.643267f;
 
-                                string serializedObject = JsonConvert.SerializeObject(plat.BuildAHDR(platform.Endianness()));
-                                Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
+                            string serializedObject = JsonConvert.SerializeObject(plat.BuildAHDR(platform.Endianness()));
+                            Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
-                                var plat2 = (AssetPLAT)AddAssetWithUniqueID(AHDR, game, platform.Endianness());
+                            var plat2 = (AssetPLAT)AddAssetWithUniqueID(AHDR, game, platform.Endianness());
 
-                                plat2.PositionX = 87.692600f;
-                                plat2.PositionZ = 8.692189f;
+                            plat2.PositionX = 87.692600f;
+                            plat2.PositionZ = 8.692189f;
 
-                                platAssetIDs.Add(numRightAssetID);
-                                platAssetIDs.Add(plat2.assetID);
+                            platAssetIDs.Add(numRightAssetID);
+                            platAssetIDs.Add(plat2.assetID);
 
-                                plat.Links = new Link[] { new Link(game)
+                            plat.Links = new Link[] { new Link(game)
                                 {
                                     EventReceiveID = (ushort)EventBFBB.Invisible,
                                     EventSendID = (ushort)EventBFBB.Invisible,
@@ -3065,105 +3085,105 @@ namespace IndustrialPark.Randomizer
                                     FloatParameter1 = 77,
                                 }
                                 };
-                            }
-
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_BB_COND_01"));
-                            int i = 0;
-                            foreach (uint u in platAssetIDs)
-                                SetNumberPlats(value, i++, u);
-
-                            ReplaceInText(new AssetID("Spatula_exit_bb01_text"), "5", value.ToString());
                         }
 
-                        // GL
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GL_COND_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_GL_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_1_GL_MECH_01"));
-                            ReplaceInText(new AssetID("Spatula_exit_gl01_text"), "10", value.ToString());
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_BB_COND_01"));
+                        int i = 0;
+                        foreach (uint u in platAssetIDs)
+                            SetNumberPlats(value, i++, u);
 
-                            ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_GL_MECH_01"))).Yaw += 180f;
-                        }
-                        // H2
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H2_COND_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_5_H2_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_1_H2_MECH_01"));
-                            ReplaceInText(new AssetID("Spatula_exit_hub2_text"), "15", value.ToString());
-                        }
-                        // RB
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_RB_COND_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_5_RB_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_2_RB_MECH_01"));
-                            ReplaceInText(new AssetID("Spatula_exit_rb01_text"), "25", value.ToString());
-                        }
-                        // SM
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_SM_COND_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_SM_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_3_SM_MECH_01"));
-                            ReplaceInText(new AssetID("Spatula_exit_sm01_text"), "30", value.ToString());
-
-                            ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_SM_MECH_01"))).Yaw += 180f;
-                        }
-                        // H3
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H3_COND_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_H3_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_4_H3_MECH_01"));
-                            ReplaceInText(new AssetID("Spatula_exit_hub3_text"), "40", value.ToString());
-
-                            ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_H3_MECH_01"))).Yaw += 180f;
-                        }
-                        // KF
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_KF_COND_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_KF_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_5_KF_MECH_01"));
-                            ReplaceInText(new AssetID("Spatula_exit_kf01_text"), "50", value.ToString());
-
-                            ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_KF_MECH_01"))).Yaw += 180f;
-                        }
-                        // GY
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GY_COND_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_GY_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_6_GY_MECH_01"));
-                            ReplaceInText(new AssetID("Spatula_exit_gy01_text"), "60", value.ToString());
-                        }
-
-                        needToAddNumbers = true;
+                        ReplaceInText(new AssetID("Spatula_exit_bb01_text"), "5", value.ToString());
                     }
-                    break;
-                case "hb08":
+
+                    // GL
                     {
-                        if (ContainsAssetWithType(AssetType.Conditional))
-                        {
-                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GL_COND_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_GL_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_1_GL_MECH_01"));
+                        ReplaceInText(new AssetID("Spatula_exit_gl01_text"), "10", value.ToString());
 
-                            if (settings.spatReqChum != -1)
-                                value = settings.spatReqChum;
-
-                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_DOOR_CONDITIONAL_01"));
-                            SetNumberPlats(value, 0, new AssetID("NUMBER_5_MECH_01"));
-                            SetNumberPlats(value, 1, new AssetID("NUMBER_7_MECH_01"));
-                            ReplaceInText(new AssetID("exit_b301_denial_text"), "75", value.ToString());
-                            ReplaceInText(new AssetID("exit_b301_description_text"), "75", value.ToString());
-
-                            if (value != 75)
-                                needToAddNumbers = true;
-                        }
+                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_GL_MECH_01"))).Yaw += 180f;
                     }
-                    break;
+                    // H2
+                    {
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H2_COND_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_5_H2_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_1_H2_MECH_01"));
+                        ReplaceInText(new AssetID("Spatula_exit_hub2_text"), "15", value.ToString());
+                    }
+                    // RB
+                    {
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_RB_COND_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_5_RB_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_2_RB_MECH_01"));
+                        ReplaceInText(new AssetID("Spatula_exit_rb01_text"), "25", value.ToString());
+                    }
+                    // SM
+                    {
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_SM_COND_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_SM_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_3_SM_MECH_01"));
+                        ReplaceInText(new AssetID("Spatula_exit_sm01_text"), "30", value.ToString());
+
+                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_SM_MECH_01"))).Yaw += 180f;
+                    }
+                    // H3
+                    {
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H3_COND_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_H3_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_4_H3_MECH_01"));
+                        ReplaceInText(new AssetID("Spatula_exit_hub3_text"), "40", value.ToString());
+
+                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_H3_MECH_01"))).Yaw += 180f;
+                    }
+                    // KF
+                    {
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_KF_COND_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_KF_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_5_KF_MECH_01"));
+                        ReplaceInText(new AssetID("Spatula_exit_kf01_text"), "50", value.ToString());
+
+                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_KF_MECH_01"))).Yaw += 180f;
+                    }
+                    // GY
+                    {
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GY_COND_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_GY_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_6_GY_MECH_01"));
+                        ReplaceInText(new AssetID("Spatula_exit_gy01_text"), "60", value.ToString());
+                    }
+
+                    needToAddNumbers = true;
+                }
+                break;
+                case "hb08":
+                {
+                    if (ContainsAssetWithType(AssetType.Conditional))
+                    {
+                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+
+                        if (settings.spatReqChum != -1)
+                            value = settings.spatReqChum;
+
+                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_DOOR_CONDITIONAL_01"));
+                        SetNumberPlats(value, 0, new AssetID("NUMBER_5_MECH_01"));
+                        SetNumberPlats(value, 1, new AssetID("NUMBER_7_MECH_01"));
+                        ReplaceInText(new AssetID("exit_b301_denial_text"), "75", value.ToString());
+                        ReplaceInText(new AssetID("exit_b301_description_text"), "75", value.ToString());
+
+                        if (value != 75)
+                            needToAddNumbers = true;
+                    }
+                }
+                break;
                 default:
                     return false;
             }
@@ -3179,524 +3199,524 @@ namespace IndustrialPark.Randomizer
             {
                 case "bb01":
                 case "bb02":
-                    {
-                        int originalShinyAmount = 2100;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                            new List<uint>
-                            {
+                {
+                    int originalShinyAmount = 2100;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_1_COND"),
                                 new AssetID("SHINYGATE_FORCE_COND_01"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_1_TALKBOX"),
                                 new AssetID("SHINYGATE_1_FORCE" + (LevelName ==  "bb01" ? "D" : "") + "_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("CLAMGATE_SHINY_MECH_05"),
                                 new AssetID("CLAMGATE_SHINY_MECH_04"),
                                 new AssetID("CLAMGATE_SHINY_MECH_03"),
                                 new AssetID("CLAMGATE_SHINY_MECH_02"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("shinyobjectgate_1_text"),
                                 new AssetID("shinyobjectgate_force_text"),
                                 new AssetID(0xCD5C904B),
                                 new AssetID("shinyobjectgate_notenough_text"),
-                            });
-                    }
-                    break;
+                        });
+                }
+                break;
                 case "bc02":
-                    {
-                        int originalShinyAmount = 2300;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                            new List<uint>
-                            {
+                {
+                    int originalShinyAmount = 2300;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_2_COND"),
                                 new AssetID("SHINYGATE_2_FORCE_COND"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_2_TALKBOX"),
                                 new AssetID("SHINYGATE_2_FORCE_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("CLAMGATE_SHINY_MECH_05"),
                                 new AssetID("CLAMGATE_SHINY_MECH_04"),
                                 new AssetID("CLAMGATE_SHINY_MECH_03"),
                                 new AssetID("CLAMGATE_SHINY_MECH_02"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID(0x03A7AC42),
                                 new AssetID("shinyobjectgate_patteeter_text")
-                            });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                        });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "bc03":
-                    {
-                        int originalShinyAmount = 2300;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                            new List<uint>
-                            {
+                {
+                    int originalShinyAmount = 2300;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_1_COND"),
                                 new AssetID("SHINYGATE_1_FORCE_COND"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_1_TALKBOX"),
                                 new AssetID("SHINYGATE_1_FORCE_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("CLAMGATE_SHINY_MECH_05"),
                                 new AssetID("CLAMGATE_SHINY_MECH_04"),
                                 new AssetID("CLAMGATE_SHINY_MECH_03"),
                                 new AssetID("CLAMGATE_SHINY_MECH_02"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("shinyobjectgate_highpath_text"),
                                 new AssetID("shinyobjectgate_notenough_text"),
-                            });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                        });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "db01":
+                {
+                    for (int i = 1; i <= 3; i++)
                     {
-                        for (int i = 1; i <= 3; i++)
-                        {
-                            List<uint> numberPlats;
+                        List<uint> numberPlats;
 
-                            if (i == 1)
-                                numberPlats = new List<uint> {
+                        if (i == 1)
+                            numberPlats = new List<uint> {
                                     new AssetID("CLAMGATE_SHINY_MECH_05"),
                                     new AssetID("CLAMGATE_SHINY_MECH_04"),
                                     new AssetID("CLAMGATE_SHINY_MECH_03"),
                                     new AssetID("CLAMGATE_SHINY_MECH_02")};
-                            else if (i == 2)
-                                numberPlats = new List<uint> {
+                        else if (i == 2)
+                            numberPlats = new List<uint> {
                                     new AssetID("CLAMGATE_SHINY_MECH_09"),
                                     new AssetID("CLAMGATE_SHINY_MECH_08"),
                                     new AssetID("CLAMGATE_SHINY_MECH_07"),
                                     new AssetID("CLAMGATE_SHINY_MECH_06")};
-                            else
-                                numberPlats = new List<uint> {
+                        else
+                            numberPlats = new List<uint> {
                                     new AssetID("CLAMGATE_SHINY_MECH_14"),
                                     new AssetID("CLAMGATE_SHINY_MECH_13"),
                                     new AssetID("CLAMGATE_SHINY_MECH_12"),
                                     new AssetID("CLAMGATE_SHINY_MECH_11")};
 
-                            int originalShinyAmount = 1000;
-                            SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                                new List<uint>
-                                {
-                                    new AssetID("SHINYGATE_" + i.ToString() + "_COND"),
-                                    new AssetID("SHINYGATE_" + i.ToString() + "_FORCE_COND"),
-                                },
-                                new List<uint>
-                                {
-                                    new AssetID("SHINYGATE_" + i.ToString() + "_TALKBOX"),
-                                    new AssetID("SHINYGATE_" + i.ToString() + "_FORCE_TALKBOX"),
-                                },
-                                numberPlats,
-                                new List<uint>
-                                {
-                                    new AssetID("shinyobjectgate_path_text_" + i.ToString()),
-                                    new AssetID((uint)(0x03A7AC40 + i)),
-                                });
-                        }
-                        needToAddNumbers = true;
-                    }
-                    break;
-                case "db02":
-                    {
-                        int originalShinyAmount = 2800;
+                        int originalShinyAmount = 1000;
                         SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
                             new List<uint>
                             {
+                                    new AssetID("SHINYGATE_" + i.ToString() + "_COND"),
+                                    new AssetID("SHINYGATE_" + i.ToString() + "_FORCE_COND"),
+                            },
+                            new List<uint>
+                            {
+                                    new AssetID("SHINYGATE_" + i.ToString() + "_TALKBOX"),
+                                    new AssetID("SHINYGATE_" + i.ToString() + "_FORCE_TALKBOX"),
+                            },
+                            numberPlats,
+                            new List<uint>
+                            {
+                                    new AssetID("shinyobjectgate_path_text_" + i.ToString()),
+                                    new AssetID((uint)(0x03A7AC40 + i)),
+                            });
+                    }
+                    needToAddNumbers = true;
+                }
+                break;
+                case "db02":
+                {
+                    int originalShinyAmount = 2800;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_1_COND"),
                                 new AssetID("SHINYGATE_FORCE_COND_01"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("SHINYGATE_1_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("CLAMGATE_SHINY_MECH_05"),
                                 new AssetID("CLAMGATE_SHINY_MECH_04"),
                                 new AssetID("CLAMGATE_SHINY_MECH_03"),
                                 new AssetID("CLAMGATE_SHINY_MECH_02"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                 new AssetID("shinyobjectgate_notenough_text"),
                                 new AssetID(0xCD5C904B),
                                 new AssetID("shinyobjectgate_force_text"),
                                 new AssetID("shinyobjectgate_1_text"),
-                            });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                        });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "gl01":
-                    {
-                        int originalShinyAmount = 2200;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint>
-                             {
+                {
+                    int originalShinyAmount = 2200;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint>
+                         {
                                 new AssetID("SHINYGATE_CASTLE_COND"),
                                 new AssetID("SHINYGATE_FORCE_COND"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("SHINYGATE_CASTLE_TALKBOX"),
                                 new AssetID("SHINYGATE_CASTLE_FORCE_TALKBOX"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("CLAMGATE_SHINY_MECH_05"),
                                 new AssetID("CLAMGATE_SHINY_MECH_04"),
                                 new AssetID("CLAMGATE_SHINY_MECH_03"),
                                 new AssetID("CLAMGATE_SHINY_MECH_02"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("shinyobjectgate_castle_text"),
                                 new AssetID("shinyobjectgate_notenough_text"),
-                             });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                         });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "gl03":
-                    {
-                        int originalShinyAmount = 2200;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint>
-                             {
+                {
+                    int originalShinyAmount = 2200;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint>
+                         {
                                 new AssetID("SHINYGATE_1_COND"),
                                 new AssetID("SHINYGATE_1_FORCE_COND"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("SHINYGATE_1_TALKBOX"),
                                 new AssetID("SHINYGATE_1_FORCE_TALKBOX"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("CLAMGATE_SHINY_MECH_05"),
                                 new AssetID("CLAMGATE_SHINY_MECH_04"),
                                 new AssetID("CLAMGATE_SHINY_MECH_03"),
                                 new AssetID("CLAMGATE_SHINY_MECH_02"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("shinyobjectgate_bungee_text"),
                                 new AssetID("shinyobjectgate_notenough_text"),
-                             });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                         });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "gy01":
-                    {
-                        int originalShinyAmount = 2700;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                            new List<uint>
-                            {
+                {
+                    int originalShinyAmount = 2700;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                new AssetID("SHINYGATE_CHEST_COND"),
                                new AssetID("SHINYGATE_CHEST_FORCE_COND"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                new AssetID("SHINYGATE_CHEST_TALKBOX"),
                                new AssetID("SHINYGATE_CHEST_FORCE_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                new AssetID("CLAMGATE_SHINY_MECH_05"),
                                new AssetID("CLAMGATE_SHINY_MECH_04"),
                                new AssetID("CLAMGATE_SHINY_MECH_03"),
                                new AssetID("CLAMGATE_SHINY_MECH_02"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                new AssetID("shinyobjectgate_chest_text"),
                                new AssetID("shinyobjectgate_notenough_text"),
-                            });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                        });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "gy02":
-                    {
-                        int originalShinyAmount = 2700;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint>
-                             {
+                {
+                    int originalShinyAmount = 2700;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint>
+                         {
                                 new AssetID("SHINYGATE_COND_1"),
                                 new AssetID("SHINYGATE_FORCE_COND"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("SHINYGATE_BUNGEE_TALKBOX"),
                                 new AssetID("SHINYGATE_BUNGEE_FORCE_TALKBOX"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID("CLAMGATE_SHINY_MECH_05"),
                                 new AssetID("CLAMGATE_SHINY_MECH_04"),
                                 new AssetID("CLAMGATE_SHINY_MECH_03"),
                                 new AssetID("CLAMGATE_SHINY_MECH_02"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                 new AssetID(0x230ED0ED),
                                 new AssetID("shinyobjectgate_bungee_text"),
-                             });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                         });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "hb01":
-                    {
-                        int originalShinyAmount = 40000;
-                        int shinyAmount = (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax));
-                        SetGate(originalShinyAmount, shinyAmount,
-                            new List<uint> { new AssetID("THEATER_CONDIT_01"), },
-                            new List<uint> { new AssetID("BOGUY_TALKBOX_01"), },
-                            new List<uint> {
+                {
+                    int originalShinyAmount = 40000;
+                    int shinyAmount = (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax));
+                    SetGate(originalShinyAmount, shinyAmount,
+                        new List<uint> { new AssetID("THEATER_CONDIT_01"), },
+                        new List<uint> { new AssetID("BOGUY_TALKBOX_01"), },
+                        new List<uint> {
                                 new AssetID("THEATRE_MECH_06"),
                                 new AssetID("THEATRE_MECH_05"),
                                 new AssetID("THEATRE_MECH_04"),
                                 new AssetID("THEATRE_MECH_03"),
                                 new AssetID("THEATRE_MECH_02"),
-                             },
-                             new List<uint>());
+                         },
+                         new List<uint>());
 
-                        string fortyThousand = "40,000";
+                    string fortyThousand = "40,000";
 
-                        ReplaceInText(0x0001A923, fortyThousand, shinyAmount.ToString());
-                        ReplaceInText(0x576E065E, fortyThousand, shinyAmount.ToString());
-                        ReplaceInText(0xD4F84AE7, fortyThousand, shinyAmount.ToString());
-                        ReplaceInText(0x4C5ECE3F, fortyThousand, shinyAmount.ToString());
-                        ReplaceInText(0xEFFC2BB5, fortyThousand, shinyAmount.ToString());
-                        ReplaceInText(0xEFFC2BB6, fortyThousand, shinyAmount.ToString());
-                        ReplaceInText(0x65BF2EE7, fortyThousand, shinyAmount.ToString());
+                    ReplaceInText(0x0001A923, fortyThousand, shinyAmount.ToString());
+                    ReplaceInText(0x576E065E, fortyThousand, shinyAmount.ToString());
+                    ReplaceInText(0xD4F84AE7, fortyThousand, shinyAmount.ToString());
+                    ReplaceInText(0x4C5ECE3F, fortyThousand, shinyAmount.ToString());
+                    ReplaceInText(0xEFFC2BB5, fortyThousand, shinyAmount.ToString());
+                    ReplaceInText(0xEFFC2BB6, fortyThousand, shinyAmount.ToString());
+                    ReplaceInText(0x65BF2EE7, fortyThousand, shinyAmount.ToString());
 
-                        needToAddNumbers = true;
-                    }
-                    break;
+                    needToAddNumbers = true;
+                }
+                break;
                 case "hb02":
-                    {
-                        int originalShinyAmount50 = 50;
-                        SetGate(originalShinyAmount50, (int)(originalShinyAmount50 * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint> { new AssetID("SOGATE_COND_01"), },
-                             new List<uint> { new AssetID("SOGATE_COND_01"), },
-                             new List<uint> { new AssetID("SHINY_OBJ_MECH_04"), new AssetID("SHINY_OBJ_MECH_03"), },
-                             new List<uint> { 0xB5FF7865, 0x9AA7AE41, });
+                {
+                    int originalShinyAmount50 = 50;
+                    SetGate(originalShinyAmount50, (int)(originalShinyAmount50 * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint> { new AssetID("SOGATE_COND_01"), },
+                         new List<uint> { new AssetID("SOGATE_COND_01"), },
+                         new List<uint> { new AssetID("SHINY_OBJ_MECH_04"), new AssetID("SHINY_OBJ_MECH_03"), },
+                         new List<uint> { 0xB5FF7865, 0x9AA7AE41, });
 
-                        int originalShinyAmount10 = 10;
-                        SetGate(originalShinyAmount10, (int)(originalShinyAmount10 * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint> { new AssetID("SOGATE_COND_02"), },
-                             new List<uint> { new AssetID("SOGATE_COND_02"), },
-                             new List<uint> { new AssetID("SHINY_OBJ_MECH_07"), new AssetID("SHINY_OBJ_MECH_06"), },
-                             new List<uint> { 0x21BA9BE1, 0x23CE2B75, });
+                    int originalShinyAmount10 = 10;
+                    SetGate(originalShinyAmount10, (int)(originalShinyAmount10 * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint> { new AssetID("SOGATE_COND_02"), },
+                         new List<uint> { new AssetID("SOGATE_COND_02"), },
+                         new List<uint> { new AssetID("SHINY_OBJ_MECH_07"), new AssetID("SHINY_OBJ_MECH_06"), },
+                         new List<uint> { 0x21BA9BE1, 0x23CE2B75, });
 
-                        int originalShinyAmount20 = 20;
-                        SetGate(originalShinyAmount20, (int)(originalShinyAmount20 * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint> { new AssetID("SOGATE_COND_03"), },
-                             new List<uint> { new AssetID("SOGATE_COND_03"), },
-                             new List<uint> { new AssetID("SHINY_OBJ_MECH_10"), new AssetID("SHINY_OBJ_MECH_09"), },
-                             new List<uint> { 0x21BA9BE2, 0x23CE2B76, });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                    int originalShinyAmount20 = 20;
+                    SetGate(originalShinyAmount20, (int)(originalShinyAmount20 * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint> { new AssetID("SOGATE_COND_03"), },
+                         new List<uint> { new AssetID("SOGATE_COND_03"), },
+                         new List<uint> { new AssetID("SHINY_OBJ_MECH_10"), new AssetID("SHINY_OBJ_MECH_09"), },
+                         new List<uint> { 0x21BA9BE2, 0x23CE2B76, });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "jf01":
-                    {
-                        int originalShinyAmount = 125;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint>
-                             {
+                {
+                    int originalShinyAmount = 125;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint>
+                         {
                                             new AssetID("SHINYGATE_1_COND"),
                                             new AssetID("SHINYGATE_FORCE_COND_01"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                             new AssetID("SHINYGATE_1_TALKBOX"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                             new AssetID("CLAMGATE_SHINY_MECH_04"),
                                             new AssetID("CLAMGATE_SHINY_MECH_03"),
                                             new AssetID("CLAMGATE_SHINY_MECH_02"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                             new AssetID("shinyobjectgate_notenough_text"),
                                             new AssetID(0xCD5C904B),
                                             new AssetID("shinyobjectgate_1_text"),
                                             new AssetID("shinyobjectgate_force_text"),
-                             });
-                    }
-                    break;
+                         });
+                }
+                break;
                 case "jf03":
-                    {
-                        int originalShinyAmount = 2000;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                             new List<uint>
-                             {
+                {
+                    int originalShinyAmount = 2000;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                         new List<uint>
+                         {
                                             new AssetID("SHINYGATE_1_COND"),
                                             new AssetID("SHINYGATE_FORCE_COND_01"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                             new AssetID("SHINYGATE_1_TALKBOX"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                             new AssetID("SO_NUMBER_0_MECH_03"),
                                             new AssetID("SO_NUMBER_0_MECH_02"),
                                             new AssetID("SO_NUMBER_0_MECH_01"),
                                             new AssetID("SO_NUMBER_2_MECH"),
-                             },
-                             new List<uint>
-                             {
+                         },
+                         new List<uint>
+                         {
                                             new AssetID("shinyobjectgate_notenough_text"),
                                             new AssetID(0xCD5C904B),
                                             new AssetID("shinyobjectgate_1_text"),
                                             new AssetID("shinyobjectgate_force_text"),
-                             });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                         });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "kf02":
-                    {
-                        int originalShinyAmount = 2600;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                            new List<uint>
-                            {
+                {
+                    int originalShinyAmount = 2600;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                             new AssetID("SHINYGATE_1_COND"),
                                             new AssetID("SHINYGATE_FORCE_COND_01"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("SHINYGATE_1_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                              new AssetID("SO_NUMBER_ 0_MECH_03"),
                                              new AssetID("SO_NUMBER_ 0_MECH_02"),
                                              new AssetID("SO_NUMBER_6_MECH_01"),
                                              new AssetID("SO_NUMBER_ 2_MECH"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("shinyobjectgate_notenough_text"),
                                             new AssetID(0xCD5C904B),
                                             new AssetID("shinyobjectgate_1_text"),
                                             new AssetID("shinyobjectgate_force_text"),
-                            });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                        });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "rb03":
-                    {
-                        int originalShinyAmount = 2400;
-                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                            new List<uint>
-                            {
+                {
+                    int originalShinyAmount = 2400;
+                    SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                             new AssetID("SHINYGATE_1_COND"),
                                             new AssetID("SHINYGATE_FORCE_COND_01"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("SHINYGATE_1_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("SO_NUMBER_0_MECH_01"),
                                             new AssetID("SO_NUMBER_0_MECH_02"),
                                             new AssetID("SO_NUMBER_4_MECH"),
                                             new AssetID("SO_NUMBER_2_MECH_01"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("shinyobjectgate_notenough_text"),
                                             new AssetID(0xCD5C904B),
                                             new AssetID("shinyobjectgate_1_text"),
                                             new AssetID("shinyobjectgate_force_text"),
-                            });
-                        needToAddNumbers = true;
-                    }
-                    break;
+                        });
+                    needToAddNumbers = true;
+                }
+                break;
                 case "sm01":
+                {
+                    for (int i = 2; i <= 4; i++)
                     {
-                        for (int i = 2; i <= 4; i++)
-                        {
-                            int originalShinyAmount = 1500;
-                            List<uint> texts = new List<uint>
+                        int originalShinyAmount = 1500;
+                        List<uint> texts = new List<uint>
                                             {
                                                 new AssetID("shinydoor_2sm0" + i.ToString() + "_force_text"),
                                                 new AssetID("shinydoor_2sm0" + i.ToString() + "_notenough_text"),
                                                 new AssetID("shinydoor_2sm0" + i.ToString() + "_text")
                                             };
 
-                            if (i == 2)
-                                texts.Add(0xFB25C8DC);
-                            else if (i == 3)
-                                texts.Add(0x586D0E0F);
-                            else
-                                texts.Add(0xB5B45342);
+                        if (i == 2)
+                            texts.Add(0xFB25C8DC);
+                        else if (i == 3)
+                            texts.Add(0x586D0E0F);
+                        else
+                            texts.Add(0xB5B45342);
 
-                            SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                                new List<uint>
-                                {
+                        SetGate(originalShinyAmount, (int)(originalShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                            new List<uint>
+                            {
                                                 new AssetID("SHINYDOOR_2SM0" + i.ToString() + "_COND"),
                                                 new AssetID("SHINYDOOR_2SM0" + i.ToString() + "_FORCE_COND"),
-                                },
-                                new List<uint>
-                                {
+                            },
+                            new List<uint>
+                            {
                                                 new AssetID("SHINYDOOR_2SM0" + i.ToString() + "_TALKBOX"),
-                                },
-                                new List<uint>
-                                {
+                            },
+                            new List<uint>
+                            {
                                                 new AssetID("SHINYDOOR_2SM0" + i.ToString() + "_MECH_05"),
                                                 new AssetID("SHINYDOOR_2SM0" + i.ToString() + "_MECH_04"),
                                                 new AssetID("SHINYDOOR_2SM0" + i.ToString() + "_MECH_03"),
                                                 new AssetID("SHINYDOOR_2SM0" + i.ToString() + "_MECH_02"),
-                                }, texts);
-                        }
+                            }, texts);
+                    }
 
-                        int bungeeShinyAmount = 2500;
-                        SetGate(bungeeShinyAmount, (int)(bungeeShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
-                            new List<uint>
-                            {
+                    int bungeeShinyAmount = 2500;
+                    SetGate(bungeeShinyAmount, (int)(bungeeShinyAmount * random.NextFloat(settings.shinyReqMin, settings.shinyReqMax)),
+                        new List<uint>
+                        {
                                             new AssetID("SHINYGATE_1_COND"),
                                             new AssetID("SHINYGATE_FORCE_COND_01"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("SHINYGATE_1_TALKBOX"),
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("CLAMGATE_SHINY_MECH_05"),
                                             new AssetID("CLAMGATE_SHINY_MECH_04"),
                                             new AssetID("CLAMGATE_SHINY_MECH_03"),
                                             new AssetID("CLAMGATE_SHINY_MECH_02")
-                            },
-                            new List<uint>
-                            {
+                        },
+                        new List<uint>
+                        {
                                             new AssetID("shinyobjectgate_notenough_text"),
                                             new AssetID(0xCD5C904B),
                                             new AssetID("shinyobjectgate_1_text"),
                                             new AssetID("shinyobjectgate_force_text"),
-                            });
-                        needToAddNumbers = false;
-                    }
-                    break;
+                        });
+                    needToAddNumbers = false;
+                }
+                break;
                 default:
                     return false;
             }

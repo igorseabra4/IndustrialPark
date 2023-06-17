@@ -107,7 +107,7 @@ namespace IndustrialPark
         }
 
         [Category(categoryFlags), DisplayName("Unknown (Movie/Incredibles only)")]
-        public int Unknown
+        public AssetID Unknown
         {
             get => Entry.Unknown;
             set => Entry.Unknown = value;

@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -366,7 +365,8 @@ namespace IndustrialPark
         Rotate = 1,
         SlideAndRotate = 2,
         SlideThenRotate = 3,
-        RotateThenSlide = 4
+        RotateThenSlide = 4,
+        Scale = 5
     }
 
     public enum EMechanismFlags : byte

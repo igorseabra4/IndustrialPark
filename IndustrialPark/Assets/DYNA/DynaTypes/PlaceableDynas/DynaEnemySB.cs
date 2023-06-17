@@ -3,6 +3,7 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -168,6 +169,61 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName + " Entity References")]
         public AssetID Surface { get; set; }
+
+        [Category(dynaCategoryName + " Entity Tools"),
+            DisplayName("Copy Transformation"),
+            Description("Click on the button to copy the position, rotation and scale values to clipboard."),
+            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
+        public virtual string CopyTransformation
+        {
+            get
+            {
+                TransformationEditor.isCopy = true;
+                TransformationEditor.transformation = new Transformation()
+                {
+                    _positionX = _position.X,
+                    _positionY = _position.Y,
+                    _positionZ = _position.Z,
+                    _yaw = _yaw,
+                    _pitch = _pitch,
+                    _roll = _roll,
+                    _scaleX = _scale.X,
+                    _scaleY = _scale.Y,
+                    _scaleZ = _scale.Z,
+                };
+                return "Click here ->";
+            }
+            set { }
+        }
+
+        [Category(dynaCategoryName + " Entity Tools"),
+            DisplayName("Paste Transformation"),
+            Description("Click on the button to paste copied position, rotation and scale values."),
+            Editor(typeof(TransformationEditor), typeof(UITypeEditor))]
+        public virtual string PasteTransformation
+        {
+            get
+            {
+                TransformationEditor.isCopy = false;
+                return "Click here ->";
+            }
+            set
+            {
+                if (value == "transformed")
+                {
+                    _position.X = TransformationEditor.transformation._positionX;
+                    _position.Y = TransformationEditor.transformation._positionY;
+                    _position.Z = TransformationEditor.transformation._positionZ;
+                    _yaw = TransformationEditor.transformation._yaw;
+                    _pitch = TransformationEditor.transformation._pitch;
+                    _roll = TransformationEditor.transformation._roll;
+                    _scale.X = TransformationEditor.transformation._scaleX;
+                    _scale.Y = TransformationEditor.transformation._scaleY;
+                    _scale.Z = TransformationEditor.transformation._scaleZ;
+                    CreateTransformMatrix();
+                }
+            }
+        }
 
         protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
 

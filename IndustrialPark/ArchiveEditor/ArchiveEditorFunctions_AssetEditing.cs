@@ -196,10 +196,10 @@ namespace IndustrialPark
         {
             float smallerDistance = 3 * farPlane;
             uint? assetID = null;
-            
+
             foreach (Asset ra in (from IRenderableAsset asset in renderableAssets
-                                 where asset is AssetUI || asset is AssetUIFT
-                                 select asset).Cast<Asset>())
+                                  where asset is AssetUI || asset is AssetUIFT
+                                  select asset).Cast<Asset>())
             {
                 if (!ra.isSelected)
                 {
@@ -697,7 +697,7 @@ namespace IndustrialPark
             progressBar.Show();
 
             List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.assetName).ToList();
-            ordered = ordered.OrderBy(f => f.assetType).ToList();
+            ordered = ordered.OrderBy(f => f.assetType.ToString()).ToList();
 
             if (!ContainsAssetWithType(AssetType.JSP))
                 result.Add($"Archive: Does not contain any JSP asset.");
@@ -936,11 +936,13 @@ namespace IndustrialPark
             {
                 var prevLayerType = SelectedLayerIndex;
 
-                if (!NoLayers) SelectedLayerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
-                
+                if (!NoLayers)
+                    SelectedLayerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
+
                 pipt = (AssetPIPT)PlaceTemplate(template: AssetTemplate.Pipe_Info_Table);
 
-                if (!NoLayers) SelectedLayerIndex = prevLayerType;
+                if (!NoLayers)
+                    SelectedLayerIndex = prevLayerType;
             }
 
             List<PipeInfo> entries = pipt.Entries.ToList();
@@ -1131,7 +1133,8 @@ namespace IndustrialPark
                             {
                                 if (AssetPICK.pickEntries.ContainsKey(pkup.PickReferenceID))
                                     modelAsset = (Asset)renderingDictionary[pkup.PickReferenceID];
-                                else continue;
+                                else
+                                    continue;
                             }
                             else
                                 modelAsset = (Asset)renderingDictionary[entity.Model];
@@ -1157,14 +1160,16 @@ namespace IndustrialPark
                             world = enemySb.world;
                             assetName = enemySb.assetName;
                         }
-                        else continue;
+                        else
+                            continue;
 
                         if (modelAsset is AssetMINF minf)
                             modelAsset = (Asset)renderingDictionary[minf.References[0].Model];
 
                         if (modelAsset is AssetMODL modl)
                             textureNamesList.AddRange(modl.Textures);
-                        else continue;
+                        else
+                            continue;
 
                         Assimp_IO.ExportAssimp(
                             Path.Combine(folderName, assetName + "." + format.FileExtension),

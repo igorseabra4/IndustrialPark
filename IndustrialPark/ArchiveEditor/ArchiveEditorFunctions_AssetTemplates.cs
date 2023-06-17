@@ -1,6 +1,4 @@
-﻿using Assimp;
-using DiscordRPC;
-using HipHopFile;
+﻿using HipHopFile;
 using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
@@ -9,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using static HipHopFile.Functions;
 
@@ -218,13 +215,34 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Ring_Control, eventHandler),
             });
 
+            ToolStripMenuItem floatingBlocksTSSM = new ToolStripMenuItem("Floating Blocks");
+            floatingBlocksTSSM.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Floating_Block, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Floating_Block_Spiked, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Scale_Block, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Scale_Block_Spiked, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Scale_Block_Driven, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Scale_Block_Spiked_Driven, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ice_Block, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ice_Block_Spiked, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Trampoline_Block, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Trampoline_Block_Spiked, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Trampoline_Block_Driven, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Trampoline_Block_Spiked_Driven, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Wooden_Platform, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Block_Spikes, eventHandler),
+            });
+
             ToolStripMenuItem tssm = new ToolStripMenuItem("Movie Game");
             tssm.DropDownItems.AddRange(new ToolStripItem[]
             {
                 pickupsTSSM,
                 enemiesTSSM,
                 moreEnemiesTSSM,
-                stageitemsTSSM
+                stageitemsTSSM,
+                floatingBlocksTSSM
             });
 
             ToolStripMenuItem scoobyPickups = new ToolStripMenuItem("Pickups");
@@ -603,6 +621,24 @@ namespace IndustrialPark
                     return "Volume (Box)";
                 case AssetTemplate.Volume_Sphere:
                     return "Volume (Sphere)";
+                case AssetTemplate.Floating_Block_Spiked:
+                    return "Floating Block (spiked)";
+                case AssetTemplate.Scale_Block_Spiked:
+                    return "Scale Block (spiked)";
+                case AssetTemplate.Scale_Block_Driven:
+                    return "Scale Block (with driver)";
+                case AssetTemplate.Scale_Block_Spiked_Driven:
+                    return "Scale Block (spiked with driver)";
+                case AssetTemplate.Ice_Block_Spiked:
+                    return "Ice Block (spiked)";
+                case AssetTemplate.Trampoline_Block_Spiked:
+                    return "Trampoline Block (spiked)";
+                case AssetTemplate.Trampoline_Block_Driven:
+                    return "Trampoline Block (with driver)";
+                case AssetTemplate.Trampoline_Block_Spiked_Driven:
+                    return "Trampoline Block (spiked with driver)";
+                case AssetTemplate.Block_Spikes:
+                    return "Spikes";
             }
 
             return template.ToString().Replace('_', ' ');
@@ -1045,6 +1081,7 @@ namespace IndustrialPark
                 case AssetTemplate.Floor_Button_Smash_Base:
                 case AssetTemplate.Cauldron:
                 case AssetTemplate.Flower:
+                case AssetTemplate.Block_Spikes:
                 {
                     var simp = new AssetSIMP(assetName, position, template);
                     switch (template)
@@ -1466,6 +1503,61 @@ namespace IndustrialPark
                     return new AssetZLIN(assetName, position);
                 case AssetTemplate.Rubble_Generator:
                     return new DynaGObjectRubbleGenerator(assetName);
+                case AssetTemplate.Floating_Block:
+                case AssetTemplate.Floating_Block_Spiked:
+                case AssetTemplate.Scale_Block:
+                case AssetTemplate.Scale_Block_Spiked:
+                case AssetTemplate.Scale_Block_Driven:
+                case AssetTemplate.Scale_Block_Spiked_Driven:
+                case AssetTemplate.Ice_Block:
+                case AssetTemplate.Ice_Block_Spiked:
+                case AssetTemplate.Trampoline_Block:
+                case AssetTemplate.Trampoline_Block_Spiked:
+                case AssetTemplate.Trampoline_Block_Driven:
+                case AssetTemplate.Trampoline_Block_Spiked_Driven:
+                case AssetTemplate.Wooden_Platform:
+                case AssetTemplate.Block_Driver:
+                    var block = new AssetPLAT(assetName, position, template);
+                    if (new AssetTemplate[] {
+                        AssetTemplate.Floating_Block_Spiked,
+                        AssetTemplate.Ice_Block_Spiked,
+                        AssetTemplate.Scale_Block_Spiked,
+                        AssetTemplate.Scale_Block_Spiked_Driven,
+                        AssetTemplate.Trampoline_Block_Spiked,
+                        AssetTemplate.Trampoline_Block_Spiked_Driven
+                    }.Contains(template))
+                    {
+                        var spikes = (AssetSIMP)PlaceTemplate(position, ref assetIDs, block.assetName + "_SPIKES", AssetTemplate.Block_Spikes);
+                        spikes.Links = new Link[]
+                        {
+                            new Link(game)
+                            {
+                                EventReceiveID = (ushort)EventTSSM.ScenePrepare,
+                                EventSendID = (ushort)EventTSSM.Drivenby,
+                                TargetAsset = block.assetID,
+                                FloatParameter1 = 1f
+                            }
+                        };
+                    }
+                    if (new AssetTemplate[] {
+                        AssetTemplate.Scale_Block_Driven,
+                        AssetTemplate.Scale_Block_Spiked_Driven,
+                        AssetTemplate.Trampoline_Block_Driven,
+                        AssetTemplate.Trampoline_Block_Spiked_Driven
+                    }.Contains(template))
+                    {
+                        var driver = (AssetPLAT)PlaceTemplate(position, ref assetIDs, block.assetName + "_DRIVER", AssetTemplate.Block_Driver);
+                        block.Links = new Link[]
+                        {
+                            new Link(game)
+                            {
+                                EventReceiveID = (ushort)EventTSSM.ScenePrepare,
+                                EventSendID = (ushort)EventTSSM.Drivenby,
+                                TargetAsset = driver.assetID,
+                            }
+                        };
+                    }
+                    return block;
             }
             MessageBox.Show("Unsupported template");
             return null;

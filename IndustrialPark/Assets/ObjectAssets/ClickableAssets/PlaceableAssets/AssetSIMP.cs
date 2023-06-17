@@ -112,6 +112,12 @@ namespace IndustrialPark
                     SolidityFlags.FlagValueByte = 0x03;
                     CollType.FlagValueByte = 0;
                     break;
+                case AssetTemplate.Block_Spikes:
+                    _scale = new Vector3(1.9f, 1.9f, 1.9f);
+                    Model = "block_spikes";
+                    Surface = "SPIKE_SURF";
+                    SimpFlags.FlagValueByte = 8;
+                    break;
             }
         }
 

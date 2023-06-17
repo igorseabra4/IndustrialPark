@@ -1,17 +1,16 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using HipHopFile;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using System.ComponentModel;
-using HipHopFile;
 
 namespace IndustrialPark
 {
@@ -60,7 +59,7 @@ namespace IndustrialPark
                     {
                         builder.Append(unsavedChanges);
                     }
-                    
+
                     // Separator
                     if (i < archiveEditors.Count - 1)
                     {
@@ -187,9 +186,9 @@ namespace IndustrialPark
             if (UnsavedChanges())
             {
                 DialogResult result = MessageBox.Show(
-                    "You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", 
-                    "Warning", 
-                    MessageBoxButtons.YesNoCancel, 
+                    "You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?",
+                    "Warning",
+                    MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
@@ -519,7 +518,7 @@ namespace IndustrialPark
                 float y = ((e.Y - renderPanel.ClientRectangle.Y) * 480f / renderPanel.ClientRectangle.Height);
 
                 SetToolStripStatusLabel(string.Format("Position: [{0:0.0000}, {1:0.0000}]", x, y)
-                    + " FPS: "+ $"{renderer.sharpFPS.FPS:0.0000}");
+                    + " FPS: " + $"{renderer.sharpFPS.FPS:0.0000}");
             }
             else
             {
@@ -731,7 +730,7 @@ namespace IndustrialPark
                 -90 + pitchPadding,
                 90 - pitchPadding);
         }
-        
+
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1212,7 +1211,7 @@ namespace IndustrialPark
 
                 names.Add(assetType, text);
             }
-            
+
             foreach (var entry in names.OrderBy(f => f.Value))
             {
                 var field = assetViewTypes[entry.Key].GetField("dontRender");
@@ -1604,7 +1603,7 @@ namespace IndustrialPark
                 {
                     MessageBox.Show("Failed to open Dolphin: " + ex.Message, "Error opening Dolphin", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }     
+            }
         }
 
         private void saveAllOpenHIPsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1654,13 +1653,19 @@ namespace IndustrialPark
             Assimp.ExportFormatDescription format = null;
 
             string textureExtension = null;
-            bool ok = false;
-            while (format == null && !ok)
+            while (format == null)
             {
+                bool ok;
                 (ok, format, textureExtension) = Models.ChooseTarget.GetTarget();
 
+                if (!ok)
+                {
+                    format = null;
+                    break;
+                }
+
                 if (format == null || textureExtension == null)
-                    MessageBox.Show("Unuspported format for exporting scene");
+                    MessageBox.Show("Unsupported format for exporting scene");
             }
 
             if (format != null)
@@ -1788,7 +1793,8 @@ namespace IndustrialPark
                         var b = r.ReadByte();
                         if (b != 0)
                             bytes.Add((char)b);
-                        else break;
+                        else
+                            break;
                     }
 
                     return new string(bytes.ToArray());

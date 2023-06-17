@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -157,6 +156,89 @@ namespace IndustrialPark
                     m.RetractPositionX = _position.X;
                     m.RetractPositionY = _position.Y;
                     m.RetractPositionZ = _position.Z;
+                    break;
+                case AssetTemplate.Floating_Block:
+                case AssetTemplate.Floating_Block_Spiked:
+                    _scale = new Vector3(1.9f, 1.9f, 1.9f);
+                    Motion = new Motion_Mechanism(game)
+                    {
+                        Type = MotionType.Mechanism,
+                        MovementLoopMode = EMechanismFlags.ReturnToStart,
+                        ScaleAmount = 1f,
+                        ScaleDuration = 1f
+                    };
+                    Model = "block_basic";
+                    Surface = "WALLHANG_SURF";
+                    SolidityFlags.FlagValueByte = 0x82;
+                    break;
+                case AssetTemplate.Scale_Block:
+                case AssetTemplate.Scale_Block_Spiked:
+                case AssetTemplate.Scale_Block_Driven:
+                case AssetTemplate.Scale_Block_Spiked_Driven:
+                    _scale = new Vector3(1.9f, 1.9f, 1.9f);
+                    Motion = new Motion_Mechanism(game)
+                    {
+                        Type = MotionType.Mechanism,
+                        MovementType = EMovementType.Scale,
+                        MovementLoopMode = EMechanismFlags.DontLoop,
+                        ScaleAxis = 6,
+                        ScaleAmount = 0.01f,
+                        ScaleDuration = 1f
+                    };
+                    Model = "block_scale";
+                    Surface = "WALLHANG_SURF";
+                    SolidityFlags.FlagValueByte = 0x82;
+                    break;
+                case AssetTemplate.Ice_Block:
+                case AssetTemplate.Ice_Block_Spiked:
+                    _scale = new Vector3(1.9f, 1.9f, 1.9f);
+                    Motion = new Motion_Mechanism(game)
+                    {
+                        Type = MotionType.Mechanism,
+                        MovementLoopMode = EMechanismFlags.ReturnToStart,
+                        ScaleAmount = 1f,
+                        ScaleDuration = 1f
+                    };
+                    Model = "block_ice";
+                    Surface = "ICE_SURF";
+                    SolidityFlags.FlagValueByte = 0x82;
+                    break;
+                case AssetTemplate.Trampoline_Block:
+                case AssetTemplate.Trampoline_Block_Spiked:
+                case AssetTemplate.Trampoline_Block_Driven:
+                case AssetTemplate.Trampoline_Block_Spiked_Driven:
+                    _scale = new Vector3(1.9f, 1.9f, 1.9f);
+                    PlatformType = PlatType.Springboard;
+                    PlatSpecific = new PlatSpecific_Springboard(game)
+                    {
+                        Height1 = 18,
+                        Height2 = 18,
+                        Height3 = 18,
+                        HeightBubbleBounce = 18,
+                        Animation1 = 0x6B68D5DB,
+                        Animation2 = 0x6B68D5DB,
+                        DirectionY = 1f
+                    };
+                    ((PlatSpecific_Springboard)PlatSpecific).Settings.FlagValueInt = 1;
+                    Model = "block_spring";
+                    break;
+                case AssetTemplate.Block_Driver:
+                    _scale = new Vector3(1f, 1f, 1f);
+                    Motion = new Motion_Mechanism(game)
+                    {
+                        Type = MotionType.Mechanism,
+                        MovementLoopMode = EMechanismFlags.ReturnToStart
+                    };
+                    Model = "block_basic";
+                    VisibilityFlags.FlagValueByte = 0;
+                    SolidityFlags.FlagValueByte = 0;
+                    PlatFlags.FlagValueByte = 0;
+                    break;
+                case AssetTemplate.Wooden_Platform:
+                    _scale = new Vector3(0.6f, 0.6f, 0.6f);
+                    Model = "fb_platform";
+                    Surface = "WALLHANG_SURF";
+                    SolidityFlags.FlagValueByte = 0x82;
                     break;
             }
         }

@@ -148,8 +148,12 @@
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\LodtWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\PipeInfoWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
+    <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\GcWavInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
+    <Compile Include="Assets\Shared\Editors\AtblAddEditor.cs" />
+    <Compile Include="Assets\Shared\Editors\TransformationEditor.cs" />
     <Compile Include="Assets\Shared\Editors\BakeRotationEditor.cs" />
     <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
     <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />
@@ -292,7 +296,6 @@
     <Compile Include="Assets\Binary\AssetCRDT.cs" />
     <Compile Include="Assets\Binary\AssetFLY.cs" />
     <Compile Include="Assets\Binary\AssetLKIT.cs" />
-    <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\Binary\AssetCSN.cs" />
     <Compile Include="Assets\Binary\AssetDEST.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
