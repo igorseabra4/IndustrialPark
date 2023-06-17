@@ -99,7 +99,7 @@ namespace IndustrialPark
                     if (hip.Item3 == Platform.GameCube)
                     {
                         if (hip.Item2 == Game.Incredibles)
-                            MergeSNDI(new AssetSNDI_GCN_V2(AHDR, hip.Item2, hip.Item3.Endianness()));
+                            MergeSNDI(new AssetSNDI_GCN_V2(AHDR, hip.Item2));
                         else
                             MergeSNDI(new AssetSNDI_GCN_V1(AHDR, hip.Item2, hip.Item3.Endianness()));
                     }

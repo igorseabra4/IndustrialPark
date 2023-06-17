@@ -13,7 +13,7 @@ namespace IndustrialPark
         // header
         // char4
         [Category("FSB3 Header")]
-        public int numSamples => soundEntries.Length;
+        public int numSamples => SoundEntries.Length;
         [Category("FSB3 Header")]
         public int totalHeadersSize => 72 + numSamples * 0x36;
         [Category("FSB3 Header")]
@@ -24,7 +24,7 @@ namespace IndustrialPark
                 int acc = 0;
 
                 for (int i = 0; i < numSamples; i++)
-                    acc += soundEntries[i].lengthcompressedbytes;
+                    acc += SoundEntries[i].lengthcompressedbytes;
 
                 return acc;
             }
@@ -44,8 +44,8 @@ namespace IndustrialPark
         {
             get
             {
-                if (soundEntries.Length > 0)
-                    return soundEntries[0].lengthsamples;
+                if (SoundEntries.Length > 0)
+                    return SoundEntries[0].lengthsamples;
                 return 0;
             }
         }
@@ -54,8 +54,8 @@ namespace IndustrialPark
         {
             get
             {
-                if (soundEntries.Length > 0)
-                    return soundEntries[0].lengthcompressedbytes;
+                if (SoundEntries.Length > 0)
+                    return SoundEntries[0].lengthcompressedbytes;
                 return 0;
             }
         }
@@ -66,8 +66,8 @@ namespace IndustrialPark
         {
             get
             {
-                if (soundEntries.Length > 0)
-                    return (uint)(soundEntries[0].lengthsamples - 1);
+                if (SoundEntries.Length > 0)
+                    return (uint)(SoundEntries[0].lengthsamples - 1);
                 return 0;
             }
         }
@@ -107,40 +107,40 @@ namespace IndustrialPark
             "FSOUND_SYNCPOINTS");
 
         [Category("Sample Header")]
-        public int deffreq { get; set; }
+        public int Frequency { get; set; }
         [Category("Sample Header")]
-        public ushort defvol { get; set; }
+        public ushort Volume { get; set; }
         [Category("Sample Header")]
-        public short defpan { get; set; }
+        public short Pan { get; set; }
         [Category("Sample Header")]
-        public ushort defpri { get; set; }
+        public ushort Priority { get; set; }
         [Category("Sample Header")]
-        public ushort numchannels { get; set; }
+        public ushort NumChannels { get; set; }
         [Category("Sample Header")]
-        public float mindistance { get; set; }
+        public float MinDistance { get; set; }
         [Category("Sample Header")]
-        public float maxdistance { get; set; }
+        public float MaxDistance { get; set; }
 
-        [Category("Other")]
-        public GcWavInfo[] soundEntries { get; set; }
+        [Category("Sound Entries")]
+        public GcWavInfo[] SoundEntries { get; set; }
 
         public FSB3_File()
         {
             mode = 2;
             version = 196609;
 
-            deffreq = 32000;
-            defpan = 128;
-            defpri = 255;
-            defvol = 255;
-            mindistance = 1f;
-            maxdistance = 1000000f;
+            Frequency = 32000;
+            Pan = 128;
+            Priority = 255;
+            Volume = 255;
+            MinDistance = 1f;
+            MaxDistance = 1000000f;
             name = "empty";
-            numchannels = 1;
+            NumChannels = 1;
             sampleHeaderMode.FlagValueInt = 33558561;
             size = 126;
 
-            soundEntries = new GcWavInfo[0];
+            SoundEntries = new GcWavInfo[0];
         }
 
         public FSB3_File(BinaryReader reader, bool condensed = false)
@@ -164,29 +164,29 @@ namespace IndustrialPark
             loopstart = reader.ReadUInt32();
             uint loopend = reader.ReadUInt32();
             sampleHeaderMode.FlagValueInt = reader.ReadUInt32();
-            deffreq = reader.ReadInt32();
-            defvol = reader.ReadUInt16();
-            defpan = reader.ReadInt16();
-            defpri = reader.ReadUInt16();
-            numchannels = reader.ReadUInt16();
-            mindistance = reader.ReadSingle();
-            maxdistance = reader.ReadSingle();
+            Frequency = reader.ReadInt32();
+            Volume = reader.ReadUInt16();
+            Pan = reader.ReadInt16();
+            Priority = reader.ReadUInt16();
+            NumChannels = reader.ReadUInt16();
+            MinDistance = reader.ReadSingle();
+            MaxDistance = reader.ReadSingle();
 
-            soundEntries = new GcWavInfo[numSamples];
+            SoundEntries = new GcWavInfo[numSamples];
             for (int i = 0; i < numSamples; i++)
             {
-                soundEntries[i] = new GcWavInfo();
-                soundEntries[i].SetEntryPartOne(reader);
+                SoundEntries[i] = new GcWavInfo();
+                SoundEntries[i].SetEntryPartOne(reader);
             }
 
             if (numSamples > 0)
             {
-                soundEntries[0].lengthsamples = lengthsamples;
-                soundEntries[0].templengthcompressedbytes = templengthcompressedbytes;
+                SoundEntries[0].lengthsamples = lengthsamples;
+                SoundEntries[0].templengthcompressedbytes = templengthcompressedbytes;
             }
 
             for (int i = 0; i < numSamples; i++)
-                soundEntries[i].Data = reader.ReadBytes(soundEntries[i].templengthcompressedbytes);
+                SoundEntries[i].Data = reader.ReadBytes(SoundEntries[i].templengthcompressedbytes);
 
             if (condensed)
             {
@@ -195,7 +195,7 @@ namespace IndustrialPark
                 var uAudioSampleIndex = reader.ReadByte();
                 var uFSBIndex = reader.ReadByte();
                 var uSoundInfoIndex = reader.ReadByte();
-                soundEntries[uAudioSampleIndex].SetEntryPartTwo(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+                SoundEntries[uAudioSampleIndex].SetEntryPartTwo(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
             }
         }
 
@@ -224,40 +224,40 @@ namespace IndustrialPark
                 writer.Write(loopstart);
                 writer.Write(loopend);
                 writer.Write(sampleHeaderMode.FlagValueInt);
-                writer.Write(deffreq);
-                writer.Write(defvol);
-                writer.Write(defpan);
-                writer.Write(defpri);
-                writer.Write(numchannels);
-                writer.Write(mindistance);
-                writer.Write(maxdistance);
+                writer.Write(Frequency);
+                writer.Write(Volume);
+                writer.Write(Pan);
+                writer.Write(Priority);
+                writer.Write(NumChannels);
+                writer.Write(MinDistance);
+                writer.Write(MaxDistance);
 
                 if (everyEntry)
                 {
                     for (int i = 0; i < numSamples; i++)
                     {
-                        soundEntries[i].PartOneToByteArray(writer, i);
-                        soundEntries[i].uAudioSampleIndex = (byte)i;
-                        soundEntries[i].uFSBIndex = (byte)index;
+                        SoundEntries[i].PartOneToByteArray(writer, i);
+                        SoundEntries[i].uAudioSampleIndex = (byte)i;
+                        SoundEntries[i].uFSBIndex = (byte)index;
                     }
-                    for (int i = 0; i < soundEntries.Length; i++)
-                        writer.Write(soundEntries[i].Data);
+                    for (int i = 0; i < SoundEntries.Length; i++)
+                        writer.Write(SoundEntries[i].Data);
                 }
                 else
                 {
-                    soundEntries[entryIndex].PartOneToByteArray(writer, -1);
-                    soundEntries[entryIndex].uAudioSampleIndex = 0;
-                    soundEntries[entryIndex].uFSBIndex = 0;
-                    writer.Write(soundEntries[entryIndex].Data);
+                    SoundEntries[entryIndex].PartOneToByteArray(writer, -1);
+                    SoundEntries[entryIndex].uAudioSampleIndex = 0;
+                    SoundEntries[entryIndex].uFSBIndex = 0;
+                    writer.Write(SoundEntries[entryIndex].Data);
                 }
 
                 if (!everyEntry)
                 {
-                    writer.Write(soundEntries[entryIndex].Sound);
-                    writer.Write(soundEntries[entryIndex].uFlags);
+                    writer.Write(SoundEntries[entryIndex].Sound);
+                    writer.Write(SoundEntries[entryIndex].uFlags);
                     writer.Write((byte)0);
                     writer.Write((byte)0);
-                    writer.Write(soundEntries[entryIndex].uSoundInfoIndex);
+                    writer.Write(SoundEntries[entryIndex].uSoundInfoIndex);
                 }
 
                 return writer.ToArray();
@@ -267,21 +267,23 @@ namespace IndustrialPark
         [Category("Other"), ReadOnly(true)]
         public int offset { get; set; }
         [Category("Other")]
-        public int UnknownEndValue { get; set; }
+        public int UnknownEndValue1 { get; set; }
+        [Category("Other")]
+        public int UnknownEndValue2 { get; set; }
 
         public void Merge(FSB3_File file)
         {
-            List<GcWavInfo> list = soundEntries.ToList();
+            List<GcWavInfo> list = SoundEntries.ToList();
 
-            List<uint> existingSounds = new List<uint>(soundEntries.Length);
-            foreach (GcWavInfo s in soundEntries)
+            List<uint> existingSounds = new List<uint>(SoundEntries.Length);
+            foreach (GcWavInfo s in SoundEntries)
                 existingSounds.Add(s.Sound);
 
-            foreach (GcWavInfo s in file.soundEntries)
+            foreach (GcWavInfo s in file.SoundEntries)
                 if (!existingSounds.Contains(s.Sound))
                     list.Add(s);
 
-            soundEntries = list.ToArray();
+            SoundEntries = list.ToArray();
         }
 
         public byte[] SerializeSingleEntry(int index) => ToByteArray(0, false, index);

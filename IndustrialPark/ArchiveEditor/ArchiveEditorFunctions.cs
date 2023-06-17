@@ -707,7 +707,7 @@ namespace IndustrialPark
                     {
                         if (game != Game.Incredibles)
                             return new AssetSNDI_GCN_V1(AHDR, game, endianness);
-                        return new AssetSNDI_GCN_V2(AHDR, game, endianness);
+                        return new AssetSNDI_GCN_V2(AHDR, game);
                     }
                     if (platform == Platform.Xbox)
                         return new AssetSNDI_XBOX(AHDR, game, endianness);

@@ -1982,11 +1982,11 @@ namespace IndustrialPark.Randomizer
             var entries = sndi.Entries;
 
             foreach (var v in entries)
-                foreach (var u in v.soundEntries)
+                foreach (var u in v.SoundEntries)
                     assetIDs.Add(u.Sound);
 
             foreach (var v in entries)
-                foreach (var u in v.soundEntries)
+                foreach (var u in v.SoundEntries)
                 {
                     int index = random.Next(0, assetIDs.Count);
                     u.Sound = assetIDs[index];

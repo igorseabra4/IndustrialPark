@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.ComponentModel;
+using System.IO;
 
 namespace IndustrialPark
 {
@@ -77,10 +78,27 @@ namespace IndustrialPark
         public uint _assetID;
         [ValidReferenceRequired]
         public AssetID Sound { get => _assetID; set => _assetID = value; }
-        public byte uFlags { get; set; }
-        public byte uAudioSampleIndex { get; set; }
-        public byte uFSBIndex { get; set; }
-        public byte uSoundInfoIndex { get; set; }
+        public byte uFlags;
+        public byte uAudioSampleIndex;
+        public byte uFSBIndex;
+        public byte uSoundInfoIndex;
+
+        [Category("Settings")]
+        public bool Looped
+        {
+            get => (uFlags & 1) != 0;
+            set
+            {
+                if (value)
+                {
+                    uFlags |= 1;
+                }
+                else
+                {
+                    uFlags = (byte)(uFlags & 254);
+                }
+            }
+        }
 
         public void SetEntryPartTwo(uint assetID, byte uFlags, byte uAudioSampleIndex, byte uFSBIndex, byte uSoundInfoIndex)
         {

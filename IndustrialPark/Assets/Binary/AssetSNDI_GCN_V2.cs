@@ -1,24 +1,32 @@
 ﻿using HipHopFile;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetSNDI_GCN_V2 : Asset
     {
-        public override string AssetInfo => $"GameCube {game}, {Entries.Sum(e => e.soundEntries.Length)} entries";
+        public override string AssetInfo => $"GameCube {game}, {Entries.Sum(e => e.SoundEntries.Length)} entries";
 
+        private const string categoryName = "Sound Info";
+
+        private uint _assetId; // hacky solution to weird issue
+
+        [Category(categoryName), Description("Usually 0.")]
         public int pFMusicMod { get; set; }
+        [Category(categoryName), Description("Usually 0.")]
         public int pFSBFileArray { get; set; }
+        [Category(categoryName), Description("Usually 0.")]
         public int pWavInfoArray { get; set; }
+        [Category(categoryName), Description("Usually 0.")]
         public int pCutsceneAudioHeaders { get; set; }
-        public ushort nWavFiles { get; set; }
-        public ushort nSounds { get; set; }
-        public ushort nStreams { get; set; }
-        public byte nFSBFiles { get; set; }
-        public byte nCutsceneAudioHeaders { get; set; }
+
+        [Category(categoryName)]
         public FSB3_File[] Entries { get; set; }
+
+        [Category(categoryName)]
         public EntrySoundInfo_GCN_V1[] Entries_Sound_CIN { get; set; }
 
         public AssetSNDI_GCN_V2(string assetName) : base(assetName, AssetType.SoundInfo)
@@ -27,21 +35,21 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
         }
 
-        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Big))
             {
-                reader.ReadUInt32();
+                _assetId = reader.ReadUInt32();
                 var totalSize = reader.ReadUInt32();
                 pFMusicMod = reader.ReadInt32();
                 pFSBFileArray = reader.ReadInt32();
                 pWavInfoArray = reader.ReadInt32();
                 pCutsceneAudioHeaders = reader.ReadInt32();
-                nWavFiles = reader.ReadUInt16();
-                nSounds = reader.ReadUInt16();
-                nStreams = reader.ReadUInt16();
-                nFSBFiles = reader.ReadByte();
-                nCutsceneAudioHeaders = reader.ReadByte();
+                ushort nWavFiles = reader.ReadUInt16();
+                ushort nSounds = reader.ReadUInt16();
+                ushort nStreams = reader.ReadUInt16();
+                byte nFSBFiles = reader.ReadByte();
+                byte nCutsceneAudioHeaders = reader.ReadByte();
 
                 reader.BaseStream.Position = totalSize + 0x20;
 
@@ -55,8 +63,9 @@ namespace IndustrialPark
                     {
                         fsbReader.BaseStream.Position = offsets[i];
                         var fsb3file = new FSB3_File(fsbReader);
-                        fsbReader.BaseStream.Position = (i + 1 < offsets.Length) ? (offsets[i + 1] - 0x04) : (totalSize + 0x1C);
-                        fsb3file.UnknownEndValue = fsbReader.ReadInt32();
+                        fsbReader.BaseStream.Position = (i + 1 < offsets.Length) ? (offsets[i + 1] - 0x08) : (totalSize + 0x18);
+                        fsb3file.UnknownEndValue1 = fsbReader.ReadInt32();
+                        fsb3file.UnknownEndValue2 = fsbReader.ReadInt32();
                         entries.Add(fsb3file);
                     }
 
@@ -67,7 +76,7 @@ namespace IndustrialPark
                     var uAudioSampleIndex = reader.ReadByte();
                     var uFSBIndex = reader.ReadByte();
                     var uSoundInfoIndex = reader.ReadByte();
-                    entries[uFSBIndex].soundEntries[uAudioSampleIndex].SetEntryPartTwo(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+                    entries[uFSBIndex].SoundEntries[uAudioSampleIndex].SetEntryPartTwo(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
                 }
                 Entries = entries.ToArray();
 
@@ -86,10 +95,16 @@ namespace IndustrialPark
                 writer.Write(Entries[i].ToByteArray(i));
                 while (writer.BaseStream.Position % 0x20 != 0)
                     writer.BaseStream.Position++;
-                if (Entries[i].UnknownEndValue != 0)
+                if (Entries[i].UnknownEndValue1 != 0 || Entries[i].UnknownEndValue2 != 0)
                 {
-                    writer.BaseStream.Position -= 4;
-                    var ukbs = BitConverter.GetBytes(Entries[i].UnknownEndValue);
+                    writer.BaseStream.Position -= 8;
+                    var ukbs = BitConverter.GetBytes(Entries[i].UnknownEndValue1);
+                    writer.Write(ukbs[0]);
+                    writer.Write(ukbs[1]);
+                    writer.Write(ukbs[2]);
+                    writer.Write(ukbs[3]);
+
+                    ukbs = BitConverter.GetBytes(Entries[i].UnknownEndValue2);
                     writer.Write(ukbs[0]);
                     writer.Write(ukbs[1]);
                     writer.Write(ukbs[2]);
@@ -105,9 +120,9 @@ namespace IndustrialPark
                 writer.Write(Entries[i].offset);
                 for (int j = 0; j < Entries[i].numSamples; j++)
                 {
-                    Entries[i].soundEntries[j].uAudioSampleIndex = (byte)j;
-                    Entries[i].soundEntries[j].uFSBIndex = (byte)i;
-                    listForPart2.Add(Entries[i].soundEntries[j]);
+                    Entries[i].SoundEntries[j].uAudioSampleIndex = (byte)j;
+                    Entries[i].SoundEntries[j].uFSBIndex = (byte)i;
+                    listForPart2.Add(Entries[i].SoundEntries[j]);
                 }
             }
 
@@ -118,8 +133,12 @@ namespace IndustrialPark
             foreach (var entry in Entries_Sound_CIN)
                 entry.Serialize(writer);
 
+            ushort nWavFiles = (ushort)Entries.Sum(e => e.SoundEntries.Length);
+            ushort nSounds = (ushort)Entries.Sum(e => e.SoundEntries.Sum(se => ((se.uFlags & 2) == 0) ? 1 : 0));
+            ushort nStreams = (ushort)(nWavFiles - nSounds);
+
             writer.BaseStream.Position = 0;
-            writer.Write(assetID);
+            writer.Write(_assetId);
             writer.Write(footerOffset);
             writer.Write(pFMusicMod);
             writer.Write(pFSBFileArray);
@@ -128,15 +147,17 @@ namespace IndustrialPark
             writer.Write(nWavFiles);
             writer.Write(nSounds);
             writer.Write(nStreams);
-            writer.Write(nFSBFiles);
-            writer.Write(nCutsceneAudioHeaders);
+            writer.Write((byte)Entries.Length);
+            writer.Write((byte)Entries_Sound_CIN.Length);
         }
 
         public byte[] GetHeader(uint assetID)
         {
+            _assetId = assetID;
+
             foreach (FSB3_File f in Entries)
                 for (int i = 0; i < f.numSamples; i++)
-                    if (f.soundEntries[i].Sound == assetID)
+                    if (f.SoundEntries[i].Sound == assetID)
                         return f.SerializeSingleEntry(i);
 
             throw new Exception($"Error: SNDI asset does not contain sound header for asset [{assetID:X8}]");
@@ -151,7 +172,7 @@ namespace IndustrialPark
                 FSB3_File temp = new FSB3_File(reader2, true);
                 List<FSB3_File> newEntries = Entries.ToList();
 
-                if ((temp.soundEntries[0].uFlags & 2) != 0)
+                if ((temp.SoundEntries[0].uFlags & 2) != 0)
                 {
                     newEntries.Add(temp);
                 }
@@ -159,7 +180,7 @@ namespace IndustrialPark
                 {
                     if (newEntries.Count == 0)
                         newEntries.Add(new FSB3_File());
-                    temp.soundEntries[0].Sound = assetID;
+                    temp.SoundEntries[0].Sound = assetID;
                     newEntries[0].Merge(temp);
                 }
 
@@ -190,19 +211,20 @@ namespace IndustrialPark
 
             for (int i = 0; i < entries.Count; i++)
             {
-                List<GcWavInfo> soundEntries = entries[i].soundEntries.ToList();
+                List<GcWavInfo> soundEntries = entries[i].SoundEntries.ToList();
 
                 for (int j = 0; j < soundEntries.Count; j++)
                     if (soundEntries[j].Sound == assetID)
                         soundEntries.RemoveAt(j--);
 
-                entries[i].soundEntries = soundEntries.ToArray();
+                entries[i].SoundEntries = soundEntries.ToArray();
 
                 if (entries[i].numSamples == 0)
                     entries.RemoveAt(i--);
             }
 
             Entries = entries.ToArray();
+            _assetId = assetID;
         }
 
         public void Clean(IEnumerable<uint> assetIDs)
@@ -211,17 +233,18 @@ namespace IndustrialPark
 
             for (int i = 0; i < fsb3s.Count; i++)
             {
-                var entries = fsb3s[i].soundEntries.ToList();
+                var entries = fsb3s[i].SoundEntries.ToList();
                 for (int j = 0; i < entries.Count; j++)
                     if (!assetIDs.Contains(entries[j].Sound))
                         entries.RemoveAt(j--);
                 if (entries.Count == 0)
                     fsb3s.RemoveAt(i--);
                 else
-                    fsb3s[i].soundEntries = entries.ToArray();
+                    fsb3s[i].SoundEntries = entries.ToArray();
             }
 
             Entries = fsb3s.ToArray();
+            _assetId = assetID;
         }
     }
 }
