@@ -69,7 +69,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
+            ArchiveEditorFunctions.OpenWikiPage(asset);
         }
 
         private void buttonExport_Click(object sender, EventArgs e)

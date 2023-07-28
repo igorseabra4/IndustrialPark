@@ -27,28 +27,36 @@ namespace IndustrialPark
 
         public void RefreshPropertyGrid()
         {
-            var sndi = archive.GetSNDI();
-            if (sndi != null)
+            try
             {
-                if (sndi is AssetSNDI_PS2 ps2)
+                var sndi = archive.GetSNDI();
+                if (sndi != null)
                 {
-                    var header = ps2.GetHeader(asset.assetID, asset.assetType);
-                    propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(header);
-                    return;
-                }
-                if (sndi is AssetSNDI_XBOX xbox)
-                {
-                    var entry = xbox.GetEntry(asset.assetID, asset.assetType);
-                    propertyGridSoundData.SelectedObject = new SoundInfoXboxWrapper(entry);
-                    return;
-                }
-                if (sndi is AssetSNDI_GCN_V1 gcn1)
-                {
-                    var header = gcn1.GetHeader(asset.assetID, asset.assetType);
-                    propertyGridSoundData.SelectedObject = new SoundInfoGcn1Wrapper(header);
-                    return;
+                    if (sndi is AssetSNDI_PS2 ps2)
+                    {
+                        var header = ps2.GetHeader(asset.assetID, asset.assetType);
+                        propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(header);
+                        return;
+                    }
+                    if (sndi is AssetSNDI_XBOX xbox)
+                    {
+                        var entry = xbox.GetEntry(asset.assetID, asset.assetType);
+                        propertyGridSoundData.SelectedObject = new SoundInfoXboxWrapper(entry);
+                        return;
+                    }
+                    if (sndi is AssetSNDI_GCN_V1 gcn1)
+                    {
+                        var header = gcn1.GetHeader(asset.assetID, asset.assetType);
+                        propertyGridSoundData.SelectedObject = new SoundInfoGcn1Wrapper(header);
+                        return;
+                    }
                 }
             }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message);
+            }
+
             propertyGridSoundData.SelectedObject = null;
         }
 
@@ -175,7 +183,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
+            ArchiveEditorFunctions.OpenWikiPage(asset);
         }
 
         byte[] soundData;
@@ -202,8 +210,8 @@ namespace IndustrialPark
         }
 
         private static bool converterInitialized = false;
-        private static string vgmstreamFolder => Path.Combine(Path.Combine(Application.StartupPath, "Resources"), "vgmstream");
-        private static string vgmstreamPath => Path.Combine(vgmstreamFolder, "test.exe");
+        private static string vgmstreamFolder => Path.Combine(Application.StartupPath, "Resources", "vgmstream");
+        private static string vgmstreamPath => Path.Combine(vgmstreamFolder, "vgmstream-cli.exe");
         private static string inPath => vgmstreamFolder + "/test_sound_in";
         private static string outPath => vgmstreamFolder + "/test_sound_out.wav";
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -265,7 +264,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            Process.Start(AboutBox.WikiLink + asset.assetType.ToString());
+            ArchiveEditorFunctions.OpenWikiPage(asset);
         }
     }
 }

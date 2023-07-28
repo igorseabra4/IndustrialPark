@@ -52,10 +52,7 @@ namespace IndustrialPark
             Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
             buttonHelp.Click += (object sender, EventArgs e) =>
             {
-                var code = asset.assetType.GetCode();
-                if (asset.assetType.IsDyna())
-                    code += $"/{asset.TypeString}";
-                System.Diagnostics.Process.Start(AboutBox.WikiLink + code);
+                ArchiveEditorFunctions.OpenWikiPage(asset);
             };
             tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
 

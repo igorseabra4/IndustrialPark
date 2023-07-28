@@ -187,18 +187,22 @@ namespace IndustrialPark
         {
             DownloadAndUnzip(
                 "https://github.com/igorseabra4/IndustrialPark-EditorFiles/archive/master.zip",
-                Application.StartupPath + "/Resources/IndustrialPark-EditorFiles.zip",
-                Application.StartupPath + "/Resources/IndustrialPark-EditorFiles/",
+                Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles.zip"),
+                Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles"),
                 "IndustrialPark-EditorFiles");
         }
 
         public static void DownloadVgmstream()
         {
             DownloadAndUnzip(
-                "https://github.com/vgmstream/vgmstream/releases/download/r1810/vgmstream-win.zip",
-                Application.StartupPath + "/Resources/vgmstream-win.zip",
-                Application.StartupPath + "/Resources/vgmstream/",
+                "https://github.com/vgmstream/vgmstream/releases/download/r1866/vgmstream-win.zip",
+                Path.Combine(Application.StartupPath, "Resources", "vgmstream-win.zip"),
+                Path.Combine(Application.StartupPath, "Resources", "vgmstream"),
                 "vgmstream");
+
+            ZipFile.ExtractToDirectory(
+                Path.Combine(Application.StartupPath, "Resources", "vgmstream_ip_fix.zip"),
+                Path.Combine(Application.StartupPath, "Resources", "vgmstream"));
         }
 
         private static void DownloadAndUnzip(string zipUrl, string destZipPath, string destFolder, string downloadName)
@@ -215,7 +219,7 @@ namespace IndustrialPark
                 ZipFile.ExtractToDirectory(destZipPath, destFolder);
 
                 File.Delete(destZipPath);
-                
+
                 MessageBox.Show("Downloaded " + downloadName + " from " + zipUrl + " to " + destFolder);
             }
             catch (Exception ex)

@@ -1,20 +1,17 @@
-﻿using IndustrialPark.Models;
+﻿using Assimp;
+using HipHopFile;
+using IndustrialPark.Models;
 using RenderWareFile;
+using RenderWareFile.Sections;
 using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
 using static IndustrialPark.Models.BSP_IO;
 using static IndustrialPark.Models.BSP_IO_Shared;
-using HipHopFile;
-using Assimp;
-using System.Linq;
-using RenderWareFile.Sections;
-using System.Collections.Generic;
-using static Assimp.Metadata;
-using System.Reflection;
-using System.Net.NetworkInformation;
 
 namespace IndustrialPark
 {
@@ -122,10 +119,7 @@ namespace IndustrialPark
 
         private void buttonHelp_Click(object sender, EventArgs e)
         {
-            var code = asset.assetType.GetCode();
-            if (asset.assetType.IsDyna())
-                code += $"/{asset.TypeString}";
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + code);
+            ArchiveEditorFunctions.OpenWikiPage(asset);
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)
@@ -273,7 +267,7 @@ namespace IndustrialPark
             }
             SetupArrowVisibility();
         }
-        
+
         private void buttonCreatePipeInfo_Click(object sender, EventArgs e)
         {
             var pipt = archive.GetPIPT(true);

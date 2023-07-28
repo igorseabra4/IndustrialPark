@@ -113,6 +113,14 @@ namespace IndustrialPark
                 ie.TopMost = value;
         }
 
+        public static void OpenWikiPage(Asset asset)
+        {
+            var code = asset.assetType.GetCode();
+            if (asset.assetType.IsDyna())
+                code += $"/{asset.TypeString}";
+            System.Diagnostics.Process.Start(AboutBox.WikiLink + code);
+        }
+
         public AssetPIPT GetPIPT(bool create = false) => (AssetPIPT)GetAssetOfType(AssetType.PipeInfoTable, AssetTemplate.Pipe_Info_Table, create);
 
         public AssetCOLL GetCOLL(bool create = false) => (AssetCOLL)GetAssetOfType(AssetType.CollisionTable, AssetTemplate.Collision_Table, create);
