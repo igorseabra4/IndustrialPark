@@ -150,7 +150,11 @@
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\GcWavInfo.cs" />
+    <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />
+    <Compile Include="Assets\Shared\FMOD\FSB3_Header.cs" />
+    <Compile Include="Assets\Shared\FMOD\FSB3_SampleHeaderBasic.cs" />
+    <Compile Include="Assets\Shared\FMOD\GcnV2SoundWrapper.cs" />
+    <Compile Include="Assets\Shared\FMOD\GcWavInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
     <Compile Include="Assets\Shared\Editors\AtblAddEditor.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Transformation.cs" />
@@ -314,7 +318,7 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSDFX.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDUPC.cs" />
     <Compile Include="Assets\Shared\AssetGeneric.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\FSB3_File.cs" />
+    <Compile Include="Assets\Shared\FMOD\FSB3_File.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHud.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudMeter.cs" />
     <Compile Include="Assets\Shared\Enums\FontEnum.cs" />
@@ -355,6 +359,7 @@
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
+    <Compile Include="Assets\Shared\FMOD\FSB3_SampleHeader.cs" />
     <Compile Include="Assets\Shared\GenericAssetDataContainer.cs" />
     <Compile Include="Assets\Shared\AssetWithMotion.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\PareSpecific.cs" />
@@ -858,7 +863,7 @@
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
       <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 e x64%29</ProductName>
+      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
