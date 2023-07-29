@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 
 namespace IndustrialPark
 {
@@ -15,7 +16,7 @@ namespace IndustrialPark
             SoundEntry = soundEntry.Clone();
         }
 
-        public GcnV2SoundWrapper(byte[] data)
+        public GcnV2SoundWrapper(byte[] data, AssetType assetType)
         {
             using (var reader = new EndianBinaryReader(data, Endianness.Little))
             {
@@ -39,13 +40,21 @@ namespace IndustrialPark
 
                 SoundEntry.Data = reader.ReadBytes(SoundEntry.BasicSampleHeader.LengthCompressedBytes);
 
-                var assetID = reader.ReadUInt32();
-                var uFlags = reader.ReadByte();
-                var uAudioSampleIndex = reader.ReadByte();
-                var uFSBIndex = reader.ReadByte();
-                var uSoundInfoIndex = reader.ReadByte();
+                try
+                {
+                    var assetID = reader.ReadUInt32();
+                    var uFlags = reader.ReadByte();
+                    var uAudioSampleIndex = reader.ReadByte();
+                    var uFSBIndex = reader.ReadByte();
+                    var uSoundInfoIndex = reader.ReadByte();
 
-                SoundEntry.SetEntryData(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+                    SoundEntry.SetEntryData(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+                }
+                catch
+                {
+                    if (assetType == AssetType.SoundStream)
+                        SoundEntry.SetEntryData(0, 2, 0, 0, 0);
+                }
             }
         }
 
@@ -62,18 +71,26 @@ namespace IndustrialPark
                 SampleHeader.LengthCompressedBytes = SoundEntry.BasicSampleHeader.LengthCompressedBytes;
 
                 Header.NumSamples = 1;
-                Header.TotalHeadersSize = 72 + Header.NumSamples * 0x36;
                 Header.TotalDataSize = SoundEntry.BasicSampleHeader.LengthCompressedBytes;
 
                 Header.Serialize(writer);
+
+                int totalHeadersSize = (int)writer.BaseStream.Position;
+
                 SampleHeader.Serialize(writer);
 
                 for (int i = 0; i < SoundEntry.GcAdpcmInfos.Length; i++)
                     SoundEntry.GcAdpcmInfos[i].Serialize(writer);
 
+                totalHeadersSize = (int)writer.BaseStream.Position - totalHeadersSize;
+                Header.TotalHeadersSize = totalHeadersSize;
+
                 writer.Write(SoundEntry.Data);
 
                 SoundEntry.Serialize(writer);
+
+                writer.BaseStream.Position = 4;
+                Header.Serialize(writer);
 
                 return writer.ToArray();
             }

@@ -11,7 +11,7 @@ namespace IndustrialPark
             if (!ContainsAssetWithType(AssetType.SoundInfo))
             {
                 var prevIndex = SelectedLayerIndex;
-                
+
                 if (!NoLayers)
                     SelectedLayerIndex = IndexOfLayerOfType(LayerType.SNDTOC);
 
@@ -31,7 +31,7 @@ namespace IndustrialPark
                 }
                 else if (a is AssetSNDI_GCN_V2 SNDI_G2)
                 {
-                    SNDI_G2.AddEntry(soundData, assetID);
+                    SNDI_G2.AddEntry(soundData, assetID, assetType);
                     finalData = new byte[0];
                     return;
                 }

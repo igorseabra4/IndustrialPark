@@ -64,12 +64,14 @@ namespace IndustrialPark
                 SampleHeader.LengthCompressedBytes = SoundEntries.Length > 0 ? SoundEntries[0].BasicSampleHeader.LengthCompressedBytes : 0;
 
                 Header.NumSamples = SoundEntries.Length;
-                Header.TotalHeadersSize = 72 + Header.NumSamples * 0x36;
                 Header.TotalDataSize = 0;
                 foreach (var se in SoundEntries)
                     Header.TotalDataSize += se.BasicSampleHeader.LengthCompressedBytes;
 
                 Header.Serialize(fsbWriter);
+
+                int totalHeadersSize = (int)fsbWriter.BaseStream.Position;
+
                 SampleHeader.Serialize(fsbWriter);
 
                 for (int i = 0; i < SoundEntries.Length; i++)
@@ -81,8 +83,14 @@ namespace IndustrialPark
                         SoundEntries[i].GcAdpcmInfos[j].Serialize(fsbWriter);
                 }
 
+                totalHeadersSize = (int)fsbWriter.BaseStream.Position - totalHeadersSize;
+                Header.TotalHeadersSize = totalHeadersSize;
+
                 for (int i = 0; i < SoundEntries.Length; i++)
                     fsbWriter.Write(SoundEntries[i].Data);
+
+                fsbWriter.BaseStream.Position = 4;
+                Header.Serialize(fsbWriter);
 
                 writer.Write(fsbWriter.ToArray());
             }

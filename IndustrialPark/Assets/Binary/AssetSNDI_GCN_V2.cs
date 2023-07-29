@@ -166,11 +166,11 @@ namespace IndustrialPark
             throw new Exception($"Error: SNDI asset does not contain sound header for asset [{assetID:X8}]");
         }
 
-        public void AddEntry(byte[] soundData, uint assetID)
+        public void AddEntry(byte[] soundData, uint assetID, AssetType assetType)
         {
             RemoveEntry(assetID);
 
-            var temp = new GcnV2SoundWrapper(soundData);
+            var temp = new GcnV2SoundWrapper(soundData, assetType);
             temp.SoundEntry.Sound = assetID;
 
             List<FSB3_File> newEntries = Entries.ToList();
