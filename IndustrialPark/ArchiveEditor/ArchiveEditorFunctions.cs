@@ -160,15 +160,15 @@ namespace IndustrialPark
             Game game;
             Platform platformFromFile;
 
-            //try
-            //{
-            (hipFile, game, platformFromFile) = HipFile.FromPath(fileName);
-            //}
-            //catch (Exception e)
-            //{
-            //    progressBar.Close();
-            //    throw e;
-            //}
+            try
+            {
+                (hipFile, game, platformFromFile) = HipFile.FromPath(fileName);
+            }
+            catch (Exception e)
+            {
+                progressBar.Close();
+                throw e;
+            }
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
 
