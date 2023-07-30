@@ -160,17 +160,19 @@ namespace IndustrialPark
             Game game;
             Platform platformFromFile;
 
-            try
-            {
-                (hipFile, game, platformFromFile) = HipFile.FromPath(fileName);
-            }
-            catch (Exception e)
-            {
-                progressBar.Close();
-                throw e;
-            }
+            //try
+            //{
+            (hipFile, game, platformFromFile) = HipFile.FromPath(fileName);
+            //}
+            //catch (Exception e)
+            //{
+            //    progressBar.Close();
+            //    throw e;
+            //}
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
+
+            scoobyPlatform = hipFile.HIPB.ScoobyPlatform;
 
             this.game = game;
             platform = (scoobyPlatform != Platform.Unknown) ? scoobyPlatform : platformFromFile;
@@ -189,8 +191,8 @@ namespace IndustrialPark
             PACK = hipFile.PACK;
 
             Layers = new List<Layer>();
-            foreach (Section_LHDR LHDR in hipFile.DICT.LTOC.LHDRList)
-                Layers.Add(LHDRToLayer(LHDR, game));
+            for (int i = 0; i < hipFile.DICT.LTOC.LHDRList.Count; i++)
+                Layers.Add(LHDRToLayer(hipFile.DICT.LTOC.LHDRList[i], game, hipFile.HIPB.GetLayerName(i)));
 
             foreach (var l in Layers)
                 foreach (var u in l.AssetIDs)
@@ -234,9 +236,9 @@ namespace IndustrialPark
 #endif
         }
 
-        private static Layer LHDRToLayer(Section_LHDR LHDR, Game game)
+        private static Layer LHDRToLayer(Section_LHDR LHDR, Game game, string layerName)
         {
-            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType, game), LHDR.assetIDlist.Count);
+            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType, game), LHDR.assetIDlist.Count, layerName);
             foreach (var u in LHDR.assetIDlist)
                 layer.AssetIDs.Add(u);
             return layer;
@@ -313,18 +315,25 @@ namespace IndustrialPark
                 DICT.ATOC.AHDRList.Add(asset.BuildAHDR(platform.Endianness()));
             }
 
-            foreach (var layer in NoLayers ? BuildLayers() : Layers)
+            var HIPB = new Section_HIPB();
+            if (NoLayers)
+                HIPB.HasNoLayers = 1;
+            HIPB.ScoobyPlatform = platform;
+
+            var layers = NoLayers ? BuildLayers() : Layers;
+            for (int i = 0; i < layers.Count; i++)
+            {
                 DICT.LTOC.LHDRList.Add(new Section_LHDR()
                 {
-                    layerType = LayerTypeGenericToSpecific(layer.Type, game),
-                    assetIDlist = layer.AssetIDs,
+                    layerType = LayerTypeGenericToSpecific(layers[i].Type, game),
+                    assetIDlist = layers[i].AssetIDs,
                     LDBG = new Section_LDBG(-1)
                 });
+                if (!string.IsNullOrWhiteSpace(layers[i].LayerName))
+                    HIPB.LayerNames[i] = layers[i].LayerName;
+            }
 
-            return new HipFile(new Section_HIPA(), PACK, DICT, new Section_STRM())
-            {
-                HIPB = NoLayers ? new Section_HIPB() { HasNoLayers = 1 } : null
-            };
+            return new HipFile(new Section_HIPA(), PACK, DICT, new Section_STRM(), HIPB);
         }
 
         private static int LayerTypeGenericToSpecific(LayerType layerType, Game game)
@@ -433,7 +442,7 @@ namespace IndustrialPark
         public string LayerToString() => LayerToString(SelectedLayerIndex);
 
         public string LayerToString(int index) => "Layer " + index.ToString("D2") + ": "
-            + Layers[index].Type.ToString()
+            + (string.IsNullOrWhiteSpace(Layers[index].LayerName) ? Layers[index].Type.ToString() : Layers[index].LayerName)
             + " [" + Layers[index].AssetIDs.Count() + "]";
 
         public List<uint> GetAssetIDsOnLayer() => NoLayers ?
@@ -505,6 +514,17 @@ namespace IndustrialPark
                     return i;
 
             throw new Exception($"Asset ID {assetID:X8} is not present in any layer.");
+        }
+
+        public void RenameLayer(int selectedIndex)
+        {
+            if (NoLayers)
+                return;
+            var layer = Layers[selectedIndex];
+            var rn = new RenameLayer(layer.LayerName);
+            rn.ShowDialog();
+            layer.LayerName = string.IsNullOrWhiteSpace(rn.LayerName) ? null : rn.LayerName;
+            UnsavedChanges = true;
         }
 
         public void Dispose(bool showProgress = true)

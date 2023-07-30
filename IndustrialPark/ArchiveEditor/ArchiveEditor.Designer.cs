@@ -114,6 +114,8 @@
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxLayers.SuspendLayout();
@@ -209,7 +211,9 @@
             this.layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.hideLayersToolStripMenuItem,
             this.organizeLayersToolStripMenuItem,
-            this.organizeLegacyToolStripMenuItem});
+            this.organizeLegacyToolStripMenuItem,
+            this.toolStripSeparator5,
+            this.renameToolStripMenuItem});
             this.layersToolStripMenuItem.Name = "layersToolStripMenuItem";
             resources.ApplyResources(this.layersToolStripMenuItem, "layersToolStripMenuItem");
             // 
@@ -717,6 +721,17 @@
             resources.ApplyResources(this.toolStripMenuItem_MultiEdit, "toolStripMenuItem_MultiEdit");
             this.toolStripMenuItem_MultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
+            // 
+            // renameToolStripMenuItem
+            // 
+            resources.ApplyResources(this.renameToolStripMenuItem, "renameToolStripMenuItem");
+            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
+            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
+            // 
             // ArchiveEditor
             // 
             resources.ApplyResources(this, "$this");
@@ -833,5 +848,7 @@
         private System.Windows.Forms.ToolStripMenuItem hideLayersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem organizeLayersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem organizeLegacyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
     }
 }

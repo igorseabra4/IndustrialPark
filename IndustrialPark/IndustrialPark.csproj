@@ -135,6 +135,12 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\Dialogs\RenameLayer.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\RenameLayer.Designer.cs">
+      <DependentUpon>RenameLayer.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoGcn1Wrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoXboxWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoPs2Wrapper.cs" />
@@ -570,6 +576,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyVertexColors.resx">
       <DependentUpon>ApplyVertexColors.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\RenameLayer.resx">
+      <DependentUpon>RenameLayer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.en-GB.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>

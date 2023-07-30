@@ -3,11 +3,11 @@ using Microsoft.WindowsAPICodePack.Dialogs;
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.Diagnostics;
 
 namespace IndustrialPark
 {
@@ -74,8 +74,10 @@ namespace IndustrialPark
         {
             if (!standalone)
             {
-                if (e.CloseReason == CloseReason.WindowsShutDown) return;
-                if (e.CloseReason == CloseReason.FormOwnerClosing) return;
+                if (e.CloseReason == CloseReason.WindowsShutDown)
+                    return;
+                if (e.CloseReason == CloseReason.FormOwnerClosing)
+                    return;
 
                 e.Cancel = true;
                 Hide();
@@ -88,8 +90,10 @@ namespace IndustrialPark
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Cancel) return;
-                if (result == DialogResult.Yes) archive.Save();
+                if (result == DialogResult.Cancel)
+                    return;
+                if (result == DialogResult.Yes)
+                    archive.Save();
             }
 
             if (archive.New())
@@ -107,8 +111,10 @@ namespace IndustrialPark
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Cancel) return;
-                if (result == DialogResult.Yes) archive.Save();
+                if (result == DialogResult.Cancel)
+                    return;
+                if (result == DialogResult.Yes)
+                    archive.Save();
             }
 
             OpenFileDialog openFile = new OpenFileDialog()
@@ -171,7 +177,7 @@ namespace IndustrialPark
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
             archive.UnsavedChanges = false;
-            
+
             EnableToolStripMenuItems();
 
             SetNoLayers();
@@ -244,7 +250,8 @@ namespace IndustrialPark
             if (filesizeBytes < 1000) // 1 B - 999 B
             {
                 toolStripStatusLabelFileSize.Text = filesizeBytes + " B";
-            } else if (filesizeBytes < 1_000_000) // 1 kB - 999 kB
+            }
+            else if (filesizeBytes < 1_000_000) // 1 kB - 999 kB
             {
                 toolStripStatusLabelFileSize.Text = Math.Round(filesizeBytes / 1000.0, 2) + " kB";
             }
@@ -266,7 +273,7 @@ namespace IndustrialPark
             _updateFilesizeStatusBarItem();
         }
 
-        
+
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
@@ -295,8 +302,10 @@ namespace IndustrialPark
             {
                 DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Cancel) return;
-                if (result == DialogResult.Yes) archive.Save();
+                if (result == DialogResult.Cancel)
+                    return;
+                if (result == DialogResult.Yes)
+                    archive.Save();
             }
 
             CloseArchiveEditor();
@@ -386,6 +395,7 @@ namespace IndustrialPark
                 importModelsToolStripMenuItem.Enabled = false;
                 importTexturesToolStripMenuItem.Enabled = false;
                 addTemplateToolStripMenuItem.Enabled = false;
+                renameToolStripMenuItem.Enabled = false;
             }
             else
             {
@@ -395,7 +405,10 @@ namespace IndustrialPark
                         comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType();
                     else
                         comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType();
+                    renameToolStripMenuItem.Enabled = true;
                 }
+                else
+                    renameToolStripMenuItem.Enabled = false;
 
                 PopulateAssetListAndComboBox();
 
@@ -535,7 +548,7 @@ namespace IndustrialPark
             {
                 if (assetIDs == null)
                     assetIDs = archive.GetAssetIDsOnLayer();
-                
+
                 List<ListViewItem> items = new List<ListViewItem>(assetIDs.Count());
 
                 for (int i = 0; i < assetIDs.Count(); i++)
@@ -654,7 +667,7 @@ namespace IndustrialPark
             reverseSorting = (e.Column == prevColumn) && !reverseSorting;
 
             prevColumn = e.Column;
-            
+
             listViewAssets.ListViewItemSorter = new AssetListViewSorter(e.Column, reverseSorting);
             listViewAssets.Sort();
 
@@ -736,7 +749,8 @@ namespace IndustrialPark
 
         private void buttonDuplicate_Click(object sender, EventArgs e)
         {
-            if (listViewAssets.SelectedItems.Count == 0) return;
+            if (listViewAssets.SelectedItems.Count == 0)
+                return;
 
             archive.DuplicateSelectedAssets(out List<uint> finalIndices);
 
@@ -747,7 +761,8 @@ namespace IndustrialPark
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
-            if (listViewAssets.SelectedItems.Count == 0) return;
+            if (listViewAssets.SelectedItems.Count == 0)
+                return;
 
             archive.CopyAssetsToClipboard();
         }
@@ -766,7 +781,8 @@ namespace IndustrialPark
 
         private void ButtonRemoveAsset_Click(object sender, EventArgs e)
         {
-            if (listViewAssets.SelectedItems.Count == 0) return;
+            if (listViewAssets.SelectedItems.Count == 0)
+                return;
 
             programIsChangingStuff = true;
 
@@ -795,10 +811,12 @@ namespace IndustrialPark
                     listViewAssets.Items[i].Selected = false;
 
                 if (listViewAssets.Items.Count > 0)
-                    try { listViewAssets.Items[prevIndex].Selected = true; }
+                    try
+                    { listViewAssets.Items[prevIndex].Selected = true; }
                     catch
                     {
-                        try { listViewAssets.Items[prevIndex - 1].Selected = true; }
+                        try
+                        { listViewAssets.Items[prevIndex - 1].Selected = true; }
                         catch { }
                     }
             }
@@ -810,7 +828,8 @@ namespace IndustrialPark
 
         private void buttonView_Click(object sender, EventArgs e)
         {
-            if (listViewAssets.SelectedItems.Count == 0 || standalone) return;
+            if (listViewAssets.SelectedItems.Count == 0 || standalone)
+                return;
 
             if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
                 Program.Renderer.Camera.SetPositionCamera(cam);
@@ -1432,7 +1451,7 @@ namespace IndustrialPark
             if (!PressedKeys.Contains(e.KeyCode))
                 PressedKeys.Add(e.KeyCode);
 
-            if (PressedKeys.Contains(Keys.ControlKey) 
+            if (PressedKeys.Contains(Keys.ControlKey)
                 && PressedKeys.Contains(Keys.S))
             {
                 Save();
@@ -1633,7 +1652,7 @@ namespace IndustrialPark
                         {
                             output.WriteLine($"{asset.assetName}: {links.Length} links");
 
-                            foreach (var link in links) 
+                            foreach (var link in links)
                             {
                                 string eventSendIDName = "";
                                 string eventReceiveIDName = "";
@@ -1662,7 +1681,7 @@ namespace IndustrialPark
                                             break;
                                     }
                                 }
-                                
+
                                 // If event name not supplied, event ID used instead.
                                 eventSendIDName = eventSendIDName == "" ? link.EventSendID.ToString() : eventSendIDName;
                                 eventReceiveIDName = eventReceiveIDName == "" ? link.EventReceiveID.ToString() : eventReceiveIDName;
@@ -1711,7 +1730,7 @@ namespace IndustrialPark
 
                 output.WriteLine("\n#### END OF REPORT ####");
                 stopwatch.Stop();
-                output.WriteLine($"Report generated in {Math.Round(stopwatch.Elapsed.TotalMilliseconds,2)} ms.");
+                output.WriteLine($"Report generated in {Math.Round(stopwatch.Elapsed.TotalMilliseconds, 2)} ms.");
             }
 
             if (generationWasSuccessful)
@@ -1809,6 +1828,16 @@ namespace IndustrialPark
             }
 
             PopulateAssetListAndComboBox();
+        }
+
+        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (comboBoxLayers.SelectedIndex != -1)
+            {
+                archive.RenameLayer(comboBoxLayers.SelectedIndex);
+                PopulateLayerComboBox();
+                PopulateAssetListAndComboBox();
+            }
         }
     }
 }
