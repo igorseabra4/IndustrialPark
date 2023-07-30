@@ -349,11 +349,15 @@ namespace IndustrialPark
             {
                 this.PACK = PACK;
 
+                if (platform != newPlatform || game != newGame)
+                {
+                    var notConverted = GetUnconvertableAssets();
+                    if (!string.IsNullOrEmpty(notConverted))
+                        new ScrollableMessageBox($"[{Path.GetFileName(currentlyOpenFilePath)}] Unconvertable assets", notConverted).Show();
+                }
+
                 platform = newPlatform;
                 game = newGame;
-
-                if (platform == Platform.Unknown)
-                    new ChoosePlatformDialog().ShowDialog();
 
                 for (int i = 0; i < internalEditors.Count; i++)
                 {
@@ -367,6 +371,28 @@ namespace IndustrialPark
             }
 
             return false;
+        }
+
+        private string GetUnconvertableAssets()
+        {
+            var result = new List<string>();
+            foreach (var asset in assetDictionary.Values)
+            {
+                if (asset.assetType == AssetType.SoundInfo ||
+                    asset is AssetSound ||
+                    asset is AssetGeneric ||
+                    asset is AssetGenericBase ||
+                    asset is DynaGeneric ||
+                    asset is AssetJSP ||
+                    asset is AssetJSP_INFO ||
+                    asset is AssetMODL ||
+                    asset is AssetRWTX ||
+                    asset is AssetCRDT)
+                    result.Add($"[{AssetTypeContainer.AssetTypeToString(asset.assetType)}] {asset.assetName}");
+            }
+            if (result.Count > 0)
+                return "The following asset types could not be converted. You might need to re-create them or replace them with the appropriate version on the game and/or platform.\n\n" + string.Join("\n", result.OrderBy(x => x));
+            return null;
         }
 
         private bool _noLayers = false;

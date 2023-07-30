@@ -225,7 +225,7 @@ namespace IndustrialPark
                 bytes.AddRange(BitConverter.GetBytes(entry.cbSize));
                 bytes.AddRange(BitConverter.GetBytes(entry.NibblesPerBlock));
             }
-            else if (entry.wFormatTag == 0x0069)
+            else if (entry.wFormatTag == 0x0069 || entry.wFormatTag == 0x006A)
             {
                 bytes.AddRange(BitConverter.GetBytes((short)0x0011));
                 bytes.AddRange(BitConverter.GetBytes(entry.nChannels));
