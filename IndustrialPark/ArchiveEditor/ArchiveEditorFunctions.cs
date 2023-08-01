@@ -784,6 +784,8 @@ namespace IndustrialPark
                     return new AssetCOND(AHDR, game, endianness);
                 case AssetType.Credits:
                     return new AssetCRDT(AHDR, game, endianness);
+                case AssetType.Cutscene:
+                    return new AssetCSN(AHDR, game, endianness);
                 case AssetType.CutsceneManager:
                     return new AssetCSNM(AHDR, game, endianness);
                 case AssetType.Destructible:
@@ -803,7 +805,7 @@ namespace IndustrialPark
                 case AssetType.Environment:
                     return new AssetENV(AHDR, game, endianness);
                 case AssetType.Flythrough:
-                    return new AssetFLY(AHDR, game, endianness);
+                    return new AssetFLY(AHDR, game);
                 case AssetType.Fog:
                     return new AssetFOG(AHDR, game, endianness);
                 case AssetType.Group:
@@ -927,7 +929,6 @@ namespace IndustrialPark
 
                 case AssetType.Null:
 
-                case AssetType.Cutscene:
                 case AssetType.CutsceneTableOfContents:
 
                     return new AssetGeneric(AHDR, game, endianness);
@@ -1194,10 +1195,10 @@ namespace IndustrialPark
             return null;
         }
 
-        public Asset AddAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool setTextureDisplay)
+        public Asset AddAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool setTextureDisplay, int forceLayerIndex = -1)
         {
             if (!NoLayers)
-                Layers[SelectedLayerIndex].AssetIDs.Add(AHDR.assetID);
+                Layers[forceLayerIndex != -1 ? forceLayerIndex : SelectedLayerIndex].AssetIDs.Add(AHDR.assetID);
             AddAssetToDictionary(AHDR, game, endianness, false, true);
 
             var asset = GetFromAssetID(AHDR.assetID);

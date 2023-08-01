@@ -263,7 +263,7 @@ namespace IndustrialPark
 
         public void Save()
         {
-            Program.StopSound();
+            SoundUtility.StopSound();
 
             if (archive.currentlyOpenFilePath == null)
                 saveAsToolStripMenuItem_Click(null, null);
@@ -844,6 +844,7 @@ namespace IndustrialPark
                 uint oldAssetID = CurrentlySelectedAssetIDs()[0];
 
                 var asset = archive.GetFromAssetID(oldAssetID);
+                var oldLayer = archive.GetLayerFromAssetID(oldAssetID);
 
                 Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR(archive.platform.Endianness()));
 
@@ -856,7 +857,7 @@ namespace IndustrialPark
                     while (archive.ContainsAsset(AHDR.assetID))
                         MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
 
-                    archive.AddAsset(AHDR, asset.game, archive.platform.Endianness(), true);
+                    archive.AddAsset(AHDR, asset.game, archive.platform.Endianness(), true, oldLayer);
 
                     if (ArchiveEditorFunctions.updateReferencesOnCopy)
                     {

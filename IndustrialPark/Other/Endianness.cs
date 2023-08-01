@@ -107,35 +107,40 @@ namespace IndustrialPark
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse4(BitConverter.GetBytes(f));
+            else
+                WriteReverse4(BitConverter.GetBytes(f));
         }
 
         public override void Write(int f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse4(BitConverter.GetBytes(f));
+            else
+                WriteReverse4(BitConverter.GetBytes(f));
         }
 
         public override void Write(short f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse2(BitConverter.GetBytes(f));
+            else
+                WriteReverse2(BitConverter.GetBytes(f));
         }
 
         public override void Write(uint f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse4(BitConverter.GetBytes(f));
+            else
+                WriteReverse4(BitConverter.GetBytes(f));
         }
 
         public override void Write(ushort f)
         {
             if (endianness == Endianness.Little)
                 base.Write(f);
-            else WriteReverse2(BitConverter.GetBytes(f));
+            else
+                WriteReverse2(BitConverter.GetBytes(f));
         }
 
         private void WriteReverse4(byte[] bytes)
@@ -172,6 +177,12 @@ namespace IndustrialPark
                 throw new ArgumentException("Magic word must have 4 characters");
             var chars = magic.ToCharArray();
             Write(endianness == Endianness.Little ? chars : chars.Reverse().ToArray());
+        }
+
+        public void WritePaddedString(string text, int count)
+        {
+            for (int i = 0; i < count; i++)
+                Write((byte)(i < text.Length ? text[i] : 0));
         }
     }
 }

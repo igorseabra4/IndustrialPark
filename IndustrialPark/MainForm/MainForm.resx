@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="&gt;&gt;lowerQualityGraphicsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="openToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Open</value>
   </data>
@@ -130,8 +127,8 @@
   <data name="addTextureFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 34</value>
   </data>
-  <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>290, 34</value>
+  <data name="updateReferencesOnCopyPasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>452, 34</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator9.Name" xml:space="preserve">
     <value>toolStripSeparator9</value>
@@ -144,6 +141,12 @@
   </data>
   <data name="dynaNameSearcherToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>279, 34</value>
+  </data>
+  <data name="wireframeFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>364, 34</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesNowToolStripMenuItem.Name" xml:space="preserve">
+    <value>checkForUpdatesNowToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;selectionColorToolStripMenuItem1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -166,18 +169,11 @@
   <data name="disableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>197, 34</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="viewConfigToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F1</value>
-  </data>
   <data name="&gt;&gt;selectionColorToolStripMenuItem1.Name" xml:space="preserve">
     <value>selectionColorToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;checkForUpdatesOnEditorFilesToolStripMenuItem.Name" xml:space="preserve">
     <value>checkForUpdatesOnEditorFilesToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;userTemplateToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripStatusLabelTemplate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -191,11 +187,12 @@
   <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="saveAllOpenHIPsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Shift+S</value>
+  </data>
   <data name="checkForUpdatesOnEditorFilesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>407, 34</value>
-  </data>
-  <data name="&gt;&gt;saveAsToolStripMenuItem.Name" xml:space="preserve">
-    <value>saveAsToolStripMenuItem</value>
   </data>
   <data name="renderPanel.Size" type="System.Drawing.Size, System.Drawing">
     <value>1896, 983</value>
@@ -230,9 +227,6 @@
   <data name="&gt;&gt;toolStripStatusLabel2.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;templatesPersistentShiniesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;runGameF5ToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -260,9 +254,6 @@
   <data name="dYNASearchToolStripMenuItem.Text" xml:space="preserve">
     <value>DYNA Search</value>
   </data>
-  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>86, 29</value>
-  </data>
   <data name="&gt;&gt;openFolderToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -284,9 +275,6 @@
   <data name="stopSoundToolStripMenuItem.Text" xml:space="preserve">
     <value>Stop Sound</value>
   </data>
-  <data name="&gt;&gt;colorsToolStripMenuItem.Name" xml:space="preserve">
-    <value>colorsToolStripMenuItem</value>
-  </data>
   <data name="enableAllToolStripMenuItem.Text" xml:space="preserve">
     <value>Enable All</value>
   </data>
@@ -295,6 +283,9 @@
   </data>
   <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 34</value>
+  </data>
+  <data name="&gt;&gt;saveAllOpenHIPsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;openToolStripMenuItem.Name" xml:space="preserve">
     <value>openToolStripMenuItem</value>
@@ -332,9 +323,6 @@
   <data name="discordRichPresenceToolStripMenuItem.Text" xml:space="preserve">
     <value>Discord Rich Presence</value>
   </data>
-  <data name="&gt;&gt;renderPanel.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <data name="&gt;&gt;toolStripComboBoxUserTemplate.Name" xml:space="preserve">
     <value>toolStripComboBoxUserTemplate</value>
   </data>
@@ -353,8 +341,11 @@
   <data name="&gt;&gt;rotationToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;useLegacyAssetTypeFormatToolStripMenuItem.Name" xml:space="preserve">
-    <value>useLegacyAssetTypeFormatToolStripMenuItem</value>
+  <data name="viewConfigToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F1</value>
+  </data>
+  <data name="&gt;&gt;newToolStripMenuItem.Name" xml:space="preserve">
+    <value>newToolStripMenuItem</value>
   </data>
   <data name="useLegacyAssetTypeFormatToolStripMenuItem.Text" xml:space="preserve">
     <value>Use Legacy Asset Type Format</value>
@@ -374,11 +365,8 @@
   <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
     <value>361, 6</value>
   </data>
-  <data name="rotationToolStripMenuItem.Text" xml:space="preserve">
-    <value>Rotation</value>
-  </data>
-  <data name="hideInvisibleMeshesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Hide Invisible Meshes</value>
+  <data name="usePIPTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>364, 34</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>1896, 1048</value>
@@ -413,9 +401,6 @@
   <data name="&gt;&gt;widgetColorToolStripMenuItem.Name" xml:space="preserve">
     <value>widgetColorToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;newToolStripMenuItem1.Name" xml:space="preserve">
-    <value>newToolStripMenuItem1</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparator7.Name" xml:space="preserve">
     <value>toolStripSeparator7</value>
   </data>
@@ -432,9 +417,6 @@
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;noCullingCToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;displayToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="templatesPersistentShiniesToolStripMenuItem.Text" xml:space="preserve">
@@ -455,17 +437,21 @@
   <data name="&gt;&gt;wireframeFToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="closeAllEditorsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="positionLocalToolStripMenuItem.Text" xml:space="preserve">
     <value>Position (Local)</value>
-  </data>
-  <data name="&gt;&gt;eventSearchToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;closeAllEditorsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;enableAllToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="archiveEditorToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Archive Editor</value>
   </data>
   <data name="viewConfigToolStripMenuItem.Text" xml:space="preserve">
     <value>View Config</value>
@@ -485,8 +471,8 @@
   <data name="&gt;&gt;toolStripSeparatorAssetTypes.Name" xml:space="preserve">
     <value>toolStripSeparatorAssetTypes</value>
   </data>
-  <data name="resetColorsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Reset Colors</value>
+  <data name="&gt;&gt;colorsToolStripMenuItem.Name" xml:space="preserve">
+    <value>colorsToolStripMenuItem</value>
   </data>
   <data name="runGameF5ToolStripMenuItem.Text" xml:space="preserve">
     <value>Run Game</value>
@@ -497,11 +483,14 @@
   <data name="&gt;&gt;toolStripSeparatorAssetTypes.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 34</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;useLegacyAssetTypeFormatToolStripMenuItem.Name" xml:space="preserve">
+    <value>useLegacyAssetTypeFormatToolStripMenuItem</value>
   </data>
   <data name="toolStripStatusLabel3.Size" type="System.Drawing.Size, System.Drawing">
     <value>16, 25</value>
@@ -536,7 +525,6 @@
   <data name="displayToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Display</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
   </data>
@@ -545,9 +533,6 @@
   </data>
   <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>9, 20</value>
   </data>
   <data name="autoSaveOnClosingToolStripMenuItem.Text" xml:space="preserve">
     <value>Auto-Save On Closing</value>
@@ -578,6 +563,9 @@
   </data>
   <data name="&gt;&gt;usePIPTForRenderingToolStripMenuItem.Name" xml:space="preserve">
     <value>usePIPTForRenderingToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;viewConfigToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;vSyncToolStripMenuItem.Name" xml:space="preserve">
     <value>vSyncToolStripMenuItem</value>
@@ -618,8 +606,8 @@
   <data name="replaceAssetsOnPasteToolStripMenuItem.Text" xml:space="preserve">
     <value>Replace Assets on Paste</value>
   </data>
-  <data name="&gt;&gt;hideInvisibleMeshesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;uIModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>uIModeToolStripMenuItem</value>
   </data>
   <data name="researchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>183, 29</value>
@@ -669,11 +657,11 @@
   <data name="positionLocalToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>232, 34</value>
   </data>
+  <data name="&gt;&gt;toolStripComboBoxUserTemplate.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="vSyncToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 34</value>
-  </data>
-  <data name="&gt;&gt;movementPreviewToolStripMenuItem.Name" xml:space="preserve">
-    <value>movementPreviewToolStripMenuItem</value>
   </data>
   <data name="noCullingCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 34</value>
@@ -708,6 +696,12 @@
   <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
     <value>menuStrip1</value>
   </data>
+  <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
+    <value>About...</value>
+  </data>
+  <data name="renderPanel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 33</value>
+  </data>
   <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Name" xml:space="preserve">
     <value>refreshTexturesAndModelsToolStripMenuItem</value>
   </data>
@@ -725,9 +719,6 @@
   </data>
   <data name="&gt;&gt;usePIPTForRenderingToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="uIModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>364, 34</value>
   </data>
   <data name="&gt;&gt;positionToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -756,11 +747,8 @@
   <data name="&gt;&gt;researchToolStripMenuItem.Name" xml:space="preserve">
     <value>researchToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;addTXDArchiveToolStripMenuItem.Name" xml:space="preserve">
-    <value>addTXDArchiveToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;projectToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tools</value>
   </data>
   <data name="&gt;&gt;useLegacyAssetIDFormatToolStripMenuItem.Name" xml:space="preserve">
     <value>useLegacyAssetIDFormatToolStripMenuItem</value>
@@ -771,11 +759,11 @@
   <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="selectionColorToolStripMenuItem1.Text" xml:space="preserve">
-    <value>Selection Color...</value>
-  </data>
   <data name="autoLoadOnStartupToolStripMenuItem.Text" xml:space="preserve">
     <value>Auto-Load On Startup</value>
+  </data>
+  <data name="&gt;&gt;downloadVgmstreamToolStripMenuItem.Name" xml:space="preserve">
+    <value>downloadVgmstreamToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;replaceAssetsOnPasteToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -795,14 +783,14 @@
   <data name="&gt;&gt;saveAllOpenHIPsToolStripMenuItem.Name" xml:space="preserve">
     <value>saveAllOpenHIPsToolStripMenuItem</value>
   </data>
+  <data name="&gt;&gt;backgroundColorToolStripMenuItem1.Name" xml:space="preserve">
+    <value>backgroundColorToolStripMenuItem1</value>
+  </data>
   <data name="useLegacyAssetIDFormatToolStripMenuItem.Text" xml:space="preserve">
     <value>Use Legacy Asset ID Format</value>
   </data>
   <data name="toolStripSeparator11.Size" type="System.Drawing.Size, System.Drawing">
     <value>330, 6</value>
-  </data>
-  <data name="backgroundColorToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>333, 34</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator9.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -827,6 +815,9 @@
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>267, 6</value>
+  </data>
+  <data name="resetColorsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Reset Colors</value>
   </data>
   <data name="&gt;&gt;gizmoToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -858,8 +849,8 @@
   <data name="&gt;&gt;toolStripSeparator5.Name" xml:space="preserve">
     <value>toolStripSeparator5</value>
   </data>
-  <data name="updateReferencesOnCopyPasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>452, 34</value>
+  <data name="&gt;&gt;displayToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripStatusLabel3.Name" xml:space="preserve">
     <value>toolStripStatusLabel3</value>
@@ -867,8 +858,8 @@
   <data name="&gt;&gt;checkForUpdatesOnEditorFilesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripComboBoxUserTemplate.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;newToolStripMenuItem1.Name" xml:space="preserve">
+    <value>newToolStripMenuItem1</value>
   </data>
   <data name="&gt;&gt;dynaNameSearcherToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -885,17 +876,14 @@
   <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
     <value>404, 6</value>
   </data>
-  <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Name" xml:space="preserve">
-    <value>drawOnlyFirstMINFReferenceToolStripMenuItem</value>
-  </data>
   <data name="&gt;&gt;statusStrip1.Name" xml:space="preserve">
     <value>statusStrip1</value>
   </data>
   <data name="dYNASearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>279, 34</value>
   </data>
-  <data name="&gt;&gt;backgroundColorToolStripMenuItem1.Name" xml:space="preserve">
-    <value>backgroundColorToolStripMenuItem1</value>
+  <data name="&gt;&gt;projectToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;researchToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -912,8 +900,11 @@
   <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
     <value>toolStripSeparator2</value>
   </data>
-  <data name="resetColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>333, 34</value>
+  <data name="addTXDArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Add TXD Archive...</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+N</value>
@@ -2621,9 +2612,6 @@
   <data name="&gt;&gt;contextMenuStripMain.Type" xml:space="preserve">
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Tools</value>
-  </data>
   <data name="&gt;&gt;updateReferencesOnCopyPasteToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -2654,8 +2642,8 @@
   <data name="&gt;&gt;pickupSearcherToolStripMenuItem.Name" xml:space="preserve">
     <value>pickupSearcherToolStripMenuItem</value>
   </data>
-  <data name="closeAllEditorsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
+  <data name="&gt;&gt;renderPanel.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="uIModeAutoSizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 34</value>
@@ -2678,11 +2666,8 @@
   <data name="&gt;&gt;positionLocalToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="saveAllOpenHIPsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+Shift+S</value>
-  </data>
-  <data name="renderPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 5, 4, 5</value>
+  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>86, 29</value>
   </data>
   <data name="&gt;&gt;assetTypesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -2696,6 +2681,9 @@
   <data name="toolStripSeparator9.Size" type="System.Drawing.Size, System.Drawing">
     <value>361, 6</value>
   </data>
+  <data name="rotationToolStripMenuItem.Text" xml:space="preserve">
+    <value>Rotation</value>
+  </data>
   <data name="&gt;&gt;saveAsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
@@ -2708,8 +2696,8 @@
   <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="usePIPTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>364, 34</value>
+  <data name="resetColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>333, 34</value>
   </data>
   <data name="closeAllEditorsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Close All Editors</value>
@@ -2747,6 +2735,9 @@
   <data name="&gt;&gt;replaceAssetsOnPasteToolStripMenuItem.Name" xml:space="preserve">
     <value>replaceAssetsOnPasteToolStripMenuItem</value>
   </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator8.Name" xml:space="preserve">
     <value>toolStripSeparator8</value>
   </data>
@@ -2755,6 +2746,9 @@
   </data>
   <data name="pickupSearcherToolStripMenuItem.Text" xml:space="preserve">
     <value>Pickup Searcher</value>
+  </data>
+  <data name="useLODTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>364, 34</value>
   </data>
   <data name="gizmoToolStripMenuItem.Text" xml:space="preserve">
     <value>Gizmo (V)</value>
@@ -2765,9 +2759,6 @@
   <data name="&gt;&gt;ensureAssociationsToolStripMenuItem.Name" xml:space="preserve">
     <value>ensureAssociationsToolStripMenuItem</value>
   </data>
-  <data name="dynaNameSearcherToolStripMenuItem.Text" xml:space="preserve">
-    <value>Dyna Name Searcher</value>
-  </data>
   <data name="toolStripMenuItem_Templates.Text" xml:space="preserve">
     <value>Template</value>
   </data>
@@ -2777,14 +2768,14 @@
   <data name="&gt;&gt;useLODTForRenderingToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="renderPanel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 33</value>
+  <data name="&gt;&gt;templatesPersistentShiniesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripStatusLabelProject.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
-    <value>About...</value>
+  <data name="dynaNameSearcherToolStripMenuItem.Text" xml:space="preserve">
+    <value>Dyna Name Searcher</value>
   </data>
   <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
     <value>449, 6</value>
@@ -2792,20 +2783,23 @@
   <data name="&gt;&gt;ensureAssociationsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="checkForUpdatesOnEditorFilesToolStripMenuItem.Text" xml:space="preserve">
     <value>Check For Updates on EditorFiles...</value>
   </data>
   <data name="&gt;&gt;checkForUpdatesNowToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>9, 20</value>
   </data>
   <data name="&gt;&gt;contextMenuStripMain.Name" xml:space="preserve">
     <value>contextMenuStripMain</value>
   </data>
-  <data name="&gt;&gt;uIModeToolStripMenuItem.Name" xml:space="preserve">
-    <value>uIModeToolStripMenuItem</value>
+  <data name="&gt;&gt;hideInvisibleMeshesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="projectToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Project</value>
@@ -2828,14 +2822,20 @@
   <data name="&gt;&gt;noCullingCToolStripMenuItem.Name" xml:space="preserve">
     <value>noCullingCToolStripMenuItem</value>
   </data>
-  <data name="archiveEditorToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Archive Editor</value>
+  <data name="&gt;&gt;saveAsToolStripMenuItem.Name" xml:space="preserve">
+    <value>saveAsToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;viewConfigToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;eventSearchToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
     <value>Open Folder</value>
+  </data>
+  <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>290, 34</value>
+  </data>
+  <data name="&gt;&gt;rotationToolStripMenuItem.Name" xml:space="preserve">
+    <value>rotationToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;sFXInColorToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -2858,11 +2858,11 @@
   <data name="lowerQualityGraphicsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 34</value>
   </data>
-  <data name="addTXDArchiveToolStripMenuItem.Text" xml:space="preserve">
-    <value>Add TXD Archive...</value>
+  <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Name" xml:space="preserve">
+    <value>drawOnlyFirstMINFReferenceToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;rotationToolStripMenuItem.Name" xml:space="preserve">
-    <value>rotationToolStripMenuItem</value>
+  <data name="backgroundColorToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>333, 34</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
     <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -2891,8 +2891,8 @@
   <data name="&gt;&gt;toolStripSeparator10.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="wireframeFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>364, 34</value>
+  <data name="hideInvisibleMeshesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Hide Invisible Meshes</value>
   </data>
   <data name="checkForUpdatesNowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>407, 34</value>
@@ -2909,41 +2909,41 @@
   <data name="toolStripMenuItem_Templates.Size" type="System.Drawing.Size, System.Drawing">
     <value>195, 32</value>
   </data>
-  <data name="useLODTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>364, 34</value>
+  <data name="selectionColorToolStripMenuItem1.Text" xml:space="preserve">
+    <value>Selection Color...</value>
   </data>
-  <data name="&gt;&gt;downloadVgmstreamToolStripMenuItem.Name" xml:space="preserve">
-    <value>downloadVgmstreamToolStripMenuItem</value>
+  <data name="uIModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>364, 34</value>
   </data>
   <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 25</value>
   </data>
-  <data name="&gt;&gt;saveAllOpenHIPsToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;lowerQualityGraphicsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator11.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator8.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="renderPanel.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 5, 4, 5</value>
   </data>
   <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
     <value>287, 6</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesNowToolStripMenuItem.Name" xml:space="preserve">
-    <value>checkForUpdatesNowToolStripMenuItem</value>
+  <data name="&gt;&gt;addTXDArchiveToolStripMenuItem.Name" xml:space="preserve">
+    <value>addTXDArchiveToolStripMenuItem</value>
   </data>
   <data name="toolStripStatusLabel3.Text" xml:space="preserve">
     <value>|</value>
   </data>
-  <data name="&gt;&gt;newToolStripMenuItem.Name" xml:space="preserve">
-    <value>newToolStripMenuItem</value>
+  <data name="&gt;&gt;userTemplateToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
+  <data name="&gt;&gt;movementPreviewToolStripMenuItem.Name" xml:space="preserve">
+    <value>movementPreviewToolStripMenuItem</value>
   </data>
   <data name="autoLoadOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>290, 34</value>
@@ -2974,9 +2974,6 @@
   </data>
   <metadata name="contextMenuStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
-  </metadata>
-  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>en-GB</value>
   </metadata>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>

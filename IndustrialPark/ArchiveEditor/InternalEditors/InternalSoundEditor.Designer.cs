@@ -34,11 +34,12 @@
             this.buttonFindCallers = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.buttonImportRaw = new System.Windows.Forms.Button();
             this.checkBoxSendToSNDI = new System.Windows.Forms.CheckBox();
-            this.buttonImportJawData = new System.Windows.Forms.Button();
+            this.buttonGenerateJawData = new System.Windows.Forms.Button();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.propertyGridSoundData = new System.Windows.Forms.PropertyGrid();
+            this.buttonImportSound = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,25 +48,28 @@
             this.tableLayoutPanel1.ColumnCount = 2;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 5);
-            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this.button2, 0, 4);
-            this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 2);
-            this.tableLayoutPanel1.Controls.Add(this.button1, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonHelp, 0, 6);
+            this.tableLayoutPanel1.Controls.Add(this.buttonFindCallers, 1, 6);
+            this.tableLayoutPanel1.Controls.Add(this.button2, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.richTextBox1, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonImportRaw, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this.checkBoxSendToSNDI, 0, 0);
-            this.tableLayoutPanel1.Controls.Add(this.buttonImportJawData, 1, 1);
-            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 1, 4);
-            this.tableLayoutPanel1.Controls.Add(this.propertyGridSoundData, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.buttonPlay, 1, 5);
+            this.tableLayoutPanel1.Controls.Add(this.propertyGridSoundData, 0, 4);
+            this.tableLayoutPanel1.Controls.Add(this.buttonImportSound, 0, 1);
+            this.tableLayoutPanel1.Controls.Add(this.buttonGenerateJawData, 1, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 6;
+            this.tableLayoutPanel1.RowCount = 7;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
@@ -108,23 +112,23 @@
             // 
             this.tableLayoutPanel1.SetColumnSpan(this.richTextBox1, 2);
             this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(3, 53);
+            this.richTextBox1.Location = new System.Drawing.Point(3, 81);
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(338, 161);
+            this.richTextBox1.Size = new System.Drawing.Size(338, 147);
             this.richTextBox1.TabIndex = 9;
             this.richTextBox1.Text = resources.GetString("richTextBox1.Text");
             // 
-            // button1
+            // buttonImportRaw
             // 
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Location = new System.Drawing.Point(3, 25);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(166, 22);
-            this.button1.TabIndex = 7;
-            this.button1.Text = "Import Sound Data";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.buttonImportRaw.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonImportRaw.Location = new System.Drawing.Point(3, 53);
+            this.buttonImportRaw.Name = "buttonImportRaw";
+            this.buttonImportRaw.Size = new System.Drawing.Size(166, 22);
+            this.buttonImportRaw.TabIndex = 7;
+            this.buttonImportRaw.Text = "Import Raw Sound";
+            this.buttonImportRaw.UseVisualStyleBackColor = true;
+            this.buttonImportRaw.Click += new System.EventHandler(this.button1_Click);
             // 
             // checkBoxSendToSNDI
             // 
@@ -139,16 +143,16 @@
             this.checkBoxSendToSNDI.Text = "Trim header and send it to SNDI";
             this.checkBoxSendToSNDI.UseVisualStyleBackColor = true;
             // 
-            // buttonImportJawData
+            // buttonGenerateJawData
             // 
-            this.buttonImportJawData.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonImportJawData.Location = new System.Drawing.Point(175, 25);
-            this.buttonImportJawData.Name = "buttonImportJawData";
-            this.buttonImportJawData.Size = new System.Drawing.Size(166, 22);
-            this.buttonImportJawData.TabIndex = 12;
-            this.buttonImportJawData.Text = "Import Jaw Data";
-            this.buttonImportJawData.UseVisualStyleBackColor = true;
-            this.buttonImportJawData.Click += new System.EventHandler(this.buttonImportJawData_Click);
+            this.buttonGenerateJawData.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonGenerateJawData.Location = new System.Drawing.Point(175, 25);
+            this.buttonGenerateJawData.Name = "buttonGenerateJawData";
+            this.buttonGenerateJawData.Size = new System.Drawing.Size(166, 22);
+            this.buttonGenerateJawData.TabIndex = 12;
+            this.buttonGenerateJawData.Text = "Generate Jaw Data";
+            this.buttonGenerateJawData.UseVisualStyleBackColor = true;
+            this.buttonGenerateJawData.Click += new System.EventHandler(this.buttonImportJawData_Click);
             // 
             // buttonPlay
             // 
@@ -166,13 +170,24 @@
             this.tableLayoutPanel1.SetColumnSpan(this.propertyGridSoundData, 2);
             this.propertyGridSoundData.Dock = System.Windows.Forms.DockStyle.Fill;
             this.propertyGridSoundData.HelpVisible = false;
-            this.propertyGridSoundData.Location = new System.Drawing.Point(3, 220);
+            this.propertyGridSoundData.Location = new System.Drawing.Point(3, 234);
             this.propertyGridSoundData.Name = "propertyGridSoundData";
             this.propertyGridSoundData.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridSoundData.Size = new System.Drawing.Size(338, 161);
+            this.propertyGridSoundData.Size = new System.Drawing.Size(338, 147);
             this.propertyGridSoundData.TabIndex = 19;
             this.propertyGridSoundData.ToolbarVisible = false;
             this.propertyGridSoundData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridSoundData_PropertyValueChanged);
+            // 
+            // buttonImportSound
+            // 
+            this.buttonImportSound.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonImportSound.Location = new System.Drawing.Point(3, 25);
+            this.buttonImportSound.Name = "buttonImportSound";
+            this.buttonImportSound.Size = new System.Drawing.Size(166, 22);
+            this.buttonImportSound.TabIndex = 20;
+            this.buttonImportSound.Text = "Import Sound";
+            this.buttonImportSound.UseVisualStyleBackColor = true;
+            this.buttonImportSound.Click += new System.EventHandler(this.buttonImportSound_Click);
             // 
             // InternalSoundEditor
             // 
@@ -194,14 +209,15 @@
 
         #endregion
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonImportRaw;
         private System.Windows.Forms.CheckBox checkBoxSendToSNDI;
         private System.Windows.Forms.RichTextBox richTextBox1;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button buttonFindCallers;
-        private System.Windows.Forms.Button buttonImportJawData;
+        private System.Windows.Forms.Button buttonGenerateJawData;
         private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.Button buttonPlay;
         private System.Windows.Forms.PropertyGrid propertyGridSoundData;
+        private System.Windows.Forms.Button buttonImportSound;
     }
 }

@@ -205,6 +205,32 @@ namespace IndustrialPark
                 Path.Combine(Application.StartupPath, "Resources", "vgmstream"));
         }
 
+        public static void DownloadFfmpeg()
+        {
+            DownloadAndUnzip(
+                "https://github.com/GyanD/codexffmpeg/releases/download/2023-07-19-git-efa6cec759/ffmpeg-2023-07-19-git-efa6cec759-essentials_build.zip",
+                Path.Combine(Application.StartupPath, "Resources", "ffmpeg-2023-07-19-git-efa6cec759-essentials_build.zip"),
+                Path.Combine(Application.StartupPath, "Resources", "ffmpeg"),
+                "ffmpeg");
+        }
+
+        public static void DownloadVGAudio()
+        {
+            try
+            {
+                MessageBox.Show("Will begin download of VGAudioCli from GitHub. Please wait as this might take a while.");
+
+                using (var webClient = new WebClient())
+                    webClient.DownloadFile(new Uri("https://github.com/Thealexbarney/VGAudio/releases/download/v2.2.1/VGAudioCli.exe"), Path.Combine(Application.StartupPath, "Resources", "VGAudioCli.exe"));
+
+                MessageBox.Show("Downloaded VGAudioCli.");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
         private static void DownloadAndUnzip(string zipUrl, string destZipPath, string destFolder, string downloadName)
         {
             try

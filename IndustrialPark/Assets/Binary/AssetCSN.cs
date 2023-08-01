@@ -1,441 +1,236 @@
-﻿//using System;
-//using System.Collections.Generic;
-//using System.ComponentModel;
-//using System.IO;
-//using System.Linq;
-//using HipHopFile;
+﻿using HipHopFile;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
-//namespace IndustrialPark
-//{
-//    public enum CSNSec1EntryType
-//    {
-//        Model = 1,
-//        Animation = 2,
-//        Unknown_03 = 3,
-//        SoundName = 4,
-//        MTDJ = 6,
-//        ATDJ = 7,
-//    }
+namespace IndustrialPark
+{
+    public class AssetCSN : Asset
+    {
+        public AssetCSN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        {
+            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            {
+                reader.ReadUInt32();
+                reader.ReadUInt32();
+                uint numData = reader.ReadUInt32();
+                uint numTime = reader.ReadUInt32();
+                reader.ReadUInt32();
+                reader.ReadUInt32();
+                reader.ReadUInt32();
+                uint headerSize = reader.ReadUInt32();
+                uint visCount = reader.ReadUInt32();
+                uint visSize = reader.ReadUInt32();
+                uint breakCount = reader.ReadUInt32();
+                reader.ReadUInt32();
 
-//    [TypeConverter(typeof(ExpandableObjectConverter))]
-//    public class Animation_Entry : Section1_Entry
-//    {
-//        public int Unknown05 { get; set; }
-//        public AssetSingle UnknownX { get; set; }
-//        public AssetSingle UnknownY { get; set; }
-//        public AssetSingle UnknownZ { get; set; }
-//    }
+                headerSize -= numData * 16 + numTime * 4 + visSize * 4 + breakCount * 8 + 4;
 
-//    [TypeConverter(typeof(ExpandableObjectConverter))]
-//    public class Section_Type3_Entry
-//    {
-//        public int Unknown01 { get; set; }
-//        public AssetSingle UnknownFloat01 { get; set; }
-//        public AssetSingle UnknownFloat02 { get; set; }
-//        public AssetSingle UnknownFloat03 { get; set; }
-//        public AssetSingle UnknownFloat04 { get; set; }
-//        public AssetSingle UnknownFloat05 { get; set; }
-//        public AssetSingle UnknownFloat06 { get; set; }
-//        public AssetSingle UnknownFloat07 { get; set; }
-//        public AssetSingle UnknownFloat08 { get; set; }
-//        public AssetSingle UnknownFloat09 { get; set; }
-//        public AssetSingle UnknownFloat10 { get; set; }
-//        public AssetSingle UnknownFloat11 { get; set; }
-//        public AssetSingle UnknownFloat12 { get; set; }
-//        public AssetSingle UnknownFloat13 { get; set; }
-//        public AssetSingle UnknownFloat14 { get; set; }
-//        public AssetSingle UnknownFloat15 { get; set; }
-//    }
+                if (headerSize == 0x50)
+                {
+                    _audioTrackCount = 1;
+                    _audioTracks = new CutsceneAudioTrackV1[] { new CutsceneAudioTrackV1(reader) };
+                }
+                else
+                {
+                    _audioTrackCount = 32;
+                    _audioTracks = new CutsceneAudioTrackV1[_audioTrackCount];
 
-//    [TypeConverter(typeof(ExpandableObjectConverter))]
-//    public class SectionEntry_Type3 : Section1_Entry
-//    {
-//        public int AmountOfEntries { get; set; }
-//        public Section_Type3_Entry[] Entries { get; set; }
-//    }
+                    int soundStrLen;
+                    if (headerSize == 0x830)
+                        soundStrLen = 28;
+                    else if (headerSize == 0x1030)
+                        soundStrLen = 60;
+                    else
+                        throw new System.Exception($"Unknown asset format: header size {headerSize}");
 
-//    [TypeConverter(typeof(ExpandableObjectConverter))]
-//    public class Section1_Entry
-//    {
-//        public CSNSec1EntryType Unknown01 { get; set; }
-//        public AssetID AssetID { get; set; }
-//        [ReadOnly(true)]
-//        public int fileSize { get; set; }
-//        [ReadOnly(true)]
-//        public int fileOffset { get; set; }
-//        public byte[] fileData { get; set; }
-//    }
+                    for (int i = 0; i < _audioTracks.Length; i++)
+                        _audioTracks[i] = new CutsceneAudioTrackV2(reader, soundStrLen);
+                }
 
-//    [TypeConverter(typeof(ExpandableObjectConverter))]
-//    public class Section2_Entry : EndianConvertibleWithData
-//    {
-//        public override byte[] Data { get; set; }
+                CutsceneData = new CutsceneData[numData];
+                for (int i = 0; i < CutsceneData.Length; i++)
+                    CutsceneData[i] = new CutsceneData(reader, game);
 
-//        public Section2_Entry(byte[] data, Endianness endianness) : base(endianness)
-//        {
-//            Data = data;
-//        }
+                uint[] CutsceneTime = new uint[numTime];
+                for (int i = 0; i < CutsceneTime.Length; i++)
+                    CutsceneTime[i] = reader.ReadUInt32();
 
-//        public AssetSingle StartTime
-//        {
-//            get => ReadFloat(0x00);
-//            set => Write(0x00, value);
-//        }
-//        public AssetSingle EndTime
-//        {
-//            get => ReadFloat(0x04);
-//            set => Write(0x04, value);
-//        }
-//        [ReadOnly(true)]
-//        public int AnimCount
-//        {
-//            get => ReadInt(0x08);
-//            set => Write(0x08, value);
-//        }
-//        public int EntryIndex
-//        {
-//            get => ReadInt(0x0C);
-//            set => Write(0x0C, value);
-//        }
-//        public int Unknown05
-//        {
-//            get => ReadInt(0x10);
-//            set => Write(0x10, value);
-//        }
-//        public int Unknown06
-//        {
-//            get => ReadInt(0x14);
-//            set => Write(0x14, value);
-//        }
-//        [ReadOnly(true)]
-//        public int SizeOfData1
-//        {
-//            get => ReadInt(0x18);
-//            set => Write(0x18, value);
-//        }
-//        public int Unknown08
-//        {
-//            get => ReadInt(0x1C);
-//            set => Write(0x1C, value);
-//        }
-//        public byte[] Data1
-//        {
-//            get
-//            {
-//                return Data.Skip(0x20).Take(SizeOfData1).ToArray();
-//            }
-//            set
-//            {
-//                List<byte> before = Data.Take(0x10).ToList();
-//                before.AddRange(value);
-//                while (before.Count != 0x10)
-//                    before.Add(0x00);
-//                before.AddRange(Data.Skip(0x10 + SizeOfData1).ToArray());
-//                Data = before.ToArray();
-//                SizeOfData1 = value.Length;
-//            }
-//        }
+                reader.ReadUInt32();
 
-//        public Section1_Entry[] Animations
-//        {
-//            get
-//            {
-//                int currentPos = 0x20 + SizeOfData1;
-//                var aEs = new List<Section1_Entry>();
-//                while (currentPos < Data.Length)
-//                {
-//                    CSNSec1EntryType entryType = (CSNSec1EntryType)ReadInt(currentPos);
-//                    if (entryType == CSNSec1EntryType.Animation)
-//                    {
-//                        var aE = new Animation_Entry
-//                        {
-//                            Unknown01 = entryType,
-//                            AssetID = ReadUInt(currentPos + 4),
-//                            fileSize = ReadInt(currentPos + 8),
-//                            fileOffset = ReadInt(currentPos + 12),
-//                            Unknown05 = ReadInt(currentPos + 16),
-//                            UnknownX = ReadInt(currentPos + 20),
-//                            UnknownY = ReadInt(currentPos + 24),
-//                            UnknownZ = ReadInt(currentPos + 28)
-//                        };
-//                        aE.fileData = Data.Skip(currentPos + 32).Take(aE.fileSize - 0x10).ToArray();
-//                        aEs.Add(aE);
+                int visBytesCount = (int)(visSize * 4 / visCount);
+                Visibility = new byte[visCount][];
+                for (int i = 0; i < Visibility.Length; i++)
+                    Visibility[i] = reader.ReadBytes(visBytesCount);
 
-//                        currentPos += aE.fileSize + 0x10;
-//                    }
-//                    else if (entryType == CSNSec1EntryType.Unknown_03)
-//                    {
-//                        var aE = new SectionEntry_Type3
-//                        {
-//                            Unknown01 = entryType,
-//                            AssetID = ReadUInt(currentPos + 4),
-//                            fileSize = ReadInt(currentPos + 8),
-//                            fileOffset = ReadInt(currentPos + 12),
-//                            AmountOfEntries = ReadInt(currentPos + 16),
-//                        };
-//                        currentPos += 20;
-//                        aE.Entries = new Section_Type3_Entry[aE.AmountOfEntries];
+                CutsceneBreaks = new CutsceneBreak[breakCount];
+                for (int i = 0; i < CutsceneBreaks.Length; i++)
+                    CutsceneBreaks[i] = new CutsceneBreak(reader);
 
-//                        for (int j = 0; j < aE.AmountOfEntries; j++)
-//                        {
-//                            aE.Entries[j] = new Section_Type3_Entry
-//                            {
-//                                Unknown01 = ReadInt(currentPos),
-//                                UnknownFloat01 = ReadInt(currentPos + 0x04),
-//                                UnknownFloat02 = ReadInt(currentPos + 0x08),
-//                                UnknownFloat03 = ReadInt(currentPos + 0x0C),
-//                                UnknownFloat04 = ReadInt(currentPos + 0x10),
-//                                UnknownFloat05 = ReadInt(currentPos + 0x14),
-//                                UnknownFloat06 = ReadInt(currentPos + 0x18),
-//                                UnknownFloat07 = ReadInt(currentPos + 0x1C),
-//                                UnknownFloat08 = ReadInt(currentPos + 0x20),
-//                                UnknownFloat09 = ReadInt(currentPos + 0x24),
-//                                UnknownFloat10 = ReadInt(currentPos + 0x28),
-//                                UnknownFloat11 = ReadInt(currentPos + 0x2C),
-//                                UnknownFloat12 = ReadInt(currentPos + 0x30),
-//                                UnknownFloat13 = ReadInt(currentPos + 0x34),
-//                                UnknownFloat14 = ReadInt(currentPos + 0x38),
-//                                UnknownFloat15 = ReadInt(currentPos + 0x3C)
-//                            };
-//                            currentPos += 0x40;
-//                        }
-//                        aEs.Add(aE);
-//                    }
-//                    else
-//                    {
-//                        var aE = new Section1_Entry
-//                        {
-//                            Unknown01 = entryType,
-//                            AssetID = ReadUInt(currentPos + 4),
-//                            fileSize = ReadInt(currentPos + 8),
-//                            fileOffset = ReadInt(currentPos + 12),
-//                        };
-//                        currentPos += 20;
-//                        aE.fileData = Data.Skip(currentPos + 16).Take(aE.fileSize).ToArray();
-//                        currentPos += aE.fileSize;
+                TimeChunks = new TimeChunk[numTime];
+                for (int i = 0; i < TimeChunks.Length; i++)
+                {
+                    reader.BaseStream.Position = CutsceneTime[i];
+                    TimeChunks[i] = new TimeChunk(reader);
+                }
+            }
+        }
 
-//                        aEs.Add(aE);
-//                    }
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(new byte[12 * 4]);
 
-//                    while (currentPos % 0x10 != 0)
-//                        currentPos++;
-//                }
+            for (int i = 0; i < _audioTracks.Length; i++)
+                _audioTracks[i].Serialize(writer);
 
-//                return aEs.ToArray();
-//            }
-//        }
-//    }
+            for (int i = 0; i < CutsceneData.Length; i++)
+                CutsceneData[i].Serialize(writer);
 
-//    public class AssetCSN_old : Asset
-//    {
-//        public AssetCSN_old(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game) { }
+            for (int i = 0; i < TimeChunks.Length; i++)
+                writer.Write(0);
 
-//        public override bool HasReference(uint assetID)
-//        {
-//            return base.HasReference(assetID);
-//        }
+            writer.Write(0);
 
-//        private const string categoryName = "Cutscene";
+            for (int i = 0; i < Visibility.Length; i++)
+                for (int j = 0; j < Visibility[i].Length; j++)
+                    writer.Write(Visibility[i][j]);
 
-//        [Category(categoryName)]
-//        public string VideoMode
-//        {
-//            get
-//            {
-//                string result = "";
-//                foreach (byte b in BitConverter.GetBytes(ReadInt(0x00)))
-//                    result += (char)b;
-//                return result;
-//            }
+            for (int i = 0; i < CutsceneBreaks.Length; i++)
+                CutsceneBreaks[i].Serialize(writer);
 
-//            set
-//            {
-//                var result = new List<byte>();
-//                foreach (char b in VideoMode)
-//                    result.Add((byte)b);
-//                Write(0, BitConverter.ToInt32(result.ToArray(), 0));
-//            }
-//        }
+            uint headerSize = (uint)writer.BaseStream.Position;
 
-//        [Category(categoryName)]
-//        public AssetID AssetID
-//        {
-//            get => ReadUInt(0x04);
-//            set => Write(0x04, value);
-//        }
+            PadTo0800(writer);
 
-//        [Category(categoryName)]
-//        public int Section1_Entries_Count
-//        {
-//            get => ReadInt(0x08);
-//            set => Write(0x08, value);
-//        }
+            uint maxModel = 0;
 
-//        [Category(categoryName)]
-//        public int Section2_Entries_Count
-//        {
-//            get => ReadInt(0x0C);
-//            set => Write(0x0C, value);
-//        }
+            for (int i = 0; i < CutsceneData.Length; i++)
+            {
+                CutsceneData[i].fileOffset = (uint)writer.BaseStream.Position;
+                CutsceneData[i].Data.Serialize(writer);
+                CutsceneData[i].chunkSize = (uint)(writer.BaseStream.Position - CutsceneData[i].fileOffset);
+                PadTo0800(writer);
+                uint size = (uint)(writer.BaseStream.Position - CutsceneData[i].fileOffset);
+                if (CutsceneData[i].chunkSize == 0)
+                    CutsceneData[i].fileOffset = 0;
+                if (CutsceneData[i].DataType == CutsceneDataType.Model && size > maxModel)
+                    maxModel = size;
+            }
 
-//        [Category(categoryName)]
-//        public int UnknownInt_10
-//        {
-//            get => ReadInt(0x10);
-//            set => Write(0x10, value);
-//        }
+            uint maxBufEven = 0;
+            uint maxBufOdd = 0;
 
-//        [Category(categoryName)]
-//        public int UnknownInt_14
-//        {
-//            get => ReadInt(0x14);
-//            set => Write(0x14, value);
-//        }
+            uint[] timeChunkOffsets = new uint[TimeChunks.Length];
 
-//        [Category(categoryName)]
-//        public int UnknownInt_18
-//        {
-//            get => ReadInt(0x18);
-//            set => Write(0x18, value);
-//        }
+            for (int i = 0; i < TimeChunks.Length; i++)
+            {
+                timeChunkOffsets[i] = (uint)writer.BaseStream.Position;
+                TimeChunks[i].chunkIndex = i;
+                TimeChunks[i].Serialize(writer);
+                PadTo0800(writer);
+                uint size = (uint)(writer.BaseStream.Position - timeChunkOffsets[i]);
+                if (i % 2 == 0)
+                {
+                    if (size > maxBufEven)
+                        maxBufEven = size;
+                }
+                else
+                {
+                    if (size > maxBufOdd)
+                        maxBufOdd = size;
+                }
+            }
 
-//        [Category(categoryName)]
-//        public int UnknownInt_1C
-//        {
-//            get => ReadInt(0x1C);
-//            set => Write(0x1C, value);
-//        }
+            writer.BaseStream.Position = 0;
 
-//        [Category(categoryName)]
-//        public CSNSec1EntryType SoundName_EntryType
-//        {
-//            get => (CSNSec1EntryType)ReadInt(0x20);
-//            set => Write(0x20, (int)value);
-//        }
+            writer.WriteMagic("CTSN");
+            writer.Write(assetID);
+            writer.Write(CutsceneData.Length);
+            writer.Write(TimeChunks.Length);
+            writer.Write(maxModel);
+            writer.Write(maxBufEven);
+            writer.Write(maxBufOdd);
+            writer.Write(headerSize);
+            writer.Write(Visibility.Length);
+            writer.Write(Visibility.Sum(v => v.Length) / 4);
+            writer.Write(CutsceneBreaks.Length);
+            writer.Write(0);
 
-//        [Category(categoryName)]
-//        public int UnknownInt_24
-//        {
-//            get => ReadInt(0x24);
-//            set => Write(0x24, value);
-//        }
+            for (int i = 0; i < _audioTracks.Length; i++)
+                _audioTracks[i].Serialize(writer);
 
-//        [Category(categoryName)]
-//        public int UnknownInt_28
-//        {
-//            get => ReadInt(0x28);
-//            set => Write(0x28, value);
-//        }
+            for (int i = 0; i < CutsceneData.Length; i++)
+                CutsceneData[i].Serialize(writer);
 
-//        [Category(categoryName)]
-//        public int UnknownInt_2C
-//        {
-//            get => ReadInt(0x2C);
-//            set => Write(0x2C, value);
-//        }
+            for (int i = 0; i < timeChunkOffsets.Length; i++)
+                writer.Write(timeChunkOffsets[i]);
 
-//        [Category(categoryName)]
-//        public string SoundName
-//        {
-//            get
-//            {
-//                string result = "";
-//                foreach (byte b in Data.Skip(0x30).Take(0x20))
-//                    if (b != '\0')
-//                        result += (char)b;
-//                return result;
-//            }
+            writer.Write((uint)writer.BaseStream.Length);
+        }
 
-//            set
-//            {
-//                while (value.Length < 0x20)
-//                    value += '\0';
-//                for (int i = 0; i < 0x20; i++)
-//                    Data[0x30 + i] = (byte)value[i];
-//            }
-//        }
+        protected void PadTo0800(EndianBinaryWriter writer)
+        {
+            while (writer.BaseStream.Position % 0x800 != 0)
+                writer.Write((byte)0);
+        }
 
-//        [Category(categoryName)]
-//        public Section1_Entry[] entryType1s
-//        {
-//            get
-//            {
-//                var entries = new Section1_Entry[Section1_Entries_Count];
-//                const int startPos = 0x50;
-//                const int varSize = 0x10;
+        private const string categoryName = "Cutscene";
 
-//                for (int i = 0; i < entries.Length; i++)
-//                {
-//                    entries[i] = new Section1_Entry()
-//                    {
-//                        Unknown01 = (CSNSec1EntryType)ReadInt(startPos + i * varSize + 0),
-//                        AssetID = ReadUInt(startPos + i * varSize + 4),
-//                        fileSize = ReadInt(startPos + i * varSize + 8),
-//                        fileOffset = ReadInt(startPos + i * varSize + 12),
-//                    };
+        private int _audioTrackCount;
+        private CutsceneAudioTrackV1[] _audioTracks;
+        public CutsceneAudioTrackV1[] AudioTracks
+        {
+            get => _audioTracks;
+            set
+            {
+                if (value.Length == _audioTrackCount)
+                    _audioTracks = value;
+                else
+                    throw new System.Exception($"Must have {(_audioTrackCount == 1 ? "1 entry" : $"{_audioTrackCount} entries")}");
+            }
+        }
 
-//                    entries[i].fileData = Data.Skip(entries[i].fileOffset).Take(entries[i].fileSize).ToArray();
-//                }
-//                return entries;
-//            }
-//        }
+        public CutsceneData[] CutsceneData { get; set; }
+        public TimeChunk[] TimeChunks { get; set; }
+        public byte[][] Visibility { get; set; }
+        public CutsceneBreak[] CutsceneBreaks { get; set; }
 
-//        [Category(categoryName)]
-//        public Section2_Entry[] entryType2s
-//        {
-//            get
-//            {
-//                var startOffsets = new int[Section2_Entries_Count + 1];
-//                int startPos = 0x50 + Section1_Entries_Count * 0x10;
+        public void ExtractToFolder(string folderName, Endianness endianness)
+        {
+            var list = new List<CutsceneData>();
+            list.AddRange(CutsceneData);
+            foreach (var tc in TimeChunks)
+                list.AddRange(tc.CutsceneData);
 
-//                for (int i = 0; i < startOffsets.Length; i++)
-//                    startOffsets[i] = ReadInt(startPos + i * 4);
+            foreach (var cd in list)
+            {
+                byte[] bytes;
+                using (var writer = new EndianBinaryWriter(endianness))
+                {
+                    if (cd.Data is CutsceneDataAnimation anim)
+                        anim.Animation.Serialize(writer);
+                    else if (cd.Data is CutsceneDataCameraScooby cameraScooby)
+                        cameraScooby.Animation.Serialize(writer);
+                    else
+                        cd.Data.Serialize(writer);
+                    bytes = writer.ToArray();
+                }
 
-//                var entries = new Section2_Entry[Section2_Entries_Count];
-//                for (int i = 0; i < startOffsets.Length - 1; i++)
-//                    entries[i] = new Section2_Entry(Data
-//                        .Skip(startOffsets[i])
-//                        .Take(startOffsets[i + 1] - startOffsets[i])
-//                        .ToArray(), EndianConverter.PlatformEndianness(platform));
+                if (bytes.Length == 0)
+                    continue;
 
-//                return entries;
-//            }
-//        }
+                var path = Path.Combine(folderName, $"[{cd.DataType.ToString()}] {Program.MainForm.GetAssetNameFromID(cd.AssetID)}");
+                string newpath;
+                int k = 0;
+                do
+                {
+                    newpath = path + "_" + k.ToString();
+                    k++;
+                }
+                while (File.Exists(newpath));
 
-//        public void ExtractToFolder(string folderName)
-//        {
-//            foreach (Section1_Entry entry in entryType1s)
-//                if (entry.Unknown01 == CSNSec1EntryType.Model)
-//                {
-//                    if (entry.fileData != null && entry.fileData.Length > 0)
-//                        File.WriteAllBytes(
-//                            Path.Combine(folderName, Path.ChangeExtension(Program.MainForm.GetAssetNameFromID(entry.AssetID), ".dff")),
-//                            entry.fileData);
-//                    else
-//                        foreach (var ae in Program.MainForm.archiveEditors)
-//                            if (ae.archive.ContainsAsset(entry.AssetID))
-//                                File.WriteAllBytes(
-//                                    Path.Combine(folderName, Program.MainForm.GetAssetNameFromID(entry.AssetID)),
-//                                    ae.archive.GetFromAssetID(entry.AssetID).Data);
-//                }
-//            int j = 0;
-//            foreach (Section2_Entry entry in entryType2s)
-//            {
-//                int k = 0;
-
-//                foreach (var animEntry in entry.Animations)
-//                    if (animEntry.Unknown01 == CSNSec1EntryType.Animation)
-//                        if (animEntry.fileData != null && animEntry.fileData.Length > 0)
-//                        {
-//                            File.WriteAllBytes(
-//                                Path.Combine(folderName,
-//                                $"skb1_s{j}_a{k}_" +
-//                                Path.GetFileNameWithoutExtension(Program.MainForm.GetAssetNameFromID(animEntry.AssetID))),
-//                                animEntry.fileData);
-//                            k++;
-//                        }
-//                j++;
-//            }
-//        }
-//    }
-//}
+                File.WriteAllBytes(newpath, bytes);
+            }
+        }
+    }
+}

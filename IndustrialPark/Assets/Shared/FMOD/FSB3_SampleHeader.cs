@@ -97,11 +97,7 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write((ushort)(0x50 + NumChannels * 0x2E));
-            for (int i = 0; i < 30; i++)
-                if (i < Name.Length)
-                    writer.Write((byte)Name[i]);
-                else
-                    writer.Write((byte)0);
+            writer.WritePaddedString(Name, 30);
             writer.Write(LengthSamples);
             writer.Write(LengthCompressedBytes);
             writer.Write(LoopStart);

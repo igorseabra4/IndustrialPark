@@ -59,39 +59,54 @@ namespace IndustrialPark
         [Category(categoryName)]
         public short[][] Offsets { get; set; }
 
+        public AssetANIM()
+        {
+            KeyFrames = new AssetANIM_KeyFrame[0];
+            Times = new AssetSingle[0];
+            Offsets = new short[0][];
+        }
+
+        public AssetANIM(EndianBinaryReader reader)
+        {
+            ReadAnim(reader);
+        }
+
         public AssetANIM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+                ReadAnim(reader);
+        }
+
+        public void ReadAnim(EndianBinaryReader reader)
+        {
+            reader.ReadUInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            var boneCount = reader.ReadUInt16();
+            var timeCount = reader.ReadUInt16();
+            var keyCount = reader.ReadUInt32();
+            ScaleX = reader.ReadSingle();
+            ScaleY = reader.ReadSingle();
+            ScaleZ = reader.ReadSingle();
+
+            var keyFrames = new List<AssetANIM_KeyFrame>();
+            for (int i = 0; i < keyCount; i++)
+                keyFrames.Add(new AssetANIM_KeyFrame(reader));
+            KeyFrames = keyFrames.ToArray();
+
+            var times = new List<AssetSingle>();
+            for (int i = 0; i < timeCount; i++)
+                times.Add(reader.ReadSingle());
+            Times = times.ToArray();
+
+            var offsets = new List<short[]>();
+            for (int i = 0; i < timeCount - 1; i++)
             {
-                reader.ReadUInt32();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                var boneCount = reader.ReadUInt16();
-                var timeCount = reader.ReadUInt16();
-                var keyCount = reader.ReadUInt32();
-                ScaleX = reader.ReadSingle();
-                ScaleY = reader.ReadSingle();
-                ScaleZ = reader.ReadSingle();
-
-                var keyFrames = new List<AssetANIM_KeyFrame>();
-                for (int i = 0; i < keyCount; i++)
-                    keyFrames.Add(new AssetANIM_KeyFrame(reader));
-                KeyFrames = keyFrames.ToArray();
-
-                var times = new List<AssetSingle>();
-                for (int i = 0; i < timeCount; i++)
-                    times.Add(reader.ReadSingle());
-                Times = times.ToArray();
-
-                var offsets = new List<short[]>();
-                for (int i = 0; i < timeCount - 1; i++)
-                {
-                    var offset = new List<short>();
-                    for (int j = 0; j < boneCount; j++)
-                        offset.Add(reader.ReadInt16());
-                    offsets.Add(offset.ToArray());
-                }
-                Offsets = offsets.ToArray();
+                var offset = new List<short>();
+                for (int j = 0; j < boneCount; j++)
+                    offset.Add(reader.ReadInt16());
+                offsets.Add(offset.ToArray());
             }
+            Offsets = offsets.ToArray();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -118,8 +133,11 @@ namespace IndustrialPark
                 foreach (var of in o)
                     writer.Write(of);
 
-            while (writer.BaseStream.Length % 4 != 0)
-                writer.Write((byte)0xCD);
+            if (Pad)
+                while (writer.BaseStream.Length % 4 != 0)
+                    writer.Write((byte)0xCD);
         }
+
+        public bool Pad = true;
     }
 }

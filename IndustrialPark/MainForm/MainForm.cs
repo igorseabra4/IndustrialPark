@@ -1645,7 +1645,7 @@ namespace IndustrialPark
 
         private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.StopSound();
+            SoundUtility.StopSound();
         }
 
         private void exportSceneToolStripMenuItem_Click(object sender, EventArgs e)

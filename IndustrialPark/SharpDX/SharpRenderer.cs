@@ -148,21 +148,31 @@ namespace IndustrialPark
             {
                 Models.ModelConverterData objData;
 
-                if (i == 0) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Box.obj", false);
-                else if (i == 1) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Cylinder.obj", false);
-                else if (i == 2) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Pyramid.obj", false);
-                else if (i == 3) objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
-                else objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Torus.obj", false);
+                if (i == 0)
+                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Box.obj", false);
+                else if (i == 1)
+                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Cylinder.obj", false);
+                else if (i == 2)
+                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Pyramid.obj", false);
+                else if (i == 3)
+                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
+                else
+                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Torus.obj", false);
 
                 List<Vertex> vertexList = new List<Vertex>();
                 foreach (Models.Vertex v in objData.VertexList)
                 {
                     vertexList.Add(new Vertex(v.Position));
-                    if (i == 0) cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 1) cylinderVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 2) pyramidVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 3) sphereVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 4) torusVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    if (i == 0)
+                        cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    else if (i == 1)
+                        cylinderVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    else if (i == 2)
+                        pyramidVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    else if (i == 3)
+                        sphereVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                    else if (i == 4)
+                        torusVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
                 }
 
                 List<int> indexList = new List<int>();
@@ -171,11 +181,16 @@ namespace IndustrialPark
                     indexList.Add(t.vertex1);
                     indexList.Add(t.vertex2);
                     indexList.Add(t.vertex3);
-                    if (i == 0) cubeTriangles.Add(t);
-                    else if (i == 1) cylinderTriangles.Add(t);
-                    else if (i == 2) pyramidTriangles.Add(t);
-                    else if (i == 3) sphereTriangles.Add(t);
-                    else if (i == 4) torusTriangles.Add(t);
+                    if (i == 0)
+                        cubeTriangles.Add(t);
+                    else if (i == 1)
+                        cylinderTriangles.Add(t);
+                    else if (i == 2)
+                        pyramidTriangles.Add(t);
+                    else if (i == 3)
+                        sphereTriangles.Add(t);
+                    else if (i == 4)
+                        torusTriangles.Add(t);
                 }
 
                 if (!tiny)
@@ -558,6 +573,8 @@ namespace IndustrialPark
                     MainLoop(control.Size);
 
             // main loop is done; release resources
+
+            SoundUtility.Dispose();
 
             arrowDefault.Dispose();
             whiteDefault.Dispose();

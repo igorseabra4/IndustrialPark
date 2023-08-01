@@ -1,12 +1,11 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
 namespace IndustrialPark
 {
-    public class FlyFrame
+    public class FlyFrame : GenericAssetDataContainer
     {
         public int FrameNumer { get; set; }
         public WireVector CameraNormalizedRight { get; set; }
@@ -37,30 +36,6 @@ namespace IndustrialPark
             Focal = binaryReader.ReadSingle();
         }
 
-        public byte[] Serialize()
-        {
-            List<byte> data = new List<byte>(16 * 4);
-
-            data.AddRange(BitConverter.GetBytes(FrameNumer));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedRight.X));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedRight.Y));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedRight.Z));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.X));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.Y));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedUp.Z));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedBackward.X));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedBackward.Y));
-            data.AddRange(BitConverter.GetBytes(CameraNormalizedBackward.Z));
-            data.AddRange(BitConverter.GetBytes(CameraPosition.X));
-            data.AddRange(BitConverter.GetBytes(CameraPosition.Y));
-            data.AddRange(BitConverter.GetBytes(CameraPosition.Z));
-            data.AddRange(BitConverter.GetBytes(ApertureX));
-            data.AddRange(BitConverter.GetBytes(ApertureY));
-            data.AddRange(BitConverter.GetBytes(Focal));
-
-            return data.ToArray();
-        }
-
         public override string ToString()
         {
             return $"[{FrameNumer}] - [{CameraPosition}]";
@@ -72,6 +47,26 @@ namespace IndustrialPark
                 CameraNormalizedRight.NearEqual(other.CameraNormalizedRight) &&
                 CameraNormalizedUp.NearEqual(other.CameraNormalizedUp) &&
                 CameraNormalizedBackward.NearEqual(other.CameraNormalizedBackward);
+        }
+
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(FrameNumer);
+            writer.Write(CameraNormalizedRight.X);
+            writer.Write(CameraNormalizedRight.Y);
+            writer.Write(CameraNormalizedRight.Z);
+            writer.Write(CameraNormalizedUp.X);
+            writer.Write(CameraNormalizedUp.Y);
+            writer.Write(CameraNormalizedUp.Z);
+            writer.Write(CameraNormalizedBackward.X);
+            writer.Write(CameraNormalizedBackward.Y);
+            writer.Write(CameraNormalizedBackward.Z);
+            writer.Write(CameraPosition.X);
+            writer.Write(CameraPosition.Y);
+            writer.Write(CameraPosition.Z);
+            writer.Write(ApertureX);
+            writer.Write(ApertureY);
+            writer.Write(Focal);
         }
     }
 
@@ -87,7 +82,7 @@ namespace IndustrialPark
             Frames = new FlyFrame[0];
         }
 
-        public AssetFLY(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetFLY(Section_AHDR AHDR, Game game) : base(AHDR, game)
         {
             List<FlyFrame> entries = new List<FlyFrame>();
 
@@ -100,8 +95,10 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            foreach (var i in Frames)
-                writer.Write(i.Serialize());
+            writer.endianness = Endianness.Little;
+
+            foreach (var f in Frames)
+                f.Serialize(writer);
         }
     }
 }

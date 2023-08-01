@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +29,8 @@ namespace IndustrialPark
 
             if (asset is AssetCAM cam)
                 SetupForCam(cam);
-            //else if (asset is AssetCSN csn) SetupForCsn(csn);
+            else if (asset is AssetCSN csn)
+                SetupForCsn(csn);
             else if (asset is IAssetAddSelected aas)
                 SetupForAddSelected(aas);
             else if (asset is AssetSHRP shrp)
@@ -150,24 +152,20 @@ namespace IndustrialPark
             tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
         }
 
-        //private void SetupForCsn(AssetCSN asset)
-        //{
-        //    AddRow();
+        private void SetupForCsn(AssetCSN asset)
+        {
+            AddRow(ButtonSize);
 
-        //    Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All MODL/ANIM", AutoSize = true };
-        //    buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
-        //    {
-        //        CommonOpenFileDialog saveFile = new CommonOpenFileDialog()
-        //        {
-        //            IsFolderPicker = true,
-        //        };
-
-        //        if (saveFile.ShowDialog() == CommonFileDialogResult.Ok)
-        //            asset.ExtractToFolder(saveFile.FileName);
-        //    };
-        //    tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
-        //    tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
-        //}
+            Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All", AutoSize = true };
+            buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
+            {
+                using (CommonOpenFileDialog openFolder = new CommonOpenFileDialog() { IsFolderPicker = true })
+                    if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
+                        asset.ExtractToFolder(openFolder.FileName, archive.platform.Endianness());
+            };
+            tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
+            tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
+        }
 
         private void SetupForShrp(AssetSHRP asset)
         {
