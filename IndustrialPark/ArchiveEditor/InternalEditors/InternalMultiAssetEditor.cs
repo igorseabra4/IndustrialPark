@@ -12,7 +12,7 @@ namespace IndustrialPark
             InitializeComponent();
             TopMost = true;
 
-            this.assets = assets; 
+            this.assets = assets;
             this.archive = archive;
             this.updateListView = updateListView;
 

@@ -11,7 +11,7 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
-            SerializeLinks(writer);                
+            SerializeLinks(writer);
         }
     }
 }

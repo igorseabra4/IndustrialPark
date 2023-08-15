@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
+using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using System.ComponentModel;
-using IndustrialPark.AssetEditorColors;
 
 namespace IndustrialPark
 {

@@ -1,7 +1,6 @@
 ﻿using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -9,7 +8,7 @@ using System.Windows.Forms;
 namespace IndustrialPark
 {
     public partial class MaterialEffectEditor : Form
-    {        
+    {
         private MaterialEffectEditor(Material_0007[] materials)
         {
             InitializeComponent();
@@ -72,7 +71,7 @@ namespace IndustrialPark
                 currentMaterials[0].materialStruct.color.B);
 
             propertyGridTextureInfo.SelectedObjects = (from Material_0007 mat in currentMaterials where mat.texture != null select mat.texture).ToArray();
-            
+
             if (currentMaterials.Count() == 1)
             {
                 comboBoxMatEffects.Enabled = true;
@@ -136,7 +135,7 @@ namespace IndustrialPark
         {
             if (programIsChangingStuff || currentMaterials.Count() != 1)
                 return;
-            
+
             bool foundMatEffect = false;
 
             for (int j = 0; j < currentMaterials[0].materialExtension.extensionSectionList.Count; j++)

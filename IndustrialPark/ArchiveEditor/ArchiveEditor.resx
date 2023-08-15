@@ -122,164 +122,31 @@
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>37, 22</value>
+    <value>46, 24</value>
   </data>
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;File</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="editPACKToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="editPACKToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="editPACKToolStripMenuItem.Text" xml:space="preserve">
-    <value>Convert Archive</value>
-  </data>
-  <data name="hideLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="hideLayersToolStripMenuItem.Text" xml:space="preserve">
-    <value>No Layers</value>
-  </data>
-  <data name="organizeLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="organizeLayersToolStripMenuItem.Text" xml:space="preserve">
-    <value>Organize</value>
-  </data>
-  <data name="organizeLegacyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="organizeLegacyToolStripMenuItem.Text" xml:space="preserve">
-    <value>Organize (semi-legacy)</value>
-  </data>
-  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 6</value>
-  </data>
-  <data name="renameToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="renameToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="renameToolStripMenuItem.Text" xml:space="preserve">
-    <value>Rename</value>
-  </data>
-  <data name="layersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="layersToolStripMenuItem.Text" xml:space="preserve">
-    <value>Layers</value>
-  </data>
-  <data name="mergeSimilarAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="mergeSimilarAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="mergeSimilarAssetsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Merge Similar Assets</value>
-  </data>
-  <data name="applyScaleToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="applyScaleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="applyScaleToolStripMenuItem.Text" xml:space="preserve">
-    <value>Apply Scale</value>
-  </data>
-  <data name="verifyArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="verifyArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="verifyArchiveToolStripMenuItem.Text" xml:space="preserve">
-    <value>Verify Archive</value>
-  </data>
-  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>202, 6</value>
-  </data>
-  <data name="hipHopToolExportToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="hipHopToolExportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="hipHopToolExportToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export Assets + INI</value>
-  </data>
-  <data name="exportAudioToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="exportAudioToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="exportAudioToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export Audio</value>
-  </data>
-  <data name="importHIPArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importHIPArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="importHIPArchiveToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import HIP/HOP Archive</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Multiple Assets</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Models</value>
-  </data>
-  <data name="importTexturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="importTexturesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Textures</value>
-  </data>
-  <data name="tXDArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="tXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="tXDArchiveToolStripMenuItem.Text" xml:space="preserve">
-    <value>TXD Archive</value>
-  </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 22</value>
+    <value>49, 24</value>
   </data>
   <data name="editToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Edit</value>
   </data>
+  <data name="generateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>230, 26</value>
+  </data>
+  <data name="generateToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Generate Report</value>
+  </data>
   <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>46, 22</value>
+    <value>58, 24</value>
   </data>
   <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Tools</value>
   </data>
   <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 22</value>
+    <value>55, 24</value>
   </data>
   <data name="viewToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;View</value>
@@ -289,11 +156,12 @@
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 1, 0, 1</value>
+    <value>5, 1, 0, 1</value>
   </data>
   <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 24</value>
+    <value>832, 26</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
@@ -316,7 +184,7 @@
     <value>Ctrl+N</value>
   </data>
   <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>184, 26</value>
   </data>
   <data name="newToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;New</value>
@@ -325,7 +193,7 @@
     <value>Ctrl+O</value>
   </data>
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>184, 26</value>
   </data>
   <data name="openToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Open</value>
@@ -337,7 +205,7 @@
     <value>Ctrl+S</value>
   </data>
   <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>184, 26</value>
   </data>
   <data name="saveToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Save</value>
@@ -346,55 +214,187 @@
     <value>False</value>
   </data>
   <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>184, 26</value>
   </data>
   <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
     <value>Save &amp;As...</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>145, 6</value>
+    <value>181, 6</value>
   </data>
   <data name="closeToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+W</value>
   </data>
   <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>184, 26</value>
   </data>
   <data name="closeToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Close</value>
   </data>
+  <data name="editPACKToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="editPACKToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="editPACKToolStripMenuItem.Text" xml:space="preserve">
+    <value>Convert Archive</value>
+  </data>
+  <data name="layersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="layersToolStripMenuItem.Text" xml:space="preserve">
+    <value>Layers</value>
+  </data>
+  <data name="hideLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>246, 26</value>
+  </data>
+  <data name="hideLayersToolStripMenuItem.Text" xml:space="preserve">
+    <value>No Layers</value>
+  </data>
+  <data name="organizeLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>246, 26</value>
+  </data>
+  <data name="organizeLayersToolStripMenuItem.Text" xml:space="preserve">
+    <value>Organize</value>
+  </data>
+  <data name="organizeLegacyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>246, 26</value>
+  </data>
+  <data name="organizeLegacyToolStripMenuItem.Text" xml:space="preserve">
+    <value>Organize (semi-legacy)</value>
+  </data>
+  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>243, 6</value>
+  </data>
+  <data name="renameToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="renameToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>246, 26</value>
+  </data>
+  <data name="renameToolStripMenuItem.Text" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="mergeSimilarAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="mergeSimilarAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="mergeSimilarAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Merge Similar Assets</value>
+  </data>
+  <data name="applyScaleToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="applyScaleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="applyScaleToolStripMenuItem.Text" xml:space="preserve">
+    <value>Apply Scale</value>
+  </data>
+  <data name="verifyArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="verifyArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="verifyArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Verify Archive</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>250, 6</value>
+  </data>
+  <data name="hipHopToolExportToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="hipHopToolExportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="hipHopToolExportToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export Assets + INI</value>
+  </data>
+  <data name="exportAudioToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="exportAudioToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="exportAudioToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export Audio</value>
+  </data>
+  <data name="importHIPArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importHIPArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="importHIPArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import HIP/HOP Archive</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Multiple Assets</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Models</value>
+  </data>
+  <data name="importTexturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="importTexturesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Textures</value>
+  </data>
+  <data name="tXDArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="tXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 26</value>
+  </data>
+  <data name="tXDArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>TXD Archive</value>
+  </data>
   <data name="exportRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
+    <value>206, 26</value>
   </data>
   <data name="exportRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Export (RW3)</value>
   </data>
   <data name="importRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
+    <value>206, 26</value>
   </data>
   <data name="importRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Import (RW3)</value>
   </data>
   <data name="exportNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
+    <value>206, 26</value>
   </data>
   <data name="exportNoRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Export (No RW3)</value>
   </data>
   <data name="importNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
+    <value>206, 26</value>
   </data>
   <data name="importNoRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Import (No RW3)</value>
   </data>
-  <data name="generateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>159, 22</value>
-  </data>
-  <data name="generateToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Generate Report</value>
-  </data>
   <data name="hideButtonsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>143, 22</value>
+    <value>178, 26</value>
   </data>
   <data name="hideButtonsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Hide Buttons</value>
@@ -403,10 +403,13 @@
     <value>132, 17</value>
   </metadata>
   <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 431</value>
+    <value>0, 532</value>
+  </data>
+  <data name="statusStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>1, 0, 19, 0</value>
   </data>
   <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 22</value>
+    <value>832, 26</value>
   </data>
   <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
     <value>1</value>
@@ -427,25 +430,25 @@
     <value>3</value>
   </data>
   <data name="toolStripStatusLabelCurrentFilename.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
+    <value>0, 20</value>
   </data>
   <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>10, 17</value>
+    <value>13, 20</value>
   </data>
   <data name="toolStripStatusLabel1.Text" xml:space="preserve">
     <value>|</value>
   </data>
   <data name="toolStripStatusLabelSelectionCount.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
+    <value>0, 20</value>
   </data>
   <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>10, 17</value>
+    <value>13, 20</value>
   </data>
   <data name="toolStripStatusLabel2.Text" xml:space="preserve">
     <value>|</value>
   </data>
   <data name="toolStripStatusLabelFileSize.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
+    <value>0, 20</value>
   </data>
   <data name="groupBoxLayers.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -535,10 +538,16 @@
     <value>6</value>
   </data>
   <data name="groupBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 27</value>
+    <value>16, 33</value>
+  </data>
+  <data name="groupBoxLayers.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="groupBoxLayers.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="groupBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
-    <value>600, 47</value>
+    <value>800, 58</value>
   </data>
   <data name="groupBoxLayers.TabIndex" type="System.Int32, mscorlib">
     <value>2</value>
@@ -565,10 +574,13 @@
     <value>False</value>
   </data>
   <data name="buttonArrowDown.Location" type="System.Drawing.Point, System.Drawing">
-    <value>568, 19</value>
+    <value>757, 23</value>
+  </data>
+  <data name="buttonArrowDown.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonArrowDown.Size" type="System.Drawing.Size, System.Drawing">
-    <value>22, 22</value>
+    <value>29, 27</value>
   </data>
   <data name="buttonArrowDown.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -595,10 +607,13 @@
     <value>False</value>
   </data>
   <data name="buttonArrowUp.Location" type="System.Drawing.Point, System.Drawing">
-    <value>540, 19</value>
+    <value>720, 23</value>
+  </data>
+  <data name="buttonArrowUp.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonArrowUp.Size" type="System.Drawing.Size, System.Drawing">
-    <value>22, 22</value>
+    <value>29, 27</value>
   </data>
   <data name="buttonArrowUp.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -622,10 +637,13 @@
     <value>Bottom, Left, Right</value>
   </data>
   <data name="comboBoxLayerTypes.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 19</value>
+    <value>395, 23</value>
+  </data>
+  <data name="comboBoxLayerTypes.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="comboBoxLayerTypes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>115, 21</value>
+    <value>152, 24</value>
   </data>
   <data name="comboBoxLayerTypes.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -649,10 +667,13 @@
     <value>True</value>
   </data>
   <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>256, 23</value>
+    <value>341, 28</value>
+  </data>
+  <data name="label1.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>34, 13</value>
+    <value>42, 16</value>
   </data>
   <data name="label1.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -679,10 +700,13 @@
     <value>False</value>
   </data>
   <data name="buttonRemoveLayer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>471, 19</value>
+    <value>628, 23</value>
+  </data>
+  <data name="buttonRemoveLayer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonRemoveLayer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>63, 21</value>
+    <value>84, 26</value>
   </data>
   <data name="buttonRemoveLayer.TabIndex" type="System.Int32, mscorlib">
     <value>6</value>
@@ -709,10 +733,13 @@
     <value>False</value>
   </data>
   <data name="buttonAddLayer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>417, 19</value>
+    <value>556, 23</value>
+  </data>
+  <data name="buttonAddLayer.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonAddLayer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 21</value>
+    <value>64, 26</value>
   </data>
   <data name="buttonAddLayer.TabIndex" type="System.Int32, mscorlib">
     <value>5</value>
@@ -733,10 +760,13 @@
     <value>5</value>
   </data>
   <data name="comboBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
+    <value>8, 23</value>
+  </data>
+  <data name="comboBoxLayers.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="comboBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
-    <value>244, 21</value>
+    <value>324, 24</value>
   </data>
   <data name="comboBoxLayers.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -949,10 +979,16 @@
     <value>15</value>
   </data>
   <data name="groupBoxAssets.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 80</value>
+    <value>16, 98</value>
+  </data>
+  <data name="groupBoxAssets.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
+  </data>
+  <data name="groupBoxAssets.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="groupBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>600, 348</value>
+    <value>800, 428</value>
   </data>
   <data name="groupBoxAssets.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -979,10 +1015,13 @@
     <value>False</value>
   </data>
   <data name="buttonMultiEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 318</value>
+    <value>692, 391</value>
+  </data>
+  <data name="buttonMultiEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonMultiEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonMultiEdit.TabIndex" type="System.Int32, mscorlib">
     <value>22</value>
@@ -1009,13 +1048,16 @@
     <value>True</value>
   </data>
   <data name="checkBoxTemplateFocus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>520, 8</value>
+    <value>693, 10</value>
+  </data>
+  <data name="checkBoxTemplateFocus.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="checkBoxTemplateFocus.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="checkBoxTemplateFocus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 30</value>
+    <value>100, 36</value>
   </data>
   <data name="checkBoxTemplateFocus.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
@@ -1043,10 +1085,13 @@ Focus</value>
     <value>Top, Bottom, Left, Right</value>
   </data>
   <data name="listViewAssets.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 40</value>
+    <value>12, 49</value>
+  </data>
+  <data name="listViewAssets.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="listViewAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>507, 301</value>
+    <value>675, 370</value>
   </data>
   <data name="listViewAssets.TabIndex" type="System.Int32, mscorlib">
     <value>11</value>
@@ -1106,10 +1151,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonCopy.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 98</value>
+    <value>692, 121</value>
+  </data>
+  <data name="buttonCopy.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonCopy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonCopy.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -1136,10 +1184,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonPaste.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 127</value>
+    <value>692, 156</value>
+  </data>
+  <data name="buttonPaste.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonPaste.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonPaste.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
@@ -1163,10 +1214,13 @@ Focus</value>
     <value>Top, Left, Right</value>
   </data>
   <data name="textBoxFindAsset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 13</value>
+    <value>395, 16</value>
+  </data>
+  <data name="textBoxFindAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="textBoxFindAsset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>217, 20</value>
+    <value>289, 22</value>
   </data>
   <data name="textBoxFindAsset.TabIndex" type="System.Int32, mscorlib">
     <value>10</value>
@@ -1187,10 +1241,13 @@ Focus</value>
     <value>True</value>
   </data>
   <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>260, 16</value>
+    <value>347, 20</value>
+  </data>
+  <data name="label3.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>30, 13</value>
+    <value>36, 16</value>
   </data>
   <data name="label3.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
@@ -1217,10 +1274,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonInternalEdit.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 289</value>
+    <value>692, 356</value>
+  </data>
+  <data name="buttonInternalEdit.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonInternalEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonInternalEdit.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -1247,10 +1307,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonView.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 202</value>
+    <value>692, 249</value>
+  </data>
+  <data name="buttonView.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonView.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonView.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
@@ -1277,10 +1340,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonExportRaw.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 231</value>
+    <value>692, 284</value>
+  </data>
+  <data name="buttonExportRaw.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonExportRaw.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonExportRaw.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -1307,10 +1373,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonEditAsset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 260</value>
+    <value>692, 320</value>
+  </data>
+  <data name="buttonEditAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonEditAsset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonEditAsset.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -1337,10 +1406,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonDuplicate.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 69</value>
+    <value>692, 85</value>
+  </data>
+  <data name="buttonDuplicate.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonDuplicate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonDuplicate.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
@@ -1367,10 +1439,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonRemoveAsset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 156</value>
+    <value>692, 192</value>
+  </data>
+  <data name="buttonRemoveAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonRemoveAsset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonRemoveAsset.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -1397,10 +1472,13 @@ Focus</value>
     <value>False</value>
   </data>
   <data name="buttonAddAsset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>519, 40</value>
+    <value>692, 49</value>
+  </data>
+  <data name="buttonAddAsset.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="buttonAddAsset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>100, 28</value>
   </data>
   <data name="buttonAddAsset.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -1421,10 +1499,13 @@ Focus</value>
     <value>13</value>
   </data>
   <data name="comboBoxAssetTypes.Location" type="System.Drawing.Point, System.Drawing">
-    <value>46, 13</value>
+    <value>61, 16</value>
+  </data>
+  <data name="comboBoxAssetTypes.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="comboBoxAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>204, 21</value>
+    <value>271, 24</value>
   </data>
   <data name="comboBoxAssetTypes.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -1445,10 +1526,13 @@ Focus</value>
     <value>True</value>
   </data>
   <data name="label2.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 16</value>
+    <value>8, 20</value>
+  </data>
+  <data name="label2.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 0, 4, 0</value>
   </data>
   <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>34, 13</value>
+    <value>42, 16</value>
   </data>
   <data name="label2.TabIndex" type="System.Int32, mscorlib">
     <value>4</value>
@@ -1472,7 +1556,7 @@ Focus</value>
     <value>248, 17</value>
   </metadata>
   <data name="contextMenuStrip_ListBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>223, 280</value>
+    <value>266, 304</value>
   </data>
   <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Name" xml:space="preserve">
     <value>contextMenuStrip_ListBoxAssets</value>
@@ -1481,79 +1565,79 @@ Focus</value>
     <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="addTemplateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="addTemplateToolStripMenuItem.Text" xml:space="preserve">
     <value>Add Template</value>
   </data>
   <data name="ToolStripMenuItem_CreateGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="ToolStripMenuItem_CreateGroup.Text" xml:space="preserve">
     <value>Create Group From Selected</value>
   </data>
   <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 6</value>
+    <value>262, 6</value>
   </data>
   <data name="toolStripMenuItem_Add.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_Add.Text" xml:space="preserve">
     <value>Import (Ctrl + I)</value>
   </data>
   <data name="toolStripMenuItem_Duplicate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_Duplicate.Text" xml:space="preserve">
     <value>Duplicate (Ctrl + D)</value>
   </data>
   <data name="toolStripMenuItem_Copy.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_Copy.Text" xml:space="preserve">
     <value>Copy (Ctrl + C)</value>
   </data>
   <data name="toolStripMenuItem_Paste.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_Paste.Text" xml:space="preserve">
     <value>Paste (Ctrl + V)</value>
   </data>
   <data name="toolStripMenuItem_Remove.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_Remove.Text" xml:space="preserve">
     <value>Remove (Del)</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>219, 6</value>
+    <value>262, 6</value>
   </data>
   <data name="toolStripMenuItem_View.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_View.Text" xml:space="preserve">
     <value>View</value>
   </data>
   <data name="toolStripMenuItem_Export.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_Export.Text" xml:space="preserve">
     <value>Export Raw</value>
   </data>
   <data name="toolStripMenuItem_EditHeader.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_EditHeader.Text" xml:space="preserve">
     <value>Edit Header (Ctrl + H)</value>
   </data>
   <data name="toolStripMenuItem_EditData.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_EditData.Text" xml:space="preserve">
     <value>Edit Data (Ctrl + G)</value>
   </data>
   <data name="toolStripMenuItem_MultiEdit.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
+    <value>265, 24</value>
   </data>
   <data name="toolStripMenuItem_MultiEdit.Text" xml:space="preserve">
     <value>Multi Edit</value>
@@ -1562,13 +1646,16 @@ Focus</value>
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>8, 16</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>624, 453</value>
+    <value>832, 558</value>
+  </data>
+  <data name="$this.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 4, 4, 4</value>
   </data>
   <data name="$this.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>398, 244</value>
+    <value>525, 289</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>
@@ -1652,6 +1739,18 @@ Focus</value>
     <value>organizeLegacyToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;organizeLegacyToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator5.Name" xml:space="preserve">
+    <value>toolStripSeparator5</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator5.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;renameToolStripMenuItem.Name" xml:space="preserve">
+    <value>renameToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;renameToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mergeSimilarAssetsToolStripMenuItem.Name" xml:space="preserve">
@@ -1910,18 +2009,6 @@ Focus</value>
     <value>toolStripMenuItem_MultiEdit</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem_MultiEdit.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator5.Name" xml:space="preserve">
-    <value>toolStripSeparator5</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator5.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;renameToolStripMenuItem.Name" xml:space="preserve">
-    <value>renameToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;renameToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">

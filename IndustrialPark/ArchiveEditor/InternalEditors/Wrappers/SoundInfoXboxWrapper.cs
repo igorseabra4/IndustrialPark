@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
     public class SoundInfoXboxWrapper
     {

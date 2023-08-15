@@ -25,8 +25,8 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(MaxAttackers);
-                
+            writer.Write(MaxAttackers);
+
         }
     }
 }

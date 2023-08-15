@@ -17,7 +17,7 @@ namespace IndustrialPark
             assets = new List<Section_AHDR>();
             jspExtraInfo = new List<AssetID[]>();
         }
-        
+
         public void Add(Game game, Endianness endianness, Section_AHDR asset, AssetID[] jspExtraInfo)
         {
             games.Add(game);

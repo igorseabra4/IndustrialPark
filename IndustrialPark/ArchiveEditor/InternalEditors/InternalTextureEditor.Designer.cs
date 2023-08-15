@@ -30,7 +30,6 @@
         {
             this.propertyGridAsset = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.checkBoxMipmaps = new System.Windows.Forms.CheckBox();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonExport = new System.Windows.Forms.Button();
             this.buttonImport = new System.Windows.Forms.Button();
@@ -39,6 +38,7 @@
             this.checkBoxFlipTextures = new System.Windows.Forms.CheckBox();
             this.checkBoxTransFix = new System.Windows.Forms.CheckBox();
             this.checkBoxCompress = new System.Windows.Forms.CheckBox();
+            this.checkBoxMipmaps = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -51,10 +51,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tableLayoutPanel1.SetColumnSpan(this.propertyGridAsset, 2);
             this.propertyGridAsset.HelpVisible = false;
-            this.propertyGridAsset.Location = new System.Drawing.Point(3, 3);
+            this.propertyGridAsset.Location = new System.Drawing.Point(4, 4);
+            this.propertyGridAsset.Margin = new System.Windows.Forms.Padding(4);
             this.propertyGridAsset.Name = "propertyGridAsset";
             this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(338, 121);
+            this.propertyGridAsset.Size = new System.Drawing.Size(451, 152);
             this.propertyGridAsset.TabIndex = 5;
             this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
             // 
@@ -76,39 +77,28 @@
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 7;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 40F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 27F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 31F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 32F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(459, 543);
             this.tableLayoutPanel1.TabIndex = 7;
-            // 
-            // checkBoxMipmaps
-            // 
-            this.checkBoxMipmaps.AutoSize = true;
-            this.checkBoxMipmaps.Checked = true;
-            this.checkBoxMipmaps.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMipmaps.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxMipmaps.Location = new System.Drawing.Point(3, 343);
-            this.checkBoxMipmaps.Name = "checkBoxMipmaps";
-            this.checkBoxMipmaps.Size = new System.Drawing.Size(166, 16);
-            this.checkBoxMipmaps.TabIndex = 15;
-            this.checkBoxMipmaps.Text = "Generate Mipmaps";
-            this.checkBoxMipmaps.UseVisualStyleBackColor = true;
             // 
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
             this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 415);
+            this.buttonHelp.Location = new System.Drawing.Point(4, 516);
+            this.buttonHelp.Margin = new System.Windows.Forms.Padding(4);
             this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(166, 23);
+            this.buttonHelp.Size = new System.Drawing.Size(221, 23);
             this.buttonHelp.TabIndex = 13;
             this.buttonHelp.Text = "Open Wiki Page";
             this.buttonHelp.UseVisualStyleBackColor = true;
@@ -118,9 +108,10 @@
             // 
             this.buttonExport.AutoSize = true;
             this.buttonExport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonExport.Location = new System.Drawing.Point(3, 387);
+            this.buttonExport.Location = new System.Drawing.Point(4, 485);
+            this.buttonExport.Margin = new System.Windows.Forms.Padding(4);
             this.buttonExport.Name = "buttonExport";
-            this.buttonExport.Size = new System.Drawing.Size(166, 22);
+            this.buttonExport.Size = new System.Drawing.Size(221, 23);
             this.buttonExport.TabIndex = 10;
             this.buttonExport.Text = "Export";
             this.buttonExport.UseVisualStyleBackColor = true;
@@ -130,9 +121,10 @@
             // 
             this.buttonImport.AutoSize = true;
             this.buttonImport.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonImport.Location = new System.Drawing.Point(175, 387);
+            this.buttonImport.Location = new System.Drawing.Point(233, 485);
+            this.buttonImport.Margin = new System.Windows.Forms.Padding(4);
             this.buttonImport.Name = "buttonImport";
-            this.buttonImport.Size = new System.Drawing.Size(166, 22);
+            this.buttonImport.Size = new System.Drawing.Size(222, 23);
             this.buttonImport.TabIndex = 11;
             this.buttonImport.Text = "Import";
             this.buttonImport.UseVisualStyleBackColor = true;
@@ -142,9 +134,10 @@
             // 
             this.buttonFindCallers.AutoSize = true;
             this.buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonFindCallers.Location = new System.Drawing.Point(175, 415);
+            this.buttonFindCallers.Location = new System.Drawing.Point(233, 516);
+            this.buttonFindCallers.Margin = new System.Windows.Forms.Padding(4);
             this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(166, 23);
+            this.buttonFindCallers.Size = new System.Drawing.Size(222, 23);
             this.buttonFindCallers.TabIndex = 12;
             this.buttonFindCallers.Text = "Find Who Targets Me";
             this.buttonFindCallers.UseVisualStyleBackColor = true;
@@ -155,18 +148,20 @@
             this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.tableLayoutPanel1.SetColumnSpan(this.pictureBox1, 2);
             this.pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 130);
+            this.pictureBox1.Location = new System.Drawing.Point(4, 164);
+            this.pictureBox1.Margin = new System.Windows.Forms.Padding(4);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(338, 185);
+            this.pictureBox1.Size = new System.Drawing.Size(451, 232);
             this.pictureBox1.TabIndex = 14;
             this.pictureBox1.TabStop = false;
             // 
             // checkBoxFlipTextures
             // 
             this.checkBoxFlipTextures.AutoSize = true;
-            this.checkBoxFlipTextures.Location = new System.Drawing.Point(175, 343);
+            this.checkBoxFlipTextures.Location = new System.Drawing.Point(233, 431);
+            this.checkBoxFlipTextures.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxFlipTextures.Name = "checkBoxFlipTextures";
-            this.checkBoxFlipTextures.Size = new System.Drawing.Size(87, 16);
+            this.checkBoxFlipTextures.Size = new System.Drawing.Size(109, 19);
             this.checkBoxFlipTextures.TabIndex = 17;
             this.checkBoxFlipTextures.Text = "Flip Vertically";
             this.checkBoxFlipTextures.UseVisualStyleBackColor = true;
@@ -174,9 +169,10 @@
             // checkBoxTransFix
             // 
             this.checkBoxTransFix.AutoSize = true;
-            this.checkBoxTransFix.Location = new System.Drawing.Point(175, 365);
+            this.checkBoxTransFix.Location = new System.Drawing.Point(233, 458);
+            this.checkBoxTransFix.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxTransFix.Name = "checkBoxTransFix";
-            this.checkBoxTransFix.Size = new System.Drawing.Size(113, 16);
+            this.checkBoxTransFix.Size = new System.Drawing.Size(141, 19);
             this.checkBoxTransFix.TabIndex = 18;
             this.checkBoxTransFix.Text = "Has Transparency";
             this.checkBoxTransFix.UseVisualStyleBackColor = true;
@@ -187,32 +183,49 @@
             this.checkBoxCompress.AutoSize = true;
             this.checkBoxCompress.Checked = true;
             this.checkBoxCompress.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxCompress.Location = new System.Drawing.Point(3, 365);
+            this.checkBoxCompress.Location = new System.Drawing.Point(4, 458);
+            this.checkBoxCompress.Margin = new System.Windows.Forms.Padding(4);
             this.checkBoxCompress.Name = "checkBoxCompress";
-            this.checkBoxCompress.Size = new System.Drawing.Size(72, 16);
+            this.checkBoxCompress.Size = new System.Drawing.Size(91, 19);
             this.checkBoxCompress.TabIndex = 16;
             this.checkBoxCompress.Text = "Compress";
             this.checkBoxCompress.UseVisualStyleBackColor = true;
             this.checkBoxCompress.CheckedChanged += new System.EventHandler(this.checkBoxCompress_CheckedChanged);
+            // 
+            // checkBoxMipmaps
+            // 
+            this.checkBoxMipmaps.AutoSize = true;
+            this.checkBoxMipmaps.Checked = true;
+            this.checkBoxMipmaps.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMipmaps.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxMipmaps.Location = new System.Drawing.Point(4, 431);
+            this.checkBoxMipmaps.Margin = new System.Windows.Forms.Padding(4);
+            this.checkBoxMipmaps.Name = "checkBoxMipmaps";
+            this.checkBoxMipmaps.Size = new System.Drawing.Size(221, 19);
+            this.checkBoxMipmaps.TabIndex = 15;
+            this.checkBoxMipmaps.Text = "Generate Mipmaps";
+            this.checkBoxMipmaps.UseVisualStyleBackColor = true;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.tableLayoutPanel1.SetColumnSpan(this.label1, 2);
             this.label1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.label1.Location = new System.Drawing.Point(3, 318);
+            this.label1.Location = new System.Drawing.Point(4, 400);
+            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(338, 22);
+            this.label1.Size = new System.Drawing.Size(451, 27);
             this.label1.TabIndex = 19;
             this.label1.Text = "Import settings:";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // InternalTextureEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 441);
+            this.ClientSize = new System.Drawing.Size(459, 543);
             this.Controls.Add(this.tableLayoutPanel1);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.Name = "InternalTextureEditor";
             this.ShowIcon = false;

@@ -46,14 +46,14 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                base.Serialize(writer);
-                writer.Write((short)Items.Length);
-                writer.Write((short)ReceiveEventDelegation);
-                foreach (var a in Items)
-                    writer.Write(a);
-                SerializeLinks(writer);
+            base.Serialize(writer);
+            writer.Write((short)Items.Length);
+            writer.Write((short)ReceiveEventDelegation);
+            foreach (var a in Items)
+                writer.Write(a);
+            SerializeLinks(writer);
 
-                
+
         }
 
         [Browsable(false)]

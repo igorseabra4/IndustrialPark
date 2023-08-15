@@ -170,6 +170,7 @@ namespace IndustrialPark
             return CreateRWTXsFromBitmaps(game, platform, new List<string>() { fileName }, appendRW3, flip, mipmaps, compress, transFix)[0];
         }
 
+
         public static List<Section_AHDR> CreateRWTXsFromBitmaps
             (Game game, Platform platform, List<string> fileNames, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
         {

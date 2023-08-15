@@ -30,7 +30,7 @@ namespace IndustrialPark
         public void ApplyScale(Vector3 factor)
         {
             var sections = File;
-            foreach(var s in sections)
+            foreach (var s in sections)
             {
                 if (s is BFBB_CollisionData_Section1_00BEEF01 s1)
                 {

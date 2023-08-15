@@ -288,7 +288,7 @@ namespace IndustrialPark
             writer.Write(hitEffect);
             writer.Write(effectStart);
             writer.Write(effectEnd);
-            effectBoneOutside1.Serialize(writer); 
+            effectBoneOutside1.Serialize(writer);
             effectBoneOutside2.Serialize(writer);
             effectBoneInside1.Serialize(writer);
             effectBoneInside2.Serialize(writer);
@@ -339,7 +339,7 @@ namespace IndustrialPark
         public AttackTableTransition[] Transitions { get; set; }
         [Category(categoryName)]
         public AttackTableState[] States { get; set; }
-        
+
         public AssetATKT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             if (AHDR.data.Length == 0)

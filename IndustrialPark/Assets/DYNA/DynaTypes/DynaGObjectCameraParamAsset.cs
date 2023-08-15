@@ -44,15 +44,15 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(UnknownFloat00);
-                writer.Write(UnknownFloat04);
-                writer.Write(UnknownFloat08);
-                writer.Write(UnknownFloat0C);
-                writer.Write(UnknownFloat10);
-                writer.Write(UnknownFloat14);
-                writer.Write(UnknownFloat18);
+            writer.Write(UnknownFloat00);
+            writer.Write(UnknownFloat04);
+            writer.Write(UnknownFloat08);
+            writer.Write(UnknownFloat0C);
+            writer.Write(UnknownFloat10);
+            writer.Write(UnknownFloat14);
+            writer.Write(UnknownFloat18);
 
-                
+
         }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -39,13 +38,13 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(Unknown00);
-                writer.Write(Unknown04);
-                writer.Write(Unknown08);
-                writer.Write(Unknown0C);
-                writer.Write(Unknown10);
+            writer.Write(Unknown00);
+            writer.Write(Unknown04);
+            writer.Write(Unknown08);
+            writer.Write(Unknown0C);
+            writer.Write(Unknown10);
 
-                
+
         }
     }
 }

@@ -53,7 +53,7 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
+    <TargetZone>Custom</TargetZone>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>false</GenerateManifests>
@@ -154,6 +154,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArchiveEditor\ArchiveEditor.Designer.cs">
+      <DependentUpon>ArchiveEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
     <Compile Include="ArchiveEditor\Dialogs\RenameLayer.cs">
@@ -161,6 +164,24 @@
     </Compile>
     <Compile Include="ArchiveEditor\Dialogs\RenameLayer.Designer.cs">
       <DependentUpon>RenameLayer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\ImageEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\ImageEditor.Designer.cs">
+      <DependentUpon>ImageEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\ImageEditorDialogs\ChangeImageScale.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\ImageEditorDialogs\ChangeImageScale.Designer.cs">
+      <DependentUpon>ChangeImageScale.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\ImageEditorDialogs\ImageEditorImageProperties.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\InternalEditors\ImageEditorDialogs\ImageEditorImageProperties.Designer.cs">
+      <DependentUpon>ImageEditorImageProperties.cs</DependentUpon>
     </Compile>
     <Compile Include="ArchiveEditor\InternalEditors\SoundUtility.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoGcn1Wrapper.cs" />
@@ -400,6 +421,8 @@
     <Compile Include="Assets\Shared\Interfaces\IAssetCopyPasteTransformation.cs" />
     <Compile Include="Assets\Shared\Interfaces\IVolumeAsset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
+    <Compile Include="ImageHelpers\ImageEditorFilters.cs" />
+    <Compile Include="ImageHelpers\ImageScalingAlgorithm.cs" />
     <Compile Include="Links\Enums\EventScooby.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatType.cs" />
@@ -579,9 +602,6 @@
     <Compile Include="ArchiveEditor\ArchiveEditor.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ArchiveEditor\ArchiveEditor.Designer.cs">
-      <DependentUpon>ArchiveEditor.cs</DependentUpon>
-    </Compile>
     <Compile Include="MainForm\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -620,6 +640,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\ImageEditor.resx">
+      <DependentUpon>ImageEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\ImageEditorDialogs\ChangeImageScale.resx">
+      <DependentUpon>ChangeImageScale.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\InternalEditors\ImageEditorDialogs\ImageEditorImageProperties.resx">
+      <DependentUpon>ImageEditorImageProperties.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
       <DependentUpon>InternalModelEditor.cs</DependentUpon>

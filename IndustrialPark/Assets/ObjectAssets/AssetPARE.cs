@@ -113,8 +113,8 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle Velocity_AngleVariation_Rad { get; set; }
         [Category(categoryName)]
-        public AssetSingle Velocity_AngleVariation_Deg 
-        { 
+        public AssetSingle Velocity_AngleVariation_Deg
+        {
             get => MathUtil.RadiansToDegrees(Velocity_AngleVariation_Rad);
             set => Velocity_AngleVariation_Rad = MathUtil.DegreesToRadians(value);
         }
@@ -152,8 +152,8 @@ namespace IndustrialPark
                 Count = 0x03;
                 CountVariation = 0x01;
                 Interval = 0.1f;
-                ParticleEmitterSettings = new PareSpecific_xPECircle() 
-                { 
+                ParticleEmitterSettings = new PareSpecific_xPECircle()
+                {
                     Radius = 0.5f
                 };
                 ParticleSystem = "CAULDRON SYSTEM";

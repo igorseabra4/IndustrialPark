@@ -1,13 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -519,7 +516,7 @@ namespace IndustrialPark
             {
                 BoundingSphere localBounds = new BoundingSphere();
                 if (geometryStruct.morphTargets[i].hasVertices != 0)
-                { 
+                {
                     for (int j = 0; j < geometryStruct.morphTargets[i].vertices.Length; j++)
                         geometryStruct.morphTargets[i].vertices[j] = transform(geometryStruct.morphTargets[i].vertices[j].X, geometryStruct.morphTargets[i].vertices[j].Y, geometryStruct.morphTargets[i].vertices[j].Z);
                     localBounds = GetBoundingSphere(geometryStruct.morphTargets[i].vertices);

@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -73,30 +72,30 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                base.Serialize(writer);
-                writer.Write(Type);
-                writer.Write(ParticleSystem);
-                writer.Write(Texture);
-                writer.Write(Flags.FlagValueByte);
-                writer.Write(Priority);
-                writer.Write(MaxParticles);
-                writer.Write(RenderFunction);
-                writer.Write(RenderSourceBlendMode);
-                writer.Write(RenderDestBlendMode);
-                writer.Write(CmdCount);
-                writer.Write(Cmd.Length * 4);
-                foreach (var c in Cmd)
-                    writer.Write(c);
+            base.Serialize(writer);
+            writer.Write(Type);
+            writer.Write(ParticleSystem);
+            writer.Write(Texture);
+            writer.Write(Flags.FlagValueByte);
+            writer.Write(Priority);
+            writer.Write(MaxParticles);
+            writer.Write(RenderFunction);
+            writer.Write(RenderSourceBlendMode);
+            writer.Write(RenderDestBlendMode);
+            writer.Write(CmdCount);
+            writer.Write(Cmd.Length * 4);
+            foreach (var c in Cmd)
+                writer.Write(c);
 
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(Unknown01);
-                    writer.Write(Unknown02);
-                    writer.Write(Unknown03);
-                    writer.Write(Unknown04);
-                }
-                SerializeLinks(writer);
-                
+            if (game == Game.Incredibles)
+            {
+                writer.Write(Unknown01);
+                writer.Write(Unknown02);
+                writer.Write(Unknown03);
+                writer.Write(Unknown04);
+            }
+            SerializeLinks(writer);
+
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

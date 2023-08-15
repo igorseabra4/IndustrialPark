@@ -38,12 +38,12 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(Priority);
-                writer.Write(Time);
-                writer.Write(PitchAdjust);
-                writer.Write(DistAdjust);
+            writer.Write(Priority);
+            writer.Write(Time);
+            writer.Write(PitchAdjust);
+            writer.Write(DistAdjust);
 
-                
+
         }
     }
 }

@@ -92,20 +92,20 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write((int)PlayerType);
-                writer.Write(RingModel);
-                writer.Write(DefaultWarningTime);
-                writer.Write(Rings.Length);
-                writer.Write(UnusedOffset);
-                writer.Write(RingSoundGroup1);
-                writer.Write(RingSoundGroup2);
-                writer.Write(RingSoundGroup3);
-                writer.Write(RingSoundGroup4);
-                writer.Write(NumNextRingsToShow);
-                foreach (var i in Rings)
-                    writer.Write(i);
+            writer.Write((int)PlayerType);
+            writer.Write(RingModel);
+            writer.Write(DefaultWarningTime);
+            writer.Write(Rings.Length);
+            writer.Write(UnusedOffset);
+            writer.Write(RingSoundGroup1);
+            writer.Write(RingSoundGroup2);
+            writer.Write(RingSoundGroup3);
+            writer.Write(RingSoundGroup4);
+            writer.Write(NumNextRingsToShow);
+            foreach (var i in Rings)
+                writer.Write(i);
 
-                
+
         }
 
         [Browsable(false)]

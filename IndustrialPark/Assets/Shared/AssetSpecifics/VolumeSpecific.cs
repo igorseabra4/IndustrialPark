@@ -1,7 +1,4 @@
-﻿using HipHopFile;
-using SharpDX;
-using SharpDX.Direct3D11;
-using System;
+﻿using SharpDX;
 using System.Collections.Generic;
 
 namespace IndustrialPark
@@ -47,7 +44,7 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write(CenterX);            
+            writer.Write(CenterX);
             writer.Write(CenterY);
             writer.Write(CenterZ);
         }
@@ -242,15 +239,15 @@ namespace IndustrialPark
             _minimum.X *= factor.X;
             _minimum.Y *= factor.Y;
             _minimum.Z *= factor.Z;
-            
+
             _maximum.X *= factor.X;
             _maximum.Y *= factor.Y;
             _maximum.Z *= factor.Z;
-            
+
             _position.X *= factor.X;
             _position.Y *= factor.Y;
             _position.Z *= factor.Z;
-            
+
             FixPosition();
         }
     }
