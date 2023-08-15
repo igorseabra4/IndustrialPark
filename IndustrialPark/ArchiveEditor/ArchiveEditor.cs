@@ -1840,5 +1840,10 @@ namespace IndustrialPark
                 PopulateAssetListAndComboBox();
             }
         }
+
+        private void builtInImageEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }

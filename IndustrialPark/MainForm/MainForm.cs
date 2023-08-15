@@ -1849,5 +1849,12 @@ namespace IndustrialPark
             foreach (var ae in archiveEditors)
                 ae.archive.DropSelectedAssets(renderer);
         }
+
+        private void builtInImageEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImageEditor imageEditorTool = new ImageEditor();
+            imageEditorTool.TopMost = true;
+            imageEditorTool.ShowDialog();
+        }
     }
 }

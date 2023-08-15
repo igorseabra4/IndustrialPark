@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -61,7 +60,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle ActivateRadius
         {
-            get => _activateRadius; 
+            get => _activateRadius;
             set { _activateRadius = value; CreateTransformMatrix(); }
         }
         [Category(categoryName)]
@@ -373,7 +372,7 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         public override bool DontRender => dontRender;
-        
+
         public override void Draw(SharpRenderer renderer)
         {
             Vector4 Color = _color;

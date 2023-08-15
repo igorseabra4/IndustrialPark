@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -28,13 +27,13 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(BumpMapTexture);
-                writer.Write(EnvMapTexture);
-                writer.Write(Shininess);
-                writer.Write(Bumpiness);
-                writer.Write(DualMapTexture);
-                
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(BumpMapTexture);
+            writer.Write(EnvMapTexture);
+            writer.Write(Shininess);
+            writer.Write(Bumpiness);
+            writer.Write(DualMapTexture);
+
         }
     }
 
@@ -81,11 +80,11 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                writer.Write(Padding);
-                writer.Write(Mode);
-                writer.Write(Group);
-                writer.Write(Speed);
-                
+            writer.Write(Padding);
+            writer.Write(Mode);
+            writer.Write(Group);
+            writer.Write(Speed);
+
         }
     }
 

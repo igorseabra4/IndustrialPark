@@ -71,26 +71,26 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(VentType);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(DamageBoxLowerCornerX);
-                writer.Write(DamageBoxLowerCornerY);
-                writer.Write(DamageBoxLowerCornerZ);
-                writer.Write(DamageBoxUpperCornerX);
-                writer.Write(DamageBoxUpperCornerY);
-                writer.Write(DamageBoxUpperCornerZ);
-                writer.Write(BoulderPushSpeed);
-                writer.Write(VentFlags.FlagValueInt);
-                writer.Write(IdleTime);
-                writer.Write(WarnTime);
-                writer.Write(DamageTime);
+            writer.Write(VentType);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(DamageBoxLowerCornerX);
+            writer.Write(DamageBoxLowerCornerY);
+            writer.Write(DamageBoxLowerCornerZ);
+            writer.Write(DamageBoxUpperCornerX);
+            writer.Write(DamageBoxUpperCornerY);
+            writer.Write(DamageBoxUpperCornerZ);
+            writer.Write(BoulderPushSpeed);
+            writer.Write(VentFlags.FlagValueInt);
+            writer.Write(IdleTime);
+            writer.Write(WarnTime);
+            writer.Write(DamageTime);
 
-                
+
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

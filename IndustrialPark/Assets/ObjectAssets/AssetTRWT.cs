@@ -1,6 +1,4 @@
 ﻿using HipHopFile;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -13,7 +11,7 @@ namespace IndustrialPark
         public AssetID Shrapnel { get; set; }
         public int Damage { get; set; }
         public AssetSingle DamageRadius { get; set; }
-        
+
         public ThrowableEntry() { }
         public ThrowableEntry(EndianBinaryReader reader)
         {
@@ -27,12 +25,12 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                writer.Write(Model);
-                writer.Write(Type);
-                writer.Write(Shrapnel);
-                writer.Write(Damage);
-                writer.Write(DamageRadius);
-                
+            writer.Write(Model);
+            writer.Write(Type);
+            writer.Write(Shrapnel);
+            writer.Write(Damage);
+            writer.Write(DamageRadius);
+
         }
 
         public override string ToString()

@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -112,41 +111,41 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                base.Serialize(writer);
-                writer.Write(LobMasterType);
-                writer.Write(Projectile);
-                writer.Write(PositionX);
-                writer.Write(PositionY);
-                writer.Write(PositionZ);
-                writer.Write(RotationX);
-                writer.Write(RotationY);
-                writer.Write(RotationZ);
-                writer.Write(LaunchSpeed);
-                writer.Write(SpeedRandomPct);
-                writer.Write(ScaleX);
-                writer.Write(ScaleY);
-                writer.Write(ScaleZ);
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(MaxLifetime);
-                writer.Write(MaxDistance);
-                writer.Write(Aid_MovePoint);
-                writer.Write(SalvoCount);
-                writer.Write(AmmoCount);
-                writer.Write(ArcCoeffFactor);
-                writer.Write(DebrisConeAngle);
-                writer.Write(NumBounce);
-                writer.Write(PowerupType);
-                writer.Write(HeavyFactor);
-                writer.Write(TumbleRotationX);
-                writer.Write(TumbleRotationY);
-                writer.Write(TumbleRotationZ);
-                writer.Write(CollideDelay);
-                writer.Write(AtRestPeriod);
-                writer.Write(Mode);
+            base.Serialize(writer);
+            writer.Write(LobMasterType);
+            writer.Write(Projectile);
+            writer.Write(PositionX);
+            writer.Write(PositionY);
+            writer.Write(PositionZ);
+            writer.Write(RotationX);
+            writer.Write(RotationY);
+            writer.Write(RotationZ);
+            writer.Write(LaunchSpeed);
+            writer.Write(SpeedRandomPct);
+            writer.Write(ScaleX);
+            writer.Write(ScaleY);
+            writer.Write(ScaleZ);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(MaxLifetime);
+            writer.Write(MaxDistance);
+            writer.Write(Aid_MovePoint);
+            writer.Write(SalvoCount);
+            writer.Write(AmmoCount);
+            writer.Write(ArcCoeffFactor);
+            writer.Write(DebrisConeAngle);
+            writer.Write(NumBounce);
+            writer.Write(PowerupType);
+            writer.Write(HeavyFactor);
+            writer.Write(TumbleRotationX);
+            writer.Write(TumbleRotationY);
+            writer.Write(TumbleRotationZ);
+            writer.Write(CollideDelay);
+            writer.Write(AtRestPeriod);
+            writer.Write(Mode);
 
-                SerializeLinks(writer);
+            SerializeLinks(writer);
 
-                
+
         }
     }
 }

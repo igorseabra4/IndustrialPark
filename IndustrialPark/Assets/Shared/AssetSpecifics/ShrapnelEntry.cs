@@ -414,7 +414,7 @@ namespace IndustrialPark
             writer.Write(DeathColorRed);
             writer.Write(DeathColorGreen);
             writer.Write(DeathColorBlue);
-            writer.Write(DeathColorAlpha);                
+            writer.Write(DeathColorAlpha);
         }
     }
 

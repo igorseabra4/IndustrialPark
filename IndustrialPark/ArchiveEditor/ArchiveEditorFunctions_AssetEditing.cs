@@ -535,101 +535,101 @@ namespace IndustrialPark
                 switch (a.assetType)
                 {
                     case AssetType.Texture:
-                    {
-                        switch (textureIndex)
                         {
-                            case 0:
-                                textureLayer0.AssetIDs.Add(a.assetID);
-                                break;
-                            case 1:
-                                textureLayer1.AssetIDs.Add(a.assetID);
-                                break;
-                            case 2:
-                                textureLayer2.AssetIDs.Add(a.assetID);
-                                break;
+                            switch (textureIndex)
+                            {
+                                case 0:
+                                    textureLayer0.AssetIDs.Add(a.assetID);
+                                    break;
+                                case 1:
+                                    textureLayer1.AssetIDs.Add(a.assetID);
+                                    break;
+                                case 2:
+                                    textureLayer2.AssetIDs.Add(a.assetID);
+                                    break;
+                            }
+                            if (game != Game.Scooby && !legacy)
+                                textureIndex = (textureIndex + 1) % 3;
+                            break;
                         }
-                        if (game != Game.Scooby && !legacy)
-                            textureIndex = (textureIndex + 1) % 3;
-                        break;
-                    }
                     case AssetType.BinkVideo:
                     case AssetType.TextureStream:
                     case AssetType.WireframeModel:
-                    {
-                        textureStrmLayer.AssetIDs.Add(a.assetID);
-                        break;
-                    }
+                        {
+                            textureStrmLayer.AssetIDs.Add(a.assetID);
+                            break;
+                        }
                     case AssetType.BSP:
                     case AssetType.JSP:
-                    {
-                        if (game == Game.Scooby || !ContainsAssetWithType(AssetType.JSPInfo))
                         {
-                            bspLayer.AssetIDs.Add(a.assetID);
-                            doneJsps.Add(a.assetID);
+                            if (game == Game.Scooby || !ContainsAssetWithType(AssetType.JSPInfo))
+                            {
+                                bspLayer.AssetIDs.Add(a.assetID);
+                                doneJsps.Add(a.assetID);
+                            }
+                            break;
                         }
-                        break;
-                    }
                     case AssetType.JSPInfo:
-                    {
-                        jspInfoLayers.Add(new Layer(LayerType.JSPINFO) { AssetIDs = new List<uint>() { a.assetID } });
-                        break;
-                    }
-                    case AssetType.Model:
-                    {
-                        switch (modelIndex)
                         {
-                            case 0:
-                                modelLayer0.AssetIDs.Add(a.assetID);
-                                break;
-                            case 1:
-                                modelLayer1.AssetIDs.Add(a.assetID);
-                                break;
-                            case 2:
-                                modelLayer2.AssetIDs.Add(a.assetID);
-                                break;
+                            jspInfoLayers.Add(new Layer(LayerType.JSPINFO) { AssetIDs = new List<uint>() { a.assetID } });
+                            break;
                         }
-                        if (game != Game.Scooby && !legacy)
-                            modelIndex = (modelIndex + 1) % 3;
-                        break;
-                    }
+                    case AssetType.Model:
+                        {
+                            switch (modelIndex)
+                            {
+                                case 0:
+                                    modelLayer0.AssetIDs.Add(a.assetID);
+                                    break;
+                                case 1:
+                                    modelLayer1.AssetIDs.Add(a.assetID);
+                                    break;
+                                case 2:
+                                    modelLayer2.AssetIDs.Add(a.assetID);
+                                    break;
+                            }
+                            if (game != Game.Scooby && !legacy)
+                                modelIndex = (modelIndex + 1) % 3;
+                            break;
+                        }
                     case AssetType.Animation:
-                    {
-                        if (game == Game.BFBB)
-                            animationLayer.AssetIDs.Add(a.assetID);
-                        else
-                            defaultLayer.AssetIDs.Add(a.assetID);
-                        break;
-                    }
+                        {
+                            if (game == Game.BFBB)
+                                animationLayer.AssetIDs.Add(a.assetID);
+                            else
+                                defaultLayer.AssetIDs.Add(a.assetID);
+                            break;
+                        }
                     case AssetType.Cutscene:
                     case AssetType.CutsceneStreamingSound:
-                    {
-                        cutsceneLayer.AssetIDs.Add(a.assetID);
-                        break;
-                    }
+                        {
+                            cutsceneLayer.AssetIDs.Add(a.assetID);
+                            break;
+                        }
                     case AssetType.Sound:
                     case AssetType.SoundStream:
-                    {
-                        sramLayer.AssetIDs.Add(a.assetID);
-                        break;
-                    }
+                        {
+                            sramLayer.AssetIDs.Add(a.assetID);
+                            break;
+                        }
                     case AssetType.SoundInfo:
-                    {
-                        sndtocLayer.AssetIDs.Add(a.assetID);
-                        break;
-                    }
-                    case AssetType.CutsceneTableOfContents:
-                    {
-                        if (game == Game.Incredibles)
-                            cutscenetocLayer.AssetIDs.Add(a.assetID);
-                        else
+                        {
                             sndtocLayer.AssetIDs.Add(a.assetID);
-                        break;
-                    }
+                            break;
+                        }
+                    case AssetType.CutsceneTableOfContents:
+                        {
+                            if (game == Game.Incredibles)
+                                cutscenetocLayer.AssetIDs.Add(a.assetID);
+                            else
+                                sndtocLayer.AssetIDs.Add(a.assetID);
+                            break;
+                        }
                     default:
-                    {
-                        defaultLayer.AssetIDs.Add(a.assetID);
-                        break;
-                    }
+                        {
+                            defaultLayer.AssetIDs.Add(a.assetID);
+                            break;
+                        }
                 }
             }
 

@@ -134,65 +134,65 @@ namespace IndustrialPark
                 fillerByte = 0xCD;
 
 
-                base.Serialize(writer);
+            base.Serialize(writer);
 
-                for (int i = 0; i < 9; i++)
-                    writer.Write(0);
+            for (int i = 0; i < 9; i++)
+                writer.Write(0);
 
-                int OffPrefixOffset = (int)writer.BaseStream.Position - 8;
-                WriteString(TileName_FirstWhite, writer, fillerByte);
+            int OffPrefixOffset = (int)writer.BaseStream.Position - 8;
+            WriteString(TileName_FirstWhite, writer, fillerByte);
 
-                int TransitionPrefixOffset = (int)writer.BaseStream.Position - 8;
-                WriteString(TileName_FirstYellow, writer, fillerByte);
+            int TransitionPrefixOffset = (int)writer.BaseStream.Position - 8;
+            WriteString(TileName_FirstYellow, writer, fillerByte);
 
-                int OnPrefixOffset = (int)writer.BaseStream.Position - 8;
-                WriteString(TileName_FirstRed, writer, fillerByte);
+            int OnPrefixOffset = (int)writer.BaseStream.Position - 8;
+            WriteString(TileName_FirstRed, writer, fillerByte);
 
-                int StatesOffset = (int)writer.BaseStream.Position - 8;
+            int StatesOffset = (int)writer.BaseStream.Position - 8;
 
-                for (int i = 0; i < Patterns.Length; i++)
-                    writer.Write(0); // int[] Phases
+            for (int i = 0; i < Patterns.Length; i++)
+                writer.Write(0); // int[] Phases
 
-                int[] PhaseOffsets = new int[Patterns.Length];
+            int[] PhaseOffsets = new int[Patterns.Length];
 
-                for (int i = 0; i < Patterns.Length; i++)
+            for (int i = 0; i < Patterns.Length; i++)
+            {
+                PhaseOffsets[i] = (int)writer.BaseStream.Position - 8;
+
+                Patterns[i].Fix(AmountOfTiles);
+
+                for (int j = 0; j < Patterns[i].Pattern.Length; j += 4)
                 {
-                    PhaseOffsets[i] = (int)writer.BaseStream.Position - 8;
-
-                    Patterns[i].Fix(AmountOfTiles);
-
-                    for (int j = 0; j < Patterns[i].Pattern.Length; j += 4)
-                    {
-                        byte entry = 0;
-                        for (int k = 0; k < 4; k++)
-                            if (j + k < Patterns[i].Pattern.Length)
-                                entry |= (byte)(((int)Patterns[i].Pattern[j + k]) << (2 * k));
-                        writer.Write(entry);
-                    }
+                    byte entry = 0;
+                    for (int k = 0; k < 4; k++)
+                        if (j + k < Patterns[i].Pattern.Length)
+                            entry |= (byte)(((int)Patterns[i].Pattern[j + k]) << (2 * k));
+                    writer.Write(entry);
                 }
+            }
 
-                while (writer.BaseStream.Position % 4 != 0)
-                    writer.Write(fillerByte);
+            while (writer.BaseStream.Position % 4 != 0)
+                writer.Write(fillerByte);
 
-                writer.BaseStream.Position = baseHeaderEndPosition;
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(TimeYellow);
-                writer.Write(TimeRed);
-                writer.Write(OffPrefixOffset);
-                writer.Write(TransitionPrefixOffset);
-                writer.Write(OnPrefixOffset);
-                writer.Write(AmountOfTiles);
-                writer.Write(StatesOffset);
-                writer.Write(Patterns.Length);
+            writer.BaseStream.Position = baseHeaderEndPosition;
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(TimeYellow);
+            writer.Write(TimeRed);
+            writer.Write(OffPrefixOffset);
+            writer.Write(TransitionPrefixOffset);
+            writer.Write(OnPrefixOffset);
+            writer.Write(AmountOfTiles);
+            writer.Write(StatesOffset);
+            writer.Write(Patterns.Length);
 
-                writer.BaseStream.Position = StatesOffset + 8;
+            writer.BaseStream.Position = StatesOffset + 8;
 
-                for (int i = 0; i < PhaseOffsets.Length; i++)
-                    writer.Write(PhaseOffsets[i]);
+            for (int i = 0; i < PhaseOffsets.Length; i++)
+                writer.Write(PhaseOffsets[i]);
 
-                writer.BaseStream.Position = writer.BaseStream.Length;
-                SerializeLinks(writer);
-                
+            writer.BaseStream.Position = writer.BaseStream.Length;
+            SerializeLinks(writer);
+
         }
 
         private string ReadString(EndianBinaryReader reader)

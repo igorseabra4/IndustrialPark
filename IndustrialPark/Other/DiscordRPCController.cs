@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using DiscordRPC;
+﻿using DiscordRPC;
 using DiscordRPC.Logging;
 using HipHopFile;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -93,7 +92,7 @@ namespace IndustrialPark
                         currentTimestamp = Timestamps.Now;
                     }
                     currentArchiveEditor = archiveEditor.Text;
-                    
+
                     game = GameHandler(archiveEditor);
 
                     switch (game)
@@ -168,7 +167,7 @@ namespace IndustrialPark
         private static string GameHandler(ArchiveEditor archiveEditor)
         {
             Game game = archiveEditor.archive.game;
-            switch (game) 
+            switch (game)
             {
                 case Game.Scooby:
                 case Game.BFBB:

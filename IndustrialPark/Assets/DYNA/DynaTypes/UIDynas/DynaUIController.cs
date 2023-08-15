@@ -15,7 +15,7 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            SerializeDynaUI(writer);                
+            SerializeDynaUI(writer);
         }
     }
 }

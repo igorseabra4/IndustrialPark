@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using SharpDX;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark

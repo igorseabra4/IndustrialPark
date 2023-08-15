@@ -728,16 +728,16 @@ namespace IndustrialPark
             switch (AHDR.assetType)
             {
                 case AssetType.Animation:
-                {
-                    if (AHDR.data.Length == 0)
-                        return new AssetGeneric(AHDR, game, endianness);
-                    var magic = AHDR.data.Take(4).ToArray();
-                    if (endianness == Endianness.Big)
-                        magic = magic.Reverse().ToArray();
-                    if (magic[0] == 'S' && magic[1] == 'K' && magic[2] == 'B' && magic[3] == '1')
-                        return new AssetANIM(AHDR, game, endianness);
-                    throw new Exception($"Invalid Animation asset: {AHDR.ADBG.assetName}");
-                }
+                    {
+                        if (AHDR.data.Length == 0)
+                            return new AssetGeneric(AHDR, game, endianness);
+                        var magic = AHDR.data.Take(4).ToArray();
+                        if (endianness == Endianness.Big)
+                            magic = magic.Reverse().ToArray();
+                        if (magic[0] == 'S' && magic[1] == 'K' && magic[2] == 'B' && magic[3] == '1')
+                            return new AssetANIM(AHDR, game, endianness);
+                        throw new Exception($"Invalid Animation asset: {AHDR.ADBG.assetName}");
+                    }
                 case AssetType.BSP:
                 case AssetType.JSP:
                     return new AssetJSP(AHDR, game, endianness, Program.Renderer);

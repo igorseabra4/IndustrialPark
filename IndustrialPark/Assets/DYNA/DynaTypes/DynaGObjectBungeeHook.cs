@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -151,39 +150,39 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(Entity);
-                writer.Write(EnterX);
-                writer.Write(EnterY);
-                writer.Write(EnterZ);
-                writer.Write(AttachDist);
-                writer.Write(AttachTravelTime);
-                writer.Write(DetachDist);
-                writer.Write(DetachFreeFallTime);
-                writer.Write(DetachAccel);
-                writer.Write(TurnUnused1);
-                writer.Write(TurnUnused2);
-                writer.Write(VerticalFrequency);
-                writer.Write(VerticalGravity);
-                writer.Write(VerticalDive);
-                writer.Write(VerticalMinDist);
-                writer.Write(VerticalMaxDist);
-                writer.Write(VerticalDamp);
-                writer.Write(HorizontalMaxDist);
-                writer.Write(CameraRestDist);
-                writer.Write(Cameraview_angle);
-                writer.Write(CameraOffset);
-                writer.Write(CameraOffsetDir);
-                writer.Write(CameraTurnSpeed);
-                writer.Write(CameraVelScale);
-                writer.Write(CameraRollSpeed);
-                writer.Write(CameraUnused1_X);
-                writer.Write(CameraUnused1_Y);
-                writer.Write(CameraUnused1_Z);
-                writer.Write(CollisionHitLoss);
-                writer.Write(CollisionDamageVelocity);
-                writer.Write(CollisionHitVelocity);
+            writer.Write(Entity);
+            writer.Write(EnterX);
+            writer.Write(EnterY);
+            writer.Write(EnterZ);
+            writer.Write(AttachDist);
+            writer.Write(AttachTravelTime);
+            writer.Write(DetachDist);
+            writer.Write(DetachFreeFallTime);
+            writer.Write(DetachAccel);
+            writer.Write(TurnUnused1);
+            writer.Write(TurnUnused2);
+            writer.Write(VerticalFrequency);
+            writer.Write(VerticalGravity);
+            writer.Write(VerticalDive);
+            writer.Write(VerticalMinDist);
+            writer.Write(VerticalMaxDist);
+            writer.Write(VerticalDamp);
+            writer.Write(HorizontalMaxDist);
+            writer.Write(CameraRestDist);
+            writer.Write(Cameraview_angle);
+            writer.Write(CameraOffset);
+            writer.Write(CameraOffsetDir);
+            writer.Write(CameraTurnSpeed);
+            writer.Write(CameraVelScale);
+            writer.Write(CameraRollSpeed);
+            writer.Write(CameraUnused1_X);
+            writer.Write(CameraUnused1_Y);
+            writer.Write(CameraUnused1_Z);
+            writer.Write(CollisionHitLoss);
+            writer.Write(CollisionDamageVelocity);
+            writer.Write(CollisionHitVelocity);
 
-                
+
         }
     }
 }

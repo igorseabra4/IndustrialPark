@@ -92,9 +92,9 @@ namespace IndustrialPark
         }
 
         private Vector3 GetValue() => new Vector3((float)numericUpDownX.Value, (float)numericUpDownY.Value, (float)numericUpDownZ.Value);
-        
+
         private IEnumerable<AssetType> GetAssetTypes() => checkedListBoxAssetTypes.CheckedItems.Cast<AssetTypeContainer>().Select(a => a.assetType);
-        
+
         private bool OK = false;
 
         private void button1_Click(object sender, EventArgs e)

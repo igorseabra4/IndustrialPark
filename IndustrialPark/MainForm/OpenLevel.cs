@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -45,9 +41,9 @@ namespace IndustrialPark
 
             if (files.Count != files.Distinct().Count())
             {
-                if (MessageBox.Show("Are you sure you want to open duplicate files?", 
-                    "Duplicate files detected", 
-                    MessageBoxButtons.YesNo, 
+                if (MessageBox.Show("Are you sure you want to open duplicate files?",
+                    "Duplicate files detected",
+                    MessageBoxButtons.YesNo,
                     MessageBoxIcon.Warning) == DialogResult.No)
                 {
                     return;
@@ -111,7 +107,7 @@ namespace IndustrialPark
                         importSuccessful = false;
                     }
                 }
-            }            
+            }
 
             if (importSuccessful)
             {
@@ -135,7 +131,7 @@ namespace IndustrialPark
                 txtHIP.SelectionStart = txtHIP.Text.Length;
                 txtHIP.SelectionLength = 0;
             }
-            
+
             // Try to find HOP
             if (findHOP && File.Exists(Path.GetDirectoryName(filePath) + "\\" + Path.GetFileNameWithoutExtension(filePath) + ".HOP"))
             {
@@ -232,7 +228,7 @@ namespace IndustrialPark
         {
             btnImport.Enabled = chkHIP.Checked && txtHIP.Text.Length > 0
                 || chkHOP.Checked && txtHOP.Text.Length > 0
-                || chkBOOT.Checked && txtBOOT.Text.Length > 0 
+                || chkBOOT.Checked && txtBOOT.Text.Length > 0
                 || lvwLocalization.CheckedItems.Count > 0;
         }
 

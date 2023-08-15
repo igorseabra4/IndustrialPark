@@ -167,5 +167,12 @@ namespace IndustrialPark
             if (checkBoxCompress.Checked)
                 checkBoxTransFix.Checked = false;
         }
+
+        private void btnImageEditor_Click(object sender, EventArgs e)
+        {
+            ImageEditor imageEditorTool = new ImageEditor();
+            imageEditorTool.Show();
+            imageEditorTool.TopMost = true;
+        }
     }
 }

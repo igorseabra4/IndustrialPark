@@ -34,14 +34,14 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                base.Serialize(writer);
-                writer.Write(Time);
+            base.Serialize(writer);
+            writer.Write(Time);
 
-                if (game != Game.Scooby)
-                    writer.Write(RandomRange);
-                SerializeLinks(writer);
+            if (game != Game.Scooby)
+                writer.Write(RandomRange);
+            SerializeLinks(writer);
 
-                
+
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
