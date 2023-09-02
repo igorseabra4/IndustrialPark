@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
 using System.ComponentModel;
 using static IndustrialPark.ArchiveEditorFunctions;
 
@@ -20,7 +19,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Entity References")]
+        [Category(categoryNameReferences)]
         public AssetID Sound
         {
             get => Animation;

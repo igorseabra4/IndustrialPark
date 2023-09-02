@@ -3,6 +3,13 @@
     public abstract class CamSpecific_Generic : GenericAssetDataContainer
     {
         public CamSpecific_Generic() { }
+
+        public override string ToString()
+        {
+            if (GetType().IsSubclassOf(typeof(CamSpecific_Generic)))
+                return base.ToString().Substring(27);
+            return "";
+        }
     }
 
     public class CamSpecific_Follow : CamSpecific_Generic

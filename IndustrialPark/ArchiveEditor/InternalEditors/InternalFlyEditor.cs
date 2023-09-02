@@ -58,7 +58,7 @@ namespace IndustrialPark
             foreach (FlyFrame entry in asset.Frames)
             {
                 listBoxFlyEntries.Items.Add(entry);
-                maxFrame = entry.FrameNumer > maxFrame ? entry.FrameNumer : maxFrame;
+                maxFrame = entry.FrameNumber > maxFrame ? entry.FrameNumber : maxFrame;
             }
         }
 
@@ -71,10 +71,10 @@ namespace IndustrialPark
             maxFrame = 0;
             foreach (FlyFrame entry in listBoxFlyEntries.Items)
             {
-                entry.FrameNumer = count++;
+                entry.FrameNumber = count++;
                 entries.Add(entry);
-                if (entry.FrameNumer > maxFrame)
-                    maxFrame = entry.FrameNumer;
+                if (entry.FrameNumber > maxFrame)
+                    maxFrame = entry.FrameNumber;
             }
             asset.Frames = entries.ToArray();
             archive.UnsavedChanges = true;
@@ -102,7 +102,7 @@ namespace IndustrialPark
 
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            var entry = new FlyFrame() { FrameNumer = listBoxFlyEntries.Items.Count };
+            var entry = new FlyFrame() { FrameNumber = listBoxFlyEntries.Items.Count };
             SetViewToFly(entry);
             listBoxFlyEntries.Items.Add(entry);
             updateListView(asset);
@@ -223,7 +223,7 @@ namespace IndustrialPark
         {
             foreach (FlyFrame entry in listBoxFlyEntries.Items)
             {
-                if (entry.FrameNumer == currentFrame)
+                if (entry.FrameNumber == currentFrame)
                 {
                     Program.MainForm.renderer.Camera.SetPositionFlyEntry(entry);
                     break;
@@ -244,7 +244,7 @@ namespace IndustrialPark
         {
             var newFly = new FlyFrame
             {
-                FrameNumer = listBoxFlyEntries.Items.Count,
+                FrameNumber = listBoxFlyEntries.Items.Count,
                 ApertureX = 0.98f,
                 ApertureY = 0.735f,
                 Focal = 26.69057f
@@ -258,7 +258,7 @@ namespace IndustrialPark
                 switcher = !switcher;
                 if (switcher)
                     listBoxFlyEntries.Items.Add(newFly);
-                labelFrame.Text = "Frame: " + newFly.FrameNumer;
+                labelFrame.Text = "Frame: " + newFly.FrameNumber;
             }
         }
 

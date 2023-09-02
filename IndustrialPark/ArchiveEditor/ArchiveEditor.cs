@@ -263,7 +263,7 @@ namespace IndustrialPark
 
         public void Save()
         {
-            SoundUtility.StopSound();
+            SoundUtility_vgmstream.StopSound();
 
             if (archive.currentlyOpenFilePath == null)
                 saveAsToolStripMenuItem_Click(null, null);
@@ -1320,7 +1320,7 @@ namespace IndustrialPark
 
         public bool TemplateFocus => checkBoxTemplateFocus.Checked;
 
-        public void TemplateFocusOff()
+        public void ClearTemplateFocus()
         {
             checkBoxTemplateFocus.Checked = false;
         }

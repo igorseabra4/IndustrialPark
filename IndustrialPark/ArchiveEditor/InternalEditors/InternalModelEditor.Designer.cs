@@ -47,6 +47,10 @@
             this.tableLayoutPanelAtomics = new System.Windows.Forms.TableLayoutPanel();
             this.buttonEditAtomics = new System.Windows.Forms.Button();
             this.groupBoxPipeInfo = new System.Windows.Forms.GroupBox();
+            this.labelPipeInfos = new System.Windows.Forms.Label();
+            this.buttonArrowDown = new System.Windows.Forms.Button();
+            this.buttonArrowUp = new System.Windows.Forms.Button();
+            this.buttonDeletePipeInfo = new System.Windows.Forms.Button();
             this.propertyGridPipeInfo = new System.Windows.Forms.PropertyGrid();
             this.buttonCreatePipeInfo = new System.Windows.Forms.Button();
             this.groupBoxLevelOfDetail = new System.Windows.Forms.GroupBox();
@@ -59,10 +63,6 @@
             this.propertyGridCollision = new System.Windows.Forms.PropertyGrid();
             this.buttonCreateCollision = new System.Windows.Forms.Button();
             this.checkBoxUseTemplates = new System.Windows.Forms.CheckBox();
-            this.buttonDeletePipeInfo = new System.Windows.Forms.Button();
-            this.buttonArrowDown = new System.Windows.Forms.Button();
-            this.buttonArrowUp = new System.Windows.Forms.Button();
-            this.labelPipeInfos = new System.Windows.Forms.Label();
             this.groupBoxImport.SuspendLayout();
             this.groupBoxExport.SuspendLayout();
             this.groupBoxTextures.SuspendLayout();
@@ -289,6 +289,53 @@
             this.groupBoxPipeInfo.TabStop = false;
             this.groupBoxPipeInfo.Text = "Pipe Info";
             // 
+            // labelPipeInfos
+            // 
+            this.labelPipeInfos.AutoSize = true;
+            this.labelPipeInfos.Location = new System.Drawing.Point(6, 21);
+            this.labelPipeInfos.Name = "labelPipeInfos";
+            this.labelPipeInfos.Size = new System.Drawing.Size(73, 13);
+            this.labelPipeInfos.TabIndex = 46;
+            this.labelPipeInfos.Text = "labelPipeInfos";
+            // 
+            // buttonArrowDown
+            // 
+            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowDown.Enabled = false;
+            this.buttonArrowDown.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.buttonArrowDown.Location = new System.Drawing.Point(161, 16);
+            this.buttonArrowDown.Name = "buttonArrowDown";
+            this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowDown.TabIndex = 45;
+            this.buttonArrowDown.Text = "▼";
+            this.buttonArrowDown.UseVisualStyleBackColor = true;
+            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
+            // 
+            // buttonArrowUp
+            // 
+            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonArrowUp.Enabled = false;
+            this.buttonArrowUp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.buttonArrowUp.Location = new System.Drawing.Point(133, 16);
+            this.buttonArrowUp.Name = "buttonArrowUp";
+            this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
+            this.buttonArrowUp.TabIndex = 44;
+            this.buttonArrowUp.Text = "▲";
+            this.buttonArrowUp.UseVisualStyleBackColor = true;
+            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
+            // 
+            // buttonDeletePipeInfo
+            // 
+            this.buttonDeletePipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonDeletePipeInfo.Location = new System.Drawing.Point(195, 16);
+            this.buttonDeletePipeInfo.Name = "buttonDeletePipeInfo";
+            this.buttonDeletePipeInfo.Size = new System.Drawing.Size(22, 22);
+            this.buttonDeletePipeInfo.TabIndex = 43;
+            this.buttonDeletePipeInfo.Text = "-";
+            this.buttonDeletePipeInfo.UseVisualStyleBackColor = true;
+            this.buttonDeletePipeInfo.Click += new System.EventHandler(this.buttonDeletePipeInfo_Click);
+            // 
             // propertyGridPipeInfo
             // 
             this.propertyGridPipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
@@ -432,53 +479,7 @@
             this.checkBoxUseTemplates.TabIndex = 46;
             this.checkBoxUseTemplates.Text = "Use this model when placing a template";
             this.checkBoxUseTemplates.UseVisualStyleBackColor = true;
-            // 
-            // buttonDeletePipeInfo
-            // 
-            this.buttonDeletePipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDeletePipeInfo.Location = new System.Drawing.Point(195, 16);
-            this.buttonDeletePipeInfo.Name = "buttonDeletePipeInfo";
-            this.buttonDeletePipeInfo.Size = new System.Drawing.Size(22, 22);
-            this.buttonDeletePipeInfo.TabIndex = 43;
-            this.buttonDeletePipeInfo.Text = "-";
-            this.buttonDeletePipeInfo.UseVisualStyleBackColor = true;
-            this.buttonDeletePipeInfo.Click += new System.EventHandler(this.buttonDeletePipeInfo_Click);
-            // 
-            // buttonArrowDown
-            // 
-            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowDown.Enabled = false;
-            this.buttonArrowDown.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.buttonArrowDown.Location = new System.Drawing.Point(161, 16);
-            this.buttonArrowDown.Name = "buttonArrowDown";
-            this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowDown.TabIndex = 45;
-            this.buttonArrowDown.Text = "▼";
-            this.buttonArrowDown.UseVisualStyleBackColor = true;
-            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
-            // 
-            // buttonArrowUp
-            // 
-            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowUp.Enabled = false;
-            this.buttonArrowUp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.buttonArrowUp.Location = new System.Drawing.Point(133, 16);
-            this.buttonArrowUp.Name = "buttonArrowUp";
-            this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowUp.TabIndex = 44;
-            this.buttonArrowUp.Text = "▲";
-            this.buttonArrowUp.UseVisualStyleBackColor = true;
-            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
-            // 
-            // labelPipeInfos
-            // 
-            this.labelPipeInfos.AutoSize = true;
-            this.labelPipeInfos.Location = new System.Drawing.Point(6, 21);
-            this.labelPipeInfos.Name = "labelPipeInfos";
-            this.labelPipeInfos.Size = new System.Drawing.Size(73, 13);
-            this.labelPipeInfos.TabIndex = 46;
-            this.labelPipeInfos.Text = "labelPipeInfos";
+            this.checkBoxUseTemplates.Click += new System.EventHandler(this.checkBoxUseTemplates_Click);
             // 
             // InternalModelEditor
             // 

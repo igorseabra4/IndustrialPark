@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public abstract class BaseAsset : Asset
     {
-        private const string categoryName = "Base";
+        private const string categoryName = "\t\t\t\t\tBase";
 
         public override string AssetInfoLinks => _links.Length.ToString();
 
@@ -17,7 +17,7 @@ namespace IndustrialPark
             return $"{count} {name}s";
         }
 
-        [Category(categoryName)]
+        [Category(categoryName), ReadOnly(true)]
         public BaseAssetType BaseAssetType { get; set; }
 
         [Category(categoryName), Browsable(false)]
@@ -29,7 +29,7 @@ namespace IndustrialPark
         //        "Visible During Cutscenes",
         //        "Receive Shadows");
 
-        [Category(categoryName)]
+        [Category(categoryName), DisplayName("Enabled On Start")]
         public bool EnabledOnStart
         {
             get => (BaseFlags & 1) != 0;
@@ -41,7 +41,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 1;
             }
         }
-        [Category(categoryName)]
+        [Category(categoryName), DisplayName("Persistent"), Description("Asset state is saved to the save file and persists after deaths and reloads.")]
         public bool StateIsPersistent
         {
             get => (BaseFlags & 2) != 0;
@@ -53,7 +53,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 2;
             }
         }
-        [Category(categoryName)]
+        [Category(categoryName), DisplayName("Unknown"), Description("Always true")]
         public bool UnknownAlwaysTrue
         {
             get => (BaseFlags & 4) != 0;
@@ -65,7 +65,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 4;
             }
         }
-        [Category(categoryName)]
+        [Category(categoryName), DisplayName("Visible During Cutscenes")]
         public bool VisibleDuringCutscenes
         {
             get => (BaseFlags & 8) != 0;
@@ -77,7 +77,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 8;
             }
         }
-        [Category(categoryName)]
+        [Category(categoryName), DisplayName("Receive Shadows")]
         public bool ReceiveShadows
         {
             get => (BaseFlags & 16) != 0;

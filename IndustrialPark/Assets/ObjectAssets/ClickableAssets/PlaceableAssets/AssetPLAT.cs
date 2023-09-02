@@ -9,8 +9,14 @@ namespace IndustrialPark
         private const string categoryName = "Platform";
         public override string AssetInfo => $"{PlatformType} {HexUIntTypeConverter.StringFromAssetID(Model)}";
 
+        [Category(categoryName), DisplayName("Flags")]
+        public FlagBitmask PlatformFlags { get; set; } = ShortFlagsDescriptor(
+            "Shake on Mount",
+            null,
+            "Solid");
+
         private PlatType _platformType;
-        [Category(categoryName)]
+        [Category(categoryName), DisplayName("Type")]
         public PlatType PlatformType
         {
             get => _platformType;
@@ -26,28 +32,28 @@ namespace IndustrialPark
                 switch ((PlatType)(byte)TypeFlag)
                 {
                     case PlatType.ConveyorBelt:
-                        PlatSpecific = new PlatSpecific_ConveryorBelt(game);
+                        PlatformSpecific = new PlatSpecific_ConveryorBelt(game);
                         break;
                     case PlatType.FallingPlatform:
-                        PlatSpecific = new PlatSpecific_FallingPlatform(game);
+                        PlatformSpecific = new PlatSpecific_FallingPlatform(game);
                         break;
                     case PlatType.FR:
-                        PlatSpecific = new PlatSpecific_FR(game);
+                        PlatformSpecific = new PlatSpecific_FR(game);
                         break;
                     case PlatType.BreakawayPlatform:
-                        PlatSpecific = new PlatSpecific_BreakawayPlatform(game);
+                        PlatformSpecific = new PlatSpecific_BreakawayPlatform(game);
                         break;
                     case PlatType.Springboard:
-                        PlatSpecific = new PlatSpecific_Springboard(game);
+                        PlatformSpecific = new PlatSpecific_Springboard(game);
                         break;
                     case PlatType.TeeterTotter:
-                        PlatSpecific = new PlatSpecific_TeeterTotter(game);
+                        PlatformSpecific = new PlatSpecific_TeeterTotter(game);
                         break;
                     case PlatType.Paddle:
-                        PlatSpecific = new PlatSpecific_Paddle(game);
+                        PlatformSpecific = new PlatSpecific_Paddle(game);
                         break;
                     default:
-                        PlatSpecific = new PlatSpecific_Generic(game);
+                        PlatformSpecific = new PlatSpecific_Generic(game);
                         break;
                 }
 
@@ -78,12 +84,6 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName)]
-        public FlagBitmask PlatFlags { get; set; } = ShortFlagsDescriptor(
-            "Shake on Mount",
-            "Unknown",
-            "Solid");
-
         private int motionStart(Game game) =>
             game == Game.Scooby ? 0x78 :
             game == Game.BFBB ? 0x90 :
@@ -92,7 +92,7 @@ namespace IndustrialPark
         public AssetPLAT(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Platform, BaseAssetType.Platform, position)
         {
             PlatformType = PlatType.Mechanism;
-            PlatFlags.FlagValueShort = 4;
+            PlatformFlags.FlagValueShort = 4;
 
             switch (template)
             {
@@ -115,7 +115,7 @@ namespace IndustrialPark
                     Model = 0x55E9EAB5;
                     Animation = 0x7AAA99BB;
                     PlatformType = PlatType.Springboard;
-                    PlatSpecific = new PlatSpecific_Springboard(game)
+                    PlatformSpecific = new PlatSpecific_Springboard(game)
                     {
                         Height1 = 10,
                         Height2 = 10,
@@ -144,7 +144,7 @@ namespace IndustrialPark
                     {
                         Model = 0x1A38B9AB;
                     }
-                    PlatSpecific = new PlatSpecific_BreakawayPlatform(template, game);
+                    PlatformSpecific = new PlatSpecific_BreakawayPlatform(template, game);
                     Motion = new Motion_Mechanism(game, MotionType.Other);
                     break;
                 case AssetTemplate.Flower_Dig:
@@ -208,7 +208,7 @@ namespace IndustrialPark
                 case AssetTemplate.Trampoline_Block_Spiked_Driven:
                     _scale = new Vector3(1.9f, 1.9f, 1.9f);
                     PlatformType = PlatType.Springboard;
-                    PlatSpecific = new PlatSpecific_Springboard(game)
+                    PlatformSpecific = new PlatSpecific_Springboard(game)
                     {
                         Height1 = 18,
                         Height2 = 18,
@@ -218,7 +218,7 @@ namespace IndustrialPark
                         Animation2 = 0x6B68D5DB,
                         DirectionY = 1f
                     };
-                    ((PlatSpecific_Springboard)PlatSpecific).Settings.FlagValueInt = 1;
+                    ((PlatSpecific_Springboard)PlatformSpecific).Settings.FlagValueInt = 1;
                     Model = "block_spring";
                     break;
                 case AssetTemplate.Block_Driver:
@@ -231,7 +231,7 @@ namespace IndustrialPark
                     Model = "block_basic";
                     VisibilityFlags.FlagValueByte = 0;
                     SolidityFlags.FlagValueByte = 0;
-                    PlatFlags.FlagValueByte = 0;
+                    PlatformFlags.FlagValueByte = 0;
                     break;
                 case AssetTemplate.Wooden_Platform:
                     _scale = new Vector3(0.6f, 0.6f, 0.6f);
@@ -252,33 +252,33 @@ namespace IndustrialPark
 
                 reader.ReadByte();
 
-                PlatFlags.FlagValueShort = reader.ReadUInt16();
+                PlatformFlags.FlagValueShort = reader.ReadUInt16();
 
                 switch ((PlatType)(byte)TypeFlag)
                 {
                     case PlatType.ConveyorBelt:
-                        PlatSpecific = new PlatSpecific_ConveryorBelt(reader, game);
+                        PlatformSpecific = new PlatSpecific_ConveryorBelt(reader, game);
                         break;
                     case PlatType.FallingPlatform:
-                        PlatSpecific = new PlatSpecific_FallingPlatform(reader, game);
+                        PlatformSpecific = new PlatSpecific_FallingPlatform(reader, game);
                         break;
                     case PlatType.FR:
-                        PlatSpecific = new PlatSpecific_FR(reader, game);
+                        PlatformSpecific = new PlatSpecific_FR(reader, game);
                         break;
                     case PlatType.BreakawayPlatform:
-                        PlatSpecific = new PlatSpecific_BreakawayPlatform(reader, game);
+                        PlatformSpecific = new PlatSpecific_BreakawayPlatform(reader, game);
                         break;
                     case PlatType.Springboard:
-                        PlatSpecific = new PlatSpecific_Springboard(reader, game);
+                        PlatformSpecific = new PlatSpecific_Springboard(reader, game);
                         break;
                     case PlatType.TeeterTotter:
-                        PlatSpecific = new PlatSpecific_TeeterTotter(reader, game);
+                        PlatformSpecific = new PlatSpecific_TeeterTotter(reader, game);
                         break;
                     case PlatType.Paddle:
-                        PlatSpecific = new PlatSpecific_Paddle(reader, game);
+                        PlatformSpecific = new PlatSpecific_Paddle(reader, game);
                         break;
                     default:
-                        PlatSpecific = new PlatSpecific_Generic(game);
+                        PlatformSpecific = new PlatSpecific_Generic(game);
                         break;
                 }
 
@@ -317,8 +317,8 @@ namespace IndustrialPark
 
             writer.Write((byte)_platformType);
             writer.Write((byte)0);
-            writer.Write(PlatFlags.FlagValueShort);
-            PlatSpecific.Serialize(writer);
+            writer.Write(PlatformFlags.FlagValueShort);
+            PlatformSpecific.Serialize(writer);
 
             var motionStart = this.motionStart(game);
             while (writer.BaseStream.Length < motionStart)
@@ -339,7 +339,7 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        [Category("Entity")]
+        [Category(categoryNamePlacement)]
         public override AssetSingle PositionX
         {
             get => base.PositionX;
@@ -351,7 +351,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Entity")]
+        [Category(categoryNamePlacement)]
         public override AssetSingle PositionY
         {
             get => base.PositionY;
@@ -363,7 +363,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Entity")]
+        [Category(categoryNamePlacement)]
         public override AssetSingle PositionZ
         {
             get => base.PositionZ;
@@ -398,9 +398,8 @@ namespace IndustrialPark
             return world;
         }
 
-        [Category("Platform")]
-        [TypeConverter(typeof(ExpandableObjectConverter))]
-        public PlatSpecific_Generic PlatSpecific { get; set; }
+        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Data")]
+        public PlatSpecific_Generic PlatformSpecific { get; set; }
 
         private bool isSkyBox = false;
         private bool skyBoxUseY = false;

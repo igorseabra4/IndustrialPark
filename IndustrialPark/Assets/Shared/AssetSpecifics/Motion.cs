@@ -74,6 +74,11 @@ namespace IndustrialPark
         {
             return Matrix.Identity;
         }
+
+        public override string ToString()
+        {
+            return Type.ToString();
+        }
     }
 
     public class Motion_ExtendRetract : Motion
@@ -386,8 +391,6 @@ namespace IndustrialPark
 
     public class Motion_Mechanism : Motion
     {
-        public string Note => "ScaleAxis, ScaleAmount and ScaleDuration are only present in Movie/Incredibles.";
-
         public EMovementType MovementType { get; set; }
         public EMechanismFlags MovementLoopMode { get; set; }
         public Axis SlideAxis { get; set; }
@@ -402,8 +405,11 @@ namespace IndustrialPark
         public AssetSingle RotateDecelTime { get; set; }
         public AssetSingle RetractDelay { get; set; }
         public AssetSingle PostRetractDelay { get; set; }
+        [Description("Movie/Incredibles only")]
         public byte ScaleAxis { get; set; }
+        [Description("Movie/Incredibles only")]
         public AssetSingle ScaleAmount { get; set; }
+        [Description("Movie/Incredibles only")]
         public AssetSingle ScaleDuration { get; set; }
 
         public Motion_Mechanism(Game game) : this(game, MotionType.Mechanism) { }

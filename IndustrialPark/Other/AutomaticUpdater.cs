@@ -52,32 +52,32 @@ namespace IndustrialPark
 
                         string[] directoryNames = new string[]
                         {
-                                "",
-                                "/lib",
-                                "/lib/en-GB",
-                                "/Resources",
-                                "/Resources/Models",
-                                "/Resources/Scripts",
-                                "/Resources/SharpDX",
-                                "/Resources/txdgen_1.0",
-                                "/Resources/txdgen_1.0/LICENSES",
-                                "/Resources/txdgen_1.0/LICENSES/eirrepo",
-                                "/Resources/txdgen_1.0/LICENSES/libimagequant",
-                                "/Resources/txdgen_1.0/LICENSES/libjpeg",
-                                "/Resources/txdgen_1.0/LICENSES/libpng",
-                                "/Resources/txdgen_1.0/LICENSES/libsquish",
-                                "/Resources/txdgen_1.0/LICENSES/lzo-2.08",
-                                "/Resources/txdgen_1.0/LICENSES/pvrtextool",
-                                "/Resources/txdgen_1.0/LICENSES/rwtools",
-                                "/runtimes/",
-                                "/runtimes/linux-x64",
-                                "/runtimes/linux-x64/native",
-                                "/runtimes/osx-x64",
-                                "/runtimes/osx-x64/native",
-                                "/runtimes/win-x64",
-                                "/runtimes/win-x64/native",
-                                "/runtimes/win-x86",
-                                "/runtimes/win-x86/native",
+                            "",
+                            "/lib",
+                            "/lib/en-GB",
+                            "/Resources",
+                            "/Resources/Models",
+                            "/Resources/Scripts",
+                            "/Resources/SharpDX",
+                            "/Resources/txdgen_1.0",
+                            "/Resources/txdgen_1.0/LICENSES",
+                            "/Resources/txdgen_1.0/LICENSES/eirrepo",
+                            "/Resources/txdgen_1.0/LICENSES/libimagequant",
+                            "/Resources/txdgen_1.0/LICENSES/libjpeg",
+                            "/Resources/txdgen_1.0/LICENSES/libpng",
+                            "/Resources/txdgen_1.0/LICENSES/libsquish",
+                            "/Resources/txdgen_1.0/LICENSES/lzo-2.08",
+                            "/Resources/txdgen_1.0/LICENSES/pvrtextool",
+                            "/Resources/txdgen_1.0/LICENSES/rwtools",
+                            "/runtimes/",
+                            "/runtimes/linux-x64",
+                            "/runtimes/linux-x64/native",
+                            "/runtimes/osx-x64",
+                            "/runtimes/osx-x64/native",
+                            "/runtimes/win-x64",
+                            "/runtimes/win-x64/native",
+                            "/runtimes/win-x86",
+                            "/runtimes/win-x86/native",
                         };
 
                         foreach (string localDirPath in directoryNames)
@@ -192,46 +192,7 @@ namespace IndustrialPark
                 "IndustrialPark-EditorFiles");
         }
 
-        public static void DownloadVgmstream()
-        {
-            DownloadAndUnzip(
-                "https://github.com/vgmstream/vgmstream/releases/download/r1866/vgmstream-win.zip",
-                Path.Combine(Application.StartupPath, "Resources", "vgmstream-win.zip"),
-                Path.Combine(Application.StartupPath, "Resources", "vgmstream"),
-                "vgmstream");
-
-            ZipFile.ExtractToDirectory(
-                Path.Combine(Application.StartupPath, "Resources", "vgmstream_ip_fix.zip"),
-                Path.Combine(Application.StartupPath, "Resources", "vgmstream"));
-        }
-
-        public static void DownloadFfmpeg()
-        {
-            DownloadAndUnzip(
-                "https://github.com/GyanD/codexffmpeg/releases/download/2023-07-19-git-efa6cec759/ffmpeg-2023-07-19-git-efa6cec759-essentials_build.zip",
-                Path.Combine(Application.StartupPath, "Resources", "ffmpeg-2023-07-19-git-efa6cec759-essentials_build.zip"),
-                Path.Combine(Application.StartupPath, "Resources", "ffmpeg"),
-                "ffmpeg");
-        }
-
-        public static void DownloadVGAudio()
-        {
-            try
-            {
-                MessageBox.Show("Will begin download of VGAudioCli from GitHub. Please wait as this might take a while.");
-
-                using (var webClient = new WebClient())
-                    webClient.DownloadFile(new Uri("https://github.com/Thealexbarney/VGAudio/releases/download/v2.2.1/VGAudioCli.exe"), Path.Combine(Application.StartupPath, "Resources", "VGAudioCli.exe"));
-
-                MessageBox.Show("Downloaded VGAudioCli.");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-        }
-
-        private static void DownloadAndUnzip(string zipUrl, string destZipPath, string destFolder, string downloadName)
+        public static void DownloadAndUnzip(string zipUrl, string destZipPath, string destFolder, string downloadName)
         {
             try
             {

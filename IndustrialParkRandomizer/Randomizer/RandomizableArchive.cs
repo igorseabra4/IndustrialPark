@@ -745,7 +745,7 @@ namespace IndustrialPark.Randomizer
                 a.ScaleY *= scale;
                 a.ScaleZ *= scale;
 
-                if (a is AssetPLAT plat && plat.PlatSpecific is PlatSpecific_Springboard springboard)
+                if (a is AssetPLAT plat && plat.PlatformSpecific is PlatSpecific_Springboard springboard)
                 {
                     springboard.Height1 *= scale;
                     springboard.Height2 *= scale;
@@ -1886,26 +1886,26 @@ namespace IndustrialPark.Randomizer
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetPLAT plat)
                 {
-                    if (plat.PlatSpecific is PlatSpecific_ConveryorBelt p)
+                    if (plat.PlatformSpecific is PlatSpecific_ConveryorBelt p)
                     {
                         p.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatSpecific = p;
+                        plat.PlatformSpecific = p;
                     }
-                    else if (plat.PlatSpecific is PlatSpecific_FallingPlatform pf)
+                    else if (plat.PlatformSpecific is PlatSpecific_FallingPlatform pf)
                     {
                         pf.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatSpecific = pf;
+                        plat.PlatformSpecific = pf;
                     }
-                    else if (plat.PlatSpecific is PlatSpecific_BreakawayPlatform b)
+                    else if (plat.PlatformSpecific is PlatSpecific_BreakawayPlatform b)
                     {
                         b.BreakawayDelay *= random.NextFloat(minMultiTime, maxMultiTime);
                         b.ResetDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        plat.PlatSpecific = b;
+                        plat.PlatformSpecific = b;
                     }
-                    else if (plat.PlatSpecific is PlatSpecific_TeeterTotter tt)
+                    else if (plat.PlatformSpecific is PlatSpecific_TeeterTotter tt)
                     {
                         tt.InverseMass *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatSpecific = tt;
+                        plat.PlatformSpecific = tt;
                     }
 
                     if (plat.Motion is Motion_MovePoint mp)

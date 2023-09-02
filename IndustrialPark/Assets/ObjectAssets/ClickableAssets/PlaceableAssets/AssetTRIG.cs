@@ -345,7 +345,7 @@ namespace IndustrialPark
             CreateTransformMatrix();
         }
 
-        [Category("Placement")]
+        [Category(categoryNamePlacement)]
         public override AssetSingle ScaleX
         {
             get
@@ -362,7 +362,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryNamePlacement)]
         public override AssetSingle ScaleY
         {
             get
@@ -383,7 +383,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category("Placement")]
+        [Category(categoryNamePlacement)]
         public override AssetSingle ScaleZ
         {
             get

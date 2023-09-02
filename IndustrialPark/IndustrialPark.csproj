@@ -84,24 +84,6 @@
     <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
     </Reference>
-    <Reference Include="NAudio.Asio, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.Asio.2.1.0\lib\netstandard2.0\NAudio.Asio.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.Core, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.Core.2.1.0\lib\netstandard2.0\NAudio.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.Midi, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.Midi.2.1.0\lib\netstandard2.0\NAudio.Midi.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.Wasapi, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.Wasapi.2.1.0\lib\netstandard2.0\NAudio.Wasapi.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.WinForms, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.WinForms.2.1.0\lib\net472\NAudio.WinForms.dll</HintPath>
-    </Reference>
-    <Reference Include="NAudio.WinMM, Version=2.1.0.0, Culture=neutral, PublicKeyToken=e279aa5131008a41, processorArchitecture=MSIL">
-      <HintPath>..\packages\NAudio.WinMM.2.1.0\lib\netstandard2.0\NAudio.WinMM.dll</HintPath>
-    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -149,9 +131,6 @@
       <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Windows.Forms.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml" />
-    <Reference Include="VGAudio, Version=2.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\VGAudio.2.2.1\lib\net45\VGAudio.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
@@ -162,7 +141,12 @@
     <Compile Include="ArchiveEditor\Dialogs\RenameLayer.Designer.cs">
       <DependentUpon>RenameLayer.cs</DependentUpon>
     </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\SoundUtility.cs" />
+    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_DSP.cs" />
+    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_ffmpeg.cs" />
+    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_FMOD.cs" />
+    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_PS2VAG.cs" />
+    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_XboxADPCM.cs" />
+    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_vgmstream.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoGcn1Wrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoXboxWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoPs2Wrapper.cs" />
@@ -728,6 +712,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalSoundEditor.resx">
       <DependentUpon>InternalSoundEditor.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextEditor.resx">
       <DependentUpon>InternalTextEditor.cs</DependentUpon>
@@ -760,6 +745,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <None Include="Resources\FSBank.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="Resources\jf01_light_kit">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

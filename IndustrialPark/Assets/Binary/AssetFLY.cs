@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public class FlyFrame : GenericAssetDataContainer
     {
-        public int FrameNumer { get; set; }
+        public int FrameNumber { get; set; }
         public WireVector CameraNormalizedRight { get; set; }
         public WireVector CameraNormalizedUp { get; set; }
         public WireVector CameraNormalizedBackward { get; set; }
@@ -26,7 +26,7 @@ namespace IndustrialPark
 
         public FlyFrame(BinaryReader binaryReader)
         {
-            FrameNumer = binaryReader.ReadInt32();
+            FrameNumber = binaryReader.ReadInt32();
             CameraNormalizedRight = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
             CameraNormalizedUp = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
             CameraNormalizedBackward = new WireVector(binaryReader.ReadSingle(), binaryReader.ReadSingle(), binaryReader.ReadSingle());
@@ -38,7 +38,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{FrameNumer}] - [{CameraPosition}]";
+            return $"[{FrameNumber}] - [{CameraPosition}]";
         }
 
         public bool NearlySimilar(FlyFrame other)
@@ -51,7 +51,7 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write(FrameNumer);
+            writer.Write(FrameNumber);
             writer.Write(CameraNormalizedRight.X);
             writer.Write(CameraNormalizedRight.Y);
             writer.Write(CameraNormalizedRight.Z);

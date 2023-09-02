@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -11,6 +12,13 @@ namespace IndustrialPark
         }
 
         public override void Serialize(EndianBinaryWriter writer) { }
+
+        public override string ToString()
+        {
+            if (GetType().IsSubclassOf(typeof(PlatSpecific_Generic)))
+                return base.ToString().Substring(28);
+            return "";
+        }
     }
 
     public class PlatSpecific_ConveryorBelt : PlatSpecific_Generic
@@ -25,7 +33,7 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write(Speed);                
+            writer.Write(Speed);
         }
     }
 
@@ -78,12 +86,12 @@ namespace IndustrialPark
 
     public class PlatSpecific_BreakawayPlatform : PlatSpecific_Generic
     {
-        public string Note => "BustModel is not present in Movie/Incredibles. UnknownFloat is only present in Movie/Incredibles.";
-
         public AssetSingle BreakawayDelay { get; set; }
+        [Description("Not present in Movie/Incredibles")]
         public AssetID BustModel { get; set; }
         public AssetSingle ResetDelay { get; set; }
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor("Allow sneak");
+        [Description("Only present in Movie/Incredibles")]
         public AssetSingle UnknownFloat { get; set; }
 
         public PlatSpecific_BreakawayPlatform(Game game) : base(game)
@@ -127,11 +135,10 @@ namespace IndustrialPark
 
     public class PlatSpecific_Springboard : PlatSpecific_Generic
     {
-        public string Note => "HeightBubbleBounce and Settings are not present in Scooby.";
-
         public AssetSingle Height1 { get; set; }
         public AssetSingle Height2 { get; set; }
         public AssetSingle Height3 { get; set; }
+        [Description("Not present in Scooby.")]
         public AssetSingle HeightBubbleBounce { get; set; }
         public AssetID Animation1 { get; set; }
         public AssetID Animation2 { get; set; }
@@ -139,6 +146,7 @@ namespace IndustrialPark
         public AssetSingle DirectionX { get; set; }
         public AssetSingle DirectionY { get; set; }
         public AssetSingle DirectionZ { get; set; }
+        [Description("Not present in Scooby.")]
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor(
             "Lock Camera Down",
             null,

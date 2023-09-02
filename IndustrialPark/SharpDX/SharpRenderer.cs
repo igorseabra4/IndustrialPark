@@ -574,7 +574,7 @@ namespace IndustrialPark
 
             // main loop is done; release resources
 
-            SoundUtility.Dispose();
+            SoundUtility_vgmstream.Dispose();
 
             arrowDefault.Dispose();
             whiteDefault.Dispose();

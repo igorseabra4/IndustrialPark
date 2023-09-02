@@ -79,7 +79,7 @@ namespace IndustrialPark
                     archive.UnsavedChanges = true;
                 }
             }
-            SoundUtility.ClearSound();
+            SoundUtility_vgmstream.ClearSound();
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -124,7 +124,7 @@ namespace IndustrialPark
                 }
                 archive.UnsavedChanges = true;
                 updateListView(asset);
-                SoundUtility.ClearSound();
+                SoundUtility_vgmstream.ClearSound();
             }
         }
 
@@ -149,13 +149,28 @@ namespace IndustrialPark
             Program.MainForm.FindWhoTargets(GetAssetID());
         }
 
+        private void buttonGenerateJawData_Click(object sender, EventArgs e)
+        {
+            ApplyJawData(SoundUtility_vgmstream.GenerateJawData(archive.GetSoundData(asset.assetID, asset.Data), (float)numericUpDownJawMultiplier.Value));
+        }
+
         private void buttonImportJawData_Click(object sender, EventArgs e)
         {
-            byte[] file = SoundUtility.GenerateJawData(archive.GetSoundData(asset.assetID, asset.Data));
+            OpenFileDialog openFileDialog = new OpenFileDialog()
+            {
+                Title = "Select your JAW data file"
+            };
 
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+                ApplyJawData(File.ReadAllBytes(openFileDialog.FileName));
+        }
+
+        private void ApplyJawData(byte[] jawData)
+        {
             try
             {
-                archive.AddJawDataToJAW(file, asset.assetID);
+                var JAW = archive.GetJAW(true);
+                JAW.AddEntry(jawData, asset.assetID);
             }
             catch (Exception ex)
             {
@@ -173,7 +188,7 @@ namespace IndustrialPark
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            SoundUtility.PlaySound(asset, archive);
+            SoundUtility_vgmstream.PlaySound(asset, archive);
         }
 
         private void buttonImportSound_Click(object sender, EventArgs e)
@@ -185,7 +200,18 @@ namespace IndustrialPark
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                byte[] data = SoundUtility.ConvertSoundToDSP(openFileDialog.FileName);
+                byte[] data = null;
+                if (archive.platform == Platform.Xbox)
+                    data = SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(openFileDialog.FileName);
+                else if (archive.platform == Platform.PS2)
+                    data = SoundUtility_PS2VAG.ConvertSoundToPS2VAG(openFileDialog.FileName);
+                else if (archive.platform == Platform.GameCube && archive.game == Game.Incredibles)
+                    data = SoundUtility_FMOD.ConvertSoundToFSB3(openFileDialog.FileName, asset.assetType == AssetType.Sound ? archive.GetDefaultSampleRate() : -1);
+                else if (archive.platform == Platform.GameCube)
+                    data = SoundUtility_DSP.ConvertSoundToDSP(openFileDialog.FileName);
+                else
+                    MessageBox.Show("Cannot import sound: unsupported platform.");
+
                 if (data == null)
                     return;
 
@@ -201,7 +227,7 @@ namespace IndustrialPark
 
                 archive.UnsavedChanges = true;
                 updateListView(asset);
-                SoundUtility.ClearSound();
+                SoundUtility_vgmstream.ClearSound();
             }
         }
     }

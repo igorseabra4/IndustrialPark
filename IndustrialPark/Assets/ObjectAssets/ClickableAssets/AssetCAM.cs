@@ -91,21 +91,6 @@ namespace IndustrialPark
         public AssetSingle FadeUp { get; set; }
         [Category(categoryName)]
         public AssetSingle FadeDown { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
-        public CamSpecific_Generic CamSpecific { get; set; }
-        [Category(categoryName)]
-        public FlagBitmask Flags1 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags2 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags3 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags4 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public AssetID Marker1 { get; set; }
-        [Category(categoryName)]
-        public AssetID Marker2 { get; set; }
-        private CamType _camType;
         [Category(categoryName)]
         public CamType CamType
         {
@@ -136,6 +121,21 @@ namespace IndustrialPark
                 }
             }
         }
+        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Data")]
+        public CamSpecific_Generic CamSpecific { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask Flags1 { get; set; } = ByteFlagsDescriptor();
+        [Category(categoryName)]
+        public FlagBitmask Flags2 { get; set; } = ByteFlagsDescriptor();
+        [Category(categoryName)]
+        public FlagBitmask Flags3 { get; set; } = ByteFlagsDescriptor();
+        [Category(categoryName)]
+        public FlagBitmask Flags4 { get; set; } = ByteFlagsDescriptor();
+        [Category(categoryName)]
+        public AssetID Marker1 { get; set; }
+        [Category(categoryName)]
+        public AssetID Marker2 { get; set; }
+        private CamType _camType;
 
         public AssetCAM(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Camera, BaseAssetType.Camera)
         {

@@ -12,10 +12,25 @@ namespace IndustrialPark
 {
     public abstract class EntityAsset : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset, IAssetCopyPasteTransformation
     {
-        private const string categoryName = "Entity";
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Model);
 
-        private const string categoryNameFlags = "Entity Flags";
+        protected const string categoryNameReferences = "\t\t\t\tEntity References";
+
+        protected uint _model;
+        [Category(categoryNameReferences), Description("Model or Model Info asset"), ValidReferenceRequired]
+        public AssetID Model
+        {
+            get => _model;
+            set { _model = value; CreateTransformMatrix(); }
+        }
+
+        [Category(categoryNameReferences)]
+        public virtual AssetID Animation { get; set; }
+
+        [Category(categoryNameReferences)]
+        public AssetID Surface { get; set; }
+
+        private const string categoryNameFlags = "\t\t\tEntity Flags";
 
         [Category(categoryNameFlags)]
         public FlagBitmask VisibilityFlags { get; set; } = ByteFlagsDescriptor(
@@ -36,20 +51,22 @@ namespace IndustrialPark
             null,
             "Ledge Grab");
 
+        protected const string categoryNamePlacement = "\t\tEntity Placement";
+
         protected Vector3 _position;
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public virtual AssetSingle PositionX
         {
             get => _position.X;
             set { _position.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public virtual AssetSingle PositionY
         {
             get => _position.Y;
             set { _position.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public virtual AssetSingle PositionZ
         {
             get => _position.Z;
@@ -57,7 +74,7 @@ namespace IndustrialPark
         }
 
         protected float _yaw;
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public AssetSingle Yaw
         {
             get => MathUtil.RadiansToDegrees(_yaw);
@@ -65,7 +82,7 @@ namespace IndustrialPark
         }
 
         protected float _pitch;
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public AssetSingle Pitch
         {
             get => MathUtil.RadiansToDegrees(_pitch);
@@ -73,7 +90,7 @@ namespace IndustrialPark
         }
 
         protected float _roll;
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public AssetSingle Roll
         {
             get => MathUtil.RadiansToDegrees(_roll);
@@ -81,26 +98,26 @@ namespace IndustrialPark
         }
 
         protected Vector3 _scale;
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public virtual AssetSingle ScaleX
         {
             get => _scale.X;
             set { _scale.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public virtual AssetSingle ScaleY
         {
             get => _scale.Y;
             set { _scale.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryName)]
+        [Category(categoryNamePlacement)]
         public virtual AssetSingle ScaleZ
         {
             get => _scale.Z;
             set { _scale.Z = value; CreateTransformMatrix(); }
         }
 
-        private const string categoryNameColor = "Entity Color";
+        private const string categoryNameColor = "\tEntity Color";
 
         protected Vector4 _color;
         [Category(categoryNameColor), DisplayName("Red (0 - 1)")]
@@ -142,20 +159,6 @@ namespace IndustrialPark
 
         [Category(categoryNameColor)]
         public AssetSingle ColorAlphaSpeed { get; set; }
-
-        protected uint _model;
-        [Category(categoryName + " References"), Description("Model or Model Info asset"), ValidReferenceRequired]
-        public AssetID Model
-        {
-            get => _model;
-            set { _model = value; CreateTransformMatrix(); }
-        }
-
-        [Category(categoryName + " References")]
-        public virtual AssetID Animation { get; set; }
-
-        [Category(categoryName + " References")]
-        public AssetID Surface { get; set; }
 
         protected int entityHeaderEndPosition => game == Game.BFBB ? 0x54 : 0x50;
 

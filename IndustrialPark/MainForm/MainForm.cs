@@ -361,7 +361,7 @@ namespace IndustrialPark
 
         private void downloadVgmstreamToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AutomaticUpdater.DownloadVgmstream();
+            SoundUtility_vgmstream.DownloadVgmstream();
         }
 
         public ProjectJson FromCurrentInstance()
@@ -1321,7 +1321,13 @@ namespace IndustrialPark
         public void ClearTemplateFocus()
         {
             foreach (ArchiveEditor archiveEditor in archiveEditors)
-                archiveEditor.TemplateFocusOff();
+                archiveEditor.ClearTemplateFocus();
+        }
+
+        public void ClearModelTemplateFocus()
+        {
+            foreach (ArchiveEditor archiveEditor in archiveEditors)
+                archiveEditor.archive.ClearModelTemplateFocus();
         }
 
         private void uIModeAutoSizeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1645,7 +1651,7 @@ namespace IndustrialPark
 
         private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SoundUtility.StopSound();
+            SoundUtility_vgmstream.StopSound();
         }
 
         private void exportSceneToolStripMenuItem_Click(object sender, EventArgs e)

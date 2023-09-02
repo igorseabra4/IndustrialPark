@@ -121,6 +121,13 @@ namespace IndustrialPark
             System.Diagnostics.Process.Start(AboutBox.WikiLink + code);
         }
 
+        public void ClearModelTemplateFocus()
+        {
+            foreach (var ie in internalEditors)
+                if (ie is InternalModelEditor ime)
+                    ime.ClearModelTemplateFocus();
+        }
+
         public AssetPIPT GetPIPT(bool create = false) => (AssetPIPT)GetAssetOfType(AssetType.PipeInfoTable, AssetTemplate.Pipe_Info_Table, create);
 
         public AssetCOLL GetCOLL(bool create = false) => (AssetCOLL)GetAssetOfType(AssetType.CollisionTable, AssetTemplate.Collision_Table, create);
@@ -128,6 +135,8 @@ namespace IndustrialPark
         public AssetLODT GetLODT(bool create = false) => (AssetLODT)GetAssetOfType(AssetType.LevelOfDetailTable, AssetTemplate.Level_Of_Detail_Table, create);
 
         public AssetSHDW GetSHDW(bool create = false) => (AssetSHDW)GetAssetOfType(AssetType.ShadowTable, AssetTemplate.Shadow_Table, create);
+
+        public AssetJAW GetJAW(bool create = false) => (AssetJAW)GetAssetOfType(AssetType.JawDataTable, AssetTemplate.Jaw_Data_Table, create);
 
         public Asset GetSNDI() => GetAssetOfType(AssetType.SoundInfo, AssetTemplate.Sound_Info, false);
 
