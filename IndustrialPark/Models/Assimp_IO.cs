@@ -174,24 +174,7 @@ namespace IndustrialPark.Models
                         });
             }
 
-            Vector3 max = new Vector3(vertices[0].X, vertices[0].Y, vertices[0].Z);
-            Vector3 min = new Vector3(vertices[0].X, vertices[0].Y, vertices[0].Z);
-
-            foreach (Vertex3 v in vertices)
-            {
-                if (v.X > max.X)
-                    max.X = v.X;
-                if (v.Y > max.Y)
-                    max.Y = v.Y;
-                if (v.Z > max.Z)
-                    max.Z = v.Z;
-                if (v.X < min.X)
-                    min.X = v.X;
-                if (v.Y < min.Y)
-                    min.Y = v.Y;
-                if (v.Z < min.Z)
-                    min.Z = v.Z;
-            }
+            BoundingSphere boundingSphere = BoundingSphere.FromPoints(vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray());
 
             var binMeshes = new List<BinMesh>(materials.Count);
 
@@ -216,7 +199,7 @@ namespace IndustrialPark.Models
                     });
             }
 
-            return ToClump(materials.ToArray(), new BoundingSphere(max + min / 2f, (max - min).Length()),
+            return ToClump(materials.ToArray(), boundingSphere,
                 vertices.ToArray(), normals.ToArray(), textCoords.ToArray(), vertexColors.ToArray(), triangles.ToArray(),
                 binMeshes.ToArray(), atomicNeedsMaterialEffects);
         }
@@ -424,27 +407,8 @@ namespace IndustrialPark.Models
 
             triangles = triangles.OrderBy(t => t.materialIndex).ToList();
 
-            Vertex3 Max = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
-            Vertex3 Min = new Vertex3(vertices[0].X, vertices[0].Y, vertices[0].Z);
-
-            //foreach (Vertex3 i in vertices)
-            //{
-            //    if (i.X > Max.X)
-            //        Max.X = i.X;
-            //    if (i.Y > Max.Y)
-            //        Max.Y = i.Y;
-            //    if (i.Z > Max.Z)
-            //        Max.Z = i.Z;
-            //    if (i.X < Min.X)
-            //        Min.X = i.X;
-            //    if (i.Y < Min.Y)
-            //        Min.Y = i.Y;
-            //    if (i.Z < Min.Z)
-            //        Min.Z = i.Z;
-            //}
-
-            Max = new Vertex3(MaximumBoundary, MaximumBoundary, MaximumBoundary);
-            Min = new Vertex3(-MaximumBoundary, -MaximumBoundary, -MaximumBoundary);
+            Vertex3 Max = new Vertex3(MaximumBoundary, MaximumBoundary, MaximumBoundary);
+            Vertex3 Min = new Vertex3(-MaximumBoundary, -MaximumBoundary, -MaximumBoundary);
 
             BinMesh[] binMeshes = new BinMesh[scene.MaterialCount];
 

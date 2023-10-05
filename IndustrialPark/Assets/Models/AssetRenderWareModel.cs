@@ -1,13 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -326,114 +323,20 @@ namespace IndustrialPark
             }
         }
 
+        public virtual void ApplyScale(float x, float y, float z)
+        {
+            ApplyScale(new Vector3(x, y, z));
+        }
+
         public virtual void ApplyScale(Vector3 factor)
         {
-            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
-            var renderWareVersion = sections[0].renderWareVersion;
-            foreach (RWSection rws in sections)
-                if (rws is Clump_0010 clump)
-                    foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                        ApplyScale(factor, geo);
-                else if (rws is World_000B world)
-                {
-                    if (world.firstWorldChunk is AtomicSector_0009 atomic)
-                        ApplyScale(factor, atomic);
-                    else if (world.firstWorldChunk is PlaneSector_000A plane)
-                        ApplyScale(factor, plane);
-                }
-
-            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            Setup(Program.Renderer);
-        }
-
-        private static void ApplyScale(Vector3 factor, Geometry_000F geo)
-        {
-            var singleFactor = Math.Max(factor.X, Math.Max(factor.Y, factor.Z));
-            geo.geometryStruct.sphereCenterX *= factor.X;
-            geo.geometryStruct.sphereCenterY *= factor.Y;
-            geo.geometryStruct.sphereCenterZ *= factor.Z;
-            geo.geometryStruct.sphereRadius *= singleFactor;
-
-            if ((geo.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) == 0)
-                ApplyScale(factor, geo.geometryStruct, singleFactor);
-            else
-                foreach (var ex in geo.geometryExtension.extensionSectionList)
-                    if (ex is NativeDataPLG_0510 nativeData)
-                        if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
-                            ApplyScale(factor, nativeData);
-        }
-
-        private static void ApplyScale(Vector3 factor, GeometryStruct_0001 geometryStruct, float singleFactor)
-        {
-            for (int i = 0; i < geometryStruct.morphTargets.Length; i++)
+            var matrix = Matrix.Scaling(factor);
+            var transform = new Func<float, float, float, Vertex3>((float x, float y, float z) =>
             {
-                geometryStruct.morphTargets[i].sphereCenter.X *= factor.X;
-                geometryStruct.morphTargets[i].sphereCenter.Y *= factor.Y;
-                geometryStruct.morphTargets[i].sphereCenter.Z *= factor.Z;
-                geometryStruct.morphTargets[i].radius *= singleFactor;
-
-                if (geometryStruct.morphTargets[i].hasVertices != 0)
-                    for (int j = 0; j < geometryStruct.morphTargets[i].vertices.Length; j++)
-                    {
-                        geometryStruct.morphTargets[i].vertices[j].X *= factor.X;
-                        geometryStruct.morphTargets[i].vertices[j].Y *= factor.Y;
-                        geometryStruct.morphTargets[i].vertices[j].Z *= factor.Z;
-                    }
-            }
-        }
-
-        private static void ApplyScale(Vector3 factor, NativeDataPLG_0510 nativeData)
-        {
-            for (int i = 0; i < nativeData.nativeDataStruct.nativeData.declarations.Length; i++)
-                if (nativeData.nativeDataStruct.nativeData.declarations[i].declarationType == Declarations.Vertex)
-                {
-                    var vd = (Vertex3Declaration)nativeData.nativeDataStruct.nativeData.declarations[i];
-                    for (int j = 0; j < vd.entryList.Count; j++)
-                        vd.entryList[j] = new Vertex3(
-                            vd.entryList[j].X * factor.X,
-                            vd.entryList[j].Y * factor.Y,
-                            vd.entryList[j].Z * factor.Z);
-                }
-        }
-
-        private static void ApplyScale(Vector3 factor, AtomicSector_0009 atomic)
-        {
-            if (atomic.atomicSectorStruct.isNativeData)
-            {
-                foreach (var ex in atomic.atomicSectorExtension.extensionSectionList)
-                    if (ex is NativeDataPLG_0510 nativeData)
-                        if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
-                            ApplyScale(factor, nativeData);
-            }
-            else
-            {
-                atomic.atomicSectorStruct.boxMaximum.X *= factor.X;
-                atomic.atomicSectorStruct.boxMaximum.Y *= factor.Y;
-                atomic.atomicSectorStruct.boxMaximum.Z *= factor.Z;
-
-                atomic.atomicSectorStruct.boxMinimum.X *= factor.X;
-                atomic.atomicSectorStruct.boxMinimum.Y *= factor.Y;
-                atomic.atomicSectorStruct.boxMinimum.Z *= factor.Z;
-
-                for (int i = 0; i < atomic.atomicSectorStruct.vertexArray.Length; i++)
-                {
-                    atomic.atomicSectorStruct.vertexArray[i].X *= factor.X;
-                    atomic.atomicSectorStruct.vertexArray[i].Y *= factor.Y;
-                    atomic.atomicSectorStruct.vertexArray[i].Z *= factor.Z;
-                }
-            }
-        }
-
-        private static void ApplyScale(Vector3 factor, PlaneSector_000A plane)
-        {
-            if (plane.leftSection is AtomicSector_0009 atomicL)
-                ApplyScale(factor, atomicL);
-            else if (plane.leftSection is PlaneSector_000A planeL)
-                ApplyScale(factor, planeL);
-            if (plane.rightSection is AtomicSector_0009 atomicR)
-                ApplyScale(factor, atomicR);
-            else if (plane.rightSection is PlaneSector_000A planeR)
-                ApplyScale(factor, planeR);
+                var vector = Vector3.Transform(new Vector3(x, y, z), matrix);
+                return new Vertex3(vector.X, vector.Y, vector.Z);
+            });
+            ApplyTransformation(transform);
         }
 
         public virtual void ApplyRotation(float yaw, float pitch, float roll)
@@ -484,46 +387,40 @@ namespace IndustrialPark
 
         private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, Geometry_000F geo)
         {
+            var allVertices = new List<Vector3>();
+
             if ((geo.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) == 0)
             {
-                ApplyTransformation(transform, geo.geometryStruct, out _);
-                geo.geometryStruct.sphereCenterX = 0;
-                geo.geometryStruct.sphereCenterY = 0;
-                geo.geometryStruct.sphereCenterZ = 0;
-                geo.geometryStruct.sphereRadius = 0;
+                ApplyTransformation(transform, geo.geometryStruct, ref allVertices);
             }
             else
             {
-                BoundingSphere? bounds = null;
                 foreach (var ex in geo.geometryExtension.extensionSectionList)
                     if (ex is NativeDataPLG_0510 nativeData)
                         if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
-                        {
-                            ApplyTransformation(transform, nativeData, out BoundingSphere? localBounds);
-                            bounds = bounds.HasValue ? BoundingSphere.Merge(bounds.Value, localBounds.Value) : localBounds;
-                        }
-                if (bounds.HasValue)
-                {
-                    geo.geometryStruct.sphereCenterX = bounds.Value.Center.X;
-                    geo.geometryStruct.sphereCenterY = bounds.Value.Center.Y;
-                    geo.geometryStruct.sphereCenterZ = bounds.Value.Center.Z;
-                    geo.geometryStruct.sphereRadius = bounds.Value.Radius;
-                }
+                            ApplyTransformation(transform, nativeData, ref allVertices);
             }
+
+            var boundingSphere = BoundingSphere.FromPoints(allVertices.ToArray());
+
+            geo.geometryStruct.sphereCenterX = boundingSphere.Center.X;
+            geo.geometryStruct.sphereCenterY = boundingSphere.Center.Y;
+            geo.geometryStruct.sphereCenterZ = boundingSphere.Center.Z;
+            geo.geometryStruct.sphereRadius = boundingSphere.Radius;
         }
 
-        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, GeometryStruct_0001 geometryStruct, out BoundingSphere? bounds)
+        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, GeometryStruct_0001 geometryStruct, ref List<Vector3> allVertices)
         {
-            bounds = null;
             for (int i = 0; i < geometryStruct.morphTargets.Length; i++)
             {
                 BoundingSphere localBounds = new BoundingSphere();
                 if (geometryStruct.morphTargets[i].hasVertices != 0)
-                { 
+                {
                     for (int j = 0; j < geometryStruct.morphTargets[i].vertices.Length; j++)
                         geometryStruct.morphTargets[i].vertices[j] = transform(geometryStruct.morphTargets[i].vertices[j].X, geometryStruct.morphTargets[i].vertices[j].Y, geometryStruct.morphTargets[i].vertices[j].Z);
-                    localBounds = GetBoundingSphere(geometryStruct.morphTargets[i].vertices);
-                    bounds = bounds.HasValue ? BoundingSphere.Merge(bounds.Value, localBounds) : localBounds;
+                    var points = geometryStruct.morphTargets[i].vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray();
+                    localBounds = BoundingSphere.FromPoints(points);
+                    allVertices.AddRange(points);
                 }
                 geometryStruct.morphTargets[i].sphereCenter.X = localBounds.Center.X;
                 geometryStruct.morphTargets[i].sphereCenter.Y = localBounds.Center.Y;
@@ -532,43 +429,44 @@ namespace IndustrialPark
             }
         }
 
-        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, NativeDataPLG_0510 nativeData, out BoundingSphere? bounds)
+        private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, NativeDataPLG_0510 nativeData, ref List<Vector3> allVertices)
         {
-            bounds = null;
             for (int i = 0; i < nativeData.nativeDataStruct.nativeData.declarations.Length; i++)
                 if (nativeData.nativeDataStruct.nativeData.declarations[i].declarationType == Declarations.Vertex)
                 {
                     var vd = (Vertex3Declaration)nativeData.nativeDataStruct.nativeData.declarations[i];
                     for (int j = 0; j < vd.entryList.Count; j++)
                         vd.entryList[j] = transform(vd.entryList[j].X, vd.entryList[j].Y, vd.entryList[j].Z);
-                    var newBounds = GetBoundingSphere(vd.entryList);
-                    bounds = bounds.HasValue ? BoundingSphere.Merge(bounds.Value, newBounds) : newBounds;
+
+                    allVertices.AddRange(vd.entryList.Select(v => new Vector3(v.X, v.Y, v.Z)));
                 }
         }
 
         private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, AtomicSector_0009 atomic)
         {
-            BoundingSphere? bounds = null;
+            BoundingBox boundingBox;
+
             if (atomic.atomicSectorStruct.isNativeData)
             {
+                var allVertices = new List<Vector3>();
+
                 foreach (var ex in atomic.atomicSectorExtension.extensionSectionList)
                     if (ex is NativeDataPLG_0510 nativeData)
                         if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
-                            ApplyTransformation(transform, nativeData, out bounds);
+                            ApplyTransformation(transform, nativeData, ref allVertices);
+
+                boundingBox = BoundingBox.FromPoints(allVertices.ToArray());
             }
             else
             {
                 for (int i = 0; i < atomic.atomicSectorStruct.vertexArray.Length; i++)
                     atomic.atomicSectorStruct.vertexArray[i] = transform(atomic.atomicSectorStruct.vertexArray[i].X, atomic.atomicSectorStruct.vertexArray[i].Y, atomic.atomicSectorStruct.vertexArray[i].Z);
-                bounds = GetBoundingSphere(atomic.atomicSectorStruct.vertexArray);
+
+                boundingBox = BoundingBox.FromPoints(atomic.atomicSectorStruct.vertexArray.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray());
             }
 
-            if (bounds.HasValue)
-            {
-                var bb = BoundingBox.FromSphere(bounds.Value);
-                atomic.atomicSectorStruct.boxMaximum = new Vertex3(bb.Maximum.X, bb.Maximum.Y, bb.Maximum.Z);
-                atomic.atomicSectorStruct.boxMinimum = new Vertex3(bb.Minimum.X, bb.Minimum.Y, bb.Minimum.Z);
-            }
+            atomic.atomicSectorStruct.boxMaximum = new Vertex3(boundingBox.Maximum.X, boundingBox.Maximum.Y, boundingBox.Maximum.Z);
+            atomic.atomicSectorStruct.boxMinimum = new Vertex3(boundingBox.Minimum.X, boundingBox.Minimum.Y, boundingBox.Minimum.Z);
         }
 
         private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, PlaneSector_000A plane)
@@ -581,31 +479,6 @@ namespace IndustrialPark
                 ApplyTransformation(transform, atomicR);
             else if (plane.rightSection is PlaneSector_000A planeR)
                 ApplyTransformation(transform, planeR);
-        }
-
-        private static BoundingSphere GetBoundingSphere(IEnumerable<Vertex3> vertices)
-        {
-            var first = vertices.FirstOrDefault();
-            var min = new Vector3(first.X, first.Y, first.Z);
-            var max = new Vector3(first.X, first.Y, first.Z);
-
-            foreach (var v in vertices)
-            {
-                if (v.X < min.X)
-                    min.X = v.X;
-                if (v.Y < min.Y)
-                    min.Y = v.Y;
-                if (v.Z < min.Z)
-                    min.Z = v.Z;
-                if (v.X > max.X)
-                    max.X = v.X;
-                if (v.Y > max.Y)
-                    max.Y = v.Y;
-                if (v.Z > max.Z)
-                    max.Z = v.Z;
-            }
-
-            return new BoundingSphere(max + min / 2f, (max - min).Length());
         }
     }
 }

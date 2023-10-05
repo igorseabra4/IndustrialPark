@@ -16,7 +16,7 @@ namespace IndustrialPark.Models
             string materialLibrary = Path.ChangeExtension(fileName, "MTL");
             string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
 
-            StreamWriter OBJWriter = new StreamWriter((Path.ChangeExtension(fileName, "OBJ")), false);
+            StreamWriter OBJWriter = new StreamWriter(Path.ChangeExtension(fileName, "OBJ"), false);
 
             List<Triangle> triangleList = new List<Triangle>();
 
@@ -144,7 +144,8 @@ namespace IndustrialPark.Models
             {
                 if (rw is BinMeshPLG_050E binmesh)
                 {
-                    if (binmesh.numMeshes == 0) return;
+                    if (binmesh.numMeshes == 0)
+                        return;
                 }
                 if (rw is NativeDataPLG_0510 native)
                 {
@@ -152,7 +153,8 @@ namespace IndustrialPark.Models
                 }
             }
 
-            if (n == null) throw new Exception();
+            if (n == null)
+                throw new Exception();
 
             List<Vertex3> vertexList_init = new List<Vertex3>();
             List<Vertex3> normalList_init = new List<Vertex3>();

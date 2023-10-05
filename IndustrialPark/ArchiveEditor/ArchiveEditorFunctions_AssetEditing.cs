@@ -753,7 +753,9 @@ namespace IndustrialPark
 
             float singleFactor = (factor.X + factor.Y + factor.Z) / 3;
 
-            foreach (Asset a in assetDictionary.Values.Where(a => assetTypes == null || assetTypes.Contains(a.assetType)))
+            var assets = assetDictionary.Values.Where(a => assetTypes == null || assetTypes.Contains(a.assetType)).ToArray();
+
+            foreach (Asset a in assets)
             {
                 if (a is IVolumeAsset volume)
                 {
@@ -816,12 +818,12 @@ namespace IndustrialPark
                     if (placeable is AssetNPC || placeable is AssetVIL)
                     {
                         if (bakeNpcsVilScales)
-                            placeable.Model = ApplyBakeScale(placeable.Model, factor);
+                            placeable.Model = ApplyBakeScale(placeable.assetName, placeable.Model, factor);
                     }
                     else if (factor.X != factor.Y || factor.X != factor.Z || factor.Y != factor.Z)
                     {
                         if (bakeEntityUnproportionalScales)
-                            placeable.Model = ApplyBakeScale(placeable.Model, factor);
+                            placeable.Model = ApplyBakeScale(placeable.assetName, placeable.Model, factor);
                     }
                     else
                     {
@@ -989,7 +991,7 @@ namespace IndustrialPark
             return data;
         }
 
-        public static uint ApplyBakeScale(uint modelAssetId, Vector3 scale)
+        public static uint ApplyBakeScale(string assetName, uint modelAssetId, Vector3 scale)
         {
             if (scale.X == 1f && scale.Y == 1f && scale.Z == 1f)
             {
@@ -1013,13 +1015,13 @@ namespace IndustrialPark
                     count++;
                     if (count > 1)
                     {
-                        MessageBox.Show("Unable to bake scale: model found in more than one open archive.");
+                        MessageBox.Show($"Unable to bake scale for asset {assetName}: model 0x{modelAssetId:X8} found in more than one open archive.");
                         return modelAssetId;
                     }
                 }
 
             if (count == 0)
-                MessageBox.Show("Unable bake scale: model not found in open archives.");
+                MessageBox.Show($"Unable to bake scale for asset {assetName}: model 0x{modelAssetId:X8} not found in open archives.");
             else if (count == 1)
                 return bsmc.Item1.ApplyBakeScaleLocal((Asset)bsmc.Item2, scale);
 
