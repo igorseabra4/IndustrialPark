@@ -382,7 +382,7 @@ namespace IndustrialPark
             "It's only needed when the scale axes are not equal to each other or when scaling models with MINFs (Model Infos).", "Bake Scale", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
             {
-                var newValue = ArchiveEditorFunctions.ApplyBakeScale(_model, _scale);
+                var newValue = ArchiveEditorFunctions.ApplyBakeScale(assetName, _model, _scale);
                 if (newValue != _model)
                 {
                     _model = newValue;
