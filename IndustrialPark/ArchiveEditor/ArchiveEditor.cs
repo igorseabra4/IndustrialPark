@@ -1212,37 +1212,37 @@ namespace IndustrialPark
 
         private void checkedListBoxAssets_KeyDown(object sender, KeyEventArgs e)
         {
-            //if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)
-            //{
-            //    if (buttonImportAsset.Enabled)
-            //        buttonAddAsset_Click(null, null);
-            //}
-            //else if (e.KeyCode == Keys.D && e.Modifiers == Keys.Control)
-            //{
-            //    if (buttonDuplicateAsset.Enabled)
-            //        buttonDuplicate_Click(null, null);
-            //}
-            //else if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
-            //{
-            //    if (buttonCopyAsset.Enabled)
-            //        buttonCopy_Click(null, null);
-            //}
-            //else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
-            //{
-            //    if (buttonPasteAssets.Enabled)
-            //        buttonPaste_Click(null, null);
-            //}
-            //else if (e.KeyCode == Keys.G && e.Modifiers == Keys.Control)
-            //{
-            //    if (buttonEditDataAsset.Enabled)
-            //        buttonInternalEdit_Click(null, null);
-            //}
-            //else if (e.KeyCode == Keys.H && e.Modifiers == Keys.Control)
-            //{
-            //    if (buttonEditAsset.Enabled)
-            //        buttonEditAsset_Click(null, null);
-            //}
-            //else 
+            if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)
+            {
+                if (buttonImportAsset.Enabled)
+                    buttonAddAsset_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.D && e.Modifiers == Keys.Control)
+            {
+                if (buttonDuplicateAsset.Enabled)
+                    buttonDuplicate_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
+            {
+                if (buttonCopyAsset.Enabled)
+                    buttonCopy_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
+            {
+                if (buttonPasteAssets.Enabled)
+                    buttonPaste_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.G && e.Modifiers == Keys.Control)
+            {
+                if (buttonEditDataAsset.Enabled)
+                    buttonInternalEdit_Click(null, null);
+            }
+            else if (e.KeyCode == Keys.H && e.Modifiers == Keys.Control)
+            {
+                if (buttonEditAsset.Enabled)
+                    buttonEditAsset_Click(null, null);
+            }
+            else
             if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
             {
                 listViewAssets.BeginUpdate();
@@ -1250,11 +1250,11 @@ namespace IndustrialPark
                     listViewAssets.Items[i].Selected = true;
                 listViewAssets.EndUpdate();
             }
-            //else if (e.KeyCode == Keys.Delete)
-            //{
-            //    if (buttonRemoveAsset.Enabled)
-            //        ButtonRemoveAsset_Click(null, null);
-            //}
+            else if (e.KeyCode == Keys.Delete)
+            {
+                if (buttonRemoveAsset.Enabled)
+                    ButtonRemoveAsset_Click(null, null);
+            }
         }
 
         private void checkedListBoxAssets_MouseDown(object sender, MouseEventArgs e)
@@ -1409,29 +1409,17 @@ namespace IndustrialPark
             if (!PressedKeys.Contains(e.KeyCode))
                 PressedKeys.Add(e.KeyCode);
 
-            //if (PressedKeys.Contains(Keys.ControlKey)
-            //    && PressedKeys.Contains(Keys.S))
-            //{
-            //    Save();
-            //}
+            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.S))
+                Save();
 
-            //if (PressedKeys.Contains(Keys.ControlKey)
-            //    && PressedKeys.Contains(Keys.N))
-            //{
-            //    newToolStripMenuItem_Click(sender, e);
-            //}
+            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.N))
+                newToolStripMenuItem_Click(sender, e);
 
-            //if (PressedKeys.Contains(Keys.ControlKey)
-            //    && PressedKeys.Contains(Keys.O))
-            //{
-            //    openToolStripMenuItem_Click(sender, e);
-            //}
+            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.O))
+                openToolStripMenuItem_Click(sender, e);
 
-            //if (PressedKeys.Contains(Keys.ControlKey)
-            //    && PressedKeys.Contains(Keys.W))
-            //{
-            //    closeToolStripMenuItem_Click(sender, e);
-            //}
+            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.W))
+                closeToolStripMenuItem_Click(sender, e);
         }
 
         private void ArchiveEditor_KeyUp(object sender, KeyEventArgs e)
