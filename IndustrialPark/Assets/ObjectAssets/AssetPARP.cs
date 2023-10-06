@@ -60,21 +60,36 @@ namespace IndustrialPark
             {
                 switch (index)
                 {
-                    case 0: return "Rate (how many times per second a particle is emitted)";
-                    case 1: return "Life (particle lifetime in seconds)";
-                    case 2: return "Birth size in units";
-                    case 3: return "Death size in units";
-                    case 4: return "Start color (red component)";
-                    case 5: return "Start color (green component)";
-                    case 6: return "Start color (blue component)";
-                    case 7: return "Start color (alpha component)";
-                    case 8: return "End color (red component)";
-                    case 9: return "End color (green component)";
-                    case 10: return "End color (blue component)";
-                    case 11: return "End color (alpha component)";
-                    case 12: return "Vel_Scale (unknown/unused)";
-                    case 13: return "Vel_Angle (unknown/unused)";
-                    default: return "Error";
+                    case 0:
+                        return "Rate (how many times per second a particle is emitted)";
+                    case 1:
+                        return "Life (particle lifetime in seconds)";
+                    case 2:
+                        return "Birth size in units";
+                    case 3:
+                        return "Death size in units";
+                    case 4:
+                        return "Start color (red component)";
+                    case 5:
+                        return "Start color (green component)";
+                    case 6:
+                        return "Start color (blue component)";
+                    case 7:
+                        return "Start color (alpha component)";
+                    case 8:
+                        return "End color (red component)";
+                    case 9:
+                        return "End color (green component)";
+                    case 10:
+                        return "End color (blue component)";
+                    case 11:
+                        return "End color (alpha component)";
+                    case 12:
+                        return "Vel_Scale (unknown/unused)";
+                    case 13:
+                        return "Vel_Angle (unknown/unused)";
+                    default:
+                        return "Error";
                 }
             }
         }

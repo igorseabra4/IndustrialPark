@@ -101,16 +101,17 @@ namespace IndustrialPark
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
-                            } 
+                            }
                             catch (ArgumentException)
                             {
-                                MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed " 
-                                    + TRI_AND_VERTEX_LIMIT + ".", 
+                                MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed "
+                                    + TRI_AND_VERTEX_LIMIT + ".",
                                     "Error Importing Model",
-                                    MessageBoxButtons.OK, 
+                                    MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
                                 return (null, false, false, false, false, false);
-                            } catch (Exception)
+                            }
+                            catch (Exception)
                             {
                                 MessageBox.Show("Model could not be imported.",
                                     "Error Importing Model",
@@ -118,7 +119,7 @@ namespace IndustrialPark
                                     MessageBoxIcon.Error);
                                 return (null, false, false, false, false, false);
                             }
-                            
+
                         }
                         else if (assetType == AssetType.BSP)
                         {
@@ -133,7 +134,8 @@ namespace IndustrialPark
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxIgnoreMeshColors.Checked),
                                         modelRenderWareVersion(game));
-                            } catch (ArgumentException)
+                            }
+                            catch (ArgumentException)
                             {
                                 MessageBox.Show("Model could not be imported.\nPlease check that:\n- Vertex/triangle counts do not exceed "
                                     + TRI_AND_VERTEX_LIMIT + "\n- Number of vertices matches texture coordinate and vertex color counts",
@@ -152,7 +154,8 @@ namespace IndustrialPark
                             }
 
                         }
-                        else throw new ArgumentException();
+                        else
+                            throw new ArgumentException();
 
                         AHDRs.Add(new Section_AHDR(
                                 Functions.BKDRHash(assetName),

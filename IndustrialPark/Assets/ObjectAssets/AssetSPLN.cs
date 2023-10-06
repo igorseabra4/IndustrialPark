@@ -121,7 +121,7 @@ namespace IndustrialPark
 
             base.Serialize(writer);
             writer.endianness = prevEndian;
-            
+
             writer.Write(SplineType);
             writer.Write(_points.Length + SplineType); // point count plus 3
             writer.Write(_points.Length - 1); // point count minus one

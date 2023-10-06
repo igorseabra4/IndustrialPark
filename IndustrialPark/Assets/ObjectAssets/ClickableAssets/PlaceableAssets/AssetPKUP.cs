@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using static IndustrialPark.ArchiveEditorFunctions;
 
@@ -291,7 +290,7 @@ namespace IndustrialPark
             writer.Write(PickReferenceID);
             writer.Write((ushort)PickupFlags);
             writer.Write(PickupValue);
-            SerializeLinks(writer);                
+            SerializeLinks(writer);
         }
 
         public static bool dontRender = false;

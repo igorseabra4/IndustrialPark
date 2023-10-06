@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -68,28 +67,72 @@ namespace IndustrialPark
         {
             switch (template)
             {
-                case AssetTemplate.Fogger_GoofyGoober: EnemyType = EnemyStandardType.fogger_gg_bind; break;
-                case AssetTemplate.Fogger_Desert: EnemyType = EnemyStandardType.fogger_de_bind; break;
-                case AssetTemplate.Fogger_ThugTug: EnemyType = EnemyStandardType.fogger_tt_bind; break;
-                case AssetTemplate.Fogger_Trench: EnemyType = EnemyStandardType.fogger_tr_bind; break;
-                case AssetTemplate.Fogger_Junkyard: EnemyType = EnemyStandardType.fogger_jk_bind; break;
-                case AssetTemplate.Fogger_Planktopolis: EnemyType = EnemyStandardType.fogger_pt_bind; break;
-                case AssetTemplate.Fogger_v1: EnemyType = EnemyStandardType.fogger_v1_bind; break;
-                case AssetTemplate.Fogger_v2: EnemyType = EnemyStandardType.fogger_v2_bind; break;
-                case AssetTemplate.Fogger_v3: EnemyType = EnemyStandardType.fogger_v3_bind; break;
-                case AssetTemplate.Slammer_GoofyGoober: EnemyType = EnemyStandardType.slammer_v1_bind; break;
-                case AssetTemplate.Slammer_Desert: EnemyType = EnemyStandardType.slammer_des_bind; break;
-                case AssetTemplate.Slammer_ThugTug: EnemyType = EnemyStandardType.slammer_v3_bind; break;
-                case AssetTemplate.Spinner_ThugTug: EnemyType = EnemyStandardType.spinner_v1_bind; break;
-                case AssetTemplate.Spinner_Junkyard: EnemyType = EnemyStandardType.spinner_v2_bind; break;
-                case AssetTemplate.Spinner_Planktopolis: EnemyType = EnemyStandardType.spinner_v3_bind; break;
-                case AssetTemplate.Minimerv: EnemyType = EnemyStandardType.minimerv_v1_bind; break;
-                case AssetTemplate.Mervyn: EnemyType = EnemyStandardType.mervyn_v3_bind; break;
-                case AssetTemplate.Flinger_Desert: EnemyType = EnemyStandardType.flinger_v1_bind; break;
-                case AssetTemplate.Flinger_Trench: EnemyType = EnemyStandardType.flinger_v2_bind; break;
-                case AssetTemplate.Flinger_Junkyard: EnemyType = EnemyStandardType.flinger_v3_bind; break;
-                case AssetTemplate.Popper_Trench: EnemyType = EnemyStandardType.popper_v1_bind; break;
-                case AssetTemplate.Popper_Planktopolis: EnemyType = EnemyStandardType.popper_v3_bind; break;
+                case AssetTemplate.Fogger_GoofyGoober:
+                    EnemyType = EnemyStandardType.fogger_gg_bind;
+                    break;
+                case AssetTemplate.Fogger_Desert:
+                    EnemyType = EnemyStandardType.fogger_de_bind;
+                    break;
+                case AssetTemplate.Fogger_ThugTug:
+                    EnemyType = EnemyStandardType.fogger_tt_bind;
+                    break;
+                case AssetTemplate.Fogger_Trench:
+                    EnemyType = EnemyStandardType.fogger_tr_bind;
+                    break;
+                case AssetTemplate.Fogger_Junkyard:
+                    EnemyType = EnemyStandardType.fogger_jk_bind;
+                    break;
+                case AssetTemplate.Fogger_Planktopolis:
+                    EnemyType = EnemyStandardType.fogger_pt_bind;
+                    break;
+                case AssetTemplate.Fogger_v1:
+                    EnemyType = EnemyStandardType.fogger_v1_bind;
+                    break;
+                case AssetTemplate.Fogger_v2:
+                    EnemyType = EnemyStandardType.fogger_v2_bind;
+                    break;
+                case AssetTemplate.Fogger_v3:
+                    EnemyType = EnemyStandardType.fogger_v3_bind;
+                    break;
+                case AssetTemplate.Slammer_GoofyGoober:
+                    EnemyType = EnemyStandardType.slammer_v1_bind;
+                    break;
+                case AssetTemplate.Slammer_Desert:
+                    EnemyType = EnemyStandardType.slammer_des_bind;
+                    break;
+                case AssetTemplate.Slammer_ThugTug:
+                    EnemyType = EnemyStandardType.slammer_v3_bind;
+                    break;
+                case AssetTemplate.Spinner_ThugTug:
+                    EnemyType = EnemyStandardType.spinner_v1_bind;
+                    break;
+                case AssetTemplate.Spinner_Junkyard:
+                    EnemyType = EnemyStandardType.spinner_v2_bind;
+                    break;
+                case AssetTemplate.Spinner_Planktopolis:
+                    EnemyType = EnemyStandardType.spinner_v3_bind;
+                    break;
+                case AssetTemplate.Minimerv:
+                    EnemyType = EnemyStandardType.minimerv_v1_bind;
+                    break;
+                case AssetTemplate.Mervyn:
+                    EnemyType = EnemyStandardType.mervyn_v3_bind;
+                    break;
+                case AssetTemplate.Flinger_Desert:
+                    EnemyType = EnemyStandardType.flinger_v1_bind;
+                    break;
+                case AssetTemplate.Flinger_Trench:
+                    EnemyType = EnemyStandardType.flinger_v2_bind;
+                    break;
+                case AssetTemplate.Flinger_Junkyard:
+                    EnemyType = EnemyStandardType.flinger_v3_bind;
+                    break;
+                case AssetTemplate.Popper_Trench:
+                    EnemyType = EnemyStandardType.popper_v1_bind;
+                    break;
+                case AssetTemplate.Popper_Planktopolis:
+                    EnemyType = EnemyStandardType.popper_v3_bind;
+                    break;
             }
             MovePoint = mvptAssetID;
         }

@@ -2,7 +2,6 @@
 using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using SharpDX.Direct3D11;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 
@@ -155,8 +154,8 @@ namespace IndustrialPark
 
         private Bitmap DrawBitmapFromText()
         {
-            var font = new Font(FontFamily.GenericMonospace, Char_Width, FontStyle.Regular, GraphicsUnit.Pixel);            
-            
+            var font = new Font(FontFamily.GenericMonospace, Char_Width, FontStyle.Regular, GraphicsUnit.Pixel);
+
             var img = new Bitmap(Width, Height);
             Graphics graphics = Graphics.FromImage(img);
 
@@ -179,7 +178,7 @@ namespace IndustrialPark
             foreach (var c in text)
             {
                 graphics.DrawString(c.ToString(), font, textBrush, x, y, fmt);
-                x += Spacing_Horizontal/2;
+                x += Spacing_Horizontal / 2;
             }
 
             graphics.Save();

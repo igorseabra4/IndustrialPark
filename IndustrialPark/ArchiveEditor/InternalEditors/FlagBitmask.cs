@@ -32,7 +32,8 @@ public class FlagBitmask : DynamicTypeDescriptor
     {
         if (component is FlagField ff)
             _flagField = ff;
-        else throw new ArgumentException();
+        else
+            throw new ArgumentException();
 
         return base.DFD_FromComponent(ff);
     }

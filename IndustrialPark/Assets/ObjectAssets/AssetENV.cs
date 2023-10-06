@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -99,36 +98,36 @@ namespace IndustrialPark
         {
 
 
-                base.Serialize(writer);
-                writer.Write(BSP);
-                writer.Write(StartCamera);
-                writer.Write(ClimateFlags);
-                writer.Write(ClimateStrengthMin);
-                writer.Write(ClimateStrengthMax);
-                writer.Write(BSP_LightKit);
-                writer.Write(Object_LightKit);
-                writer.Write(Padding24);
-                writer.Write(BSP_Collision);
-                writer.Write(BSP_FX);
-                writer.Write(BSP_Camera);
-                writer.Write(BSP_SurfaceMapper);
-                writer.Write(BSP_Collision_SurfaceMapper);
-                writer.Write(BSP_FX_SurfaceMapper);
-                if (game != Game.Scooby)
-                    writer.Write(BitConverter.GetBytes(LoldHeight));
-                if (game == Game.Incredibles)
-                {
-                    writer.Write(UnknownInt44);
-                    writer.Write(UnknownInt48);
-                    writer.Write(UnknownInt4C);
-                    writer.Write(UnknownInt50);
-                    writer.Write(UnknownInt54);
-                    writer.Write(UnknownInt58);
-                }
+            base.Serialize(writer);
+            writer.Write(BSP);
+            writer.Write(StartCamera);
+            writer.Write(ClimateFlags);
+            writer.Write(ClimateStrengthMin);
+            writer.Write(ClimateStrengthMax);
+            writer.Write(BSP_LightKit);
+            writer.Write(Object_LightKit);
+            writer.Write(Padding24);
+            writer.Write(BSP_Collision);
+            writer.Write(BSP_FX);
+            writer.Write(BSP_Camera);
+            writer.Write(BSP_SurfaceMapper);
+            writer.Write(BSP_Collision_SurfaceMapper);
+            writer.Write(BSP_FX_SurfaceMapper);
+            if (game != Game.Scooby)
+                writer.Write(BitConverter.GetBytes(LoldHeight));
+            if (game == Game.Incredibles)
+            {
+                writer.Write(UnknownInt44);
+                writer.Write(UnknownInt48);
+                writer.Write(UnknownInt4C);
+                writer.Write(UnknownInt50);
+                writer.Write(UnknownInt54);
+                writer.Write(UnknownInt58);
+            }
 
-                SerializeLinks(writer);
+            SerializeLinks(writer);
 
-                
+
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

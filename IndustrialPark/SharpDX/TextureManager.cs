@@ -57,7 +57,8 @@ namespace IndustrialPark
         {
             ShaderResourceView texture;
 
-            try { texture = Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
+            try
+            { texture = Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
             catch { return; }
 
             DisposeTexture(tnStruct.textureName);
@@ -87,7 +88,8 @@ namespace IndustrialPark
                         if (extensions.Contains(Path.GetExtension(i).ToLower()))
                             AddTextureBitmap(i);
                 }
-                else MessageBox.Show("Error loading textures from " + folderName + ": folder not found");
+                else
+                    MessageBox.Show("Error loading textures from " + folderName + ": folder not found");
 
             ReapplyTextures();
         }

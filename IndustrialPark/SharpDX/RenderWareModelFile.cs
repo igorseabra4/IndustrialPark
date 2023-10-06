@@ -116,7 +116,8 @@ namespace IndustrialPark
             {
                 AddPlane(device, pl, materialList);
             }
-            else throw new Exception();
+            else
+                throw new Exception();
 
             if (planeSection.rightSection is AtomicSector_0009 ar)
             {
@@ -126,7 +127,8 @@ namespace IndustrialPark
             {
                 AddPlane(device, pr, materialList);
             }
-            else throw new Exception();
+            else
+                throw new Exception();
         }
 
         private void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector, List<string> MaterialList)
@@ -316,7 +318,8 @@ namespace IndustrialPark
             {
                 if (rw is BinMeshPLG_050E binmesh)
                 {
-                    if (binmesh.numMeshes == 0) return;
+                    if (binmesh.numMeshes == 0)
+                        return;
                 }
                 if (rw is NativeDataPLG_0510 native)
                 {
@@ -325,7 +328,8 @@ namespace IndustrialPark
                 }
             }
 
-            if (n == null) throw new Exception();
+            if (n == null)
+                throw new Exception();
 
             List<Vertex3> vertexList1 = new List<Vertex3>();
             List<Vertex3> normalList = new List<Vertex3>();

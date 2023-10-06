@@ -315,7 +315,7 @@ namespace IndustrialPark
         public void ApplyScale(Vector3 scale)
         {
             string VectorToParam(Vector3 v) => $"{{ {v.X:.0###########}, {v.Y:.0###########}, {v.Z:.0###########} }}";
-            
+
             var mparams = _parameters.ToList();
 
             var sparamIndex = -1;

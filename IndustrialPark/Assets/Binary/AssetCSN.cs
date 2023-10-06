@@ -58,7 +58,7 @@ namespace IndustrialPark
 
                 reader.ReadUInt32();
 
-                int visBytesCount = (int)(visSize * 4 / visCount);
+                int visBytesCount = visCount != 0 ? (int)(visSize * 4 / visCount) : 0;
                 Visibility = new byte[visCount][];
                 for (int i = 0; i < Visibility.Length; i++)
                     Visibility[i] = reader.ReadBytes(visBytesCount);

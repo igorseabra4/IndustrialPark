@@ -1,5 +1,4 @@
-﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+﻿using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -178,7 +177,7 @@ namespace IndustrialPark
             writer.Write(StartOpacity);
             writer.Write(EndOpacity);
             writer.Write((byte)0);
-            writer.Write((byte)0);                
+            writer.Write((byte)0);
         }
     }
 

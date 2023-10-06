@@ -440,8 +440,10 @@ namespace IndustrialPark
             get => _vSync == 1;
             set
             {
-                if (value) _vSync = 1;
-                else _vSync = 0;
+                if (value)
+                    _vSync = 1;
+                else
+                    _vSync = 0;
                 Resize();
             }
         }

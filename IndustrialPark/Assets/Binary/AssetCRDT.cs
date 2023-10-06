@@ -117,7 +117,8 @@ namespace IndustrialPark
             writer.Write(0);
             writer.Write(Text);
 
-            do writer.Write((byte)0);
+            do
+                writer.Write((byte)0);
             while (writer.BaseStream.Length % 4 != 0);
 
             var savePos = writer.BaseStream.Position;

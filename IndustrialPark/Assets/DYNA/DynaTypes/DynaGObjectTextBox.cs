@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -112,7 +111,8 @@ namespace IndustrialPark
                     ShadowOffsetX = reader.ReadSingle();
                     ShadowOffsetY = reader.ReadSingle();
                 }
-                else ShadowColor = new AssetColor();
+                else
+                    ShadowColor = new AssetColor();
             }
         }
 

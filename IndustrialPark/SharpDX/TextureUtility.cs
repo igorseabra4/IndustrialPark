@@ -954,7 +954,8 @@ namespace IndustrialPark
             {
                 return CreateTextureFromBitmap(device.Device, filename);
             }
-            else throw new Exception("Unsupported image format: " + filename);
+            else
+                throw new Exception("Unsupported image format: " + filename);
         }
 
         public static ShaderResourceView LoadTextureFromRenderWareNative(this SharpDevice device, TextureNativeStruct_0001 tnStruct)

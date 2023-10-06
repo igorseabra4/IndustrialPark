@@ -137,7 +137,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            string recEvent;            
+            string recEvent;
             string sndEvent;
             switch (game)
             {

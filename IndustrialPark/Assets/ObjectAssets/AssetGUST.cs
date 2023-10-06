@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -55,18 +54,18 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
 
-                base.Serialize(writer);
-                writer.Write(GustFlags.FlagValueInt);
-                writer.Write(Volume);
-                writer.Write(Effect);
-                writer.Write(StrengthX);
-                writer.Write(StrengthY);
-                writer.Write(StrengthZ);
-                writer.Write(Fade);
-                writer.Write(PartMod);
-                SerializeLinks(writer);
+            base.Serialize(writer);
+            writer.Write(GustFlags.FlagValueInt);
+            writer.Write(Volume);
+            writer.Write(Effect);
+            writer.Write(StrengthX);
+            writer.Write(StrengthY);
+            writer.Write(StrengthZ);
+            writer.Write(Fade);
+            writer.Write(PartMod);
+            SerializeLinks(writer);
 
-                
+
         }
     }
 }

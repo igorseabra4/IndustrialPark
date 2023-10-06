@@ -16,8 +16,10 @@ namespace IndustrialPark
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.WindowsShutDown) return;
-            if (e.CloseReason == CloseReason.FormOwnerClosing) return;
+            if (e.CloseReason == CloseReason.WindowsShutDown)
+                return;
+            if (e.CloseReason == CloseReason.FormOwnerClosing)
+                return;
 
             e.Cancel = true;
             Hide();
@@ -41,7 +43,8 @@ namespace IndustrialPark
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
-            if (listBoxTemplates.SelectedIndex < 0) return;
+            if (listBoxTemplates.SelectedIndex < 0)
+                return;
 
             Clipboard.SetText(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, listBoxTemplates.SelectedItem.ToString())));
         }
@@ -84,7 +87,8 @@ namespace IndustrialPark
 
         private void buttonRename_Click(object sender, EventArgs e)
         {
-            if (listBoxTemplates.SelectedIndex < 0) return;
+            if (listBoxTemplates.SelectedIndex < 0)
+                return;
 
             string newName = EditName.GetName(listBoxTemplates.SelectedItem.ToString(), "Template Name", out bool okED);
 

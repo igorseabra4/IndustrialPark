@@ -220,115 +220,115 @@ namespace IndustrialPark
             switch (CurrentGizmoMode)
             {
                 case GizmoMode.Position:
+                {
+                    float dist = 10000f;
+                    int index = -1;
+
+                    if (TriggerGizmo)
                     {
-                        float dist = 10000f;
-                        int index = -1;
-
-                        if (TriggerGizmo)
+                        for (int g = 0; g < triggerPositionGizmos.Length; g++)
                         {
-                            for (int g = 0; g < triggerPositionGizmos.Length; g++)
+                            float? distance = triggerPositionGizmos[g].IntersectsWith(r);
+                            if (distance != null)
                             {
-                                float? distance = triggerPositionGizmos[g].IntersectsWith(r);
-                                if (distance != null)
+                                if (distance < dist)
                                 {
-                                    if (distance < dist)
-                                    {
-                                        dist = (float)distance;
-                                        index = g;
-                                    }
+                                    dist = (float)distance;
+                                    index = g;
                                 }
                             }
-
-                            if (index != -1)
-                                triggerPositionGizmos[index].isSelected = true;
                         }
 
-                        if (index == -1)
-                        {
-                            for (int g = 0; g < positionGizmos.Length; g++)
-                            {
-                                float? distance = positionGizmos[g].IntersectsWith(r);
-                                if (distance != null)
-                                {
-                                    if (distance < dist)
-                                    {
-                                        dist = (float)distance;
-                                        index = g;
-                                    }
-                                }
-                            }
-
-                            if (index != -1)
-                                positionGizmos[index].isSelected = true;
-                        }
+                        if (index != -1)
+                            triggerPositionGizmos[index].isSelected = true;
                     }
-                    break;
+
+                    if (index == -1)
+                    {
+                        for (int g = 0; g < positionGizmos.Length; g++)
+                        {
+                            float? distance = positionGizmos[g].IntersectsWith(r);
+                            if (distance != null)
+                            {
+                                if (distance < dist)
+                                {
+                                    dist = (float)distance;
+                                    index = g;
+                                }
+                            }
+                        }
+
+                        if (index != -1)
+                            positionGizmos[index].isSelected = true;
+                    }
+                }
+                break;
                 case GizmoMode.Rotation:
-                    {
-                        float dist = 1000f;
-                        int index = -1;
+                {
+                    float dist = 1000f;
+                    int index = -1;
 
-                        for (int g = 0; g < rotationGizmos.Length; g++)
+                    for (int g = 0; g < rotationGizmos.Length; g++)
+                    {
+                        float? distance = rotationGizmos[g].IntersectsWith(r);
+                        if (distance != null)
                         {
-                            float? distance = rotationGizmos[g].IntersectsWith(r);
-                            if (distance != null)
+                            if (distance < dist)
                             {
-                                if (distance < dist)
-                                {
-                                    dist = (float)distance;
-                                    index = g;
-                                }
+                                dist = (float)distance;
+                                index = g;
                             }
                         }
-
-                        if (index != -1)
-                            rotationGizmos[index].isSelected = true;
                     }
-                    break;
+
+                    if (index != -1)
+                        rotationGizmos[index].isSelected = true;
+                }
+                break;
                 case GizmoMode.Scale:
-                    {
-                        float dist = 1000f;
-                        int index = -1;
+                {
+                    float dist = 1000f;
+                    int index = -1;
 
-                        for (int g = 0; g < scaleGizmos.Length; g++)
+                    for (int g = 0; g < scaleGizmos.Length; g++)
+                    {
+                        float? distance = scaleGizmos[g].IntersectsWith(r);
+                        if (distance != null)
                         {
-                            float? distance = scaleGizmos[g].IntersectsWith(r);
-                            if (distance != null)
+                            if (distance < dist)
                             {
-                                if (distance < dist)
-                                {
-                                    dist = (float)distance;
-                                    index = g;
-                                }
+                                dist = (float)distance;
+                                index = g;
                             }
                         }
-
-                        if (index != -1)
-                            scaleGizmos[index].isSelected = true;
                     }
-                    break;
+
+                    if (index != -1)
+                        scaleGizmos[index].isSelected = true;
+                }
+                break;
                 case GizmoMode.PositionLocal:
-                    {
-                        float dist = 1000f;
-                        int index = -1;
+                {
+                    float dist = 1000f;
+                    int index = -1;
 
-                        for (int g = 0; g < positionLocalGizmos.Length; g++)
+                    for (int g = 0; g < positionLocalGizmos.Length; g++)
+                    {
+                        float? distance = positionLocalGizmos[g].IntersectsWith(r);
+                        if (distance != null)
                         {
-                            float? distance = positionLocalGizmos[g].IntersectsWith(r);
-                            if (distance != null)
+                            if (distance < dist)
                             {
-                                if (distance < dist)
-                                {
-                                    dist = (float)distance;
-                                    index = g;
-                                }
+                                dist = (float)distance;
+                                index = g;
                             }
                         }
-
-                        if (index != -1)
-                            positionLocalGizmos[index].isSelected = true;
                     }
-                    break;
+
+                    if (index != -1)
+                        positionLocalGizmos[index].isSelected = true;
+                }
+                break;
             }
         }
 
@@ -730,7 +730,8 @@ namespace IndustrialPark
                 else if (CurrentGizmoMode == GizmoMode.PositionLocal)
                     CurrentGizmoMode = GizmoMode.Position;
             }
-            else CurrentGizmoMode = mode;
+            else
+                CurrentGizmoMode = mode;
 
             return CurrentGizmoMode;
         }

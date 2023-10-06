@@ -105,7 +105,7 @@ namespace IndustrialPark
         private bool ListBoxShouldUpdate = true;
 
         private string GetAssetName(AssetID assetID) => HexUIntTypeConverter.StringFromAssetID(assetID);
-        
+
         private AssetID GetAssetID(string assetName)
         {
             if (HexUIntTypeConverter.Legacy)

@@ -86,25 +86,25 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(Flags.FlagValueInt);
-                writer.Write(SpawnFromMarker);
-                writer.Write(SpawnToMarker);
-                writer.Write(Models.Length);
-                writer.Write(0x3C);
-                writer.Write(SpawnRate);
-                writer.Write(SpawnLimit);
-                writer.Write(MinVelocity);
-                writer.Write(MaxVelocity);
-                writer.Write(MinRotations);
-                writer.Write(MaxRotations);
-                writer.Write((int)LandEffectType);
-                writer.Write(RepeatType);
-                writer.Write(LaunchSoundGroup);
-                writer.Write(LandSoundGroup);
-                foreach (var i in Models)
-                    writer.Write(i);
+            writer.Write(Flags.FlagValueInt);
+            writer.Write(SpawnFromMarker);
+            writer.Write(SpawnToMarker);
+            writer.Write(Models.Length);
+            writer.Write(0x3C);
+            writer.Write(SpawnRate);
+            writer.Write(SpawnLimit);
+            writer.Write(MinVelocity);
+            writer.Write(MaxVelocity);
+            writer.Write(MinRotations);
+            writer.Write(MaxRotations);
+            writer.Write((int)LandEffectType);
+            writer.Write(RepeatType);
+            writer.Write(LaunchSoundGroup);
+            writer.Write(LandSoundGroup);
+            foreach (var i in Models)
+                writer.Write(i);
 
-                
+
         }
 
         [Browsable(false)]

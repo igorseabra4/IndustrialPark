@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -81,7 +80,8 @@ namespace IndustrialPark
                 Version = reader.ReadInt32();
                 var count = reader.ReadInt32();
                 ReactiveAnimations = new ReactiveAnimation[count];
-                for (int i = 0; i < ReactiveAnimations.Length; i++) ReactiveAnimations[i] = new ReactiveAnimation(reader);
+                for (int i = 0; i < ReactiveAnimations.Length; i++)
+                    ReactiveAnimations[i] = new ReactiveAnimation(reader);
             }
         }
 

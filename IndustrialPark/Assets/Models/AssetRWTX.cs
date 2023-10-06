@@ -142,10 +142,14 @@ namespace IndustrialPark
                     foreach (TextureNative_0015 native in textD.textureNativeList)
                         switch (native.textureNativeStruct.platformType)
                         {
-                            case 5: return "Xbox";
-                            case 8: return "PC";
-                            case 100663296: return "GC";
-                            case 3298128: return "PS2";
+                            case 5:
+                                return "Xbox";
+                            case 8:
+                                return "PC";
+                            case 100663296:
+                                return "GC";
+                            case 3298128:
+                                return "PS2";
                         }
             return "Unknown Format";
         }

@@ -40,16 +40,16 @@ namespace IndustrialPark
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
 
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-                writer.Write(_yaw);
-                writer.Write(_pitch);
-                writer.Write(_roll);
-                writer.Write(Radius);
-                writer.Write(IconFlags.FlagValueInt);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
+            writer.Write(_yaw);
+            writer.Write(_pitch);
+            writer.Write(_roll);
+            writer.Write(Radius);
+            writer.Write(IconFlags.FlagValueInt);
 
-                
+
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
