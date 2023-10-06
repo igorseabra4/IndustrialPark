@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -159,6 +160,35 @@ namespace IndustrialPark
 
     public abstract class CutsceneDataData : GenericAssetDataContainer
     {
+        protected abstract byte[] GetData();
+        protected abstract void SetData(byte[] data);
+
+        [Editor(typeof(ByteArrayEditor), typeof(UITypeEditor))]
+        public string ExportData
+        {
+            get
+            {
+                ByteArrayEditor.IsImport = false;
+                ByteArrayEditor.Data = GetData();
+                return "Click here ->";
+            }
+            set { }
+        }
+
+        [Editor(typeof(ByteArrayEditor), typeof(UITypeEditor))]
+        public string ImportData
+        {
+            get
+            {
+                ByteArrayEditor.IsImport = true;
+                return "Click here ->";
+            }
+            set
+            {
+                if (value == "imported_replace")
+                    SetData(ByteArrayEditor.Data);
+            }
+        }
     }
 
     public class CutsceneDataGeneric : CutsceneDataData
@@ -174,10 +204,15 @@ namespace IndustrialPark
         {
             writer.Write(Data);
         }
+
+        protected override byte[] GetData() => Data;
+        protected override void SetData(byte[] data) => Data = data;
     }
 
     public class CutsceneDataAnimation : CutsceneDataData
     {
+        private Endianness endianness;
+
         public uint RootIndex { get; set; }
         public AssetSingle TranslateX { get; set; }
         public AssetSingle TranslateY { get; set; }
@@ -187,6 +222,8 @@ namespace IndustrialPark
 
         public CutsceneDataAnimation(EndianBinaryReader reader, int chunkSize)
         {
+            endianness = reader.endianness;
+
             var start = reader.BaseStream.Position;
             RootIndex = reader.ReadUInt32();
             TranslateX = reader.ReadSingle();
@@ -210,10 +247,27 @@ namespace IndustrialPark
             foreach (byte b in UnknownBytes)
                 writer.Write(b);
         }
+
+        protected override byte[] GetData()
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                Animation.Serialize(writer);
+                return writer.ToArray();
+            }
+        }
+
+        protected override void SetData(byte[] data)
+        {
+            using (var reader = new EndianBinaryReader(data, endianness))
+                Animation = new AssetANIM(reader);
+        }
     }
 
     public class CutsceneDataCameraScooby : CutsceneDataData
     {
+        private Endianness endianness;
+
         public uint Unknown { get; set; }
         public AssetSingle PositionX { get; set; }
         public AssetSingle PositionY { get; set; }
@@ -224,6 +278,8 @@ namespace IndustrialPark
 
         public CutsceneDataCameraScooby(EndianBinaryReader reader, int chunkSize)
         {
+            endianness = reader.endianness;
+
             var start = reader.BaseStream.Position;
             Unknown = reader.ReadUInt32();
             PositionX = reader.ReadSingle();
@@ -256,14 +312,33 @@ namespace IndustrialPark
             foreach (byte b in UnknownBytes)
                 writer.Write(b);
         }
+
+        protected override byte[] GetData()
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                Animation.Serialize(writer);
+                return writer.ToArray();
+            }
+        }
+
+        protected override void SetData(byte[] data)
+        {
+            using (var reader = new EndianBinaryReader(data, endianness))
+                Animation = new AssetANIM(reader);
+        }
     }
 
     public class CutsceneDataCamera : CutsceneDataData
     {
+        private Endianness endianness;
+
         public FlyFrame[] Frames { get; set; }
 
         public CutsceneDataCamera(EndianBinaryReader reader)
         {
+            endianness = reader.endianness;
+
             uint numFrames = reader.ReadUInt32();
             Frames = new FlyFrame[numFrames];
             for (int i = 0; i < Frames.Length; i++)
@@ -275,6 +350,27 @@ namespace IndustrialPark
             writer.Write(Frames.Length);
             foreach (var f in Frames)
                 f.Serialize(writer);
+        }
+
+        protected override byte[] GetData()
+        {
+            using (var writer = new EndianBinaryWriter(endianness))
+            {
+                foreach (var f in Frames)
+                    f.Serialize(writer);
+                return writer.ToArray();
+            }
+        }
+
+        protected override void SetData(byte[] data)
+        {
+            using (var reader = new EndianBinaryReader(data, endianness))
+            {
+                var frames = new List<FlyFrame>();
+                while (!reader.EndOfStream)
+                    frames.Add(new FlyFrame(reader));
+                Frames = frames.ToArray();
+            }
         }
     }
 

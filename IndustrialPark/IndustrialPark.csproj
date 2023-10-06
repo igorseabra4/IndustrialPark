@@ -162,6 +162,7 @@
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
+    <Compile Include="Assets\Shared\Editors\ByteArrayEditor.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Cutscene.cs" />
     <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_Header.cs" />
