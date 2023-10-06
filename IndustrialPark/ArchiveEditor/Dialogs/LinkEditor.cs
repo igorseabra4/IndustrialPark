@@ -71,11 +71,17 @@ namespace IndustrialPark
 
             this.game = game;
 
+            var eventAutoCompleteCollection = new AutoCompleteStringCollection();
+
             foreach (var o in Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)))
             {
+                eventAutoCompleteCollection.Add(o.ToString());
                 comboRecieveEvent.Items.Add(o);
                 comboSendEvent.Items.Add(o);
             }
+
+            comboRecieveEvent.AutoCompleteCustomSource = eventAutoCompleteCollection;
+            comboSendEvent.AutoCompleteCustomSource = eventAutoCompleteCollection;
 
             foreach (var assetEvent in events)
                 listBoxLinks.Items.Add(assetEvent);
