@@ -218,12 +218,12 @@ namespace IndustrialPark
             soundsToolStripMenuItem.Enabled = true;
             buttonAddLayer.Enabled = true;
             importSoundsToolStripMenuItem.Enabled = true;
+            importRawSoundsToolStripMenuItem.Enabled = true;
 
             var canImportAssetsToLayer = archive.NoLayers || (archive.SelectedLayerIndex != -1);
             importTexturesToolStripMenuItem.Enabled = canImportAssetsToLayer;
             importRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
             importNoRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
-            importRawSoundsToolStripMenuItem.Enabled = canImportAssetsToLayer;
             importModelsToolStripMenuItem.Enabled = canImportAssetsToLayer;
             importMultipleAssetsToolStripMenuItem.Enabled = canImportAssetsToLayer;
 
@@ -743,6 +743,7 @@ namespace IndustrialPark
 
         private void importTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Enabled = false;
             var (AHDRs, overwrite) = ImportTextures.GetAssets(archive.game, archive.platform);
 
             if (AHDRs != null)
@@ -754,6 +755,7 @@ namespace IndustrialPark
                 SetSelectedIndices(assetIDs, true);
                 SetMenuItemsEnabled();
             }
+            Enabled = true;
         }
 
         private void exportAllTexturesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1204,8 +1206,10 @@ namespace IndustrialPark
 
             if (openFile.ShowDialog() == DialogResult.OK)
             {
+                Enabled = false;
                 archive.ImportHip(openFile.FileNames, forceOverwrite);
                 OnEditorUpdate();
+                Enabled = true;
             }
             PopulateLayerComboBox();
         }
@@ -1377,6 +1381,7 @@ namespace IndustrialPark
 
         private void ImportTXD(bool RW3)
         {
+            Enabled = false;
             OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
 
             if (openTXD.ShowDialog() == DialogResult.OK)
@@ -1385,6 +1390,7 @@ namespace IndustrialPark
                 PopulateLayerComboBox();
                 OnEditorUpdate();
             }
+            Enabled = true;
         }
 
         private void ExportTXD(CheckState RW3)
@@ -1815,6 +1821,7 @@ namespace IndustrialPark
 
         private void ImportSounds(bool raw, AssetType assetType)
         {
+            Enabled = false;
             OpenFileDialog openFile = new OpenFileDialog()
             {
                 Filter = "Audio files|*",
@@ -1823,14 +1830,17 @@ namespace IndustrialPark
 
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                archive.ImportSounds(raw, openFile.FileNames, assetType, out List<uint> assetIDs);
+                archive.ImportSounds(raw, openFile.FileNames, assetType, overwriteOnImportToolStripMenuItem.Checked, out List<uint> assetIDs);
                 if (assetIDs.Any())
                 {
                     OnEditorUpdate();
+                    PopulateLayerComboBox();
+                    comboBoxLayers.SelectedIndex = archive.IndexOfLayerOfType(LayerType.SRAM);
                     SetSelectedIndices(assetIDs, true);
                     SetMenuItemsEnabled();
                 }
             }
+            Enabled = true;
         }
 
         private void importAsSoundToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1851,6 +1861,11 @@ namespace IndustrialPark
         private void importRawSoundStreamToolStripMenuItem_Click(object sender, EventArgs e)
         {
             ImportSounds(true, AssetType.SoundStream);
+        }
+
+        private void overwriteOnImportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            overwriteOnImportToolStripMenuItem.Checked = !overwriteOnImportToolStripMenuItem.Checked;
         }
     }
 }

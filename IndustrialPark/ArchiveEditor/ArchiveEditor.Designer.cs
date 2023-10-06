@@ -128,6 +128,8 @@
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
+            this.overwriteOnImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxLayers.SuspendLayout();
@@ -366,7 +368,9 @@
             this.importSoundsToolStripMenuItem,
             this.importRawSoundsToolStripMenuItem,
             this.exportAllSoundsToolStripMenuItem,
-            this.exportAllSoundsRawToolStripMenuItem});
+            this.exportAllSoundsRawToolStripMenuItem,
+            this.toolStripSeparator7,
+            this.overwriteOnImportToolStripMenuItem});
             resources.ApplyResources(this.soundsToolStripMenuItem, "soundsToolStripMenuItem");
             this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
             // 
@@ -827,6 +831,19 @@
             resources.ApplyResources(this.toolStripMenuItem_MultiEdit, "toolStripMenuItem_MultiEdit");
             this.toolStripMenuItem_MultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
             // 
+            // toolStripSeparator7
+            // 
+            this.toolStripSeparator7.Name = "toolStripSeparator7";
+            resources.ApplyResources(this.toolStripSeparator7, "toolStripSeparator7");
+            // 
+            // overwriteOnImportToolStripMenuItem
+            // 
+            this.overwriteOnImportToolStripMenuItem.Checked = true;
+            this.overwriteOnImportToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.overwriteOnImportToolStripMenuItem.Name = "overwriteOnImportToolStripMenuItem";
+            resources.ApplyResources(this.overwriteOnImportToolStripMenuItem, "overwriteOnImportToolStripMenuItem");
+            this.overwriteOnImportToolStripMenuItem.Click += new System.EventHandler(this.overwriteOnImportToolStripMenuItem_Click);
+            // 
             // ArchiveEditor
             // 
             resources.ApplyResources(this, "$this");
@@ -957,5 +974,7 @@
         private System.Windows.Forms.ToolStripMenuItem importAsSoundStreamToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importRawSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importRawSoundStreamToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
+        private System.Windows.Forms.ToolStripMenuItem overwriteOnImportToolStripMenuItem;
     }
 }

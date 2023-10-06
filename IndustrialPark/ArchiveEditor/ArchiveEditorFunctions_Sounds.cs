@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -150,11 +151,25 @@ namespace IndustrialPark
             return null;
         }
 
-        public void ImportSounds(bool raw, string[] fileNames, AssetType assetType, out List<uint> assetIDs)
+        public void ImportSounds(bool raw, string[] fileNames, AssetType assetType, bool forceOverwrite, out List<uint> assetIDs)
         {
             assetIDs = new List<uint>();
             foreach (var fileName in fileNames)
             {
+                var assetName = Path.GetFileNameWithoutExtension(fileName);
+                var assetID = Functions.BKDRHash(assetName);
+
+                if (ContainsAsset(assetID))
+                {
+                    var result = forceOverwrite ? DialogResult.Yes :
+                    MessageBox.Show($"Asset [{assetID:X8}] {assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                    if (result == DialogResult.Yes)
+                        RemoveAsset(assetID, true);
+                    else
+                        continue;
+                }
+
                 byte[] data = raw ? File.ReadAllBytes(fileName) : CreateSoundFile(assetType, fileName);
                 if (data == null)
                     continue;
@@ -162,18 +177,15 @@ namespace IndustrialPark
                 var sramLayer = IndexOfLayerOfType(LayerType.SRAM);
                 GetSNDI(true);
 
-                var assetName = Path.GetFileNameWithoutExtension(fileName);
-                var asset = new Section_AHDR(Functions.BKDRHash(assetName), assetType, AHDRFlagsFromAssetType(assetType),
+                var AHDR = new Section_AHDR(assetID, assetType, AHDRFlagsFromAssetType(assetType),
                         new Section_ADBG(0, assetName, "", 0), data);
-
-                RemoveAsset(asset.assetID, true);
-
-                AddAsset(asset, game, platform.Endianness(), false, sramLayer);
 
                 try
                 {
-                    AddSoundToSNDI(data, asset.assetID, asset.assetType, out byte[] soundData);
-                    asset.data = soundData;
+                    AddAsset(AHDR, game, platform.Endianness(), false, sramLayer);
+                    AddSoundToSNDI(data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
+                    AHDR.data = soundData;
+                    assetIDs.Add(AHDR.assetID);
                 }
                 catch (Exception ex)
                 {
@@ -181,7 +193,6 @@ namespace IndustrialPark
                 }
 
                 UnsavedChanges = true;
-                assetIDs.Add(asset.assetID);
             }
         }
     }

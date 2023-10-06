@@ -23,11 +23,13 @@ namespace IndustrialPark
             var typeProperties = GetType().GetProperties();
 
             foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
-                gadc.SetGame(game);
+                if (gadc != null)
+                    gadc.SetGame(game);
 
             foreach (var gadcs in typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) && typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).Select(prop => (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)))
                 foreach (var gadc in gadcs)
-                    gadc.SetGame(game);
+                    if (gadc != null)
+                        gadc.SetGame(game);
         }
 
         public abstract void Serialize(EndianBinaryWriter writer);
