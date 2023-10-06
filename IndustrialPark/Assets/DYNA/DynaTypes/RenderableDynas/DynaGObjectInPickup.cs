@@ -47,7 +47,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Power_50:
                     PickupHash = 0xD4F73ACE;
-                    break; 
+                    break;
                 case AssetTemplate.Bonus:
                     PickupHash = 0x91338C47;
                     break;
@@ -73,18 +73,15 @@ namespace IndustrialPark
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
-                writer.Write(PickupHash);
-                writer.Write(_position.X);
-                writer.Write(_position.Y);
-                writer.Write(_position.Z);
-
-                
+            writer.Write(PickupHash);
+            writer.Write(_position.X);
+            writer.Write(_position.Y);
+            writer.Write(_position.Z);
         }
 
-        protected override List<Vector3> vertexSource => null;
+        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
 
-        protected override List<Triangle> triangleSource => null;
+        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
 
         public override void CreateTransformMatrix()
         {
