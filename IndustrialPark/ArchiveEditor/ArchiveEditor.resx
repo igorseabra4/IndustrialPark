@@ -180,19 +180,19 @@
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;File</value>
   </data>
-  <data name="editPACKToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+  <data name="convertArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="editPACKToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+  <data name="convertArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
   </data>
-  <data name="editPACKToolStripMenuItem.Text" xml:space="preserve">
+  <data name="convertArchiveToolStripMenuItem.Text" xml:space="preserve">
     <value>Convert Archive</value>
   </data>
-  <data name="hideLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="noLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>196, 22</value>
   </data>
-  <data name="hideLayersToolStripMenuItem.Text" xml:space="preserve">
+  <data name="noLayersToolStripMenuItem.Text" xml:space="preserve">
     <value>No Layers</value>
   </data>
   <data name="organizeLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
@@ -210,17 +210,20 @@
   <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
     <value>193, 6</value>
   </data>
-  <data name="renameToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+  <data name="renameLayerToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="renameToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="renameLayerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>196, 22</value>
   </data>
-  <data name="renameToolStripMenuItem.Text" xml:space="preserve">
+  <data name="renameLayerToolStripMenuItem.Text" xml:space="preserve">
     <value>Rename</value>
   </data>
+  <data name="layersToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
   <data name="layersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+    <value>193, 22</value>
   </data>
   <data name="layersToolStripMenuItem.Text" xml:space="preserve">
     <value>Layers</value>
@@ -229,7 +232,7 @@
     <value>False</value>
   </data>
   <data name="mergeSimilarAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+    <value>193, 22</value>
   </data>
   <data name="mergeSimilarAssetsToolStripMenuItem.Text" xml:space="preserve">
     <value>Merge Similar Assets</value>
@@ -238,7 +241,7 @@
     <value>False</value>
   </data>
   <data name="applyScaleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+    <value>193, 22</value>
   </data>
   <data name="applyScaleToolStripMenuItem.Text" xml:space="preserve">
     <value>Apply Scale</value>
@@ -247,100 +250,202 @@
     <value>False</value>
   </data>
   <data name="verifyArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+    <value>193, 22</value>
   </data>
   <data name="verifyArchiveToolStripMenuItem.Text" xml:space="preserve">
     <value>Verify Archive</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>202, 6</value>
+    <value>190, 6</value>
   </data>
-  <data name="hipHopToolExportToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+  <data name="importHipArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="hipHopToolExportToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+  <data name="importHipArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>204, 22</value>
   </data>
-  <data name="hipHopToolExportToolStripMenuItem.Text" xml:space="preserve">
+  <data name="importHipArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="importHipArchiveForceOverwriteToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importHipArchiveForceOverwriteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>204, 22</value>
+  </data>
+  <data name="importHipArchiveForceOverwriteToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import (Force Overwrite)</value>
+  </data>
+  <data name="exportAssetsIniToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="exportAssetsIniToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>204, 22</value>
+  </data>
+  <data name="exportAssetsIniToolStripMenuItem.Text" xml:space="preserve">
     <value>Export Assets + INI</value>
   </data>
-  <data name="exportAudioToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+  <data name="hipHopFileToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="exportAudioToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+  <data name="hipHopFileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
   </data>
-  <data name="exportAudioToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export Audio</value>
-  </data>
-  <data name="importHIPArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importHIPArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="importHIPArchiveToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import HIP/HOP Archive</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Multiple Assets</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Models</value>
+  <data name="hipHopFileToolStripMenuItem.Text" xml:space="preserve">
+    <value>HIP/HOP File</value>
   </data>
   <data name="importTexturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="importTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+    <value>188, 22</value>
   </data>
   <data name="importTexturesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Textures</value>
+    <value>Import</value>
   </data>
-  <data name="exportRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
-  </data>
-  <data name="exportRW3ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export (RW3)</value>
-  </data>
-  <data name="importRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
-  </data>
-  <data name="importRW3ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import (RW3)</value>
-  </data>
-  <data name="exportNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
-  </data>
-  <data name="exportNoRW3ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export (No RW3)</value>
-  </data>
-  <data name="importNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>164, 22</value>
-  </data>
-  <data name="importNoRW3ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import (No RW3)</value>
-  </data>
-  <data name="tXDArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+  <data name="exportAllTexturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="tXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>205, 22</value>
+  <data name="exportAllTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 22</value>
   </data>
-  <data name="tXDArchiveToolStripMenuItem.Text" xml:space="preserve">
-    <value>TXD Archive</value>
+  <data name="exportAllTexturesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export All (PNG)</value>
+  </data>
+  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>185, 6</value>
+  </data>
+  <data name="exportRW3ToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="exportRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 22</value>
+  </data>
+  <data name="exportRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export TXD (RW3)</value>
+  </data>
+  <data name="importRW3ToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 22</value>
+  </data>
+  <data name="importRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import TXD (RW3)</value>
+  </data>
+  <data name="exportNoRW3ToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="exportNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 22</value>
+  </data>
+  <data name="exportNoRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export TXD (No RW3)</value>
+  </data>
+  <data name="importNoRW3ToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>188, 22</value>
+  </data>
+  <data name="importNoRW3ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import TXD (No RW3)</value>
+  </data>
+  <data name="texturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="texturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="texturesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Textures</value>
+  </data>
+  <data name="importAsSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="importAsSoundToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="importAsSoundStreamToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="importAsSoundStreamToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sound Stream</value>
+  </data>
+  <data name="importSoundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importSoundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="importSoundsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="importRawSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="importRawSoundToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="importRawSoundStreamToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="importRawSoundStreamToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sound Stream</value>
+  </data>
+  <data name="importRawSoundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importRawSoundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="importRawSoundsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import (Raw)</value>
+  </data>
+  <data name="exportAllSoundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="exportAllSoundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="exportAllSoundsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export All (WAV)</value>
+  </data>
+  <data name="exportAllSoundsRawToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="exportAllSoundsRawToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="exportAllSoundsRawToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export All (Raw)</value>
+  </data>
+  <data name="soundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="soundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="soundsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sounds</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Models</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Multiple Assets</value>
   </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>39, 22</value>
@@ -672,34 +777,34 @@
   <data name="groupBoxAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="buttonMultiEdit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="buttonMultiEditAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="buttonMultiEdit.Enabled" type="System.Boolean, mscorlib">
+  <data name="buttonMultiEditAsset.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="buttonMultiEdit.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonMultiEditAsset.Location" type="System.Drawing.Point, System.Drawing">
     <value>519, 318</value>
   </data>
-  <data name="buttonMultiEdit.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonMultiEditAsset.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="buttonMultiEdit.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonMultiEditAsset.TabIndex" type="System.Int32, mscorlib">
     <value>22</value>
   </data>
-  <data name="buttonMultiEdit.Text" xml:space="preserve">
+  <data name="buttonMultiEditAsset.Text" xml:space="preserve">
     <value>Multi Edit</value>
   </data>
-  <data name="&gt;&gt;buttonMultiEdit.Name" xml:space="preserve">
-    <value>buttonMultiEdit</value>
+  <data name="&gt;&gt;buttonMultiEditAsset.Name" xml:space="preserve">
+    <value>buttonMultiEditAsset</value>
   </data>
-  <data name="&gt;&gt;buttonMultiEdit.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonMultiEditAsset.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonMultiEdit.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonMultiEditAsset.Parent" xml:space="preserve">
     <value>groupBoxAssets</value>
   </data>
-  <data name="&gt;&gt;buttonMultiEdit.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonMultiEditAsset.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <data name="checkBoxTemplateFocus.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -799,64 +904,64 @@ Focus</value>
   <data name="&gt;&gt;listViewAssets.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="buttonCopy.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="buttonCopyAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="buttonCopy.Enabled" type="System.Boolean, mscorlib">
+  <data name="buttonCopyAsset.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="buttonCopy.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonCopyAsset.Location" type="System.Drawing.Point, System.Drawing">
     <value>519, 98</value>
   </data>
-  <data name="buttonCopy.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonCopyAsset.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="buttonCopy.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonCopyAsset.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
   </data>
-  <data name="buttonCopy.Text" xml:space="preserve">
+  <data name="buttonCopyAsset.Text" xml:space="preserve">
     <value>Copy</value>
   </data>
-  <data name="&gt;&gt;buttonCopy.Name" xml:space="preserve">
-    <value>buttonCopy</value>
+  <data name="&gt;&gt;buttonCopyAsset.Name" xml:space="preserve">
+    <value>buttonCopyAsset</value>
   </data>
-  <data name="&gt;&gt;buttonCopy.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonCopyAsset.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonCopy.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonCopyAsset.Parent" xml:space="preserve">
     <value>groupBoxAssets</value>
   </data>
-  <data name="&gt;&gt;buttonCopy.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonCopyAsset.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="buttonPaste.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="buttonPasteAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="buttonPaste.Enabled" type="System.Boolean, mscorlib">
+  <data name="buttonPasteAssets.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="buttonPaste.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonPasteAssets.Location" type="System.Drawing.Point, System.Drawing">
     <value>519, 127</value>
   </data>
-  <data name="buttonPaste.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonPasteAssets.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="buttonPaste.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonPasteAssets.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
   </data>
-  <data name="buttonPaste.Text" xml:space="preserve">
+  <data name="buttonPasteAssets.Text" xml:space="preserve">
     <value>Paste</value>
   </data>
-  <data name="&gt;&gt;buttonPaste.Name" xml:space="preserve">
-    <value>buttonPaste</value>
+  <data name="&gt;&gt;buttonPasteAssets.Name" xml:space="preserve">
+    <value>buttonPasteAssets</value>
   </data>
-  <data name="&gt;&gt;buttonPaste.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonPasteAssets.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonPaste.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonPasteAssets.Parent" xml:space="preserve">
     <value>groupBoxAssets</value>
   </data>
-  <data name="&gt;&gt;buttonPaste.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonPasteAssets.ZOrder" xml:space="preserve">
     <value>4</value>
   </data>
   <data name="textBoxFindAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -910,34 +1015,34 @@ Focus</value>
   <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="buttonInternalEdit.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="buttonEditDataAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="buttonInternalEdit.Enabled" type="System.Boolean, mscorlib">
+  <data name="buttonEditDataAsset.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="buttonInternalEdit.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonEditDataAsset.Location" type="System.Drawing.Point, System.Drawing">
     <value>519, 289</value>
   </data>
-  <data name="buttonInternalEdit.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonEditDataAsset.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="buttonInternalEdit.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonEditDataAsset.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
   </data>
-  <data name="buttonInternalEdit.Text" xml:space="preserve">
+  <data name="buttonEditDataAsset.Text" xml:space="preserve">
     <value>Edit Data</value>
   </data>
-  <data name="&gt;&gt;buttonInternalEdit.Name" xml:space="preserve">
-    <value>buttonInternalEdit</value>
+  <data name="&gt;&gt;buttonEditDataAsset.Name" xml:space="preserve">
+    <value>buttonEditDataAsset</value>
   </data>
-  <data name="&gt;&gt;buttonInternalEdit.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonEditDataAsset.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonInternalEdit.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonEditDataAsset.Parent" xml:space="preserve">
     <value>groupBoxAssets</value>
   </data>
-  <data name="&gt;&gt;buttonInternalEdit.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonEditDataAsset.ZOrder" xml:space="preserve">
     <value>7</value>
   </data>
   <data name="buttonView.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -970,34 +1075,34 @@ Focus</value>
   <data name="&gt;&gt;buttonView.ZOrder" xml:space="preserve">
     <value>8</value>
   </data>
-  <data name="buttonExportRaw.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="buttonExportRawAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="buttonExportRaw.Enabled" type="System.Boolean, mscorlib">
+  <data name="buttonExportRawAsset.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="buttonExportRaw.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonExportRawAsset.Location" type="System.Drawing.Point, System.Drawing">
     <value>519, 231</value>
   </data>
-  <data name="buttonExportRaw.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonExportRawAsset.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="buttonExportRaw.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonExportRawAsset.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
   </data>
-  <data name="buttonExportRaw.Text" xml:space="preserve">
+  <data name="buttonExportRawAsset.Text" xml:space="preserve">
     <value>Export Raw</value>
   </data>
-  <data name="&gt;&gt;buttonExportRaw.Name" xml:space="preserve">
-    <value>buttonExportRaw</value>
+  <data name="&gt;&gt;buttonExportRawAsset.Name" xml:space="preserve">
+    <value>buttonExportRawAsset</value>
   </data>
-  <data name="&gt;&gt;buttonExportRaw.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonExportRawAsset.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonExportRaw.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonExportRawAsset.Parent" xml:space="preserve">
     <value>groupBoxAssets</value>
   </data>
-  <data name="&gt;&gt;buttonExportRaw.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonExportRawAsset.ZOrder" xml:space="preserve">
     <value>9</value>
   </data>
   <data name="buttonEditAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -1030,34 +1135,34 @@ Focus</value>
   <data name="&gt;&gt;buttonEditAsset.ZOrder" xml:space="preserve">
     <value>10</value>
   </data>
-  <data name="buttonDuplicate.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="buttonDuplicateAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="buttonDuplicate.Enabled" type="System.Boolean, mscorlib">
+  <data name="buttonDuplicateAsset.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="buttonDuplicate.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonDuplicateAsset.Location" type="System.Drawing.Point, System.Drawing">
     <value>519, 69</value>
   </data>
-  <data name="buttonDuplicate.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonDuplicateAsset.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="buttonDuplicate.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonDuplicateAsset.TabIndex" type="System.Int32, mscorlib">
     <value>8</value>
   </data>
-  <data name="buttonDuplicate.Text" xml:space="preserve">
+  <data name="buttonDuplicateAsset.Text" xml:space="preserve">
     <value>Duplicate</value>
   </data>
-  <data name="&gt;&gt;buttonDuplicate.Name" xml:space="preserve">
-    <value>buttonDuplicate</value>
+  <data name="&gt;&gt;buttonDuplicateAsset.Name" xml:space="preserve">
+    <value>buttonDuplicateAsset</value>
   </data>
-  <data name="&gt;&gt;buttonDuplicate.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonDuplicateAsset.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonDuplicate.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonDuplicateAsset.Parent" xml:space="preserve">
     <value>groupBoxAssets</value>
   </data>
-  <data name="&gt;&gt;buttonDuplicate.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonDuplicateAsset.ZOrder" xml:space="preserve">
     <value>11</value>
   </data>
   <data name="buttonRemoveAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
@@ -1090,34 +1195,34 @@ Focus</value>
   <data name="&gt;&gt;buttonRemoveAsset.ZOrder" xml:space="preserve">
     <value>12</value>
   </data>
-  <data name="buttonAddAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+  <data name="buttonImportAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="buttonAddAsset.Enabled" type="System.Boolean, mscorlib">
+  <data name="buttonImportAsset.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="buttonAddAsset.Location" type="System.Drawing.Point, System.Drawing">
+  <data name="buttonImportAsset.Location" type="System.Drawing.Point, System.Drawing">
     <value>519, 40</value>
   </data>
-  <data name="buttonAddAsset.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="buttonImportAsset.Size" type="System.Drawing.Size, System.Drawing">
     <value>75, 23</value>
   </data>
-  <data name="buttonAddAsset.TabIndex" type="System.Int32, mscorlib">
+  <data name="buttonImportAsset.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
   </data>
-  <data name="buttonAddAsset.Text" xml:space="preserve">
+  <data name="buttonImportAsset.Text" xml:space="preserve">
     <value>Import</value>
   </data>
-  <data name="&gt;&gt;buttonAddAsset.Name" xml:space="preserve">
-    <value>buttonAddAsset</value>
+  <data name="&gt;&gt;buttonImportAsset.Name" xml:space="preserve">
+    <value>buttonImportAsset</value>
   </data>
-  <data name="&gt;&gt;buttonAddAsset.Type" xml:space="preserve">
+  <data name="&gt;&gt;buttonImportAsset.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;buttonAddAsset.Parent" xml:space="preserve">
+  <data name="&gt;&gt;buttonImportAsset.Parent" xml:space="preserve">
     <value>groupBoxAssets</value>
   </data>
-  <data name="&gt;&gt;buttonAddAsset.ZOrder" xml:space="preserve">
+  <data name="&gt;&gt;buttonImportAsset.ZOrder" xml:space="preserve">
     <value>13</value>
   </data>
   <data name="comboBoxAssetTypes.Location" type="System.Drawing.Point, System.Drawing">
@@ -1201,44 +1306,59 @@ Focus</value>
   <data name="addTemplateToolStripMenuItem.Text" xml:space="preserve">
     <value>Add Template</value>
   </data>
-  <data name="ToolStripMenuItem_CreateGroup.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="toolStripMenuItem_CreateGroup.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
-  <data name="ToolStripMenuItem_CreateGroup.Text" xml:space="preserve">
+  <data name="toolStripMenuItem_CreateGroup.Text" xml:space="preserve">
     <value>Create Group From Selected</value>
   </data>
   <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
     <value>219, 6</value>
   </data>
-  <data name="toolStripMenuItem_Add.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="toolStripMenuItem_Import.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+I</value>
+  </data>
+  <data name="toolStripMenuItem_Import.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
-  <data name="toolStripMenuItem_Add.Text" xml:space="preserve">
-    <value>Import (Ctrl + I)</value>
+  <data name="toolStripMenuItem_Import.Text" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="toolStripMenuItem_Duplicate.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+D</value>
   </data>
   <data name="toolStripMenuItem_Duplicate.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
   <data name="toolStripMenuItem_Duplicate.Text" xml:space="preserve">
-    <value>Duplicate (Ctrl + D)</value>
+    <value>Duplicate</value>
+  </data>
+  <data name="toolStripMenuItem_Copy.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+C</value>
   </data>
   <data name="toolStripMenuItem_Copy.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
   <data name="toolStripMenuItem_Copy.Text" xml:space="preserve">
-    <value>Copy (Ctrl + C)</value>
+    <value>Copy</value>
+  </data>
+  <data name="toolStripMenuItem_Paste.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+V</value>
   </data>
   <data name="toolStripMenuItem_Paste.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
   <data name="toolStripMenuItem_Paste.Text" xml:space="preserve">
-    <value>Paste (Ctrl + V)</value>
+    <value>Paste</value>
+  </data>
+  <data name="toolStripMenuItem_Remove.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Del</value>
   </data>
   <data name="toolStripMenuItem_Remove.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
   <data name="toolStripMenuItem_Remove.Text" xml:space="preserve">
-    <value>Remove (Del)</value>
+    <value>Remove</value>
   </data>
   <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
     <value>219, 6</value>
@@ -1249,23 +1369,29 @@ Focus</value>
   <data name="toolStripMenuItem_View.Text" xml:space="preserve">
     <value>View</value>
   </data>
-  <data name="toolStripMenuItem_Export.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="toolStripMenuItem_ExportRaw.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
-  <data name="toolStripMenuItem_Export.Text" xml:space="preserve">
+  <data name="toolStripMenuItem_ExportRaw.Text" xml:space="preserve">
     <value>Export Raw</value>
+  </data>
+  <data name="toolStripMenuItem_EditHeader.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+H</value>
   </data>
   <data name="toolStripMenuItem_EditHeader.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
   <data name="toolStripMenuItem_EditHeader.Text" xml:space="preserve">
-    <value>Edit Header (Ctrl + H)</value>
+    <value>Edit Header</value>
+  </data>
+  <data name="toolStripMenuItem_EditData.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+G</value>
   </data>
   <data name="toolStripMenuItem_EditData.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
   <data name="toolStripMenuItem_EditData.Text" xml:space="preserve">
-    <value>Edit Data (Ctrl + G)</value>
+    <value>Edit Data</value>
   </data>
   <data name="toolStripMenuItem_MultiEdit.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
@@ -1348,10 +1474,10 @@ Focus</value>
   <data name="&gt;&gt;editToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;editPACKToolStripMenuItem.Name" xml:space="preserve">
-    <value>editPACKToolStripMenuItem</value>
+  <data name="&gt;&gt;convertArchiveToolStripMenuItem.Name" xml:space="preserve">
+    <value>convertArchiveToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;editPACKToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;convertArchiveToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;layersToolStripMenuItem.Name" xml:space="preserve">
@@ -1360,10 +1486,10 @@ Focus</value>
   <data name="&gt;&gt;layersToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;hideLayersToolStripMenuItem.Name" xml:space="preserve">
-    <value>hideLayersToolStripMenuItem</value>
+  <data name="&gt;&gt;noLayersToolStripMenuItem.Name" xml:space="preserve">
+    <value>noLayersToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;hideLayersToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;noLayersToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;organizeLayersToolStripMenuItem.Name" xml:space="preserve">
@@ -1384,10 +1510,10 @@ Focus</value>
   <data name="&gt;&gt;toolStripSeparator5.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;renameToolStripMenuItem.Name" xml:space="preserve">
-    <value>renameToolStripMenuItem</value>
+  <data name="&gt;&gt;renameLayerToolStripMenuItem.Name" xml:space="preserve">
+    <value>renameLayerToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;renameToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;renameLayerToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;mergeSimilarAssetsToolStripMenuItem.Name" xml:space="preserve">
@@ -1414,34 +1540,34 @@ Focus</value>
   <data name="&gt;&gt;toolStripSeparator3.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;hipHopToolExportToolStripMenuItem.Name" xml:space="preserve">
-    <value>hipHopToolExportToolStripMenuItem</value>
+  <data name="&gt;&gt;hipHopFileToolStripMenuItem.Name" xml:space="preserve">
+    <value>hipHopFileToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;hipHopToolExportToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;hipHopFileToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;exportAudioToolStripMenuItem.Name" xml:space="preserve">
-    <value>exportAudioToolStripMenuItem</value>
+  <data name="&gt;&gt;importHipArchiveToolStripMenuItem.Name" xml:space="preserve">
+    <value>importHipArchiveToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;exportAudioToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;importHipArchiveToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;importHIPArchiveToolStripMenuItem.Name" xml:space="preserve">
-    <value>importHIPArchiveToolStripMenuItem</value>
+  <data name="&gt;&gt;importHipArchiveForceOverwriteToolStripMenuItem.Name" xml:space="preserve">
+    <value>importHipArchiveForceOverwriteToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;importHIPArchiveToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;importHipArchiveForceOverwriteToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;importMultipleAssetsToolStripMenuItem.Name" xml:space="preserve">
-    <value>importMultipleAssetsToolStripMenuItem</value>
+  <data name="&gt;&gt;exportAssetsIniToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportAssetsIniToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;importMultipleAssetsToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;exportAssetsIniToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;importModelsToolStripMenuItem.Name" xml:space="preserve">
-    <value>importModelsToolStripMenuItem</value>
+  <data name="&gt;&gt;texturesToolStripMenuItem.Name" xml:space="preserve">
+    <value>texturesToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;importModelsToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;texturesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;importTexturesToolStripMenuItem.Name" xml:space="preserve">
@@ -1450,11 +1576,17 @@ Focus</value>
   <data name="&gt;&gt;importTexturesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;tXDArchiveToolStripMenuItem.Name" xml:space="preserve">
-    <value>tXDArchiveToolStripMenuItem</value>
+  <data name="&gt;&gt;exportAllTexturesToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportAllTexturesToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;tXDArchiveToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;exportAllTexturesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator6.Name" xml:space="preserve">
+    <value>toolStripSeparator6</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator6.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;exportRW3ToolStripMenuItem.Name" xml:space="preserve">
     <value>exportRW3ToolStripMenuItem</value>
@@ -1478,6 +1610,72 @@ Focus</value>
     <value>importNoRW3ToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;importNoRW3ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;soundsToolStripMenuItem.Name" xml:space="preserve">
+    <value>soundsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;soundsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importSoundsToolStripMenuItem.Name" xml:space="preserve">
+    <value>importSoundsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importSoundsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importAsSoundToolStripMenuItem.Name" xml:space="preserve">
+    <value>importAsSoundToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importAsSoundToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importAsSoundStreamToolStripMenuItem.Name" xml:space="preserve">
+    <value>importAsSoundStreamToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importAsSoundStreamToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importRawSoundsToolStripMenuItem.Name" xml:space="preserve">
+    <value>importRawSoundsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importRawSoundsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importRawSoundToolStripMenuItem.Name" xml:space="preserve">
+    <value>importRawSoundToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importRawSoundToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importRawSoundStreamToolStripMenuItem.Name" xml:space="preserve">
+    <value>importRawSoundStreamToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importRawSoundStreamToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportAllSoundsToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportAllSoundsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;exportAllSoundsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportAllSoundsRawToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportAllSoundsRawToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;exportAllSoundsRawToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importModelsToolStripMenuItem.Name" xml:space="preserve">
+    <value>importModelsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importModelsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importMultipleAssetsToolStripMenuItem.Name" xml:space="preserve">
+    <value>importMultipleAssetsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importMultipleAssetsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolsToolStripMenuItem.Name" xml:space="preserve">
@@ -1570,10 +1768,10 @@ Focus</value>
   <data name="&gt;&gt;addTemplateToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;ToolStripMenuItem_CreateGroup.Name" xml:space="preserve">
-    <value>ToolStripMenuItem_CreateGroup</value>
+  <data name="&gt;&gt;toolStripMenuItem_CreateGroup.Name" xml:space="preserve">
+    <value>toolStripMenuItem_CreateGroup</value>
   </data>
-  <data name="&gt;&gt;ToolStripMenuItem_CreateGroup.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripMenuItem_CreateGroup.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
@@ -1582,10 +1780,10 @@ Focus</value>
   <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem_Add.Name" xml:space="preserve">
-    <value>toolStripMenuItem_Add</value>
+  <data name="&gt;&gt;toolStripMenuItem_Import.Name" xml:space="preserve">
+    <value>toolStripMenuItem_Import</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem_Add.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripMenuItem_Import.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem_Duplicate.Name" xml:space="preserve">
@@ -1624,10 +1822,10 @@ Focus</value>
   <data name="&gt;&gt;toolStripMenuItem_View.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem_Export.Name" xml:space="preserve">
-    <value>toolStripMenuItem_Export</value>
+  <data name="&gt;&gt;toolStripMenuItem_ExportRaw.Name" xml:space="preserve">
+    <value>toolStripMenuItem_ExportRaw</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem_Export.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripMenuItem_ExportRaw.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem_EditHeader.Name" xml:space="preserve">

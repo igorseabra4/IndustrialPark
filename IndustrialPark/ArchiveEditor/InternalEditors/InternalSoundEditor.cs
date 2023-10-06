@@ -19,6 +19,8 @@ namespace IndustrialPark
             Text = $"[{asset.assetType}] {asset}";
 
             RefreshPropertyGrid();
+
+            buttonImportSound.Enabled = archive.platform == Platform.GameCube;
         }
 
         public void RefreshPropertyGrid()
@@ -96,7 +98,7 @@ namespace IndustrialPark
             return asset.assetID;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonImportRaw_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
@@ -128,7 +130,7 @@ namespace IndustrialPark
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void buttonExportRaw_Click(object sender, EventArgs e)
         {
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
@@ -142,6 +144,18 @@ namespace IndustrialPark
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 File.WriteAllBytes(saveFileDialog.FileName, archive.GetSoundData(asset.assetID, asset.Data));
+        }
+
+        private void buttonExport_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog()
+            {
+                FileName = asset.assetName + ".wav",
+                Filter = "WAV files|*.wav"
+            };
+
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                SoundUtility_vgmstream.ExportToFile(asset, archive, saveFileDialog.FileName);
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)
@@ -202,17 +216,7 @@ namespace IndustrialPark
             {
                 Enabled = false;
 
-                byte[] data = null;
-                if (archive.platform == Platform.Xbox)
-                    data = SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(openFileDialog.FileName);
-                else if (archive.platform == Platform.PS2)
-                    data = SoundUtility_PS2VAG.ConvertSoundToPS2VAG(openFileDialog.FileName);
-                else if (archive.platform == Platform.GameCube && archive.game == Game.Incredibles)
-                    data = SoundUtility_FMOD.ConvertSoundToFSB3(openFileDialog.FileName, asset.assetType == AssetType.Sound ? archive.GetDefaultSampleRate() : -1);
-                else if (archive.platform == Platform.GameCube)
-                    data = SoundUtility_DSP.ConvertSoundToDSP(openFileDialog.FileName);
-                else
-                    MessageBox.Show("Cannot import sound: unsupported platform.");
+                byte[] data = archive.CreateSoundFile(asset.assetType, openFileDialog.FileName);
 
                 if (data != null)
                 {

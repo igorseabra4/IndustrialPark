@@ -428,6 +428,7 @@ namespace IndustrialPark
                 }
                 _noLayers = value;
                 UnsavedChanges = true;
+                SelectedLayerIndex = -1;
             }
         }
 
@@ -1353,7 +1354,7 @@ namespace IndustrialPark
         public static bool updateReferencesOnCopy = true;
         public static bool replaceAssetsOnPaste = false;
 
-        public void PasteAssetsFromClipboard(out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
+        public bool PasteAssetsFromClipboard(out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
         {
             finalIndices = new List<uint>();
 
@@ -1365,7 +1366,7 @@ namespace IndustrialPark
             catch (Exception ex)
             {
                 MessageBox.Show("Error pasting assets from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
-                return;
+                return false;
             }
 
             UnsavedChanges = true;
@@ -1416,6 +1417,8 @@ namespace IndustrialPark
 
                 assetDictionary[AHDR.assetID] = TryCreateAsset(AHDR, clipboard.games[i], clipboard.endiannesses[i], true, ref error);
             }
+
+            return true;
         }
 
         public void UpdateReferencesOnCopy(Dictionary<uint, uint> referenceUpdate, List<Section_AHDR> assets)

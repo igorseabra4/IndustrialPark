@@ -34,6 +34,26 @@ namespace IndustrialPark
         private static SoundPlayer player;
         private static uint playerSoundAssetId;
 
+        public static void ExportToFile(AssetSound asset, ArchiveEditorFunctions archive, string fileName)
+        {
+            try
+            {
+                if (!InitVgmstream())
+                    return;
+
+                var soundData = archive.GetSoundData(asset.assetID, asset.Data);
+                File.WriteAllBytes(vgmsInPath, soundData);
+
+                ConvertVgmstream(vgmsInPath, fileName);
+
+                File.Delete(vgmsInPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Unable to export [{asset.assetID:X8}] {asset.assetName}: " + ex);
+            }
+        }
+
         public static void PlaySound(AssetSound asset, ArchiveEditorFunctions archive)
         {
             try

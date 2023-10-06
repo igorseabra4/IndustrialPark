@@ -313,7 +313,8 @@ namespace IndustrialPark
                     assetID = BKDRHash(t);
                     if (ContainsAsset(assetID))
                         RWTX = (AssetRWTX)GetFromAssetID(assetID);
-                    else continue;
+                    else
+                        continue;
                 }
 
                 foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(RWTX.Data)[0]).textureNativeList)
@@ -329,6 +330,29 @@ namespace IndustrialPark
                 textureNativeList = textures,
                 textureDictionaryExtension = new Extension_0003()
             }, currentTextureVersion(game)));
+        }
+
+        public List<(string, Bitmap)> GetAllTexturesAsBitmaps()
+        {
+            List<TextureNative_0015> textures = new List<TextureNative_0015>();
+
+            ReadFileMethods.treatStuffAsByteArray = true;
+
+            foreach (AssetRWTX RWTX in GetAllAssets().OfType<AssetRWTX>())
+            {
+                foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(RWTX.Data)[0]).textureNativeList)
+                {
+                    texture.textureNativeStruct.textureName = RWTX.assetName;
+                    textures.Add(texture);
+                }
+            }
+
+            return ExportTXDToBitmap(ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
+            {
+                textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textures.Count, unknown = 0 },
+                textureNativeList = textures,
+                textureDictionaryExtension = new Extension_0003()
+            }, currentTextureVersion(game))).Select(b => (b.Key, b.Value)).ToList();
         }
     }
 }

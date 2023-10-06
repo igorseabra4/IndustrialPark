@@ -428,8 +428,8 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Throwable_Table, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Empty_BSP, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Empty_Sound, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Empty_Streaming_Sound, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Empty_Sound, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Empty_Streaming_Sound, eventHandler),
             });
 
             var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
@@ -1175,9 +1175,9 @@ namespace IndustrialPark
                         return new AssetSNDI_GCN_V2(assetName);
                     return new AssetSNDI_GCN_V1(assetName);
                 }
-                case AssetTemplate.Empty_Sound:
-                case AssetTemplate.Empty_Streaming_Sound:
-                    return new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.SoundStream, game, platform, new byte[0]);
+                //case AssetTemplate.Empty_Sound:
+                //case AssetTemplate.Empty_Streaming_Sound:
+                //    return new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.SoundStream, game, platform, new byte[0]);
                 case AssetTemplate.Empty_BSP:
                     return new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? null : Program.MainForm.renderer);
                 case AssetTemplate.Shiny_Red:

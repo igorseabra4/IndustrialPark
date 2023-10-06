@@ -68,8 +68,8 @@
         Sound_Info,
         Surface_Mapper,
         Throwable_Table,
-        Empty_Sound,
-        Empty_Streaming_Sound,
+        //Empty_Sound,
+        //Empty_Streaming_Sound,
         Empty_BSP,
 
         // BFBB Pickups and Tikis

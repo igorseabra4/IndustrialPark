@@ -138,7 +138,7 @@ namespace IndustrialPark
 
         public AssetJAW GetJAW(bool create = false) => (AssetJAW)GetAssetOfType(AssetType.JawDataTable, AssetTemplate.Jaw_Data_Table, create);
 
-        public Asset GetSNDI() => GetAssetOfType(AssetType.SoundInfo, AssetTemplate.Sound_Info, false);
+        public Asset GetSNDI(bool create = false) => GetAssetOfType(AssetType.SoundInfo, AssetTemplate.Sound_Info, create);
 
         private Asset GetAssetOfType(AssetType assetType, AssetTemplate assetTemplate, bool create)
         {
@@ -149,8 +149,12 @@ namespace IndustrialPark
 
                 var prevIndex = SelectedLayerIndex;
 
+                var layerType = LayerType.DEFAULT;
+                if (assetTemplate == AssetTemplate.Sound_Info)
+                    layerType = LayerType.SNDTOC;
+
                 if (!NoLayers)
-                    SelectedLayerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
+                    SelectedLayerIndex = IndexOfLayerOfType(layerType);
 
                 PlaceTemplate(assetTemplate);
                 if (!standalone)

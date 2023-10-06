@@ -39,26 +39,40 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editPACKToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.convertArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.layersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.hideLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.noLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.organizeLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.organizeLegacyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.renameLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mergeSimilarAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verifyArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
-            this.hipHopToolExportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exportAudioToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importHIPArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hipHopFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importHipArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importHipArchiveForceOverwriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAssetsIniToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.texturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.tXDArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAllTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.exportRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importAsSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importAsSoundStreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importRawSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importRawSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importRawSoundStreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAllSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportAllSoundsRawToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -78,7 +92,7 @@
             this.buttonAddLayer = new System.Windows.Forms.Button();
             this.comboBoxLayers = new System.Windows.Forms.ComboBox();
             this.groupBoxAssets = new System.Windows.Forms.GroupBox();
-            this.buttonMultiEdit = new System.Windows.Forms.Button();
+            this.buttonMultiEditAsset = new System.Windows.Forms.Button();
             this.checkBoxTemplateFocus = new System.Windows.Forms.CheckBox();
             this.listViewAssets = new System.Windows.Forms.ListView();
             this.AssetNameCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -86,36 +100,34 @@
             this.AssetTypeCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AssetInfoCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.AssetLinksCol = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.buttonCopy = new System.Windows.Forms.Button();
-            this.buttonPaste = new System.Windows.Forms.Button();
+            this.buttonCopyAsset = new System.Windows.Forms.Button();
+            this.buttonPasteAssets = new System.Windows.Forms.Button();
             this.textBoxFindAsset = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.buttonInternalEdit = new System.Windows.Forms.Button();
+            this.buttonEditDataAsset = new System.Windows.Forms.Button();
             this.buttonView = new System.Windows.Forms.Button();
-            this.buttonExportRaw = new System.Windows.Forms.Button();
+            this.buttonExportRawAsset = new System.Windows.Forms.Button();
             this.buttonEditAsset = new System.Windows.Forms.Button();
-            this.buttonDuplicate = new System.Windows.Forms.Button();
+            this.buttonDuplicateAsset = new System.Windows.Forms.Button();
             this.buttonRemoveAsset = new System.Windows.Forms.Button();
-            this.buttonAddAsset = new System.Windows.Forms.Button();
+            this.buttonImportAsset = new System.Windows.Forms.Button();
             this.comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.contextMenuStrip_ListBoxAssets = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ToolStripMenuItem_CreateGroup = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_CreateGroup = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripMenuItem_Add = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_Import = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Copy = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Paste = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_Remove = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripMenuItem_View = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripMenuItem_Export = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem_ExportRaw = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
-            this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxLayers.SuspendLayout();
@@ -184,44 +196,42 @@
             // editToolStripMenuItem
             // 
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.editPACKToolStripMenuItem,
+            this.convertArchiveToolStripMenuItem,
             this.layersToolStripMenuItem,
             this.mergeSimilarAssetsToolStripMenuItem,
             this.applyScaleToolStripMenuItem,
             this.verifyArchiveToolStripMenuItem,
             this.toolStripSeparator3,
-            this.hipHopToolExportToolStripMenuItem,
-            this.exportAudioToolStripMenuItem,
-            this.importHIPArchiveToolStripMenuItem,
-            this.importMultipleAssetsToolStripMenuItem,
+            this.hipHopFileToolStripMenuItem,
+            this.texturesToolStripMenuItem,
+            this.soundsToolStripMenuItem,
             this.importModelsToolStripMenuItem,
-            this.importTexturesToolStripMenuItem,
-            this.tXDArchiveToolStripMenuItem});
+            this.importMultipleAssetsToolStripMenuItem});
             this.editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(this.editToolStripMenuItem, "editToolStripMenuItem");
             // 
-            // editPACKToolStripMenuItem
+            // convertArchiveToolStripMenuItem
             // 
-            resources.ApplyResources(this.editPACKToolStripMenuItem, "editPACKToolStripMenuItem");
-            this.editPACKToolStripMenuItem.Name = "editPACKToolStripMenuItem";
-            this.editPACKToolStripMenuItem.Click += new System.EventHandler(this.EditPACKToolStripMenuItem_Click);
+            resources.ApplyResources(this.convertArchiveToolStripMenuItem, "convertArchiveToolStripMenuItem");
+            this.convertArchiveToolStripMenuItem.Name = "convertArchiveToolStripMenuItem";
+            this.convertArchiveToolStripMenuItem.Click += new System.EventHandler(this.EditPACKToolStripMenuItem_Click);
             // 
             // layersToolStripMenuItem
             // 
             this.layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.hideLayersToolStripMenuItem,
+            this.noLayersToolStripMenuItem,
             this.organizeLayersToolStripMenuItem,
             this.organizeLegacyToolStripMenuItem,
             this.toolStripSeparator5,
-            this.renameToolStripMenuItem});
-            this.layersToolStripMenuItem.Name = "layersToolStripMenuItem";
+            this.renameLayerToolStripMenuItem});
             resources.ApplyResources(this.layersToolStripMenuItem, "layersToolStripMenuItem");
+            this.layersToolStripMenuItem.Name = "layersToolStripMenuItem";
             // 
-            // hideLayersToolStripMenuItem
+            // noLayersToolStripMenuItem
             // 
-            this.hideLayersToolStripMenuItem.Name = "hideLayersToolStripMenuItem";
-            resources.ApplyResources(this.hideLayersToolStripMenuItem, "hideLayersToolStripMenuItem");
-            this.hideLayersToolStripMenuItem.Click += new System.EventHandler(this.hideToolStripMenuItem_Click);
+            this.noLayersToolStripMenuItem.Name = "noLayersToolStripMenuItem";
+            resources.ApplyResources(this.noLayersToolStripMenuItem, "noLayersToolStripMenuItem");
+            this.noLayersToolStripMenuItem.Click += new System.EventHandler(this.noLayersToolStripMenuItem_Click);
             // 
             // organizeLayersToolStripMenuItem
             // 
@@ -234,6 +244,17 @@
             this.organizeLegacyToolStripMenuItem.Name = "organizeLegacyToolStripMenuItem";
             resources.ApplyResources(this.organizeLegacyToolStripMenuItem, "organizeLegacyToolStripMenuItem");
             this.organizeLegacyToolStripMenuItem.Click += new System.EventHandler(this.organizeLegacyToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
+            // 
+            // renameLayerToolStripMenuItem
+            // 
+            resources.ApplyResources(this.renameLayerToolStripMenuItem, "renameLayerToolStripMenuItem");
+            this.renameLayerToolStripMenuItem.Name = "renameLayerToolStripMenuItem";
+            this.renameLayerToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // mergeSimilarAssetsToolStripMenuItem
             // 
@@ -258,29 +279,148 @@
             this.toolStripSeparator3.Name = "toolStripSeparator3";
             resources.ApplyResources(this.toolStripSeparator3, "toolStripSeparator3");
             // 
-            // hipHopToolExportToolStripMenuItem
+            // hipHopFileToolStripMenuItem
             // 
-            resources.ApplyResources(this.hipHopToolExportToolStripMenuItem, "hipHopToolExportToolStripMenuItem");
-            this.hipHopToolExportToolStripMenuItem.Name = "hipHopToolExportToolStripMenuItem";
-            this.hipHopToolExportToolStripMenuItem.Click += new System.EventHandler(this.hipHopToolExportToolStripMenuItem_Click);
+            this.hipHopFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importHipArchiveToolStripMenuItem,
+            this.importHipArchiveForceOverwriteToolStripMenuItem,
+            this.exportAssetsIniToolStripMenuItem});
+            resources.ApplyResources(this.hipHopFileToolStripMenuItem, "hipHopFileToolStripMenuItem");
+            this.hipHopFileToolStripMenuItem.Name = "hipHopFileToolStripMenuItem";
             // 
-            // exportAudioToolStripMenuItem
+            // importHipArchiveToolStripMenuItem
             // 
-            resources.ApplyResources(this.exportAudioToolStripMenuItem, "exportAudioToolStripMenuItem");
-            this.exportAudioToolStripMenuItem.Name = "exportAudioToolStripMenuItem";
-            this.exportAudioToolStripMenuItem.Click += new System.EventHandler(this.exportAudioToolStripMenuItem_Click);
+            resources.ApplyResources(this.importHipArchiveToolStripMenuItem, "importHipArchiveToolStripMenuItem");
+            this.importHipArchiveToolStripMenuItem.Name = "importHipArchiveToolStripMenuItem";
+            this.importHipArchiveToolStripMenuItem.Click += new System.EventHandler(this.importHIPArchiveToolStripMenuItem_Click);
             // 
-            // importHIPArchiveToolStripMenuItem
+            // importHipArchiveForceOverwriteToolStripMenuItem
             // 
-            resources.ApplyResources(this.importHIPArchiveToolStripMenuItem, "importHIPArchiveToolStripMenuItem");
-            this.importHIPArchiveToolStripMenuItem.Name = "importHIPArchiveToolStripMenuItem";
-            this.importHIPArchiveToolStripMenuItem.Click += new System.EventHandler(this.importHIPArchiveToolStripMenuItem_Click);
+            resources.ApplyResources(this.importHipArchiveForceOverwriteToolStripMenuItem, "importHipArchiveForceOverwriteToolStripMenuItem");
+            this.importHipArchiveForceOverwriteToolStripMenuItem.Name = "importHipArchiveForceOverwriteToolStripMenuItem";
+            this.importHipArchiveForceOverwriteToolStripMenuItem.Click += new System.EventHandler(this.importForceOverwriteToolStripMenuItem_Click);
             // 
-            // importMultipleAssetsToolStripMenuItem
+            // exportAssetsIniToolStripMenuItem
             // 
-            resources.ApplyResources(this.importMultipleAssetsToolStripMenuItem, "importMultipleAssetsToolStripMenuItem");
-            this.importMultipleAssetsToolStripMenuItem.Name = "importMultipleAssetsToolStripMenuItem";
-            this.importMultipleAssetsToolStripMenuItem.Click += new System.EventHandler(this.importMultipleAssetsToolStripMenuItem_Click);
+            resources.ApplyResources(this.exportAssetsIniToolStripMenuItem, "exportAssetsIniToolStripMenuItem");
+            this.exportAssetsIniToolStripMenuItem.Name = "exportAssetsIniToolStripMenuItem";
+            this.exportAssetsIniToolStripMenuItem.Click += new System.EventHandler(this.exportAssetsIniToolStripMenuItem_Click);
+            // 
+            // texturesToolStripMenuItem
+            // 
+            this.texturesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importTexturesToolStripMenuItem,
+            this.exportAllTexturesToolStripMenuItem,
+            this.toolStripSeparator6,
+            this.exportRW3ToolStripMenuItem,
+            this.importRW3ToolStripMenuItem,
+            this.exportNoRW3ToolStripMenuItem,
+            this.importNoRW3ToolStripMenuItem});
+            resources.ApplyResources(this.texturesToolStripMenuItem, "texturesToolStripMenuItem");
+            this.texturesToolStripMenuItem.Name = "texturesToolStripMenuItem";
+            // 
+            // importTexturesToolStripMenuItem
+            // 
+            resources.ApplyResources(this.importTexturesToolStripMenuItem, "importTexturesToolStripMenuItem");
+            this.importTexturesToolStripMenuItem.Name = "importTexturesToolStripMenuItem";
+            this.importTexturesToolStripMenuItem.Click += new System.EventHandler(this.importTexturesToolStripMenuItem_Click);
+            // 
+            // exportAllTexturesToolStripMenuItem
+            // 
+            resources.ApplyResources(this.exportAllTexturesToolStripMenuItem, "exportAllTexturesToolStripMenuItem");
+            this.exportAllTexturesToolStripMenuItem.Name = "exportAllTexturesToolStripMenuItem";
+            this.exportAllTexturesToolStripMenuItem.Click += new System.EventHandler(this.exportAllTexturesToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator6
+            // 
+            this.toolStripSeparator6.Name = "toolStripSeparator6";
+            resources.ApplyResources(this.toolStripSeparator6, "toolStripSeparator6");
+            // 
+            // exportRW3ToolStripMenuItem
+            // 
+            resources.ApplyResources(this.exportRW3ToolStripMenuItem, "exportRW3ToolStripMenuItem");
+            this.exportRW3ToolStripMenuItem.Name = "exportRW3ToolStripMenuItem";
+            this.exportRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportRW3ToolStripMenuItem_Click);
+            // 
+            // importRW3ToolStripMenuItem
+            // 
+            resources.ApplyResources(this.importRW3ToolStripMenuItem, "importRW3ToolStripMenuItem");
+            this.importRW3ToolStripMenuItem.Name = "importRW3ToolStripMenuItem";
+            this.importRW3ToolStripMenuItem.Click += new System.EventHandler(this.importRW3ToolStripMenuItem_Click);
+            // 
+            // exportNoRW3ToolStripMenuItem
+            // 
+            resources.ApplyResources(this.exportNoRW3ToolStripMenuItem, "exportNoRW3ToolStripMenuItem");
+            this.exportNoRW3ToolStripMenuItem.Name = "exportNoRW3ToolStripMenuItem";
+            this.exportNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportNoRW3ToolStripMenuItem_Click);
+            // 
+            // importNoRW3ToolStripMenuItem
+            // 
+            resources.ApplyResources(this.importNoRW3ToolStripMenuItem, "importNoRW3ToolStripMenuItem");
+            this.importNoRW3ToolStripMenuItem.Name = "importNoRW3ToolStripMenuItem";
+            this.importNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.importNoRW3ToolStripMenuItem_Click);
+            // 
+            // soundsToolStripMenuItem
+            // 
+            this.soundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importSoundsToolStripMenuItem,
+            this.importRawSoundsToolStripMenuItem,
+            this.exportAllSoundsToolStripMenuItem,
+            this.exportAllSoundsRawToolStripMenuItem});
+            resources.ApplyResources(this.soundsToolStripMenuItem, "soundsToolStripMenuItem");
+            this.soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
+            // 
+            // importSoundsToolStripMenuItem
+            // 
+            this.importSoundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importAsSoundToolStripMenuItem,
+            this.importAsSoundStreamToolStripMenuItem});
+            resources.ApplyResources(this.importSoundsToolStripMenuItem, "importSoundsToolStripMenuItem");
+            this.importSoundsToolStripMenuItem.Name = "importSoundsToolStripMenuItem";
+            // 
+            // importAsSoundToolStripMenuItem
+            // 
+            this.importAsSoundToolStripMenuItem.Name = "importAsSoundToolStripMenuItem";
+            resources.ApplyResources(this.importAsSoundToolStripMenuItem, "importAsSoundToolStripMenuItem");
+            this.importAsSoundToolStripMenuItem.Click += new System.EventHandler(this.importAsSoundToolStripMenuItem_Click);
+            // 
+            // importAsSoundStreamToolStripMenuItem
+            // 
+            this.importAsSoundStreamToolStripMenuItem.Name = "importAsSoundStreamToolStripMenuItem";
+            resources.ApplyResources(this.importAsSoundStreamToolStripMenuItem, "importAsSoundStreamToolStripMenuItem");
+            this.importAsSoundStreamToolStripMenuItem.Click += new System.EventHandler(this.importAsSoundStreamToolStripMenuItem_Click);
+            // 
+            // importRawSoundsToolStripMenuItem
+            // 
+            this.importRawSoundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importRawSoundToolStripMenuItem,
+            this.importRawSoundStreamToolStripMenuItem});
+            resources.ApplyResources(this.importRawSoundsToolStripMenuItem, "importRawSoundsToolStripMenuItem");
+            this.importRawSoundsToolStripMenuItem.Name = "importRawSoundsToolStripMenuItem";
+            // 
+            // importRawSoundToolStripMenuItem
+            // 
+            this.importRawSoundToolStripMenuItem.Name = "importRawSoundToolStripMenuItem";
+            resources.ApplyResources(this.importRawSoundToolStripMenuItem, "importRawSoundToolStripMenuItem");
+            this.importRawSoundToolStripMenuItem.Click += new System.EventHandler(this.importRawSoundToolStripMenuItem_Click);
+            // 
+            // importRawSoundStreamToolStripMenuItem
+            // 
+            this.importRawSoundStreamToolStripMenuItem.Name = "importRawSoundStreamToolStripMenuItem";
+            resources.ApplyResources(this.importRawSoundStreamToolStripMenuItem, "importRawSoundStreamToolStripMenuItem");
+            this.importRawSoundStreamToolStripMenuItem.Click += new System.EventHandler(this.importRawSoundStreamToolStripMenuItem_Click);
+            // 
+            // exportAllSoundsToolStripMenuItem
+            // 
+            resources.ApplyResources(this.exportAllSoundsToolStripMenuItem, "exportAllSoundsToolStripMenuItem");
+            this.exportAllSoundsToolStripMenuItem.Name = "exportAllSoundsToolStripMenuItem";
+            this.exportAllSoundsToolStripMenuItem.Click += new System.EventHandler(this.exportAllWavToolStripMenuItem_Click);
+            // 
+            // exportAllSoundsRawToolStripMenuItem
+            // 
+            resources.ApplyResources(this.exportAllSoundsRawToolStripMenuItem, "exportAllSoundsRawToolStripMenuItem");
+            this.exportAllSoundsRawToolStripMenuItem.Name = "exportAllSoundsRawToolStripMenuItem";
+            this.exportAllSoundsRawToolStripMenuItem.Click += new System.EventHandler(this.exportAllRawToolStripMenuItem_Click);
             // 
             // importModelsToolStripMenuItem
             // 
@@ -288,45 +428,11 @@
             this.importModelsToolStripMenuItem.Name = "importModelsToolStripMenuItem";
             this.importModelsToolStripMenuItem.Click += new System.EventHandler(this.importModelsToolStripMenuItem_Click);
             // 
-            // importTexturesToolStripMenuItem
+            // importMultipleAssetsToolStripMenuItem
             // 
-            resources.ApplyResources(this.importTexturesToolStripMenuItem, "importTexturesToolStripMenuItem");
-            this.importTexturesToolStripMenuItem.Name = "importTexturesToolStripMenuItem";
-            this.importTexturesToolStripMenuItem.Click += new System.EventHandler(this.ImportTexturesToolStripMenuItem_Click);
-            // 
-            // tXDArchiveToolStripMenuItem
-            // 
-            this.tXDArchiveToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exportRW3ToolStripMenuItem,
-            this.importRW3ToolStripMenuItem,
-            this.exportNoRW3ToolStripMenuItem,
-            this.importNoRW3ToolStripMenuItem});
-            resources.ApplyResources(this.tXDArchiveToolStripMenuItem, "tXDArchiveToolStripMenuItem");
-            this.tXDArchiveToolStripMenuItem.Name = "tXDArchiveToolStripMenuItem";
-            // 
-            // exportRW3ToolStripMenuItem
-            // 
-            this.exportRW3ToolStripMenuItem.Name = "exportRW3ToolStripMenuItem";
-            resources.ApplyResources(this.exportRW3ToolStripMenuItem, "exportRW3ToolStripMenuItem");
-            this.exportRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportRW3ToolStripMenuItem_Click);
-            // 
-            // importRW3ToolStripMenuItem
-            // 
-            this.importRW3ToolStripMenuItem.Name = "importRW3ToolStripMenuItem";
-            resources.ApplyResources(this.importRW3ToolStripMenuItem, "importRW3ToolStripMenuItem");
-            this.importRW3ToolStripMenuItem.Click += new System.EventHandler(this.importRW3ToolStripMenuItem_Click);
-            // 
-            // exportNoRW3ToolStripMenuItem
-            // 
-            this.exportNoRW3ToolStripMenuItem.Name = "exportNoRW3ToolStripMenuItem";
-            resources.ApplyResources(this.exportNoRW3ToolStripMenuItem, "exportNoRW3ToolStripMenuItem");
-            this.exportNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.exportNoRW3ToolStripMenuItem_Click);
-            // 
-            // importNoRW3ToolStripMenuItem
-            // 
-            this.importNoRW3ToolStripMenuItem.Name = "importNoRW3ToolStripMenuItem";
-            resources.ApplyResources(this.importNoRW3ToolStripMenuItem, "importNoRW3ToolStripMenuItem");
-            this.importNoRW3ToolStripMenuItem.Click += new System.EventHandler(this.importNoRW3ToolStripMenuItem_Click);
+            resources.ApplyResources(this.importMultipleAssetsToolStripMenuItem, "importMultipleAssetsToolStripMenuItem");
+            this.importMultipleAssetsToolStripMenuItem.Name = "importMultipleAssetsToolStripMenuItem";
+            this.importMultipleAssetsToolStripMenuItem.Click += new System.EventHandler(this.importMultipleAssetsToolStripMenuItem_Click);
             // 
             // toolsToolStripMenuItem
             // 
@@ -454,31 +560,31 @@
             // groupBoxAssets
             // 
             resources.ApplyResources(this.groupBoxAssets, "groupBoxAssets");
-            this.groupBoxAssets.Controls.Add(this.buttonMultiEdit);
+            this.groupBoxAssets.Controls.Add(this.buttonMultiEditAsset);
             this.groupBoxAssets.Controls.Add(this.checkBoxTemplateFocus);
             this.groupBoxAssets.Controls.Add(this.listViewAssets);
-            this.groupBoxAssets.Controls.Add(this.buttonCopy);
-            this.groupBoxAssets.Controls.Add(this.buttonPaste);
+            this.groupBoxAssets.Controls.Add(this.buttonCopyAsset);
+            this.groupBoxAssets.Controls.Add(this.buttonPasteAssets);
             this.groupBoxAssets.Controls.Add(this.textBoxFindAsset);
             this.groupBoxAssets.Controls.Add(this.label3);
-            this.groupBoxAssets.Controls.Add(this.buttonInternalEdit);
+            this.groupBoxAssets.Controls.Add(this.buttonEditDataAsset);
             this.groupBoxAssets.Controls.Add(this.buttonView);
-            this.groupBoxAssets.Controls.Add(this.buttonExportRaw);
+            this.groupBoxAssets.Controls.Add(this.buttonExportRawAsset);
             this.groupBoxAssets.Controls.Add(this.buttonEditAsset);
-            this.groupBoxAssets.Controls.Add(this.buttonDuplicate);
+            this.groupBoxAssets.Controls.Add(this.buttonDuplicateAsset);
             this.groupBoxAssets.Controls.Add(this.buttonRemoveAsset);
-            this.groupBoxAssets.Controls.Add(this.buttonAddAsset);
+            this.groupBoxAssets.Controls.Add(this.buttonImportAsset);
             this.groupBoxAssets.Controls.Add(this.comboBoxAssetTypes);
             this.groupBoxAssets.Controls.Add(this.label2);
             this.groupBoxAssets.Name = "groupBoxAssets";
             this.groupBoxAssets.TabStop = false;
             // 
-            // buttonMultiEdit
+            // buttonMultiEditAsset
             // 
-            resources.ApplyResources(this.buttonMultiEdit, "buttonMultiEdit");
-            this.buttonMultiEdit.Name = "buttonMultiEdit";
-            this.buttonMultiEdit.UseVisualStyleBackColor = true;
-            this.buttonMultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
+            resources.ApplyResources(this.buttonMultiEditAsset, "buttonMultiEditAsset");
+            this.buttonMultiEditAsset.Name = "buttonMultiEditAsset";
+            this.buttonMultiEditAsset.UseVisualStyleBackColor = true;
+            this.buttonMultiEditAsset.Click += new System.EventHandler(this.buttonMultiEdit_Click);
             // 
             // checkBoxTemplateFocus
             // 
@@ -531,19 +637,19 @@
             // 
             resources.ApplyResources(this.AssetLinksCol, "AssetLinksCol");
             // 
-            // buttonCopy
+            // buttonCopyAsset
             // 
-            resources.ApplyResources(this.buttonCopy, "buttonCopy");
-            this.buttonCopy.Name = "buttonCopy";
-            this.buttonCopy.UseVisualStyleBackColor = true;
-            this.buttonCopy.Click += new System.EventHandler(this.buttonCopy_Click);
+            resources.ApplyResources(this.buttonCopyAsset, "buttonCopyAsset");
+            this.buttonCopyAsset.Name = "buttonCopyAsset";
+            this.buttonCopyAsset.UseVisualStyleBackColor = true;
+            this.buttonCopyAsset.Click += new System.EventHandler(this.buttonCopy_Click);
             // 
-            // buttonPaste
+            // buttonPasteAssets
             // 
-            resources.ApplyResources(this.buttonPaste, "buttonPaste");
-            this.buttonPaste.Name = "buttonPaste";
-            this.buttonPaste.UseVisualStyleBackColor = true;
-            this.buttonPaste.Click += new System.EventHandler(this.buttonPaste_Click);
+            resources.ApplyResources(this.buttonPasteAssets, "buttonPasteAssets");
+            this.buttonPasteAssets.Name = "buttonPasteAssets";
+            this.buttonPasteAssets.UseVisualStyleBackColor = true;
+            this.buttonPasteAssets.Click += new System.EventHandler(this.buttonPaste_Click);
             // 
             // textBoxFindAsset
             // 
@@ -558,12 +664,12 @@
             resources.ApplyResources(this.label3, "label3");
             this.label3.Name = "label3";
             // 
-            // buttonInternalEdit
+            // buttonEditDataAsset
             // 
-            resources.ApplyResources(this.buttonInternalEdit, "buttonInternalEdit");
-            this.buttonInternalEdit.Name = "buttonInternalEdit";
-            this.buttonInternalEdit.UseVisualStyleBackColor = true;
-            this.buttonInternalEdit.Click += new System.EventHandler(this.buttonInternalEdit_Click);
+            resources.ApplyResources(this.buttonEditDataAsset, "buttonEditDataAsset");
+            this.buttonEditDataAsset.Name = "buttonEditDataAsset";
+            this.buttonEditDataAsset.UseVisualStyleBackColor = true;
+            this.buttonEditDataAsset.Click += new System.EventHandler(this.buttonInternalEdit_Click);
             // 
             // buttonView
             // 
@@ -572,12 +678,12 @@
             this.buttonView.UseVisualStyleBackColor = true;
             this.buttonView.Click += new System.EventHandler(this.buttonView_Click);
             // 
-            // buttonExportRaw
+            // buttonExportRawAsset
             // 
-            resources.ApplyResources(this.buttonExportRaw, "buttonExportRaw");
-            this.buttonExportRaw.Name = "buttonExportRaw";
-            this.buttonExportRaw.UseVisualStyleBackColor = true;
-            this.buttonExportRaw.Click += new System.EventHandler(this.buttonExportRaw_Click);
+            resources.ApplyResources(this.buttonExportRawAsset, "buttonExportRawAsset");
+            this.buttonExportRawAsset.Name = "buttonExportRawAsset";
+            this.buttonExportRawAsset.UseVisualStyleBackColor = true;
+            this.buttonExportRawAsset.Click += new System.EventHandler(this.buttonExportRaw_Click);
             // 
             // buttonEditAsset
             // 
@@ -586,12 +692,12 @@
             this.buttonEditAsset.UseVisualStyleBackColor = true;
             this.buttonEditAsset.Click += new System.EventHandler(this.buttonEditAsset_Click);
             // 
-            // buttonDuplicate
+            // buttonDuplicateAsset
             // 
-            resources.ApplyResources(this.buttonDuplicate, "buttonDuplicate");
-            this.buttonDuplicate.Name = "buttonDuplicate";
-            this.buttonDuplicate.UseVisualStyleBackColor = true;
-            this.buttonDuplicate.Click += new System.EventHandler(this.buttonDuplicate_Click);
+            resources.ApplyResources(this.buttonDuplicateAsset, "buttonDuplicateAsset");
+            this.buttonDuplicateAsset.Name = "buttonDuplicateAsset";
+            this.buttonDuplicateAsset.UseVisualStyleBackColor = true;
+            this.buttonDuplicateAsset.Click += new System.EventHandler(this.buttonDuplicate_Click);
             // 
             // buttonRemoveAsset
             // 
@@ -600,12 +706,12 @@
             this.buttonRemoveAsset.UseVisualStyleBackColor = true;
             this.buttonRemoveAsset.Click += new System.EventHandler(this.ButtonRemoveAsset_Click);
             // 
-            // buttonAddAsset
+            // buttonImportAsset
             // 
-            resources.ApplyResources(this.buttonAddAsset, "buttonAddAsset");
-            this.buttonAddAsset.Name = "buttonAddAsset";
-            this.buttonAddAsset.UseVisualStyleBackColor = true;
-            this.buttonAddAsset.Click += new System.EventHandler(this.buttonAddAsset_Click);
+            resources.ApplyResources(this.buttonImportAsset, "buttonImportAsset");
+            this.buttonImportAsset.Name = "buttonImportAsset";
+            this.buttonImportAsset.UseVisualStyleBackColor = true;
+            this.buttonImportAsset.Click += new System.EventHandler(this.buttonAddAsset_Click);
             // 
             // comboBoxAssetTypes
             // 
@@ -624,16 +730,16 @@
             this.contextMenuStrip_ListBoxAssets.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.contextMenuStrip_ListBoxAssets.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.addTemplateToolStripMenuItem,
-            this.ToolStripMenuItem_CreateGroup,
+            this.toolStripMenuItem_CreateGroup,
             this.toolStripSeparator4,
-            this.toolStripMenuItem_Add,
+            this.toolStripMenuItem_Import,
             this.toolStripMenuItem_Duplicate,
             this.toolStripMenuItem_Copy,
             this.toolStripMenuItem_Paste,
             this.toolStripMenuItem_Remove,
             this.toolStripSeparator2,
             this.toolStripMenuItem_View,
-            this.toolStripMenuItem_Export,
+            this.toolStripMenuItem_ExportRaw,
             this.toolStripMenuItem_EditHeader,
             this.toolStripMenuItem_EditData,
             this.toolStripMenuItem_MultiEdit});
@@ -645,22 +751,22 @@
             this.addTemplateToolStripMenuItem.Name = "addTemplateToolStripMenuItem";
             resources.ApplyResources(this.addTemplateToolStripMenuItem, "addTemplateToolStripMenuItem");
             // 
-            // ToolStripMenuItem_CreateGroup
+            // toolStripMenuItem_CreateGroup
             // 
-            this.ToolStripMenuItem_CreateGroup.Name = "ToolStripMenuItem_CreateGroup";
-            resources.ApplyResources(this.ToolStripMenuItem_CreateGroup, "ToolStripMenuItem_CreateGroup");
-            this.ToolStripMenuItem_CreateGroup.Click += new System.EventHandler(this.ToolStripMenuItem_CreateGroup_Click);
+            this.toolStripMenuItem_CreateGroup.Name = "toolStripMenuItem_CreateGroup";
+            resources.ApplyResources(this.toolStripMenuItem_CreateGroup, "toolStripMenuItem_CreateGroup");
+            this.toolStripMenuItem_CreateGroup.Click += new System.EventHandler(this.ToolStripMenuItem_CreateGroup_Click);
             // 
             // toolStripSeparator4
             // 
             this.toolStripSeparator4.Name = "toolStripSeparator4";
             resources.ApplyResources(this.toolStripSeparator4, "toolStripSeparator4");
             // 
-            // toolStripMenuItem_Add
+            // toolStripMenuItem_Import
             // 
-            this.toolStripMenuItem_Add.Name = "toolStripMenuItem_Add";
-            resources.ApplyResources(this.toolStripMenuItem_Add, "toolStripMenuItem_Add");
-            this.toolStripMenuItem_Add.Click += new System.EventHandler(this.buttonAddAsset_Click);
+            this.toolStripMenuItem_Import.Name = "toolStripMenuItem_Import";
+            resources.ApplyResources(this.toolStripMenuItem_Import, "toolStripMenuItem_Import");
+            this.toolStripMenuItem_Import.Click += new System.EventHandler(this.buttonAddAsset_Click);
             // 
             // toolStripMenuItem_Duplicate
             // 
@@ -697,11 +803,11 @@
             resources.ApplyResources(this.toolStripMenuItem_View, "toolStripMenuItem_View");
             this.toolStripMenuItem_View.Click += new System.EventHandler(this.buttonView_Click);
             // 
-            // toolStripMenuItem_Export
+            // toolStripMenuItem_ExportRaw
             // 
-            this.toolStripMenuItem_Export.Name = "toolStripMenuItem_Export";
-            resources.ApplyResources(this.toolStripMenuItem_Export, "toolStripMenuItem_Export");
-            this.toolStripMenuItem_Export.Click += new System.EventHandler(this.buttonExportRaw_Click);
+            this.toolStripMenuItem_ExportRaw.Name = "toolStripMenuItem_ExportRaw";
+            resources.ApplyResources(this.toolStripMenuItem_ExportRaw, "toolStripMenuItem_ExportRaw");
+            this.toolStripMenuItem_ExportRaw.Click += new System.EventHandler(this.buttonExportRaw_Click);
             // 
             // toolStripMenuItem_EditHeader
             // 
@@ -720,17 +826,6 @@
             this.toolStripMenuItem_MultiEdit.Name = "toolStripMenuItem_MultiEdit";
             resources.ApplyResources(this.toolStripMenuItem_MultiEdit, "toolStripMenuItem_MultiEdit");
             this.toolStripMenuItem_MultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
-            // 
-            // toolStripSeparator5
-            // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            resources.ApplyResources(this.toolStripSeparator5, "toolStripSeparator5");
-            // 
-            // renameToolStripMenuItem
-            // 
-            resources.ApplyResources(this.renameToolStripMenuItem, "renameToolStripMenuItem");
-            this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
-            this.renameToolStripMenuItem.Click += new System.EventHandler(this.renameToolStripMenuItem_Click);
             // 
             // ArchiveEditor
             // 
@@ -779,35 +874,33 @@
         private System.Windows.Forms.ComboBox comboBoxLayerTypes;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBoxAssets;
-        private System.Windows.Forms.Button buttonAddAsset;
+        private System.Windows.Forms.Button buttonImportAsset;
         private System.Windows.Forms.ComboBox comboBoxAssetTypes;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Button buttonDuplicate;
+        private System.Windows.Forms.Button buttonDuplicateAsset;
         private System.Windows.Forms.Button buttonRemoveAsset;
         private System.Windows.Forms.Button buttonEditAsset;
-        private System.Windows.Forms.Button buttonExportRaw;
+        private System.Windows.Forms.Button buttonExportRawAsset;
         private System.Windows.Forms.Button buttonView;
-        private System.Windows.Forms.Button buttonInternalEdit;
+        private System.Windows.Forms.Button buttonEditDataAsset;
         private System.Windows.Forms.TextBox textBoxFindAsset;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button buttonCopy;
-        private System.Windows.Forms.Button buttonPaste;
+        private System.Windows.Forms.Button buttonCopyAsset;
+        private System.Windows.Forms.Button buttonPasteAssets;
         private System.Windows.Forms.Button buttonArrowDown;
         private System.Windows.Forms.Button buttonArrowUp;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
-        private System.Windows.Forms.ToolStripMenuItem importHIPArchiveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hipHopToolExportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip_ListBoxAssets;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Add;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Import;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Duplicate;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Copy;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Paste;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Remove;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_View;
-        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_Export;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_ExportRaw;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EditHeader;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_EditData;
         private System.Windows.Forms.ToolStripMenuItem importMultipleAssetsToolStripMenuItem;
@@ -817,7 +910,7 @@
         private System.Windows.Forms.ListView listViewAssets;
         private System.Windows.Forms.ToolStripMenuItem applyScaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
-        private System.Windows.Forms.ToolStripMenuItem tXDArchiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem texturesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportNoRW3ToolStripMenuItem;
@@ -825,17 +918,15 @@
         private System.Windows.Forms.ToolStripMenuItem importModelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem verifyArchiveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mergeSimilarAssetsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importTexturesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem editPACKToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem convertArchiveToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader AssetNameCol;
         private System.Windows.Forms.ColumnHeader AssetIDCol;
         private System.Windows.Forms.ColumnHeader AssetInfoCol;
         private System.Windows.Forms.CheckBox checkBoxTemplateFocus;
-        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItem_CreateGroup;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_CreateGroup;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.Button buttonMultiEdit;
+        private System.Windows.Forms.Button buttonMultiEditAsset;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem_MultiEdit;
-        private System.Windows.Forms.ToolStripMenuItem exportAudioToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel2;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelFileSize;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
@@ -845,10 +936,26 @@
         private System.Windows.Forms.ColumnHeader AssetTypeCol;
         private System.Windows.Forms.ColumnHeader AssetLinksCol;
         private System.Windows.Forms.ToolStripMenuItem layersToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem hideLayersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem noLayersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem organizeLayersToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem organizeLegacyToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
-        private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem renameLayerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hipHopFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importHipArchiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importHipArchiveForceOverwriteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportAssetsIniToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem soundsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importSoundsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importRawSoundsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportAllSoundsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportAllSoundsRawToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
+        private System.Windows.Forms.ToolStripMenuItem importTexturesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportAllTexturesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importAsSoundToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importAsSoundStreamToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importRawSoundToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importRawSoundStreamToolStripMenuItem;
     }
 }

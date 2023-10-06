@@ -4,6 +4,7 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -99,7 +100,7 @@ namespace IndustrialPark
             if (archive.New())
             {
                 archive.autoCompleteSource.Clear();
-                EnableToolStripMenuItems();
+                SetMenuItemsEnabled();
                 SetNoLayers();
                 SetupAssetVisibilityButtons();
             }
@@ -178,7 +179,7 @@ namespace IndustrialPark
             Text = Path.GetFileName(fileName);
             archive.UnsavedChanges = false;
 
-            EnableToolStripMenuItems();
+            SetMenuItemsEnabled();
 
             SetNoLayers();
 
@@ -197,21 +198,64 @@ namespace IndustrialPark
                 Program.MainForm.SetupAssetVisibilityButtons();
         }
 
-        private void EnableToolStripMenuItems()
+        private void SetMenuItemsEnabled()
         {
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
-            hipHopToolExportToolStripMenuItem.Enabled = true;
-            exportAudioToolStripMenuItem.Enabled = true;
-            importHIPArchiveToolStripMenuItem.Enabled = true;
-            tXDArchiveToolStripMenuItem.Enabled = true;
-            buttonAddLayer.Enabled = true;
-            editPACKToolStripMenuItem.Enabled = true;
+            convertArchiveToolStripMenuItem.Enabled = true;
+            layersToolStripMenuItem.Enabled = true;
+            noLayersToolStripMenuItem.Enabled = true;
             organizeLayersToolStripMenuItem.Enabled = true;
             organizeLegacyToolStripMenuItem.Enabled = true;
             mergeSimilarAssetsToolStripMenuItem.Enabled = true;
-            verifyArchiveToolStripMenuItem.Enabled = true;
             applyScaleToolStripMenuItem.Enabled = true;
+            verifyArchiveToolStripMenuItem.Enabled = true;
+            hipHopFileToolStripMenuItem.Enabled = true;
+            importHipArchiveToolStripMenuItem.Enabled = true;
+            importHipArchiveForceOverwriteToolStripMenuItem.Enabled = true;
+            exportAssetsIniToolStripMenuItem.Enabled = true;
+            texturesToolStripMenuItem.Enabled = true;
+            soundsToolStripMenuItem.Enabled = true;
+            buttonAddLayer.Enabled = true;
+            importSoundsToolStripMenuItem.Enabled = true;
+
+            var canImportAssetsToLayer = archive.NoLayers || (archive.SelectedLayerIndex != -1);
+            importTexturesToolStripMenuItem.Enabled = canImportAssetsToLayer;
+            importRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
+            importNoRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
+            importRawSoundsToolStripMenuItem.Enabled = canImportAssetsToLayer;
+            importModelsToolStripMenuItem.Enabled = canImportAssetsToLayer;
+            importMultipleAssetsToolStripMenuItem.Enabled = canImportAssetsToLayer;
+
+            toolStripMenuItem_Import.Enabled = buttonImportAsset.Enabled = canImportAssetsToLayer;
+            toolStripMenuItem_Paste.Enabled = buttonPasteAssets.Enabled = canImportAssetsToLayer;
+            addTemplateToolStripMenuItem.Enabled = canImportAssetsToLayer;
+
+            var canExportTextures = archive.ContainsAssetWithType(AssetType.Texture);
+            exportAllTexturesToolStripMenuItem.Enabled = canExportTextures;
+            exportRW3ToolStripMenuItem.Enabled = canExportTextures;
+            exportNoRW3ToolStripMenuItem.Enabled = canExportTextures;
+
+            var canExportSounds = archive.ContainsAssetWithType(AssetType.Sound) || archive.ContainsAssetWithType(AssetType.SoundStream);
+            exportAllSoundsToolStripMenuItem.Enabled = canExportSounds;
+            exportAllSoundsRawToolStripMenuItem.Enabled = canExportSounds;
+
+            buttonRemoveLayer.Enabled = archive.SelectedLayerIndex != -1;
+            buttonArrowUp.Enabled = archive.LayerCount > 1 && archive.SelectedLayerIndex > 0;
+            buttonArrowDown.Enabled = archive.LayerCount > 1 && archive.SelectedLayerIndex != -1 && archive.SelectedLayerIndex < archive.LayerCount - 1;
+
+            var canEditAsset = listViewAssets.SelectedItems.Count != 0;
+            toolStripMenuItem_Duplicate.Enabled = buttonDuplicateAsset.Enabled = canEditAsset;
+            toolStripMenuItem_Copy.Enabled = buttonCopyAsset.Enabled = canEditAsset;
+            toolStripMenuItem_Remove.Enabled = buttonRemoveAsset.Enabled = canEditAsset;
+            toolStripMenuItem_ExportRaw.Enabled = buttonExportRawAsset.Enabled = canEditAsset;
+            toolStripMenuItem_EditData.Enabled = buttonEditDataAsset.Enabled = canEditAsset;
+            toolStripMenuItem_MultiEdit.Enabled = buttonMultiEditAsset.Enabled = canEditAsset;
+            toolStripMenuItem_CreateGroup.Enabled = canEditAsset;
+
+            var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
+            toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
+            toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditSingleAsset && archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset;
         }
 
         private void PopulateLayerTypeComboBox()
@@ -272,7 +316,6 @@ namespace IndustrialPark
 
             _updateFilesizeStatusBarItem();
         }
-
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -385,17 +428,6 @@ namespace IndustrialPark
                 comboBoxAssetTypes.Items.Clear();
                 comboBoxAssetTypes.SelectedIndex = -1;
                 PopulateAssetList();
-
-                buttonAddAsset.Enabled = false;
-                buttonPaste.Enabled = false;
-                buttonRemoveLayer.Enabled = false;
-                buttonArrowUp.Enabled = false;
-                buttonArrowDown.Enabled = false;
-                importMultipleAssetsToolStripMenuItem.Enabled = false;
-                importModelsToolStripMenuItem.Enabled = false;
-                importTexturesToolStripMenuItem.Enabled = false;
-                addTemplateToolStripMenuItem.Enabled = false;
-                renameToolStripMenuItem.Enabled = false;
             }
             else
             {
@@ -405,22 +437,12 @@ namespace IndustrialPark
                         comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType();
                     else
                         comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType();
-                    renameToolStripMenuItem.Enabled = true;
+                    renameLayerToolStripMenuItem.Enabled = true;
                 }
                 else
-                    renameToolStripMenuItem.Enabled = false;
+                    renameLayerToolStripMenuItem.Enabled = false;
 
                 PopulateAssetListAndComboBox();
-
-                buttonAddAsset.Enabled = true;
-                buttonPaste.Enabled = true;
-                buttonRemoveLayer.Enabled = true;
-                buttonArrowUp.Enabled = true;
-                buttonArrowDown.Enabled = true;
-                importMultipleAssetsToolStripMenuItem.Enabled = true;
-                importModelsToolStripMenuItem.Enabled = true;
-                importTexturesToolStripMenuItem.Enabled = true;
-                addTemplateToolStripMenuItem.Enabled = true;
             }
 
             programIsChangingStuff = false;
@@ -475,29 +497,8 @@ namespace IndustrialPark
 
                 comboBoxAssetTypes.Items.Clear();
                 listViewAssets.Items.Clear();
-
-                buttonAddAsset.Enabled = false;
-                buttonPaste.Enabled = false;
-                buttonRemoveLayer.Enabled = false;
-                organizeLayersToolStripMenuItem.Enabled = false;
-                organizeLegacyToolStripMenuItem.Enabled = false;
-                mergeSimilarAssetsToolStripMenuItem.Enabled = false;
-                verifyArchiveToolStripMenuItem.Enabled = false;
-                applyScaleToolStripMenuItem.Enabled = false;
-                buttonArrowUp.Enabled = false;
-                buttonArrowDown.Enabled = false;
-                importMultipleAssetsToolStripMenuItem.Enabled = false;
-                importModelsToolStripMenuItem.Enabled = false;
-                importTexturesToolStripMenuItem.Enabled = false;
-                addTemplateToolStripMenuItem.Enabled = false;
-
-                buttonCopy.Enabled = false;
-                buttonDuplicate.Enabled = false;
-                buttonRemoveAsset.Enabled = false;
-                buttonExportRaw.Enabled = false;
-                buttonInternalEdit.Enabled = false;
-                buttonMultiEdit.Enabled = false;
             }
+            SetMenuItemsEnabled();
             SetupAssetVisibilityButtons();
         }
 
@@ -507,6 +508,7 @@ namespace IndustrialPark
             archive.MoveLayerUp();
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
+            SetMenuItemsEnabled();
         }
 
         private void buttonArrowDown_Click(object sender, EventArgs e)
@@ -515,6 +517,7 @@ namespace IndustrialPark
             archive.MoveLayerDown();
             PopulateLayerComboBox();
             comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
+            SetMenuItemsEnabled();
         }
 
         public void PopulateAssetListAndComboBox()
@@ -578,6 +581,8 @@ namespace IndustrialPark
             }
 
             toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
+
+            SetMenuItemsEnabled();
         }
 
         private ListViewItem ListViewItemFromAsset(Asset asset, bool selected)
@@ -699,6 +704,7 @@ namespace IndustrialPark
                     comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
                 SetSelectedIndex(assetID.Value, true);
                 SetupAssetVisibilityButtons();
+                SetMenuItemsEnabled();
             }
         }
 
@@ -713,6 +719,7 @@ namespace IndustrialPark
                     comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
+                SetMenuItemsEnabled();
             }
         }
 
@@ -730,10 +737,11 @@ namespace IndustrialPark
                 PopulateLayerComboBox();
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
+                SetMenuItemsEnabled();
             }
         }
 
-        private void ImportTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void importTexturesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var (AHDRs, overwrite) = ImportTextures.GetAssets(archive.game, archive.platform);
 
@@ -744,6 +752,24 @@ namespace IndustrialPark
                     comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString();
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);
+                SetMenuItemsEnabled();
+            }
+        }
+
+        private void exportAllTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true
+            };
+            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                var textures = archive.GetAllTexturesAsBitmaps();
+
+                RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
+
+                foreach ((string textureName, Bitmap texture) in textures)
+                    texture.Save(Path.Combine(saveFileDialog.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
             }
         }
 
@@ -757,6 +783,7 @@ namespace IndustrialPark
             if (!archive.NoLayers)
                 comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
             SetSelectedIndices(finalIndices, true);
+            SetMenuItemsEnabled();
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
@@ -769,7 +796,8 @@ namespace IndustrialPark
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            archive.PasteAssetsFromClipboard(out List<uint> finalIndices);
+            if (!archive.PasteAssetsFromClipboard(out List<uint> finalIndices))
+                return;
 
             if (!archive.NoLayers)
                 comboBoxLayers.Items[archive.SelectedLayerIndex] = archive.LayerToString();
@@ -823,6 +851,8 @@ namespace IndustrialPark
 
             if (listViewAssets.Items.Count == 0)
                 PopulateAssetListAndComboBox();
+            else
+                SetMenuItemsEnabled();
             SetupAssetVisibilityButtons();
         }
 
@@ -973,35 +1003,7 @@ namespace IndustrialPark
 
             archive.SelectAssets(selected);
 
-            if (listViewAssets.SelectedItems.Count == 0)
-            {
-                buttonCopy.Enabled = false;
-                buttonDuplicate.Enabled = false;
-                buttonRemoveAsset.Enabled = false;
-                buttonExportRaw.Enabled = false;
-                buttonInternalEdit.Enabled = false;
-                buttonMultiEdit.Enabled = false;
-            }
-            else
-            {
-                buttonCopy.Enabled = true;
-                buttonDuplicate.Enabled = true;
-                buttonRemoveAsset.Enabled = true;
-                buttonExportRaw.Enabled = true;
-                buttonInternalEdit.Enabled = true;
-                buttonMultiEdit.Enabled = true;
-            }
-
-            if (listViewAssets.SelectedItems.Count == 1)
-            {
-                buttonEditAsset.Enabled = true;
-                buttonView.Enabled = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset;
-            }
-            else
-            {
-                buttonEditAsset.Enabled = false;
-                buttonView.Enabled = false;
-            }
+            SetMenuItemsEnabled();
         }
 
         public void MouseMoveGeneric(Matrix viewProjection, int deltaX, int deltaY, bool grid)
@@ -1147,13 +1149,6 @@ namespace IndustrialPark
                 PopulateLayerComboBox();
                 comboBoxLayers.SelectedIndex = -1;
                 comboBoxLayers_SelectedIndexChanged(sender, e);
-                buttonDuplicate.Enabled = false;
-                buttonCopy.Enabled = false;
-                buttonRemoveAsset.Enabled = false;
-                buttonExportRaw.Enabled = false;
-                buttonEditAsset.Enabled = false;
-                buttonInternalEdit.Enabled = false;
-                buttonMultiEdit.Enabled = false;
             }
         }
 
@@ -1182,7 +1177,7 @@ namespace IndustrialPark
             comboBoxLayers_SelectedIndexChanged(sender, e);
         }
 
-        private void hipHopToolExportToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exportAssetsIniToolStripMenuItem_Click(object sender, EventArgs e)
         {
             CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
             if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
@@ -1190,6 +1185,16 @@ namespace IndustrialPark
         }
 
         private void importHIPArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportHipClick(false);
+        }
+
+        private void importForceOverwriteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportHipClick(true);
+        }
+
+        private void ImportHipClick(bool forceOverwrite)
         {
             OpenFileDialog openFile = new OpenFileDialog()
             {
@@ -1199,7 +1204,7 @@ namespace IndustrialPark
 
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                archive.ImportHip(openFile.FileNames, false);
+                archive.ImportHip(openFile.FileNames, forceOverwrite);
                 OnEditorUpdate();
             }
             PopulateLayerComboBox();
@@ -1207,68 +1212,55 @@ namespace IndustrialPark
 
         private void checkedListBoxAssets_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)
-            {
-                if (buttonAddAsset.Enabled)
-                    buttonAddAsset_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.D && e.Modifiers == Keys.Control)
-            {
-                if (buttonDuplicate.Enabled)
-                    buttonDuplicate_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
-            {
-                if (buttonCopy.Enabled)
-                    buttonCopy_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
-            {
-                if (buttonPaste.Enabled)
-                    buttonPaste_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.G && e.Modifiers == Keys.Control)
-            {
-                if (buttonInternalEdit.Enabled)
-                    buttonInternalEdit_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.H && e.Modifiers == Keys.Control)
-            {
-                if (buttonEditAsset.Enabled)
-                    buttonEditAsset_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
+            //if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)
+            //{
+            //    if (buttonImportAsset.Enabled)
+            //        buttonAddAsset_Click(null, null);
+            //}
+            //else if (e.KeyCode == Keys.D && e.Modifiers == Keys.Control)
+            //{
+            //    if (buttonDuplicateAsset.Enabled)
+            //        buttonDuplicate_Click(null, null);
+            //}
+            //else if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
+            //{
+            //    if (buttonCopyAsset.Enabled)
+            //        buttonCopy_Click(null, null);
+            //}
+            //else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
+            //{
+            //    if (buttonPasteAssets.Enabled)
+            //        buttonPaste_Click(null, null);
+            //}
+            //else if (e.KeyCode == Keys.G && e.Modifiers == Keys.Control)
+            //{
+            //    if (buttonEditDataAsset.Enabled)
+            //        buttonInternalEdit_Click(null, null);
+            //}
+            //else if (e.KeyCode == Keys.H && e.Modifiers == Keys.Control)
+            //{
+            //    if (buttonEditAsset.Enabled)
+            //        buttonEditAsset_Click(null, null);
+            //}
+            //else 
+            if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
             {
                 listViewAssets.BeginUpdate();
                 for (int i = 0; i < listViewAssets.Items.Count; i++)
                     listViewAssets.Items[i].Selected = true;
                 listViewAssets.EndUpdate();
             }
-            else if (e.KeyCode == Keys.Delete)
-            {
-                if (buttonRemoveAsset.Enabled)
-                    ButtonRemoveAsset_Click(null, null);
-            }
+            //else if (e.KeyCode == Keys.Delete)
+            //{
+            //    if (buttonRemoveAsset.Enabled)
+            //        ButtonRemoveAsset_Click(null, null);
+            //}
         }
 
         private void checkedListBoxAssets_MouseDown(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Right)
             {
-                toolStripMenuItem_Add.Enabled = buttonAddAsset.Enabled;
-                toolStripMenuItem_Duplicate.Enabled = buttonDuplicate.Enabled;
-                toolStripMenuItem_Copy.Enabled = buttonCopy.Enabled;
-                toolStripMenuItem_Paste.Enabled = buttonPaste.Enabled;
-                toolStripMenuItem_Remove.Enabled = buttonRemoveAsset.Enabled;
-                toolStripMenuItem_View.Enabled = buttonView.Enabled;
-                toolStripMenuItem_Export.Enabled = buttonExportRaw.Enabled;
-                toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled;
-                toolStripMenuItem_EditData.Enabled = buttonInternalEdit.Enabled;
-                toolStripMenuItem_MultiEdit.Enabled = buttonMultiEdit.Enabled;
-
-                addTemplateToolStripMenuItem.Enabled = buttonAddAsset.Enabled;
-                ToolStripMenuItem_CreateGroup.Enabled = buttonAddAsset.Enabled;
-
                 contextMenuStrip_ListBoxAssets.Show(listViewAssets.PointToScreen(e.Location));
             }
         }
@@ -1336,16 +1328,16 @@ namespace IndustrialPark
         {
             hideButtonsToolStripMenuItem.Checked = !hideButtonsToolStripMenuItem.Checked;
 
-            buttonAddAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonDuplicate.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonCopy.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonPaste.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonImportAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonDuplicateAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonCopyAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonPasteAssets.Visible = !hideButtonsToolStripMenuItem.Checked;
             buttonRemoveAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
             buttonView.Visible = !hideButtonsToolStripMenuItem.Checked;
             buttonEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonExportRaw.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonInternalEdit.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonMultiEdit.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonExportRawAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonEditDataAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+            buttonMultiEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
 
             if (hideButtonsToolStripMenuItem.Checked)
             {
@@ -1410,41 +1402,6 @@ namespace IndustrialPark
             archive.RecalculateAllMatrices();
         }
 
-        private void exportAudioToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
-                return;
-
-            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
-            {
-                IsFolderPicker = true
-            };
-            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-
-                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.SoundStream))
-                    try
-                    {
-                        string extension =
-                            (archive.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
-                            (archive.platform == Platform.Xbox) ? ".WAV" :
-                            (archive.platform == Platform.PS2) ? ".VAG" :
-                            "";
-
-                        string filename = (extension != "" && asset.assetName.ToLower().Contains(extension.ToLower())) ?
-                            asset.assetName :
-                            asset.assetName + extension;
-
-                        File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
-                            archive.GetSoundData(asset.assetID, asset.Data));
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
-                    }
-            }
-        }
-
         private HashSet<Keys> PressedKeys = new HashSet<Keys>();
 
         private void ArchiveEditor_KeyDown(object sender, KeyEventArgs e)
@@ -1452,29 +1409,29 @@ namespace IndustrialPark
             if (!PressedKeys.Contains(e.KeyCode))
                 PressedKeys.Add(e.KeyCode);
 
-            if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.S))
-            {
-                Save();
-            }
+            //if (PressedKeys.Contains(Keys.ControlKey)
+            //    && PressedKeys.Contains(Keys.S))
+            //{
+            //    Save();
+            //}
 
-            if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.N))
-            {
-                newToolStripMenuItem_Click(sender, e);
-            }
+            //if (PressedKeys.Contains(Keys.ControlKey)
+            //    && PressedKeys.Contains(Keys.N))
+            //{
+            //    newToolStripMenuItem_Click(sender, e);
+            //}
 
-            if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.O))
-            {
-                openToolStripMenuItem_Click(sender, e);
-            }
+            //if (PressedKeys.Contains(Keys.ControlKey)
+            //    && PressedKeys.Contains(Keys.O))
+            //{
+            //    openToolStripMenuItem_Click(sender, e);
+            //}
 
-            if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.W))
-            {
-                closeToolStripMenuItem_Click(sender, e);
-            }
+            //if (PressedKeys.Contains(Keys.ControlKey)
+            //    && PressedKeys.Contains(Keys.W))
+            //{
+            //    closeToolStripMenuItem_Click(sender, e);
+            //}
         }
 
         private void ArchiveEditor_KeyUp(object sender, KeyEventArgs e)
@@ -1755,9 +1712,9 @@ namespace IndustrialPark
             _generateReportTxt();
         }
 
-        private void hideToolStripMenuItem_Click(object sender, EventArgs e)
+        private void noLayersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var newNoLayers = !hideLayersToolStripMenuItem.Checked;
+            var newNoLayers = !noLayersToolStripMenuItem.Checked;
             if (newNoLayers)
             {
                 var dr = MessageBox.Show("This will convert the HIP/HOP archive into a format in which layers are virtually gone: " +
@@ -1777,7 +1734,7 @@ namespace IndustrialPark
         {
             if (archive.NoLayers)
             {
-                hideLayersToolStripMenuItem.Checked = true;
+                noLayersToolStripMenuItem.Checked = true;
 
                 groupBoxLayers.Visible = false;
 
@@ -1787,20 +1744,10 @@ namespace IndustrialPark
                     groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height + 53);
                     noLayersForGroupBox = true;
                 }
-
-                buttonAddAsset.Enabled = true;
-                buttonPaste.Enabled = true;
-                importMultipleAssetsToolStripMenuItem.Enabled = true;
-                importModelsToolStripMenuItem.Enabled = true;
-                importTexturesToolStripMenuItem.Enabled = true;
-                addTemplateToolStripMenuItem.Enabled = true;
-
-                organizeLayersToolStripMenuItem.Enabled = false;
-                organizeLegacyToolStripMenuItem.Enabled = false;
             }
             else
             {
-                hideLayersToolStripMenuItem.Checked = false;
+                noLayersToolStripMenuItem.Checked = false;
 
                 groupBoxLayers.Visible = true;
 
@@ -1813,19 +1760,6 @@ namespace IndustrialPark
 
                 PopulateLayerTypeComboBox();
                 PopulateLayerComboBox();
-
-                buttonAddAsset.Enabled = false;
-                buttonPaste.Enabled = false;
-                buttonRemoveLayer.Enabled = false;
-                buttonArrowUp.Enabled = false;
-                buttonArrowDown.Enabled = false;
-                importMultipleAssetsToolStripMenuItem.Enabled = false;
-                importModelsToolStripMenuItem.Enabled = false;
-                importTexturesToolStripMenuItem.Enabled = false;
-                addTemplateToolStripMenuItem.Enabled = false;
-
-                organizeLayersToolStripMenuItem.Enabled = true;
-                organizeLegacyToolStripMenuItem.Enabled = true;
             }
 
             PopulateAssetListAndComboBox();
@@ -1839,6 +1773,96 @@ namespace IndustrialPark
                 PopulateLayerComboBox();
                 PopulateAssetListAndComboBox();
             }
+        }
+
+        private void exportAllWavToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
+                return;
+
+            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true
+            };
+            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                foreach (var asset in archive.GetAllAssets().OfType<AssetSound>())
+                    SoundUtility_vgmstream.ExportToFile(asset, archive, Path.Combine(saveFileDialog.FileName, asset.assetName + ".wav"));
+            }
+        }
+
+        private void exportAllRawToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
+                return;
+
+            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true
+            };
+            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.SoundStream))
+                    try
+                    {
+                        string extension =
+                            (archive.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                            (archive.platform == Platform.Xbox) ? ".WAV" :
+                            (archive.platform == Platform.PS2) ? ".VAG" :
+                            "";
+
+                        string filename = (extension != "" && asset.assetName.ToLower().Contains(extension.ToLower())) ?
+                            asset.assetName :
+                            asset.assetName + extension;
+
+                        File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
+                            archive.GetSoundData(asset.assetID, asset.Data));
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
+                    }
+            }
+        }
+
+        private void ImportSounds(bool raw, AssetType assetType)
+        {
+            OpenFileDialog openFile = new OpenFileDialog()
+            {
+                Filter = "Audio files|*",
+                Multiselect = true
+            };
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                archive.ImportSounds(raw, openFile.FileNames, assetType, out List<uint> assetIDs);
+                if (assetIDs.Any())
+                {
+                    OnEditorUpdate();
+                    SetSelectedIndices(assetIDs, true);
+                    SetMenuItemsEnabled();
+                }
+            }
+        }
+
+        private void importAsSoundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportSounds(false, AssetType.Sound);
+        }
+
+        private void importAsSoundStreamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportSounds(false, AssetType.SoundStream);
+        }
+
+        private void importRawSoundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportSounds(true, AssetType.Sound);
+        }
+
+        private void importRawSoundStreamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImportSounds(true, AssetType.SoundStream);
         }
     }
 }

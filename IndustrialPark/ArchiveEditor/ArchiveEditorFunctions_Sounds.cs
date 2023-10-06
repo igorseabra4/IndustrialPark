@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace IndustrialPark
 {
@@ -132,6 +133,56 @@ namespace IndustrialPark
                         return SNDI_G2.Entry_Sounds.SampleHeader.Frequency;
 
             return 32000;
+        }
+
+        public byte[] CreateSoundFile(AssetType assetType, string fileName)
+        {
+            if (platform == Platform.Xbox)
+                return SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(fileName);
+            if (platform == Platform.PS2)
+                return SoundUtility_PS2VAG.ConvertSoundToPS2VAG(fileName);
+            if (platform == Platform.GameCube && game == Game.Incredibles)
+                return SoundUtility_FMOD.ConvertSoundToFSB3(fileName, assetType == AssetType.Sound ? GetDefaultSampleRate() : -1);
+            if (platform == Platform.GameCube)
+                return SoundUtility_DSP.ConvertSoundToDSP(fileName);
+
+            MessageBox.Show("Cannot import sound: unsupported platform.");
+            return null;
+        }
+
+        public void ImportSounds(bool raw, string[] fileNames, AssetType assetType, out List<uint> assetIDs)
+        {
+            assetIDs = new List<uint>();
+            foreach (var fileName in fileNames)
+            {
+                byte[] data = raw ? File.ReadAllBytes(fileName) : CreateSoundFile(assetType, fileName);
+                if (data == null)
+                    continue;
+
+                var sramLayer = IndexOfLayerOfType(LayerType.SRAM);
+                GetSNDI(true);
+
+                var assetName = Path.GetFileNameWithoutExtension(fileName);
+                var asset = new Section_AHDR(Functions.BKDRHash(assetName), assetType, AHDRFlagsFromAssetType(assetType),
+                        new Section_ADBG(0, assetName, "", 0), data);
+
+                RemoveAsset(asset.assetID, true);
+
+                AddAsset(asset, game, platform.Endianness(), false, sramLayer);
+
+                try
+                {
+                    AddSoundToSNDI(data, asset.assetID, asset.assetType, out byte[] soundData);
+                    asset.data = soundData;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(ex.Message);
+                }
+
+                UnsavedChanges = true;
+                assetIDs.Add(asset.assetID);
+            }
         }
     }
 }
