@@ -47,6 +47,8 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
+        public ushort BoneCount { get; set; }
+        [Category(categoryName)]
         public AssetSingle ScaleX { get; set; }
         [Category(categoryName)]
         public AssetSingle ScaleY { get; set; }
@@ -81,7 +83,7 @@ namespace IndustrialPark
         {
             reader.ReadUInt32();
             Flags.FlagValueInt = reader.ReadUInt32();
-            var boneCount = reader.ReadUInt16();
+            BoneCount = reader.ReadUInt16();
             var timeCount = reader.ReadUInt16();
             var keyCount = reader.ReadUInt32();
             ScaleX = reader.ReadSingle();
@@ -102,7 +104,7 @@ namespace IndustrialPark
             for (int i = 0; i < timeCount - 1; i++)
             {
                 var offset = new List<short>();
-                for (int j = 0; j < boneCount; j++)
+                for (int j = 0; j < BoneCount; j++)
                     offset.Add(reader.ReadInt16());
                 offsets.Add(offset.ToArray());
             }
@@ -113,12 +115,7 @@ namespace IndustrialPark
         {
             writer.WriteMagic("SKB1");
             writer.Write(Flags.FlagValueInt);
-
-            if (Offsets.Length > 0)
-                writer.Write((ushort)Offsets[0].Length);
-            else
-                writer.Write((ushort)0);
-
+            writer.Write(BoneCount);
             writer.Write((ushort)Times.Length);
             writer.Write(KeyFrames.Length);
             writer.Write(ScaleX);

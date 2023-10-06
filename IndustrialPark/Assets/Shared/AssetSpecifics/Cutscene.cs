@@ -118,24 +118,14 @@ namespace IndustrialPark
         {
             switch (_dataType)
             {
-                case CutsceneDataType.Model:
-                    return new CutsceneDataGeneric(reader, chunkSize);
                 case CutsceneDataType.Animation:
                     return new CutsceneDataAnimation(reader, chunkSize);
                 case CutsceneDataType.Camera:
                     if (game == Game.Scooby)
                         return new CutsceneDataCameraScooby(reader, chunkSize);
                     return new CutsceneDataCamera(reader);
-                case CutsceneDataType.MorphTarget:
-                    return new CutsceneDataGeneric(reader, chunkSize);
-                case CutsceneDataType.Sound:
-                    return new CutsceneDataGeneric(reader, chunkSize);
-                case CutsceneDataType.JDeltaModel:
-                    return new CutsceneDataGeneric(reader, chunkSize);
-                case CutsceneDataType.JDeltaAnim:
-                    return new CutsceneDataGeneric(reader, chunkSize);
             }
-            throw new System.Exception("Unknown asset format");
+            return new CutsceneDataGeneric(reader, chunkSize);
         }
 
         public uint chunkSize;
