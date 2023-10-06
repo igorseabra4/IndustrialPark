@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -69,19 +68,8 @@ namespace IndustrialPark
         public AssetSingle InnerRadius { get; set; }
         [Category(categoryName)]
         public AssetSingle OuterRadius { get; set; }
-
-        private int _pszGroupName;
         [Category(categoryName)]
-        public string PszGroupName
-        {
-            get => System.Text.Encoding.GetEncoding(1252).GetString(BitConverter.GetBytes(_pszGroupName));
-            set
-            {
-                while (value.Length < 4)
-                    value += "\0";
-                _pszGroupName = BitConverter.ToInt32(value.ToCharArray().Cast<byte>().ToArray(), 0);
-            }
-        }
+        public int PszGroupName { get; set; }
 
         [Category(categoryName)]
         public SoundGroupInfo[] Entries { get; set; }
@@ -117,7 +105,7 @@ namespace IndustrialPark
                 InnerRadius = reader.ReadSingle();
                 OuterRadius = reader.ReadSingle();
 
-                _pszGroupName = reader.ReadInt32();
+                PszGroupName = reader.ReadInt32();
 
                 Entries = new SoundGroupInfo[entryCount];
                 for (int i = 0; i < Entries.Length; i++)
@@ -139,7 +127,7 @@ namespace IndustrialPark
             writer.Write(uInfoPad0);
             writer.Write(InnerRadius);
             writer.Write(OuterRadius);
-            writer.Write(_pszGroupName);
+            writer.Write(PszGroupName);
 
             foreach (var i in Entries)
                 i.Serialize(writer);

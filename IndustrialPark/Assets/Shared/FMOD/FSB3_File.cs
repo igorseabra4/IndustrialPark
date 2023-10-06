@@ -6,6 +6,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class FSB3_File : GenericAssetDataContainer
     {
         [TypeConverter(typeof(ExpandableObjectConverter))]
@@ -106,15 +107,8 @@ namespace IndustrialPark
         public void Merge(GcWavInfo[] soundEntries)
         {
             List<GcWavInfo> list = SoundEntries.ToList();
-
-            List<uint> existingSounds = new List<uint>(SoundEntries.Length);
-            foreach (GcWavInfo s in SoundEntries)
-                existingSounds.Add(s.Sound);
-
-            foreach (GcWavInfo s in soundEntries)
-                if (!existingSounds.Contains(s.Sound))
-                    list.Add(s);
-
+            list.RemoveAll(entry => soundEntries.Select(entry2 => entry2._assetID).Contains(entry._assetID));
+            list.AddRange(soundEntries);
             SoundEntries = list.ToArray();
         }
     }

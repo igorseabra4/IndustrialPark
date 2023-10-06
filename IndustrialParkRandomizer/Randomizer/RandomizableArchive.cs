@@ -1979,21 +1979,30 @@ namespace IndustrialPark.Randomizer
         {
             List<uint> assetIDs = new List<uint>();
 
-            var entries = sndi.Entries;
+            if (sndi.Entry_Sounds != null)
+                foreach (var u in sndi.Entry_Sounds.SoundEntries)
+                    assetIDs.Add(u.Sound);
 
-            foreach (var v in entries)
+            foreach (var u in sndi.Entry_Sounds.SoundEntries)
+            {
+                int index = random.Next(0, assetIDs.Count);
+                u.Sound = assetIDs[index];
+                assetIDs.RemoveAt(index);
+            }
+
+            assetIDs.Clear();
+
+            foreach (var v in sndi.Entries_StreamingSounds)
                 foreach (var u in v.SoundEntries)
                     assetIDs.Add(u.Sound);
 
-            foreach (var v in entries)
+            foreach (var v in sndi.Entries_StreamingSounds)
                 foreach (var u in v.SoundEntries)
                 {
                     int index = random.Next(0, assetIDs.Count);
                     u.Sound = assetIDs[index];
                     assetIDs.RemoveAt(index);
                 }
-
-            sndi.Entries = entries;
 
             return true;
         }

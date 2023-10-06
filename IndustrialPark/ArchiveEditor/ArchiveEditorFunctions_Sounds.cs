@@ -128,10 +128,8 @@ namespace IndustrialPark
         {
             foreach (Asset a in assetDictionary.Values)
                 if (a is AssetSNDI_GCN_V2 SNDI_G2)
-                    foreach (var f in SNDI_G2.Entries)
-                        foreach (var e in f.SoundEntries)
-                            if (!e.StreamedSound)
-                                return f.SampleHeader.Frequency;
+                    if (SNDI_G2.Entry_Sounds != null)
+                        return SNDI_G2.Entry_Sounds.SampleHeader.Frequency;
 
             return 32000;
         }

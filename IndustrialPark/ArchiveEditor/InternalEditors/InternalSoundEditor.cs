@@ -200,6 +200,8 @@ namespace IndustrialPark
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                Enabled = false;
+
                 byte[] data = null;
                 if (archive.platform == Platform.Xbox)
                     data = SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(openFileDialog.FileName);
@@ -212,22 +214,24 @@ namespace IndustrialPark
                 else
                     MessageBox.Show("Cannot import sound: unsupported platform.");
 
-                if (data == null)
-                    return;
-
-                try
+                if (data != null)
                 {
-                    archive.AddSoundToSNDI(data, asset.assetID, asset.assetType, out byte[] soundData);
-                    asset.Data = soundData;
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
+                    try
+                    {
+                        archive.AddSoundToSNDI(data, asset.assetID, asset.assetType, out byte[] soundData);
+                        asset.Data = soundData;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(ex.Message);
+                    }
+
+                    archive.UnsavedChanges = true;
+                    updateListView(asset);
+                    SoundUtility_vgmstream.ClearSound();
                 }
 
-                archive.UnsavedChanges = true;
-                updateListView(asset);
-                SoundUtility_vgmstream.ClearSound();
+                Enabled = true;
             }
         }
     }
