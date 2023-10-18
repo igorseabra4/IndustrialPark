@@ -725,7 +725,7 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (List<Section_AHDR> AHDRs, bool overwrite, bool makeSimps, bool ledgeGrabSimps, bool piptVcolors, bool solidSimps) = ImportModel.GetModels(archive.game);
+            (List<Section_AHDR> AHDRs, bool overwrite, bool makeSimps, bool ledgeGrabSimps, bool piptVcolors, bool solidSimps, bool jsp) = ImportModel.GetModels(archive.game);
 
             if (AHDRs != null)
             {

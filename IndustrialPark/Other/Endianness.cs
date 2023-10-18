@@ -21,7 +21,7 @@ namespace IndustrialPark
 
     public class EndianBinaryReader : BinaryReader
     {
-        public readonly Endianness endianness;
+        public Endianness endianness;
 
         public EndianBinaryReader(byte[] data, Endianness endianness) : base(new MemoryStream(data))
         {

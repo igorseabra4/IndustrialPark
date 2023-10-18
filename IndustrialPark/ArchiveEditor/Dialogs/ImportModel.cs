@@ -19,6 +19,7 @@ namespace IndustrialPark
             TopMost = true;
             comboBoxAssetTypes.Items.Add(AssetType.Model);
             comboBoxAssetTypes.Items.Add(AssetType.BSP);
+            // comboBoxAssetTypes.Items.Add(AssetType.JSP);
             comboBoxAssetTypes.SelectedItem = AssetType.Model;
         }
 
@@ -65,7 +66,7 @@ namespace IndustrialPark
             Close();
         }
 
-        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps) GetModels(Game game)
+        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp) GetModels(Game game)
         {
             using (ImportModel a = new ImportModel())
                 if (a.ShowDialog() == DialogResult.OK)
@@ -88,7 +89,7 @@ namespace IndustrialPark
 
                         ReadFileMethods.treatStuffAsByteArray = false;
 
-                        if (assetType == AssetType.Model)
+                        if (assetType == AssetType.Model || assetType == AssetType.JSP)
                         {
                             assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
 
@@ -109,7 +110,7 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false);
                             }
                             catch (Exception)
                             {
@@ -117,9 +118,8 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false);
                             }
-
                         }
                         else if (assetType == AssetType.BSP)
                         {
@@ -142,7 +142,7 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false);
                             }
                             catch (Exception)
                             {
@@ -150,7 +150,7 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false);
                             }
 
                         }
@@ -165,10 +165,10 @@ namespace IndustrialPark
                                 assetData));
                     }
 
-                    return (AHDRs, a.checkBoxOverwrite.Checked, a.checkBoxGenSimps.Checked, a.checkBoxLedgeGrab.Checked, a.checkBoxEnableVcolors.Checked, a.checkBoxSolidSimps.Checked);
+                    return (AHDRs, a.checkBoxOverwrite.Checked, a.checkBoxGenSimps.Checked, a.checkBoxLedgeGrab.Checked, a.checkBoxEnableVcolors.Checked, a.checkBoxSolidSimps.Checked, assetType == AssetType.JSP);
                 }
 
-            return (null, false, false, false, false, false);
+            return (null, false, false, false, false, false, false);
         }
 
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)
@@ -179,7 +179,7 @@ namespace IndustrialPark
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ((AssetType)comboBoxAssetTypes.SelectedItem == AssetType.BSP)
+            if ((AssetType)comboBoxAssetTypes.SelectedItem != AssetType.Model)
             {
                 checkBoxGenSimps.Checked = false;
                 checkBoxGenSimps.Enabled = false;

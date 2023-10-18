@@ -1597,6 +1597,8 @@ namespace IndustrialPark
                         block.Links = links.ToArray();
                     }
                     return block;
+                case AssetTemplate.Jsp_Info:
+                    return new AssetJSP_INFO(assetName, game, platform);
             }
             MessageBox.Show("Unsupported template");
             return null;

@@ -142,6 +142,13 @@ namespace IndustrialPark
             }
         }
 
+        public Clump_0010 GetClump()
+        {
+            ReadFileMethods.treatStuffAsByteArray = false;
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            return (Clump_0010)sections[0];
+        }
+
         [Browsable(false)]
         public Material_0007[] Materials
         {

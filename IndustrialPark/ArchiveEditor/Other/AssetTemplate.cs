@@ -72,6 +72,9 @@
         //Empty_Streaming_Sound,
         Empty_BSP,
 
+        // Not for user
+        Jsp_Info,
+
         // BFBB Pickups and Tikis
         Shiny_Red,
         Shiny_Yellow,

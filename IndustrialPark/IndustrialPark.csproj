@@ -162,6 +162,9 @@
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
+    <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section1_00BEEF01.cs" />
+    <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section2_00BEEF02.cs" />
+    <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section3_00BEEF03.cs" />
     <Compile Include="Assets\Shared\Editors\ByteArrayEditor.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Cutscene.cs" />
     <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />

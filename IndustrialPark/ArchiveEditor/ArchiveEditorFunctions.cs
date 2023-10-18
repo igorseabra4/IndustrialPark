@@ -743,7 +743,7 @@ namespace IndustrialPark
                 case AssetType.JSP:
                     return new AssetJSP(AHDR, game, endianness, Program.Renderer);
                 case AssetType.JSPInfo:
-                    return new AssetJSP_INFO(AHDR, game, defaultJspAssetIds ?? GetJspAssetIDs(AHDR.assetID));
+                    return new AssetJSP_INFO(AHDR, game, platform, defaultJspAssetIds ?? GetJspAssetIDs(AHDR.assetID));
                 case AssetType.Model:
                     return new AssetMODL(AHDR, game, endianness, Program.Renderer);
                 case AssetType.Texture:
@@ -1489,6 +1489,12 @@ namespace IndustrialPark
 
                     UnsavedChanges = true;
                     assetIDs.Add(AHDR.assetID);
+
+                    if (AHDR.assetType == AssetType.JSP)
+                    {
+                        AssetJSP_INFO jspInfo = (AssetJSP_INFO)PlaceTemplate(AHDR.ADBG.assetName + "_jspInfo", AssetTemplate.Jsp_Info);
+                        jspInfo.CreateFromJsp((AssetJSP)GetFromAssetID(AHDR.assetID));
+                    }
                 }
                 catch (Exception ex)
                 {
