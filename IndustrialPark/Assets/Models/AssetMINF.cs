@@ -231,7 +231,7 @@ namespace IndustrialPark
         public void AddToDictionary()
         {
             AddToRenderingDictionary(assetID, this);
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 AddToRenderingDictionary(Functions.BKDRHash(newName), this);
                 AddToNameDictionary(Functions.BKDRHash(newName), newName);
@@ -301,7 +301,7 @@ namespace IndustrialPark
                 dt.RemoveProperty("CombatID");
                 dt.RemoveProperty("BrainID");
             }
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("BrainID_Movie");
                 dt.RemoveProperty("BrainID_Incredibles");

@@ -87,7 +87,7 @@ namespace IndustrialPark
         private int motionStart(Game game) =>
             game == Game.Scooby ? 0x78 :
             game == Game.BFBB ? 0x90 :
-            game == Game.Incredibles ? 0x8C : 0;
+            game >= Game.Incredibles ? 0x8C : 0;
 
         public AssetPLAT(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Platform, BaseAssetType.Platform, position)
         {
@@ -327,7 +327,7 @@ namespace IndustrialPark
 
             int linkStart =
                 game == Game.BFBB ? 0xC0 :
-                game == Game.Incredibles ? 0xC8 :
+                game >= Game.Incredibles ? 0xC8 :
                 game == Game.Scooby ? 0xA8 : throw new System.ArgumentException("Invalid game");
 
             while (writer.BaseStream.Length < linkStart)

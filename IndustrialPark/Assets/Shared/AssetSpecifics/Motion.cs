@@ -261,7 +261,7 @@ namespace IndustrialPark
         {
             base.Serialize(writer);
             writer.Write(SplineID);
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(Speed);
                 writer.Write(LeanModifier);
@@ -420,7 +420,7 @@ namespace IndustrialPark
             MovementLoopMode = (EMechanismFlags)reader.ReadByte();
             SlideAxis = (Axis)reader.ReadByte();
             RotateAxis = (Axis)reader.ReadByte();
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 ScaleAxis = reader.ReadByte();
                 reader.ReadByte();
@@ -437,7 +437,7 @@ namespace IndustrialPark
             RotateDecelTime = reader.ReadSingle();
             RetractDelay = reader.ReadSingle();
             PostRetractDelay = reader.ReadSingle();
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 ScaleAmount = reader.ReadSingle();
                 ScaleDuration = reader.ReadSingle();
@@ -451,7 +451,7 @@ namespace IndustrialPark
             writer.Write((byte)MovementLoopMode);
             writer.Write((byte)SlideAxis);
             writer.Write((byte)RotateAxis);
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(ScaleAxis);
                 writer.Write((byte)0);
@@ -468,7 +468,7 @@ namespace IndustrialPark
             writer.Write(RotateDecelTime);
             writer.Write(RetractDelay);
             writer.Write(PostRetractDelay);
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(ScaleAmount);
                 writer.Write(ScaleDuration);

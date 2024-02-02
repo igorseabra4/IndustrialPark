@@ -82,7 +82,7 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.MovePoint:
                     IsZone = 0x01;
-                    Delay = game == Game.Incredibles ? 2 : 0;
+                    Delay = game >= Game.Incredibles ? 2 : 0;
                     ZoneRadius = -1;
                     ArenaRadius = -1;
                     break;

@@ -58,7 +58,7 @@ namespace IndustrialPark
                 ScriptStartTime = reader.ReadSingle();
                 int timedLinkCount = reader.ReadInt32();
 
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                 {
                     Flag1 = reader.ReadByte();
                     Flag2 = reader.ReadByte();
@@ -90,7 +90,7 @@ namespace IndustrialPark
             writer.Write(ScriptStartTime);
             writer.Write(_timedLinks.Length);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(Flag1);
                 writer.Write(Flag2);
@@ -105,7 +105,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("Flag1");
                 dt.RemoveProperty("Flag2");

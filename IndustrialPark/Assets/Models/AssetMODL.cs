@@ -20,7 +20,7 @@ namespace IndustrialPark
             base.Setup(renderer);
             AddToRenderingDictionary(assetID, this);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 AddToRenderingDictionary(Functions.BKDRHash(newName), this);
                 AddToNameDictionary(Functions.BKDRHash(newName), newName);

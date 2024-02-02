@@ -82,7 +82,7 @@ namespace IndustrialPark
                     reader.ReadInt32();
                     LoldHeight = BitConverter.ToSingle(AHDR.data, 0x40);
                 }
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                 {
                     UnknownInt44 = reader.ReadInt32();
                     UnknownInt48 = reader.ReadInt32();
@@ -115,7 +115,7 @@ namespace IndustrialPark
             writer.Write(BSP_FX_SurfaceMapper);
             if (game != Game.Scooby)
                 writer.Write(BitConverter.GetBytes(LoldHeight));
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(UnknownInt44);
                 writer.Write(UnknownInt48);
@@ -134,7 +134,7 @@ namespace IndustrialPark
         {
             if (game == Game.Scooby)
                 dt.RemoveProperty("LoldHeight");
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("UnknownInt44");
                 dt.RemoveProperty("UnknownInt48");

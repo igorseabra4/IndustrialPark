@@ -428,7 +428,7 @@ namespace IndustrialPark
                     reader.ReadByte();
                 }
 
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                 {
                     ImpactSound = reader.ReadUInt32();
                     DashImpactType = reader.ReadByte();
@@ -514,7 +514,7 @@ namespace IndustrialPark
                 writer.Write((byte)0);
                 writer.Write((byte)0);
             }
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(ImpactSound);
                 writer.Write(DashImpactType);
@@ -559,7 +559,7 @@ namespace IndustrialPark
             else
                 dt.RemoveProperty("UnknownInt");
 
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("ImpactSound");
                 dt.RemoveProperty("DashImpactType");

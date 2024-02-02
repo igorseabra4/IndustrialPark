@@ -113,22 +113,22 @@ namespace IndustrialPark
         public PlatSpecific_BreakawayPlatform(EndianBinaryReader reader, Game game) : this(game)
         {
             BreakawayDelay = reader.ReadSingle();
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
                 BustModel = reader.ReadUInt32();
             ResetDelay = reader.ReadSingle();
             Settings.FlagValueInt = reader.ReadUInt32();
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 UnknownFloat = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(BreakawayDelay);
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
                 writer.Write(BustModel);
             writer.Write(ResetDelay);
             writer.Write(Settings.FlagValueInt);
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 writer.Write(UnknownFloat);
         }
     }

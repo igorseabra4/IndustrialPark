@@ -109,7 +109,7 @@ namespace IndustrialPark
                 return scoobyTextureVersion;
             if (game == Game.BFBB)
                 return bfbbTextureVersion; // VC
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 return tssmTextureVersion; // Bully
             return 0;
         }

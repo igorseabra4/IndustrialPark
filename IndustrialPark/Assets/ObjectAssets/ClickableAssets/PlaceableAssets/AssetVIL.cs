@@ -175,7 +175,7 @@ namespace IndustrialPark
                 TaskBox1 = reader.ReadUInt32();
                 TaskBox2 = reader.ReadUInt32();
 
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                 {
                     NavMesh2 = reader.ReadUInt32();
                     NPCSettings = reader.ReadUInt32();
@@ -205,7 +205,7 @@ namespace IndustrialPark
             writer.Write(MovePoint);
             writer.Write(TaskBox1);
             writer.Write(TaskBox2);
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(NavMesh2);
                 writer.Write(NPCSettings);
@@ -229,7 +229,7 @@ namespace IndustrialPark
                 dt.RemoveProperty("NavMesh2");
                 dt.RemoveProperty("NPCSettings");
             }
-            else if (game == Game.Incredibles)
+            else if (game >= Game.Incredibles)
             {
                 dt.RemoveProperty("NpcType_BFBB");
                 dt.RemoveProperty("NpcType_Alphabetical");

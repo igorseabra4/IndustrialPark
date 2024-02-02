@@ -186,7 +186,7 @@ namespace IndustrialPark
             int linkStart =
                 game == Game.Scooby ? 0x94 :
                 game == Game.BFBB ? 0x9C :
-                game == Game.Incredibles ? 0xA4 : throw new ArgumentException("Invalid game");
+                game >= Game.Incredibles ? 0xA4 : throw new ArgumentException("Invalid game");
 
             while (writer.BaseStream.Length < linkStart)
                 writer.Write((byte)0);

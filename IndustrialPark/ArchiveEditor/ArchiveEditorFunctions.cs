@@ -158,11 +158,11 @@ namespace IndustrialPark
 
             HipFile hipFile;
             Game game;
-            Platform platformFromFile;
+            Platform platform;
 
             try
             {
-                (hipFile, game, platformFromFile) = HipFile.FromPath(fileName);
+                (hipFile, game, platform) = HipFile.FromPath(fileName);
             }
             catch (Exception e)
             {
@@ -172,13 +172,17 @@ namespace IndustrialPark
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
 
-            scoobyPlatform = hipFile.HIPB.ScoobyPlatform;
+#if DEBUG
+            MessageBox.Show($"Detected Game: {game}\nDetected Platform: {platform}");
+#endif
 
+            while (game == Game.Unknown)
+                game = ChooseGame.GetGame();
             this.game = game;
-            platform = (scoobyPlatform != Platform.Unknown) ? scoobyPlatform : platformFromFile;
 
             while (platform == Platform.Unknown)
                 platform = ChoosePlatformDialog.GetPlatform();
+            this.platform = platform;
 
             string assetsWithError = "";
 
@@ -319,6 +323,7 @@ namespace IndustrialPark
             if (NoLayers)
                 HIPB.HasNoLayers = 1;
             HIPB.ScoobyPlatform = platform;
+            HIPB.IncrediblesGame = game;
 
             var layers = NoLayers ? BuildLayers() : Layers;
             for (int i = 0; i < layers.Count; i++)
@@ -333,19 +338,21 @@ namespace IndustrialPark
                     HIPB.LayerNames[i] = layers[i].LayerName;
             }
 
+            PACK.PMOD.modDate = (int)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
+
             return new HipFile(new Section_HIPA(), PACK, DICT, new Section_STRM(), HIPB);
         }
 
         private static int LayerTypeGenericToSpecific(LayerType layerType, Game game)
         {
-            if (game == Game.Incredibles || layerType < LayerType.BSP)
+            if (game >= Game.Incredibles || layerType < LayerType.BSP)
                 return (int)layerType;
             return (int)layerType - 1;
         }
 
         private static LayerType LayerTypeSpecificToGeneric(int layerType, Game game)
         {
-            if (game == Game.Incredibles || layerType < 2)
+            if (game >= Game.Incredibles || layerType < 2)
                 return (LayerType)layerType;
             return (LayerType)(layerType + 1);
         }
@@ -752,7 +759,7 @@ namespace IndustrialPark
                 case AssetType.SoundInfo:
                     if (platform == Platform.GameCube)
                     {
-                        if (game != Game.Incredibles)
+                        if (game < Game.Incredibles)
                             return new AssetSNDI_GCN_V1(AHDR, game, endianness);
                         return new AssetSNDI_GCN_V2(AHDR, game);
                     }

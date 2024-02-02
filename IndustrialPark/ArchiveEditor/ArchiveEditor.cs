@@ -266,7 +266,7 @@ namespace IndustrialPark
             programIsChangingStuff = true;
 
             comboBoxLayerTypes.Items.Clear();
-            if (archive.game == Game.Incredibles)
+            if (archive.game >= Game.Incredibles)
                 comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_TSSM)).Cast<object>().ToArray());
             else
                 comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_BFBB)).Cast<object>().ToArray());
@@ -433,7 +433,7 @@ namespace IndustrialPark
             {
                 if (!archive.NoLayers)
                 {
-                    if (archive.game == Game.Incredibles)
+                    if (archive.game >= Game.Incredibles)
                         comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType();
                     else
                         comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType();
@@ -1523,7 +1523,7 @@ namespace IndustrialPark
                 output.WriteLine($"File path: {currentFilepath}");
                 output.WriteLine($"File size: {new FileInfo(currentFilepath).Length} Bytes");
                 output.WriteLine($"Platform: {archive.platform}");
-                string game = archive.game == Game.Incredibles ? "Incredible/TSSM/ROTU" : archive.game.ToString();
+                string game = archive.game >= Game.Incredibles ? "Incredible/TSSM/ROTU" : archive.game.ToString();
                 output.WriteLine($"Game: {game}");
                 output.WriteLine($"Number of Layers: {archive.LayerCount}");
                 output.WriteLine($"Number of Assets: {archive.AssetCount}");
@@ -1617,7 +1617,7 @@ namespace IndustrialPark
                                 else if (archive.game == Game.Scooby) // Scooby
                                 {
                                 }
-                                else if (archive.game == Game.Incredibles) // TSSM/Incredibles/ROTU
+                                else if (archive.game >= Game.Incredibles) // TSSM/Incredibles/ROTU
                                 {
                                     switch (GetGameFromGameConfigIni(GetCurrentlyOpenFileName()))
                                     {
@@ -1800,7 +1800,7 @@ namespace IndustrialPark
                     try
                     {
                         string extension =
-                            (archive.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                            (archive.platform == Platform.GameCube && asset.game < Game.Incredibles) ? ".DSP" :
                             (archive.platform == Platform.Xbox) ? ".WAV" :
                             (archive.platform == Platform.PS2) ? ".VAG" :
                             "";

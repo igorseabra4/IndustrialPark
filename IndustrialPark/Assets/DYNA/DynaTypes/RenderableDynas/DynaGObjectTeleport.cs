@@ -69,7 +69,7 @@ namespace IndustrialPark
                 _mrkr = reader.ReadUInt32();
                 Opened = reader.ReadInt32Bool();
                 _launchAngle = reader.ReadInt32();
-                if (game != Game.Incredibles && Version > 1)
+                if (game < Game.Incredibles && Version > 1)
                     CameraAngle = reader.ReadInt32();
                 TargetTeleportBox = reader.ReadUInt32();
 
@@ -83,7 +83,7 @@ namespace IndustrialPark
             writer.Write(_mrkr);
             writer.Write(Opened ? 1 : 0);
             writer.Write(_launchAngle);
-            if (game != Game.Incredibles && Version > 1)
+            if (game < Game.Incredibles && Version > 1)
                 writer.Write(CameraAngle);
             writer.Write(TargetTeleportBox);
         }

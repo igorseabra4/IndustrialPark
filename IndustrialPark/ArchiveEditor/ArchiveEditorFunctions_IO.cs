@@ -98,7 +98,7 @@ namespace IndustrialPark
 
                     if (hip.Item3 == Platform.GameCube)
                     {
-                        if (hip.Item2 == Game.Incredibles)
+                        if (hip.Item2 >= Game.Incredibles)
                             MergeSNDI(new AssetSNDI_GCN_V2(AHDR, hip.Item2));
                         else
                             MergeSNDI(new AssetSNDI_GCN_V1(AHDR, hip.Item2, hip.Item3.Endianness()));
@@ -161,7 +161,7 @@ namespace IndustrialPark
                 if (j > 0 && j < DICT.LTOC.LHDRList.Count)
                 {
                     LayerType layerType;
-                    if (game == Game.Incredibles || DICT.LTOC.LHDRList[j].layerType < 2)
+                    if (game >= Game.Incredibles || DICT.LTOC.LHDRList[j].layerType < 2)
                         layerType = (LayerType)DICT.LTOC.LHDRList[j].layerType;
                     else
                         layerType = (LayerType)(DICT.LTOC.LHDRList[j].layerType + 1);

@@ -72,9 +72,9 @@ namespace IndustrialPark
         }
 
         protected static ShrapnelLocation ShrapnelLocation(Game game) =>
-            game == Game.Incredibles ? new ShrapnelLocation_TSSM() : new ShrapnelLocation();
+            game >= Game.Incredibles ? new ShrapnelLocation_TSSM() : new ShrapnelLocation();
         protected static ShrapnelLocation ShrapnelLocation(EndianBinaryReader reader, Game game) =>
-            game == Game.Incredibles ? new ShrapnelLocation_TSSM(reader) : new ShrapnelLocation(reader);
+            game >= Game.Incredibles ? new ShrapnelLocation_TSSM(reader) : new ShrapnelLocation(reader);
     }
 
     public class ShrapnelEntry_Particle : Shrapnel
@@ -106,7 +106,7 @@ namespace IndustrialPark
             Unknown2 = reader.ReadInt16();
             Unknown3 = reader.ReadInt16();
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 ReadPad(reader, 0x48);
                 Dummy0 = reader.ReadInt32();
@@ -130,7 +130,7 @@ namespace IndustrialPark
             writer.Write(Unknown2);
             writer.Write(Unknown3);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 WritePad(writer, 0x48);
                 writer.Write(Dummy0);
@@ -144,7 +144,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
                 dt.RemoveProperty("Dummy0");
         }
     }
@@ -186,7 +186,7 @@ namespace IndustrialPark
             Launch = ShrapnelLocation(reader, game);
             Velocity = ShrapnelLocation(reader, game);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 VelocityPlusMinus = ShrapnelLocation(reader, game);
                 Rotation = ShrapnelLocation(reader, game);
@@ -220,7 +220,7 @@ namespace IndustrialPark
             Launch.Serialize(writer);
             Velocity.Serialize(writer);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 VelocityPlusMinus.Serialize(writer);
                 Rotation.Serialize(writer);
@@ -241,7 +241,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("VelocityPlusMinus");
                 dt.RemoveProperty("Rotation");
@@ -295,7 +295,7 @@ namespace IndustrialPark
         {
             Sound = reader.ReadUInt32();
             Source = ShrapnelLocation(reader, game);
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 Volume = reader.ReadSingle();
                 InnerRadius = reader.ReadSingle();
@@ -310,7 +310,7 @@ namespace IndustrialPark
             writer.Write(Sound);
             Source.Serialize(writer);
 
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 writer.Write(Volume);
                 writer.Write(InnerRadius);
@@ -320,7 +320,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 dt.RemoveProperty("Volume");
                 dt.RemoveProperty("InnerRadius");

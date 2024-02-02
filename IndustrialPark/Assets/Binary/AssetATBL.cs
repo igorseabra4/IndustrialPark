@@ -228,7 +228,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 dt.RemoveProperty("EffectType");
                 dt.RemoveProperty("UserDataBytes");
@@ -262,7 +262,7 @@ namespace IndustrialPark
             StartTime = reader.ReadSingle();
             EndTime = reader.ReadSingle();
             Flags = reader.ReadInt32();
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 EffectType = reader.ReadInt32();
                 var userDataSize = reader.ReadInt32();
@@ -289,7 +289,7 @@ namespace IndustrialPark
             writer.Write(EndTime);
             writer.Write(Flags);
 
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 writer.Write(EffectType);
                 writer.Write(UserDataBytes.Length);

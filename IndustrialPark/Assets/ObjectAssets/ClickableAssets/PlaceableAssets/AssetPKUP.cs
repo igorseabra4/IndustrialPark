@@ -42,7 +42,7 @@ namespace IndustrialPark
 
         public AssetPKUP(string assetName, Game game, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Pickup, BaseAssetType.Pickup, position)
         {
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 Model = 0x94E25463;
             else
                 Model = pkupsMinfName;

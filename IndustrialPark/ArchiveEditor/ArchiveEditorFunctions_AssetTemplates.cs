@@ -912,7 +912,7 @@ namespace IndustrialPark
                     {
                         new Link(game)
                         {
-                            ArgumentAsset = game == Game.Incredibles ?
+                            ArgumentAsset = game >= Game.Incredibles ?
                             PlaceTemplate(position, ref assetIDs, "CHECKPOINT_POINTER", AssetTemplate.Pointer).assetID :
                             PlaceTemplate(position, ref assetIDs, "CHECKPOINT_MRKR", AssetTemplate.Marker).assetID,
                             TargetAsset = checkpointDisp,
@@ -929,7 +929,7 @@ namespace IndustrialPark
                             EventSendID = (ushort)EventBFBB.Run
                         });
 
-                    if (template == AssetTemplate.Checkpoint && game == Game.Incredibles)
+                    if (template == AssetTemplate.Checkpoint && game >= Game.Incredibles)
                     {
                         links.Add(new Link(game)
                         {
@@ -1171,7 +1171,7 @@ namespace IndustrialPark
                         return new AssetSNDI_XBOX(assetName);
                     if (platform == Platform.PS2)
                         return new AssetSNDI_PS2(assetName);
-                    if (game == Game.Incredibles)
+                    if (game >= Game.Incredibles)
                         return new AssetSNDI_GCN_V2(assetName);
                     return new AssetSNDI_GCN_V1(assetName);
                 }
@@ -1685,14 +1685,14 @@ namespace IndustrialPark
         private void PlaceDefaultAssets()
         {
             Asset bsp = null;
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 AddLayer(LayerType.BSP);
                 SelectedLayerIndex = 0;
                 bsp = PlaceTemplate("empty_bsp", AssetTemplate.Empty_BSP);
             }
             AddLayer();
-            SelectedLayerIndex = game == Game.Incredibles ? 0 : 1;
+            SelectedLayerIndex = game >= Game.Incredibles ? 0 : 1;
 
             AssetPLYR player = (AssetPLYR)PlaceTemplate(template: AssetTemplate.Player);
 
@@ -1700,7 +1700,7 @@ namespace IndustrialPark
 
             env.StartCamera = PlaceTemplate(new Vector3(0, 100, 100), startCamName, AssetTemplate.Start_Camera).assetID;
 
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 env.BSP = bsp.assetID;
                 PlaceTemplate(pkupsMinfName, AssetTemplate.Model_Info);
@@ -1711,7 +1711,7 @@ namespace IndustrialPark
                 env.Object_LightKit = PlaceTemplate("lights", AssetTemplate.LKIT_lights).assetID;
                 player.LightKit = PlaceTemplate("JF_SB_lights", AssetTemplate.LKIT_JF_SB_lights).assetID;
             }
-            else if (game == Game.Incredibles)
+            else if (game >= Game.Incredibles)
             {
                 var light_kit = (AssetLKIT)PlaceTemplate("jf01_light_kit", AssetTemplate.LKIT_lights);
                 player.LightKit = light_kit.assetID;

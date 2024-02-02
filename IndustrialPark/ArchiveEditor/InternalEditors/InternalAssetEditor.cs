@@ -180,7 +180,7 @@ namespace IndustrialPark
                 IShrapnelType.Sound
             };
 
-            if (asset.game == Game.Incredibles)
+            if (asset.game >= Game.Incredibles)
             {
                 AddRow(ButtonSize);
                 AddRow(ButtonSize);

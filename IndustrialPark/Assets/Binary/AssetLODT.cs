@@ -33,7 +33,7 @@ namespace IndustrialPark
             LOD2_MinDistance = reader.ReadSingle();
             LOD3_MinDistance = reader.ReadSingle();
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 Unknown = reader.ReadSingle();
         }
 
@@ -48,7 +48,7 @@ namespace IndustrialPark
             writer.Write(LOD2_MinDistance);
             writer.Write(LOD3_MinDistance);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 writer.Write(Unknown);
         }
 

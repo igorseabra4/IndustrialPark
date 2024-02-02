@@ -268,7 +268,7 @@ namespace IndustrialPark
             Model = reader.ReadUInt32();
             SubObjectBits.FlagValueInt = reader.ReadUInt32();
             PipeFlags = reader.ReadInt32();
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 Unknown = reader.ReadUInt32();
         }
 
@@ -278,7 +278,7 @@ namespace IndustrialPark
             writer.Write(SubObjectBits.FlagValueInt);
             writer.Write(PipeFlags);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 writer.Write(Unknown);
         }
     }

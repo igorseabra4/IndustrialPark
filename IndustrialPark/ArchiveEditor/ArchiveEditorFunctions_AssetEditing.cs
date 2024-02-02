@@ -302,7 +302,7 @@ namespace IndustrialPark
 
             if (platform == Platform.GameCube)
             {
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                 {
                     var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_GCN_V2)asset).ToList();
                     for (int i = 1; i < SNDIs.Count; i++)
@@ -632,7 +632,7 @@ namespace IndustrialPark
                     }
                     case AssetType.CutsceneTableOfContents:
                     {
-                        if (game == Game.Incredibles)
+                        if (game >= Game.Incredibles)
                             cutscenetocLayer.AssetIDs.Add(a.assetID);
                         else
                             sndtocLayer.AssetIDs.Add(a.assetID);

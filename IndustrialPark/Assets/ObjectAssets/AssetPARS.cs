@@ -59,7 +59,7 @@ namespace IndustrialPark
                 Cmd = new AssetID[cmdSize];
                 for (int i = 0; i < cmdSize; i++)
                     Cmd[i] = reader.ReadUInt32();
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                 {
                     Unknown01 = reader.ReadByte();
                     Unknown02 = reader.ReadByte();
@@ -87,7 +87,7 @@ namespace IndustrialPark
             foreach (var c in Cmd)
                 writer.Write(c);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 writer.Write(Unknown01);
                 writer.Write(Unknown02);
@@ -100,7 +100,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("Unknown01");
                 dt.RemoveProperty("Unknown02");
