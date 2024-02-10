@@ -24,5 +24,33 @@
         public int Popper_Plankton { get; set; } = 2;
         public int Minimerv { get; set; } = 2;
         public int Mervyn { get; set; } = 2;
+
+        public override int GetHashCode()
+        {
+            int hashCode = -466139840;
+            hashCode = hashCode * -1521134295 + Fogger_Desert.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Goofy.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Junk.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Plankton.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Trench.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Thug.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Arena1.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Arena2.GetHashCode();
+            hashCode = hashCode * -1521134295 + Fogger_Arena3.GetHashCode();
+            hashCode = hashCode * -1521134295 + Slammer_Goofy.GetHashCode();
+            hashCode = hashCode * -1521134295 + Slammer_Desert.GetHashCode();
+            hashCode = hashCode * -1521134295 + Slammer_Thug.GetHashCode();
+            hashCode = hashCode * -1521134295 + Flinger_Desert.GetHashCode();
+            hashCode = hashCode * -1521134295 + Flinger_Trench.GetHashCode();
+            hashCode = hashCode * -1521134295 + Flinger_Junk.GetHashCode();
+            hashCode = hashCode * -1521134295 + Spinner_Thug.GetHashCode();
+            hashCode = hashCode * -1521134295 + Spinner_Junk.GetHashCode();
+            hashCode = hashCode * -1521134295 + Spinner_Plankton.GetHashCode();
+            hashCode = hashCode * -1521134295 + Popper_Trench.GetHashCode();
+            hashCode = hashCode * -1521134295 + Popper_Plankton.GetHashCode();
+            hashCode = hashCode * -1521134295 + Minimerv.GetHashCode();
+            hashCode = hashCode * -1521134295 + Mervyn.GetHashCode();
+            return hashCode;
+        }
     }
 }

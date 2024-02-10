@@ -97,5 +97,22 @@ namespace IndustrialPark.Randomizer
         [Description(Constants.powerupExample)]
         public PowerupStatus Pat_Throw { get; set; } = PowerupStatus.Given;
 
+        public override int GetHashCode()
+        {
+            int hashCode = -1866944443;
+            hashCode = hashCode * -1521134295 + _preset.GetHashCode();
+            hashCode = hashCode * -1521134295 + Preset.GetHashCode();
+            hashCode = hashCode * -1521134295 + SB_Health.GetHashCode();
+            hashCode = hashCode * -1521134295 + SB_KarateSpin.GetHashCode();
+            hashCode = hashCode * -1521134295 + SB_Bash.GetHashCode();
+            hashCode = hashCode * -1521134295 + SB_Bowl.GetHashCode();
+            hashCode = hashCode * -1521134295 + SB_Guitar.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pat_Health.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pat_StarSpin.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pat_Cartwheel.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pat_BellyFlop.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pat_Throw.GetHashCode();
+            return hashCode;
+        }
     }
 }

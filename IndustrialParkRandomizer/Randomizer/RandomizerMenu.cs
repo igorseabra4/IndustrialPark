@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿using IndustrialParkRandomizer.Helpers;
 using Newtonsoft.Json;
 using System;
 using System.IO;
@@ -10,8 +10,8 @@ namespace IndustrialPark.Randomizer
     public partial class RandomizerMenu : Form
     {
         private Randomizer randomizer;
-        private string backupDir;
         private string pathToSettings => Application.StartupPath + "/randomizer_settings.json";
+        private string heavyModManagerPath;
 
         public RandomizerMenu()
         {
@@ -20,8 +20,7 @@ namespace IndustrialPark.Randomizer
             if (File.Exists(pathToSettings))
             {
                 Randomizer_JSON_Settings settings = JsonConvert.DeserializeObject<Randomizer_JSON_Settings>(File.ReadAllText(pathToSettings));
-                backupDir = settings.backupDir;
-                useBackupDirectoryToolStripMenuItem.Checked = !string.IsNullOrEmpty(settings.backupDir);
+                heavyModManagerPath = settings.heavyModManagerPath;
                 checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.checkForUpdatesOnStartup;
 
                 if (settings.checkForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
@@ -49,101 +48,22 @@ namespace IndustrialPark.Randomizer
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(new Randomizer_JSON_Settings
             {
                 checkForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
-                backupDir = backupDir,
-                rootDir = randomizer.rootDir,
-                isDir = randomizer.isDir
+                heavyModManagerPath = heavyModManagerPath
             }, Formatting.Indented));
         }
 
-        private void ChooseBackupDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
+        private void setHeavyModManagerPathToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            bool success = false;
-            try
+            var openFile = new OpenFileDialog()
             {
-                void WindowsFolderPicker()
-                {
-                    using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your backup files directory.", IsFolderPicker = true })
-                        if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                        {
-                            backupDir = openFile.FileName;
-                            success = true;
-                        }
-                }
+                Filter = "HeavyModManager.exe|HeavyModManager.exe"
+            };
 
-                WindowsFolderPicker();
-            }
-            catch
+            if (openFile.ShowDialog() == DialogResult.OK)
             {
-                using (FolderBrowserDialog openFile = new FolderBrowserDialog())
-                    if (openFile.ShowDialog() == DialogResult.OK)
-                    {
-                        backupDir = openFile.SelectedPath;
-                        success = true;
-                    }
-            }
-            if (success)
-            {
-                useBackupDirectoryToolStripMenuItem.Checked = true;
+                heavyModManagerPath = openFile.FileName;
                 UpdateInterfaceFromRandomizer();
             }
-        }
-
-        private void UseBackupDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            useBackupDirectoryToolStripMenuItem.Checked = !useBackupDirectoryToolStripMenuItem.Checked;
-            if (useBackupDirectoryToolStripMenuItem.Checked)
-            {
-                chooseBackupDirectoryToolStripMenuItem.Enabled = true;
-                ChooseBackupDirectoryToolStripMenuItem_Click(null, null);
-            }
-            else
-            {
-                chooseBackupDirectoryToolStripMenuItem.Enabled = false;
-                backupDir = null;
-            }
-            UpdateInterfaceFromRandomizer();
-        }
-
-        private void ChooseRootDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            bool success = false;
-            try
-            {
-                void WindowsFolderPicker()
-                {
-                    using (CommonOpenFileDialog openFile = new CommonOpenFileDialog() { Title = "Please choose your game root (files) directory.", IsFolderPicker = true })
-                        if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                        {
-                            randomizer.SetRootDir(openFile.FileName);
-                            success = true;
-                        }
-                }
-
-                WindowsFolderPicker();
-            }
-            catch
-            {
-                using (FolderBrowserDialog openFile = new FolderBrowserDialog())
-                    if (openFile.ShowDialog() == DialogResult.OK)
-                    {
-                        randomizer.SetRootDir(openFile.SelectedPath);
-                        success = true;
-                    }
-            }
-            if (success)
-            {
-                UpdateInterfaceFromRandomizer();
-            }
-        }
-
-        private void ChooseSingleFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog openFile = new OpenFileDialog())
-                if (openFile.ShowDialog() == DialogResult.OK)
-                {
-                    randomizer.SetFile(openFile.FileName);
-                    UpdateInterfaceFromRandomizer();
-                }
         }
 
         private void ButtonRandomSeed_Click(object sender, EventArgs e)
@@ -163,13 +83,68 @@ namespace IndustrialPark.Randomizer
 
         private void buttonPerform_Click(object sender, EventArgs e)
         {
+            var mod = new Mod();
+            string gameFolderName;
+
+            switch (randomizer.game)
+            {
+                case 0:
+                    gameFolderName = "bfbb";
+                    mod.Game = HMM_Game.BFBB;
+                    break;
+                case 1:
+                    gameFolderName = "scooby";
+                    mod.Game = HMM_Game.Scooby;
+                    break;
+                case 2:
+                    gameFolderName = "movie";
+                    mod.Game = HMM_Game.Movie;
+                    break;
+                default:
+                    throw new Exception();
+            }
+
+            var hmmDir = Path.GetDirectoryName(heavyModManagerPath);
+            var backupDir = Path.Combine(hmmDir, "Games", "gc", gameFolderName, "backup", "files");
+
+            if (!Directory.Exists(backupDir))
+            {
+                MessageBox.Show("Game backup not found. Please create a backup for this game in Heavy Mod Manager before randomizing it.");
+                return;
+            }
+
+            mod.CreatedAt = DateTime.Now;
+            mod.UpdatedAt = mod.CreatedAt;
+            mod.ModName = $"Randomized Game {mod.CreatedAt.Year:D4}-{mod.CreatedAt.Month:D2}-{mod.CreatedAt.Day:D2} {mod.CreatedAt.Hour:D2}:{mod.CreatedAt.Minute:D2}:{mod.CreatedAt.Second:D2} [{randomizer.seed}]";
+            mod.Author = "Industrial Park Randomizer";
+            mod.Description = "This is a randomized game generated by Industrial Park's randomizer. You can find the settings file inside the mod's files folder.";
+            mod.ModId = $"{gameFolderName}-randomizer-{randomizer.seed}-{(uint)randomizer.settings.GetHashCode()}";
+
+            if (randomizer.settings.skipSpatulaAnims)
+                mod.ArCodes += "$skip spatula anims\n040634F8 60000000\n0406363C 60000000\n04076A38 60000000\n04076A4C 60000000\n040640A0 60000000";
+
+            if (randomizer.settings.widescreen)
+                mod.GeckoCodes += "$16x9 aspect\n043d07e0 3f400000\n043d07e4 3f800000\n043d07e8 3f800000\n043d07f0 80134030\n043d07f8 41000000\nc2134024 00000003\n3c808032 38600003\n38844258 38a00006\n60000000 00000000\n04134028 48000005\nc213402c 00000002\n7e2802a6 3a310008\n7e2803a6 00000000\nc2134030 00000013\nc222be60 c262be64\nfe409890 ee529024\nfc119800 41800010\nee319824 ee528824\nfe209890 c262be68\nee3104f2 ee5204f2\n8a22be6c 2c110001\n40820020 8a22be74\n2c110001 41820014\nee318824 ee529024\n3a200000 9a22be6c\n8a22be74 2c110001\n4182002c 3e20802b\nd2317dd0 fe208850\nd2317dbc d2517dc4\nc262bddc ee73982a\nee5204f2 fe409050\nd242bdb4 4e800020\n60000000 00000000\nc213403c 00000004\n3a200001 9a22be6c\n8222be70 7e2903a6\n4e800421 e3e10058\n60000000 00000000\nc20209ac 00000002\n3883e178 38600003\n60000000 00000000\n040209b0 48113681\nc20209b8 00000004\n7c000278 3a200001\n9a22be6c 8222be70\n7e2903a6 4e800421\n60000000 00000000\nc2020a84 00000002\n3884e178 38a00078\n60000000 00000000\n04020a88 481135a9\nc2020a90 00000004\n7c000278 3a200001\n9a22be6c 8222be70\n7e2903a6 4e800421\n60000000 00000000\nc20bab60 00000002\n38600003 38e00006\n60000000 00000000\n040bab64 480794cd\nc20bacfc 00000004\n3a200001 9a22be6c\n8222be70 7e2903a6\n4e800421 e3e100f8\n60000000 00000000\nc20c3ca4 00000002\nc0c29710 3a200001\n9a22be74 00000000\nc21d0ab4 00000008\ned090024 8a22be74\n2c110001 4082002c\nc222be60 fe404890\nfc114800 4180000c\nfe408890 fe204890\ned089024 ed4a0472\n3a200000 9a22be74\n60000000 00000000\nc2245d4c 00000007\n3a200001 9a22be74\n8222be70 7e2903a6\n4e800421 3a200000\n9a22be74 ec0004b2\nd003000c c0030004\nec000472 d0030004\n60000000 00000000\n042363f0 c082be78\n0423642c c022be78\nc209913c 00000003\nd0a10068 8222be70\n7e2903a6 4e800421\n60000000 00000000\nc2099168 00000004\n3c608026 3a200001\n9a22be6c 8222be70\n7e2903a6 4e800421\n60000000 00000000\n043cd04c 00000000";
+
+            var modDir = Path.Combine(hmmDir, "Mods", mod.ModId);
+            var destinationDir = Path.Combine(modDir, "files");
+
             ProgressBar progressBar = new ProgressBar("Randomizing...");
             progressBar.Show();
 
             Enabled = false;
             new Thread(new ThreadStart(() =>
             {
-                randomizer.Perform(backupDir, progressBar);
+                randomizer.Perform(backupDir, destinationDir, progressBar);
+
+                mod.RemoveFiles = randomizer.RemoveFiles;
+                mod.INIReplacements = randomizer.INI;
+
+                if (!Directory.Exists(destinationDir))
+                    Directory.CreateDirectory(destinationDir);
+
+                File.WriteAllText(Path.Combine(modDir, "mod.json"), JsonConvert.SerializeObject(mod));
+
                 ThreadDone(progressBar);
             })).Start();
         }
@@ -191,7 +166,7 @@ namespace IndustrialPark.Randomizer
 
         private void buttonReset_Click(object sender, EventArgs e)
         {
-            randomizer = new Randomizer(randomizer.rootDir, randomizer.isDir, comboBoxGame.SelectedIndex);
+            randomizer = new Randomizer(comboBoxGame.SelectedIndex);
             randomizer.SetSeed(textBoxSeed.Text);
             UpdateInterfaceFromRandomizer();
         }
@@ -244,23 +219,16 @@ namespace IndustrialPark.Randomizer
 
             comboBoxGame.SelectedIndex = randomizer.game;
 
-            labelBackupDir.Text = "Backup Directory: " + (string.IsNullOrEmpty(backupDir) ? "None" : backupDir);
-
-            if (!string.IsNullOrEmpty(randomizer.rootDir))
+            if (!string.IsNullOrEmpty(heavyModManagerPath) && File.Exists(heavyModManagerPath))
             {
-                if (randomizer.isDir)
-                {
-                    labelRootDir.Text = "Game Directory: " + randomizer.rootDir;
-                    buttonPerform.Enabled = true;
-                }
-                else
-                {
-                    labelRootDir.Text = "File: " + randomizer.rootDir;
-                    buttonPerform.Enabled = true;
-                }
+                labelHmmPath.Text = "Heavy Mod Manager path: " + Path.GetDirectoryName(heavyModManagerPath);
+                buttonPerform.Enabled = true;
             }
             else
+            {
+                labelHmmPath.Text = "Heavy Mod Manager path not set";
                 buttonPerform.Enabled = false;
+            }
 
             textBoxSeed.Text = randomizer.seedText;
             labelSeed.Text = "Seed: " + randomizer.seed.ToString();

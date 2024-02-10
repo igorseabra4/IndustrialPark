@@ -15,5 +15,16 @@ namespace IndustrialPark.Randomizer
         public int ShhhTiki { get; set; } = 1;
         [DisplayName("Stone/Steel")]
         public int StoneTiki { get; set; } = 1;
+
+        public override int GetHashCode()
+        {
+            int hashCode = 919350124;
+            hashCode = hashCode * -1521134295 + WoodenTiki.GetHashCode();
+            hashCode = hashCode * -1521134295 + FloatingTiki.GetHashCode();
+            hashCode = hashCode * -1521134295 + ThunderTiki.GetHashCode();
+            hashCode = hashCode * -1521134295 + ShhhTiki.GetHashCode();
+            hashCode = hashCode * -1521134295 + StoneTiki.GetHashCode();
+            return hashCode;
+        }
     }
 }

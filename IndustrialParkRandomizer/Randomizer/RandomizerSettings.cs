@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark.Randomizer
@@ -222,14 +223,17 @@ namespace IndustrialPark.Randomizer
         [Category("Patches"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
         public bool restoreRobotLaugh { get; set; }
 
-        [Category("Patches"), DisplayName("Widescreen Menu"), Description("Makes the pause menu background fit a 16:9 resolution. Should be used with a widescreen code.")]
-        public bool widescreenMenu { get; set; }
+        [Category("Patches"), DisplayName("Widescreen Patch"), Description("Patches the game to run in a 16:9 resolution by modifying some assets and enabling a widescreen Gecko code.")]
+        public bool widescreen { get; set; }
 
         [Category("Patches"), DisplayName("Disable Cutscenes")]
         public bool disableCutscenes { get; set; }
 
         [Category("Patches"), DisplayName("Disable Flythroughs")]
         public bool disableFlythroughs { get; set; }
+
+        [Category("Patches"), DisplayName("Skip Spatula Animations")]
+        public bool skipSpatulaAnims { get; set; }
 
         [Category("Patches"), DisplayName("Open Teleport Boxes")]
         public bool openTeleportBoxes { get; set; }
@@ -288,7 +292,7 @@ namespace IndustrialPark.Randomizer
             Taxi_Trigger_Positions = false;
             Bus_Stop_Trigger_Positions = false;
             openTeleportBoxes = false;
-            widescreenMenu = false;
+            widescreen = false;
             Set_Scale = false;
             VertexColors = false;
 
@@ -535,6 +539,98 @@ namespace IndustrialPark.Randomizer
                 default:
                     throw new Exception("Invalid game");
             }
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1981898164;
+            hashCode = hashCode * -1521134295 + BoulderSettings.GetHashCode();
+            hashCode = hashCode * -1521134295 + boulderMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + boulderMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string[]>.Default.GetHashCode(skipFiles);
+            hashCode = hashCode * -1521134295 + Pickups.GetHashCode();
+            hashCode = hashCode * -1521134295 + Disco_Floors.GetHashCode();
+            hashCode = hashCode * -1521134295 + Music.GetHashCode();
+            hashCode = hashCode * -1521134295 + FloatingBlockChallenge.GetHashCode();
+            hashCode = hashCode * -1521134295 + Cameras.GetHashCode();
+            hashCode = hashCode * -1521134295 + Textures.GetHashCode();
+            hashCode = hashCode * -1521134295 + Textures_Special.GetHashCode();
+            hashCode = hashCode * -1521134295 + Sounds.GetHashCode();
+            hashCode = hashCode * -1521134295 + Mix_Sound_Types.GetHashCode();
+            hashCode = hashCode * -1521134295 + Warps.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string[]>.Default.GetHashCode(skipFilesWarps);
+            hashCode = hashCode * -1521134295 + Tiki_Types.GetHashCode();
+            hashCode = hashCode * -1521134295 + Tiki_Models.GetHashCode();
+            hashCode = hashCode * -1521134295 + Tiki_Allow_Any_Type.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<TikiProbabilities>.Default.GetHashCode(TikiProbabilities);
+            hashCode = hashCode * -1521134295 + Enemy_Types.GetHashCode();
+            hashCode = hashCode * -1521134295 + Enemies_Allow_Any_Type.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<EnemyProbabilities>.Default.GetHashCode(EnemyProbabilities);
+            hashCode = hashCode * -1521134295 + EqualityComparer<EnemyProbabilitiesMovie>.Default.GetHashCode(EnemyProbabilitiesMovie);
+            hashCode = hashCode * -1521134295 + MovePoint_Radius.GetHashCode();
+            hashCode = hashCode * -1521134295 + mvptMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + mvptMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + PlatformSpeed.GetHashCode();
+            hashCode = hashCode * -1521134295 + speedMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + speedMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + Markers.GetHashCode();
+            hashCode = hashCode * -1521134295 + Player_Start.GetHashCode();
+            hashCode = hashCode * -1521134295 + Pointer_Positions.GetHashCode();
+            hashCode = hashCode * -1521134295 + Teleport_Box_Positions.GetHashCode();
+            hashCode = hashCode * -1521134295 + Taxi_Trigger_Positions.GetHashCode();
+            hashCode = hashCode * -1521134295 + Bus_Stop_Trigger_Positions.GetHashCode();
+            hashCode = hashCode * -1521134295 + Timers.GetHashCode();
+            hashCode = hashCode * -1521134295 + timerMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + timerMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + Set_Scale.GetHashCode();
+            hashCode = hashCode * -1521134295 + scaleFactorX.GetHashCode();
+            hashCode = hashCode * -1521134295 + scaleFactorY.GetHashCode();
+            hashCode = hashCode * -1521134295 + scaleFactorZ.GetHashCode();
+            hashCode = hashCode * -1521134295 + Scale_Of_Things.GetHashCode();
+            hashCode = hashCode * -1521134295 + scaleMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + scaleMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + RingSizes.GetHashCode();
+            hashCode = hashCode * -1521134295 + ringScaleMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + ringScaleMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + Shiny_Object_Gates.GetHashCode();
+            hashCode = hashCode * -1521134295 + shinyReqMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + shinyReqMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + Spatula_Gates.GetHashCode();
+            hashCode = hashCode * -1521134295 + spatReqMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + spatReqMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + CombatArenaCounts.GetHashCode();
+            hashCode = hashCode * -1521134295 + combatMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + combatMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + Texture_Animations.GetHashCode();
+            hashCode = hashCode * -1521134295 + surfMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + surfMax.GetHashCode();
+            hashCode = hashCode * -1521134295 + Colors.GetHashCode();
+            hashCode = hashCode * -1521134295 + VertexColors.GetHashCode();
+            hashCode = hashCode * -1521134295 + brightColors.GetHashCode();
+            hashCode = hashCode * -1521134295 + strongColors.GetHashCode();
+            hashCode = hashCode * -1521134295 + PlayerCharacters.GetHashCode();
+            hashCode = hashCode * -1521134295 + UnlockCharacters.GetHashCode();
+            hashCode = hashCode * -1521134295 + RandomCharacters.GetHashCode();
+            hashCode = hashCode * -1521134295 + cheatInvincible.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<PowerupCheatsBFBB>.Default.GetHashCode(PowerupCheatsBFBB);
+            hashCode = hashCode * -1521134295 + EqualityComparer<PowerupCheatsScooby>.Default.GetHashCode(PowerupCheatsScooby);
+            hashCode = hashCode * -1521134295 + EqualityComparer<PowerupCheatsMovie>.Default.GetHashCode(PowerupCheatsMovie);
+            hashCode = hashCode * -1521134295 + bootLevelMode.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(bootLevel);
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(BootLevel);
+            hashCode = hashCode * -1521134295 + dontShowMenuOnBoot.GetHashCode();
+            hashCode = hashCode * -1521134295 + allMenuWarpsHB01.GetHashCode();
+            hashCode = hashCode * -1521134295 + restoreRobotLaugh.GetHashCode();
+            hashCode = hashCode * -1521134295 + widescreen.GetHashCode();
+            hashCode = hashCode * -1521134295 + disableCutscenes.GetHashCode();
+            hashCode = hashCode * -1521134295 + disableFlythroughs.GetHashCode();
+            hashCode = hashCode * -1521134295 + openTeleportBoxes.GetHashCode();
+            hashCode = hashCode * -1521134295 + spatReqChum.GetHashCode();
+            hashCode = hashCode * -1521134295 + invisibleLevel.GetHashCode();
+            hashCode = hashCode * -1521134295 + invisibleObjects.GetHashCode();
+            hashCode = hashCode * -1521134295 + bootHipLodtMulti.GetHashCode();
+            hashCode = hashCode * -1521134295 + lodtValue.GetHashCode();
+            return hashCode;
         }
     }
 }

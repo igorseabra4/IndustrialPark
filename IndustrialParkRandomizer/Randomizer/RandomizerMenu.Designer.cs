@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.labelRootDir = new System.Windows.Forms.Label();
             this.buttonPerform = new System.Windows.Forms.Button();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonRandomSeed = new System.Windows.Forms.Button();
@@ -40,30 +39,18 @@
             this.settingsFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.rootDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chooseBackupDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.useBackupDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chooseRootDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.chooseSingleFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setHeavyModManagerPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.labelBackupDir = new System.Windows.Forms.Label();
+            this.labelHmmPath = new System.Windows.Forms.Label();
             this.labelSeed = new System.Windows.Forms.Label();
             this.richTextBoxHelp = new System.Windows.Forms.RichTextBox();
             this.buttonReset = new System.Windows.Forms.Button();
             this.comboBoxGame = new System.Windows.Forms.ComboBox();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // labelRootDir
-            // 
-            this.labelRootDir.AutoSize = true;
-            this.labelRootDir.Location = new System.Drawing.Point(12, 37);
-            this.labelRootDir.Name = "labelRootDir";
-            this.labelRootDir.Size = new System.Drawing.Size(107, 13);
-            this.labelRootDir.TabIndex = 1;
-            this.labelRootDir.Text = "Root Directory: None";
             // 
             // buttonPerform
             // 
@@ -81,7 +68,7 @@
             // buttonHelp
             // 
             this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonHelp.Location = new System.Drawing.Point(391, 132);
+            this.buttonHelp.Location = new System.Drawing.Point(391, 119);
             this.buttonHelp.Name = "buttonHelp";
             this.buttonHelp.Size = new System.Drawing.Size(52, 23);
             this.buttonHelp.TabIndex = 25;
@@ -91,7 +78,7 @@
             // 
             // buttonRandomSeed
             // 
-            this.buttonRandomSeed.Location = new System.Drawing.Point(12, 132);
+            this.buttonRandomSeed.Location = new System.Drawing.Point(12, 119);
             this.buttonRandomSeed.Name = "buttonRandomSeed";
             this.buttonRandomSeed.Size = new System.Drawing.Size(95, 23);
             this.buttonRandomSeed.TabIndex = 29;
@@ -102,7 +89,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 77);
+            this.label3.Location = new System.Drawing.Point(12, 64);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(216, 13);
             this.label3.TabIndex = 27;
@@ -112,7 +99,7 @@
             // 
             this.textBoxSeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSeed.Location = new System.Drawing.Point(12, 93);
+            this.textBoxSeed.Location = new System.Drawing.Point(12, 80);
             this.textBoxSeed.Name = "textBoxSeed";
             this.textBoxSeed.Size = new System.Drawing.Size(431, 20);
             this.textBoxSeed.TabIndex = 0;
@@ -121,7 +108,7 @@
             // buttonClear
             // 
             this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClear.Location = new System.Drawing.Point(318, 132);
+            this.buttonClear.Location = new System.Drawing.Point(318, 119);
             this.buttonClear.Name = "buttonClear";
             this.buttonClear.Size = new System.Drawing.Size(67, 23);
             this.buttonClear.TabIndex = 32;
@@ -135,10 +122,10 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.propertyGridSettings.HelpVisible = false;
-            this.propertyGridSettings.Location = new System.Drawing.Point(12, 161);
+            this.propertyGridSettings.Location = new System.Drawing.Point(12, 148);
             this.propertyGridSettings.Name = "propertyGridSettings";
             this.propertyGridSettings.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridSettings.Size = new System.Drawing.Size(431, 266);
+            this.propertyGridSettings.Size = new System.Drawing.Size(431, 279);
             this.propertyGridSettings.TabIndex = 34;
             this.propertyGridSettings.ToolbarVisible = false;
             this.propertyGridSettings.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGridAsset_SelectedGridItemChanged);
@@ -147,7 +134,6 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsFileToolStripMenuItem,
-            this.rootDirectoryToolStripMenuItem,
             this.optionsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -178,53 +164,28 @@
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
             // 
-            // rootDirectoryToolStripMenuItem
-            // 
-            this.rootDirectoryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.chooseBackupDirectoryToolStripMenuItem,
-            this.useBackupDirectoryToolStripMenuItem,
-            this.chooseRootDirectoryToolStripMenuItem,
-            this.chooseSingleFileToolStripMenuItem});
-            this.rootDirectoryToolStripMenuItem.Name = "rootDirectoryToolStripMenuItem";
-            this.rootDirectoryToolStripMenuItem.Size = new System.Drawing.Size(101, 20);
-            this.rootDirectoryToolStripMenuItem.Text = "Game Directory";
-            // 
-            // chooseBackupDirectoryToolStripMenuItem
-            // 
-            this.chooseBackupDirectoryToolStripMenuItem.Name = "chooseBackupDirectoryToolStripMenuItem";
-            this.chooseBackupDirectoryToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.chooseBackupDirectoryToolStripMenuItem.Text = "Choose Backup Directory";
-            this.chooseBackupDirectoryToolStripMenuItem.Click += new System.EventHandler(this.ChooseBackupDirectoryToolStripMenuItem_Click);
-            // 
-            // useBackupDirectoryToolStripMenuItem
-            // 
-            this.useBackupDirectoryToolStripMenuItem.Name = "useBackupDirectoryToolStripMenuItem";
-            this.useBackupDirectoryToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.useBackupDirectoryToolStripMenuItem.Text = "Use Backup Directory";
-            this.useBackupDirectoryToolStripMenuItem.Click += new System.EventHandler(this.UseBackupDirectoryToolStripMenuItem_Click);
-            // 
-            // chooseRootDirectoryToolStripMenuItem
-            // 
-            this.chooseRootDirectoryToolStripMenuItem.Name = "chooseRootDirectoryToolStripMenuItem";
-            this.chooseRootDirectoryToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.chooseRootDirectoryToolStripMenuItem.Text = "Choose Game Directory";
-            this.chooseRootDirectoryToolStripMenuItem.Click += new System.EventHandler(this.ChooseRootDirectoryToolStripMenuItem_Click);
-            // 
-            // chooseSingleFileToolStripMenuItem
-            // 
-            this.chooseSingleFileToolStripMenuItem.Name = "chooseSingleFileToolStripMenuItem";
-            this.chooseSingleFileToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.chooseSingleFileToolStripMenuItem.Text = "Choose Single File";
-            this.chooseSingleFileToolStripMenuItem.Click += new System.EventHandler(this.ChooseSingleFileToolStripMenuItem_Click);
-            // 
             // optionsToolStripMenuItem
             // 
             this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setHeavyModManagerPathToolStripMenuItem,
+            this.toolStripSeparator1,
             this.checkForUpdatesOnStartupToolStripMenuItem,
             this.checkForUpdatesOnEditorFilesToolStripMenuItem});
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             this.optionsToolStripMenuItem.Text = "Options";
+            // 
+            // setHeavyModManagerPathToolStripMenuItem
+            // 
+            this.setHeavyModManagerPathToolStripMenuItem.Name = "setHeavyModManagerPathToolStripMenuItem";
+            this.setHeavyModManagerPathToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            this.setHeavyModManagerPathToolStripMenuItem.Text = "Set Heavy Mod Manager Path";
+            this.setHeavyModManagerPathToolStripMenuItem.Click += new System.EventHandler(this.setHeavyModManagerPathToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(255, 6);
             // 
             // checkForUpdatesOnStartupToolStripMenuItem
             // 
@@ -240,19 +201,19 @@
             this.checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check For Updates On EditorFiles...";
             this.checkForUpdatesOnEditorFilesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesOnEditorFilesToolStripMenuItem_Click);
             // 
-            // labelBackupDir
+            // labelHmmPath
             // 
-            this.labelBackupDir.AutoSize = true;
-            this.labelBackupDir.Location = new System.Drawing.Point(12, 24);
-            this.labelBackupDir.Name = "labelBackupDir";
-            this.labelBackupDir.Size = new System.Drawing.Size(121, 13);
-            this.labelBackupDir.TabIndex = 36;
-            this.labelBackupDir.Text = "Backup Directory: None";
+            this.labelHmmPath.AutoSize = true;
+            this.labelHmmPath.Location = new System.Drawing.Point(9, 24);
+            this.labelHmmPath.Name = "labelHmmPath";
+            this.labelHmmPath.Size = new System.Drawing.Size(166, 13);
+            this.labelHmmPath.TabIndex = 36;
+            this.labelHmmPath.Text = "Heavy Mod Manager path not set";
             // 
             // labelSeed
             // 
             this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(12, 116);
+            this.labelSeed.Location = new System.Drawing.Point(12, 103);
             this.labelSeed.Name = "labelSeed";
             this.labelSeed.Size = new System.Drawing.Size(38, 13);
             this.labelSeed.TabIndex = 37;
@@ -272,7 +233,7 @@
             // buttonReset
             // 
             this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReset.Location = new System.Drawing.Point(261, 132);
+            this.buttonReset.Location = new System.Drawing.Point(261, 119);
             this.buttonReset.Name = "buttonReset";
             this.buttonReset.Size = new System.Drawing.Size(51, 23);
             this.buttonReset.TabIndex = 39;
@@ -289,7 +250,7 @@
             "SpongeBob SquarePants: Battle For Bikini Bottom",
             "Scooby-Doo: Night of 100 Frights",
             "The SpongeBob SquarePants Movie"});
-            this.comboBoxGame.Location = new System.Drawing.Point(12, 53);
+            this.comboBoxGame.Location = new System.Drawing.Point(12, 40);
             this.comboBoxGame.Name = "comboBoxGame";
             this.comboBoxGame.Size = new System.Drawing.Size(431, 21);
             this.comboBoxGame.TabIndex = 40;
@@ -304,7 +265,7 @@
             this.Controls.Add(this.buttonReset);
             this.Controls.Add(this.richTextBoxHelp);
             this.Controls.Add(this.labelSeed);
-            this.Controls.Add(this.labelBackupDir);
+            this.Controls.Add(this.labelHmmPath);
             this.Controls.Add(this.propertyGridSettings);
             this.Controls.Add(this.buttonRandomSeed);
             this.Controls.Add(this.label3);
@@ -312,7 +273,6 @@
             this.Controls.Add(this.buttonClear);
             this.Controls.Add(this.buttonHelp);
             this.Controls.Add(this.buttonPerform);
-            this.Controls.Add(this.labelRootDir);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
@@ -329,7 +289,6 @@
         }
 
         #endregion
-        private System.Windows.Forms.Label labelRootDir;
         private System.Windows.Forms.Button buttonPerform;
         private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.Button buttonRandomSeed;
@@ -341,18 +300,15 @@
         private System.Windows.Forms.ToolStripMenuItem settingsFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem rootDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem chooseBackupDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem useBackupDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem chooseRootDirectoryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem chooseSingleFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
-        private System.Windows.Forms.Label labelBackupDir;
+        private System.Windows.Forms.Label labelHmmPath;
         private System.Windows.Forms.Label labelSeed;
         private System.Windows.Forms.RichTextBox richTextBoxHelp;
         private System.Windows.Forms.Button buttonReset;
         private System.Windows.Forms.ComboBox comboBoxGame;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnEditorFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setHeavyModManagerPathToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
     }
 }

@@ -53,15 +53,15 @@
             // 
             // comboBoxAssetTypes
             // 
-            resources.ApplyResources(this.comboBoxAssetTypes, "comboBoxAssetTypes");
             this.comboBoxAssetTypes.FormattingEnabled = true;
+            resources.ApplyResources(this.comboBoxAssetTypes, "comboBoxAssetTypes");
             this.comboBoxAssetTypes.Name = "comboBoxAssetTypes";
             this.comboBoxAssetTypes.SelectedIndexChanged += new System.EventHandler(this.comboBoxAssetTypes_SelectedIndexChanged);
             // 
             // groupBox1
             // 
-            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Controls.Add(this.comboBoxAssetTypes);
+            resources.ApplyResources(this.groupBox1, "groupBox1");
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.TabStop = false;
             // 
@@ -74,31 +74,31 @@
             // 
             // buttonOK
             // 
-            resources.ApplyResources(this.buttonOK, "buttonOK");
             this.buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
+            resources.ApplyResources(this.buttonOK, "buttonOK");
             this.buttonOK.Name = "buttonOK";
             this.buttonOK.UseVisualStyleBackColor = true;
             this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
             // 
             // buttonCancel
             // 
-            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(this.buttonCancel, "buttonCancel");
             this.buttonCancel.Name = "buttonCancel";
             this.buttonCancel.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
-            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Controls.Add(this.listBox1);
+            resources.ApplyResources(this.groupBox2, "groupBox2");
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.TabStop = false;
             // 
             // listBox1
             // 
-            resources.ApplyResources(this.listBox1, "listBox1");
             this.listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listBox1.FormattingEnabled = true;
+            resources.ApplyResources(this.listBox1, "listBox1");
             this.listBox1.Name = "listBox1";
             this.listBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.listBox1_KeyDown);
             // 
@@ -153,20 +153,20 @@
             // 
             // grpImportSettings
             // 
-            resources.ApplyResources(this.grpImportSettings, "grpImportSettings");
             this.grpImportSettings.Controls.Add(this.checkBoxIgnoreMeshColors);
             this.grpImportSettings.Controls.Add(this.checkBoxFlipUVs);
             this.grpImportSettings.Controls.Add(this.checkBoxEnableVcolors);
             this.grpImportSettings.Controls.Add(this.checkBoxOverwrite);
+            resources.ApplyResources(this.grpImportSettings, "grpImportSettings");
             this.grpImportSettings.Name = "grpImportSettings";
             this.grpImportSettings.TabStop = false;
             // 
             // grpSIMP
             // 
-            resources.ApplyResources(this.grpSIMP, "grpSIMP");
-            this.grpSIMP.Controls.Add(this.checkBoxLedgeGrab);
             this.grpSIMP.Controls.Add(this.checkBoxGenSimps);
             this.grpSIMP.Controls.Add(this.checkBoxSolidSimps);
+            this.grpSIMP.Controls.Add(this.checkBoxLedgeGrab);
+            resources.ApplyResources(this.grpSIMP, "grpSIMP");
             this.grpSIMP.Name = "grpSIMP";
             this.grpSIMP.TabStop = false;
             // 

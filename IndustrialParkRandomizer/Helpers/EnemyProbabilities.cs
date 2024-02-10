@@ -19,5 +19,24 @@ namespace IndustrialPark.Randomizer
         public int ChompBot { get; set; } = 1;
         public int BombBot { get; set; } = 1;
         public int BzztBot { get; set; } = 1;
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1036476329;
+            hashCode = hashCode * -1521134295 + Fodder.GetHashCode();
+            hashCode = hashCode * -1521134295 + Hammer.GetHashCode();
+            hashCode = hashCode * -1521134295 + Tartar.GetHashCode();
+            hashCode = hashCode * -1521134295 + GLove.GetHashCode();
+            hashCode = hashCode * -1521134295 + Chuck.GetHashCode();
+            hashCode = hashCode * -1521134295 + Monsoon.GetHashCode();
+            hashCode = hashCode * -1521134295 + Sleepytime.GetHashCode();
+            hashCode = hashCode * -1521134295 + Arf.GetHashCode();
+            hashCode = hashCode * -1521134295 + Tubelets.GetHashCode();
+            hashCode = hashCode * -1521134295 + Slick.GetHashCode();
+            hashCode = hashCode * -1521134295 + ChompBot.GetHashCode();
+            hashCode = hashCode * -1521134295 + BombBot.GetHashCode();
+            hashCode = hashCode * -1521134295 + BzztBot.GetHashCode();
+            return hashCode;
+        }
     }
 }

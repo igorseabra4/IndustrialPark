@@ -2720,20 +2720,8 @@ namespace IndustrialPark.Randomizer
         private bool IsWarpToSameLevel(string warpName) =>
             LevelName.ToLower().Equals(warpName.ToLower()) || new string(warpName.Reverse().ToArray()).ToLower().Equals(LevelName.ToLower());
 
-        public List<string> GetWarpNames(List<string> toSkip)
-        {
-            warpsRandomizer = new List<AssetPORT>();
-            List<string> warpNames = new List<string>();
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPORT port && !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, toSkip))
-                {
-                    warpsRandomizer.Add(port);
-                    warpNames.Add(port.DestinationLevel);
-                }
-            return warpNames;
-        }
-
-        private List<AssetPORT> warpsRandomizer;
+        public List<string> GetWarpNames(List<string> toSkip) =>
+            assetDictionary.Values.OfType<AssetPORT>().Where(port => !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, toSkip)).Select(port => port.DestinationLevel).ToList();
 
         private bool PortInToSkip(AssetPORT port, List<string> toSkip)
         {
@@ -2906,8 +2894,10 @@ namespace IndustrialPark.Randomizer
             return false;
         }
 
-        public bool SetWarpNames(ref List<string> warpNames, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique)
+        public bool SetWarpNames(List<string> toSkip, ref List<string> warpNames, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique)
         {
+            var warpsRandomizer = assetDictionary.Values.OfType<AssetPORT>().Where(port => !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, toSkip)).ToList();
+
             foreach (AssetPORT port in warpsRandomizer)
             {
                 if (warpNames.Count == 0)
