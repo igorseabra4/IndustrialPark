@@ -1609,29 +1609,25 @@ namespace IndustrialPark
                                 string eventSendIDName = "";
                                 string eventReceiveIDName = "";
 
-                                if (archive.game == Game.BFBB || archive.game == Game.Scooby) // BFBB
+                                if (archive.game == Game.BFBB) // BFBB
                                 {
                                     eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
                                 }
                                 else if (archive.game == Game.Scooby) // Scooby
                                 {
+                                    eventSendIDName = ((EventScooby)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventScooby)link.EventReceiveID).ToString();
                                 }
-                                else if (archive.game >= Game.Incredibles) // TSSM/Incredibles/ROTU
+                                else if (archive.game == Game.Incredibles) // TSSM/Incredibles
                                 {
-                                    switch (GetGameFromGameConfigIni(GetCurrentlyOpenFileName()))
-                                    {
-                                        case 3: // TSSM
-                                            eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
-                                            eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
-                                            break;
-                                        case 4: // Incredibles
-                                            // TODO: Incredibles events
-                                            break;
-                                        case 5: // ROTU
-                                            // TODO: ROTU events
-                                            break;
-                                    }
+                                    eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
+                                }
+                                else if (archive.game >= Game.ROTU)
+                                {
+                                    eventSendIDName = ((EventROTU)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventROTU)link.EventReceiveID).ToString();
                                 }
 
                                 // If event name not supplied, event ID used instead.

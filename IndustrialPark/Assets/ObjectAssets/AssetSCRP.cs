@@ -13,20 +13,14 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle ScriptStartTime { get; set; }
         [Category(categoryName)]
-        public AssetByte Flag1 { get; set; }
-        [Category(categoryName)]
-        public AssetByte Flag2 { get; set; }
-        [Category(categoryName)]
-        public AssetByte Flag3 { get; set; }
-        [Category(categoryName)]
-        public AssetByte Flag4 { get; set; }
+        public bool Loop { get; set; }
         private Link[] _timedLinks;
         [Category(categoryName), Editor(typeof(LinkListEditor), typeof(UITypeEditor))]
         public Link[] TimedLinks
         {
             get
             {
-                LinkListEditor.LinkType = TimedLinkType;
+                LinkListEditor.LinkType = (game >= Game.ROTU) ? LinkType.TimedRotu : LinkType.Timed;
                 LinkListEditor.ThisAssetID = assetID;
                 LinkListEditor.Game = game;
 
@@ -37,11 +31,6 @@ namespace IndustrialPark
                 _timedLinks = value;
             }
         }
-
-        [Category(categoryName)]
-        public EVersionROTUOthers AssetVersion { get; set; } = EVersionROTUOthers.Others;
-
-        private LinkType TimedLinkType => AssetVersion == EVersionROTUOthers.ROTU ? LinkType.TimedRotu : LinkType.Timed;
 
         public AssetSCRP(string assetName) : base(assetName, AssetType.Script, BaseAssetType.Script)
         {
@@ -60,27 +49,13 @@ namespace IndustrialPark
 
                 if (game >= Game.Incredibles)
                 {
-                    Flag1 = reader.ReadByte();
-                    Flag2 = reader.ReadByte();
-                    Flag3 = reader.ReadByte();
-                    Flag4 = reader.ReadByte();
-                }
-
-                if (timedLinkCount != 0)
-                {
-                    int timedLinkSize = (int)((reader.BaseStream.Length - reader.BaseStream.Position - Link.sizeOfStruct * _links.Length) / timedLinkCount);
-
-                    if (timedLinkSize == 0x24)
-                        AssetVersion = EVersionROTUOthers.ROTU;
-                    else if (timedLinkSize == 0x20)
-                        AssetVersion = EVersionROTUOthers.Others;
-                    else
-                        throw new Exception("Unsupported format");
+                    Loop = reader.ReadBoolean();
+                    reader.ReadBytes(3);
                 }
 
                 _timedLinks = new Link[timedLinkCount];
                 for (int i = 0; i < _timedLinks.Length; i++)
-                    _timedLinks[i] = new Link(reader, TimedLinkType, game);
+                    _timedLinks[i] = new Link(reader, (game >= Game.ROTU) ? LinkType.TimedRotu : LinkType.Timed, game);
             }
         }
 
@@ -92,14 +67,12 @@ namespace IndustrialPark
 
             if (game >= Game.Incredibles)
             {
-                writer.Write(Flag1);
-                writer.Write(Flag2);
-                writer.Write(Flag3);
-                writer.Write(Flag4);
+                writer.Write(Loop);
+                writer.Write(new byte[3]);
             }
 
             foreach (var l in _timedLinks)
-                l.Serialize(TimedLinkType, writer);
+                l.Serialize((game >= Game.ROTU) ? LinkType.TimedRotu : LinkType.Timed, writer);
             SerializeLinks(writer);
         }
 
@@ -107,10 +80,7 @@ namespace IndustrialPark
         {
             if (game < Game.Incredibles)
             {
-                dt.RemoveProperty("Flag1");
-                dt.RemoveProperty("Flag2");
-                dt.RemoveProperty("Flag3");
-                dt.RemoveProperty("Flag4");
+                dt.RemoveProperty("Loop");
             }
 
             base.SetDynamicProperties(dt);

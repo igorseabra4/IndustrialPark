@@ -116,8 +116,12 @@ namespace IndustrialPark
         public AssetSingle MinMaxSpeed_Y { get; set; }
         public AssetSingle MinMaxSpeed_Z { get; set; }
 
-        public zSurfUVFX() { }
-        public zSurfUVFX(EndianBinaryReader reader)
+        public zSurfUVFX(Game game)
+        {
+            _game = game;
+        }
+
+        public zSurfUVFX(EndianBinaryReader reader, Game game) : this(game)
         {
             Mode = reader.ReadInt32();
             Rot = reader.ReadSingle();
@@ -134,15 +138,19 @@ namespace IndustrialPark
             ScaleSpeed_X = reader.ReadSingle();
             ScaleSpeed_Y = reader.ReadSingle();
             ScaleSpeed_Z = reader.ReadSingle();
-            Min_X = reader.ReadSingle();
-            Min_Y = reader.ReadSingle();
-            Min_Z = reader.ReadSingle();
-            Max_X = reader.ReadSingle();
-            Max_Y = reader.ReadSingle();
-            Max_Z = reader.ReadSingle();
-            MinMaxSpeed_X = reader.ReadSingle();
-            MinMaxSpeed_Y = reader.ReadSingle();
-            MinMaxSpeed_Z = reader.ReadSingle();
+
+            if (game != Game.Scooby)
+            {
+                Min_X = reader.ReadSingle();
+                Min_Y = reader.ReadSingle();
+                Min_Z = reader.ReadSingle();
+                Max_X = reader.ReadSingle();
+                Max_Y = reader.ReadSingle();
+                Max_Z = reader.ReadSingle();
+                MinMaxSpeed_X = reader.ReadSingle();
+                MinMaxSpeed_Y = reader.ReadSingle();
+                MinMaxSpeed_Z = reader.ReadSingle();
+            }
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -162,15 +170,35 @@ namespace IndustrialPark
             writer.Write(ScaleSpeed_X);
             writer.Write(ScaleSpeed_Y);
             writer.Write(ScaleSpeed_Z);
-            writer.Write(Min_X);
-            writer.Write(Min_Y);
-            writer.Write(Min_Z);
-            writer.Write(Max_X);
-            writer.Write(Max_Y);
-            writer.Write(Max_Z);
-            writer.Write(MinMaxSpeed_X);
-            writer.Write(MinMaxSpeed_Y);
-            writer.Write(MinMaxSpeed_Z);
+
+            if (game != Game.Scooby)
+            {
+                writer.Write(Min_X);
+                writer.Write(Min_Y);
+                writer.Write(Min_Z);
+                writer.Write(Max_X);
+                writer.Write(Max_Y);
+                writer.Write(Max_Z);
+                writer.Write(MinMaxSpeed_X);
+                writer.Write(MinMaxSpeed_Y);
+                writer.Write(MinMaxSpeed_Z);
+            }
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+            {
+                dt.RemoveProperty("Min_X");
+                dt.RemoveProperty("Min_Y");
+                dt.RemoveProperty("Min_Z");
+                dt.RemoveProperty("Max_X");
+                dt.RemoveProperty("Max_Y");
+                dt.RemoveProperty("Max_Z");
+                dt.RemoveProperty("MinMaxSpeed_X");
+                dt.RemoveProperty("MinMaxSpeed_Y");
+                dt.RemoveProperty("MinMaxSpeed_Z");
+            }
         }
     }
 
@@ -246,8 +274,101 @@ namespace IndustrialPark
         zHS_KNOCKBACK,
         zHS_LASERBEAM,
         zHS_INFINITE_FALL,
-        zHS_COUNT,
-        zHS_FORCE_INT = 0xffffffff
+    }
+
+    public enum zHitSource_ROTU : uint
+    {
+        zHS_EVENT,
+        zHS_GENERAL,
+        zHS_EXPLOSION,
+        zHS_MELEE_HIGH,
+        zHS_MELEE_MID,
+        zHS_MELEE_LOW,
+        zHS_MELEE_BACK,
+        zHS_MELEE_DIZZY,
+        zHS_MELEE_MRI,
+        zHS_MELEE_FRO,
+        zHS_MELEE_NPC,
+        zHS_THROW,
+        zHS_PROJECTILE,
+        zHS_NUKE_MRI,
+        zHS_NUKE_FRO,
+        zHS_INCREDISLAM_LEVEL1,
+        zHS_INCREDISLAM_LEVEL2,
+        zHS_INCREDISLAM_LEVEL3,
+        zHS_ICE_GLIDE_LEVEL1,
+        zHS_ICE_GLIDE_LEVEL2,
+        zHS_ICE_GLIDE_LEVEL3,
+        zHS_DODGE_ROLL_LEVEL1,
+        zHS_DODGE_ROLL_LEVEL2,
+        zHS_DODGE_ROLL_LEVEL3,
+        zHS_GOO,
+        zHS_FIRE,
+        zHS_LASERBEAM,
+        zHS_LEDGE_UP,
+        zHS_MELEE_UP,
+        zHS_LASER,
+        zHS_ENERGY,
+        zHS_SURFACE,
+        zHS_WATER,
+        zHS_DEATHPLANE,
+        zHS_KNOCKBACK,
+        zHS_INFINITE_FALL,
+        zHS_INCREDISLAM_FALL_LEVEL1,
+        zHS_INCREDISLAM_FALL_LEVEL2,
+        zHS_INCREDISLAM_FALL_LEVEL3,
+        zHS_PUNCH_MRI_1_LEVEL1,
+        zHS_PUNCH_MRI_1_LEVEL2,
+        zHS_PUNCH_MRI_1_LEVEL3,
+        zHS_PUNCH_MRI_2_LEVEL1,
+        zHS_PUNCH_MRI_2_LEVEL2,
+        zHS_PUNCH_MRI_2_LEVEL3,
+        zHS_PUNCH_MRI_3_LEVEL1,
+        zHS_PUNCH_MRI_3_LEVEL2,
+        zHS_PUNCH_MRI_3_LEVEL3,
+        zHS_PUNCH_MRI_4_LEVEL1,
+        zHS_PUNCH_MRI_4_LEVEL2,
+        zHS_PUNCH_MRI_4_LEVEL3,
+        zHS_PUNCH_FRO_1_LEVEL1,
+        zHS_PUNCH_FRO_1_LEVEL2,
+        zHS_PUNCH_FRO_1_LEVEL3,
+        zHS_PUNCH_FRO_2_LEVEL1,
+        zHS_PUNCH_FRO_2_LEVEL2,
+        zHS_PUNCH_FRO_2_LEVEL3,
+        zHS_PUNCH_FRO_3_LEVEL1,
+        zHS_PUNCH_FRO_3_LEVEL2,
+        zHS_PUNCH_FRO_3_LEVEL3,
+        zHS_PUNCH_FRO_4_LEVEL1,
+        zHS_PUNCH_FRO_4_LEVEL2,
+        zHS_PUNCH_FRO_4_LEVEL3,
+        zHS_ENEMY_DAMAGE,
+        zHS_ENEMY_FLYBACK,
+    }
+
+    public enum DrivingSurf : byte
+    {
+        Default,
+        Tarmac,
+        Cement,
+        HardDirt,
+        Railroad,
+        Grass,
+        SoftDirt,
+        SideWalk,
+        Sand,
+        SurfaceWater,
+        ThickOil,
+        HotSauce,
+        NumNormalDrivableSurfaces,
+        Wall,
+        SlideTubWood,
+        SlideTubSand,
+        SlideTubHardRock,
+        SlideShellHardRock,
+        SlideShellTongue,
+        SlideCrownRubberHose,
+        SlideCrownRubberCable,
+        SlideCrownMetalLamp
     }
 
     public class AssetSURF : BaseAsset
@@ -307,8 +428,6 @@ namespace IndustrialPark
         public AssetSingle DamageTimer { get; set; }
         [Category(categoryName)]
         public AssetSingle DamageBounce { get; set; }
-        [Category(categoryName)]
-        public int UnknownInt { get; set; }
 
         // TSSM/Incredibles Only
         [Category(categoryName)]
@@ -337,8 +456,20 @@ namespace IndustrialPark
         public AssetID DashRampTarget_MovePoint { get; set; }
         [Category(categoryName)]
         public int DamageAmount { get; set; }
+
+        private uint _hitsource;
         [Category(categoryName)]
-        public zHitSource HitSourceDamageType { get; set; }
+        public zHitSource HitSourceDamageType
+        {
+            get => (zHitSource)_hitsource;
+            set { _hitsource = (uint)value; }
+        }
+        [Category(categoryName)]
+        public zHitSource_ROTU HitSourceDamageType_ROTU
+        {
+            get => (zHitSource_ROTU)_hitsource;
+            set { _hitsource = (uint)value; }
+        }
         [Category(categoryName)]
         public zFootstepsData OffSurface { get; set; }
         [Category(categoryName)]
@@ -362,16 +493,16 @@ namespace IndustrialPark
         [Category(categoryName)]
         public byte FootstepDecals { get; set; }
         [Category(categoryName)]
-        public byte DrivingSurfaceType { get; set; }
+        public DrivingSurf DrivingSurfaceType { get; set; }
 
-        public AssetSURF(string assetName) : base(assetName, AssetType.Surface, BaseAssetType.Surface)
+        public AssetSURF(string assetName, Game game) : base(assetName, AssetType.Surface, BaseAssetType.Surface)
         {
             zSurfMatFX = new zSurfMatFX();
             zSurfColorFX = new zSurfColorFX();
             zSurfTextureAnim1 = new zSurfTextureAnim();
             zSurfTextureAnim2 = new zSurfTextureAnim();
-            zSurfUVFX = new zSurfUVFX();
-            zSurfUVFX2 = new zSurfUVFX();
+            zSurfUVFX = new zSurfUVFX(game);
+            zSurfUVFX2 = new zSurfUVFX(game);
             OffSurface = new zFootstepsData();
             OnSurface = new zFootstepsData();
             HitDecalData0 = new zHitDecalData();
@@ -400,76 +531,62 @@ namespace IndustrialPark
                 zSurfTextureAnim1 = new zSurfTextureAnim(reader);
                 zSurfTextureAnim2 = new zSurfTextureAnim(reader);
                 UVEffectsFlags.FlagValueInt = reader.ReadUInt32();
-                zSurfUVFX = new zSurfUVFX(reader);
+                zSurfUVFX = new zSurfUVFX(reader, game);
+                zSurfUVFX2 = new zSurfUVFX(reader, game);
+                On = reader.ReadByte();
+                reader.ReadBytes(3);
 
                 if (game != Game.Scooby)
                 {
-                    zSurfUVFX2 = new zSurfUVFX(reader);
-                    On = reader.ReadByte();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                }
-                else
-                    zSurfUVFX2 = new zSurfUVFX();
+                    OutOfBoundsDelay = reader.ReadSingle();
+                    WalljumpScaleXZ = reader.ReadSingle();
+                    WalljumpScaleY = reader.ReadSingle();
+                    DamageTimer = reader.ReadSingle();
+                    DamageBounce = reader.ReadSingle();
 
-                OutOfBoundsDelay = reader.ReadSingle();
-                WalljumpScaleXZ = reader.ReadSingle();
-                WalljumpScaleY = reader.ReadSingle();
-                DamageTimer = reader.ReadSingle();
-                DamageBounce = reader.ReadSingle();
-
-                if (game == Game.Scooby)
-                {
-                    UnknownInt = reader.ReadInt32();
-                    On = reader.ReadByte();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                }
-
-                if (game >= Game.Incredibles)
-                {
-                    ImpactSound = reader.ReadUInt32();
-                    DashImpactType = reader.ReadByte();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                    DashImpactThrowBack = reader.ReadSingle();
-                    DashSprayMagnitude = reader.ReadSingle();
-                    DashCoolRate = reader.ReadSingle();
-                    DashCoolAmount = reader.ReadSingle();
-                    DashPass = reader.ReadSingle();
-                    DashRampMaxDistance = reader.ReadSingle();
-                    DashRampMinDistance = reader.ReadSingle();
-                    DashRampKeySpeed = reader.ReadSingle();
-                    DashRampMaxHeight = reader.ReadSingle();
-                    DashRampTarget_MovePoint = reader.ReadUInt32();
-                    DamageAmount = reader.ReadInt32();
-                    HitSourceDamageType = (zHitSource)reader.ReadInt32();
-                    OffSurface = new zFootstepsData(reader);
-                    OnSurface = new zFootstepsData(reader);
-                    HitDecalData0 = new zHitDecalData(reader);
-                    HitDecalData1 = new zHitDecalData(reader);
-                    HitDecalData2 = new zHitDecalData(reader);
-                    OffSurfaceTime = reader.ReadSingle();
-                    SwimmableSurface = reader.ReadByte();
-                    DashFall = reader.ReadByte();
-                    NeedButtonPress = reader.ReadByte();
-                    DashAttack = reader.ReadByte();
-                    FootstepDecals = reader.ReadByte();
-                    reader.ReadInt32();
-                    DrivingSurfaceType = reader.ReadByte();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                }
-                else
-                {
-                    OffSurface = new zFootstepsData();
-                    OnSurface = new zFootstepsData();
-                    HitDecalData0 = new zHitDecalData();
-                    HitDecalData1 = new zHitDecalData();
-                    HitDecalData2 = new zHitDecalData();
+                    if (game >= Game.Incredibles)
+                    {
+                        ImpactSound = reader.ReadUInt32();
+                        DashImpactType = reader.ReadByte();
+                        reader.ReadByte();
+                        reader.ReadByte();
+                        reader.ReadByte();
+                        DashImpactThrowBack = reader.ReadSingle();
+                        DashSprayMagnitude = reader.ReadSingle();
+                        DashCoolRate = reader.ReadSingle();
+                        DashCoolAmount = reader.ReadSingle();
+                        DashPass = reader.ReadSingle();
+                        DashRampMaxDistance = reader.ReadSingle();
+                        DashRampMinDistance = reader.ReadSingle();
+                        DashRampKeySpeed = reader.ReadSingle();
+                        DashRampMaxHeight = reader.ReadSingle();
+                        DashRampTarget_MovePoint = reader.ReadUInt32();
+                        DamageAmount = reader.ReadInt32();
+                        _hitsource = reader.ReadUInt32();
+                        OffSurface = new zFootstepsData(reader);
+                        OnSurface = new zFootstepsData(reader);
+                        HitDecalData0 = new zHitDecalData(reader);
+                        HitDecalData1 = new zHitDecalData(reader);
+                        HitDecalData2 = new zHitDecalData(reader);
+                        OffSurfaceTime = reader.ReadSingle();
+                        SwimmableSurface = reader.ReadByte();
+                        DashFall = reader.ReadByte();
+                        NeedButtonPress = reader.ReadByte();
+                        DashAttack = reader.ReadByte();
+                        FootstepDecals = reader.ReadByte();
+                        reader.ReadInt32();
+                        DrivingSurfaceType = (DrivingSurf)reader.ReadByte();
+                        reader.ReadByte();
+                        reader.ReadByte();
+                    }
+                    else
+                    {
+                        OffSurface = new zFootstepsData();
+                        OnSurface = new zFootstepsData();
+                        HitDecalData0 = new zHitDecalData();
+                        HitDecalData1 = new zHitDecalData();
+                        HitDecalData2 = new zHitDecalData();
+                    }
                 }
             }
         }
@@ -493,72 +610,59 @@ namespace IndustrialPark
             zSurfTextureAnim2.Serialize(writer);
             writer.Write(UVEffectsFlags.FlagValueInt);
             zSurfUVFX.Serialize(writer);
+            zSurfUVFX2.Serialize(writer);
+            writer.Write(On);
+            writer.Write(new byte[3]);
+
             if (game != Game.Scooby)
             {
-                zSurfUVFX2.Serialize(writer);
-                writer.Write(On);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-            }
-            writer.Write(OutOfBoundsDelay);
-            writer.Write(WalljumpScaleXZ);
-            writer.Write(WalljumpScaleY);
-            writer.Write(DamageTimer);
-            writer.Write(DamageBounce);
-            if (game == Game.Scooby)
-            {
-                writer.Write(UnknownInt);
-                writer.Write(On);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-            }
-            if (game >= Game.Incredibles)
-            {
-                writer.Write(ImpactSound);
-                writer.Write(DashImpactType);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
-                writer.Write(DashImpactThrowBack);
-                writer.Write(DashSprayMagnitude);
-                writer.Write(DashCoolRate);
-                writer.Write(DashCoolAmount);
-                writer.Write(DashPass);
-                writer.Write(DashRampMaxDistance);
-                writer.Write(DashRampMinDistance);
-                writer.Write(DashRampKeySpeed);
-                writer.Write(DashRampMaxHeight);
-                writer.Write(DashRampTarget_MovePoint);
-                writer.Write(DamageAmount);
-                writer.Write((int)HitSourceDamageType);
-                OffSurface.Serialize(writer);
-                OnSurface.Serialize(writer);
-                HitDecalData0.Serialize(writer);
-                HitDecalData1.Serialize(writer);
-                HitDecalData2.Serialize(writer);
-                writer.Write(OffSurfaceTime);
-                writer.Write(SwimmableSurface);
-                writer.Write(DashFall);
-                writer.Write(NeedButtonPress);
-                writer.Write(DashAttack);
-                writer.Write(FootstepDecals);
-                writer.Write(0);
-                writer.Write(DrivingSurfaceType);
-                writer.Write((byte)0);
-                writer.Write((byte)0);
+
+                writer.Write(OutOfBoundsDelay);
+                writer.Write(WalljumpScaleXZ);
+                writer.Write(WalljumpScaleY);
+                writer.Write(DamageTimer);
+                writer.Write(DamageBounce);
+                if (game >= Game.Incredibles)
+                {
+                    writer.Write(ImpactSound);
+                    writer.Write(DashImpactType);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                    writer.Write(DashImpactThrowBack);
+                    writer.Write(DashSprayMagnitude);
+                    writer.Write(DashCoolRate);
+                    writer.Write(DashCoolAmount);
+                    writer.Write(DashPass);
+                    writer.Write(DashRampMaxDistance);
+                    writer.Write(DashRampMinDistance);
+                    writer.Write(DashRampKeySpeed);
+                    writer.Write(DashRampMaxHeight);
+                    writer.Write(DashRampTarget_MovePoint);
+                    writer.Write(DamageAmount);
+                    writer.Write(_hitsource);
+                    OffSurface.Serialize(writer);
+                    OnSurface.Serialize(writer);
+                    HitDecalData0.Serialize(writer);
+                    HitDecalData1.Serialize(writer);
+                    HitDecalData2.Serialize(writer);
+                    writer.Write(OffSurfaceTime);
+                    writer.Write(SwimmableSurface);
+                    writer.Write(DashFall);
+                    writer.Write(NeedButtonPress);
+                    writer.Write(DashAttack);
+                    writer.Write(FootstepDecals);
+                    writer.Write(0);
+                    writer.Write((byte)DrivingSurfaceType);
+                    writer.Write((byte)0);
+                    writer.Write((byte)0);
+                }
             }
             SerializeLinks(writer);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game == Game.Scooby)
-                dt.RemoveProperty("zSurfUVFX2");
-            else
-                dt.RemoveProperty("UnknownInt");
-
             if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("ImpactSound");
@@ -588,6 +692,11 @@ namespace IndustrialPark
                 dt.RemoveProperty("FootstepDecals");
                 dt.RemoveProperty("DrivingSurfaceType");
             }
+
+            if (game >= Game.ROTU)
+                dt.RemoveProperty("HitSourceDamageType");
+            else
+                dt.RemoveProperty("HitSourceDamageType_ROTU");
 
             base.SetDynamicProperties(dt);
         }

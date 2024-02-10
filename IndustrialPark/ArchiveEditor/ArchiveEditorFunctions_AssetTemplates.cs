@@ -413,6 +413,7 @@ namespace IndustrialPark
             {
                 GetTemplateMenuItem(AssetTemplate.Animation_List, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Collision_Table, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Credits, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.DefaultGlowSceneProp, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Destructible, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Environment, eventHandler),
@@ -425,6 +426,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Shrapnel, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Sound_Info, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Surface_Mapper, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Surface, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Throwable_Table, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Empty_BSP, eventHandler),
@@ -1136,6 +1138,8 @@ namespace IndustrialPark
                     return new AssetALST(assetName);
                 case AssetTemplate.Collision_Table:
                     return new AssetCOLL(assetName);
+                case AssetTemplate.Credits:
+                    return new AssetCRDT(assetName, game);
                 case AssetTemplate.Environment:
                     return new AssetENV(assetName, startCamName);
                 case AssetTemplate.Flythrough:
@@ -1151,6 +1155,8 @@ namespace IndustrialPark
                     return new AssetJAW(assetName);
                 case AssetTemplate.Level_Of_Detail_Table:
                     return new AssetLODT(assetName);
+                case AssetTemplate.Surface:
+                    return new AssetSURF(assetName, game);
                 case AssetTemplate.Surface_Mapper:
                     return new AssetMAPR(assetName);
                 case AssetTemplate.Throwable_Table:

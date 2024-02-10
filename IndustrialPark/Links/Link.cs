@@ -57,7 +57,8 @@ namespace IndustrialPark
         public AssetID SourceCheckAsset { get; set; }
 
         public float Time { get; set; } // only for progress, timed and timed rotu
-        public int AdditionalValue { get; set; } // only for progress and timed rotu
+        public int Flags { get; set; } // only for progress
+        public bool Enabled { get; set; } // only for timed rotu
 
         [JsonConstructor]
         private Link()
@@ -89,7 +90,7 @@ namespace IndustrialPark
             {
                 Time = reader.ReadSingle();
                 if (type == LinkType.Progress)
-                    AdditionalValue = reader.ReadInt32();
+                    Flags = reader.ReadInt32();
                 TargetAsset = reader.ReadUInt32();
                 EventSendID = (ushort)reader.ReadUInt32();
                 Parameter1 = reader.ReadUInt32();
@@ -99,7 +100,10 @@ namespace IndustrialPark
                 ArgumentAsset = reader.ReadUInt32();
             }
             if (type == LinkType.TimedRotu)
-                AdditionalValue = reader.ReadInt32();
+            {
+                Enabled = reader.ReadBoolean();
+                reader.ReadBytes(3);
+            }
         }
 
         public override void Serialize(EndianBinaryWriter writer) { }
@@ -122,7 +126,7 @@ namespace IndustrialPark
             {
                 writer.Write(Time);
                 if (type == LinkType.Progress)
-                    writer.Write(AdditionalValue);
+                    writer.Write(Flags);
                 writer.Write(TargetAsset);
                 writer.Write((int)EventSendID);
                 writer.Write(Parameter1);
@@ -132,7 +136,11 @@ namespace IndustrialPark
                 writer.Write(ArgumentAsset);
             }
             if (type == LinkType.TimedRotu)
-                writer.Write(AdditionalValue);
+            {
+                writer.Write(Enabled);
+                writer.Write(new byte[3]);
+            }
+            
         }
 
         public override string ToString()
@@ -153,6 +161,14 @@ namespace IndustrialPark
                     recEvent = ((EventTSSM)EventReceiveID).ToString();
                     sndEvent = ((EventTSSM)EventSendID).ToString();
                     break;
+                case Game.ROTU:
+                    recEvent = ((EventROTU)EventReceiveID).ToString();
+                    sndEvent = ((EventROTU)EventSendID).ToString();
+                    break;
+                case Game.RatProto:
+                    recEvent = ((EventRatProto)EventReceiveID).ToString();
+                    sndEvent = ((EventRatProto)EventSendID).ToString();
+                    break;
                 default:
                     recEvent = "?";
                     sndEvent = "?";
@@ -160,14 +176,17 @@ namespace IndustrialPark
             }
 
             string assetName = HexUIntTypeConverter.StringFromAssetID(TargetAsset);
-            return $"{(LinkListEditor.LinkType == LinkType.Normal ? recEvent : Time.ToString())} => {sndEvent} => {assetName}";
+            if (LinkListEditor.LinkType == LinkType.Normal)
+                return $"{recEvent} => {sndEvent} => {assetName}";
+            else
+                return $"{(LinkListEditor.LinkType == LinkType.TimedRotu && Enabled == false ? "[DISABLED] " : "")}{Time.ToString()} => {sndEvent} => {assetName}";
         }
 
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
 
-            var eventCount = Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)).Length;
+            var eventCount = Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : game == Game.Incredibles ? typeof(EventTSSM) : game == Game.ROTU ? typeof(EventROTU) : typeof(EventRatProto)).Length;
 
             if (EventReceiveID == 0 || EventReceiveID > eventCount)
                 result.Add("Link receives event of unknown type: " + EventReceiveID.ToString());

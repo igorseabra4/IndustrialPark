@@ -52,6 +52,7 @@
 
         // Other
         Animation_List,
+        Credits,
         DefaultGlowSceneProp,
         Destructible,
         Collision_Table,
@@ -67,6 +68,7 @@
         Shrapnel,
         Sound_Info,
         Surface_Mapper,
+        Surface,
         Throwable_Table,
         //Empty_Sound,
         //Empty_Streaming_Sound,

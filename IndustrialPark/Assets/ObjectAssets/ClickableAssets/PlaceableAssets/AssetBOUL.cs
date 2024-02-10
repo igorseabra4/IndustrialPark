@@ -16,7 +16,7 @@ namespace IndustrialPark
         public AssetSingle BounceFactor { get; set; }
         [Category(categoryName)]
         public AssetSingle Friction { get; set; }
-        [Category(categoryName)] // bfbb only
+        [Category(categoryName)] 
         public AssetSingle StartFriction { get; set; }
         [Category(categoryName)]
         public AssetSingle MaxLinearVelocity { get; set; }
@@ -54,6 +54,12 @@ namespace IndustrialPark
         public AssetSingle InnerRadius { get; set; }
         [Category(categoryName)]
         public AssetSingle OuterRadius { get; set; }
+        [Category(categoryName)]
+        public AssetSingle SphereRadius { get; set; }
+        [Category(categoryName)]
+        public byte BoneIndex { get; set; }
+        [Category(categoryName)]
+        public AssetSingle InitNonCollideTime { get; set; }
 
         public AssetBOUL(string assetName, Vector3 position) : base(assetName, AssetType.Boulder, BaseAssetType.Boulder, position)
         {
@@ -86,8 +92,19 @@ namespace IndustrialPark
                     Volume = reader.ReadSingle();
                 MinSoundVel = reader.ReadSingle();
                 MaxSoundVel = reader.ReadSingle();
-                InnerRadius = reader.ReadSingle();
-                OuterRadius = reader.ReadSingle();
+                if (game == Game.BFBB)
+                {
+                    InnerRadius = reader.ReadSingle();
+                    OuterRadius = reader.ReadSingle();
+                }
+                else
+                {
+                    SphereRadius = reader.ReadSingle();
+                    reader.ReadBytes(3);
+                    BoneIndex = reader.ReadByte();
+                    if (game >= Game.ROTU)
+                        InitNonCollideTime = reader.ReadSingle();
+                }
             }
         }
 
@@ -112,8 +129,19 @@ namespace IndustrialPark
                 writer.Write(Volume);
             writer.Write(MinSoundVel);
             writer.Write(MaxSoundVel);
-            writer.Write(InnerRadius);
-            writer.Write(OuterRadius);
+            if (game == Game.BFBB)
+            {
+                writer.Write(InnerRadius);
+                writer.Write(OuterRadius);
+            }
+            else
+            {
+                writer.Write(SphereRadius);
+                writer.Write(new byte[3]);
+                writer.Write(BoneIndex);
+                if (game >= Game.ROTU)
+                    writer.Write(InitNonCollideTime);
+            }
             SerializeLinks(writer);
         }
 
@@ -134,11 +162,22 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
+            if (game < Game.ROTU)
+                dt.RemoveProperty("InitNonCollideTime");
+
             if (game != Game.BFBB)
             {
                 dt.RemoveProperty("Volume");
                 dt.RemoveProperty("StartFriction");
+                dt.RemoveProperty("InnerRadius");
+                dt.RemoveProperty("OuterRadius");
             }
+            else
+            {
+                dt.RemoveProperty("SphereRadius");
+                dt.RemoveProperty("BoneIndex");
+            }
+
             base.SetDynamicProperties(dt);
         }
     }

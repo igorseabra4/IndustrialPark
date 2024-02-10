@@ -45,7 +45,7 @@ namespace IndustrialPark
             "Diggable",
             "Precise Collision",
             null,
-            null,
+            "Grabbable",
             "Hittable",
             "Animate Collision",
             null,

@@ -171,7 +171,10 @@ namespace IndustrialPark
             {
                 case Game.Scooby:
                 case Game.BFBB:
+                case Game.ROTU:
                     return game.ToString();
+                case Game.RatProto:
+                    return "Ratatouille";
                 default:
                     switch (ArchiveEditor.GetGameFromGameConfigIni(archiveEditor.GetCurrentlyOpenFileName()))
                     {
@@ -179,10 +182,6 @@ namespace IndustrialPark
                             return "TSSM";
                         case 4:
                             return "Incredibles";
-                        case 5:
-                            return "ROTU";
-                        case 6:
-                            return "Ratatouille";
                         default:
                             return "Unknown";
                     }

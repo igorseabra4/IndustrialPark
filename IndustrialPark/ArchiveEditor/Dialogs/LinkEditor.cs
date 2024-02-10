@@ -57,7 +57,8 @@ namespace IndustrialPark
                 else if (linkType == LinkType.TimedRotu)
                 {
                     groupBoxSourceEvent.Text = "Time";
-                    groupBoxSourceCheckOrFlags.Text = "Enabled";
+                    groupBoxSourceCheckOrFlags.Visible = false;
+                    enabledcheckBox.Visible = true;
                 }
                 else if (linkType == LinkType.Progress)
                 {
@@ -73,7 +74,7 @@ namespace IndustrialPark
 
             var eventAutoCompleteCollection = new AutoCompleteStringCollection();
 
-            foreach (var o in Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : typeof(EventTSSM)))
+            foreach (var o in Enum.GetValues(game == Game.Scooby ? typeof(EventScooby) : game == Game.BFBB ? typeof(EventBFBB) : game == Game.Incredibles ? typeof(EventTSSM) : game == Game.ROTU ? typeof(EventROTU) : typeof(EventRatProto)))
             {
                 eventAutoCompleteCollection.Add(o.ToString());
                 comboRecieveEvent.Items.Add(o);
@@ -160,13 +161,15 @@ namespace IndustrialPark
                     if (LinkListEditor.LinkType == LinkType.Normal)
                     {
                         link.Time = 0;
-                        link.AdditionalValue = 0;
+                        link.Flags = 0;
                     }
                     else
                     {
                         link.EventReceiveID = 0;
-                        if (LinkListEditor.LinkType == LinkType.Timed)
-                            link.AdditionalValue = 0;
+                        if (LinkListEditor.LinkType == LinkType.Progress)
+                            link.Flags = 0;
+                        else if (LinkListEditor.LinkType == LinkType.TimedRotu)
+                            link.Enabled = true;
                     }
 
                     listBoxLinks.Items.Add(link);
@@ -196,8 +199,10 @@ namespace IndustrialPark
                     textBoxTargetAsset.Text = GetAssetName(assetEvent.TargetAsset);
                     textBoxArgumentAsset.Text = GetAssetName(assetEvent.ArgumentAsset);
 
-                    if (LinkListEditor.LinkType == LinkType.TimedRotu || LinkListEditor.LinkType == LinkType.Progress)
-                        textBoxSourceCheckOrFlags.Text = assetEvent.AdditionalValue.ToString();
+                    if (LinkListEditor.LinkType == LinkType.Progress)
+                        textBoxSourceCheckOrFlags.Text = assetEvent.Flags.ToString();
+                    else if (LinkListEditor.LinkType == LinkType.TimedRotu)
+                        enabledcheckBox.Checked = assetEvent.Enabled;
                     else if (LinkListEditor.LinkType == LinkType.Normal)
                         textBoxSourceCheckOrFlags.Text = GetAssetName(assetEvent.SourceCheckAsset);
                     else
@@ -338,9 +343,9 @@ namespace IndustrialPark
 
                 try
                 {
-                    if (LinkListEditor.LinkType == LinkType.TimedRotu || LinkListEditor.LinkType == LinkType.Progress)
+                    if (LinkListEditor.LinkType == LinkType.Progress)
                         foreach (int i in listBoxLinks.SelectedIndices)
-                            ((Link)listBoxLinks.Items[i]).AdditionalValue = Convert.ToInt32(textBoxSourceCheckOrFlags.Text);
+                            ((Link)listBoxLinks.Items[i]).Flags = Convert.ToInt32(textBoxSourceCheckOrFlags.Text);
                     else if (LinkListEditor.LinkType == LinkType.Normal)
                         foreach (int i in listBoxLinks.SelectedIndices)
                             ((Link)listBoxLinks.Items[i]).SourceCheckAsset = GetAssetID(textBoxSourceCheckOrFlags.Text);
@@ -562,6 +567,23 @@ namespace IndustrialPark
             {
                 MessageBox.Show("Unable to find sequence number in asset name");
             }
+        }
+
+        private void enabledcheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            ProgramIsChangingStuff = true;
+
+            foreach (int i in listBoxLinks.SelectedIndices)
+            {
+                if (enabledcheckBox.Checked)
+                    ((Link)listBoxLinks.Items[i]).Enabled = true;
+                else
+                    ((Link)listBoxLinks.Items[i]).Enabled = false;
+            }
+
+            SetListBoxUpdate();
+            ProgramIsChangingStuff = false;
+
         }
     }
 }

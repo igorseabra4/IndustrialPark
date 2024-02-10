@@ -106,11 +106,18 @@ namespace IndustrialPark
             set => Entry.UnknownFlagJ = value;
         }
 
-        [Category(categoryFlags), DisplayName("Unknown (Movie/Incredibles only)")]
-        public AssetID Unknown
+        [Category(categoryPipeInfo + " (Movie/Incredibles only)")]
+        public PIPTLayerType Layer
         {
-            get => Entry.Unknown;
-            set => Entry.Unknown = value;
+            get => Entry.Layer;
+            set => Entry.Layer = value;
+        }
+
+        [Category(categoryPipeInfo + " (Movie/Incredibles only)")]
+        public byte AlphaDiscard
+        {
+            get => Entry.AlphaDiscard;
+            set => Entry.AlphaDiscard = value;
         }
     }
 }

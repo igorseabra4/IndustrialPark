@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -40,8 +41,10 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetANIM : Asset
+    public class AssetANIM_V1 : Asset
     {
+        public override string AssetInfo => $"{(float)Times.Last():F3} seconds";
+
         private const string categoryName = "Animation";
 
         [Category(categoryName)]
@@ -61,19 +64,19 @@ namespace IndustrialPark
         [Category(categoryName)]
         public short[][] Offsets { get; set; }
 
-        public AssetANIM()
+        public AssetANIM_V1()
         {
             KeyFrames = new AssetANIM_KeyFrame[0];
             Times = new AssetSingle[0];
             Offsets = new short[0][];
         }
 
-        public AssetANIM(EndianBinaryReader reader)
+        public AssetANIM_V1(EndianBinaryReader reader)
         {
             ReadAnim(reader);
         }
 
-        public AssetANIM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetANIM_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
                 ReadAnim(reader);

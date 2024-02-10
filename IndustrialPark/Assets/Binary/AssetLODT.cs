@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -10,14 +11,13 @@ namespace IndustrialPark
         [ValidReferenceRequired]
         public AssetID BaseModel { get; set; }
         public AssetSingle MaxDistance { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         public AssetID LOD1_Model { get; set; }
         public AssetSingle LOD1_MinDistance { get; set; }
         public AssetID LOD2_Model { get; set; }
         public AssetSingle LOD2_MinDistance { get; set; }
         public AssetID LOD3_Model { get; set; }
         public AssetSingle LOD3_MinDistance { get; set; }
-        [Description("Movie/Incredibles only")]
-        public AssetSingle Unknown { get; set; }
 
         public EntryLODT() { }
         public EntryLODT(EndianBinaryReader reader, Game game)
@@ -26,30 +26,28 @@ namespace IndustrialPark
 
             BaseModel = reader.ReadUInt32();
             MaxDistance = reader.ReadSingle();
+            if (game >= Game.Incredibles)
+                Flags.FlagValueInt = reader.ReadUInt32();
             LOD1_Model = reader.ReadUInt32();
             LOD2_Model = reader.ReadUInt32();
             LOD3_Model = reader.ReadUInt32();
             LOD1_MinDistance = reader.ReadSingle();
             LOD2_MinDistance = reader.ReadSingle();
             LOD3_MinDistance = reader.ReadSingle();
-
-            if (game >= Game.Incredibles)
-                Unknown = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(BaseModel);
             writer.Write(MaxDistance);
+            if (game >= Game.Incredibles)
+                writer.Write(Flags.FlagValueInt);
             writer.Write(LOD1_Model);
             writer.Write(LOD2_Model);
             writer.Write(LOD3_Model);
             writer.Write(LOD1_MinDistance);
             writer.Write(LOD2_MinDistance);
             writer.Write(LOD3_MinDistance);
-
-            if (game >= Game.Incredibles)
-                writer.Write(Unknown);
         }
 
         public override string ToString()
@@ -68,6 +66,12 @@ namespace IndustrialPark
         {
             return BaseModel.GetHashCode();
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.Incredibles)
+                dt.RemoveProperty("Flags");
+        }
     }
 
     public class AssetLODT : Asset, IAssetAddSelected
@@ -79,7 +83,7 @@ namespace IndustrialPark
         public static float MaxDistanceTo(uint _model) => maxDistances.ContainsKey(_model) ? maxDistances[_model] : SharpRenderer.DefaultLODTDistance;
 
         private EntryLODT[] _entries;
-        [Category("Level Of Detail Table")]
+        [Category("Level Of Detail Table"), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public EntryLODT[] Entries
         {
             get => _entries;

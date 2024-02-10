@@ -42,6 +42,12 @@ namespace IndustrialPark
                         return newResult.Cast<AnimationEffect>().ToArray();
                     case "AnimationState[]":
                         return newResult.Cast<AnimationState>().ToArray();
+                    case "PipeInfo[]":
+                        return newResult.Cast<PipeInfo>().ToArray();
+                    case "EntryLODT[]":
+                        return newResult.Cast<EntryLODT>().ToArray();
+                    case "CreditsPreset[]":
+                        return newResult.Cast<CreditsPreset>().ToArray();
                 }
             }
 

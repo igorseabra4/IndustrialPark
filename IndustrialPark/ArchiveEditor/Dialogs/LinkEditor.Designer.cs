@@ -42,6 +42,7 @@
             this.groupBoxEventData = new System.Windows.Forms.GroupBox();
             this.groupBoxSourceCheckOrFlags = new System.Windows.Forms.GroupBox();
             this.textBoxSourceCheckOrFlags = new System.Windows.Forms.TextBox();
+            this.enabledcheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.textBoxArgumentAsset = new System.Windows.Forms.TextBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
@@ -196,6 +197,7 @@
             // 
             this.groupBoxEventData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBoxEventData.Controls.Add(this.groupBoxSourceCheckOrFlags);
+            this.groupBoxEventData.Controls.Add(this.enabledcheckBox);
             this.groupBoxEventData.Controls.Add(this.groupBox2);
             this.groupBoxEventData.Controls.Add(this.groupBox6);
             this.groupBoxEventData.Controls.Add(this.groupBox5);
@@ -230,6 +232,20 @@
             this.toolTip1.SetToolTip(this.textBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
             this.textBoxSourceCheckOrFlags.TextChanged += new System.EventHandler(this.textBoxSourceCheck_TextChanged);
             this.textBoxSourceCheckOrFlags.Leave += new System.EventHandler(this.textBoxSourceCheck_Leave);
+            // 
+            // enabledcheckBox
+            // 
+            this.enabledcheckBox.Checked = true;
+            this.enabledcheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.enabledcheckBox.Location = new System.Drawing.Point(10, 230);
+            this.enabledcheckBox.Name = "enabledcheckBox";
+            this.enabledcheckBox.Size = new System.Drawing.Size(187, 51);
+            this.enabledcheckBox.TabIndex = 11;
+            this.enabledcheckBox.Text = "Enabled";
+            this.toolTip1.SetToolTip(this.enabledcheckBox, "Defines whether this link is activated and will be executed");
+            this.enabledcheckBox.UseVisualStyleBackColor = true;
+            this.enabledcheckBox.Visible = false;
+            this.enabledcheckBox.CheckedChanged += new System.EventHandler(this.enabledcheckBox_CheckedChanged);
             // 
             // groupBox2
             // 
@@ -444,7 +460,6 @@
             // 
             // comboRecieveEvent
             // 
-            this.comboRecieveEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.comboRecieveEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.comboRecieveEvent.FormattingEnabled = true;
             this.comboRecieveEvent.Location = new System.Drawing.Point(6, 19);
@@ -554,5 +569,6 @@
         private System.Windows.Forms.GroupBox groupBoxSourceEvent;
         private System.Windows.Forms.ComboBox comboRecieveEvent;
         private System.Windows.Forms.NumericUpDown numericUpDownTime;
+        private System.Windows.Forms.CheckBox enabledcheckBox;
     }
 }

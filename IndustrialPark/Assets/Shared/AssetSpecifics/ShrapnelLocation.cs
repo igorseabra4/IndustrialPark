@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -16,7 +17,7 @@ namespace IndustrialPark
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class ShrapnelLocation : GenericAssetDataContainer
     {
-        private const byte padB = 0xCD;
+        private byte padB => (byte)((game >= Game.ROTU) ? 0x00 : 0xCD);
 
         public IShrapnelFragLocationType FragLocationType { get; set; }
         [Description("matidx if type is Loc")]
@@ -25,9 +26,12 @@ namespace IndustrialPark
         public AssetSingle PositionY { get; set; }
         public AssetSingle PositionZ { get; set; }
 
-        public ShrapnelLocation() { }
+        public ShrapnelLocation(Game game)
+        {
+            _game = game;
+        }
 
-        public ShrapnelLocation(EndianBinaryReader reader)
+        public ShrapnelLocation(EndianBinaryReader reader, Game game) : this(game)
         {
             FragLocationType = (IShrapnelFragLocationType)reader.ReadInt32();
 
@@ -68,9 +72,9 @@ namespace IndustrialPark
     {
         public AssetSingle RandRadius { get; set; }
 
-        public ShrapnelLocation_TSSM() : base() { }
+        public ShrapnelLocation_TSSM(Game game) : base(game) { }
 
-        public ShrapnelLocation_TSSM(EndianBinaryReader reader) : base(reader)
+        public ShrapnelLocation_TSSM(EndianBinaryReader reader, Game game) : base(reader, game)
         {
             RandRadius = reader.ReadSingle();
         }

@@ -166,13 +166,19 @@
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\LodtWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\PipeInfoWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
+    <Compile Include="Assets\Binary\AssetANIM_V1.cs" />
+    <Compile Include="Assets\Binary\AssetANIM_V2.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
     <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section1_00BEEF01.cs" />
     <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section2_00BEEF02.cs" />
     <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section3_00BEEF03.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\ParticleCommand.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLightInfo.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\xBound.cs" />
     <Compile Include="Assets\Shared\Editors\ByteArrayEditor.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Cutscene.cs" />
+    <Compile Include="Assets\Shared\Editors\CrdtAddEditor.cs" />
     <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_Header.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_SampleHeaderBasic.cs" />
@@ -394,6 +400,8 @@
     <Compile Include="Assets\Shared\Interfaces\IAssetCopyPasteTransformation.cs" />
     <Compile Include="Assets\Shared\Interfaces\IVolumeAsset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
+    <Compile Include="Links\Enums\EventRatProto.cs" />
+    <Compile Include="Links\Enums\EventROTU.cs" />
     <Compile Include="Links\Enums\EventScooby.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatType.cs" />
@@ -484,7 +492,6 @@
       <DependentUpon>NewArchive.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\Binary\AssetALST.cs" />
-    <Compile Include="Assets\Binary\AssetANIM.cs" />
     <Compile Include="Assets\Binary\AssetATBL.cs" />
     <Compile Include="Assets\Binary\AssetCOLL.cs" />
     <Compile Include="Assets\Binary\AssetJAW.cs" />
