@@ -836,7 +836,7 @@ namespace IndustrialPark
                         placeable.ScaleZ *= factor.Z;
                     }
                 }
-                else if (a is DynaEnemySB enemysb)
+                else if (a is DynaEnemy enemysb)
                 {
                     enemysb.PositionX *= factor.X;
                     enemysb.PositionY *= factor.Y;
@@ -1174,7 +1174,7 @@ namespace IndustrialPark
                             world = ring.world;
                             assetName = ring.assetName;
                         }
-                        else if (v is DynaEnemySB enemySb)
+                        else if (v is DynaEnemy enemySb)
                         {
                             if (enemySb.isInvisible || enemySb.DontRender)
                                 continue;

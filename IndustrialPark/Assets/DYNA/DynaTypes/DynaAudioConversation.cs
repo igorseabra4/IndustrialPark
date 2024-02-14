@@ -7,6 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "audio:conversation";
         public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(SoundGroup);
 
         protected override short constVersion => 1;
 

@@ -404,7 +404,7 @@ namespace IndustrialPark
 
         public AssetCRDT(string assetName, Game game) : base(assetName, AssetType.Credits)
         {
-            Version = (uint)(game == Game.Incredibles ? 512 : 256);
+            Version = (uint)(game >= Game.Incredibles ? 512 : 256);
             State = 1;
             Sections = new CreditsEntry[0];
         }

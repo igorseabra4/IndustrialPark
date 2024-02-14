@@ -173,9 +173,9 @@ namespace IndustrialPark
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
 
-#if DEBUG
-            MessageBox.Show($"Detected Game: {game}\nDetected Platform: {platform}");
-#endif
+//#if DEBUG
+//            MessageBox.Show($"Detected Game: {game}\nDetected Platform: {platform}");
+//#endif
 
             while (game == Game.Unknown)
                 game = ChooseGame.GetGame();
@@ -764,6 +764,8 @@ namespace IndustrialPark
                     return new AssetGeneric(AHDR, game, endianness);
                 case AssetType.Spline:
                     return new AssetSPLN(AHDR, game, endianness, Program.Renderer);
+                case AssetType.SplinePath:
+                    return new AssetSPLP(AHDR, game, endianness);
                 case AssetType.WireframeModel:
                     return new AssetWIRE(AHDR, game, endianness, Program.Renderer);
                 case AssetType.AnimationList:
@@ -778,6 +780,8 @@ namespace IndustrialPark
                     return new AssetBUTN(AHDR, game, endianness);
                 case AssetType.Camera:
                     return new AssetCAM(AHDR, game, endianness);
+                case AssetType.CameraCurve:
+                    return new AssetCCRV(AHDR, game, endianness);
                 case AssetType.Counter:
                     return new AssetCNTR(AHDR, game, endianness);
                 case AssetType.CollisionTable:
@@ -914,7 +918,6 @@ namespace IndustrialPark
                 case AssetType.SoundStream:
                     return new AssetSound(AHDR, game, platform);
 
-                case AssetType.CameraCurve:
                 case AssetType.NavigationMesh:
                 case AssetType.SlideProperty:
                 case AssetType.SceneSettings:
@@ -925,7 +928,6 @@ namespace IndustrialPark
                 case AssetType.MorphTarget:
                 case AssetType.NPCSettings:
                 case AssetType.RawImage:
-                case AssetType.SplinePath:
                 case AssetType.Subtitles:
                 case AssetType.UIFN:
 
@@ -1001,6 +1003,8 @@ namespace IndustrialPark
                     return new DynaEffectGrass(AHDR, game, endianness);
                 case DynaType.effect__smoke_emitter:
                     return new DynaEffectSmokeEmitter(AHDR, game, endianness);
+                case DynaType.effect__spark_emitter:
+                    return new DynaEffectSparkEmitter(AHDR, game, endianness);
                 case DynaType.effect__spotlight:
                     return new DynaEffectSpotlight(AHDR, game, endianness);
                 case DynaType.effect__uber_laser:
@@ -1101,65 +1105,108 @@ namespace IndustrialPark
                     return new DynaUIText(AHDR, game, endianness);
                 case DynaType.ui__text__userstring:
                     return new DynaUITextUserString(AHDR, game, endianness);
-                case DynaType.Enemy__SB:
                 case DynaType.Interest_Pointer:
+                    return new DynaInterestPointer(AHDR, game, endianness);
                 case DynaType.camera__binary_poi:
+                    return new DynaCameraBinary(AHDR, game, endianness);
+                case DynaType.effect__LightEffectFlicker:
+                    return new DynaEffectLightFlicker(AHDR, game, endianness);
+                case DynaType.effect__LightEffectStrobe:
+                    return new DynaEffectLightStrobe(AHDR, game, endianness);
+                case DynaType.effect__ScreenWarp:
+                    return new DynaEffectScreenWarp(AHDR, game, endianness);
+                case DynaType.effect__light:
+                    return new DynaEffectLight(AHDR, game, endianness);
+                case DynaType.game_object__bullet_mark:
+                    return new DynaGObjectBulletMark(AHDR, game, endianness);
+                case DynaType.game_object__bullet_time:
+                    return new DynaGObjectBulletTime(AHDR, game, endianness);
+                case DynaType.game_object__rband_camera_asset:
+                    return new DynaGObjectCameraRband(AHDR, game, endianness);
+                case DynaType.npc__CoverPoint:
+                    return new DynaNPCCoverpoint(AHDR, game, endianness);
+                case DynaType.npc__NPC_Custom_AV:
+                    return new DynaNPCCustomAV(AHDR, game, endianness);
+                case DynaType.AnalogDeflection:
+                    return new DynaAnalogDeflection(AHDR, game, endianness);
+                case DynaType.AnalogDirection:
+                    return new DynaAnalogDirection(AHDR, game, endianness);
+                case DynaType.Carrying_CarryableProperty_GenericUseProperty:
+                    return new DynaCarryablePropertyGeneric(AHDR, game, endianness);
+                case DynaType.Carrying_CarryableProperty_UsePropertyAttract:
+                    return new DynaCarryablePropertyAttract(AHDR, game, endianness);
+                case DynaType.Carrying_CarryableProperty_UsePropertyRepel:
+                    return new DynaCarryablePropertyRepel(AHDR, game, endianness);
+                case DynaType.Carrying_CarryableProperty_UsePropertySwipe:
+                    return new DynaCarryablePropertySwipe(AHDR, game, endianness);
+                case DynaType.ContextObject_PoleSwing:
+                    return new DynaCObjectPoleSwing(AHDR, game, endianness);
+                case DynaType.ContextObject_Springboard:
+                    return new DynaCObjectSpringBoard(AHDR, game, endianness);
+                case DynaType.ContextObject_Tightrope:
+                    return new DynaCObjectTightrope(AHDR, game, endianness);
+                case DynaType.Enemy__NPC_Gate:
+                    return new DynaNpcGate(AHDR, game, endianness);
+                case DynaType.Enemy__NPC_Walls:
+                    return new DynaNpcWalls(AHDR, game, endianness);
+                case DynaType.Enemy__RATS__LeftArm:
+                    return new DynaEnemyRATSLeftArm(AHDR, game, endianness);
+                case DynaType.Enemy__RATS__RightArm:
+                    return new DynaEnemyRATSRightArm(AHDR, game, endianness);
+                case DynaType.Enemy__RATS__Swarm__Bug:
+                    return new DynaEnemyRATSSwarmBug(AHDR, game, endianness);
+                case DynaType.Enemy__RATS__Swarm__Owl:
+                    return new DynaEnemyRATSSwarmOwl(AHDR, game, endianness);
+                case DynaType.Enemy__RATS__Thief:
+                    return new DynaEnemyRATSThief(AHDR, game, endianness);
+                case DynaType.Enemy__RATS__Waiter:
+                    return new DynaEnemyRATSWaiter(AHDR, game, endianness);
+                case DynaType.HUD_Compass_Object:
+                    return new DynaHudCompassObject(AHDR, game, endianness);
+                case DynaType.HUD_Compass_System:
+                    return new DynaHudCompassSystem(AHDR, game, endianness);
+                case DynaType.logic__Mission:
+                    return new DynaLogicMission(AHDR, game, endianness);
+                case DynaType.logic__Task:
+                    return new DynaLogicTask(AHDR, game, endianness);
+                case DynaType.Pour_Widget:
+                    return new DynaPourWidget(AHDR, game, endianness);
+                case DynaType.Twiddler:
+                    return new DynaTwiddler(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Bomber:
+                    return new DynaEnemyIN2Bomber(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__BossUnderminerDrill:
+                    return new DynaEnemyIN2BossUnderminerDrill(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__BossUnderminerUM:
+                    return new DynaEnemyIN2BossUnderminerUM(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Chicken:
+                    return new DynaEnemyIN2Chicken(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Driller:
+                    return new DynaEnemyIN2Driller(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Enforcer:
+                    return new DynaEnemyIN2Enforcer(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Humanoid:
+                    return new DynaEnemyIN2Humanoid(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Rat:
+                    return new DynaEnemyIN2Rat(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__RobotTank:
+                    return new DynaEnemyIN2RobotTank(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Scientist:
+                    return new DynaEnemyIN2Scientist(AHDR, game, endianness);
+                case DynaType.Enemy__IN2__Shooter:
+                    return new DynaEnemyIN2Shooter(AHDR, game, endianness);
+
+                case DynaType.effect__RumbleBoxEmitter:
+                case DynaType.effect__Waterhose:
+                case DynaType.Enemy__SB:
                 case DynaType.camera__transition_path:
                 case DynaType.camera__transition_time:
                 case DynaType.effect__BossBrain:
-                case DynaType.effect__LightEffectFlicker:
-                case DynaType.effect__LightEffectStrobe:
-                case DynaType.effect__RumbleBoxEmitter:
-                case DynaType.effect__ScreenWarp:
-                case DynaType.effect__Waterhose:
-                case DynaType.effect__light:
-                case DynaType.effect__spark_emitter:
                 case DynaType.game_object__FreezableObject:
-                case DynaType.game_object__bullet_mark:
-                case DynaType.game_object__bullet_time:
-                case DynaType.game_object__rband_camera_asset:
+                case DynaType.Carrying_CarryableObject:
                 case DynaType.interaction__IceBridge:
                 case DynaType.interaction__SwitchLever:
-                case DynaType.npc__CoverPoint:
-                case DynaType.npc__NPC_Custom_AV:
-                case DynaType.Enemy__IN2__BossUnderminerDrill:
-                case DynaType.Enemy__IN2__Rat:
-                case DynaType.Enemy__IN2__Chicken:
-                case DynaType.Enemy__IN2__Humanoid:
-                case DynaType.Enemy__IN2__RobotTank:
-                case DynaType.Enemy__IN2__Bomber:
-                case DynaType.Enemy__IN2__BossUnderminerUM:
-                case DynaType.Enemy__IN2__Driller:
-                case DynaType.Enemy__IN2__Enforcer:
-                case DynaType.Enemy__IN2__Scientist:
-                case DynaType.Enemy__IN2__Shooter:
-                case DynaType.AnalogDeflection:
-                case DynaType.AnalogDirection:
-                case DynaType.Carrying_CarryableObject:
-                case DynaType.Carrying_CarryableProperty_GenericUseProperty:
-                case DynaType.Carrying_CarryableProperty_UsePropertyAttract:
-                case DynaType.Carrying_CarryableProperty_UsePropertyRepel:
-                case DynaType.Carrying_CarryableProperty_UsePropertySwipe:
-                case DynaType.ContextObject_PoleSwing:
-                case DynaType.ContextObject_Springboard:
-                case DynaType.ContextObject_Tightrope:
-                case DynaType.Enemy__NPC_Gate:
-                case DynaType.Enemy__NPC_Walls:
-                case DynaType.Enemy__RATS__LeftArm:
-                case DynaType.Enemy__RATS__RightArm:
-                case DynaType.Enemy__RATS__Swarm__Bug:
-                case DynaType.Enemy__RATS__Swarm__Owl:
-                case DynaType.Enemy__RATS__Thief:
-                case DynaType.Enemy__RATS__Waiter:
-                case DynaType.HUD_Compass_Object:
-                case DynaType.HUD_Compass_System:
-                case DynaType.logic__Mission:
-                case DynaType.logic__Task:
-                case DynaType.Pour_Widget:
-                case DynaType.Twiddler:
-
                 case DynaType.Unknown_EBC04E7B:
-
                 case DynaType.Null:
                     return new DynaGeneric(AHDR, type, game, endianness);
                 default:

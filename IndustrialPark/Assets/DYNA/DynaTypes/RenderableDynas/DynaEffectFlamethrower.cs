@@ -14,6 +14,7 @@ namespace IndustrialPark
         public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 3;
+        protected override bool inRadians => false;
 
         [Category(dynaCategoryName)]
         public AssetByte Visible { get; set; }

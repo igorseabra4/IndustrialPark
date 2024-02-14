@@ -1523,7 +1523,7 @@ namespace IndustrialPark
                 output.WriteLine($"File path: {currentFilepath}");
                 output.WriteLine($"File size: {new FileInfo(currentFilepath).Length} Bytes");
                 output.WriteLine($"Platform: {archive.platform}");
-                string game = archive.game >= Game.Incredibles ? "Incredible/TSSM/ROTU" : archive.game.ToString();
+                string game = archive.game == Game.Incredibles ? "Incredibles/TSSM" : archive.game.ToString();
                 output.WriteLine($"Game: {game}");
                 output.WriteLine($"Number of Layers: {archive.LayerCount}");
                 output.WriteLine($"Number of Assets: {archive.AssetCount}");

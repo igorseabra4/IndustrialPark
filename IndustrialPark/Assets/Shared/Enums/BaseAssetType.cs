@@ -79,6 +79,7 @@
         SDFX = 0x4B,
         UIM = 0x53,
         SSET = 0x54,
+        SplinePath = 0x73,
         ProgressScript = 0x75,
         CameraCurve = 0x8D,
         RotuNGMS = 0x9A,

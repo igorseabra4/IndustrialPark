@@ -43,6 +43,147 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Disco_Floor, eventHandler),
             });
 
+            ToolStripMenuItem placeable = new ToolStripMenuItem("Placeable");
+            placeable.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Box_Trigger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sphere_Trigger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Cylinder_Trigger, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Camera, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Marker, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.MovePoint, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.MovePoint_Area, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Light, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Player, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Pointer, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SDFX, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SFX_OnEvent, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SFX_OnRadius, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Boulder, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Destructible_Object, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Duplicator, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Electric_Arc_Generator, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hangable, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.NPC, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Pendulum, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Platform, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Simple_Object, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Villain, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.User_Interface, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.User_Interface_Font, eventHandler),
+            });
+
+            // Scooby
+            ToolStripMenuItem scoobyPickups = new ToolStripMenuItem("Pickups");
+            scoobyPickups.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Scooby_Snack, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Snack_Box, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Warp_Gate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Snack_Gate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Save_Point, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Clue, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Key, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gum, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gum_Pack, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Soap, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Soap_Pack, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Cake, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hamburger, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ice_Cream, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sandwich, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Turkey, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Shovel, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Springs, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Slippers, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Lampshade, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Helmet, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Knight_Helmet, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Boots, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Super_Smash, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Plungers, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Super_Sonic_Smash, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Umbrella, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gum_Machine, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Soap_Bubble, eventHandler),
+            });
+
+            ToolStripMenuItem scoobyEnemies = new ToolStripMenuItem("Enemies");
+            scoobyEnemies.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Caveman, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Creeper, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Funland_Robot, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Gargoyle, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Geronimo, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ghost, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ghost_Diver, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Ghost_of_Captain_Moody, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Headless_Specter, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Sea_Creature, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Scarecrow, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Space_Kook, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Tar_Monster, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Witch, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Witch_Doctor, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Wolfman, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Zombie, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Bat, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Crab, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Flying_Fish, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Rat, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Spider, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Groundskeeper, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Holly, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Killer_Plant, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shark, eventHandler),
+
+                //GetTemplateMenuItem(AssetTemplate.Shaggy0, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy1, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy4, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy5, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Shaggy8, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Fred, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Daphne, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Velma, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Black_Knight, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Green_Ghost, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Redbeard, eventHandler),
+                //GetTemplateMenuItem(AssetTemplate.Mastermind, eventHandler),
+            });
+
+            ToolStripMenuItem stageitemsScooby = new ToolStripMenuItem("Stage Items");
+            stageitemsScooby.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Gust, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Volume_Box, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Volume_Sphere, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Red_Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Red_Button_Smash, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Floor_Button, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Floor_Button_Smash, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Crate, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Cauldron, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Flower, eventHandler),
+            });
+
+            ToolStripMenuItem scooby = new ToolStripMenuItem("Scooby");
+            scooby.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                scoobyPickups,
+                scoobyEnemies,
+                stageitemsScooby
+            });
+
             // BFBB
             ToolStripMenuItem pickupsBFBB = new ToolStripMenuItem("Pickups and Tikis");
             pickupsBFBB.DropDownItems.AddRange(new ToolStripItem[]
@@ -243,113 +384,8 @@ namespace IndustrialPark
                 floatingBlocksTSSM
             });
 
-            ToolStripMenuItem scoobyPickups = new ToolStripMenuItem("Pickups");
-            scoobyPickups.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                GetTemplateMenuItem(AssetTemplate.Scooby_Snack, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Snack_Box, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Warp_Gate, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Snack_Gate, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Save_Point, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Clue, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Key, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Gum, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Gum_Pack, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Soap, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Soap_Pack, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Cake, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Hamburger, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Ice_Cream, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Sandwich, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Turkey, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Shovel, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Springs, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Slippers, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Lampshade, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Helmet, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Knight_Helmet, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Boots, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Super_Smash, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Plungers, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Super_Sonic_Smash, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Umbrella, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Gum_Machine, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Soap_Bubble, eventHandler),
-            });
 
-            ToolStripMenuItem scoobyEnemies = new ToolStripMenuItem("Enemies");
-            scoobyEnemies.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                GetTemplateMenuItem(AssetTemplate.Caveman, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Creeper, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Funland_Robot, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Gargoyle, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Geronimo, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Ghost, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Ghost_Diver, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Ghost_of_Captain_Moody, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Headless_Specter, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Sea_Creature, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Scarecrow, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Space_Kook, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Tar_Monster, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Witch, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Witch_Doctor, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Wolfman, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Zombie, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Bat, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Crab, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Flying_Fish, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Rat, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Spider, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Groundskeeper, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Holly, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Killer_Plant, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Shark, eventHandler),
-
-                //GetTemplateMenuItem(AssetTemplate.Shaggy0, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Shaggy1, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Shaggy4, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Shaggy5, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Shaggy8, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Fred, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Daphne, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Velma, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Black_Knight, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Green_Ghost, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Redbeard, eventHandler),
-                //GetTemplateMenuItem(AssetTemplate.Mastermind, eventHandler),
-            });
-
-            ToolStripMenuItem stageitemsScooby = new ToolStripMenuItem("Stage Items");
-            stageitemsScooby.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                GetTemplateMenuItem(AssetTemplate.Gust, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Volume_Box, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Volume_Sphere, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Red_Button, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Red_Button_Smash, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Floor_Button, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Floor_Button_Smash, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Crate, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Cauldron, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Flower, eventHandler),
-            });
-
-            ToolStripMenuItem scooby = new ToolStripMenuItem("Scooby");
-            scooby.DropDownItems.AddRange(new ToolStripItem[]
-            {
-                scoobyPickups,
-                scoobyEnemies,
-                stageitemsScooby
-            });
-
+            // Incredibles
             ToolStripMenuItem incrediblesPickups = new ToolStripMenuItem("Pickups");
             incrediblesPickups.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -375,43 +411,62 @@ namespace IndustrialPark
                 incrediblesObjects
             });
 
-            ToolStripMenuItem placeable = new ToolStripMenuItem("Placeable");
-            placeable.DropDownItems.AddRange(new ToolStripItem[]
+            // ROTU
+            ToolStripMenuItem rotuEnemies = new ToolStripMenuItem("Enemies");
+            rotuEnemies.DropDownItems.AddRange(new ToolStripMenuItem[]
             {
-                GetTemplateMenuItem(AssetTemplate.Box_Trigger, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Sphere_Trigger, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Cylinder_Trigger, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Camera, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Marker, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.MovePoint, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.MovePoint_Area, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Light, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Player, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Pointer, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.SDFX, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.SFX_OnEvent, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.SFX_OnRadius, eventHandler),
-                new ToolStripSeparator(),
-                GetTemplateMenuItem(AssetTemplate.Boulder, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Button, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Destructible_Object, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Duplicator, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Electric_Arc_Generator, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Hangable, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.NPC, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Pendulum, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Platform, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Simple_Object, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Villain, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.User_Interface, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.User_Interface_Font, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Bomber, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Boss_Underminer_Drill, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Boss_Underminer_UM, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Chicken, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Driller, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Enforcer, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Humanoid, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.RotuRat, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.RobotTank, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Scientist, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Shooter, eventHandler),
             });
+
+            ToolStripMenuItem rotu = new ToolStripMenuItem("ROTU");
+            rotu.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                rotuEnemies,
+            });
+
+            // RatProto
+            ToolStripMenuItem stageitemsRatproto = new ToolStripMenuItem("Stage Items");
+            stageitemsRatproto.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Light_Effect, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Light_Effect_Flicker, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Light_Effect_Strobe, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hud_Compass_System, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Hud_Compass_Object, eventHandler),
+            });
+
+            ToolStripMenuItem ratprotoEnemies = new ToolStripMenuItem("Enemies");
+            ratprotoEnemies.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                GetTemplateMenuItem(AssetTemplate.Waiter, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Thief, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SwarmBug, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.SwarmOwl, eventHandler),
+            });
+
+            ToolStripMenuItem ratproto = new ToolStripMenuItem("RatProto");
+            ratproto.DropDownItems.AddRange(new ToolStripItem[]
+            {
+                stageitemsRatproto,
+                ratprotoEnemies,
+            });
+
 
             ToolStripMenuItem others = new ToolStripMenuItem("Other");
             others.DropDownItems.AddRange(new ToolStripItem[]
             {
                 GetTemplateMenuItem(AssetTemplate.Animation_List, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Camera_Curve, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Collision_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Credits, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.DefaultGlowSceneProp, eventHandler),
@@ -436,7 +491,7 @@ namespace IndustrialPark
 
             var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
 
-            var items = new ToolStripItem[] { controllers, placeable, bfbb, tssm, scooby, incredibles, others, paste };
+            var items = new ToolStripItem[] { controllers, placeable, new ToolStripSeparator(), bfbb, tssm, scooby, incredibles, rotu, ratproto, new ToolStripSeparator(), others, paste };
             menu.DropDownItems.AddRange(items);
 
             var result = new List<ToolStripMenuItem>();
@@ -887,7 +942,7 @@ namespace IndustrialPark
                     return timer;
                 }
                 case AssetTemplate.Cam_Tweak:
-                    return new DynaGObjectCamTweak(assetName);
+                    return new DynaGObjectCamTweak(assetName, (game >= Game.ROTU) ? 2 : 1);
                 case AssetTemplate.Duplicatotron_Settings:
                     return new DynaGObjectNPCSettings(assetName);
                 case AssetTemplate.Disco_Floor:
@@ -1136,6 +1191,8 @@ namespace IndustrialPark
                     return new AssetLITE(assetName, position, template);
                 case AssetTemplate.Animation_List:
                     return new AssetALST(assetName);
+                case AssetTemplate.Camera_Curve:
+                    return new AssetCCRV(assetName);
                 case AssetTemplate.Collision_Table:
                     return new AssetCOLL(assetName);
                 case AssetTemplate.Credits:
@@ -1504,7 +1561,7 @@ namespace IndustrialPark
                 case AssetTemplate.Zip_Line:
                     return new AssetZLIN(assetName, position);
                 case AssetTemplate.Rubble_Generator:
-                    return new DynaGObjectRubbleGenerator(assetName);
+                    return new DynaGObjectRubbleGenerator(assetName, (game >= Game.ROTU) ? 8 : 5);
                 case AssetTemplate.Floating_Block:
                 case AssetTemplate.Floating_Block_Spiked:
                 case AssetTemplate.Scale_Block:
@@ -1605,6 +1662,54 @@ namespace IndustrialPark
                     return block;
                 case AssetTemplate.Jsp_Info:
                     return new AssetJSP_INFO(assetName, game, platform);
+
+                case AssetTemplate.SwarmBug:
+                    return new DynaEnemyRATSSwarmBug(assetName, position);
+                case AssetTemplate.SwarmOwl:
+                    return new DynaEnemyRATSSwarmOwl(assetName, position);
+                case AssetTemplate.Thief:
+                    {
+                        var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                        return new DynaEnemyRATSThief(assetName, position, mvpt.assetID);
+                    }
+                case AssetTemplate.Waiter:
+                    {
+                        var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                        return new DynaEnemyRATSWaiter(assetName, position, mvpt.assetID);
+                    }
+                case AssetTemplate.Light_Effect:
+                    return new DynaEffectLight(assetName, position);
+                case AssetTemplate.Light_Effect_Flicker:
+                    return new DynaEffectLightFlicker(assetName);
+                case AssetTemplate.Light_Effect_Strobe:
+                    return new DynaEffectLightStrobe(assetName);
+                case AssetTemplate.Hud_Compass_System:
+                    return new DynaHudCompassSystem(assetName);
+                case AssetTemplate.Hud_Compass_Object:
+                    return new DynaHudCompassObject(assetName, position);
+
+                case AssetTemplate.Bomber:
+                    return new DynaEnemyIN2Bomber(assetName, position);
+                case AssetTemplate.Boss_Underminer_Drill:
+                    return new DynaEnemyIN2BossUnderminerDrill(assetName, position);
+                case AssetTemplate.Boss_Underminer_UM:
+                    return new DynaEnemyIN2BossUnderminerUM(assetName, position);
+                case AssetTemplate.Chicken:
+                    return new DynaEnemyIN2Chicken(assetName, position);
+                case AssetTemplate.Driller:
+                    return new DynaEnemyIN2Driller(assetName, position);
+                case AssetTemplate.Enforcer:
+                    return new DynaEnemyIN2Enforcer(assetName, position);
+                case AssetTemplate.Humanoid:
+                    return new DynaEnemyIN2Humanoid(assetName, position);
+                case AssetTemplate.RotuRat:
+                    return new DynaEnemyIN2Rat(assetName, position);
+                case AssetTemplate.RobotTank:
+                    return new DynaEnemyIN2RobotTank(assetName, position);
+                case AssetTemplate.Scientist:
+                    return new DynaEnemyIN2Scientist(assetName, position);
+                case AssetTemplate.Shooter:
+                    return new DynaEnemyIN2Shooter(assetName, position);
             }
             MessageBox.Show("Unsupported template");
             return null;

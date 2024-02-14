@@ -52,6 +52,7 @@
 
         // Other
         Animation_List,
+        Camera_Curve,
         Credits,
         DefaultGlowSceneProp,
         Destructible,
@@ -348,5 +349,32 @@
         // Incredibles objects
         Zip_Line,
         Rubble_Generator,
+
+        // ROTU enemies
+        Bomber,
+        Boss_Underminer_Drill,
+        Boss_Underminer_UM,
+        Chicken,
+        Driller,
+        Enforcer,
+        Humanoid,
+        RotuRat,
+        RobotTank,
+        Scientist,
+        Shooter,
+
+
+        // RatProto enemies
+        Thief,
+        Waiter,
+        SwarmOwl,
+        SwarmBug,
+
+        // RatProto objects
+        Light_Effect,
+        Light_Effect_Strobe,
+        Light_Effect_Flicker,
+        Hud_Compass_System,
+        Hud_Compass_Object,
     }
 }

@@ -11,28 +11,51 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "DYNA Placement";
 
+        protected virtual bool inRadians => true;
+
         protected float _yaw;
         [Category(dynaCategoryName)]
         public AssetSingle Yaw
         {
-            get => MathUtil.RadiansToDegrees(_yaw);
-            set { _yaw = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            get => (inRadians) ? MathUtil.RadiansToDegrees(_yaw) : _yaw;
+            set
+            {
+                if (inRadians)
+                    _yaw = MathUtil.DegreesToRadians(value);
+                else
+                    _yaw = value;
+                CreateTransformMatrix();
+            }
         }
 
         protected float _pitch;
         [Category(dynaCategoryName)]
         public AssetSingle Pitch
         {
-            get => MathUtil.RadiansToDegrees(_pitch);
-            set { _pitch = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            get => (inRadians) ? MathUtil.RadiansToDegrees(_pitch) : _pitch;
+            set
+            {
+                if (inRadians)
+                    _pitch = MathUtil.DegreesToRadians(value);
+                else
+                    _pitch = value;
+                CreateTransformMatrix();
+            }
         }
 
         protected float _roll;
         [Category(dynaCategoryName)]
         public AssetSingle Roll
         {
-            get => MathUtil.RadiansToDegrees(_roll);
-            set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            get => (inRadians) ? MathUtil.RadiansToDegrees(_roll) : _roll;
+            set
+            {
+                if (inRadians)
+                    _roll = MathUtil.DegreesToRadians(value);
+                else
+                    _roll = value;
+                CreateTransformMatrix();
+            }
         }
 
         public RenderableRotatableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType, position) { }
@@ -40,7 +63,13 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
+            if (inRadians)
+                world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
+            else
+                world = Matrix.RotationYawPitchRoll(
+                    MathUtil.DegreesToRadians(_yaw),
+                    MathUtil.DegreesToRadians(_pitch),
+                    MathUtil.DegreesToRadians(_roll)) * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }

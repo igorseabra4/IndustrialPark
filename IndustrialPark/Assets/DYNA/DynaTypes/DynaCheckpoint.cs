@@ -7,6 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Checkpoint";
         public override string TypeString => dynaCategoryName;
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Trigger);
 
         protected override short constVersion => 1;
 

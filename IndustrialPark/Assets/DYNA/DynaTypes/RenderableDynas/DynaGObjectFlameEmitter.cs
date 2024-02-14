@@ -34,14 +34,16 @@ namespace IndustrialPark
         public AssetSingle Damage { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle Knockback { get; set; }
-        [Category(dynaCategoryName + " (Incredibles version only)")]
-        public int Unknown { get; set; }
-
+        [Category(dynaCategoryName)]
+        public uint Unknown44 { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetSingle DamageBoxHeightRatio {  get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID SoundID { get; set; }
+        [Category(dynaCategoryName)]
+        public AssetID DriverID { get; set; }
         [Category(dynaCategoryName)]
         public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
-
-        public static bool dontRender = false;
-        protected override bool DontRender => dontRender;
 
         public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__flame_emitter, game, endianness)
         {
@@ -59,15 +61,20 @@ namespace IndustrialPark
                 ScaleZ = reader.ReadSingle();
                 HeatRandom = reader.ReadSingle();
                 Damage = reader.ReadSingle();
+                if (game >= Game.ROTU)
+                    DamageBoxHeightRatio = reader.ReadSingle();
                 Knockback = reader.ReadSingle();
 
-                if (reader.BaseStream.Position - _links.Length * Link.sizeOfStruct != reader.BaseStream.Length)
+                if (game >= Game.ROTU)
+                {
+                    SoundID = reader.ReadUInt32();
+                    DriverID = reader.ReadUInt32();
+                }
+                else if (reader.BaseStream.Position != AHDR.data.Length)
                 {
                     AssetVersion = EVersionIncrediblesOthers.Incredibles;
-                    Unknown = reader.ReadInt32();
+                    Unknown44 = reader.ReadUInt32();
                 }
-                else
-                    AssetVersion = EVersionIncrediblesOthers.Others;
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -88,10 +95,27 @@ namespace IndustrialPark
             writer.Write(ScaleZ);
             writer.Write(HeatRandom);
             writer.Write(Damage);
+            if (game >= Game.ROTU)
+                writer.Write(DamageBoxHeightRatio);
             writer.Write(Knockback);
 
-            if (AssetVersion == EVersionIncrediblesOthers.Incredibles)
-                writer.Write(Unknown);
+            if (game >= Game.ROTU)
+            {
+                writer.Write(SoundID);
+                writer.Write(DriverID);
+            }
+            else if (AssetVersion == EVersionIncrediblesOthers.Incredibles)
+                writer.Write(Unknown44);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.ROTU)
+            {
+                dt.RemoveProperty("DamageBoxHeightRatio");
+                dt.RemoveProperty("SoundID");
+                dt.RemoveProperty("DriverID");
+            }
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
@@ -99,5 +123,8 @@ namespace IndustrialPark
         protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
+
+        public static bool dontRender = false;
+        protected override bool DontRender => dontRender;
     }
 }
