@@ -173,6 +173,9 @@ namespace IndustrialPark
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
 
+            if (hipFile.HIPB.VersionMismatch)
+                MessageBox.Show($"Expected: {Section_HIPB.CurrentVersion}\nGot: {hipFile.HIPB.Version}\nAdditional data will be skipped", "Newer HIPB version detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
             while (game == Game.Unknown)
                 game = ChooseGame.GetGame();
             this.game = game;
