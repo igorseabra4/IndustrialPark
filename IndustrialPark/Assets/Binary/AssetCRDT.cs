@@ -34,7 +34,7 @@ namespace IndustrialPark
         public CreditsTextBox(EndianBinaryReader reader)
         {
             Font = (FontEnum)reader.ReadInt32();
-            Color = reader.ReadColor();
+            Color = new AssetColor(reader.ReadUInt32());
             CharWidth = reader.ReadSingle();
             CharHeight = reader.ReadSingle();
             CharSpacingX = reader.ReadSingle();
@@ -46,7 +46,7 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write((int)Font);
-            writer.Write(Color);
+            writer.Write((uint)Color);
             writer.Write(CharWidth);
             writer.Write(CharHeight);
             writer.Write(CharSpacingX);
@@ -76,7 +76,7 @@ namespace IndustrialPark
         public CreditsTexture(EndianBinaryReader reader)
         {
             TextureAssetID = reader.ReadUInt32();
-            Color = reader.ReadColor();
+            Color = new AssetColor(reader.ReadUInt32());
             PositionX = reader.ReadSingle();
             PositionY = reader.ReadSingle();
             Width = reader.ReadSingle();
@@ -88,7 +88,7 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(TextureAssetID);
-            writer.Write(Color);
+            writer.Write((uint)Color);
             writer.Write(PositionX);
             writer.Write(PositionY);
             writer.Write(Width);

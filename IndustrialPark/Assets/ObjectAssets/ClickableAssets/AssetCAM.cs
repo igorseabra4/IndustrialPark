@@ -124,13 +124,7 @@ namespace IndustrialPark
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Data")]
         public CamSpecific_Generic CamSpecific { get; set; }
         [Category(categoryName)]
-        public FlagBitmask Flags1 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags2 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags3 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags4 { get; set; } = ByteFlagsDescriptor();
+        public FlagBitmask ValidFlags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
         public AssetID Marker1 { get; set; }
         [Category(categoryName)]
@@ -144,10 +138,7 @@ namespace IndustrialPark
             OffsetStartFrames = 30;
             OffsetEndFrames = 45;
             FieldOfView = 100;
-            Flags1.FlagValueByte = 0;
-            Flags2.FlagValueByte = 1;
-            Flags3.FlagValueByte = 1;
-            Flags4.FlagValueByte = 0xC0;
+            ValidFlags.FlagValueInt = 0x000101C0;
 
             CamType = CamType.Static;
 
@@ -157,7 +148,7 @@ namespace IndustrialPark
                 NormalizedUpY = 1;
                 NormalizedLeftX = 1;
                 FieldOfView = 85;
-                Flags4.FlagValueByte = 0x8F;
+                ValidFlags.FlagValueInt = 0x0001018F;
                 CamType = CamType.Follow;
                 var camSpecific = (CamSpecific_Follow)CamSpecific;
                 camSpecific.Distance = -2;
@@ -181,7 +172,7 @@ namespace IndustrialPark
                 OffsetEndFrames = 45;
                 FieldOfView = 60f;
                 TransitionTime = 0.5f;
-                Flags4.FlagValueByte = 0x8F;
+                ValidFlags.FlagValueInt = 0x0001018F;
                 CamType = CamType.Static;
             }
 
@@ -218,10 +209,7 @@ namespace IndustrialPark
                 FadeDown = reader.ReadSingle();
 
                 reader.BaseStream.Position = 0x78;
-                Flags1.FlagValueByte = reader.ReadByte();
-                Flags2.FlagValueByte = reader.ReadByte();
-                Flags3.FlagValueByte = reader.ReadByte();
-                Flags4.FlagValueByte = reader.ReadByte();
+                ValidFlags.FlagValueInt = reader.ReadUInt32();
                 Marker1 = reader.ReadUInt32();
                 Marker2 = reader.ReadUInt32();
                 _camType = (CamType)reader.ReadByte();
@@ -284,10 +272,7 @@ namespace IndustrialPark
             CamSpecific.Serialize(writer);
             while (writer.BaseStream.Length < 0x78)
                 writer.Write((byte)0);
-            writer.Write(Flags1.FlagValueByte);
-            writer.Write(Flags2.FlagValueByte);
-            writer.Write(Flags3.FlagValueByte);
-            writer.Write(Flags4.FlagValueByte);
+            writer.Write(ValidFlags.FlagValueInt);
             writer.Write(Marker1);
             writer.Write(Marker2);
             writer.Write((byte)_camType);

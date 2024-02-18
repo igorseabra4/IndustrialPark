@@ -7,12 +7,12 @@ namespace IndustrialPark
 {
     public enum DynaRingControlPlayerType
     {
-        Drive = 0,
-        SpongebobPatrick = 1,
-        Spongeball = 2,
-        Unknown3 = 3,
-        Slide = 4,
-        SonicWaveGuitar = 5
+        PattyWagon = 0,
+        SpongeBobOrPatrick = 1,
+        SpongeBall = 2,
+        ToungeBoarding = 3,
+        SpongePatSlide = 4,
+        CruiseBubble = 5
     }
 
     public class DynaGObjectRingControl : AssetDYNA, IAssetAddSelected

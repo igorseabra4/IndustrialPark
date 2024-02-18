@@ -94,7 +94,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "game_object:laser_beam";
         public override string TypeString => dynaCategoryName;
-
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Target);
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]

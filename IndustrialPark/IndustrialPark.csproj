@@ -171,6 +171,7 @@
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaCameraBinary.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaCameraTransitionTime.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLightFlicker.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLightStrobe.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBulletMark.cs" />

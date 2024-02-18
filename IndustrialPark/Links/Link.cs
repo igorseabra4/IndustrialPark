@@ -58,7 +58,7 @@ namespace IndustrialPark
 
         public float Time { get; set; } // only for progress, timed and timed rotu
         public int Flags { get; set; } // only for progress
-        public bool Enabled { get; set; } // only for timed rotu
+        public bool Enabled { get; set; } = true; // only for timed rotu
 
         [JsonConstructor]
         private Link()

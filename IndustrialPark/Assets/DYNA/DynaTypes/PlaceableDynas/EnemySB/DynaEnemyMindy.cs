@@ -25,17 +25,17 @@ namespace IndustrialPark
             set => Model = (uint)value;
         }
         [Category(dynaCategoryName)]
-        public AssetID TaskBox1 { get; set; }
+        public AssetID TaskBoxID { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle ClamOpenDistance { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle ClamCloseDistance { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TextBox { get; set; }
+        public AssetID TextBoxID { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt60 { get; set; }
+        public int PrimaryCharacter { get; set; }
         [Category(dynaCategoryName)]
-        public AssetID TaskBox2 { get; set; }
+        public AssetID SecondaryTaskBoxID { get; set; }
 
         public DynaEnemyMindy(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Mindy, game, endianness)
         {
@@ -43,24 +43,24 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                TaskBox1 = reader.ReadUInt32();
+                TaskBoxID = reader.ReadUInt32();
                 ClamOpenDistance = reader.ReadSingle();
                 ClamCloseDistance = reader.ReadSingle();
-                TextBox = reader.ReadUInt32();
-                UnknownInt60 = reader.ReadInt32();
-                TaskBox2 = reader.ReadUInt32();
+                TextBoxID = reader.ReadUInt32();
+                PrimaryCharacter = reader.ReadInt32();
+                SecondaryTaskBoxID = reader.ReadUInt32();
             }
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
             SerializeEntityDyna(writer);
-            writer.Write(TaskBox1);
+            writer.Write(TaskBoxID);
             writer.Write(ClamOpenDistance);
             writer.Write(ClamCloseDistance);
-            writer.Write(TextBox);
-            writer.Write(UnknownInt60);
-            writer.Write(TaskBox2);
+            writer.Write(TextBoxID);
+            writer.Write(PrimaryCharacter);
+            writer.Write(SecondaryTaskBoxID);
         }
 
         public static bool dontRender = false;

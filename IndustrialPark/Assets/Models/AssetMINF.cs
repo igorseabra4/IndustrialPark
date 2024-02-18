@@ -301,13 +301,15 @@ namespace IndustrialPark
                 dt.RemoveProperty("CombatID");
                 dt.RemoveProperty("BrainID");
             }
-            if (game < Game.Incredibles)
+            if (game != Game.Incredibles)
             {
                 dt.RemoveProperty("BrainID_Movie");
                 dt.RemoveProperty("BrainID_Incredibles");
-                dt.RemoveProperty("BrainID_ROTU");
-                dt.RemoveProperty("BrainID_RatProto");
             }
+            if (game != Game.ROTU)
+                dt.RemoveProperty("BrainID_ROTU");
+            if (game != Game.RatProto)
+                dt.RemoveProperty("BrainID_RatProto");
 
             base.SetDynamicProperties(dt);
         }

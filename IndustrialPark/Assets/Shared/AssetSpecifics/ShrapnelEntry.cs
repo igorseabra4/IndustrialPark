@@ -110,6 +110,9 @@ namespace IndustrialPark
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
         public AssetID ParticleEmitter { get; set; }
+
+        public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
+
         public ShrapnelEntry_Particle(Game game) : base(game, IShrapnelType.Particle)
         {
             Source = ShrapnelLocation(game);
@@ -129,7 +132,7 @@ namespace IndustrialPark
             if (game >= Game.Incredibles)
                 ReadPad(reader, 0x48);
 
-            if (game == Game.Incredibles)
+            if (game == Game.Incredibles && AssetVersion == EVersionIncrediblesOthers.Others)
                 Flags.FlagValueInt = reader.ReadUInt32();
 
             if (game < Game.Incredibles)
@@ -154,7 +157,7 @@ namespace IndustrialPark
             if (game >= Game.Incredibles)
                 WritePad(writer, 0x48);
 
-            if (game == Game.Incredibles)
+            if (game == Game.Incredibles && AssetVersion == EVersionIncrediblesOthers.Others)
                 writer.Write(Flags.FlagValueInt);
 
             if (game < Game.Incredibles)

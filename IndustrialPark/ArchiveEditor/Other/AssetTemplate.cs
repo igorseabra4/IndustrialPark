@@ -182,7 +182,7 @@
         Taxi_Stand,
         Texas_Hitch,
         Texas_Hitch_Platform,
-        Checkpoint,
+        Checkpoint_Set,
         Checkpoint_Invisible,
         Bus_Stop,
         Teleport_Box,
@@ -363,18 +363,27 @@
         Scientist,
         Shooter,
 
+        // ROTU/RatProto objects
+        Checkpoint,
 
         // RatProto enemies
         Thief,
         Waiter,
-        SwarmOwl,
-        SwarmBug,
+        Swarm_Owl,
+        Swarm_Bug,
 
         // RatProto objects
+        Carryable_Property_Attract,
+        Carryable_Property_Generic,
+        Carryable_Property_Repel,
+        Carryable_Property_Swipe,
         Light_Effect,
         Light_Effect_Strobe,
         Light_Effect_Flicker,
         Hud_Compass_System,
         Hud_Compass_Object,
+        Pole_Swing,
+        CObject_SpringBoard,
+        Tightrope,
     }
 }

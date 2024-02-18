@@ -244,7 +244,7 @@ namespace IndustrialPark
             {
                 GetTemplateMenuItem(AssetTemplate.Button_Red, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Pressure_Plate, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Checkpoint, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Checkpoint_Set, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint_Invisible, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Bus_Stop, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Teleport_Box, eventHandler),
@@ -342,7 +342,7 @@ namespace IndustrialPark
             stageitemsTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
                 GetTemplateMenuItem(AssetTemplate.Button_Red, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Checkpoint, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Checkpoint_Set, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint_Invisible, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Teleport_Box, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Throw_Fruit, eventHandler),
@@ -438,11 +438,15 @@ namespace IndustrialPark
             ToolStripMenuItem stageitemsRatproto = new ToolStripMenuItem("Stage Items");
             stageitemsRatproto.DropDownItems.AddRange(new ToolStripItem[]
             {
-                GetTemplateMenuItem(AssetTemplate.Light_Effect, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Light_Effect_Flicker, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Light_Effect_Strobe, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Carryable_Property_Attract, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Carryable_Property_Generic, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Carryable_Property_Repel, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Carryable_Property_Swipe, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Hud_Compass_System, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Hud_Compass_Object, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Pole_Swing, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.CObject_SpringBoard, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Tightrope, eventHandler),
             });
 
             ToolStripMenuItem ratprotoEnemies = new ToolStripMenuItem("Enemies");
@@ -450,8 +454,8 @@ namespace IndustrialPark
             {
                 GetTemplateMenuItem(AssetTemplate.Waiter, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Thief, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.SwarmBug, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.SwarmOwl, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Swarm_Bug, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Swarm_Owl, eventHandler),
             });
 
             ToolStripMenuItem ratproto = new ToolStripMenuItem("RatProto");
@@ -466,7 +470,6 @@ namespace IndustrialPark
             others.DropDownItems.AddRange(new ToolStripItem[]
             {
                 GetTemplateMenuItem(AssetTemplate.Animation_List, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.Camera_Curve, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Collision_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Credits, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.DefaultGlowSceneProp, eventHandler),
@@ -485,13 +488,19 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Throwable_Table, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Empty_BSP, eventHandler),
+                new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.Camera_Curve, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Checkpoint, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Light_Effect, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Light_Effect_Flicker, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Light_Effect_Strobe, eventHandler),
                 //GetTemplateMenuItem(AssetTemplate.Empty_Sound, eventHandler),
                 //GetTemplateMenuItem(AssetTemplate.Empty_Streaming_Sound, eventHandler),
             });
 
             var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
 
-            var items = new ToolStripItem[] { controllers, placeable, new ToolStripSeparator(), bfbb, tssm, scooby, incredibles, rotu, ratproto, new ToolStripSeparator(), others, paste };
+            var items = new ToolStripItem[] { controllers, placeable, new ToolStripSeparator(), scooby, bfbb, tssm, incredibles, rotu, ratproto, new ToolStripSeparator(), others, paste };
             menu.DropDownItems.AddRange(items);
 
             var result = new List<ToolStripMenuItem>();
@@ -690,6 +699,10 @@ namespace IndustrialPark
                     return "Trampoline Block (spiked with driver)";
                 case AssetTemplate.Block_Spikes:
                     return "Spikes";
+                case AssetTemplate.CObject_SpringBoard:
+                    return "SpringBoard";
+                case AssetTemplate.RotuRat:
+                    return "Rat";
             }
 
             return template.ToString().Replace('_', ' ');
@@ -843,7 +856,7 @@ namespace IndustrialPark
                     assetName = playerName;
                     giveIdRegardless = true;
                     break;
-                case AssetTemplate.Checkpoint:
+                case AssetTemplate.Checkpoint_Set:
                     assetName = "CHECKPOINT_TRIG_01";
                     giveIdRegardless = true;
                     break;
@@ -957,7 +970,7 @@ namespace IndustrialPark
                 case AssetTemplate.Sphere_Trigger:
                 case AssetTemplate.Cylinder_Trigger:
                     return new AssetTRIG(assetName, position, template);
-                case AssetTemplate.Checkpoint:
+                case AssetTemplate.Checkpoint_Set:
                 case AssetTemplate.Checkpoint_Invisible:
                 {
                     var trigger = new AssetTRIG(assetName, position, template);
@@ -978,7 +991,7 @@ namespace IndustrialPark
                         }
                     };
 
-                    if (template == AssetTemplate.Checkpoint && game == Game.BFBB)
+                    if (template == AssetTemplate.Checkpoint_Set && game == Game.BFBB)
                         links.Add(new Link(game)
                         {
                             TargetAsset = PlaceTemplate(position, ref assetIDs, "CHECKPOINT_TIMER", AssetTemplate.Checkpoint_Timer).assetID,
@@ -986,7 +999,7 @@ namespace IndustrialPark
                             EventSendID = (ushort)EventBFBB.Run
                         });
 
-                    if (template == AssetTemplate.Checkpoint && game >= Game.Incredibles)
+                    if (template == AssetTemplate.Checkpoint_Set && game == Game.Incredibles)
                     {
                         links.Add(new Link(game)
                         {
@@ -1663,9 +1676,9 @@ namespace IndustrialPark
                 case AssetTemplate.Jsp_Info:
                     return new AssetJSP_INFO(assetName, game, platform);
 
-                case AssetTemplate.SwarmBug:
+                case AssetTemplate.Swarm_Bug:
                     return new DynaEnemyRATSSwarmBug(assetName, position);
-                case AssetTemplate.SwarmOwl:
+                case AssetTemplate.Swarm_Owl:
                     return new DynaEnemyRATSSwarmOwl(assetName, position);
                 case AssetTemplate.Thief:
                     {
@@ -1677,16 +1690,44 @@ namespace IndustrialPark
                         var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
                         return new DynaEnemyRATSWaiter(assetName, position, mvpt.assetID);
                     }
+                case AssetTemplate.Carryable_Property_Attract:
+                    return new DynaCarryablePropertyAttract(assetName);
+                case AssetTemplate.Carryable_Property_Generic:
+                    return new DynaCarryablePropertyGeneric(assetName);
+                case AssetTemplate.Carryable_Property_Repel:
+                    return new DynaCarryablePropertyRepel(assetName);
+                case AssetTemplate.Carryable_Property_Swipe:
+                    return new DynaCarryablePropertySwipe(assetName);
+                case AssetTemplate.Checkpoint:
+                    return new DynaCheckpoint(assetName);
                 case AssetTemplate.Light_Effect:
                     return new DynaEffectLight(assetName, position);
                 case AssetTemplate.Light_Effect_Flicker:
-                    return new DynaEffectLightFlicker(assetName);
                 case AssetTemplate.Light_Effect_Strobe:
-                    return new DynaEffectLightStrobe(assetName);
+                    var light = (DynaEffectLight)PlaceTemplate(position, ref assetIDs, null, AssetTemplate.Light_Effect);
+                    if (template == AssetTemplate.Light_Effect_Flicker)
+                    {
+                        var flicker = new DynaEffectLightFlicker(assetName);
+                        light.LightEffectID = flicker.assetID;
+                        return flicker;
+                    }
+                    else if (template == AssetTemplate.Light_Effect_Strobe)
+                    {
+                        var strobe = new DynaEffectLightStrobe(assetName);
+                        light.LightEffectID = strobe.assetID;
+                        return strobe;
+                    }
+                    return light;
                 case AssetTemplate.Hud_Compass_System:
                     return new DynaHudCompassSystem(assetName);
                 case AssetTemplate.Hud_Compass_Object:
                     return new DynaHudCompassObject(assetName, position);
+                case AssetTemplate.Pole_Swing:
+                    return new DynaCObjectPoleSwing(assetName);
+                case AssetTemplate.CObject_SpringBoard:
+                    return new DynaCObjectSpringBoard(assetName, position);
+                case AssetTemplate.Tightrope:
+                    return new DynaCObjectTightrope(assetName);
 
                 case AssetTemplate.Bomber:
                     return new DynaEnemyIN2Bomber(assetName, position);

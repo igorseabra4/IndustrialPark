@@ -38,6 +38,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte Size { get; set; }
 
+        public DynaCObjectSpringBoard(string assetName, Vector3 position) : base(assetName, DynaType.ContextObject_Springboard, position)
+        {
+            CreateTransformMatrix();
+            AddToRenderableAssets(this);
+        }
         public DynaCObjectSpringBoard(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ContextObject_Springboard, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

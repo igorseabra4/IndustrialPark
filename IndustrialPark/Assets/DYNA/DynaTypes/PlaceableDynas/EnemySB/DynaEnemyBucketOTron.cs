@@ -14,6 +14,15 @@ namespace IndustrialPark
         buckotron_pt_bind = 0x13CFE3A2,
     }
 
+    public enum enSpawnMode : uint
+    {
+        NME_SPAWNMODE_CONTINUOUS,
+        NME_SPAWNMODE_WAVES,
+        NME_SPAWNMODE_AMBUSHWAVE,
+        NME_SPAWNMODE_AMBUSHCONT,
+        NME_SPAWNMODE_NOMORE,
+    }
+
     public class DynaEnemyBucketOTron : DynaEnemy
     {
         private const string dynaCategoryName = "Enemy:SB:BucketOTron";
@@ -29,15 +38,15 @@ namespace IndustrialPark
             set => Model = (uint)value;
         }
         [Category(dynaCategoryName), ValidReferenceRequired]
-        public AssetID Group { get; set; }
+        public AssetID SpawnGroup { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt54 { get; set; }
+        public enSpawnMode SpawnMode { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle SpawnSpeed { get; set; }
+        public AssetSingle SpawnDelay { get; set; }
         [Category(dynaCategoryName)]
-        public int UnknownInt5C { get; set; }
+        public FlagBitmask FlagBuckAss { get; set; } = IntFlagsDescriptor();
         [Category(dynaCategoryName)]
-        public int UnknownInt60 { get; set; }
+        public int MaxSpawn { get; set; }
 
         public DynaEnemyBucketOTron(string assetName, AssetTemplate template, Vector3 position, uint groupAssetID) : base(assetName, DynaType.Enemy__SB__BucketOTron, position)
         {
@@ -49,7 +58,7 @@ namespace IndustrialPark
                         template == AssetTemplate.Spawner_JK ? EnemyBucketOTronType.buckotron_jk_bind :
                         template == AssetTemplate.Spawner_PT ? EnemyBucketOTronType.buckotron_pt_bind : 0;
 
-            Group = groupAssetID;
+            SpawnGroup = groupAssetID;
         }
 
         public DynaEnemyBucketOTron(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__BucketOTron, game, endianness)
@@ -58,22 +67,22 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = entityDynaEndPosition;
 
-                Group = reader.ReadUInt32();
-                UnknownInt54 = reader.ReadInt32();
-                SpawnSpeed = reader.ReadSingle();
-                UnknownInt5C = reader.ReadInt32();
-                UnknownInt60 = reader.ReadInt32();
+                SpawnGroup = reader.ReadUInt32();
+                SpawnMode = (enSpawnMode)reader.ReadInt32();
+                SpawnDelay = reader.ReadSingle();
+                FlagBuckAss.FlagValueInt = reader.ReadUInt32();
+                MaxSpawn = reader.ReadInt32();
             }
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
             SerializeEntityDyna(writer);
-            writer.Write(Group);
-            writer.Write(UnknownInt54);
-            writer.Write(SpawnSpeed);
-            writer.Write(UnknownInt5C);
-            writer.Write(UnknownInt60);
+            writer.Write(SpawnGroup);
+            writer.Write((int)SpawnMode);
+            writer.Write(SpawnDelay);
+            writer.Write(FlagBuckAss.FlagValueInt);
+            writer.Write(MaxSpawn);
         }
 
         public static bool dontRender = false;

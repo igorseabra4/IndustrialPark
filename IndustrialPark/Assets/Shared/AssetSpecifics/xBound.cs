@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
+    // Todo: Merge with Volume
     public enum BoundType : byte
     {
         Sphere = 0,

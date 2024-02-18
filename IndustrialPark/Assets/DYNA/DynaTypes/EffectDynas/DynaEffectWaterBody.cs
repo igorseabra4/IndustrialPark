@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:water_body";
         public override string TypeString => dynaCategoryName;
-
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Body);
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]

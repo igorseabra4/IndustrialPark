@@ -173,10 +173,6 @@ namespace IndustrialPark
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
 
-//#if DEBUG
-//            MessageBox.Show($"Detected Game: {game}\nDetected Platform: {platform}");
-//#endif
-
             while (game == Game.Unknown)
                 game = ChooseGame.GetGame();
             this.game = game;
@@ -403,8 +399,7 @@ namespace IndustrialPark
                     asset is AssetJSP ||
                     asset is AssetJSP_INFO ||
                     asset is AssetMODL ||
-                    asset is AssetRWTX ||
-                    asset is AssetCRDT)
+                    asset is AssetRWTX)
                     result.Add($"[{AssetTypeContainer.AssetTypeToString(asset.assetType)}] {asset.assetName}");
             }
             if (result.Count > 0)
@@ -1131,6 +1126,8 @@ namespace IndustrialPark
                     return new DynaAnalogDeflection(AHDR, game, endianness);
                 case DynaType.AnalogDirection:
                     return new DynaAnalogDirection(AHDR, game, endianness);
+                case DynaType.camera__transition_time:
+                    return new DynaCameraTransitionTime(AHDR, game, endianness); 
                 case DynaType.Carrying_CarryableProperty_GenericUseProperty:
                     return new DynaCarryablePropertyGeneric(AHDR, game, endianness);
                 case DynaType.Carrying_CarryableProperty_UsePropertyAttract:
@@ -1200,7 +1197,6 @@ namespace IndustrialPark
                 case DynaType.effect__Waterhose:
                 case DynaType.Enemy__SB:
                 case DynaType.camera__transition_path:
-                case DynaType.camera__transition_time:
                 case DynaType.effect__BossBrain:
                 case DynaType.game_object__FreezableObject:
                 case DynaType.Carrying_CarryableObject:

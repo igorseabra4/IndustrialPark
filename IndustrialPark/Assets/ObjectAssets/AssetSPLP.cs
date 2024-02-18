@@ -14,6 +14,7 @@ namespace IndustrialPark
         public bool Exclusive { get; set; }
         public AssetByte Used { get; set; }
         public bool HasHover { get; set; }  
+        public AssetByte UnknownByte { get; set; }
         public AssetSingle Speed { get; set; }
         public AssetSingle HoverTime { get; set; }
         public AssetSingle HoverPoint_X { get; set; }
@@ -39,7 +40,7 @@ namespace IndustrialPark
                 Exclusive = reader.ReadByteBool();
                 Used = reader.ReadByte();
                 HasHover = reader.ReadByteBool();
-                reader.ReadByte();
+                UnknownByte = reader.ReadByte();
                 short forwardCount = reader.ReadInt16();
                 short backwardCount = reader.ReadInt16();
                 Speed = reader.ReadSingle();
@@ -72,7 +73,7 @@ namespace IndustrialPark
             writer.Write(Exclusive);
             writer.Write(Used);
             writer.Write(HasHover);
-            writer.Write((byte)0);
+            writer.Write(UnknownByte);
             writer.Write((short)ForwardIDs.Length);
             writer.Write((short)BackwardsIDs.Length);
             writer.Write(Speed);

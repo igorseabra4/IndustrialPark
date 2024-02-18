@@ -143,7 +143,7 @@ namespace IndustrialPark
                     SetPositions(position.X + 5f, position.Y + 5f, position.Z + 5f, position.X - 5f, position.Y - 5f, position.Z - 5f);
                     break;
                 case AssetTemplate.Sphere_Trigger:
-                case AssetTemplate.Checkpoint:
+                case AssetTemplate.Checkpoint_Set:
                 case AssetTemplate.Checkpoint_Invisible:
                 case AssetTemplate.Bus_Stop_Trigger:
                     Shape = TriggerShape.Sphere;

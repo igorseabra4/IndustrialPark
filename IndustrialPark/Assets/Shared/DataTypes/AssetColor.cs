@@ -47,9 +47,20 @@ namespace IndustrialPark.AssetEditorColors
             B = argb[0];
         }
 
+        public AssetColor(uint RGBA)
+        {
+            byte[] rgba = BitConverter.GetBytes(RGBA);
+            R = rgba[3];
+            G = rgba[2];
+            B = rgba[1];
+            A = rgba[0];
+        }
+
         public static AssetColor FromVector4(float R, float G, float B, float A) => new AssetColor((byte)(R * 255f), (byte)(G * 255f), (byte)(B * 255f), (byte)(A * 255f));
 
         public static AssetColor FromVector4(Vector4 color) => FromVector4(color.X, color.Y, color.Z, color.W);
+
+        public static implicit operator uint(AssetColor color) => (uint)(color.R << 24 | color.G << 16 | color.B << 8 | color.A);
 
         public int GetARGB()
         {

@@ -26,7 +26,11 @@ namespace IndustrialPark
 
         protected int enemyRatsEndPosition => entityDynaEndPosition + 0x14;
 
-        public DynaEnemyRATS(string assetName, DynaType type, Vector3 position) : base(assetName, type, position) { }
+        public DynaEnemyRATS(string assetName, DynaType type, Vector3 position) : base(assetName, type, position)
+        {
+            UpdateDistance = 250f;
+            Flags.FlagValueInt = 1;
+        }
 
         public DynaEnemyRATS(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {

@@ -1802,19 +1802,7 @@ namespace IndustrialPark
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var unkDtypes = new uint[] {
-                    0x4EE03B24,
-                    0x9F234F8E,
-                    0x460F4FB2,
-                    0x2743B85C,
-                    0xA072A4DA,
-                    0xAD7CB421,
-                    0xC6C76EEE,
-                    0xCDB57387,
-                    0xCF21DB89,
-                    0xE5D82D97,
-                    0xE2301EA9,
                     0xEBC04E7B,
-                    0xFC2951C1
                 };
 
                 string ReadZeroTerminatedString(EndianBinaryReader r)

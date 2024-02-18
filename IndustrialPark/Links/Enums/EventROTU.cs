@@ -543,7 +543,7 @@ namespace IndustrialPark
         SetLightkit = 0x0214,
         SetOpacity = 0x0215,
         SetSoundEffect = 0x0216,
-        Scale, XYZOrdinary = 0x0217,
+        ScaleXYZOrdinary = 0x0217,
         SetReference = 0x0218,
         WarpSetWorld = 0x0219,
         WarpSetTask = 0x021a,

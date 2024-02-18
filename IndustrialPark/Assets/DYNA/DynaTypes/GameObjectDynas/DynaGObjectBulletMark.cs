@@ -11,6 +11,7 @@ namespace IndustrialPark
     public class DynaGObjectBulletMark : AssetDYNA
     {
         private const string dynaCategoryName = "game object:bullet mark";
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(TextureID);
         public override string TypeString => dynaCategoryName;
         protected override short constVersion => 1;
 

@@ -32,7 +32,12 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle OneShotSoundMaxTime { get; set; }
 
-        public DynaEnemyRATSSwarm(string assetName, DynaType type, Vector3 position) : base(assetName, type, position) { }
+        public DynaEnemyRATSSwarm(string assetName, DynaType type, Vector3 position) : base(assetName, type, position)
+        {
+            MemberNumber = 45;
+            SpawnRadius = 10f;
+            OneShotSoundMaxTime = 1f;
+        }
 
         public DynaEnemyRATSSwarm(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {

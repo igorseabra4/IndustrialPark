@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
@@ -15,6 +16,8 @@ namespace IndustrialPark
 
         [Category(categoryName), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public Shrapnel[] Entries { get; set; }
+        [Browsable(false)]
+        public AssetID ThisAssetID { get; set; }
 
         public AssetSHRP(string assetName) : base(assetName, AssetType.Shrapnel)
         {
@@ -26,7 +29,7 @@ namespace IndustrialPark
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 int count = reader.ReadInt32();
-                reader.ReadUInt32(); // assetid
+                ThisAssetID = reader.ReadUInt32();
                 reader.ReadInt32(); // internal pointer
                 Entries = new Shrapnel[count];
 
@@ -79,7 +82,17 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Entries.Length);
-            writer.Write(assetID);
+            if (ThisAssetID == 0 || ThisAssetID == assetID)
+                writer.Write(assetID);
+            else
+            {
+                for (int i = 0; i < assetName.Length; i++)
+                {
+                    AssetID tryId = new AssetID(assetName.Substring(0, i));
+                    if (tryId == ThisAssetID)
+                        writer.Write(tryId);
+                }
+            }
             writer.Write(0);
             foreach (var e in Entries)
                 e.Serialize(writer);

@@ -7,7 +7,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:Grass";
         public override string TypeString => dynaCategoryName;
-
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(GrassMesh);
         protected override short constVersion => 2;
 
         [Category(dynaCategoryName)]

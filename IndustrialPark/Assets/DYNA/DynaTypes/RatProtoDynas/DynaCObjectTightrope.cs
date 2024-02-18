@@ -20,6 +20,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask Flags { get; set; } = ByteFlagsDescriptor();
 
+        public DynaCObjectTightrope(string assetName) : base(assetName, DynaType.ContextObject_Tightrope) { }
         public DynaCObjectTightrope(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ContextObject_Tightrope, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

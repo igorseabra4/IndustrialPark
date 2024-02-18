@@ -12,7 +12,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "Analog Direction";
         public override string TypeString => dynaCategoryName;
-
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Stick);
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
