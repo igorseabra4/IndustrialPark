@@ -34,7 +34,8 @@ PS_IN VS(VS_IN input)
 
 	output.position = mul(worldViewProj, input.position);
 	output.texcoord = input.texcoord + uvAnim;
-    output.color = input.color * color;
+    // ignore vertex color
+    output.color = float4(1.0, 1.0, 1.0, input.color.a);
 
 	return output;
 }

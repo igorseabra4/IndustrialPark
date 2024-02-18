@@ -600,6 +600,8 @@ namespace IndustrialPark
                 OpenInternalEditors();
             else if (e.KeyCode == Keys.V)
                 ToggleGizmoType();
+            else if (e.KeyCode == Keys.P)
+                showVertexColorsToolStripMenuItem_Click(null, null);
             else if (e.KeyCode == Keys.Delete)
                 DeleteSelectedAssets();
             else if (e.KeyCode == Keys.U)
@@ -898,6 +900,7 @@ namespace IndustrialPark
                 "F: toggles wireframe mode\n" +
                 "G: open Asset Data Editor for selected assets\n" +
                 "H: drop selected assets\n" +
+                "P: Toggle vertex color display\n" +
                 "R: reset view\n" +
                 "T: snap gizmos to grid\n" +
                 "U: toggle UI Mode\n" +
@@ -1854,6 +1857,12 @@ namespace IndustrialPark
         {
             foreach (var ae in archiveEditors)
                 ae.archive.DropSelectedAssets(renderer);
+        }
+
+        private void showVertexColorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showVertexColorsToolStripMenuItem.Checked = !showVertexColorsToolStripMenuItem.Checked;
+            renderer.ToggleVertexColors(showVertexColorsToolStripMenuItem.Checked);
         }
     }
 }
