@@ -78,9 +78,6 @@ namespace IndustrialPark
                         new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 16, 0),
                         new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0)
             });
-
-            // Is this necessary?
-            tintedBuffer = tintedShader.CreateBuffer<UvAnimRenderData>();
         }
 
         public void SetSharpShader()
