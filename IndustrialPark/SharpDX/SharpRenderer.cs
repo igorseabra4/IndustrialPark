@@ -65,6 +65,24 @@ namespace IndustrialPark
         public SharpShader tintedShader;
         public SharpDX.Direct3D11.Buffer tintedBuffer;
 
+        public void ToggleVertexColors(bool showVertexColors)
+        {
+            ResetColors();
+            string shaderPath = showVertexColors ? "/Resources/SharpDX/Shader_Tinted.hlsl"
+                : "/Resources/SharpDX/Shader_Tinted_NoVertexColor.hlsl";
+
+            tintedShader = new SharpShader(device, Application.StartupPath + shaderPath,
+            new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
+            new InputElement[] {
+                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                        new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 16, 0),
+                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0)
+            });
+
+            // Is this necessary?
+            tintedBuffer = tintedShader.CreateBuffer<UvAnimRenderData>();
+        }
+
         public void SetSharpShader()
         {
             basicShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Basic.hlsl",
