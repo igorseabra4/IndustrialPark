@@ -37,33 +37,36 @@
             this.pBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.pBar.Location = new System.Drawing.Point(12, 12);
+            this.pBar.Location = new System.Drawing.Point(13, 18);
+            this.pBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pBar.Name = "pBar";
-            this.pBar.Size = new System.Drawing.Size(388, 23);
+            this.pBar.Size = new System.Drawing.Size(586, 35);
             this.pBar.TabIndex = 0;
             // 
             // labelLoading
             // 
             this.labelLoading.AutoSize = true;
-            this.labelLoading.Location = new System.Drawing.Point(12, 38);
+            this.labelLoading.Location = new System.Drawing.Point(18, 58);
+            this.labelLoading.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLoading.Name = "labelLoading";
-            this.labelLoading.Size = new System.Drawing.Size(0, 13);
+            this.labelLoading.Size = new System.Drawing.Size(0, 20);
             this.labelLoading.TabIndex = 1;
             // 
             // ProgressBar
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(412, 57);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            this.ClientSize = new System.Drawing.Size(608, 78);
             this.ControlBox = false;
             this.Controls.Add(this.labelLoading);
             this.Controls.Add(this.pBar);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "ProgressBar";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Opening Archive";
             this.ResumeLayout(false);
