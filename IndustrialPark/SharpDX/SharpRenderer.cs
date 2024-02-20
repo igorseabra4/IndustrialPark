@@ -67,7 +67,6 @@ namespace IndustrialPark
 
         public void ToggleVertexColors(bool showVertexColors)
         {
-            ResetColors();
             string shaderPath = showVertexColors ? "/Resources/SharpDX/Shader_Tinted.hlsl"
                 : "/Resources/SharpDX/Shader_Tinted_NoVertexColor.hlsl";
 
