@@ -81,6 +81,7 @@
     <Compile Include="Helpers\Constants.cs" />
     <Compile Include="Helpers\EnemyProbabilities.cs" />
     <Compile Include="Helpers\EnemyProbabilitiesMovie.cs" />
+    <Compile Include="Helpers\Mod.cs" />
     <Compile Include="Helpers\PowerupCheatsBFBB.cs" />
     <Compile Include="Helpers\PowerupCheatsMovie.cs" />
     <Compile Include="Helpers\PowerupCheatsScooby.cs" />

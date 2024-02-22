@@ -657,9 +657,6 @@
     <EmbeddedResource Include="ArchiveEditor\Dialogs\RenameLayer.resx">
       <DependentUpon>RenameLayer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.en-GB.resx">
-      <DependentUpon>ImportModel.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportTextures.resx">
       <DependentUpon>ImportTextures.cs</DependentUpon>
     </EmbeddedResource>
@@ -674,6 +671,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
       <DependentUpon>ImportModel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
       <DependentUpon>InternalModelEditor.cs</DependentUpon>
@@ -916,6 +914,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Resources\SharpDX\Shader_Tinted_NoVertexColor.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SharpDX\Shader_Tinted.hlsl">

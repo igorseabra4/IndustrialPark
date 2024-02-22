@@ -585,5 +585,13 @@ namespace IndustrialPark
             ProgramIsChangingStuff = false;
 
         }
+
+        private void comboBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            // Prevent buggy behaviour where autocomplete box and 
+            // dropdown appear at the same time (Thanks Double H)
+            var cmb = (ComboBox)sender;
+            cmb.DroppedDown = false;
+        }
     }
 }
