@@ -99,6 +99,8 @@ namespace IndustrialPark
                 foreach (Link l in linkEditor.listBoxLinks.Items)
                     newLinks.Add(l);
 
+                if (linkType == LinkType.Timed || linkType == LinkType.TimedRotu)
+                    return newLinks.OrderBy(link=>link.Time).ToArray();
                 return newLinks.ToArray();
             }
 

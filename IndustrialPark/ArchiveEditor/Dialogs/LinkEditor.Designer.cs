@@ -254,7 +254,7 @@
             // 
             this.enabledcheckBox.Checked = true;
             this.enabledcheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.enabledcheckBox.Location = new System.Drawing.Point(10, 230);
+            this.enabledcheckBox.Location = new System.Drawing.Point(14, 365);
             this.enabledcheckBox.Name = "enabledcheckBox";
             this.enabledcheckBox.Size = new System.Drawing.Size(187, 51);
             this.enabledcheckBox.TabIndex = 11;
@@ -502,6 +502,7 @@
             // 
             // comboRecieveEvent
             // 
+            this.comboRecieveEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
             this.comboRecieveEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             this.comboRecieveEvent.FormattingEnabled = true;
             this.comboRecieveEvent.Location = new System.Drawing.Point(9, 29);
