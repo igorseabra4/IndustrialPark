@@ -229,6 +229,7 @@
     <Compile Include="Assets\Shared\Editors\ByteArrayEditor.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Cutscene.cs" />
     <Compile Include="Assets\Shared\Editors\CrdtAddEditor.cs" />
+    <Compile Include="Assets\Shared\Enums\AnimTableStates.cs" />
     <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_Header.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_SampleHeaderBasic.cs" />

@@ -83,12 +83,12 @@ namespace IndustrialPark
                 }
                 if (game >= Game.Incredibles)
                 {
-                    MinBounds_X = reader.ReadInt32();
-                    MinBounds_Y = reader.ReadInt32();
-                    MinBounds_Z = reader.ReadInt32();
-                    MaxBounds_X = reader.ReadInt32();
-                    MaxBounds_Y = reader.ReadInt32();
-                    MaxBounds_Z = reader.ReadInt32();
+                    MinBounds_X = reader.ReadSingle();
+                    MinBounds_Y = reader.ReadSingle();
+                    MinBounds_Z = reader.ReadSingle();
+                    MaxBounds_X = reader.ReadSingle();
+                    MaxBounds_Y = reader.ReadSingle();
+                    MaxBounds_Z = reader.ReadSingle();
                 }
             }
         }

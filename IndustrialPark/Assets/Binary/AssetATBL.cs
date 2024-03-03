@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
@@ -188,6 +189,25 @@ namespace IndustrialPark
         PLAYER_TYPE_VIOLET = 0x3892E3BA
     }
 
+    public enum ConstructEnum_ROTU : uint
+    {
+        Unknown = 0,
+        NPC_TYPE_UNKNOWN = 0xB5C7DEBF,
+        NPC_TYPE_HUMANOID = 0xF8B06AB8,
+        NPC_TYPE_RAT = 0xA2F6B4C2,
+        NPC_TYPE_CHICKEN = 0xF7894D26,
+        NPC_TYPE_DRILLER = 0x809BD8FD,
+        NPC_TYPE_SHOOTER = 0xADA34F35,
+        NPC_TYPE_BOMBER = 0x1E1E596A,
+        NPC_TYPE_ROBOTTANK = 0xD81BF935,
+        NPC_TYPE_ENFORCER = 0xB744DFF3,
+        NPC_TYPE_SCIENTIST = 0x0CCF63BD,
+        NPC_TYPE_BOSSUNDERMINERDRILL = 0x51C97958,
+        NPC_TYPE_BOSSUNDERMINERUM = 0xA3406B63,
+        PLAYER_TYPE_MR_INCREDIBLE_OLD_FIT = 0xE51FD4DA,
+        PLAYER_TYPE_FROZONE = 0x818A4BB0,
+    }
+
     public class AnimationFile : GenericAssetDataContainer
     {
         public int FileFlags { get; set; }
@@ -248,9 +268,25 @@ namespace IndustrialPark
     public class AnimationState : GenericAssetDataContainer
     {
         public AssetID StateID { get; set; }
+        public AnimTableStates StateID_Enum
+        {
+            get => Enum.GetValues(typeof(AnimTableStates)).Cast<AnimTableStates>().DefaultIfEmpty(AnimTableStates.Unknown).FirstOrDefault(p => StateID.Equals((uint)p));
+            set
+            {
+                StateID = (uint)value;
+            }
+        }
         public int AnimFileIndex { get; set; }
         public AssetSingle Speed { get; set; }
-        public int SubStateID { get; set; }
+        public AssetID SubStateID { get; set; }
+        public AnimTableStates SubStateID_Enum
+        {
+            get => Enum.GetValues(typeof(AnimTableStates)).Cast<AnimTableStates>().DefaultIfEmpty(AnimTableStates.Unknown).FirstOrDefault(p => SubStateID.Equals((uint)p));
+            set
+            {
+                SubStateID = (uint)value;
+            }
+        }
         public int SubStateCount { get; set; }
 
         [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
@@ -287,7 +323,7 @@ namespace IndustrialPark
 
             if (game != Game.Scooby)
             {
-                SubStateID = reader.ReadInt32();
+                SubStateID = reader.ReadUInt32();
                 SubStateCount = reader.ReadInt32();
             }
 
@@ -325,11 +361,24 @@ namespace IndustrialPark
         {
             base.SetDynamicProperties(dt);
         }
+
+        public override string ToString()
+        {
+            return $"[{StateID_Enum}]";
+        }
     }
 
     public class AnimationEffect : GenericAssetDataContainer
     {
         public AssetID StateID { get; set; }
+        public AnimTableStates StateID_Enum
+        {
+            get => Enum.GetValues(typeof(AnimTableStates)).Cast<AnimTableStates>().DefaultIfEmpty(AnimTableStates.Unknown).FirstOrDefault(p => StateID.Equals((uint)p));
+            set
+            {
+                StateID = (uint)value;
+            }
+        }
         public AssetSingle StartTime { get; set; }
         public AssetSingle EndTime { get; set; }
         public FlagBitmask Flags_BFBB { get; set; } = IntFlagsDescriptor();
@@ -431,6 +480,12 @@ namespace IndustrialPark
             get => (ConstructEnum_Incredibles)(uint)ConstructFunc_Hash;
             set => ConstructFunc_Hash = (uint)value;
         }
+        [Category(categoryName)]
+        public ConstructEnum_ROTU ConstructFunc_ROTU
+        {
+            get => (ConstructEnum_ROTU)(uint)ConstructFunc_Hash;
+            set => ConstructFunc_Hash = (uint)value;
+        }
 
         [Category(categoryName)]
         public AssetID ConstructFunc_Hash { get; set; }
@@ -523,13 +578,15 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game == Game.BFBB)
+            if (game != Game.BFBB)
+                dt.RemoveProperty("ConstructFunc_BFBB");
+            if (game != Game.Incredibles)
             {
                 dt.RemoveProperty("ConstructFunc_TSSM");
                 dt.RemoveProperty("ConstructFunc_Incredibles");
             }
-            else
-                dt.RemoveProperty("ConstructFunc_BFBB");
+            if (game != Game.ROTU)
+                dt.RemoveProperty("ConstructFunc_ROTU");
         }
     }
 }

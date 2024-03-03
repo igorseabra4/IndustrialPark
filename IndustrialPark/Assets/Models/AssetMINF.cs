@@ -134,6 +134,12 @@ namespace IndustrialPark
         [Category(categoryNameBrain)]
         public AssetID BrainID { get; set; }
         [Category(categoryNameBrain)]
+        public EBrainID_BFBB BrainID_BFBB
+        {
+            get => Enum.GetValues(typeof(EBrainID_BFBB)).Cast<EBrainID_BFBB>().DefaultIfEmpty(EBrainID_BFBB.Unknown).FirstOrDefault(p => BrainID.Equals((uint)p));
+            set { BrainID = (uint)value; }
+        }
+        [Category(categoryNameBrain)]
         public EBrainID_Movie BrainID_Movie
         {
             get => Enum.GetValues(typeof(EBrainID_Movie)).Cast<EBrainID_Movie>().DefaultIfEmpty(EBrainID_Movie.Unknown).FirstOrDefault(p => BrainID.Equals((uint)p));
@@ -301,6 +307,8 @@ namespace IndustrialPark
                 dt.RemoveProperty("CombatID");
                 dt.RemoveProperty("BrainID");
             }
+            if (game != Game.BFBB)
+                dt.RemoveProperty("BrainID_BFBB");
             if (game != Game.Incredibles)
             {
                 dt.RemoveProperty("BrainID_Movie");
