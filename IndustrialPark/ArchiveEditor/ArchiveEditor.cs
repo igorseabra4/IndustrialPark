@@ -1491,6 +1491,13 @@ namespace IndustrialPark
         /// 
         private void _generateReportTxt()
         {
+            if (GetCurrentlyOpenFileName().Equals("Empty"))
+            {
+                // TODO: Disable the menu button if no file is open
+                MessageBox.Show("No file is currently open.");
+                return;
+            }
+
             bool generationWasSuccessful = true;
             bool isDebug;
             var timeOfGeneration = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
