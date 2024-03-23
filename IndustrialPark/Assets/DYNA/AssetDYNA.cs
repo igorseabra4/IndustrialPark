@@ -5,7 +5,7 @@ namespace IndustrialPark
 {
     public abstract class AssetDYNA : BaseAsset
     {
-        protected const string categoryName = "Dynamic";
+        protected const string categoryName = "\t\tDynamic";
         public override string TypeString => Type.ToString();
 
         [Category(categoryName)]

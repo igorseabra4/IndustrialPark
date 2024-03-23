@@ -415,7 +415,7 @@ namespace IndustrialPark
             if (game != Game.BFBB)
                 dt.RemoveProperty("Conditional_BFBB");
 
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("Conditional_TSSM");
                 dt.RemoveProperty("Conditional_Incredibles");

@@ -16,10 +16,14 @@ namespace IndustrialPark
         public AssetID SoundGroup_Hit_Switch { get; set; }
         public AssetID Rumble_Hit { get; set; }
         public AssetID Rumble_Switch { get; set; }
-        public int FxFlags { get; set; }
-        public int nAnimations { get; set; }
+        public FlagBitmask FxFlags { get; set; } = IntFlagsDescriptor();
+        [Category("xDestructibleAssetAttachedAnimList")]
+        public AssetID[] Animations { get; set; }
 
-        public DestState() { }
+        public DestState()
+        {
+            Animations = new AssetID[0];
+        }
         public DestState(EndianBinaryReader reader)
         {
             Percent = reader.ReadInt32();
@@ -33,8 +37,12 @@ namespace IndustrialPark
             SoundGroup_Hit_Switch = reader.ReadUInt32();
             Rumble_Hit = reader.ReadUInt32();
             Rumble_Switch = reader.ReadUInt32();
-            FxFlags = reader.ReadInt32();
-            nAnimations = reader.ReadInt32();
+            FxFlags.FlagValueInt = reader.ReadUInt32();
+
+            int nanimations = reader.ReadInt32();
+            Animations = new AssetID[nanimations];
+            for (int i = 0; i < nanimations; i++)
+                Animations[i] = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -50,8 +58,11 @@ namespace IndustrialPark
             writer.Write(SoundGroup_Hit_Switch);
             writer.Write(Rumble_Hit);
             writer.Write(Rumble_Switch);
-            writer.Write(FxFlags);
-            writer.Write(nAnimations);
+            writer.Write(FxFlags.FlagValueInt);
+
+            writer.Write(Animations.Length);
+            foreach (var anim in Animations)
+                writer.Write(anim);
         }
     }
 
@@ -59,16 +70,28 @@ namespace IndustrialPark
     {
         private const string categoryName = "Destructible";
 
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(ModelInfo);
+
         [Category(categoryName), ValidReferenceRequired]
         public AssetID ModelInfo { get; set; }
         [Category(categoryName)]
-        public int HitPoints { get; set; }
+        public uint HitPoints { get; set; }
         [Category(categoryName)]
-        public int HitFilter { get; set; }
+        public uint HitFilter { get; set; }
         [Category(categoryName)]
-        public int LaunchFlag { get; set; }
+        public uint HitFilter_Excluded { get; set; }
         [Category(categoryName)]
-        public int Behavior { get; set; }
+        public uint HealthPoints { get; set; }
+        [Category(categoryName)]
+        public uint ExpPoints { get; set; }
+        [Category(categoryName)]
+        public AssetSingle HealthChance { get; set; }
+        [Category(categoryName)]
+        public AssetSingle ExpChance { get; set; }
+        [Category(categoryName)]
+        public FlagBitmask LaunchFlag { get; set; } = IntFlagsDescriptor();
+        [Category(categoryName)]
+        public uint Behaviour { get; set; }
         [Category(categoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
@@ -79,10 +102,6 @@ namespace IndustrialPark
         public byte TargetPriority { get; set; }
         [Category(categoryName)]
         public DestState[] States { get; set; }
-        [Category(categoryName)]
-        public AssetID Unknown1 { get; set; }
-        [Category(categoryName)]
-        public AssetID? Unknown2 { get; set; }
 
         public AssetDEST(string assetName) : base(assetName, AssetType.Destructible)
         {
@@ -95,25 +114,27 @@ namespace IndustrialPark
             {
                 ModelInfo = reader.ReadUInt32();
                 int numStates = reader.ReadInt32();
-                HitPoints = reader.ReadInt32();
-                HitFilter = reader.ReadInt32();
-                LaunchFlag = reader.ReadInt32();
-                Behavior = reader.ReadInt32();
+                HitPoints = reader.ReadUInt32();
+                HitFilter = reader.ReadUInt32();
+                if (game >= Game.ROTU)
+                {
+                    HitFilter_Excluded = reader.ReadUInt32();
+                    HealthPoints = reader.ReadUInt32();
+                    ExpPoints = reader.ReadUInt32();
+                    HealthChance = reader.ReadSingle();
+                    ExpChance = reader.ReadSingle();
+                }
+                LaunchFlag.FlagValueInt = reader.ReadUInt32();
+                Behaviour = reader.ReadUInt32();
                 Flags.FlagValueInt = reader.ReadUInt32();
                 SoundGroup_Idle = reader.ReadUInt32();
                 Respawn = reader.ReadSingle();
                 TargetPriority = reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
+                reader.ReadBytes(3);
+
                 States = new DestState[numStates];
                 for (int i = 0; i < States.Length; i++)
                     States[i] = new DestState(reader);
-                Unknown1 = reader.ReadUInt32();
-                if (!reader.EndOfStream)
-                    Unknown2 = reader.ReadUInt32();
-                else
-                    Unknown2 = null;
             }
         }
 
@@ -124,8 +145,16 @@ namespace IndustrialPark
             writer.Write(States.Length);
             writer.Write(HitPoints);
             writer.Write(HitFilter);
-            writer.Write(LaunchFlag);
-            writer.Write(Behavior);
+            if (game >= Game.ROTU)
+            {
+                writer.Write(HitFilter_Excluded);
+                writer.Write(HealthPoints);
+                writer.Write(ExpPoints);
+                writer.Write(HealthChance);
+                writer.Write(ExpChance);
+            }
+            writer.Write(LaunchFlag.FlagValueInt);
+            writer.Write(Behaviour);
             writer.Write(Flags.FlagValueInt);
             writer.Write(SoundGroup_Idle);
             writer.Write(Respawn);
@@ -133,13 +162,22 @@ namespace IndustrialPark
             writer.Write((byte)0);
             writer.Write((byte)0);
             writer.Write((byte)0);
+
             foreach (var state in States)
                 state.Serialize(writer);
-            writer.Write(Unknown1);
-            if (Unknown2.HasValue)
-                writer.Write(Unknown2.Value);
+            writer.Write(0xFDFDFDFD);
+        }
 
-
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.ROTU)
+            {
+                dt.RemoveProperty("HitFilter_Excluded");
+                dt.RemoveProperty("HealthPoints");
+                dt.RemoveProperty("ExpPoints");
+                dt.RemoveProperty("HealthChance");
+                dt.RemoveProperty("ExpChance");
+            }
         }
     }
 }

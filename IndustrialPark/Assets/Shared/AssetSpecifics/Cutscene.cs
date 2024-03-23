@@ -217,7 +217,7 @@ namespace IndustrialPark
         public AssetSingle TranslateX { get; set; }
         public AssetSingle TranslateY { get; set; }
         public AssetSingle TranslateZ { get; set; }
-        public AssetANIM Animation { get; set; }
+        public AssetANIM_V1 Animation { get; set; }
         public byte[] UnknownBytes { get; set; }
 
         public CutsceneDataAnimation(EndianBinaryReader reader, int chunkSize)
@@ -229,7 +229,7 @@ namespace IndustrialPark
             TranslateX = reader.ReadSingle();
             TranslateY = reader.ReadSingle();
             TranslateZ = reader.ReadSingle();
-            Animation = new AssetANIM(reader);
+            Animation = new AssetANIM_V1(reader);
             var unkBytes = new List<byte>();
             while (reader.BaseStream.Position < start + chunkSize)
                 unkBytes.Add(reader.ReadByte());
@@ -260,7 +260,7 @@ namespace IndustrialPark
         protected override void SetData(byte[] data)
         {
             using (var reader = new EndianBinaryReader(data, endianness))
-                Animation = new AssetANIM(reader);
+                Animation = new AssetANIM_V1(reader);
         }
     }
 
@@ -273,7 +273,7 @@ namespace IndustrialPark
         public AssetSingle PositionY { get; set; }
         public AssetSingle PositionZ { get; set; }
         public (float, float)[] Frames { get; set; }
-        public AssetANIM Animation { get; set; }
+        public AssetANIM_V1 Animation { get; set; }
         public byte[] UnknownBytes { get; set; }
 
         public CutsceneDataCameraScooby(EndianBinaryReader reader, int chunkSize)
@@ -289,7 +289,7 @@ namespace IndustrialPark
             Frames = new (float, float)[numFrames];
             for (int i = 0; i < Frames.Length; i++)
                 Frames[i] = (reader.ReadSingle(), reader.ReadSingle());
-            Animation = new AssetANIM(reader);
+            Animation = new AssetANIM_V1(reader);
             var unkBytes = new List<byte>();
             while (reader.BaseStream.Position < start + chunkSize)
                 unkBytes.Add(reader.ReadByte());
@@ -325,7 +325,7 @@ namespace IndustrialPark
         protected override void SetData(byte[] data)
         {
             using (var reader = new EndianBinaryReader(data, endianness))
-                Animation = new AssetANIM(reader);
+                Animation = new AssetANIM_V1(reader);
         }
     }
 

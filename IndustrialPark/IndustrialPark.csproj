@@ -135,6 +135,12 @@
   <ItemGroup>
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
     <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
+    <Compile Include="ArchiveEditor\Dialogs\ChooseGame.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\ChooseGame.Designer.cs">
+      <DependentUpon>ChooseGame.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Dialogs\RenameLayer.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -160,13 +166,70 @@
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\LodtWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\PipeInfoWrapper.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
+    <Compile Include="Assets\Binary\AssetANIM_V1.cs" />
+    <Compile Include="Assets\Binary\AssetANIM_V2.cs" />
     <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaCameraBinary.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaCameraTransitionTime.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLightFlicker.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLightStrobe.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBulletMark.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBulletTime.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectCameraRband.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\DynaNpcCustomAV.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Bomber.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2BossUnderminerDrill.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2BossUnderminerUM.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Chicken.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Driller.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Enforcer.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Humanoid.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Rat.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2RobotTank.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Scientist.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Shooter.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATS.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSLeftArm.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSRightArm.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSSwarm.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSSwarmBug.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSSwarmOwl.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSThief.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSWaiter.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCarryableProperty.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaAnalogDeflection.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaAnalogDirection.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCObjectPoleSwing.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCObjectSpringBoard.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCObjectTightrope.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaHudCompassSystem.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaLogicMission.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaLogicTask.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaNpcGate.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaNpcWalls.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaPourWidget.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaTwiddler.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectLight.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectScreenWarp.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectSparkEmitter.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaHudCompassObject.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaInterestPointer.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaNpcCoverpoint.cs" />
     <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section1_00BEEF01.cs" />
     <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section2_00BEEF02.cs" />
     <Compile Include="Assets\Models\RWSections\BFBB_CollisionData_Section3_00BEEF03.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetCCRV.cs" />
+    <Compile Include="Assets\ObjectAssets\AssetSPLP.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\ParticleCommand.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\ParticleSystem.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLightInfo.cs" />
+    <Compile Include="Assets\Shared\AssetSpecifics\xBound.cs" />
     <Compile Include="Assets\Shared\Editors\ByteArrayEditor.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Cutscene.cs" />
+    <Compile Include="Assets\Shared\Editors\CrdtAddEditor.cs" />
+    <Compile Include="Assets\Shared\Enums\AnimTableStates.cs" />
     <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_Header.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_SampleHeaderBasic.cs" />
@@ -197,23 +260,23 @@
     <Compile Include="Assets\Binary\AssetONEL.cs" />
     <Compile Include="Assets\Binary\AssetCTOC.cs" />
     <Compile Include="Assets\Binary\AssetSHRP.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectUberLaser.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectUberLaser.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaCheckpoint.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRubbleGenerator.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTrainJunction.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectRubbleGenerator.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTrainJunction.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaGObjectTrainCar.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaCameraPreset.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectGrass.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectLensFlareSomething.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectSplash.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectLensFlare.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTurret.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectGrapple.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectWaterBody.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectDashCameraSpline.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectLaserBeam.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectHangable.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectCameraParamAsset.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectGrass.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLensFlareSomething.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectSplash.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLensFlare.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTurret.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectGrapple.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectWaterBody.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectDashCameraSpline.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectLaserBeam.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectHangable.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectCameraParamAsset.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaLogicFunctionGenerator.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionTurn.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionLift.cs" />
@@ -319,12 +382,12 @@
     <Compile Include="Assets\Binary\AssetDEST.cs" />
     <Compile Include="Assets\Binary\AssetVILP.cs" />
     <Compile Include="Assets\Binary\AssetWIRE.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectSpotlight.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectSpotlight.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaLogicReference.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRaceTimer.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectRaceTimer.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionLaunch.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectRumbleSphere.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectRumble.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectRumble.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaIncrediblesIcon.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectFlameEmitter.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectSmokeEmitter.cs" />
@@ -340,18 +403,18 @@
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudMeter.cs" />
     <Compile Include="Assets\Shared\Enums\FontEnum.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaJSPExtraData.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyCastNCrew.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyDennis.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyFrogFish.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyMindy.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyNeptune.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyTurret.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyCastNCrew.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyDennis.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyFrogFish.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyMindy.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyNeptune.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyTurret.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectLightning.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyBucketOTron.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyStandard.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemySupplyCrate.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyBucketOTron.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyStandard.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemySupplyCrate.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectParticleGenerator.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectVentType.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectVentType.cs" />
     <Compile Include="Assets\Models\AssetJSP_INFO.cs" />
     <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
     <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
@@ -364,12 +427,12 @@
     <Compile Include="Assets\ObjectAssets\AssetSCRP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSGRP.cs" />
     <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTaskBox.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaEffectScreenFade.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemyCritter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemySB.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTaskBox.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectScreenFade.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyCritter.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemy.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectRing.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectRingControl.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectRingControl.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\DynaSceneProperties.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetVOLU.cs" />
     <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT.cs" />
@@ -388,6 +451,8 @@
     <Compile Include="Assets\Shared\Interfaces\IAssetCopyPasteTransformation.cs" />
     <Compile Include="Assets\Shared\Interfaces\IVolumeAsset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
+    <Compile Include="Links\Enums\EventRatProto.cs" />
+    <Compile Include="Links\Enums\EventROTU.cs" />
     <Compile Include="Links\Enums\EventScooby.cs" />
     <Compile Include="Links\Enums\EventBFBB.cs" />
     <Compile Include="Assets\Shared\Enums\PlatType.cs" />
@@ -478,7 +543,6 @@
       <DependentUpon>NewArchive.cs</DependentUpon>
     </Compile>
     <Compile Include="Assets\Binary\AssetALST.cs" />
-    <Compile Include="Assets\Binary\AssetANIM.cs" />
     <Compile Include="Assets\Binary\AssetATBL.cs" />
     <Compile Include="Assets\Binary\AssetCOLL.cs" />
     <Compile Include="Assets\Binary\AssetJAW.cs" />
@@ -518,21 +582,21 @@
     <Compile Include="Assets\Shared\TypeConverter\AssetColorTypeConverter.cs" />
     <Compile Include="Assets\Shared\Editors\AssetColorEditor.cs" />
     <Compile Include="Assets\DYNA\DynaGeneric.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBoulderGen.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBungeeDrop.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBungeeHook.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectBusStop.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectCamTweak.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectFlythrough.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBoulderGen.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBungeeDrop.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBungeeHook.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBusStop.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectCamTweak.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectFlythrough.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudMeterFont.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudMeterUnit.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudModel.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudText.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectNPCSettings.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectNPCSettings.cs" />
     <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaPointer.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTalkBox.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTaxi.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaGObjectTextBox.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTalkBox.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTaxi.cs" />
+    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTextBox.cs" />
     <Compile Include="Assets\Shared\Asset.cs" />
     <Compile Include="Assets\Shared\TypeConverter\AssetSingleTypeConverter.cs" />
     <Compile Include="Assets\Shared\TypeConverter\HexByteTypeConverter.cs" />
@@ -587,6 +651,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyVertexColors.resx">
       <DependentUpon>ApplyVertexColors.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\ChooseGame.resx">
+      <DependentUpon>ChooseGame.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\RenameLayer.resx">
       <DependentUpon>RenameLayer.cs</DependentUpon>
@@ -909,9 +976,25 @@
     <Move SourceFiles="@(MoveToLibFolder)" DestinationFolder="$(OutputPath)lib" OverwriteReadOnlyFiles="true" />
   </Target>
   <PropertyGroup>
-    <PostBuildEvent>; Move all assemblies and related files to lib folder
-ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF *.exe *.config *.json *.manifest *.xml *.pdb *.txt *.cmd *.application /XD app.publish Resources runtimes lib logs data /E /IS /MOVE
-if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Debug (
+:: Delete all build_test folders
+for /d %25%25G in ("$(TargetDir)build_test*") do rd  /s /q %25%25G &amp;&amp; echo Deleted Directory: %25%25G
+:: Delete all orderlog files
+ del "$(TargetDir)*orderlog.txt"
+:: Move all assemblies and related files to lib folder
+:: ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF *.exe *.config *.json *.manifest *.xml *.pdb *.txt *.cmd *.application /XD app.publish Resources runtimes lib logs data /E /IS /MOVE
+if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25
+) ELSE (
+cd $(TargetDir)
+del *.xml
+del *.pdb
+del *.dll
+del *.manifest
+del *.application
+del *.json
+rd /s /q "app.publish"
+del *.cmd
+)</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\AssimpNet.4.1.0\build\AssimpNet.targets" Condition="Exists('..\packages\AssimpNet.4.1.0\build\AssimpNet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

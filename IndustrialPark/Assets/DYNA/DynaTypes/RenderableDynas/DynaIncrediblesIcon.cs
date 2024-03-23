@@ -13,6 +13,7 @@ namespace IndustrialPark
         public override string TypeString => dynaCategoryName;
 
         protected override short constVersion => 1;
+        protected override bool inRadians => false;
 
         [Category(dynaCategoryName)]
         public AssetSingle Radius { get; set; }

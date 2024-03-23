@@ -119,7 +119,7 @@ namespace IndustrialPark
                 Cutscene = reader.ReadUInt32();
                 Flags.FlagValueInt = reader.ReadUInt32();
                 InterpSpeed = reader.ReadSingle();
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                     Subtitles = reader.ReadUInt32();
 
                 StartTime1 = reader.ReadSingle();
@@ -179,7 +179,7 @@ namespace IndustrialPark
             writer.Write(Flags.FlagValueInt);
             writer.Write(InterpSpeed);
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 writer.Write(Subtitles);
 
             writer.Write(StartTime1);
@@ -234,7 +234,7 @@ namespace IndustrialPark
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
                 dt.RemoveProperty("Subtitles");
             base.SetDynamicProperties(dt);
         }

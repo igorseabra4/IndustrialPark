@@ -12,7 +12,7 @@ namespace IndustrialPark
     {
         private const string dynaCategoryName = "effect:smoke_emitter";
         public override string TypeString => dynaCategoryName;
-
+        public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Texture);
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]

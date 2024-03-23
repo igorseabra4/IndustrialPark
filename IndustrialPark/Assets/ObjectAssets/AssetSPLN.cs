@@ -3,6 +3,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -120,6 +121,12 @@ namespace IndustrialPark
             writer.endianness = Endianness.Little;
 
             base.Serialize(writer);
+            if (game >= Game.ROTU && prevEndian == Endianness.Big)
+            {
+                writer.BaseStream.Position = 0;
+                writer.Write(BitConverter.ToUInt32(BitConverter.GetBytes(assetID).Reverse().ToArray(), 0));
+                writer.BaseStream.Position = 8;
+            }
             writer.endianness = prevEndian;
 
             writer.Write(SplineType);

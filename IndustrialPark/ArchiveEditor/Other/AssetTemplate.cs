@@ -52,6 +52,8 @@
 
         // Other
         Animation_List,
+        Camera_Curve,
+        Credits,
         DefaultGlowSceneProp,
         Destructible,
         Collision_Table,
@@ -67,6 +69,7 @@
         Shrapnel,
         Sound_Info,
         Surface_Mapper,
+        Surface,
         Throwable_Table,
         //Empty_Sound,
         //Empty_Streaming_Sound,
@@ -179,7 +182,7 @@
         Taxi_Stand,
         Texas_Hitch,
         Texas_Hitch_Platform,
-        Checkpoint,
+        Checkpoint_Set,
         Checkpoint_Invisible,
         Bus_Stop,
         Teleport_Box,
@@ -346,5 +349,41 @@
         // Incredibles objects
         Zip_Line,
         Rubble_Generator,
+
+        // ROTU enemies
+        Bomber,
+        Boss_Underminer_Drill,
+        Boss_Underminer_UM,
+        Chicken,
+        Driller,
+        Enforcer,
+        Humanoid,
+        RotuRat,
+        RobotTank,
+        Scientist,
+        Shooter,
+
+        // ROTU/RatProto objects
+        Checkpoint,
+
+        // RatProto enemies
+        Thief,
+        Waiter,
+        Swarm_Owl,
+        Swarm_Bug,
+
+        // RatProto objects
+        Carryable_Property_Attract,
+        Carryable_Property_Generic,
+        Carryable_Property_Repel,
+        Carryable_Property_Swipe,
+        Light_Effect,
+        Light_Effect_Strobe,
+        Light_Effect_Flicker,
+        Hud_Compass_System,
+        Hud_Compass_Object,
+        Pole_Swing,
+        CObject_SpringBoard,
+        Tightrope,
     }
 }

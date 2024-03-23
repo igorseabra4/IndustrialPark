@@ -1170,16 +1170,23 @@ namespace IndustrialPark
             { AssetType.Volume, typeof(AssetVOLU) },
 
             { AssetType.CameraPreset, typeof(DynaCameraPreset) },
+            { AssetType.LightEffect, typeof(DynaEffectLight) },
+            { AssetType.Springboard, typeof(DynaCObjectSpringBoard) },
+            { AssetType.ScreenWarp, typeof(DynaEffectScreenWarp) },
             { AssetType.FlameEmitter, typeof(DynaGObjectFlameEmitter) },
             { AssetType.Flamethrower, typeof(DynaEffectFlamethrower) },
             { AssetType.IncrediblesIcon, typeof(DynaIncrediblesIcon) },
             { AssetType.IncrediblesPickup, typeof(DynaGObjectInPickup) },
+            { AssetType.InterestPointer, typeof(DynaInterestPointer) },
+            { AssetType.NPCCoverPoint, typeof(DynaNPCCoverpoint) },
+            { AssetType.HUDCompassObject, typeof(DynaHudCompassObject) },
             { AssetType.Lightning, typeof(DynaEffectLightning) },
             { AssetType.ParticleGenerator, typeof(DynaEffectParticleGenerator) },
             { AssetType.Pointer, typeof(DynaPointer) },
             { AssetType.Ring, typeof(DynaGObjectRing) },
             { AssetType.RumbleSphericalEmitter, typeof(DynaEffectRumbleSphere) },
             { AssetType.SmokeEmitter, typeof(DynaEffectSmokeEmitter) },
+            { AssetType.SparkEmitter, typeof(DynaEffectSparkEmitter) },
             { AssetType.TeleportBox, typeof(DynaGObjectTeleport) },
             { AssetType.Vent, typeof(DynaGObjectVent) },
 
@@ -1194,6 +1201,25 @@ namespace IndustrialPark
             { AssetType.Crate, typeof(DynaEnemySupplyCrate) },
             { AssetType.Turret, typeof(DynaEnemyTurret) },
             { AssetType.TrainCar, typeof(DynaGObjectTrainCar) },
+
+            { AssetType.Bomber, typeof(DynaEnemyIN2Bomber) },
+            { AssetType.BossUnderminerDrill, typeof(DynaEnemyIN2BossUnderminerDrill) },
+            { AssetType.BossUnderminerUM, typeof(DynaEnemyIN2BossUnderminerUM) },
+            { AssetType.Chicken, typeof(DynaEnemyIN2Chicken) },
+            { AssetType.Driller, typeof(DynaEnemyIN2Driller) },
+            { AssetType.Enforcer, typeof(DynaEnemyIN2Enforcer) },
+            { AssetType.Humanoid, typeof(DynaEnemyIN2Humanoid) },
+            { AssetType.Rat, typeof(DynaEnemyIN2Rat) },
+            { AssetType.RobotTank, typeof(DynaEnemyIN2RobotTank) },
+            { AssetType.Scientist, typeof(DynaEnemyIN2Scientist) },
+            { AssetType.Shooter, typeof(DynaEnemyIN2Shooter) },
+
+            { AssetType.EnemyLeftArm, typeof(DynaEnemyRATSLeftArm) },
+            { AssetType.EnemyRightArm, typeof(DynaEnemyRATSRightArm) },
+            { AssetType.EnemySwarmBug, typeof(DynaEnemyRATSSwarmBug) },
+            { AssetType.EnemySwarmOwl, typeof(DynaEnemyRATSSwarmOwl) },
+            { AssetType.EnemyThief, typeof(DynaEnemyRATSThief) },
+            { AssetType.EnemyWaiter, typeof(DynaEnemyRATSWaiter) },
         };
 
         private ToolStripMenuItem[] assetViewToolStripMenuItems;
@@ -1779,19 +1805,7 @@ namespace IndustrialPark
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 var unkDtypes = new uint[] {
-                    0x4EE03B24,
-                    0x9F234F8E,
-                    0x460F4FB2,
-                    0x2743B85C,
-                    0xA072A4DA,
-                    0xAD7CB421,
-                    0xC6C76EEE,
-                    0xCDB57387,
-                    0xCF21DB89,
-                    0xE5D82D97,
-                    0xE2301EA9,
                     0xEBC04E7B,
-                    0xFC2951C1
                 };
 
                 string ReadZeroTerminatedString(EndianBinaryReader r)

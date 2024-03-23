@@ -2,10 +2,47 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum PIPTLayerType
+    {
+        FIRST = 0,
+        PREPICKUP = 1,
+        POSTPICKUP = 2,
+        PREOOB = 3,
+        POSTOOB = 4,
+        PRECUTSCENE = 5,
+        POSTCUTSCENE = 6,
+        PRENPC = 7,
+        POSTNPC = 8,
+        PRESHADOW = 9,
+        POSTSHADOW = 10,
+        PREFX = 11,
+        POSTFX = 12,
+        PREPARTICLES = 13,
+        POSTPARTICELS = 14,
+        PRENORMAL4 = 15,
+        PRENORMAL3 = 16,
+        PRENORMAL2 = 17,
+        PRENORMAL = 18,
+        NORMAL = 19,
+        POSTNORMAL = 20,
+        POSTNORMAL2 = 21,
+        POSTNORMAL3 = 22,
+        POSTNORMAL4 = 23,
+        PREPTANK = 24,
+        POSTPTANK = 25,
+        PREDECAL = 26,
+        POSTDECAL = 27,
+        PRELASTFX = 28,
+        POSTLASTFX = 29,
+        PRELAST = 30,
+        LAST = 31
+    }
+
     public enum BlendFactorType
     {
         None = 0x00,
@@ -232,8 +269,14 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName + " (Movie/Incredibles only)")]
-        public AssetID Unknown { get; set; }
+        [Category(categoryName)]
+        public PIPTLayerType Layer { get; set; }
+
+        [Category(categoryName)]
+        public byte AlphaDiscard { get; set; }
+
+        [Category(categoryName)]
+        public ushort PipePad { get; set; }
 
         public PipeInfo()
         {
@@ -268,8 +311,13 @@ namespace IndustrialPark
             Model = reader.ReadUInt32();
             SubObjectBits.FlagValueInt = reader.ReadUInt32();
             PipeFlags = reader.ReadInt32();
-            if (game == Game.Incredibles)
-                Unknown = reader.ReadUInt32();
+
+            if (game >= Game.Incredibles)
+            {
+                Layer = (PIPTLayerType)reader.ReadByte();
+                AlphaDiscard = reader.ReadByte();
+                PipePad = reader.ReadUInt16();
+            }
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -278,8 +326,22 @@ namespace IndustrialPark
             writer.Write(SubObjectBits.FlagValueInt);
             writer.Write(PipeFlags);
 
-            if (game == Game.Incredibles)
-                writer.Write(Unknown);
+            if (game >= Game.Incredibles)
+            {
+                writer.Write((byte)Layer);
+                writer.Write(AlphaDiscard);
+                writer.Write(PipePad);
+            }
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.Incredibles)
+            {
+                dt.RemoveProperty("Layer");
+                dt.RemoveProperty("AlphaDiscard");
+                dt.RemoveProperty("PipePad");
+            }
         }
     }
 
@@ -288,7 +350,7 @@ namespace IndustrialPark
         public override string AssetInfo => $"{Entries.Length} entries";
 
         private PipeInfo[] _entries { get; set; }
-        [Category("Pipe Info Table")]
+        [Category("Pipe Info Table"), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public PipeInfo[] Entries
         {
             get => _entries;

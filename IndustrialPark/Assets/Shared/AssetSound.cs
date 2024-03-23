@@ -13,7 +13,7 @@ namespace IndustrialPark
             switch (platform)
             {
                 case Platform.GameCube:
-                    if (game == Game.Incredibles)
+                    if (game >= Game.Incredibles)
                         fileType = "GameCube FSB3 ";
                     else
                         fileType = "GameCube DSP ";

@@ -2,13 +2,15 @@
 using IndustrialPark.AssetEditorColors;
 using IndustrialPark.Models;
 using SharpDX;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Windows.Forms;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
-    public enum DynaEffectParticleGeneratorAttachType
+   public enum DynaEffectParticleGeneratorAttachType
     {
         attach_fixed = 0,
         attach_entity = 1,
@@ -26,6 +28,7 @@ namespace IndustrialPark
         volume_circle = 2,
         volume_line = 3,
         volume_model = 4,
+        volume_box = 5
     }
 
     public class DynaEffectParticleGenerator : RenderableRotatableDynaBase
@@ -42,8 +45,8 @@ namespace IndustrialPark
         public AssetSingle Rate { get; set; }
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Texture { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetByte SystemType { get; set; }
+        [Category(dynaCategoryName), Description("ROTU only")]
+        public AssetSingle EmitDistance { get; set; }
 
         private const string dynaCategoryNameAttach = dynaCategoryName + ": Attach Data";
 
@@ -92,6 +95,8 @@ namespace IndustrialPark
         public AssetSingle Radius { get; set; }
         [Category(dynaCategoryNameVolume), Description("volume_circle only")]
         public AssetSingle CircleArcLength { get; set; }
+        [Category(dynaCategoryName), Description("volume_circle rotu only")]
+        public AssetSingle Height { get; set; }
 
         [Category(dynaCategoryNameVolume), Description("volume_line only")]
         public FlagBitmask LineFlags { get; set; } = ByteFlagsDescriptor();
@@ -107,44 +112,56 @@ namespace IndustrialPark
         [Category(dynaCategoryNameVolume), Description("volume_model only")]
         public AssetSingle ModelExpand { get; set; }
 
-        [Category(dynaCategoryName)]
-        public FlagBitmask UnknownFlags { get; set; } = IntFlagsDescriptor();
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown01 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown02 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown03 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown04 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown05 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown06 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown07 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown08 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown09 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown10 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown11 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown12 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown13 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown14 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown15 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetColor UnknownColor { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown16 { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle Unknown17 { get; set; }
+        [Category(dynaCategoryNameVolume), Description("volume_box only")]
+        public AssetSingle DimensionsX { get; set; }
+        [Category(dynaCategoryNameVolume), Description("volume_box only")]
+        public AssetSingle DimensionsY { get; set; }
+        [Category(dynaCategoryNameVolume), Description("volume_box only")]
+        public AssetSingle DimensionsZ { get; set; }
+
+        private const string dynaCategoryNameParSystem = dynaCategoryName + ": Particle System";
+        private ParticleSystemType _systemtype;
+        [Category(dynaCategoryNameParSystem)]
+        public ParticleSystemType SystemType
+        {
+            get => _systemtype;
+            set
+            {
+                _systemtype = value;
+                switch (value)
+                {
+                    case ParticleSystemType.Waterfall:
+                        ParticleSystem = new ParticleSystem_Waterfall();
+                        break;
+                    case ParticleSystemType.WaterfallMist:
+                        ParticleSystem = new ParticleSystem_WaterfallMist();
+                        break;
+                    case ParticleSystemType.WaterfallSplash:
+                        ParticleSystem = new ParticleSystem_WaterfallSplash();
+                        break;
+                    case ParticleSystemType.Snow:
+                        ParticleSystem = new ParticleSystem_Snow();
+                        break;
+                    case ParticleSystemType.Rain:
+                        ParticleSystem = new ParticleSystem_Rain();
+                        break;
+                    case ParticleSystemType.EarthDust:
+                        ParticleSystem = new ParticleSystem_EarthDust();
+                        break;
+                    case ParticleSystemType.Pop:
+                        ParticleSystem = new ParticleSystem_Pop();
+                        break;
+                    case ParticleSystemType.BurrowKickup:
+                        ParticleSystem = new ParticleSystem_BurrowKick();
+                        break;
+                    case ParticleSystemType.Puffer:
+                        ParticleSystem = new ParticleSystem_Puffer();
+                        break;
+                }
+            }
+        }
+        [Category(dynaCategoryNameParSystem), TypeConverter(typeof(ExpandableObjectConverter))]
+        public ParticleSystem_Generic ParticleSystem { get; set; }
 
         public DynaEffectParticleGenerator(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Effect__particle_generator, game, endianness)
         {
@@ -158,10 +175,12 @@ namespace IndustrialPark
                 VolumeFlags.FlagValueByte = reader.ReadByte();
                 Rate = reader.ReadSingle();
                 Texture = reader.ReadUInt32();
+                if (game >= Game.ROTU)
+                    EmitDistance = reader.ReadSingle();
                 AttachType = (DynaEffectParticleGeneratorAttachType)reader.ReadByte();
                 MotionType = (DynaEffectParticleGeneratorMotionType)reader.ReadByte();
                 VolumeType = (DynaEffectParticleGeneratorVolumeType)reader.ReadByte();
-                SystemType = reader.ReadByte();
+                SystemType = (ParticleSystemType)reader.ReadByte();
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
@@ -196,7 +215,10 @@ namespace IndustrialPark
                 {
                     Radius = reader.ReadSingle();
                     CircleArcLength = reader.ReadSingle();
-                    reader.BaseStream.Position += 4;
+                    if (game >= Game.ROTU)
+                        Height = reader.ReadSingle();
+                    else
+                        reader.BaseStream.Position += 4;
                 }
                 else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_line)
                 {
@@ -213,27 +235,46 @@ namespace IndustrialPark
                     ModelExpand = reader.ReadSingle();
                     reader.BaseStream.Position += 4;
                 }
+                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_box)
+                {
+                    DimensionsX = reader.ReadSingle();
+                    DimensionsY = reader.ReadSingle();
+                    DimensionsZ = reader.ReadSingle();
+                }
 
-                UnknownFlags.FlagValueInt = reader.ReadUInt32();
+                switch (SystemType)
+                {
+                    case ParticleSystemType.Waterfall:
+                        ParticleSystem = new ParticleSystem_Waterfall(reader);
+                        break;
+                    case ParticleSystemType.WaterfallMist:
+                        ParticleSystem = new ParticleSystem_WaterfallMist(reader);
+                        break;
+                    case ParticleSystemType.WaterfallSplash:
+                        ParticleSystem = new ParticleSystem_WaterfallSplash(reader);
+                        break;
+                    case ParticleSystemType.Snow:
+                        ParticleSystem = new ParticleSystem_Snow(reader);
+                        break;
+                    case ParticleSystemType.Rain:
+                        ParticleSystem = new ParticleSystem_Rain(reader);
+                        break;
+                    case ParticleSystemType.EarthDust:
+                        ParticleSystem = new ParticleSystem_EarthDust(reader);
+                        break;
+                    case ParticleSystemType.Pop:
+                        ParticleSystem = new ParticleSystem_Pop(reader);
+                        break;
+                    case ParticleSystemType.BurrowKickup:
+                        ParticleSystem = new ParticleSystem_BurrowKick(reader);
+                        break;
+                    case ParticleSystemType.Puffer:
+                        ParticleSystem = new ParticleSystem_Puffer(reader);
+                        break;
+                    default:
+                        throw new Exception($"Unknown particle system type: {SystemType}");
+                }
 
-                Unknown01 = reader.ReadSingle();
-                Unknown02 = reader.ReadSingle();
-                Unknown03 = reader.ReadSingle();
-                Unknown04 = reader.ReadSingle();
-                Unknown05 = reader.ReadSingle();
-                Unknown06 = reader.ReadSingle();
-                Unknown07 = reader.ReadSingle();
-                Unknown08 = reader.ReadSingle();
-                Unknown09 = reader.ReadSingle();
-                Unknown10 = reader.ReadSingle();
-                Unknown11 = reader.ReadSingle();
-                Unknown12 = reader.ReadSingle();
-                Unknown13 = reader.ReadSingle();
-                Unknown14 = reader.ReadSingle();
-                Unknown15 = reader.ReadSingle();
-                UnknownColor = reader.ReadColor();
-                Unknown16 = reader.ReadSingle();
-                Unknown17 = reader.ReadSingle();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -248,10 +289,12 @@ namespace IndustrialPark
             writer.Write(VolumeFlags.FlagValueByte);
             writer.Write(Rate);
             writer.Write(Texture);
+            if (game >= Game.ROTU)
+                writer.Write(EmitDistance);
             writer.Write((byte)AttachType);
             writer.Write((byte)MotionType);
             writer.Write((byte)VolumeType);
-            writer.Write(SystemType);
+            writer.Write((byte)SystemType);
             writer.Write(_position.X);
             writer.Write(_position.Y);
             writer.Write(_position.Z);
@@ -288,7 +331,10 @@ namespace IndustrialPark
             {
                 writer.Write(Radius);
                 writer.Write(CircleArcLength);
-                writer.Write(new byte[4]);
+                if (game >= Game.ROTU)
+                    writer.Write(Height);
+                else
+                    writer.Write(0);
             }
             else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_line)
             {
@@ -305,26 +351,14 @@ namespace IndustrialPark
                 writer.Write(ModelExpand);
                 writer.Write(new byte[4]);
             }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_box)
+            {
+                writer.Write(DimensionsX);
+                writer.Write(DimensionsY);
+                writer.Write(DimensionsZ);
+            }
+            ParticleSystem.Serialize(writer);
 
-            writer.Write(UnknownFlags.FlagValueInt);
-            writer.Write(Unknown01);
-            writer.Write(Unknown02);
-            writer.Write(Unknown03);
-            writer.Write(Unknown04);
-            writer.Write(Unknown05);
-            writer.Write(Unknown06);
-            writer.Write(Unknown07);
-            writer.Write(Unknown08);
-            writer.Write(Unknown09);
-            writer.Write(Unknown10);
-            writer.Write(Unknown11);
-            writer.Write(Unknown12);
-            writer.Write(Unknown13);
-            writer.Write(Unknown14);
-            writer.Write(Unknown15);
-            writer.Write(UnknownColor);
-            writer.Write(Unknown16);
-            writer.Write(Unknown17);
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

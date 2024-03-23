@@ -10,6 +10,7 @@ namespace IndustrialPark
     {
         [ValidReferenceRequired]
         public AssetID Sound { get; set; }
+        public int Flags { get; set; }
         public byte[] JawData { get; set; }
 
         public EntryJAW()
@@ -20,6 +21,11 @@ namespace IndustrialPark
         {
             Sound = soundAssetID;
             JawData = jawData;
+        }
+
+        public EntryJAW(AssetID soundAssetID, int flags, byte[] jawData) : this(soundAssetID, jawData)
+        {
+            Flags = flags;
         }
 
         public override string ToString()
@@ -68,10 +74,19 @@ namespace IndustrialPark
                     int offset = reader.ReadInt32();
                     reader.ReadInt32();
 
-                    int length = BitConverter.ToInt32(AHDR.data, startOfJawData + offset);
-                    byte[] jawData = AHDR.data.Skip(startOfJawData + offset + 4).Take(length).ToArray();
-
-                    JAW_Entries[i] = new EntryJAW(soundAssetID, jawData);
+                    if (game >= Game.ROTU)
+                    {
+                        int length = BitConverter.ToInt32(AHDR.data.Skip(startOfJawData + offset).Take(4).Reverse().ToArray(), 0);
+                        int flags = BitConverter.ToInt32(AHDR.data.Skip(startOfJawData + offset + 4).Take(4).Reverse().ToArray(), 0);
+                        byte[] jawData = AHDR.data.Skip(startOfJawData + offset + 8).Take(length).ToArray();
+                        JAW_Entries[i] = new EntryJAW(soundAssetID, flags, jawData);
+                    }
+                    else
+                    {
+                        int length = BitConverter.ToInt32(AHDR.data, startOfJawData + offset);
+                        byte[] jawData = AHDR.data.Skip(startOfJawData + offset + 4).Take(length).ToArray();
+                        JAW_Entries[i] = new EntryJAW(soundAssetID, jawData);
+                    }
                 }
             }
         }
@@ -86,9 +101,18 @@ namespace IndustrialPark
             {
                 writer.Write(i.Sound);
                 writer.Write(newJawData.Count);
-                writer.Write(i.JawData.Length + 4);
 
-                newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
+                if (game >= Game.ROTU)
+                {
+                    writer.Write(i.JawData.Length + 8);
+                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length).Reverse());
+                    newJawData.AddRange(BitConverter.GetBytes(i.Flags).Reverse());
+                }
+                else
+                {
+                    writer.Write(i.JawData.Length + 4);
+                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length));
+                }
                 newJawData.AddRange(i.JawData);
 
                 while (newJawData.Count % 4 != 0)

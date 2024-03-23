@@ -110,6 +110,8 @@ namespace IndustrialPark
         public AssetID Group { get; set; }
         [Category(categoryName)]
         public LightKitLight[] Lights { get; set; }
+        [Category(categoryName)]
+        public int Blended { get; set; }
 
         public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LightKit)
         {
@@ -133,6 +135,8 @@ namespace IndustrialPark
                 reader.BaseStream.Position = 0x10;
                 for (int i = 0; i < lightCount; i++)
                     Lights[i] = new LightKitLight(reader);
+                if (game >= Game.ROTU)
+                    Blended = reader.ReadInt32();
             }
         }
 
@@ -149,6 +153,15 @@ namespace IndustrialPark
 
             foreach (var l in Lights)
                 l.Serialize(writer);
+
+            if (game >= Game.ROTU)
+                writer.Write(Blended);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.ROTU)
+                dt.RemoveProperty("Blended");
         }
     }
 }

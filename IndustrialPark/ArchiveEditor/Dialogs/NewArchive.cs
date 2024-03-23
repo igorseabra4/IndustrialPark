@@ -34,7 +34,9 @@ namespace IndustrialPark
 
             comboBoxGame.Items.Add("Scooby-Doo: Night Of 100 Frights");
             comboBoxGame.Items.Add("Spongebob Squarepants: Battle For Bikini Bottom");
-            comboBoxGame.Items.Add("The Incredibles/Movie Game/Rise of the Underminer");
+            comboBoxGame.Items.Add("The SpongeBob SquarePants Movie Game/The Incredibles");
+            comboBoxGame.Items.Add("Rise of the Underminer");
+            comboBoxGame.Items.Add("Ratatouille Prototype");
 
             comboBoxPlatform.Items.Add("GameCube");
             comboBoxPlatform.Items.Add("Xbox / PC");
@@ -64,6 +66,12 @@ namespace IndustrialPark
                     break;
                 case Game.Incredibles:
                     comboBoxGame.SelectedIndex = 2;
+                    break;
+                case Game.ROTU:
+                    comboBoxGame.SelectedIndex = 3;
+                    break;
+                case Game.RatProto:
+                    comboBoxGame.SelectedIndex = 4;
                     break;
             }
 
@@ -103,8 +111,8 @@ namespace IndustrialPark
 
             Section_PACK PACK = new Section_PACK();
 
-            PACK.PMOD = new Section_PMOD((int)dateTimePicker1.Value.ToBinary());
-            PACK.PCRT = new Section_PCRT((int)dateTimePicker1.Value.ToBinary(), textBoxPCRT.Text);
+            PACK.PMOD = new Section_PMOD((int)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
+            PACK.PCRT = new Section_PCRT((int)((DateTimeOffset)dateTimePicker1.Value).ToUnixTimeSeconds(), textBoxPCRT.Text);
             PACK.PCNT = new Section_PCNT(0, 0, 0, 0, 0);
             PACK.PFLG = new Section_PFLG(46);
 
@@ -143,6 +151,8 @@ namespace IndustrialPark
                     }
                     break;
                 case Game.Incredibles:
+                case Game.ROTU:
+                case Game.RatProto:
                     PACK.PLAT.language = "US";
                     PACK.PLAT.targetGame = "Incredibles";
                     switch (platform)
@@ -178,6 +188,10 @@ namespace IndustrialPark
                 game = Game.BFBB;
             else if (comboBoxGame.SelectedIndex == 2)
                 game = Game.Incredibles;
+            else if (comboBoxGame.SelectedIndex == 3)
+                game = Game.ROTU;
+            else if (comboBoxGame.SelectedIndex == 4)
+                game = Game.RatProto;
 
             if (comboBoxPlatform.SelectedIndex == 0)
                 platform = Platform.GameCube;

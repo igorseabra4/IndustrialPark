@@ -33,6 +33,8 @@ namespace IndustrialPark
                 SetupForCsn(csn);
             else if (asset is IAssetAddSelected aas)
                 SetupForAddSelected(aas);
+            else if (asset is AssetPARS pars)
+                SetupForPars(pars);
             else if (asset is AssetSHRP shrp)
                 SetupForShrp(shrp);
             else if (asset is AssetUIM uim)
@@ -180,7 +182,7 @@ namespace IndustrialPark
                 IShrapnelType.Sound
             };
 
-            if (asset.game == Game.Incredibles)
+            if (asset.game >= Game.Incredibles)
             {
                 AddRow(ButtonSize);
                 AddRow(ButtonSize);
@@ -190,6 +192,19 @@ namespace IndustrialPark
                      IShrapnelType.Explosion,
                      IShrapnelType.Distortion,
                      IShrapnelType.Fire,
+                });
+            }
+
+            if (asset.game >= Game.ROTU)
+            {
+                AddRow(ButtonSize);
+                AddRow(ButtonSize);
+
+                validTypes.AddRange(new IShrapnelType[]
+                {
+                    IShrapnelType.Light,
+                    IShrapnelType.Smoke,
+                    IShrapnelType.Goo
                 });
             }
 
@@ -204,6 +219,26 @@ namespace IndustrialPark
                 };
                 tableLayoutPanel1.Controls.Add(buttonAdd);
             }
+        }
+
+        private void SetupForPars(AssetPARS asset)
+        {
+            AddRow(ButtonSize);
+
+            ComboBox listBox = new ComboBox() {Dock = DockStyle.Fill, Text="Test", AutoSize = true };
+            foreach (var o in Enum.GetValues(typeof(ParticleCommandType)))
+                listBox.Items.Add(o);
+            listBox.SelectedIndex = 0;
+
+            Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = "Add Command", AutoSize = true };
+            buttonAdd.Click += (object sender, EventArgs e) =>
+            {
+                asset.AddEntry((ParticleCommandType)listBox.Items[listBox.SelectedIndex]);
+            };
+
+            tableLayoutPanel1.Controls.Add(listBox);
+            tableLayoutPanel1.Controls.Add(buttonAdd);
+
         }
 
         private void SetupForUim(AssetUIM asset)
@@ -252,6 +287,7 @@ namespace IndustrialPark
                 SaveFileDialog saveFile = new SaveFileDialog()
                 {
                     Filter = "OBJ Files|*.obj|All files|*.*",
+                    FileName = asset.assetName
                 };
 
                 if (saveFile.ShowDialog() == DialogResult.OK)

@@ -866,11 +866,11 @@ namespace IndustrialPark.Randomizer
 
         private bool ShufflePlaceableDynaColors(bool brightColors, bool strongColors)
         {
-            List<DynaEnemySB> assets = (from asset in assetDictionary.Values
-                                        where asset is DynaEnemySB
-                                        select asset).Cast<DynaEnemySB>().ToList();
+            List<DynaEnemy> assets = (from asset in assetDictionary.Values
+                                        where asset is DynaEnemy
+                                        select asset).Cast<DynaEnemy>().ToList();
 
-            foreach (DynaEnemySB a in assets)
+            foreach (DynaEnemy a in assets)
             {
                 Vector3 color = GetRandomColor(brightColors, strongColors);
                 a.ColorRed = color.X;

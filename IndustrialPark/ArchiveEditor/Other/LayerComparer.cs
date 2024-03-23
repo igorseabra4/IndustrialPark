@@ -48,7 +48,7 @@ namespace IndustrialPark
             if (game == Game.BFBB && layerOrderBFBB.Contains(l1) && layerOrderBFBB.Contains(l2))
                 return layerOrderBFBB.IndexOf(l1) > layerOrderBFBB.IndexOf(l2) ? 1 : -1;
 
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
             {
                 if ((l1 == 3 && l2 == 11) || (l1 == 11 && l2 == 3))
                     return 0;

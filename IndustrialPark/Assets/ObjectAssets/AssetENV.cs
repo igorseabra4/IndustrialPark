@@ -39,17 +39,17 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle LoldHeight { get; set; }
         [Category(categoryName)]
-        public int UnknownInt44 { get; set; }
+        public AssetSingle MinBounds_X { get; set; }
         [Category(categoryName)]
-        public int UnknownInt48 { get; set; }
+        public AssetSingle MinBounds_Y { get; set; }
         [Category(categoryName)]
-        public int UnknownInt4C { get; set; }
+        public AssetSingle MinBounds_Z { get; set; }
         [Category(categoryName)]
-        public int UnknownInt50 { get; set; }
+        public AssetSingle MaxBounds_X { get; set; }
         [Category(categoryName)]
-        public int UnknownInt54 { get; set; }
+        public AssetSingle MaxBounds_Y { get; set; }
         [Category(categoryName)]
-        public int UnknownInt58 { get; set; }
+        public AssetSingle MaxBounds_Z { get; set; }
 
         public AssetENV(string assetName, string startCamName) : base(assetName, AssetType.Environment, BaseAssetType.Env)
         {
@@ -79,17 +79,16 @@ namespace IndustrialPark
                 BSP_FX_SurfaceMapper = reader.ReadUInt32();
                 if (game != Game.Scooby)
                 {
-                    reader.ReadInt32();
-                    LoldHeight = BitConverter.ToSingle(AHDR.data, 0x40);
+                    LoldHeight = reader.ReadSingle();
                 }
-                if (game == Game.Incredibles)
+                if (game >= Game.Incredibles)
                 {
-                    UnknownInt44 = reader.ReadInt32();
-                    UnknownInt48 = reader.ReadInt32();
-                    UnknownInt4C = reader.ReadInt32();
-                    UnknownInt50 = reader.ReadInt32();
-                    UnknownInt54 = reader.ReadInt32();
-                    UnknownInt58 = reader.ReadInt32();
+                    MinBounds_X = reader.ReadSingle();
+                    MinBounds_Y = reader.ReadSingle();
+                    MinBounds_Z = reader.ReadSingle();
+                    MaxBounds_X = reader.ReadSingle();
+                    MaxBounds_Y = reader.ReadSingle();
+                    MaxBounds_Z = reader.ReadSingle();
                 }
             }
         }
@@ -114,15 +113,15 @@ namespace IndustrialPark
             writer.Write(BSP_Collision_SurfaceMapper);
             writer.Write(BSP_FX_SurfaceMapper);
             if (game != Game.Scooby)
-                writer.Write(BitConverter.GetBytes(LoldHeight));
-            if (game == Game.Incredibles)
+                writer.Write(LoldHeight);
+            if (game >= Game.Incredibles)
             {
-                writer.Write(UnknownInt44);
-                writer.Write(UnknownInt48);
-                writer.Write(UnknownInt4C);
-                writer.Write(UnknownInt50);
-                writer.Write(UnknownInt54);
-                writer.Write(UnknownInt58);
+                writer.Write(MinBounds_X);
+                writer.Write(MinBounds_Y);
+                writer.Write(MinBounds_Z);
+                writer.Write(MaxBounds_X);
+                writer.Write(MaxBounds_Y);
+                writer.Write(MaxBounds_Z);
             }
 
             SerializeLinks(writer);
@@ -134,14 +133,14 @@ namespace IndustrialPark
         {
             if (game == Game.Scooby)
                 dt.RemoveProperty("LoldHeight");
-            if (game != Game.Incredibles)
+            if (game < Game.Incredibles)
             {
-                dt.RemoveProperty("UnknownInt44");
-                dt.RemoveProperty("UnknownInt48");
-                dt.RemoveProperty("UnknownInt4C");
-                dt.RemoveProperty("UnknownInt50");
-                dt.RemoveProperty("UnknownInt54");
-                dt.RemoveProperty("UnknownInt58");
+                dt.RemoveProperty("MinBounds_X");
+                dt.RemoveProperty("MinBounds_Y");
+                dt.RemoveProperty("MinBounds_Z");
+                dt.RemoveProperty("MaxBounds_X");
+                dt.RemoveProperty("MaxBounds_Y");
+                dt.RemoveProperty("MaxBounds_Z");
             }
             base.SetDynamicProperties(dt);
         }

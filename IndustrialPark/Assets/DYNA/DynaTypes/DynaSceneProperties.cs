@@ -30,35 +30,30 @@ namespace IndustrialPark
         public AssetSingle waterTileWidth { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle lodFadeDistance { get; set; }
-        [Category(dynaCategoryName)]
-        public int UnknownInt24 { get; set; }
-        [Category(dynaCategoryName)]
-        public int UnknownInt28 { get; set; }
-        [Category(dynaCategoryName)]
-        public int UnknownInt2C { get; set; }
-        [Category(dynaCategoryName)]
-        public int UnknownInt30 { get; set; }
 
         private const string incrediblesCategory = dynaCategoryName + " (Incredibles version only)";
 
         [Category(incrediblesCategory)]
-        public int UnknownInt34 { get; set; }
+        public AssetSingle WaterTileOffsetX { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt38 { get; set; }
+        public AssetSingle WaterTileOffsetY { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt3C { get; set; }
+        public AssetByte NumCheckpoints { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt40 { get; set; }
+        public AssetSingle GrassDistFade { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt44 { get; set; }
+        public AssetSingle GrassDistCull { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt48 { get; set; }
+        public uint PiggyBank { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt4C { get; set; }
+        public uint MaxAnimationMem { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt50 { get; set; }
+        public uint MaxArtMem { get; set; }
         [Category(incrediblesCategory)]
-        public int UnknownInt54 { get; set; }
+        public uint MaxDesignMem { get; set; }
+        [Category(incrediblesCategory)]
+        public uint MaxProgrammingMem { get; set; }
+
 
         [Category(dynaCategoryName)]
         public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
@@ -75,10 +70,6 @@ namespace IndustrialPark
             scenePropertiesFlags = 1;
             waterTileWidth = 0;
             lodFadeDistance = 4;
-            UnknownInt24 = 0;
-            UnknownInt28 = 0;
-            UnknownInt2C = 0;
-            UnknownInt30 = 0;
         }
 
         public DynaSceneProperties(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.SceneProperties, game, endianness)
@@ -100,24 +91,21 @@ namespace IndustrialPark
                 scenePropertiesFlags = reader.ReadInt32();
                 waterTileWidth = reader.ReadSingle();
                 lodFadeDistance = reader.ReadSingle();
-                UnknownInt24 = reader.ReadInt32();
-                UnknownInt28 = reader.ReadInt32();
-                UnknownInt2C = reader.ReadInt32();
-                UnknownInt30 = reader.ReadInt32();
 
-                if (reader.BaseStream.Length - Link.sizeOfStruct * _links.Length - idle03Extras.Length * 4 - idle04Extras.Length * 4 != reader.BaseStream.Position)
+                if (reader.BaseStream.Length > 0x44)
                 {
                     AssetVersion = EVersionIncrediblesOthers.Incredibles;
-
-                    UnknownInt34 = reader.ReadInt32();
-                    UnknownInt38 = reader.ReadInt32();
-                    UnknownInt3C = reader.ReadInt32();
-                    UnknownInt40 = reader.ReadInt32();
-                    UnknownInt44 = reader.ReadInt32();
-                    UnknownInt48 = reader.ReadInt32();
-                    UnknownInt4C = reader.ReadInt32();
-                    UnknownInt50 = reader.ReadInt32();
-                    UnknownInt54 = reader.ReadInt32();
+                    WaterTileOffsetX = reader.ReadSingle();
+                    WaterTileOffsetY = reader.ReadSingle();
+                    NumCheckpoints = reader.ReadByte();
+                    reader.ReadBytes(3);
+                    GrassDistFade = reader.ReadSingle();
+                    GrassDistCull = reader.ReadSingle();
+                    PiggyBank = reader.ReadUInt32();
+                    MaxAnimationMem = reader.ReadUInt32();
+                    MaxArtMem = reader.ReadUInt32();
+                    MaxDesignMem = reader.ReadUInt32();
+                    MaxProgrammingMem = reader.ReadUInt32();
                 }
                 else
                 {
@@ -149,22 +137,24 @@ namespace IndustrialPark
             writer.Write(scenePropertiesFlags);
             writer.Write(waterTileWidth);
             writer.Write(lodFadeDistance);
-            writer.Write(UnknownInt24);
-            writer.Write(UnknownInt28);
-            writer.Write(UnknownInt2C);
-            writer.Write(UnknownInt30);
-
             if (AssetVersion == EVersionIncrediblesOthers.Incredibles)
             {
-                writer.Write(UnknownInt34);
-                writer.Write(UnknownInt38);
-                writer.Write(UnknownInt3C);
-                writer.Write(UnknownInt40);
-                writer.Write(UnknownInt44);
-                writer.Write(UnknownInt48);
-                writer.Write(UnknownInt4C);
-                writer.Write(UnknownInt50);
-                writer.Write(UnknownInt54);
+                writer.Write(WaterTileOffsetX);
+                writer.Write(WaterTileOffsetY);
+                writer.Write(NumCheckpoints);
+                writer.Write(new byte[3]);
+                writer.Write(GrassDistFade);
+                writer.Write(GrassDistCull);
+                writer.Write(PiggyBank);
+                writer.Write(MaxAnimationMem);
+                writer.Write(MaxArtMem);
+                writer.Write(MaxDesignMem);
+                writer.Write(MaxProgrammingMem);
+                writer.Write(new byte[12]);
+            }
+            else
+            {
+                writer.Write(new byte[16]);
             }
 
             var idle03Pos = (int)(writer.BaseStream.Position - idlesStart);

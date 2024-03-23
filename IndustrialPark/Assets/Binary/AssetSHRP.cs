@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
@@ -13,10 +14,10 @@ namespace IndustrialPark
 
         private const string categoryName = "Shrapnel";
 
-        [Category(categoryName)]
-        public int Unknown { get; set; }
         [Category(categoryName), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public Shrapnel[] Entries { get; set; }
+        [Browsable(false)]
+        public AssetID ThisAssetID { get; set; }
 
         public AssetSHRP(string assetName) : base(assetName, AssetType.Shrapnel)
         {
@@ -28,8 +29,8 @@ namespace IndustrialPark
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 int count = reader.ReadInt32();
-                reader.ReadUInt32();
-                Unknown = reader.ReadInt32();
+                ThisAssetID = reader.ReadUInt32();
+                reader.ReadInt32(); // internal pointer
                 Entries = new Shrapnel[count];
 
                 for (int i = 0; i < Entries.Length; i++)
@@ -59,6 +60,18 @@ namespace IndustrialPark
                         case IShrapnelType.Distortion:
                             Entries[i] = new ShrapnelEntry_Distortion(reader, game);
                             break;
+                        case IShrapnelType.Fire:
+                            Entries[i] = new ShrapnelEntry_Fire(reader, game);
+                            break;
+                        case IShrapnelType.Light:
+                            Entries[i] = new ShrapnelEntry_Light(reader, game);
+                            break;
+                        case IShrapnelType.Smoke:
+                            Entries[i] = new ShrapnelEntry_Smoke(reader, game);
+                            break;
+                        case IShrapnelType.Goo:
+                            Entries[i] = new ShrapnelEntry_Goo(reader, game);
+                            break;
                         default:
                             throw new Exception($"Unknown shrapnel entry type: {entryType}");
                     }
@@ -69,8 +82,18 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Entries.Length);
-            writer.Write(assetID);
-            writer.Write(Unknown);
+            if (ThisAssetID == 0 || ThisAssetID == assetID)
+                writer.Write(assetID);
+            else
+            {
+                for (int i = 0; i < assetName.Length; i++)
+                {
+                    AssetID tryId = new AssetID(assetName.Substring(0, i));
+                    if (tryId == ThisAssetID)
+                        writer.Write(tryId);
+                }
+            }
+            writer.Write(0);
             foreach (var e in Entries)
                 e.Serialize(writer);
         }
@@ -104,6 +127,15 @@ namespace IndustrialPark
                     break;
                 case IShrapnelType.Fire:
                     list.Add(new ShrapnelEntry_Fire(game));
+                    break;
+                case IShrapnelType.Light:
+                    list.Add(new ShrapnelEntry_Light(game));
+                    break;
+                case IShrapnelType.Smoke:
+                    list.Add(new ShrapnelEntry_Smoke(game));
+                    break;
+                case IShrapnelType.Goo:
+                    list.Add(new ShrapnelEntry_Goo(game));
                     break;
                 default:
                     throw new ArgumentException($"Unknown shrapnel entry type: {type}");

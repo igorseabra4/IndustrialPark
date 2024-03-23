@@ -135,7 +135,7 @@ namespace IndustrialPark
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 FileName = asset.assetName + (
-                (archive.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                (archive.platform == Platform.GameCube && asset.game < Game.Incredibles) ? ".DSP" :
                 (archive.platform == Platform.Xbox) ? ".WAV" :
                 (archive.platform == Platform.PS2) ? ".VAG" :
                 ""),

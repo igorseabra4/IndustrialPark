@@ -130,7 +130,7 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             byte fillerByte = 0;
-            if (game == Game.Incredibles)
+            if (game >= Game.Incredibles)
                 fillerByte = 0xCD;
 
 

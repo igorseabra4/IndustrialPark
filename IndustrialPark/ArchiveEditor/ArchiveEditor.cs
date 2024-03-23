@@ -266,7 +266,7 @@ namespace IndustrialPark
             programIsChangingStuff = true;
 
             comboBoxLayerTypes.Items.Clear();
-            if (archive.game == Game.Incredibles)
+            if (archive.game >= Game.Incredibles)
                 comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_TSSM)).Cast<object>().ToArray());
             else
                 comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_BFBB)).Cast<object>().ToArray());
@@ -433,7 +433,7 @@ namespace IndustrialPark
             {
                 if (!archive.NoLayers)
                 {
-                    if (archive.game == Game.Incredibles)
+                    if (archive.game >= Game.Incredibles)
                         comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType();
                     else
                         comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType();
@@ -1530,7 +1530,7 @@ namespace IndustrialPark
                 output.WriteLine($"File path: {currentFilepath}");
                 output.WriteLine($"File size: {new FileInfo(currentFilepath).Length} Bytes");
                 output.WriteLine($"Platform: {archive.platform}");
-                string game = archive.game == Game.Incredibles ? "Incredible/TSSM/ROTU" : archive.game.ToString();
+                string game = archive.game == Game.Incredibles ? "Incredibles/TSSM" : archive.game.ToString();
                 output.WriteLine($"Game: {game}");
                 output.WriteLine($"Number of Layers: {archive.LayerCount}");
                 output.WriteLine($"Number of Assets: {archive.AssetCount}");
@@ -1616,29 +1616,25 @@ namespace IndustrialPark
                                 string eventSendIDName = "";
                                 string eventReceiveIDName = "";
 
-                                if (archive.game == Game.BFBB || archive.game == Game.Scooby) // BFBB
+                                if (archive.game == Game.BFBB) // BFBB
                                 {
                                     eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
                                 }
                                 else if (archive.game == Game.Scooby) // Scooby
                                 {
+                                    eventSendIDName = ((EventScooby)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventScooby)link.EventReceiveID).ToString();
                                 }
-                                else if (archive.game == Game.Incredibles) // TSSM/Incredibles/ROTU
+                                else if (archive.game == Game.Incredibles) // TSSM/Incredibles
                                 {
-                                    switch (GetGameFromGameConfigIni(GetCurrentlyOpenFileName()))
-                                    {
-                                        case 3: // TSSM
-                                            eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
-                                            eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
-                                            break;
-                                        case 4: // Incredibles
-                                            // TODO: Incredibles events
-                                            break;
-                                        case 5: // ROTU
-                                            // TODO: ROTU events
-                                            break;
-                                    }
+                                    eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
+                                }
+                                else if (archive.game >= Game.ROTU)
+                                {
+                                    eventSendIDName = ((EventROTU)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventROTU)link.EventReceiveID).ToString();
                                 }
 
                                 // If event name not supplied, event ID used instead.
@@ -1807,7 +1803,7 @@ namespace IndustrialPark
                     try
                     {
                         string extension =
-                            (archive.platform == Platform.GameCube && asset.game != Game.Incredibles) ? ".DSP" :
+                            (archive.platform == Platform.GameCube && asset.game < Game.Incredibles) ? ".DSP" :
                             (archive.platform == Platform.Xbox) ? ".WAV" :
                             (archive.platform == Platform.PS2) ? ".VAG" :
                             "";

@@ -18,19 +18,19 @@ namespace IndustrialPark
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID VentType { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle DamageBoxLowerCornerX { get; set; }
+        public AssetSingle DamageBoxLowerLeftX { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle DamageBoxLowerCornerY { get; set; }
+        public AssetSingle DamageBoxLowerLeftY { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle DamageBoxLowerCornerZ { get; set; }
+        public AssetSingle DamageBoxLowerLeftZ { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle DamageBoxUpperCornerX { get; set; }
+        public AssetSingle DamageBoxUpperRightX { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle DamageBoxUpperCornerY { get; set; }
+        public AssetSingle DamageBoxUpperRightY { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle DamageBoxUpperCornerZ { get; set; }
+        public AssetSingle DamageBoxUpperRightZ { get; set; }
         [Category(dynaCategoryName)]
-        public AssetSingle BoulderPushSpeed { get; set; }
+        public AssetSingle BoulderInfluence { get; set; }
         [Category(dynaCategoryName)]
         public FlagBitmask VentFlags { get; set; } = IntFlagsDescriptor("Break boulders", "Automatic", "Damage spongeball");
         [Category(dynaCategoryName)]
@@ -39,6 +39,8 @@ namespace IndustrialPark
         public AssetSingle WarnTime { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle DamageTime { get; set; }
+        [Category(dynaCategoryName)]
+        public int DamagePoints { get; set; }
 
         public DynaGObjectVent(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Vent, game, endianness)
         {
@@ -51,17 +53,19 @@ namespace IndustrialPark
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
-                DamageBoxLowerCornerX = reader.ReadSingle();
-                DamageBoxLowerCornerY = reader.ReadSingle();
-                DamageBoxLowerCornerZ = reader.ReadSingle();
-                DamageBoxUpperCornerX = reader.ReadSingle();
-                DamageBoxUpperCornerY = reader.ReadSingle();
-                DamageBoxUpperCornerZ = reader.ReadSingle();
-                BoulderPushSpeed = reader.ReadSingle();
+                DamageBoxLowerLeftX = reader.ReadSingle();
+                DamageBoxLowerLeftY = reader.ReadSingle();
+                DamageBoxLowerLeftZ = reader.ReadSingle();
+                DamageBoxUpperRightX = reader.ReadSingle();
+                DamageBoxUpperRightY = reader.ReadSingle();
+                DamageBoxUpperRightZ = reader.ReadSingle();
+                BoulderInfluence = reader.ReadSingle();
                 VentFlags.FlagValueInt = reader.ReadUInt32();
                 IdleTime = reader.ReadSingle();
                 WarnTime = reader.ReadSingle();
                 DamageTime = reader.ReadSingle();
+                if (game >= Game.ROTU)
+                    DamagePoints = reader.ReadInt32();
 
                 CreateTransformMatrix();
                 AddToRenderableAssets(this);
@@ -78,19 +82,26 @@ namespace IndustrialPark
             writer.Write(_yaw);
             writer.Write(_pitch);
             writer.Write(_roll);
-            writer.Write(DamageBoxLowerCornerX);
-            writer.Write(DamageBoxLowerCornerY);
-            writer.Write(DamageBoxLowerCornerZ);
-            writer.Write(DamageBoxUpperCornerX);
-            writer.Write(DamageBoxUpperCornerY);
-            writer.Write(DamageBoxUpperCornerZ);
-            writer.Write(BoulderPushSpeed);
+            writer.Write(DamageBoxLowerLeftX);
+            writer.Write(DamageBoxLowerLeftY);
+            writer.Write(DamageBoxLowerLeftZ);
+            writer.Write(DamageBoxUpperRightX);
+            writer.Write(DamageBoxUpperRightY);
+            writer.Write(DamageBoxUpperRightZ);
+            writer.Write(BoulderInfluence);
             writer.Write(VentFlags.FlagValueInt);
             writer.Write(IdleTime);
             writer.Write(WarnTime);
             writer.Write(DamageTime);
+            if (game >= Game.ROTU)
+                writer.Write(DamagePoints);
 
+        }
 
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.ROTU)
+                dt.RemoveProperty("DamagePoints");
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;

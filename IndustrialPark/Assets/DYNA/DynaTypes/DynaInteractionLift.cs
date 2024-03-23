@@ -21,6 +21,8 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle ButtonFreq { get; set; }
         [Category(dynaCategoryName)]
+        public AssetID Rotu_PointerID { get; set; }
+        [Category(dynaCategoryName)]
         public AssetSingle ProgressSpeed { get; set; }
         [Category(dynaCategoryName)]
         public AssetSingle SlipSpeed { get; set; }
@@ -43,13 +45,17 @@ namespace IndustrialPark
                 BackwardScript = reader.ReadUInt32();
                 LiftObject = reader.ReadUInt32();
                 StandPointer = reader.ReadUInt32();
-                ButtonFreq = reader.ReadSingle();
+                if (game == Game.Incredibles)
+                    ButtonFreq = reader.ReadSingle();
+                else if (game == Game.ROTU)
+                    Rotu_PointerID = reader.ReadUInt32();
                 ProgressSpeed = reader.ReadSingle();
                 SlipSpeed = reader.ReadSingle();
                 FinalPos = reader.ReadSingle();
                 TossSpeed = reader.ReadSingle();
                 DropGravity = reader.ReadSingle();
-                LiftFlags.FlagValueInt = reader.ReadUInt32();
+                if (game == Game.Incredibles)
+                    LiftFlags.FlagValueInt = reader.ReadUInt32();
             }
         }
 
@@ -60,13 +66,17 @@ namespace IndustrialPark
             writer.Write(BackwardScript);
             writer.Write(LiftObject);
             writer.Write(StandPointer);
-            writer.Write(ButtonFreq);
+            if (game == Game.Incredibles)
+                writer.Write(ButtonFreq);
+            else if (game == Game.ROTU)
+                writer.Write(Rotu_PointerID);
             writer.Write(ProgressSpeed);
             writer.Write(SlipSpeed);
             writer.Write(FinalPos);
             writer.Write(TossSpeed);
             writer.Write(DropGravity);
-            writer.Write(LiftFlags.FlagValueInt);
+            if (game == Game.Incredibles)
+                writer.Write(LiftFlags.FlagValueInt);
 
 
         }

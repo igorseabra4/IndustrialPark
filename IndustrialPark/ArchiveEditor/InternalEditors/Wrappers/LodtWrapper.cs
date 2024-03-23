@@ -53,11 +53,11 @@ namespace IndustrialPark
             get => Entry.LOD3_MinDistance;
             set => Entry.LOD3_MinDistance = value;
         }
-        [Category("Unknown - Movie/Incredibles only")]
-        public AssetSingle Unknown
+        [Category("Movie/Incredibles only")]
+        public FlagBitmask Flags
         {
-            get => Entry.Unknown;
-            set => Entry.Unknown = value;
+            get => Entry.Flags;
+            set => Entry.Flags = value;
         }
     }
 }
