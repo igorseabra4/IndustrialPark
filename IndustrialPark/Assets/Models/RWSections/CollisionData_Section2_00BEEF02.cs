@@ -8,7 +8,7 @@ namespace IndustrialPark
         public int nodeFlags { get; set; }
     }
 
-    public class BFBB_CollisionData_Section2_00BEEF02 : GenericAssetDataContainer
+    public class CollisionData_Section2_00BEEF02 : GenericAssetDataContainer
     {
         public int RenderWareVersion;
         public Platform platform;
@@ -20,7 +20,7 @@ namespace IndustrialPark
         public int null3 { get; set; }
         public xJSPNodeInfo[] jspNodeList { get; set; }
 
-        public BFBB_CollisionData_Section2_00BEEF02(EndianBinaryReader reader, Platform platform)
+        public CollisionData_Section2_00BEEF02(EndianBinaryReader reader, Platform platform)
         {
             this.platform = platform;
 
@@ -48,7 +48,7 @@ namespace IndustrialPark
                 };
         }
 
-        public BFBB_CollisionData_Section2_00BEEF02(Platform platform)
+        public CollisionData_Section2_00BEEF02(Platform platform)
         {
             this.platform = platform;
 

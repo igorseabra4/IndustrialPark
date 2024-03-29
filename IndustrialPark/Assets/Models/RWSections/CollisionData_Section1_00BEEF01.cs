@@ -83,7 +83,7 @@ namespace IndustrialPark
         public short matIndex { get; set; }
     }
 
-    public class BFBB_CollisionData_Section1_00BEEF01 : GenericAssetDataContainer
+    public class CollisionData_Section1_00BEEF01 : GenericAssetDataContainer
     {
         public int RenderWareVersion;
         public Platform platform;
@@ -92,7 +92,7 @@ namespace IndustrialPark
         public xClumpCollBSPBranchNode[] branchNodes { get; set; }
         public xClumpCollBSPTriangle[] triangles { get; set; }
 
-        public BFBB_CollisionData_Section1_00BEEF01(Platform platform)
+        public CollisionData_Section1_00BEEF01(Platform platform)
         {
             this.platform = platform;
 
@@ -102,7 +102,7 @@ namespace IndustrialPark
             triangles = new xClumpCollBSPTriangle[0];
         }
 
-        public BFBB_CollisionData_Section1_00BEEF01(EndianBinaryReader reader, Platform platform)
+        public CollisionData_Section1_00BEEF01(EndianBinaryReader reader, Platform platform)
         {
             this.platform = platform;
 

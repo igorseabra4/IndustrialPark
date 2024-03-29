@@ -2,6 +2,7 @@
 using RenderWareFile;
 using SharpDX;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -18,15 +19,15 @@ namespace IndustrialPark
         public Platform Platform { get; set; }
 
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
-        public BFBB_CollisionData_Section1_00BEEF01 Section1 { get; set; }
+        public CollisionData_Section1_00BEEF01 Section1 { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
-        public BFBB_CollisionData_Section2_00BEEF02 Section2 { get; set; }
+        public CollisionData_Section2_00BEEF02 Section2 { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
         public GenericSection Section2_Data { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
-        public BFBB_CollisionData_Section3_00BEEF03 Section3 { get; set; }
+        public CollisionData_Section3_00BEEF03 Section3 { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
-        public GenericSection Section4 { get; set; }
+        public CollisionData_Section4_00BEEF04 Section4 { get; set; }
 
         public AssetJSP_INFO(Section_AHDR AHDR, Game game, Platform platform, AssetID[] jspAssetIds) : base(AHDR, game)
         {
@@ -35,12 +36,12 @@ namespace IndustrialPark
 
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
             {
-                Section1 = new BFBB_CollisionData_Section1_00BEEF01(reader, platform);
+                Section1 = new CollisionData_Section1_00BEEF01(reader, platform);
 
                 renderWareVersion = Section1.RenderWareVersion;
 
                 if (game == Game.BFBB)
-                    Section2 = new BFBB_CollisionData_Section2_00BEEF02(reader, platform);
+                    Section2 = new CollisionData_Section2_00BEEF02(reader, platform);
                 else
                 {
                     var currentSection = (RenderWareFile.Section)reader.ReadInt32();
@@ -49,13 +50,12 @@ namespace IndustrialPark
 
                 if (game == Game.BFBB && Platform == Platform.GameCube)
                 {
-                    Section3 = new BFBB_CollisionData_Section3_00BEEF03(reader);
+                    Section3 = new CollisionData_Section3_00BEEF03(reader);
                 }
 
                 if (game != Game.BFBB)
                 {
-                    var currentSection = (RenderWareFile.Section)reader.ReadInt32();
-                    Section4 = new GenericSection().Read(reader, currentSection);
+                    Section4 = new CollisionData_Section4_00BEEF04(reader);
                 }
             }
         }
@@ -64,6 +64,24 @@ namespace IndustrialPark
         {
             _game = game;
             Platform = platform;
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+
+            if (game == Game.BFBB)
+            {
+                dt.RemoveProperty("Section2_Data");
+                dt.RemoveProperty("Section4");
+                if (Platform != Platform.GameCube)
+                    dt.RemoveProperty("Section3");
+            }
+
+            if (game != Game.BFBB)
+            {
+                dt.RemoveProperty("Section2");
+                dt.RemoveProperty("Section3");
+            }
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -86,7 +104,7 @@ namespace IndustrialPark
             }
 
             if (game != Game.BFBB)
-                writer.Write(Section4.GetBytes(renderWareVersion));
+                Section4.Serialize(writer);
         }
 
         public void ApplyScale(Vector3 factor)
@@ -125,15 +143,20 @@ namespace IndustrialPark
             var clump = assetJSP.GetClump();
             renderWareVersion = clump.renderWareVersion;
 
-            Section1 = new BFBB_CollisionData_Section1_00BEEF01(Platform);
+            Section1 = new CollisionData_Section1_00BEEF01(Platform);
 
-            Section2 = new BFBB_CollisionData_Section2_00BEEF02(Platform);
+            Section2 = new CollisionData_Section2_00BEEF02(Platform);
 
             Section2_Data = null;
 
-            Section3 = new BFBB_CollisionData_Section3_00BEEF03(clump.geometryList.geometryList);
+            Section3 = new CollisionData_Section3_00BEEF03(clump.geometryList.geometryList);
 
             Section4 = null;
+        }
+
+        public override bool HasReference(uint assetID)
+        {
+            return JSP_AssetIDs.Contains(assetID);
         }
     }
 }
