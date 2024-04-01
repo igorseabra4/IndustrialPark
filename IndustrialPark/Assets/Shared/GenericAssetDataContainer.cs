@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using Newtonsoft.Json;
 using SharpDX;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -43,18 +44,49 @@ namespace IndustrialPark
             }
         }
 
-        public virtual bool HasReference(uint assetID) =>
-            GetType().GetProperties().Any(prop => (
-                prop.PropertyType.Equals(typeof(AssetID)) &&
-                    ((AssetID)prop.GetValue(this)).Equals(assetID)) ||
-                (typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType) &&
-                    ((GenericAssetDataContainer)prop.GetValue(this)).HasReference(assetID)) ||
-                prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType &&
-                    i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) &&
-                        ((i.GenericTypeArguments[0].Equals(typeof(AssetID)) &&
-                            ((IEnumerable<AssetID>)prop.GetValue(this)).Any(a => a.Equals(assetID))) ||
-                        (typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]) &&
-                            ((IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)).Any(a => a.HasReference(assetID))))));
+        public virtual bool HasReference(uint assetID)
+        {
+            var properties = GetType().GetProperties();
+
+            foreach (var prop in properties)
+            {
+                var propValue = prop.GetValue(this);
+
+                if (propValue == null)
+                    continue;
+
+                if (prop.PropertyType.Equals(typeof(AssetID)) && ((AssetID)propValue).Equals(assetID))
+                    return true;
+
+                if (typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType))
+                {
+                    if (((GenericAssetDataContainer)propValue).HasReference(assetID))
+                        return true;
+                }
+
+                var interfaces = prop.PropertyType.GetInterfaces();
+                foreach (var i in interfaces)
+                {
+                    if (i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)))
+                    {
+                        if (i.GenericTypeArguments[0].Equals(typeof(AssetID)))
+                        {
+                            var enumerable = (IEnumerable<AssetID>)propValue;
+                            if (enumerable != null && enumerable.Any(a => a.Equals(assetID)))
+                                return true;
+                        }
+                        else if (typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))
+                        {
+                            var enumerable = (IEnumerable<GenericAssetDataContainer>)propValue;
+                            if (enumerable != null && enumerable.Any(a => a != null && a.HasReference(assetID)))
+                                return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
 
         public virtual void ReplaceReferences(uint oldAssetId, uint newAssetId)
         {

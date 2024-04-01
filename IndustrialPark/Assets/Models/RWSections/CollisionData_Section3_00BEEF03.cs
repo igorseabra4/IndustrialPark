@@ -5,14 +5,14 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    public class BFBB_CollisionData_Section3_00BEEF03 : GenericAssetDataContainer
+    public class CollisionData_Section3_00BEEF03 : GenericAssetDataContainer
     {
         public int RenderWareVersion;
 
         [TypeConverter(typeof(ExpandableObjectConverter))]
         public Vertex3[] vertexList { get; set; }
 
-        public BFBB_CollisionData_Section3_00BEEF03(EndianBinaryReader reader)
+        public CollisionData_Section3_00BEEF03(EndianBinaryReader reader)
         {
             reader.ReadInt32();
             reader.ReadInt32();
@@ -24,7 +24,7 @@ namespace IndustrialPark
                 vertexList[i] = new Vertex3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
-        public BFBB_CollisionData_Section3_00BEEF03(List<Geometry_000F> geometries)
+        public CollisionData_Section3_00BEEF03(List<Geometry_000F> geometries)
         {
             var vertexList = new List<Vertex3>();
             foreach (var geom in geometries)
