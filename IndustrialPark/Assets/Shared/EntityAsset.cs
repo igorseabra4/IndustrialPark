@@ -35,7 +35,12 @@ namespace IndustrialPark
         [Category(categoryNameFlags)]
         public FlagBitmask VisibilityFlags { get; set; } = ByteFlagsDescriptor(
             "Visible",
-            "Stackable");
+            "Stackable",
+            null,
+            null,
+            null,
+            null,
+            "No Shadow");
         [Category(categoryNameFlags)]
         public AssetByte TypeFlag { get; set; }
         [Category(categoryNameFlags)]
