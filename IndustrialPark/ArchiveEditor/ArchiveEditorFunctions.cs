@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 using static HipHopFile.Functions;
 
@@ -561,6 +560,7 @@ namespace IndustrialPark
             assetDictionary.Clear();
 
             currentlyOpenFilePath = null;
+            SelectedLayerIndex = -1;
 
             if (showProgress)
                 progressBar.Close();
@@ -1130,7 +1130,7 @@ namespace IndustrialPark
                 case DynaType.AnalogDirection:
                     return new DynaAnalogDirection(AHDR, game, endianness);
                 case DynaType.camera__transition_time:
-                    return new DynaCameraTransitionTime(AHDR, game, endianness); 
+                    return new DynaCameraTransitionTime(AHDR, game, endianness);
                 case DynaType.Carrying_CarryableProperty_GenericUseProperty:
                     return new DynaCarryablePropertyGeneric(AHDR, game, endianness);
                 case DynaType.Carrying_CarryableProperty_UsePropertyAttract:
