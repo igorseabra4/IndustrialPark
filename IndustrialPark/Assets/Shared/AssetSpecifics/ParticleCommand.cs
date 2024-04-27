@@ -48,6 +48,7 @@ namespace IndustrialPark
     public abstract class ParticleCommand : GenericAssetDataContainer
     {
         protected const string categoryName = "ParticleCommand";
+        public bool NeedsFix = false;
 
         [Category(categoryName), ReadOnly(true)]
         public ParticleCommandType CommandType { get; set; }
@@ -55,6 +56,8 @@ namespace IndustrialPark
         public bool Enabled { get; set; }
         [Category(categoryName)]
         public AssetByte Mode { get; set; }
+        [Category(categoryName), Browsable(false)]
+        public short Pad { get; set; }
 
         public ParticleCommand(ParticleCommandType commandType)
         {
@@ -64,10 +67,16 @@ namespace IndustrialPark
 
         public ParticleCommand(EndianBinaryReader reader, ParticleCommandType type)
         {
+            byte[] test = reader.ReadBytes(4);
+            if (test[2] != 0 || test[3] != 0) // Custom particle system created in IP v2024.02.10 and below
+            {
+                Array.Reverse(test);
+                NeedsFix = true;
+            }
             CommandType = type;
-            Enabled = reader.ReadBoolean();
-            Mode = reader.ReadByte();
-            reader.ReadInt16();
+            Enabled = Convert.ToBoolean(test[0]);
+            Mode = test[1];
+            Pad = BitConverter.ToInt16(test, 2);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

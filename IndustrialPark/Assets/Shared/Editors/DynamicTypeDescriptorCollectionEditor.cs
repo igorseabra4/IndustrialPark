@@ -1,14 +1,20 @@
-﻿using System;
+﻿using HipHopFile;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.Design;
+using System.Drawing;
 using System.Linq;
+using System.Reflection;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
     public class DynamicTypeDescriptorCollectionEditor : CollectionEditor
     {
         private string type;
+        public static Game game { get; set; }
 
         public DynamicTypeDescriptorCollectionEditor(Type type) : base(type)
         {
@@ -52,6 +58,23 @@ namespace IndustrialPark
             }
 
             return base.EditValue(context, provider, value);
+        }
+
+        protected override object CreateInstance(Type itemType)
+        {
+            Type type = CollectionType.GetElementType();
+            ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Game) });
+
+            if (constructor != null)
+            {
+                object instance = constructor.Invoke(new object[] { game });
+
+                DynamicTypeDescriptor dt = new DynamicTypeDescriptor(type);
+                if (instance is GenericAssetDataContainer gadc)
+                    gadc.SetDynamicProperties(dt);
+                return dt.FromComponent(instance);
+            }
+            return base.CreateInstance(itemType);
         }
     }
 }

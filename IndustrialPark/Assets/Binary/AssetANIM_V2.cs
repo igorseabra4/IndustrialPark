@@ -117,6 +117,7 @@ namespace IndustrialPark
             }
         }
 
+        public override bool HasReference(uint assetID) => false;
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.WriteMagic("SKB1");

@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using Assimp;
+using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -114,6 +115,7 @@ namespace IndustrialPark
             Offsets = offsets.ToArray();
         }
 
+        public override bool HasReference(uint assetID) => false;
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.WriteMagic("SKB1");

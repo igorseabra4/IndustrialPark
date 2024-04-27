@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -30,8 +31,8 @@ namespace IndustrialPark
                 ffmpegProcess.StartInfo.FileName = ffmpegPath;
                 ffmpegProcess.StartInfo.CreateNoWindow = true;
                 ffmpegProcess.StartInfo.WorkingDirectory = ffmpegFolder;
-                ffmpegProcess.StartInfo.RedirectStandardOutput = true;
-                ffmpegProcess.StartInfo.RedirectStandardError = true;
+                ffmpegProcess.StartInfo.RedirectStandardOutput = false;
+                ffmpegProcess.StartInfo.RedirectStandardError = false;
                 ffmpegProcess.StartInfo.UseShellExecute = false;
                 ffmpegProcess.EnableRaisingEvents = true;
                 ffmpegInitialized = true;

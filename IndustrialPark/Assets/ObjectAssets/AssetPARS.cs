@@ -169,7 +169,7 @@ namespace IndustrialPark
                 }
             }
         }
-
+        public override bool SkipBuildTesting => Commands.Any(i => i.NeedsFix == true);
         public override void Serialize(EndianBinaryWriter writer)
         {
 

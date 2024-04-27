@@ -52,6 +52,8 @@ namespace IndustrialPark
                 SoundEntries[i].Data = reader.ReadBytes(SoundEntries[i].BasicSampleHeader.LengthCompressedBytes);
         }
 
+        public int TotalFSBSize => 0x18 + Header.TotalHeadersSize + Header.TotalDataSize;
+
         public override void Serialize(EndianBinaryWriter writer)
         {
             using (var fsbWriter = new EndianBinaryWriter(Endianness.Little))
@@ -99,10 +101,11 @@ namespace IndustrialPark
 
         [Category("Other"), ReadOnly(true)]
         public int offset { get; set; }
+
+        // This seems to be a known issue?
+        // https://github.com/vgmstream/vgmstream/blob/2efdcb651f472e757c44ac2715aaef753c5e8774/src/meta/fsb.c#L295
         [Category("Other")]
-        public int UnknownEndValue1 { get; set; }
-        [Category("Other")]
-        public int UnknownEndValue2 { get; set; }
+        public byte[] UnknownBytes { get; set; }
 
         public void Merge(GcWavInfo[] soundEntries)
         {

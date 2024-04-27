@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
 
-        public static byte[] ConvertSoundToDSP(string fileName)
+        public static byte[] ConvertSoundToDSP(string fileName, int samplerate)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace IndustrialPark
                 if (File.Exists(ffmpegOutPath))
                     File.Delete(ffmpegOutPath);
 
-                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -ac 1 \"{ffmpegOutPath}\"");
+                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -ac 1 -ar {samplerate} \"{ffmpegOutPath}\"");
 
                 if (!InitVGAudio())
                 {

@@ -237,7 +237,6 @@
     <Compile Include="Assets\Shared\FMOD\GcnV2SoundWrapper.cs" />
     <Compile Include="Assets\Shared\FMOD\GcWavInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
-    <Compile Include="Assets\Shared\Editors\AtblAddEditor.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Transformation.cs" />
     <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
     <Compile Include="Assets\Shared\Editors\DynamicTypeDescriptorCollectionEditor.cs" />

@@ -6,7 +6,7 @@ using System.Drawing.Design;
 namespace IndustrialPark
 {
     [TypeConverter(typeof(HexUIntTypeConverter)), Editor(typeof(AssetIDEditor), typeof(UITypeEditor))]
-    public struct AssetID
+    public struct AssetID : IComparable<AssetID>
     {
         [JsonConstructor]
         public AssetID(uint value = 0)
@@ -52,6 +52,11 @@ namespace IndustrialPark
         public string ToString(string v) => value.ToString(v);
 
         public static implicit operator AssetID(string value) => HipHopFile.Functions.BKDRHash(value);
+
+        public int CompareTo(AssetID aid)
+        {
+            return value.CompareTo(aid.value);
+        }
     }
 
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = false)]

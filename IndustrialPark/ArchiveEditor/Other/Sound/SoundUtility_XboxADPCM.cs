@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
 
-        public static byte[] ConvertSoundToXboxADPCM(string fileName)
+        public static byte[] ConvertSoundToXboxADPCM(string fileName, bool compress, bool forcemono, int samplerate)
         {
             try
             {
@@ -20,7 +20,7 @@ namespace IndustrialPark
                 if (File.Exists(ffmpegOutPath))
                     File.Delete(ffmpegOutPath);
 
-                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" \"{ffmpegOutPath}\"");
+                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -bitexact -map_metadata -1 -ac {(forcemono ? "1" : "2")} -ar {samplerate} \"{ffmpegOutPath}\"");
 
                 if (!InitXboxADPCM())
                 {
@@ -32,12 +32,16 @@ namespace IndustrialPark
                 if (File.Exists(xboxadpcmOutPath))
                     File.Delete(xboxadpcmOutPath);
 
-                ConvertXboxADPCM(ffmpegOutPath, xboxadpcmOutPath);
-
-                var file = File.ReadAllBytes(xboxadpcmOutPath);
-
+                byte[] file;
+                if (compress)
+                {
+                    ConvertXboxADPCM(ffmpegOutPath, xboxadpcmOutPath);
+                    file = File.ReadAllBytes(xboxadpcmOutPath);
+                    File.Delete(xboxadpcmOutPath);
+                }
+                else
+                    file = File.ReadAllBytes(ffmpegOutPath);
                 File.Delete(ffmpegOutPath);
-                File.Delete(xboxadpcmOutPath);
 
                 return file;
             }

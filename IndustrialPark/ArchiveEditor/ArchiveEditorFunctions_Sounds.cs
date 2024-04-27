@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -44,6 +45,7 @@ namespace IndustrialPark
                 }
                 else if (a is AssetSNDI_PS2 SNDI_P)
                 {
+                    InternalSoundEditor.VagHeaderToLittleEndian(ref soundData);
                     SNDI_P.AddEntry(soundData, assetID, assetType, out finalData);
                     return;
                 }
@@ -136,16 +138,16 @@ namespace IndustrialPark
             return 32000;
         }
 
-        public byte[] CreateSoundFile(AssetType assetType, string fileName)
+        public byte[] CreateSoundFile(AssetType assetType, string fileName, bool ps2Looping = false, bool xboxcompress = true, bool forcemono = false, int samplerate = 0)
         {
             if (platform == Platform.Xbox)
-                return SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(fileName);
+                return SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(fileName, xboxcompress, forcemono, samplerate);
             if (platform == Platform.PS2)
-                return SoundUtility_PS2VAG.ConvertSoundToPS2VAG(fileName);
+                return SoundUtility_PS2VAG.ConvertSoundToPS2VAG(fileName, ps2Looping, samplerate);
             if (platform == Platform.GameCube && game >= Game.Incredibles)
-                return SoundUtility_FMOD.ConvertSoundToFSB3(fileName, assetType == AssetType.Sound ? GetDefaultSampleRate() : -1);
+                return SoundUtility_FMOD.ConvertSoundToFSB3(fileName, assetType == AssetType.Sound ? GetDefaultSampleRate() : samplerate, assetType == AssetType.Sound ? true : forcemono);
             if (platform == Platform.GameCube)
-                return SoundUtility_DSP.ConvertSoundToDSP(fileName);
+                return SoundUtility_DSP.ConvertSoundToDSP(fileName, samplerate);
 
             MessageBox.Show("Cannot import sound: unsupported platform.");
             return null;
@@ -154,6 +156,10 @@ namespace IndustrialPark
         public void ImportSounds(bool raw, string[] fileNames, AssetType assetType, bool forceOverwrite, out List<uint> assetIDs)
         {
             assetIDs = new List<uint>();
+            ProgressBar progressBar = new ProgressBar("Import Sounds");
+            progressBar.SetProgressBar(0, fileNames.Count(), 1);
+            progressBar.Show();
+
             foreach (var fileName in fileNames)
             {
                 var assetName = Path.GetFileNameWithoutExtension(fileName);
@@ -182,9 +188,9 @@ namespace IndustrialPark
 
                 try
                 {
-                    AddAsset(AHDR, game, platform.Endianness(), false, sramLayer);
                     AddSoundToSNDI(data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
                     AHDR.data = soundData;
+                    AddAsset(AHDR, game, platform.Endianness(), false, sramLayer);
                     assetIDs.Add(AHDR.assetID);
                 }
                 catch (Exception ex)
@@ -193,7 +199,9 @@ namespace IndustrialPark
                 }
 
                 UnsavedChanges = true;
+                progressBar.PerformStep(fileName);
             }
+            progressBar.Close();
         }
     }
 }

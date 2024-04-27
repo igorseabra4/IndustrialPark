@@ -287,6 +287,11 @@ namespace IndustrialPark
             UnknownFlagJ = 2;
         }
 
+        public PipeInfo(Game game) : this()
+        {
+            _game = game;
+        }
+
         public override string ToString()
         {
             return $"{HexUIntTypeConverter.StringFromAssetID(Model)} - {SubObjectBits}";
@@ -353,7 +358,11 @@ namespace IndustrialPark
         [Category("Pipe Info Table"), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public PipeInfo[] Entries
         {
-            get => _entries;
+            get
+            {
+                DynamicTypeDescriptorCollectionEditor.game = game;
+                return _entries;
+            }
             set
             {
                 _entries = value;

@@ -20,7 +20,14 @@ namespace IndustrialPark
 
             RefreshPropertyGrid();
 
-            buttonImportSound.Enabled = archive.platform == Platform.GameCube;
+            if (archive.platform != Platform.Xbox)
+                xboxCompressCheckBox.Enabled = false;
+            if (archive.platform != Platform.PS2)
+                checkBoxPS2Looping.Enabled = false;
+            if (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles && asset.assetType == AssetType.Sound)
+                forceSampleRateCheckbox.Enabled = false;
+            if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles))
+                xboxForceMono.Enabled = true;
         }
 
         public void RefreshPropertyGrid()
@@ -28,24 +35,28 @@ namespace IndustrialPark
             try
             {
                 var sndi = archive.GetSNDI();
+                soundSizeLabel.Text = ArchiveEditor.ConvertSize(asset.Data.Length);
                 if (sndi != null)
                 {
                     if (sndi is AssetSNDI_PS2 ps2)
                     {
-                        var header = ps2.GetHeader(asset.assetID, asset.assetType);
-                        propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(header);
+                        var entry = ps2.GetEntry(asset.assetID, asset.assetType);
+                        propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(entry);
+                        CalculateSoundLength(entry);
                         return;
                     }
                     if (sndi is AssetSNDI_XBOX xbox)
                     {
                         var entry = xbox.GetEntry(asset.assetID, asset.assetType);
                         propertyGridSoundData.SelectedObject = new SoundInfoXboxWrapper(entry);
+                        CalculateSoundLength(entry);
                         return;
                     }
                     if (sndi is AssetSNDI_GCN_V1 gcn1)
                     {
-                        var header = gcn1.GetHeader(asset.assetID, asset.assetType);
-                        propertyGridSoundData.SelectedObject = new SoundInfoGcn1Wrapper(header);
+                        var entry = gcn1.GetEntry(asset.assetID, asset.assetType);
+                        propertyGridSoundData.SelectedObject = new SoundInfoGcn1Wrapper(entry);
+                        CalculateSoundLength(entry);
                         return;
                     }
                 }
@@ -67,7 +78,7 @@ namespace IndustrialPark
             {
                 if (sndi is AssetSNDI_PS2 ps2)
                 {
-                    ps2.AddEntry(((SoundInfoPs2Wrapper)propertyGridSoundData.SelectedObject).ToByteArray(), GetAssetID(), asset.assetType, out _);
+                    ps2.SetEntry(((SoundInfoPs2Wrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
                     archive.UnsavedChanges = true;
                 }
                 else if (sndi is AssetSNDI_XBOX xbox)
@@ -77,7 +88,7 @@ namespace IndustrialPark
                 }
                 else if (sndi is AssetSNDI_GCN_V1 gcn1)
                 {
-                    gcn1.AddEntry(((SoundInfoGcn1Wrapper)propertyGridSoundData.SelectedObject).ToByteArray(), GetAssetID(), asset.assetType, out _);
+                    gcn1.SetEntry(((SoundInfoGcn1Wrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
                     archive.UnsavedChanges = true;
                 }
             }
@@ -86,6 +97,7 @@ namespace IndustrialPark
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
+            SoundUtility_vgmstream.StopSound();
             archive.CloseInternalEditor(this);
         }
 
@@ -127,6 +139,7 @@ namespace IndustrialPark
                 archive.UnsavedChanges = true;
                 updateListView(asset);
                 SoundUtility_vgmstream.ClearSound();
+                RefreshPropertyGrid();
             }
         }
 
@@ -216,7 +229,13 @@ namespace IndustrialPark
             {
                 Enabled = false;
 
-                byte[] data = archive.CreateSoundFile(asset.assetType, openFileDialog.FileName);
+                byte[] data = archive.CreateSoundFile(
+                    asset.assetType, 
+                    openFileDialog.FileName, 
+                    checkBoxPS2Looping.Checked,
+                    xboxCompressCheckBox.Checked,
+                    xboxForceMono.Checked,
+                    (int)samplerateNumeric.Value);
 
                 if (data != null)
                 {
@@ -236,7 +255,47 @@ namespace IndustrialPark
                 }
 
                 Enabled = true;
+                RefreshPropertyGrid();
             }
+        }
+
+        private void buttonStop_Click(object sender, EventArgs e)
+        {
+            SoundUtility_vgmstream.StopSound();
+        }
+
+        public static void VagHeaderToLittleEndian(ref byte[] data)
+        {
+            if (BitConverter.ToInt32(data, 4) > 32)
+            {
+                Array.Reverse(data, 4, 4);
+                Array.Reverse(data, 12, 4);
+                Array.Reverse(data, 16, 4);
+            }
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            samplerateNumeric.Enabled = forceSampleRateCheckbox.Checked;
+        }
+
+        private string SoundLengthLabelText = "Length: {0:00}:{1:00}";
+        private void CalculateSoundLength(EntrySoundInfo_XBOX entry)
+        {
+            int duration = entry.dataSize / entry.nAvgBytesPerSec;
+            soundLengthLabel.Text = string.Format(SoundLengthLabelText, duration / 60, duration % 60);
+        }
+
+        private void CalculateSoundLength(EntrySoundInfo_PS2 entry)
+        {
+            uint duration = ((entry.DataSize / 0x10) * 28) / entry.SampleRate;
+            soundLengthLabel.Text = string.Format(SoundLengthLabelText, duration / 60, duration % 60);
+        }
+
+        private void CalculateSoundLength(EntrySoundInfo_GCN_V1 entry)
+        {
+            uint duration = entry.num_samples / entry.sample_rate;
+            soundLengthLabel.Text = string.Format(SoundLengthLabelText, duration / 60, duration % 60);
         }
     }
 }

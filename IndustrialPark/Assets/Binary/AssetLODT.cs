@@ -19,7 +19,10 @@ namespace IndustrialPark
         public AssetID LOD3_Model { get; set; }
         public AssetSingle LOD3_MinDistance { get; set; }
 
-        public EntryLODT() { }
+        public EntryLODT(Game game)
+        {
+            _game = game;
+        }
         public EntryLODT(EndianBinaryReader reader, Game game)
         {
             _game = game;
@@ -86,7 +89,11 @@ namespace IndustrialPark
         [Category("Level Of Detail Table"), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public EntryLODT[] Entries
         {
-            get => _entries;
+            get
+            {
+                DynamicTypeDescriptorCollectionEditor.game = game;
+                return _entries;
+            }
             set
             {
                 _entries = value;
@@ -153,7 +160,7 @@ namespace IndustrialPark
             var entries = Entries.ToList();
             foreach (var i in items)
                 if (!entries.Any(e => e.BaseModel == i))
-                    entries.Add(new EntryLODT() { BaseModel = i, MaxDistance = 100f });
+                    entries.Add(new EntryLODT(game) { BaseModel = i, MaxDistance = 100f });
             Entries = entries.ToArray();
         }
 
