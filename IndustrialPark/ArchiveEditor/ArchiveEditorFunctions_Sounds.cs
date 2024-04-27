@@ -145,7 +145,7 @@ namespace IndustrialPark
             if (platform == Platform.PS2)
                 return SoundUtility_PS2VAG.ConvertSoundToPS2VAG(fileName, ps2Looping, samplerate);
             if (platform == Platform.GameCube && game >= Game.Incredibles)
-                return SoundUtility_FMOD.ConvertSoundToFSB3(fileName, assetType == AssetType.Sound ? GetDefaultSampleRate() : samplerate, forcemono);
+                return SoundUtility_FMOD.ConvertSoundToFSB3(fileName, assetType == AssetType.Sound ? GetDefaultSampleRate() : samplerate, assetType == AssetType.Sound ? true : forcemono);
             if (platform == Platform.GameCube)
                 return SoundUtility_DSP.ConvertSoundToDSP(fileName, samplerate);
 

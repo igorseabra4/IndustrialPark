@@ -183,7 +183,7 @@ namespace IndustrialPark
                 platform = ChoosePlatformDialog.GetPlatform();
             this.platform = platform;
 
-            string assetsWithError = "";
+            List<AssetError> assetsWithError = new List<AssetError>();
 
             List<string> autoComplete = new List<string>(hipFile.DICT.ATOC.AHDRList.Count);
 
@@ -201,10 +201,10 @@ namespace IndustrialPark
                 foreach (var u in l.AssetIDs)
                 {
                     var AHDR = hipFile.DICT.ATOC.AHDRList.Where(ahdr => ahdr.assetID == u).First();
-                    string error = AddAssetToDictionary(AHDR, game, platform.Endianness(), true, false);
+                    AssetError error = AddAssetToDictionary(AHDR, game, platform.Endianness(), true, false);
 
-                    if (error != null)
-                        assetsWithError += error + "\n";
+                    if (error.reason != ErrorReason.NoError)
+                        assetsWithError.Add(error);
 
                     autoComplete.Add(AHDR.ADBG.assetName);
 
@@ -214,8 +214,10 @@ namespace IndustrialPark
 #endif
                 }
 
-            if (assetsWithError != "")
-                MessageBox.Show("There was an error loading the following assets and editing has been disabled for them:\n" + assetsWithError);
+            if (assetsWithError.Any())
+                MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", assetsWithError), 
+                    $"{assetsWithError.Count} Asset(s) with errors", 
+                    MessageBoxButtons.OK);
 
             if (hipFile.HIPB != null && hipFile.HIPB.HasNoLayers != 0)
                 NoLayers = true;
@@ -646,7 +648,27 @@ namespace IndustrialPark
 
         public int AssetCount => assetDictionary.Values.Count;
 
-        private string AddAssetToDictionary(Section_AHDR AHDR, Game game, Endianness endianness, bool fast, bool showMessageBox)
+        public enum ErrorReason
+        {
+            NoError,
+            SequenceNotEqual,
+            SkipBuildTesting,
+            Exception,
+            NoData
+        }
+        public struct AssetError
+        {
+            public ErrorReason reason;
+            public uint assetid;
+            public string assetname;
+            public string errorMessage;
+
+            public override string ToString()
+            {
+                return $"-{reason}: [{assetid:X8}] {assetname} {string.Format("({0})", errorMessage) ?? ""}";
+            }
+        }
+        private AssetError AddAssetToDictionary(Section_AHDR AHDR, Game game, Endianness endianness, bool fast, bool showMessageBox)
         {
             if (assetDictionary.ContainsKey(AHDR.assetID))
             {
@@ -655,19 +677,26 @@ namespace IndustrialPark
             }
 
             Asset newAsset;
-            string error = null;
+            AssetError err = new AssetError() { reason = ErrorReason.NoError, assetid = AHDR.assetID, assetname = AHDR.ADBG.assetName };
 
-            newAsset = TryCreateAsset(AHDR, game, endianness, showMessageBox, ref error);
+            newAsset = TryCreateAsset(AHDR, game, endianness, showMessageBox, ref err);
+
+            if (newAsset.SkipBuildTesting)
+            {
+                err.reason = ErrorReason.SkipBuildTesting;
+                err.errorMessage = "Intentional, editing has not been disabled";
+            }
 
             // testing if build works
-            if (fast)
+            if (fast && err.reason == ErrorReason.NoError)
             {
                 var built = newAsset.BuildAHDR(platform.Endianness()).data;
                 if (!Enumerable.SequenceEqual(AHDR.data, built))
                 {
-                    error = $"[{AHDR.assetID:X8}] {AHDR.ADBG.assetName} (unsupported format)";
+                    err.reason = ErrorReason.SequenceNotEqual;
+                    err.errorMessage = "unsupported format";
                     if (showMessageBox)
-                        MessageBox.Show($"There was an error loading asset " + error + " and editing has been disabled for it.");
+                        MessageBox.Show($"There was an error loading asset " + err + " and editing has been disabled for it.");
 
                     newAsset = new AssetGeneric(AHDR, game, endianness);
 #if DEBUG
@@ -689,7 +718,7 @@ namespace IndustrialPark
             if (!fast)
                 autoCompleteSource.Add(AHDR.ADBG.assetName);
 
-            return error;
+            return err;
         }
 
         private void AddAssetToDictionary(Asset asset, bool fast)
@@ -709,19 +738,27 @@ namespace IndustrialPark
                 autoCompleteSource.Add(asset.assetName);
         }
 
-        protected virtual Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
+        protected virtual Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref AssetError error)
         {
-            //return CreateAsset(AHDR, game, endianness);
             try
             {
                 return CreateAsset(AHDR, game, endianness);
             }
             catch (Exception ex)
             {
-                error = $"[{AHDR.assetID:X8}] {AHDR.ADBG.assetName} ({ex.Message})";
+                if (AHDR.data.Length == 0)
+                {
+                    error.reason = ErrorReason.NoData;
+                    error.errorMessage = "Asset is empty and does not contain any data";
+                }
+                else
+                {
+                    error.reason = ErrorReason.Exception;
+                    error.errorMessage = ex.Message;
+                }
 
                 if (showMessageBox)
-                    MessageBox.Show($"There was an error loading asset {error} and editing has been disabled for it.");
+                    MessageBox.Show($"There was an error loading asset {error.assetname} and editing has been disabled for it.");
 
                 return new AssetGeneric(AHDR, game, endianness);
             }
@@ -1456,14 +1493,6 @@ namespace IndustrialPark
 
             if (updateReferencesOnCopy || forceRefUpdate)
                 UpdateReferencesOnCopy(referenceUpdate, clipboard.assets);
-
-            for (int i = 0; i < clipboard.assets.Count; i++)
-            {
-                var AHDR = clipboard.assets[i];
-                string error = "";
-
-                assetDictionary[AHDR.assetID] = TryCreateAsset(AHDR, clipboard.games[i], clipboard.endiannesses[i], true, ref error);
-            }
 
             return true;
         }

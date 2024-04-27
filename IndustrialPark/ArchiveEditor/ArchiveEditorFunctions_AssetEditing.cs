@@ -64,6 +64,7 @@ namespace IndustrialPark
                     internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this, updateListView));
                     break;
                 case AssetType.Texture:
+                case AssetType.TextureStream:
                     if (asset is AssetRWTX rwtx)
                         internalEditors.Add(new InternalTextureEditor(rwtx, this, updateListView));
                     else

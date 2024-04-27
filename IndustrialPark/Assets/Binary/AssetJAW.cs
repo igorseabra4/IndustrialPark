@@ -70,23 +70,30 @@ namespace IndustrialPark
 
                 for (int i = 0; i < JAW_Entries.Length; i++)
                 {
+                    reader.endianness = endianness;
                     uint soundAssetID = reader.ReadUInt32();
                     int offset = reader.ReadInt32();
                     reader.ReadInt32();
 
+                    long returnPos = reader.BaseStream.Position;
+
+                    reader.BaseStream.Position = startOfJawData + offset;
+
                     if (game >= Game.ROTU)
                     {
-                        int length = BitConverter.ToInt32(AHDR.data.Skip(startOfJawData + offset).Take(4).Reverse().ToArray(), 0);
-                        int flags = BitConverter.ToInt32(AHDR.data.Skip(startOfJawData + offset + 4).Take(4).Reverse().ToArray(), 0);
-                        byte[] jawData = AHDR.data.Skip(startOfJawData + offset + 8).Take(length).ToArray();
+                        int length = reader.ReadInt32();
+                        int flags = reader.ReadInt32();
+                        byte[] jawData = reader.ReadBytes(length);
                         JAW_Entries[i] = new EntryJAW(soundAssetID, flags, jawData);
                     }
                     else
                     {
-                        int length = BitConverter.ToInt32(AHDR.data, startOfJawData + offset);
-                        byte[] jawData = AHDR.data.Skip(startOfJawData + offset + 4).Take(length).ToArray();
+                        reader.endianness = Endianness.Little;
+                        int length = reader.ReadInt32();
+                        byte[] jawData = reader.ReadBytes(length);
                         JAW_Entries[i] = new EntryJAW(soundAssetID, jawData);
                     }
+                    reader.BaseStream.Position = returnPos;
                 }
             }
         }
@@ -104,9 +111,11 @@ namespace IndustrialPark
 
                 if (game >= Game.ROTU)
                 {
+                    byte[] length = writer.endianness == Endianness.Little ? BitConverter.GetBytes(i.JawData.Length) : BitConverter.GetBytes(i.JawData.Length).Reverse().ToArray();
                     writer.Write(i.JawData.Length + 8);
-                    newJawData.AddRange(BitConverter.GetBytes(i.JawData.Length).Reverse());
-                    newJawData.AddRange(BitConverter.GetBytes(i.Flags).Reverse());
+                    newJawData.AddRange(length);
+                    byte[] flags = writer.endianness == Endianness.Little ? BitConverter.GetBytes(i.Flags) : BitConverter.GetBytes(i.Flags).Reverse().ToArray();
+                    newJawData.AddRange(flags);
                 }
                 else
                 {

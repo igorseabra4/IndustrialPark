@@ -289,28 +289,22 @@ namespace IndustrialPark
         }
         public int SubStateCount { get; set; }
 
+        private AnimationEffect[] _animationeffects;
         [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
-        public AnimationEffect[] AnimationEffects { get; set; }
-
-        [DisplayName("Add Animation Effect"), Editor(typeof(AtblAddEditor), typeof(UITypeEditor))]
-        public string AddEffect
+        public AnimationEffect[] AnimationEffects
         {
-            get => "Click here ->";
-            set
+            get
             {
-                if (value == "add_state_effect")
-                {
-                    var effects = AnimationEffects.ToList();
-                    effects.Add(new AnimationEffect(game));
-                    AnimationEffects = effects.ToArray();
-                }
+                DynamicTypeDescriptorCollectionEditor.game = game;
+                return _animationeffects;
             }
+            set => _animationeffects = value;
         }
 
         public AnimationState(Game game)
         {
             _game = game;
-            AnimationEffects = new AnimationEffect[0];
+            _animationeffects = new AnimationEffect[0];
         }
 
         public AnimationState(EndianBinaryReader reader, Game game) : this(game)
@@ -494,21 +488,16 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AnimationFile[] AnimationFiles { get; set; }
 
+        private AnimationState[] _animationstate;
         [Category(categoryName), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
-        public AnimationState[] AnimationStates { get; set; }
-        [Category(categoryName), DisplayName("Add Animation State"), Editor(typeof(AtblAddEditor), typeof(UITypeEditor))]
-        public string AddState
+        public AnimationState[] AnimationStates
         {
-            get => "Click here ->";
-            set
+            get
             {
-                if (value == "add_state_effect")
-                {
-                    var states = AnimationStates.ToList();
-                    states.Add(new AnimationState(game));
-                    AnimationStates = states.ToArray();
-                }
+                DynamicTypeDescriptorCollectionEditor.game = game;
+                return _animationstate;
             }
+            set => _animationstate = value;
         }
 
         public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)

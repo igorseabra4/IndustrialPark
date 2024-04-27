@@ -9,6 +9,9 @@ namespace IndustrialPark
         public bool isInvisible = false;
 
         [Browsable(false)]
+        public virtual bool SkipBuildTesting => false;
+
+        [Browsable(false)]
         public uint assetID { get; set; }
         public string assetName;
         public string assetFileName;

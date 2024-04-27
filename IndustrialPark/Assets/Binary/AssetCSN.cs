@@ -76,6 +76,7 @@ namespace IndustrialPark
             }
         }
 
+        public override bool HasReference(uint assetID) => CutsceneData.Where(i => i.AssetID.Equals(assetID) && i.chunkSize == 0 && i.fileOffset == 0).Any();
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(new byte[12 * 4]);

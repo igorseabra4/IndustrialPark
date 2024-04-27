@@ -291,18 +291,20 @@ namespace IndustrialPark
 
             long filesizeBytes = new FileInfo(GetCurrentlyOpenFileName()).Length;
 
-            if (filesizeBytes < 1000) // 1 B - 999 B
-            {
-                toolStripStatusLabelFileSize.Text = filesizeBytes + " B";
-            }
-            else if (filesizeBytes < 1_000_000) // 1 kB - 999 kB
-            {
-                toolStripStatusLabelFileSize.Text = Math.Round(filesizeBytes / 1000.0, 2) + " kB";
-            }
-            else // 1+ MB
-            {
-                toolStripStatusLabelFileSize.Text = Math.Round(filesizeBytes / 1_000_000.0, 2) + " MB";
-            }
+            toolStripStatusLabelFileSize.Text = ConvertSize((int)filesizeBytes);
+        }
+
+        public static string ConvertSize(int size)
+        {
+            if (size <= 1024)
+                return $"{size} B";
+
+            string[] name = new string[] { "B", "KiB", "MiB", "GiB" };
+
+            double i = Math.Floor(Math.Log(size, 1024));
+            double s = Math.Round(size / Math.Pow(1024, i), 2);
+
+            return $"{s} {name[(int)i]}";
         }
 
         public void Save()
@@ -1509,6 +1511,15 @@ namespace IndustrialPark
                 Path.GetDirectoryName(currentFilepath),
                 Path.GetFileName(currentFilepath) + "_IP_Report.txt");
 
+#if DEBUG
+            HipFile hip = HipFile.FromPath(currentFilepath).Item1;
+            if (!File.Exists(currentFilepath))
+            {
+                MessageBox.Show($"HIP File \"{currentFilepath}\" not found");
+                return;
+            }
+#endif
+
             using (StreamWriter output = new StreamWriter(filepath))
             {
                 stopwatch.Start();
@@ -1561,6 +1572,67 @@ namespace IndustrialPark
                     }
                 }
 
+#if DEBUG
+                Dictionary<uint, Section_AHDR> ahdrList = new Dictionary<uint, Section_AHDR>();
+                foreach (var ahdr in hip.DICT.ATOC.AHDRList)
+                    ahdrList.Add(ahdr.assetID, ahdr);
+
+                int padding = archive.platform == Platform.GameCube ? 0x20 : 0x800;
+
+                output.WriteLine("\n\nVerbose Layer Information\n------------------\n");
+                int i = 0;
+                foreach (var lhdr in hip.DICT.LTOC.LHDRList)
+                {
+                    LayerType type = (archive.game >= Game.Incredibles || lhdr.layerType < 2) ? (LayerType)lhdr.layerType : (LayerType)(lhdr.layerType + 1);
+
+                    output.WriteLine($"Layer #{i} is Type {lhdr.layerType} ({type})");
+                    output.WriteLine("-------------------");
+                    output.WriteLine("AssetName                       AssetID  Checksum Type Offset   Size     Plus Align");
+                    output.WriteLine("---------                       -------  -------- ---- ------   ----     ---- -----");
+
+                    int layerSizeTotal = 0, layerSizeDataAsset = 0, layerSizeDataLayer = 0, layerSizePaddingAsset = 0, layerSizePaddingLayer = 0;
+                    int sndSize = 0, sndsSize = 0;
+
+                    foreach (uint aid in lhdr.assetIDlist)
+                    {
+                        Section_AHDR ahdr = ahdrList[aid];
+                        output.Write(ahdr.ADBG.assetName.PadRight(32, ' '));
+                        output.Write(ahdr.assetID.ToString("X8") + ' ');
+                        output.Write(ahdr.ADBG.checksum.ToString("X8") + ' ');
+                        output.Write(Functions.GetCode(ahdr.assetType).PadRight(5, ' '));
+                        output.Write(ahdr.fileOffset.ToString("X8").PadRight(9, ' '));
+                        output.Write(ahdr.fileSize.ToString("X").PadRight(9, ' '));
+                        output.Write(ahdr.plusValue.ToString().PadRight(5, ' '));
+                        output.Write(ahdr.ADBG.alignment.ToString().PadRight(6, ' ') + "\n");
+
+                        if (ahdr.assetType == AssetType.Sound)
+                            sndSize += ahdr.fileSize + ahdr.plusValue;
+                        else if (ahdr.assetType == AssetType.SoundStream)
+                            sndsSize += ahdr.fileSize + ahdr.plusValue;
+
+                        layerSizeTotal += ahdr.fileSize + ahdr.plusValue;
+                        layerSizeDataAsset += ahdr.fileSize;
+                        layerSizePaddingAsset += ahdr.plusValue;
+                        layerSizeDataLayer += ahdr.fileSize + ahdr.plusValue;
+                    }
+
+                    layerSizePaddingLayer = (padding - (layerSizeTotal % padding)) % padding;
+                    layerSizeTotal += layerSizePaddingLayer;
+
+                    if (archive.game <= Game.BFBB && lhdr.layerType == 6 || archive.game >= Game.Incredibles && lhdr.layerType == 7) // SRAM
+                    {
+                        output.WriteLine($"\nSND Size (bytes): {sndSize} ({ConvertSize(sndSize)})");
+                        output.WriteLine($"SNDS Size (bytes): {sndsSize} ({ConvertSize(sndsSize)})");
+                    }
+
+                    output.WriteLine($"\nLayer Size (Total):         {layerSizeTotal} ({ConvertSize(layerSizeTotal)})");
+                    output.WriteLine($"Layer Size (Data_Layer):    {layerSizeDataLayer} ({ConvertSize(layerSizeDataLayer)})");
+                    output.WriteLine($"Layer Size (Data_Asset):    {layerSizeDataAsset} ({ConvertSize(layerSizeDataAsset)})");
+                    output.WriteLine($"Layer Size (Padding_Asset): {layerSizePaddingAsset} ({ConvertSize(layerSizePaddingAsset)})");
+                    output.WriteLine($"Layer Size (Padding_Layer): {layerSizePaddingLayer} ({ConvertSize(layerSizePaddingLayer)})\n\n");
+                    i++;
+                }
+#else
                 output.WriteLine("\nLAYER INFORMATION");
                 output.WriteLine("-------------");
 
@@ -1596,6 +1668,7 @@ namespace IndustrialPark
                 }
                 output.WriteLine($"Number of invisible assets: {numOfInvisibleAssets}");
                 output.WriteLine("");
+#endif
 
                 output.WriteLine("\nASSET LINKING INFO");
                 output.WriteLine("-------------");
@@ -1616,12 +1689,12 @@ namespace IndustrialPark
                                 string eventSendIDName = "";
                                 string eventReceiveIDName = "";
 
-                                if (archive.game == Game.BFBB) // BFBB
+                                if (archive.game == Game.BFBB)
                                 {
                                     eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
                                 }
-                                else if (archive.game == Game.Scooby) // Scooby
+                                else if (archive.game == Game.Scooby) 
                                 {
                                     eventSendIDName = ((EventScooby)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventScooby)link.EventReceiveID).ToString();
@@ -1631,10 +1704,15 @@ namespace IndustrialPark
                                     eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
                                 }
-                                else if (archive.game >= Game.ROTU)
+                                else if (archive.game == Game.ROTU)
                                 {
                                     eventSendIDName = ((EventROTU)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventROTU)link.EventReceiveID).ToString();
+                                }
+                                else if (archive.game == Game.RatProto)
+                                {
+                                    eventSendIDName = ((EventRatProto)link.EventSendID).ToString();
+                                    eventReceiveIDName = ((EventRatProto)link.EventReceiveID).ToString();
                                 }
 
                                 // If event name not supplied, event ID used instead.
@@ -1783,8 +1861,15 @@ namespace IndustrialPark
             };
             if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
+                ProgressBar progressBar = new ProgressBar("Export All (Wav)");
+                progressBar.SetProgressBar(0, archive.GetAllAssets().OfType<AssetSound>().Count(), 1);
+                progressBar.Show();
                 foreach (var asset in archive.GetAllAssets().OfType<AssetSound>())
+                {
                     SoundUtility_vgmstream.ExportToFile(asset, archive, Path.Combine(saveFileDialog.FileName, asset.assetName + ".wav"));
+                    progressBar.PerformStep(asset.assetName);
+                }
+                progressBar.Close();
             }
         }
 

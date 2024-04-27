@@ -339,7 +339,7 @@ namespace IndustrialPark
             var lodt = archive.GetLODT(true);
             if (propertyGridLevelOfDetail.SelectedObject == null)
             {
-                var entry = new EntryLODT()
+                var entry = new EntryLODT(archive.game)
                 {
                     BaseModel = GetAssetID()
                 };
