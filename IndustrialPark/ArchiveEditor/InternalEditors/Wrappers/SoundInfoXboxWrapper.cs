@@ -9,7 +9,7 @@
             Entry = entry;
         }
 
-        public short wFormatTag
+        public XboxFormat wFormatTag
         {
             get => Entry.wFormatTag;
             set => Entry.wFormatTag = value;
@@ -54,10 +54,16 @@
             get => Entry.dataSize;
             set => Entry.dataSize = value;
         }
-        public int flag_loop
+        public FlagBitmask Flags
         {
-            get => Entry.flag_loop;
-            set => Entry.flag_loop = value;
+            get => Entry.Flags;
+            set => Entry.Flags = value;
+        }
+
+        public int UnknownIncrediblesPC
+        {
+            get => Entry.UnknownIncrediblesPC;
+            set => Entry.UnknownIncrediblesPC = value;
         }
     }
 }

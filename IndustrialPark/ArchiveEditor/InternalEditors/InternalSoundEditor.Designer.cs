@@ -39,15 +39,30 @@
             this.buttonImportSound = new System.Windows.Forms.Button();
             this.buttonGenerateJawData = new System.Windows.Forms.Button();
             this.groupBoxImport = new System.Windows.Forms.GroupBox();
+            this.xboxCompressCheckBox = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.samplerateNumeric = new System.Windows.Forms.NumericUpDown();
+            this.forceSampleRateCheckbox = new System.Windows.Forms.CheckBox();
+            this.xboxForceMono = new System.Windows.Forms.CheckBox();
+            this.checkBoxPS2Looping = new System.Windows.Forms.CheckBox();
             this.groupBoxJaw = new System.Windows.Forms.GroupBox();
             this.numericUpDownJawMultiplier = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBoxExport = new System.Windows.Forms.GroupBox();
             this.buttonExport = new System.Windows.Forms.Button();
+            this.buttonStop = new System.Windows.Forms.Button();
+            this.groupBoxPlayer = new System.Windows.Forms.GroupBox();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.soundLengthLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.soundSizeLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBoxImport.SuspendLayout();
+            this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.samplerateNumeric)).BeginInit();
             this.groupBoxJaw.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownJawMultiplier)).BeginInit();
             this.groupBoxExport.SuspendLayout();
+            this.groupBoxPlayer.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonImportJawData
@@ -63,7 +78,7 @@
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
-            this.buttonHelp.Location = new System.Drawing.Point(18, 406);
+            this.buttonHelp.Location = new System.Drawing.Point(12, 497);
             this.buttonHelp.Name = "buttonHelp";
             this.buttonHelp.Size = new System.Drawing.Size(145, 23);
             this.buttonHelp.TabIndex = 17;
@@ -74,7 +89,7 @@
             // buttonFindCallers
             // 
             this.buttonFindCallers.AutoSize = true;
-            this.buttonFindCallers.Location = new System.Drawing.Point(181, 406);
+            this.buttonFindCallers.Location = new System.Drawing.Point(175, 497);
             this.buttonFindCallers.Name = "buttonFindCallers";
             this.buttonFindCallers.Size = new System.Drawing.Size(145, 23);
             this.buttonFindCallers.TabIndex = 11;
@@ -94,7 +109,7 @@
             // 
             // buttonImportRaw
             // 
-            this.buttonImportRaw.Location = new System.Drawing.Point(6, 78);
+            this.buttonImportRaw.Location = new System.Drawing.Point(163, 16);
             this.buttonImportRaw.Name = "buttonImportRaw";
             this.buttonImportRaw.Size = new System.Drawing.Size(145, 22);
             this.buttonImportRaw.TabIndex = 7;
@@ -107,7 +122,7 @@
             this.checkBoxSendToSNDI.AutoSize = true;
             this.checkBoxSendToSNDI.Checked = true;
             this.checkBoxSendToSNDI.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxSendToSNDI.Location = new System.Drawing.Point(6, 44);
+            this.checkBoxSendToSNDI.Location = new System.Drawing.Point(163, 44);
             this.checkBoxSendToSNDI.Name = "checkBoxSendToSNDI";
             this.checkBoxSendToSNDI.Size = new System.Drawing.Size(128, 30);
             this.checkBoxSendToSNDI.TabIndex = 8;
@@ -116,7 +131,7 @@
             // 
             // buttonPlay
             // 
-            this.buttonPlay.Location = new System.Drawing.Point(181, 302);
+            this.buttonPlay.Location = new System.Drawing.Point(6, 16);
             this.buttonPlay.Name = "buttonPlay";
             this.buttonPlay.Size = new System.Drawing.Size(145, 22);
             this.buttonPlay.TabIndex = 18;
@@ -130,7 +145,7 @@
             this.propertyGridSoundData.Location = new System.Drawing.Point(12, 12);
             this.propertyGridSoundData.Name = "propertyGridSoundData";
             this.propertyGridSoundData.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridSoundData.Size = new System.Drawing.Size(320, 204);
+            this.propertyGridSoundData.Size = new System.Drawing.Size(320, 187);
             this.propertyGridSoundData.TabIndex = 19;
             this.propertyGridSoundData.ToolbarVisible = false;
             this.propertyGridSoundData.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridSoundData_PropertyValueChanged);
@@ -157,15 +172,93 @@
             // 
             // groupBoxImport
             // 
+            this.groupBoxImport.Controls.Add(this.xboxCompressCheckBox);
+            this.groupBoxImport.Controls.Add(this.groupBox1);
+            this.groupBoxImport.Controls.Add(this.xboxForceMono);
+            this.groupBoxImport.Controls.Add(this.checkBoxPS2Looping);
             this.groupBoxImport.Controls.Add(this.buttonImportRaw);
             this.groupBoxImport.Controls.Add(this.buttonImportSound);
             this.groupBoxImport.Controls.Add(this.checkBoxSendToSNDI);
-            this.groupBoxImport.Location = new System.Drawing.Point(12, 222);
+            this.groupBoxImport.Location = new System.Drawing.Point(12, 205);
             this.groupBoxImport.Name = "groupBoxImport";
-            this.groupBoxImport.Size = new System.Drawing.Size(157, 106);
+            this.groupBoxImport.Size = new System.Drawing.Size(320, 134);
             this.groupBoxImport.TabIndex = 34;
             this.groupBoxImport.TabStop = false;
             this.groupBoxImport.Text = "Import";
+            // 
+            // xboxCompressCheckBox
+            // 
+            this.xboxCompressCheckBox.AutoSize = true;
+            this.xboxCompressCheckBox.Checked = true;
+            this.xboxCompressCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.xboxCompressCheckBox.Location = new System.Drawing.Point(6, 68);
+            this.xboxCompressCheckBox.Name = "xboxCompressCheckBox";
+            this.xboxCompressCheckBox.Size = new System.Drawing.Size(102, 17);
+            this.xboxCompressCheckBox.TabIndex = 30;
+            this.xboxCompressCheckBox.Text = "Xbox: Compress";
+            this.xboxCompressCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.samplerateNumeric);
+            this.groupBox1.Controls.Add(this.forceSampleRateCheckbox);
+            this.groupBox1.Location = new System.Drawing.Point(163, 80);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(145, 44);
+            this.groupBox1.TabIndex = 29;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Sample Rate";
+            // 
+            // samplerateNumeric
+            // 
+            this.samplerateNumeric.Enabled = false;
+            this.samplerateNumeric.Increment = new decimal(new int[] {
+            100,
+            0,
+            0,
+            0});
+            this.samplerateNumeric.Location = new System.Drawing.Point(72, 16);
+            this.samplerateNumeric.Maximum = new decimal(new int[] {
+            48000,
+            0,
+            0,
+            0});
+            this.samplerateNumeric.Name = "samplerateNumeric";
+            this.samplerateNumeric.Size = new System.Drawing.Size(67, 20);
+            this.samplerateNumeric.TabIndex = 28;
+            this.samplerateNumeric.ThousandsSeparator = true;
+            // 
+            // forceSampleRateCheckbox
+            // 
+            this.forceSampleRateCheckbox.AutoSize = true;
+            this.forceSampleRateCheckbox.Location = new System.Drawing.Point(6, 18);
+            this.forceSampleRateCheckbox.Name = "forceSampleRateCheckbox";
+            this.forceSampleRateCheckbox.Size = new System.Drawing.Size(65, 17);
+            this.forceSampleRateCheckbox.TabIndex = 29;
+            this.forceSampleRateCheckbox.Text = "Force to";
+            this.forceSampleRateCheckbox.UseVisualStyleBackColor = true;
+            this.forceSampleRateCheckbox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
+            // 
+            // xboxForceMono
+            // 
+            this.xboxForceMono.AutoSize = true;
+            this.xboxForceMono.Enabled = false;
+            this.xboxForceMono.Location = new System.Drawing.Point(6, 44);
+            this.xboxForceMono.Name = "xboxForceMono";
+            this.xboxForceMono.Size = new System.Drawing.Size(82, 17);
+            this.xboxForceMono.TabIndex = 22;
+            this.xboxForceMono.Text = "Force mono\r\n";
+            this.xboxForceMono.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxPS2Looping
+            // 
+            this.checkBoxPS2Looping.AutoSize = true;
+            this.checkBoxPS2Looping.Location = new System.Drawing.Point(6, 88);
+            this.checkBoxPS2Looping.Name = "checkBoxPS2Looping";
+            this.checkBoxPS2Looping.Size = new System.Drawing.Size(135, 30);
+            this.checkBoxPS2Looping.TabIndex = 21;
+            this.checkBoxPS2Looping.Text = "PS2: Import as looping \r\nsound";
+            this.checkBoxPS2Looping.UseVisualStyleBackColor = true;
             // 
             // groupBoxJaw
             // 
@@ -173,7 +266,7 @@
             this.groupBoxJaw.Controls.Add(this.label1);
             this.groupBoxJaw.Controls.Add(this.buttonImportJawData);
             this.groupBoxJaw.Controls.Add(this.buttonGenerateJawData);
-            this.groupBoxJaw.Location = new System.Drawing.Point(12, 334);
+            this.groupBoxJaw.Location = new System.Drawing.Point(12, 425);
             this.groupBoxJaw.Name = "groupBoxJaw";
             this.groupBoxJaw.Size = new System.Drawing.Size(320, 66);
             this.groupBoxJaw.TabIndex = 34;
@@ -215,7 +308,7 @@
             // 
             this.groupBoxExport.Controls.Add(this.buttonExportRaw);
             this.groupBoxExport.Controls.Add(this.buttonExport);
-            this.groupBoxExport.Location = new System.Drawing.Point(175, 222);
+            this.groupBoxExport.Location = new System.Drawing.Point(12, 345);
             this.groupBoxExport.Name = "groupBoxExport";
             this.groupBoxExport.Size = new System.Drawing.Size(157, 74);
             this.groupBoxExport.TabIndex = 36;
@@ -232,14 +325,57 @@
             this.buttonExport.UseVisualStyleBackColor = true;
             this.buttonExport.Click += new System.EventHandler(this.buttonExport_Click);
             // 
+            // buttonStop
+            // 
+            this.buttonStop.Location = new System.Drawing.Point(6, 43);
+            this.buttonStop.Name = "buttonStop";
+            this.buttonStop.Size = new System.Drawing.Size(145, 23);
+            this.buttonStop.TabIndex = 37;
+            this.buttonStop.Text = "Stop";
+            this.buttonStop.UseVisualStyleBackColor = true;
+            this.buttonStop.Click += new System.EventHandler(this.buttonStop_Click);
+            // 
+            // groupBoxPlayer
+            // 
+            this.groupBoxPlayer.Controls.Add(this.buttonPlay);
+            this.groupBoxPlayer.Controls.Add(this.buttonStop);
+            this.groupBoxPlayer.Location = new System.Drawing.Point(175, 345);
+            this.groupBoxPlayer.Name = "groupBoxPlayer";
+            this.groupBoxPlayer.Size = new System.Drawing.Size(157, 74);
+            this.groupBoxPlayer.TabIndex = 38;
+            this.groupBoxPlayer.TabStop = false;
+            this.groupBoxPlayer.Text = "Player";
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.soundLengthLabel,
+            this.soundSizeLabel});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 526);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(344, 22);
+            this.statusStrip1.TabIndex = 39;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // soundLengthLabel
+            // 
+            this.soundLengthLabel.Name = "soundLengthLabel";
+            this.soundLengthLabel.Size = new System.Drawing.Size(0, 17);
+            // 
+            // soundSizeLabel
+            // 
+            this.soundSizeLabel.Name = "soundSizeLabel";
+            this.soundSizeLabel.Size = new System.Drawing.Size(0, 17);
+            // 
             // InternalSoundEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 441);
+            this.ClientSize = new System.Drawing.Size(344, 548);
+            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.groupBoxPlayer);
             this.Controls.Add(this.groupBoxExport);
             this.Controls.Add(this.buttonHelp);
-            this.Controls.Add(this.buttonPlay);
             this.Controls.Add(this.buttonFindCallers);
             this.Controls.Add(this.groupBoxJaw);
             this.Controls.Add(this.propertyGridSoundData);
@@ -252,10 +388,16 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalAssetEditor_FormClosing);
             this.groupBoxImport.ResumeLayout(false);
             this.groupBoxImport.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.samplerateNumeric)).EndInit();
             this.groupBoxJaw.ResumeLayout(false);
             this.groupBoxJaw.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownJawMultiplier)).EndInit();
             this.groupBoxExport.ResumeLayout(false);
+            this.groupBoxPlayer.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -278,5 +420,16 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBoxExport;
         private System.Windows.Forms.Button buttonExport;
+        private System.Windows.Forms.CheckBox checkBoxPS2Looping;
+        private System.Windows.Forms.Button buttonStop;
+        private System.Windows.Forms.CheckBox xboxForceMono;
+        private System.Windows.Forms.GroupBox groupBoxPlayer;
+        private System.Windows.Forms.NumericUpDown samplerateNumeric;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox forceSampleRateCheckbox;
+        private System.Windows.Forms.CheckBox xboxCompressCheckBox;
+        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.ToolStripStatusLabel soundLengthLabel;
+        private System.Windows.Forms.ToolStripStatusLabel soundSizeLabel;
     }
 }

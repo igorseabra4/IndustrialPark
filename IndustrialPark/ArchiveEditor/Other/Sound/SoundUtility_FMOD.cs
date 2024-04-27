@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
 
-        public static byte[] ConvertSoundToFSB3(string fileName, int frequency)
+        public static byte[] ConvertSoundToFSB3(string fileName, int frequency, bool forcemono)
         {
             try
             {
@@ -20,9 +20,7 @@ namespace IndustrialPark
                 if (File.Exists(ffmpegOutPath))
                     File.Delete(ffmpegOutPath);
 
-                SoundUtility_ffmpeg.ConvertFfmpeg((frequency == -1) ?
-                    $"-i \"{fileName}\" \"{ffmpegOutPath}\"" :
-                    $"-i \"{fileName}\" -ac 1 -ar {frequency} \"{ffmpegOutPath}\"");
+                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -ac {(forcemono ? "1" : "2")} -ar {frequency} \"{ffmpegOutPath}\"");
 
                 if (!InitFSBank())
                 {

@@ -5,85 +5,97 @@ namespace IndustrialPark
 {
     public class SoundInfoGcn1Wrapper
     {
-        public uint num_samples { get; set; }
-        public uint num_adpcm_nibbles { get; set; }
-        public uint sample_rate { get; set; }
-        public ushort loop_flag { get; set; }
-        public ushort format { get; set; }
-        public uint loop_start_offset { get; set; }
-        public uint loop_end_offset { get; set; }
-        public uint initial_offset_value { get; set; }
-        public short[] coefs { get; set; }
-        public ushort gain_factor { get; set; }
-        public ushort pred_scale { get; set; }
-        public ushort yn1 { get; set; }
-        public ushort yn2 { get; set; }
-        public ushort loop_pred_scale { get; set; }
-        public ushort loop_yn1 { get; set; }
-        public ushort loop_yn2 { get; set; }
-        private byte[] pad;
+        public EntrySoundInfo_GCN_V1 Entry;
 
-        public SoundInfoGcn1Wrapper(byte[] header)
+        public SoundInfoGcn1Wrapper(EntrySoundInfo_GCN_V1 entry)
         {
-            using (var reader = new EndianBinaryReader(header, Endianness.Big))
-            {
-                num_samples = reader.ReadUInt32();
-                num_adpcm_nibbles = reader.ReadUInt32();
-                sample_rate = reader.ReadUInt32();
-                loop_flag = reader.ReadUInt16();
-                format = reader.ReadUInt16();
-                loop_start_offset = reader.ReadUInt32();
-                loop_end_offset = reader.ReadUInt32();
-                initial_offset_value = reader.ReadUInt32();
-                coefs = new short[16];
-                for (int i = 0; i < coefs.Length; i++)
-                    coefs[i] = reader.ReadInt16();
-                gain_factor = reader.ReadUInt16();
-                pred_scale = reader.ReadUInt16();
-                yn1 = reader.ReadUInt16();
-                yn2 = reader.ReadUInt16();
-                loop_pred_scale = reader.ReadUInt16();
-                loop_yn1 = reader.ReadUInt16();
-                loop_yn2 = reader.ReadUInt16();
-                pad = new byte[22];
-                for (int i = 0; i < pad.Length; i++)
-                    pad[i] = reader.ReadByte();
-            }
-            if (!Enumerable.SequenceEqual(header, ToByteArray()))
-                throw new Exception("Unable to open sound editor");
+            Entry = entry;
         }
 
-        public byte[] ToByteArray()
+        public uint num_samples
         {
-            using (var writer = new EndianBinaryWriter(Endianness.Big))
-            {
-                writer.Write(num_samples);
-                writer.Write(num_adpcm_nibbles);
-                writer.Write(sample_rate);
-                writer.Write(loop_flag);
-                writer.Write(format);
-                writer.Write(loop_start_offset);
-                writer.Write(loop_end_offset);
-                writer.Write(initial_offset_value);
-                for (int i = 0; i < 16; i++)
-                    if (i < coefs.Length)
-                        writer.Write(coefs[i]);
-                    else
-                        writer.Write((short)0);
-                writer.Write(gain_factor);
-                writer.Write(pred_scale);
-                writer.Write(yn1);
-                writer.Write(yn2);
-                writer.Write(loop_pred_scale);
-                writer.Write(loop_yn1);
-                writer.Write(loop_yn2);
-                for (int i = 0; i < 22; i++)
-                    if (i < pad.Length)
-                        writer.Write(pad[i]);
-                    else
-                        writer.Write((byte)0);
-                return writer.ToArray();
-            }
+            get => Entry.num_samples;
+            set => Entry.num_samples = value;
+        }
+        public uint num_adpcm_nibble
+        {
+            get => Entry.num_adpcm_nibbles;
+            set => Entry.num_adpcm_nibbles = value;
+        }
+        public uint sample_rate
+        {
+            get => Entry.sample_rate; 
+            set => Entry.sample_rate = value;
+        }
+        public bool Loop
+        {
+            get => Entry.Loop;
+            set => Entry.Loop = value;
+        }
+        public ushort format
+        {
+            get => Entry.format; 
+            set => Entry.format = value;
+        }
+        public uint loop_start_offset
+        {
+            get => Entry.loop_start_offset; 
+            set => Entry.loop_start_offset = value;
+        }
+        public uint loop_end_offset
+        {
+            get => Entry.loop_end_offset; 
+            set => Entry.loop_end_offset = value;
+        }
+        public uint initial_offset_value
+        {
+            get => Entry.initial_offset_value;
+            set => Entry.initial_offset_value = value;
+        }
+        public short[] coefs
+        {
+            get => Entry.coefs;
+            set => Entry.coefs = value;
+        }
+        public ushort gain_factor
+        {
+            get => Entry.gain_factor;
+            set => Entry.gain_factor = value;
+        }
+        public ushort pred_scale
+        {
+            get => Entry.pred_scale;
+            set => Entry.pred_scale = value;
+        }
+        public ushort yn1
+        {
+            get => Entry.yn1;
+            set => Entry.yn1 = value;
+        }
+        public ushort yn2
+        {
+            get => Entry.yn2;
+            set => Entry.yn2 = value;
+        }
+        public ushort loop_pred_scale
+        {
+            get => Entry.loop_pred_scale;
+            set => Entry.loop_pred_scale = value;
+        }
+        public ushort loop_yn1
+        {
+            get => Entry.loop_yn1;
+            set => Entry.loop_yn2 = value;
+        }
+        public ushort loop_yn2
+        {
+            get => Entry.loop_yn2;
+            set => Entry.loop_yn2 = value;
+        }
+        public byte[] pad
+        {
+            get => Entry.pad;
+            set => Entry.pad = value;
         }
     }
 }

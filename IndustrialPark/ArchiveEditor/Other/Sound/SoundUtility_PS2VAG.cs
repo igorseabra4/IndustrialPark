@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Web.Caching;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -10,33 +11,29 @@ namespace IndustrialPark
     {
         private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
 
-        public static byte[] ConvertSoundToPS2VAG(string fileName)
+        public static byte[] ConvertSoundToPS2VAG(string fileName, bool looping, int samplerate)
         {
             try
             {
                 if (!SoundUtility_ffmpeg.InitFfmpeg())
                     return null;
 
-                if (File.Exists(ffmpegOutPath))
-                    File.Delete(ffmpegOutPath);
+                if (File.Exists(ps2vagInPath))
+                    File.Delete(ps2vagInPath);
 
-                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -ac 1 \"{ffmpegOutPath}\"");
+                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -ac 1 -ar {samplerate} \"{ps2vagInPath}\"");
 
                 if (!InitPS2VAG())
-                {
-                    if (File.Exists(ffmpegOutPath))
-                        File.Delete(ffmpegOutPath);
                     return null;
-                }
 
                 if (File.Exists(ps2vagOutPath))
                     File.Delete(ps2vagOutPath);
 
-                ConvertPS2VAG(ffmpegOutPath, ps2vagOutPath);
+                ConvertPS2VAG(ps2vagInPath, looping);
 
                 var file = File.ReadAllBytes(ps2vagOutPath);
 
-                File.Delete(ffmpegOutPath);
+                File.Delete(ps2vagInPath);
                 File.Delete(ps2vagOutPath);
 
                 return file;
@@ -49,8 +46,10 @@ namespace IndustrialPark
         }
 
         private static bool ps2vagInitialized = false;
-        private static string ps2vagPath => Path.Combine(Application.StartupPath, "Resources", "PS2VAGTool", "AIFF2VAG.exe");
-        private static string ps2vagOutPath => Path.Combine(Application.StartupPath, "Resources", "PS2VAGTool", "test_sound_out.vag");
+        private static string ps2vagDir => Path.Combine(Application.StartupPath, "Resources", "PS2VAGTool");
+        private static string ps2vagPath => Path.Combine(ps2vagDir, "AIFF2VAG.exe");
+        private static string ps2vagInPath => Path.Combine(ps2vagDir, "test_sound_out.wav");
+        private static string ps2vagOutPath => Path.ChangeExtension(ps2vagInPath, "vag");
 
         private static Process ps2vagProcess;
 
@@ -81,9 +80,9 @@ namespace IndustrialPark
             return true;
         }
 
-        private static void ConvertPS2VAG(string inPath, string outPath)
+        private static void ConvertPS2VAG(string inPath, bool looping)
         {
-            ps2vagProcess.StartInfo.Arguments = $"\"{inPath}\" \"{outPath}\"";
+            ps2vagProcess.StartInfo.Arguments = $"\"{inPath}\"" + (looping ? " -L" : " -1");
             ps2vagProcess.Start();
             ps2vagProcess.WaitForExit();
         }
@@ -93,6 +92,9 @@ namespace IndustrialPark
             try
             {
                 MessageBox.Show("Will begin download of PS2 VAG Tool from GitHub. Please wait as this might take a while.");
+
+                if (!Directory.Exists(ps2vagDir))
+                    Directory.CreateDirectory(ps2vagDir);
 
                 using (var webClient = new WebClient())
                     webClient.DownloadFile(new Uri("https://github.com/eurotools/es-ps2-vag-tool/releases/download/3.0.0.0/AIFF2VAG.exe"), ps2vagPath);

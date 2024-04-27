@@ -3,30 +3,62 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Web.UI;
 
 namespace IndustrialPark
 {
     public class EntrySoundInfo_GCN_V1 : GenericAssetDataContainer
     {
-        public byte[] SoundHeader { get; set; }
+        public uint num_samples { get; set; }
+        public uint num_adpcm_nibbles { get; set; }
+        public uint sample_rate { get; set; }
+        public bool Loop { get; set; }
+        public ushort format { get; set; }
+        public uint loop_start_offset { get; set; }
+        public uint loop_end_offset { get; set; }
+        public uint initial_offset_value { get; set; }
+        public short[] coefs { get; set; }
+        public ushort gain_factor { get; set; }
+        public ushort pred_scale { get; set; }
+        public ushort yn1 { get; set; }
+        public ushort yn2 { get; set; }
+        public ushort loop_pred_scale { get; set; }
+        public ushort loop_yn1 { get; set; }
+        public ushort loop_yn2 { get; set; }
+        public byte[] pad { get; set; }
         [ValidReferenceRequired]
         public AssetID Sound { get; set; }
 
-        public EntrySoundInfo_GCN_V1()
-        {
-            SoundHeader = new byte[0x60];
-            Sound = 0;
-        }
-
-        public EntrySoundInfo_GCN_V1(byte[] soundHeader, uint sound)
-        {
-            SoundHeader = soundHeader;
-            Sound = sound;
-        }
+        public EntrySoundInfo_GCN_V1() { }
 
         public EntrySoundInfo_GCN_V1(EndianBinaryReader reader)
         {
-            SoundHeader = reader.ReadBytes(0x60);
+            Read(reader);
+        }
+
+        private void Read(EndianBinaryReader reader)
+        {
+            num_samples = reader.ReadUInt32();
+            num_adpcm_nibbles = reader.ReadUInt32();
+            sample_rate = reader.ReadUInt32();
+            Loop = Convert.ToBoolean(reader.ReadUInt16());
+            format = reader.ReadUInt16();
+            loop_start_offset = reader.ReadUInt32();
+            loop_end_offset = reader.ReadUInt32();
+            initial_offset_value = reader.ReadUInt32();
+            coefs = new short[16];
+            for (int i = 0; i < coefs.Length; i++)
+                coefs[i] = reader.ReadInt16();
+            gain_factor = reader.ReadUInt16();
+            pred_scale = reader.ReadUInt16();
+            yn1 = reader.ReadUInt16();
+            yn2 = reader.ReadUInt16();
+            loop_pred_scale = reader.ReadUInt16();
+            loop_yn1 = reader.ReadUInt16();
+            loop_yn2 = reader.ReadUInt16();
+            pad = new byte[22];
+            for (int i = 0; i < pad.Length; i++)
+                pad[i] = reader.ReadByte();
             Sound = reader.ReadUInt32();
         }
 
@@ -34,6 +66,36 @@ namespace IndustrialPark
         {
             writer.Write(SoundHeader);
             writer.Write(Sound);
+        }
+
+        public byte[] Serialize()
+        {
+            List<byte> array = new List<byte>();
+
+            array.AddRange(BitConverter.GetBytes(num_samples).Reverse());
+            array.AddRange(BitConverter.GetBytes(num_adpcm_nibbles).Reverse());
+            array.AddRange(BitConverter.GetBytes(sample_rate).Reverse());
+            array.AddRange(BitConverter.GetBytes(Convert.ToUInt16(Loop)).Reverse());
+            array.AddRange(BitConverter.GetBytes(format).Reverse());
+            array.AddRange(BitConverter.GetBytes(loop_start_offset).Reverse());
+            array.AddRange(BitConverter.GetBytes(loop_end_offset).Reverse());
+            array.AddRange(BitConverter.GetBytes(initial_offset_value).Reverse());
+            array.AddRange(coefs.SelectMany(i => BitConverter.GetBytes(i).Reverse()).ToArray());
+            array.AddRange(BitConverter.GetBytes(gain_factor).Reverse());
+            array.AddRange(BitConverter.GetBytes(pred_scale).Reverse());
+            array.AddRange(BitConverter.GetBytes(yn1).Reverse());
+            array.AddRange(BitConverter.GetBytes(yn2).Reverse());
+            array.AddRange(BitConverter.GetBytes(loop_pred_scale).Reverse());
+            array.AddRange(BitConverter.GetBytes(loop_yn1).Reverse());
+            array.AddRange(BitConverter.GetBytes(loop_yn2).Reverse());
+            array.AddRange(pad);
+            return array.ToArray();
+        }
+
+        public byte[] SoundHeader
+        {
+            get => Serialize();
+            set => Read(new EndianBinaryReader(value, Endianness.Big));
         }
 
         public override string ToString()
@@ -120,7 +182,7 @@ namespace IndustrialPark
                 if (entries[i].Sound == assetID)
                     entries.Remove(entries[i--]);
 
-            entries.Add(new EntrySoundInfo_GCN_V1(soundData.Take(0x60).ToArray(), assetID));
+            entries.Add(new EntrySoundInfo_GCN_V1(new EndianBinaryReader(soundData, Endianness.Big)) { Sound = assetID });
 
             finalData = soundData.Skip(0x60).ToArray();
 
@@ -147,6 +209,66 @@ namespace IndustrialPark
                 Entries_SND = entries.ToArray();
             else
                 Entries_SNDS = entries.ToArray();
+        }
+
+        public void SetEntry(EntrySoundInfo_GCN_V1 entry, AssetType assetType)
+        {
+            List<EntrySoundInfo_GCN_V1> entries;
+            if (assetType == AssetType.Sound)
+                entries = Entries_SND.ToList();
+            else
+                entries = Entries_SNDS.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Sound == entry.Sound)
+                {
+                    entries[i] = entry;
+
+                    if (assetType == AssetType.Sound)
+                        Entries_SND = entries.ToArray();
+                    else
+                        Entries_SNDS = entries.ToArray();
+                    return;
+                }
+
+            entries = Entries_Sound_CIN.ToList();
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Sound == assetID)
+                {
+                    entries[i] = entry;
+                    Entries_Sound_CIN = entries.ToArray();
+                    return;
+                }
+        }
+
+        public EntrySoundInfo_GCN_V1 GetEntry(uint assetID, AssetType assetType)
+        {
+            List<EntrySoundInfo_GCN_V1> entries;
+            if (assetType == AssetType.Sound)
+                entries = Entries_SND.ToList();
+            else
+                entries = Entries_SNDS.ToList();
+
+            EntrySoundInfo_GCN_V1 entry = null;
+
+            for (int i = 0; i < entries.Count; i++)
+                if (entries[i].Sound == assetID)
+                    entry = entries[i];
+
+            if (entry == null)
+            {
+                entries = Entries_Sound_CIN.ToList();
+
+                for (int i = 0; i < entries.Count; i++)
+                    if (entries[i].Sound == assetID)
+                        entry = entries[i];
+            }
+
+            if (entry == null)
+                throw new Exception($"Error: Sound Info asset does not contain {assetType} sound header for asset [{assetID:X8}]");
+
+            return entry;
         }
 
         public byte[] GetHeader(uint assetID, AssetType assetType)

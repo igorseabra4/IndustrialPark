@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 
@@ -6,58 +7,52 @@ namespace IndustrialPark
 {
     public class SoundInfoPs2Wrapper
     {
-        private byte[] magic;
-        private int formatVersion;
-        private int sourceStartOffset;
-        private int waveformDataSize;
-        public int sampleRate { get; set; }
-        public short baseVolumeLeft { get; set; }
-        public short baseVolumeRight { get; set; }
-        public short basePitch { get; set; }
-        public short baseADSR1 { get; set; }
-        public short baseADSR2 { get; set; }
-        private short reserved;
-        private byte[] trackName;
+        public EntrySoundInfo_PS2 Entry;
 
-        public SoundInfoPs2Wrapper(byte[] header)
+        public SoundInfoPs2Wrapper(EntrySoundInfo_PS2 entry)
         {
-            using (var reader = new BinaryReader(new MemoryStream(header)))
-            {
-                magic = reader.ReadBytes(4);
-                formatVersion = reader.ReadInt32();
-                sourceStartOffset = reader.ReadInt32();
-                waveformDataSize = reader.ReadInt32();
-                sampleRate = reader.ReadInt32();
-                baseVolumeLeft = reader.ReadInt16();
-                baseVolumeRight = reader.ReadInt16();
-                basePitch = reader.ReadInt16();
-                baseADSR1 = reader.ReadInt16();
-                baseADSR2 = reader.ReadInt16();
-                reserved = reader.ReadInt16();
-                trackName = reader.ReadBytes(16);
-            }
-            if (!Enumerable.SequenceEqual(header, ToByteArray()))
-                throw new Exception("Unable to open sound editor");
+            Entry = entry;
         }
 
-        public byte[] ToByteArray()
+        public uint Version
         {
-            using (var writer = new BinaryWriter(new MemoryStream()))
-            {
-                writer.Write(magic);
-                writer.Write(formatVersion);
-                writer.Write(sourceStartOffset);
-                writer.Write(waveformDataSize);
-                writer.Write(sampleRate);
-                writer.Write(baseVolumeLeft);
-                writer.Write(baseVolumeRight);
-                writer.Write(basePitch);
-                writer.Write(baseADSR1);
-                writer.Write(baseADSR2);
-                writer.Write(reserved);
-                writer.Write(trackName);
-                return ((MemoryStream)writer.BaseStream).ToArray();
-            }
+            get => Entry.Version;
+            set => Entry.Version = value;
+        }
+
+        public uint DataSize
+        {
+            get => Entry.DataSize;
+            set => Entry.DataSize = value;
+        }
+
+        public uint SampleRate
+        {
+            get => Entry.SampleRate;
+            set => Entry.SampleRate = value;
+        }
+
+        public uint StreamInterleaveCount
+        {
+            get => Entry.StreamInterleaveCount;
+            set => Entry.StreamInterleaveCount = value;
+        }
+
+        public uint StreamInterleaveSize
+        {
+            get => Entry.StreamInterleaveSize;
+            set => Entry.StreamInterleaveSize = value;    
+        }
+
+        public uint Reserved2
+        {
+            get => Entry.reserved2;
+            set => Entry.reserved2 = value;
+        }
+        public string Trackname
+        {
+            get => Entry.TrackName;
+            set => Entry.TrackName = value;
         }
     }
 }

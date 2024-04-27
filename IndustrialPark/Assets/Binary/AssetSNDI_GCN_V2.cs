@@ -12,15 +12,6 @@ namespace IndustrialPark
 
         private const string categoryName = "Sound Info";
 
-        [Category(categoryName), Description("Usually 0.")]
-        public int pFMusicMod { get; set; }
-        [Category(categoryName), Description("Usually 0.")]
-        public int pFSBFileArray { get; set; }
-        [Category(categoryName), Description("Usually 0.")]
-        public int pWavInfoArray { get; set; }
-        [Category(categoryName), Description("Usually 0.")]
-        public int pCutsceneAudioHeaders { get; set; }
-
         [Category(categoryName)]
         public FSB3_File Entry_Sounds { get; set; }
 
@@ -43,10 +34,8 @@ namespace IndustrialPark
             {
                 reader.ReadUInt32();
                 var totalSize = reader.ReadUInt32();
-                pFMusicMod = reader.ReadInt32();
-                pFSBFileArray = reader.ReadInt32();
-                pWavInfoArray = reader.ReadInt32();
-                pCutsceneAudioHeaders = reader.ReadInt32();
+                // Internal Pointers
+                reader.BaseStream.Position += 0x10;
                 ushort nWavFiles = reader.ReadUInt16();
                 ushort nSounds = reader.ReadUInt16();
                 ushort nStreams = reader.ReadUInt16();
@@ -65,9 +54,7 @@ namespace IndustrialPark
                     {
                         fsbReader.BaseStream.Position = offsets[i];
                         var fsb3file = new FSB3_File(fsbReader);
-                        fsbReader.BaseStream.Position = (i + 1 < offsets.Length) ? (offsets[i + 1] - 0x08) : (totalSize + 0x18);
-                        fsb3file.UnknownEndValue1 = fsbReader.ReadInt32();
-                        fsb3file.UnknownEndValue2 = fsbReader.ReadInt32();
+                        fsb3file.UnknownBytes = fsbReader.ReadBytes((32 - (fsb3file.TotalFSBSize % 32)) % 32);
                         entries.Add(fsb3file);
                     }
 
@@ -130,24 +117,11 @@ namespace IndustrialPark
                 Entries[i].offset = (int)(writer.BaseStream.Position - 0x20);
                 Entries[i].Serialize(writer);
 
-                while (writer.BaseStream.Position % 0x20 != 0)
-                    writer.BaseStream.Position++;
-
-                if (Entries[i].UnknownEndValue1 != 0 || Entries[i].UnknownEndValue2 != 0)
-                {
-                    writer.BaseStream.Position -= 8;
-                    var ukbs = BitConverter.GetBytes(Entries[i].UnknownEndValue1);
-                    writer.Write(ukbs[0]);
-                    writer.Write(ukbs[1]);
-                    writer.Write(ukbs[2]);
-                    writer.Write(ukbs[3]);
-
-                    ukbs = BitConverter.GetBytes(Entries[i].UnknownEndValue2);
-                    writer.Write(ukbs[0]);
-                    writer.Write(ukbs[1]);
-                    writer.Write(ukbs[2]);
-                    writer.Write(ukbs[3]);
-                }
+                if (Entries[i].UnknownBytes == null)
+                    while (writer.BaseStream.Position % 0x20 != 0)
+                        writer.BaseStream.Position++;
+                else
+                    writer.Write(Entries[i].UnknownBytes);
             }
 
             int footerOffset = (int)(writer.BaseStream.Position - 0x20);
@@ -178,10 +152,7 @@ namespace IndustrialPark
             writer.BaseStream.Position = 0;
             writer.Write(assetID);
             writer.Write(footerOffset);
-            writer.Write(pFMusicMod);
-            writer.Write(pFSBFileArray);
-            writer.Write(pWavInfoArray);
-            writer.Write(pCutsceneAudioHeaders);
+            writer.Write(new byte[0x10]);
             writer.Write(nWavFiles);
             writer.Write(nSounds);
             writer.Write(nStreams);

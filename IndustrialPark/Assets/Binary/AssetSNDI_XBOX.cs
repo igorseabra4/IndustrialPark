@@ -6,9 +6,15 @@ using System.Linq;
 
 namespace IndustrialPark
 {
+    public enum XboxFormat : short
+    {
+        PCM = 1,
+        XboxADPCM = 105,
+        Unknown_IncPC = 106
+    }
     public class EntrySoundInfo_XBOX : GenericAssetDataContainer
     {
-        public short wFormatTag { get; set; }
+        public XboxFormat wFormatTag { get; set; }
         public short nChannels { get; set; }
         public int nSamplesPerSec { get; set; }
         public int nAvgBytesPerSec { get; set; }
@@ -19,7 +25,8 @@ namespace IndustrialPark
         public int dataSize { get; set; }
         [ValidReferenceRequired]
         public AssetID Sound { get; set; }
-        public int flag_loop { get; set; }
+        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor("Looped");
+        public int UnknownIncrediblesPC { get; set; }
 
         public static int StructSize = 0x2C;
 
@@ -31,7 +38,7 @@ namespace IndustrialPark
 
         private void Read(EndianBinaryReader reader)
         {
-            wFormatTag = reader.ReadInt16();
+            wFormatTag = (XboxFormat)reader.ReadInt16();
             nChannels = reader.ReadInt16();
             nSamplesPerSec = reader.ReadInt32();
             nAvgBytesPerSec = reader.ReadInt32();
@@ -41,9 +48,10 @@ namespace IndustrialPark
             NibblesPerBlock = reader.ReadInt16();
             dataSize = reader.ReadInt32();
             Sound = reader.ReadUInt32();
-            flag_loop = reader.ReadInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            UnknownIncrediblesPC = reader.ReadInt32();
 
-            reader.BaseStream.Position += 12;
+            reader.BaseStream.Position += 8;
         }
 
         public override void Serialize(EndianBinaryWriter writer) { }
@@ -52,7 +60,7 @@ namespace IndustrialPark
         {
             List<byte> array = new List<byte>();
 
-            array.AddRange(BitConverter.GetBytes(wFormatTag));
+            array.AddRange(BitConverter.GetBytes((short)wFormatTag));
             array.AddRange(BitConverter.GetBytes(nChannels));
             array.AddRange(BitConverter.GetBytes(nSamplesPerSec));
             array.AddRange(BitConverter.GetBytes(nAvgBytesPerSec));
@@ -62,8 +70,9 @@ namespace IndustrialPark
             array.AddRange(BitConverter.GetBytes(NibblesPerBlock));
             array.AddRange(BitConverter.GetBytes(dataSize));
             array.AddRange(BitConverter.GetBytes(Sound));
-            array.AddRange(BitConverter.GetBytes(flag_loop));
-            array.AddRange(new byte[12]);
+            array.AddRange(BitConverter.GetBytes(Flags.FlagValueInt));
+            array.AddRange(BitConverter.GetBytes(UnknownIncrediblesPC));
+            array.AddRange(new byte[8]);
 
             return array.ToArray();
         }
@@ -148,12 +157,40 @@ namespace IndustrialPark
             else
                 entries = Entries_SNDS.ToList();
 
-            var reader = new EndianBinaryReader(soundData, Endianness.Little);
-            reader.BaseStream.Position = 0x14;
+            using (var reader = new EndianBinaryReader(soundData, Endianness.Little))
+            {
+                reader.BaseStream.Position = 0x10;
 
-            entries.Add(new EntrySoundInfo_XBOX(reader) { Sound = assetID });
+                int fmtLength = reader.ReadInt32();
 
-            finalData = soundData.Skip(0x30).ToArray();
+                EntrySoundInfo_XBOX entry = new EntrySoundInfo_XBOX();
+                entry.Sound = assetID;
+                entry.wFormatTag = (XboxFormat)reader.ReadUInt16();
+                entry.nChannels = reader.ReadInt16();
+                entry.nSamplesPerSec = reader.ReadInt32();
+                entry.nAvgBytesPerSec = reader.ReadInt32();
+                entry.nBlockAlign = reader.ReadInt16();
+                entry.wBitsPerSample = reader.ReadInt16();
+
+                if (fmtLength == 0x10) // PCM
+                {
+                    entry.cbSize = 0;
+                    entry.NibblesPerBlock = 0;
+                }
+                else if (fmtLength == 0x14) // ADPCM
+                {
+                    entry.cbSize = reader.ReadInt16();
+                    entry.NibblesPerBlock = reader.ReadInt16();
+                }
+                else
+                    reader.BaseStream.Position = 0x10 + fmtLength;
+
+                reader.BaseStream.Position += 4;
+                entry.dataSize = reader.ReadInt32();
+
+                entries.Add(entry);
+                finalData = soundData.Skip((int)reader.BaseStream.Position).ToArray();
+            }
 
             if (assetType == AssetType.Sound)
                 Entries_SND = entries.ToArray();
@@ -214,9 +251,9 @@ namespace IndustrialPark
                     0x14, 0, 0, 0
                 };
 
-            if (entry.wFormatTag == 0x0001)
+            if (entry.wFormatTag == XboxFormat.PCM)
             {
-                bytes.AddRange(BitConverter.GetBytes(entry.wFormatTag));
+                bytes.AddRange(BitConverter.GetBytes((short)entry.wFormatTag));
                 bytes.AddRange(BitConverter.GetBytes(entry.nChannels));
                 bytes.AddRange(BitConverter.GetBytes(entry.nSamplesPerSec));
                 bytes.AddRange(BitConverter.GetBytes(entry.nAvgBytesPerSec));
@@ -225,7 +262,7 @@ namespace IndustrialPark
                 bytes.AddRange(BitConverter.GetBytes(entry.cbSize));
                 bytes.AddRange(BitConverter.GetBytes(entry.NibblesPerBlock));
             }
-            else if (entry.wFormatTag == 0x0069 || entry.wFormatTag == 0x006A)
+            else if (entry.wFormatTag == XboxFormat.XboxADPCM || entry.wFormatTag == XboxFormat.Unknown_IncPC)
             {
                 bytes.AddRange(BitConverter.GetBytes((short)0x0011));
                 bytes.AddRange(BitConverter.GetBytes(entry.nChannels));
