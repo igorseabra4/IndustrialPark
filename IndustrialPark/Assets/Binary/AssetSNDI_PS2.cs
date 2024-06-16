@@ -136,7 +136,7 @@ namespace IndustrialPark
                 writer.Write(e.SoundHeader);
         }
 
-        private void OrderEntries()
+        public void OrderEntries()
         {
             Entries_SND = Entries_SND.OrderBy(i => i.SoundAssetID).ToArray();
             Entries_SNDS = Entries_SNDS.OrderBy(i => i.SoundAssetID).ToArray();
@@ -160,7 +160,6 @@ namespace IndustrialPark
                 Entries_SND = entries.ToArray();
             else
                 Entries_SNDS = entries.ToArray();
-            OrderEntries();
         }
 
         public void RemoveEntry(uint assetID, AssetType assetType)
@@ -262,7 +261,6 @@ namespace IndustrialPark
                         entriesSNDS.Add(entrySNDS);
                 Entries_SNDS = entriesSNDS.ToArray();
             }
-            OrderEntries();
         }
 
         public void Clean(IEnumerable<uint> assetIDs)

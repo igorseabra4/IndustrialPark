@@ -317,6 +317,8 @@ namespace IndustrialPark
             foreach (var asset in assetDictionary.Values)
             {
                 asset.SetGame(game);
+                if (asset is AssetSNDI_PS2 sndips2)
+                    sndips2.OrderEntries();
                 DICT.ATOC.AHDRList.Add(asset.BuildAHDR(platform.Endianness()));
             }
 
