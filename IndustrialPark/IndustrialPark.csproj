@@ -87,6 +87,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="Ps2IsoTools, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Ps2IsoTools.1.1.2\lib\netstandard2.0\Ps2IsoTools.dll</HintPath>
+    </Reference>
     <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
       <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
     </Reference>
@@ -466,6 +469,12 @@
     </Compile>
     <Compile Include="Links\Enums\EventTSSM.cs" />
     <Compile Include="Links\Link.cs" />
+    <Compile Include="MainForm\BuildISO.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm\BuildISO.Designer.cs">
+      <DependentUpon>BuildISO.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm\OpenLevel.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -692,11 +701,18 @@
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyScale.resx">
       <DependentUpon>ApplyScale.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="MainForm\BuildISO.resx">
+      <DependentUpon>BuildISO.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm\MainForm.en-GB.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\OpenLevel.resx">
       <DependentUpon>OpenLevel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="Research\AssetIDGenerator.resx">
       <DependentUpon>AssetIDGenerator.cs</DependentUpon>
@@ -710,6 +726,11 @@
     <EmbeddedResource Include="Research\EventSearch.resx">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Research\AssetIDGenerator.cs">
       <SubType>Form</SubType>
     </Compile>
