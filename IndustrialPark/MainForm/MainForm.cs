@@ -678,9 +678,9 @@ namespace IndustrialPark
             }
 
             if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.I))
+                && PressedKeys.Contains(Keys.O))
             {
-                importLevelToolStripMenuItem_Click(sender, e);
+                openLevelToolStripMenuItem_Click(sender, e);
             }
         }
 
@@ -1836,11 +1836,9 @@ namespace IndustrialPark
             }
         }
 
-        private void importLevelToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenLevel level = new OpenLevel();
-
-            level.Show();
+            new OpenLevel().Show();
         }
 
         private void closeAllEditorsToolStripMenuItem_Click(object sender, EventArgs e)
