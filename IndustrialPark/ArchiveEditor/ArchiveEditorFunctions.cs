@@ -217,7 +217,7 @@ namespace IndustrialPark
             if (assetsWithError.Any())
                 MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", assetsWithError), 
                     $"{assetsWithError.Count} Asset(s) with errors", 
-                    MessageBoxButtons.OK);
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             if (hipFile.HIPB != null && hipFile.HIPB.HasNoLayers != 0)
                 NoLayers = true;
