@@ -460,7 +460,7 @@
     <value>258, 22</value>
   </data>
   <data name="noCullingCToolStripMenuItem.Text" xml:space="preserve">
-    <value>No Culling (C)</value>
+    <value>Backface Culling (C)</value>
   </data>
   <data name="wireframeFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>258, 22</value>

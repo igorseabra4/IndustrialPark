@@ -591,7 +591,7 @@ namespace IndustrialPark
             else if (e.KeyCode == Keys.D3)
                 renderer.Camera.IncreaseCameraRotationSpeed(1);
             else if (e.KeyCode == Keys.C)
-                ToggleCulling();
+                ToggleBackfaceCulling();
             else if (e.KeyCode == Keys.F)
                 ToggleWireFrame();
             else if (e.KeyCode == Keys.H)
@@ -806,10 +806,10 @@ namespace IndustrialPark
 
         private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToggleCulling();
+            ToggleBackfaceCulling();
         }
 
-        public void ToggleCulling()
+        public void ToggleBackfaceCulling()
         {
             noCullingCToolStripMenuItem.Checked = !noCullingCToolStripMenuItem.Checked;
             renderer.device.SetNormalCullMode(noCullingCToolStripMenuItem.Checked ? CullMode.None : CullMode.Back);
