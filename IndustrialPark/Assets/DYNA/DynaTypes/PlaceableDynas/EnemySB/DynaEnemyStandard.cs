@@ -135,6 +135,8 @@ namespace IndustrialPark
                     break;
             }
             MovePoint = mvptAssetID;
+            // Walk on SIMPs and PLATs by default.
+            EnemyFlags.FlagValueByte = 8 | 4; 
         }
 
         public DynaEnemyStandard(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Standard, game, endianness)
