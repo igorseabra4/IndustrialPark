@@ -759,7 +759,7 @@ namespace IndustrialPark
         private System.Windows.Forms.Panel renderPanel;
         private ToolStripStatusLabel toolStripStatusLabel1;
         private ToolStripMenuItem optionsToolStripMenuItem;
-        private ToolStripMenuItem noCullingCToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem noCullingCToolStripMenuItem;
         private ToolStripMenuItem wireframeFToolStripMenuItem;
         private ToolStripMenuItem viewConfigToolStripMenuItem;
         private ToolStripMenuItem archiveEditorToolStripMenuItem;
