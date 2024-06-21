@@ -21,7 +21,7 @@ for the following platforms:
 
 The tool (whose namesake is one of the levels in Battle For Bikini Bottom) can create, open, display, extract data from, edit and save the HIP/HOP archive files used in the games and contains multiple functions to aid on custom level creation; it's essentially a very fancy GUI for the [HipHopFile library](https://github.com/igorseabra4/HipHopTool). It was used by video game developer [Purple Lamp Studios](https://www.purplelamp.com/) during the development of [Spongebob Squarepants: Battle For Bikini Bottom - Rehydrated](https://www.purplelamp.com/projects/spongebob-squarepants-rehydrated/) to aid on extracting data from the original game.
 
-# Installation
+## Installation
 > [!IMPORTANT]
 > Industrial Park is compatible with **Windows** only.
 
@@ -29,7 +29,7 @@ The tool (whose namesake is one of the levels in Battle For Bikini Bottom) can c
 2. Extract the .zip somewhere and launch IndustrialPark.exe.
 3. Drag .HIP or .HOP files into the window to open them, or go to `Archive Editor > Open Level` to open a level.
 
-# How to Use
+## How to Use
 Please see the project's [page on the Heavy Iron Modding wiki](https://heavyironmodding.org/wiki/Industrial_Park_(level_editor)) for additional information, including the links to the complete user guide/tutorials. It's highly recommended to read the [Essentials Series](https://heavyironmodding.org/wiki/Essentials_Series), which teaches the basics of how to create mods using Industrial Park.
 
 If you're stuck, feel free to join the [Heavy Iron Modding Discord server](https://discord.gg/9eAE6UB) and ask in the #help channel.
