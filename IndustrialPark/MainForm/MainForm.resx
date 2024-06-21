@@ -126,16 +126,16 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>185, 22</value>
   </data>
   <data name="newToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;New Editor</value>
   </data>
   <data name="importLevelToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+I</value>
+    <value>Ctrl+O</value>
   </data>
   <data name="importLevelToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>185, 22</value>
   </data>
   <data name="importLevelToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Open Level...</value>
@@ -151,13 +151,13 @@
     <value>False</value>
   </data>
   <data name="closeAllEditorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>185, 22</value>
   </data>
   <data name="closeAllEditorsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Close All Editors</value>
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>182, 6</value>
   </data>
   <data name="archiveEditorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>93, 19</value>
@@ -475,7 +475,7 @@
     <value>258, 22</value>
   </data>
   <data name="noCullingCToolStripMenuItem.Text" xml:space="preserve">
-    <value>No Culling (C)</value>
+    <value>Backface Culling (C)</value>
   </data>
   <data name="wireframeFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>258, 22</value>
