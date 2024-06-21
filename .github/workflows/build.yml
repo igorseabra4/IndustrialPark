@@ -20,7 +20,7 @@ jobs:
         uses: NuGet/setup-nuget@v2
 
       - name: Restore Packages
-        run: nuget restore MySolution.sln
+        run: nuget restore IndustrialPark.sln
 
       - name: Build solution
         run: msbuild IndustrialPark.sln -t:rebuild -property:Configuration=Release -property:platform="Any CPU"
