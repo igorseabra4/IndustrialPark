@@ -1,4 +1,6 @@
 # Industrial Park
+![Screenshots of the Industrial Park Editor](https://github.com/igorseabra4/IndustrialPark/assets/12785991/68db5600-e355-451e-8438-9e067033786e)
+
 Industrial Park is an archive viewer and editor for the following Heavy Iron Studios games:
 
 * Spongebob Squarepants: Battle For Bikini Bottom
