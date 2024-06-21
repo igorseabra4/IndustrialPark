@@ -1,8 +1,7 @@
 # Industrial Park
 ![GitHub Release](https://img.shields.io/github/v/release/IgorSeabra4/IndustrialPark)  ![GitHub Downloads (all assets, latest release)](https://img.shields.io/github/downloads/IgorSeabra4/IndustrialPark/latest/total) ![Discord](https://img.shields.io/discord/446321271635050506?logo=discord&logoColor=white) ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/IgorSeabra4/IndustrialPark/build.yml)
 
-
-![Screenshots of the Industrial Park Editor](https://github.com/igorseabra4/IndustrialPark/assets/12785991/68db5600-e355-451e-8438-9e067033786e)
+![Screenshots of the Industrial Park Editor](https://github.com/igorseabra4/IndustrialPark/assets/12785991/6c3e7981-b69b-4e56-b081-243d30a4cd54)
 
 **Industrial Park** is an archive viewer and editor for the following Heavy Iron Studios games:
 
