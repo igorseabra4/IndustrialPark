@@ -7,6 +7,8 @@
         public string LastProjectPath;
         public bool CheckForUpdatesOnStartup;
 
+        public string[] recentArchivePaths;
+
         public bool drawOnlyFirstMinf = false;
         public bool renderBasedOnLodt = false;
         public bool renderBasedOnPipt = true;
@@ -17,5 +19,8 @@
 
         public bool LegacyAssetIDFormat = false;
         public bool LegacyAssetTypeFormat = false;
+
+        public string pcsx2Path;
+        public string[] recentBuildIsoGamePaths;
     }
 }

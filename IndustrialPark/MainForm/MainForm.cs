@@ -158,6 +158,12 @@ namespace IndustrialPark
             discordRichPresenceToolStripMenuItem.Checked = settings.discordRichPresence;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
 
+            BuildISO.PCSX2Path = settings.pcsx2Path;
+            BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
+
+            foreach (string filepath in settings.recentArchivePaths)
+                SetRecentOpenedArchives(filepath);
+
             if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
             {
                 Close();
@@ -219,6 +225,9 @@ namespace IndustrialPark
                 persistentShinies = ArchiveEditorFunctions.persistentShinies,
                 LegacyAssetIDFormat = HexUIntTypeConverter.Legacy,
                 LegacyAssetTypeFormat = AssetTypeContainer.LegacyAssetNameFormat,
+                pcsx2Path = BuildISO.PCSX2Path,
+                recentBuildIsoGamePaths = BuildISO.recentGameDirPaths,
+                recentArchivePaths = openLastToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Text).ToArray(),
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -617,6 +626,8 @@ namespace IndustrialPark
                 saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
             else if (e.KeyCode == Keys.F5)
                 TryToRunGame();
+            else if (e.KeyCode == Keys.F6)
+                buildAndRunPS2ISOToolStripMenuItem_Click(sender, e);
 
             if (PressedKeys.Contains(Keys.S)
                 && PressedKeys.Contains(Keys.ControlKey)
@@ -773,13 +784,35 @@ namespace IndustrialPark
 
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
         {
-            archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 4].Text = newName;
+            archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 5].Text = newName;
+        }
+
+        public void SetRecentOpenedArchives(string filepath)
+        {
+            if (!openLastToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Any(x => x.Text == filepath))
+            {
+                ToolStripMenuItem item = new ToolStripMenuItem(filepath);
+                item.Click += (s, e) =>
+                {
+                    openLastToolStripMenuItem.DropDownItems.Remove(item);
+                    if (File.Exists(filepath))
+                    {
+                        openLastToolStripMenuItem.DropDownItems.Add(item);
+                        AddArchiveEditor(filepath);
+                    }
+                    else
+                        MessageBox.Show("File does not exist", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                };
+                openLastToolStripMenuItem.DropDownItems.Add(item);
+            }
+            while (openLastToolStripMenuItem.DropDownItems.Count > 15)
+                openLastToolStripMenuItem.DropDownItems.RemoveAt(0);
         }
 
         public void CloseArchiveEditor(ArchiveEditor sender)
         {
             int index = archiveEditors.IndexOf(sender);
-            archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 4);
+            archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 5);
             archiveEditors.RemoveAt(index);
         }
 
@@ -909,6 +942,7 @@ namespace IndustrialPark
                 "F1: displays the View Config box\n" +
                 "Ctrl + Shift + S or F4: save all open Archive Editors\n" +
                 "F5: attempt to run game\n" +
+                "F6: open Build/Run PS2 ISO\n" +
                 "Delete: delete selected assets\n" +
                 "Ctrl + Shift + H: closes all windows which are not Archive Editors\n" +
                 "Ctrl + 1 to 9: Open the corresponding Archive Editor window\n" +
@@ -1875,6 +1909,13 @@ namespace IndustrialPark
         {
             showVertexColorsToolStripMenuItem.Checked = !showVertexColorsToolStripMenuItem.Checked;
             renderer.ToggleVertexColors(showVertexColorsToolStripMenuItem.Checked);
+        }
+
+        private void buildAndRunPS2ISOToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.BuildISO == null)
+                Program.BuildISO = new BuildISO();
+            Program.BuildISO.Show();
         }
     }
 }
