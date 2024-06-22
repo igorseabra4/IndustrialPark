@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+    
+jobs:
+  build:
+    runs-on: windows-2019
+    
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+        
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Setup NuGet
+        uses: NuGet/setup-nuget@v2
+
+      - name: Restore Packages
+        run: nuget restore IndustrialPark.sln
+
+      - name: Build solution
+        run: msbuild IndustrialPark.sln -t:rebuild -property:Configuration=Release -property:platform="Any CPU"
