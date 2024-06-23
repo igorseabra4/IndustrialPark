@@ -1,14 +1,16 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.IO;
+using System.Linq;
 
 namespace IndustrialPark
 {
     public class FSB3_SampleHeader : GenericAssetDataContainer
     {
-        public string Name { get; set; }
-        [Browsable(false)]
+        public string SampleName { get; set; }
+        [ReadOnly(true)]
         public int LengthSamples { get; set; }
-        [Browsable(false)]
+        [ReadOnly(true)]
         public int LengthCompressedBytes { get; set; }
         public uint LoopStart { get; set; }
         public uint LoopEnd { get; set; }
@@ -59,10 +61,54 @@ namespace IndustrialPark
         public int VariableFrequency { get; set; }
         public ushort VariableVolume { get; set; }
         public short VariablePan { get; set; }
+        public FMOD_GcADPCMInfo[] GCADPCM { get; set; }
+
+        private uint _assetid;
+        [ValidReferenceRequired]
+        public AssetID Sound { get => _assetid; set => _assetid = value; }
+        public byte uFlags;
+        public byte uAudioSampleIndex;
+        public byte uFSBIndex;
+        public byte uSoundInfoIndex;
+        public byte[] Data { get; set; }
+        public bool Looped
+        {
+            get => (uFlags & 1) != 0;
+            set
+            {
+                if (value)
+                {
+                    uFlags |= 1;
+                    SampleHeaderMode.FlagValueInt &= 0xFFFFFFFE;
+                }
+                else
+                {
+                    uFlags &= 254;
+                    SampleHeaderMode.FlagValueInt |= 1;
+                }
+            }
+        }
+
+        [Browsable(false)]
+        public bool StreamedSound
+        {
+            get => (uFlags & 2) != 0;
+            set
+            {
+                if (value)
+                {
+                    uFlags |= 2;
+                }
+                else
+                {
+                    uFlags = (byte)(uFlags & 253);
+                }
+            }
+        }
 
         public FSB3_SampleHeader()
         {
-            Name = "empty";
+            SampleName = "empty";
             SampleHeaderMode.FlagValueInt = 33558561;
             Frequency = 32000;
             Volume = 255;
@@ -71,12 +117,13 @@ namespace IndustrialPark
             NumChannels = 1;
             MinDistance = 1f;
             MaxDistance = 1000000f;
+            GCADPCM = new FMOD_GcADPCMInfo[0];
         }
 
         public FSB3_SampleHeader(BinaryReader reader)
         {
             reader.ReadUInt16();
-            Name = new string(reader.ReadChars(30));
+            SampleName = new string(reader.ReadChars(30));
             LengthSamples = reader.ReadInt32();
             LengthCompressedBytes = reader.ReadInt32();
             LoopStart = reader.ReadUInt32();
@@ -92,12 +139,28 @@ namespace IndustrialPark
             VariableFrequency = reader.ReadInt32();
             VariableVolume = reader.ReadUInt16();
             VariablePan = reader.ReadInt16();
+
+            if ((SampleHeaderMode.FlagValueInt & 0x02000000) != 0)
+            {
+                GCADPCM = new FMOD_GcADPCMInfo[NumChannels];
+                for (int i = 0; i < NumChannels; i++)
+                    GCADPCM[i] = new FMOD_GcADPCMInfo(reader);
+            }
+        }
+
+        public void SetEntryData(uint assetID, byte uFlags, byte uAudioSampleIndex, byte uFSBIndex, byte uSoundInfoIndex)
+        {
+            _assetid = assetID;
+            this.uFlags = uFlags;
+            this.uAudioSampleIndex = uAudioSampleIndex;
+            this.uFSBIndex = uFSBIndex;
+            this.uSoundInfoIndex = uSoundInfoIndex;
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write((ushort)(0x50 + NumChannels * 0x2E));
-            writer.WritePaddedString(Name, 30);
+            writer.Write((ushort)(0x50 + (GCADPCM is null ? 0 : NumChannels * 0x2E)));
+            writer.WritePaddedString(SampleName, 30);
             writer.Write(LengthSamples);
             writer.Write(LengthCompressedBytes);
             writer.Write(LoopStart);
@@ -113,13 +176,25 @@ namespace IndustrialPark
             writer.Write(VariableFrequency);
             writer.Write(VariableVolume);
             writer.Write(VariablePan);
+
+            GCADPCM?.ToList().ForEach(a => a.Serialize(writer));
+
+        }
+
+        public void SerializeWavInfo(EndianBinaryWriter writer)
+        {
+            writer.Write(Sound);
+            writer.Write(uFlags);
+            writer.Write(uAudioSampleIndex);
+            writer.Write(uFSBIndex);
+            writer.Write(uSoundInfoIndex);
         }
 
         public FSB3_SampleHeader Clone()
         {
             var result = new FSB3_SampleHeader
             {
-                Name = Name,
+                SampleName = SampleName,
                 LengthSamples = LengthSamples,
                 LengthCompressedBytes = LengthCompressedBytes,
                 LoopStart = LoopStart,
@@ -133,11 +208,23 @@ namespace IndustrialPark
                 MaxDistance = MaxDistance,
                 VariableFrequency = VariableFrequency,
                 VariableVolume = VariableVolume,
-                VariablePan = VariablePan
+                VariablePan = VariablePan,
+                GCADPCM = GCADPCM,
+                uFlags = uFlags,
+                uAudioSampleIndex = uAudioSampleIndex,
+                uFSBIndex = uFSBIndex,
+                uSoundInfoIndex = uSoundInfoIndex,
+                _assetid = _assetid,
+                Data = Data,
             };
             result.SampleHeaderMode.FlagValueInt = SampleHeaderMode.FlagValueInt;
 
             return result;
+        }
+
+        public override string ToString()
+        {
+            return HexUIntTypeConverter.StringFromAssetID(Sound);
         }
     }
 }

@@ -33,7 +33,7 @@ namespace IndustrialPark
             TotalHeadersSize = 0;
             TotalDataSize = 0;
             Version = 196609;
-            Mode.FlagValueInt = 2;
+            Mode.FlagValueInt = 0;
         }
 
         public FSB3_Header(BinaryReader reader)
@@ -47,6 +47,10 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
+            writer.Write((byte)'F');
+            writer.Write((byte)'S');
+            writer.Write((byte)'B');
+            writer.Write((byte)'3');
             writer.Write(NumSamples);
             writer.Write(TotalHeadersSize);
             writer.Write(TotalDataSize);

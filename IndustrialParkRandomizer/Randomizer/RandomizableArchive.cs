@@ -1980,10 +1980,10 @@ namespace IndustrialPark.Randomizer
             List<uint> assetIDs = new List<uint>();
 
             if (sndi.Entry_Sounds != null)
-                foreach (var u in sndi.Entry_Sounds.SoundEntries)
+                foreach (var u in sndi.Entry_Sounds.SampleHeader)
                     assetIDs.Add(u.Sound);
 
-            foreach (var u in sndi.Entry_Sounds.SoundEntries)
+            foreach (var u in sndi.Entry_Sounds.SampleHeader)
             {
                 int index = random.Next(0, assetIDs.Count);
                 u.Sound = assetIDs[index];
@@ -1993,11 +1993,11 @@ namespace IndustrialPark.Randomizer
             assetIDs.Clear();
 
             foreach (var v in sndi.Entries_StreamingSounds)
-                foreach (var u in v.SoundEntries)
+                foreach (var u in v.SampleHeader)
                     assetIDs.Add(u.Sound);
 
             foreach (var v in sndi.Entries_StreamingSounds)
-                foreach (var u in v.SoundEntries)
+                foreach (var u in v.SampleHeader)
                 {
                     int index = random.Next(0, assetIDs.Count);
                     u.Sound = assetIDs[index];

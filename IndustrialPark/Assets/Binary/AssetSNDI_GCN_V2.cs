@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public class AssetSNDI_GCN_V2 : Asset
     {
-        public override string AssetInfo => $"GameCube {game}, {(Entry_Sounds == null ? 0 : Entry_Sounds.SoundEntries.Length) + Entries_StreamingSounds.Length} entries";
+        public override string AssetInfo => $"GameCube {game}, {(Entry_Sounds == null ? 0 : Entry_Sounds.SampleHeader.Length) + Entries_StreamingSounds.Length} entries";
 
         private const string categoryName = "Sound Info";
 
@@ -65,17 +65,17 @@ namespace IndustrialPark
                     var uAudioSampleIndex = reader.ReadByte();
                     var uFSBIndex = reader.ReadByte();
                     var uSoundInfoIndex = reader.ReadByte();
-                    entries[uFSBIndex].SoundEntries[uAudioSampleIndex].SetEntryData(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+                    entries[uFSBIndex].SampleHeader[uAudioSampleIndex].SetEntryData(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
                 }
 
-                if (entries.Count == 0 || (entries.Count == 1 && entries[0].SoundEntries.Length == 0))
+                if (entries.Count == 0 || (entries.Count == 1 && entries[0].SampleHeader.Length == 0))
                 {
                     Entry_Sounds = null;
                     Entries_StreamingSounds = new FSB3_File[0];
                 }
                 else if (entries.Count == 1)
                 {
-                    if (entries[0].SoundEntries[0].StreamedSound)
+                    if (entries[0].SampleHeader[0].StreamedSound)
                     {
                         Entry_Sounds = null;
                         Entries_StreamingSounds = entries.ToArray();
@@ -101,7 +101,7 @@ namespace IndustrialPark
         public List<FSB3_File> GetAllEntries()
         {
             var result = new List<FSB3_File>();
-            if (Entry_Sounds != null && Entry_Sounds.SoundEntries.Length > 0)
+            if (Entry_Sounds != null && Entry_Sounds.SampleHeader.Length > 0)
                 result.Add(Entry_Sounds);
             result.AddRange(Entries_StreamingSounds);
             return result;
@@ -111,10 +111,11 @@ namespace IndustrialPark
         {
             var Entries = GetAllEntries();
 
+            List<int> offsets = new List<int>();
             writer.BaseStream.Position = 0x20;
             for (int i = 0; i < Entries.Count; i++)
             {
-                Entries[i].offset = (int)(writer.BaseStream.Position - 0x20);
+                offsets.Add((int)writer.BaseStream.Position - 0x20);
                 Entries[i].Serialize(writer);
 
                 if (Entries[i].UnknownBytes == null)
@@ -125,29 +126,29 @@ namespace IndustrialPark
             }
 
             int footerOffset = (int)(writer.BaseStream.Position - 0x20);
-            List<GcWavInfo> gcWavInfos = new List<GcWavInfo>();
+            List<FSB3_SampleHeader> gcWavInfos = new List<FSB3_SampleHeader>();
 
             for (int i = 0; i < Entries.Count; i++)
             {
-                writer.Write(Entries[i].offset);
+                writer.Write(offsets[i]);
                 for (int j = 0; j < Entries[i].Header.NumSamples; j++)
                 {
-                    Entries[i].SoundEntries[j].uAudioSampleIndex = (byte)j;
-                    Entries[i].SoundEntries[j].uFSBIndex = (byte)i;
-                    gcWavInfos.Add(Entries[i].SoundEntries[j]);
+                    Entries[i].SampleHeader[j].uAudioSampleIndex = (byte)j;
+                    Entries[i].SampleHeader[j].uFSBIndex = (byte)i;
+                    gcWavInfos.Add(Entries[i].SampleHeader[j]);
                 }
             }
 
-            gcWavInfos = gcWavInfos.OrderBy(f => f._assetID).ToList();
-            foreach (GcWavInfo entry in gcWavInfos)
-                entry.Serialize(writer);
+            gcWavInfos = gcWavInfos.OrderBy(f => f.Sound).ToList();
+            foreach (FSB3_SampleHeader entry in gcWavInfos)
+                entry.SerializeWavInfo(writer);
 
             foreach (var entry in Entries_Sound_CIN)
                 entry.Serialize(writer);
 
-            ushort nWavFiles = (ushort)Entries.Sum(e => e.SoundEntries.Length);
-            ushort nSounds = (ushort)Entries.Sum(e => e.SoundEntries.Count(se => !se.StreamedSound));
-            ushort nStreams = (ushort)Entries.Sum(e => e.SoundEntries.Count(se => se.StreamedSound));
+            ushort nWavFiles = (ushort)Entries.Sum(e => e.SampleHeader.Length);
+            ushort nSounds = (ushort)Entries.Sum(e => e.SampleHeader.Count(se => !se.StreamedSound));
+            ushort nStreams = (ushort)Entries.Sum(e => e.SampleHeader.Count(se => se.StreamedSound));
 
             writer.BaseStream.Position = 0;
             writer.Write(assetID);
@@ -163,11 +164,39 @@ namespace IndustrialPark
         public byte[] GetHeader(uint assetID)
         {
             foreach (FSB3_File f in GetAllEntries())
-                foreach (var se in f.SoundEntries)
-                    if (se.Sound == assetID)
-                        return new GcnV2SoundWrapper(f.Header, f.SampleHeader, se).Serialize();
+                for (int i = 0; i < f.SampleHeader.Length; i++)
+                    if (f.SampleHeader[i].Sound == assetID)
+                        return new GcnV2SoundWrapper(f.Header, f.SampleHeader[i]).Serialize();
 
             throw new Exception($"Error: SNDI asset does not contain sound header for asset [{assetID:X8}]");
+        }
+
+        public FSB3_SampleHeader GetEntry(uint assetID)
+        {
+            FSB3_SampleHeader entry = null;
+            foreach (FSB3_File fsb3 in GetAllEntries())
+                foreach (FSB3_SampleHeader header in fsb3.SampleHeader)
+                    if (header.Sound == assetID)
+                        entry = header;
+
+            if (entry == null)
+                throw new Exception($"Error: Sound Info asset does not contain sound header for asset [{assetID:X8}]");
+            return entry;
+        }
+
+        public void SetEntry(FSB3_SampleHeader entry)
+        {
+            foreach (FSB3_File fsb3 in GetAllEntries())
+            {
+                List<FSB3_SampleHeader> entries = fsb3.SampleHeader.ToList();
+                for (int i = 0; i < entries.Count; i++)
+                    if (entries[i].Sound == entry.Sound)
+                    {
+                        entries[i] = entry;
+                        fsb3.SampleHeader = entries.ToArray();
+                        return;
+                    }
+            }
         }
 
         public void AddEntry(byte[] soundData, uint assetID, AssetType assetType)
@@ -175,18 +204,19 @@ namespace IndustrialPark
             RemoveEntry(assetID);
 
             var temp = new GcnV2SoundWrapper(soundData, assetType);
-            temp.SoundEntry.Sound = assetID;
+            temp.SampleHeader.Sound = assetID;
 
             if (assetType == AssetType.Sound)
             {
-                temp.SoundEntry.StreamedSound = false;
+                temp.SampleHeader.StreamedSound = false;
                 if (Entry_Sounds == null)
                     Entry_Sounds = new FSB3_File();
-                Entry_Sounds.Merge(new GcWavInfo[] { temp.SoundEntry });
+                Entry_Sounds.Header.Mode.FlagValueInt &= 253;
+                Entry_Sounds.Merge(new FSB3_SampleHeader[] { temp.SampleHeader});
             }
             else
             {
-                temp.SoundEntry.StreamedSound = true;
+                temp.SampleHeader.StreamedSound = true;
                 List<FSB3_File> newEntries = Entries_StreamingSounds.ToList();
                 newEntries.Add(temp.ToFSB3());
                 Entries_StreamingSounds = newEntries.ToArray();
@@ -195,16 +225,16 @@ namespace IndustrialPark
 
         public void Merge(AssetSNDI_GCN_V2 assetSNDI)
         {
-            if (assetSNDI.Entry_Sounds != null && assetSNDI.Entry_Sounds.SoundEntries.Length > 0)
+            if (assetSNDI.Entry_Sounds != null && assetSNDI.Entry_Sounds.SampleHeader.Length > 0)
             {
                 if (Entry_Sounds == null)
                     Entry_Sounds = assetSNDI.Entry_Sounds;
                 else
-                    Entry_Sounds.Merge(assetSNDI.Entry_Sounds.SoundEntries);
+                    Entry_Sounds.Merge(assetSNDI.Entry_Sounds.SampleHeader);
             }
 
             List<FSB3_File> newEntries = Entries_StreamingSounds.ToList();
-            newEntries.RemoveAll(entry => assetSNDI.Entries_StreamingSounds.Select(es => es.SoundEntries[0]._assetID).Contains(entry.SoundEntries[0]._assetID));
+            newEntries.RemoveAll(entry => assetSNDI.Entries_StreamingSounds.Select(es => es.SampleHeader[0].Sound).Contains(entry.SampleHeader[0].Sound));
             newEntries.AddRange(assetSNDI.Entries_StreamingSounds);
             Entries_StreamingSounds = newEntries.ToArray();
         }
@@ -213,13 +243,13 @@ namespace IndustrialPark
         {
             if (Entry_Sounds != null)
             {
-                List<GcWavInfo> list = Entry_Sounds.SoundEntries.ToList();
-                list.RemoveAll(entry => entry._assetID == assetID);
-                Entry_Sounds.SoundEntries = list.ToArray();
+                List<FSB3_SampleHeader> list = Entry_Sounds.SampleHeader.ToList();
+                list.RemoveAll(entry => entry.Sound == assetID);
+                Entry_Sounds.SampleHeader = list.ToArray();
             }
 
             List<FSB3_File> newEntries = Entries_StreamingSounds.ToList();
-            newEntries.RemoveAll(entry => entry.SoundEntries[0]._assetID == assetID);
+            newEntries.RemoveAll(entry => entry.SampleHeader[0].Sound == assetID);
             Entries_StreamingSounds = newEntries.ToArray();
         }
     }

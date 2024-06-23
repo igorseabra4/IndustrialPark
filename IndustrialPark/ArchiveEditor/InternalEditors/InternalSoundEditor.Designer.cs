@@ -39,11 +39,11 @@
             this.buttonImportSound = new System.Windows.Forms.Button();
             this.buttonGenerateJawData = new System.Windows.Forms.Button();
             this.groupBoxImport = new System.Windows.Forms.GroupBox();
-            this.xboxCompressCheckBox = new System.Windows.Forms.CheckBox();
+            this.compressCheckBox = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.samplerateNumeric = new System.Windows.Forms.NumericUpDown();
             this.forceSampleRateCheckbox = new System.Windows.Forms.CheckBox();
-            this.xboxForceMono = new System.Windows.Forms.CheckBox();
+            this.forceMonoCheckBox = new System.Windows.Forms.CheckBox();
             this.checkBoxPS2Looping = new System.Windows.Forms.CheckBox();
             this.groupBoxJaw = new System.Windows.Forms.GroupBox();
             this.numericUpDownJawMultiplier = new System.Windows.Forms.NumericUpDown();
@@ -53,6 +53,7 @@
             this.buttonStop = new System.Windows.Forms.Button();
             this.groupBoxPlayer = new System.Windows.Forms.GroupBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.importSoundStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.soundLengthLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.soundSizeLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.groupBoxImport.SuspendLayout();
@@ -78,7 +79,7 @@
             // buttonHelp
             // 
             this.buttonHelp.AutoSize = true;
-            this.buttonHelp.Location = new System.Drawing.Point(12, 497);
+            this.buttonHelp.Location = new System.Drawing.Point(18, 497);
             this.buttonHelp.Name = "buttonHelp";
             this.buttonHelp.Size = new System.Drawing.Size(145, 23);
             this.buttonHelp.TabIndex = 17;
@@ -89,7 +90,7 @@
             // buttonFindCallers
             // 
             this.buttonFindCallers.AutoSize = true;
-            this.buttonFindCallers.Location = new System.Drawing.Point(175, 497);
+            this.buttonFindCallers.Location = new System.Drawing.Point(181, 497);
             this.buttonFindCallers.Name = "buttonFindCallers";
             this.buttonFindCallers.Size = new System.Drawing.Size(145, 23);
             this.buttonFindCallers.TabIndex = 11;
@@ -172,9 +173,9 @@
             // 
             // groupBoxImport
             // 
-            this.groupBoxImport.Controls.Add(this.xboxCompressCheckBox);
+            this.groupBoxImport.Controls.Add(this.compressCheckBox);
             this.groupBoxImport.Controls.Add(this.groupBox1);
-            this.groupBoxImport.Controls.Add(this.xboxForceMono);
+            this.groupBoxImport.Controls.Add(this.forceMonoCheckBox);
             this.groupBoxImport.Controls.Add(this.checkBoxPS2Looping);
             this.groupBoxImport.Controls.Add(this.buttonImportRaw);
             this.groupBoxImport.Controls.Add(this.buttonImportSound);
@@ -186,17 +187,18 @@
             this.groupBoxImport.TabStop = false;
             this.groupBoxImport.Text = "Import";
             // 
-            // xboxCompressCheckBox
+            // compressCheckBox
             // 
-            this.xboxCompressCheckBox.AutoSize = true;
-            this.xboxCompressCheckBox.Checked = true;
-            this.xboxCompressCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.xboxCompressCheckBox.Location = new System.Drawing.Point(6, 68);
-            this.xboxCompressCheckBox.Name = "xboxCompressCheckBox";
-            this.xboxCompressCheckBox.Size = new System.Drawing.Size(102, 17);
-            this.xboxCompressCheckBox.TabIndex = 30;
-            this.xboxCompressCheckBox.Text = "Xbox: Compress";
-            this.xboxCompressCheckBox.UseVisualStyleBackColor = true;
+            this.compressCheckBox.AutoSize = true;
+            this.compressCheckBox.Checked = true;
+            this.compressCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.compressCheckBox.Enabled = false;
+            this.compressCheckBox.Location = new System.Drawing.Point(6, 68);
+            this.compressCheckBox.Name = "compressCheckBox";
+            this.compressCheckBox.Size = new System.Drawing.Size(72, 17);
+            this.compressCheckBox.TabIndex = 30;
+            this.compressCheckBox.Text = "Compress";
+            this.compressCheckBox.UseVisualStyleBackColor = true;
             // 
             // groupBox1
             // 
@@ -239,16 +241,16 @@
             this.forceSampleRateCheckbox.UseVisualStyleBackColor = true;
             this.forceSampleRateCheckbox.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
-            // xboxForceMono
+            // forceMonoCheckBox
             // 
-            this.xboxForceMono.AutoSize = true;
-            this.xboxForceMono.Enabled = false;
-            this.xboxForceMono.Location = new System.Drawing.Point(6, 44);
-            this.xboxForceMono.Name = "xboxForceMono";
-            this.xboxForceMono.Size = new System.Drawing.Size(82, 17);
-            this.xboxForceMono.TabIndex = 22;
-            this.xboxForceMono.Text = "Force mono\r\n";
-            this.xboxForceMono.UseVisualStyleBackColor = true;
+            this.forceMonoCheckBox.AutoSize = true;
+            this.forceMonoCheckBox.Enabled = false;
+            this.forceMonoCheckBox.Location = new System.Drawing.Point(6, 44);
+            this.forceMonoCheckBox.Name = "forceMonoCheckBox";
+            this.forceMonoCheckBox.Size = new System.Drawing.Size(82, 17);
+            this.forceMonoCheckBox.TabIndex = 22;
+            this.forceMonoCheckBox.Text = "Force mono\r\n";
+            this.forceMonoCheckBox.UseVisualStyleBackColor = true;
             // 
             // checkBoxPS2Looping
             // 
@@ -349,18 +351,26 @@
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.importSoundStatusLabel,
             this.soundLengthLabel,
             this.soundSizeLabel});
             this.statusStrip1.Location = new System.Drawing.Point(0, 526);
             this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.ShowItemToolTips = true;
             this.statusStrip1.Size = new System.Drawing.Size(344, 22);
             this.statusStrip1.TabIndex = 39;
             this.statusStrip1.Text = "statusStrip1";
+            // 
+            // importSoundStatusLabel
+            // 
+            this.importSoundStatusLabel.Name = "importSoundStatusLabel";
+            this.importSoundStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
             // soundLengthLabel
             // 
             this.soundLengthLabel.Name = "soundLengthLabel";
             this.soundLengthLabel.Size = new System.Drawing.Size(0, 17);
+            this.soundLengthLabel.ToolTipText = "MM:SS.MS";
             // 
             // soundSizeLabel
             // 
@@ -422,14 +432,15 @@
         private System.Windows.Forms.Button buttonExport;
         private System.Windows.Forms.CheckBox checkBoxPS2Looping;
         private System.Windows.Forms.Button buttonStop;
-        private System.Windows.Forms.CheckBox xboxForceMono;
+        private System.Windows.Forms.CheckBox forceMonoCheckBox;
         private System.Windows.Forms.GroupBox groupBoxPlayer;
         private System.Windows.Forms.NumericUpDown samplerateNumeric;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.CheckBox forceSampleRateCheckbox;
-        private System.Windows.Forms.CheckBox xboxCompressCheckBox;
+        private System.Windows.Forms.CheckBox compressCheckBox;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel soundLengthLabel;
         private System.Windows.Forms.ToolStripStatusLabel soundSizeLabel;
+        private System.Windows.Forms.ToolStripStatusLabel importSoundStatusLabel;
     }
 }

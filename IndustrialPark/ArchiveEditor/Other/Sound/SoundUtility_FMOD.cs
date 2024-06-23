@@ -10,7 +10,7 @@ namespace IndustrialPark
     {
         private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
 
-        public static byte[] ConvertSoundToFSB3(string fileName, int frequency, bool forcemono)
+        public static byte[] ConvertSoundToFSB3(string fileName, int frequency, bool forcemono, bool compress)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace IndustrialPark
 
                 File.WriteAllText(fsbankTextPath, ffmpegOutPath);
 
-                ConvertFSBank(fsbankTextPath, fsbankOutPath);
+                ConvertFSBank(fsbankTextPath, fsbankOutPath, compress);
 
                 var file = File.ReadAllBytes(fsbankOutPath);
 
@@ -88,9 +88,9 @@ namespace IndustrialPark
             return true;
         }
 
-        private static void ConvertFSBank(string inPath, string outPath)
+        private static void ConvertFSBank(string inPath, string outPath, bool compress)
         {
-            fsbankProcess.StartInfo.Arguments = $"-o \"{outPath}\" \"{inPath}\" -p gc -f gcadpcm -h";
+            fsbankProcess.StartInfo.Arguments = $"-o \"{outPath}\" \"{inPath}\" -p gc -f {(compress ? "gcadpcm" : "pcm")} -h";
             fsbankProcess.Start();
             fsbankProcess.WaitForExit();
         }
