@@ -20,14 +20,12 @@ namespace IndustrialPark
 
             RefreshPropertyGrid();
 
-            if (archive.platform != Platform.Xbox)
-                xboxCompressCheckBox.Enabled = false;
+            if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles && asset.assetType == AssetType.SoundStream))
+                compressCheckBox.Enabled = true;
             if (archive.platform != Platform.PS2)
                 checkBoxPS2Looping.Enabled = false;
-            if (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles && asset.assetType == AssetType.Sound)
-                forceSampleRateCheckbox.Enabled = false;
             if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles))
-                xboxForceMono.Enabled = true;
+                forceMonoCheckBox.Enabled = true;
         }
 
         public void RefreshPropertyGrid()
@@ -59,6 +57,15 @@ namespace IndustrialPark
                         CalculateSoundLength(entry);
                         return;
                     }
+                    if (sndi is AssetSNDI_GCN_V2 gcn2)
+                    {
+                        var entry = gcn2.GetEntry(asset.assetID);
+                        soundSizeLabel.Text = ArchiveEditor.ConvertSize(entry.LengthCompressedBytes);
+                        propertyGridSoundData.SelectedObject = entry.Clone();
+                        CalculateSoundLength(entry);
+                        return;
+
+                    }
                 }
             }
             catch (Exception e)
@@ -89,6 +96,11 @@ namespace IndustrialPark
                 else if (sndi is AssetSNDI_GCN_V1 gcn1)
                 {
                     gcn1.SetEntry(((SoundInfoGcn1Wrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
+                    archive.UnsavedChanges = true;
+                }
+                else if (sndi is AssetSNDI_GCN_V2 gcn2)
+                {
+                    gcn2.SetEntry((FSB3_SampleHeader)propertyGridSoundData.SelectedObject);
                     archive.UnsavedChanges = true;
                 }
             }
@@ -227,14 +239,16 @@ namespace IndustrialPark
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
+                importSoundStatusLabel.Text = "Import in progress...";
+                soundLengthLabel.Visible = false;
+                soundSizeLabel.Visible = false;
                 Enabled = false;
 
                 byte[] data = archive.CreateSoundFile(
-                    asset.assetType, 
                     openFileDialog.FileName, 
                     checkBoxPS2Looping.Checked,
-                    xboxCompressCheckBox.Checked,
-                    xboxForceMono.Checked,
+                    compressCheckBox.Checked,
+                    forceMonoCheckBox.Checked,
                     (int)samplerateNumeric.Value);
 
                 if (data != null)
@@ -246,9 +260,9 @@ namespace IndustrialPark
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(ex.Message);
+                        MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-
+                        
                     archive.UnsavedChanges = true;
                     updateListView(asset);
                     SoundUtility_vgmstream.ClearSound();
@@ -256,6 +270,9 @@ namespace IndustrialPark
 
                 Enabled = true;
                 RefreshPropertyGrid();
+                importSoundStatusLabel.Text = "";
+                soundLengthLabel.Visible = true;
+                soundSizeLabel.Visible = true;
             }
         }
 
@@ -279,23 +296,30 @@ namespace IndustrialPark
             samplerateNumeric.Enabled = forceSampleRateCheckbox.Checked;
         }
 
-        private string SoundLengthLabelText = "Length: {0:00}:{1:00}";
         private void CalculateSoundLength(EntrySoundInfo_XBOX entry)
         {
-            int duration = entry.dataSize / entry.nAvgBytesPerSec;
-            soundLengthLabel.Text = string.Format(SoundLengthLabelText, duration / 60, duration % 60);
+            SetSoundLengthLabel((float)entry.dataSize / entry.nAvgBytesPerSec);
         }
-
         private void CalculateSoundLength(EntrySoundInfo_PS2 entry)
         {
-            uint duration = ((entry.DataSize / 0x10) * 28) / entry.SampleRate;
-            soundLengthLabel.Text = string.Format(SoundLengthLabelText, duration / 60, duration % 60);
+            SetSoundLengthLabel((float)((entry.DataSize / 0x10) * 28) / entry.SampleRate);
         }
 
         private void CalculateSoundLength(EntrySoundInfo_GCN_V1 entry)
         {
-            uint duration = entry.num_samples / entry.sample_rate;
-            soundLengthLabel.Text = string.Format(SoundLengthLabelText, duration / 60, duration % 60);
+            SetSoundLengthLabel((float)entry.num_samples / entry.sample_rate);
         }
+
+        private void CalculateSoundLength(FSB3_SampleHeader entry)
+        {
+            SetSoundLengthLabel((float)entry.LengthSamples / entry.Frequency);
+        }
+
+        private void SetSoundLengthLabel(float duration)
+        {
+            TimeSpan ts = TimeSpan.FromSeconds(duration);
+            soundLengthLabel.Text = $"Length: {ts:mm\\:ss\\.fff}";
+        }
+
     }
 }

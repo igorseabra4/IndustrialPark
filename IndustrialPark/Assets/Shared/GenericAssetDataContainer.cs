@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using DiscordRPC;
+using HipHopFile;
 using Newtonsoft.Json;
 using SharpDX;
 using System.Collections;
@@ -21,16 +22,34 @@ namespace IndustrialPark
         {
             _game = game;
 
-            var typeProperties = GetType().GetProperties();
+            var properties = GetType().GetProperties();
 
-            foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
-                if (gadc != null)
-                    gadc.SetGame(game);
+            foreach (var prop in properties)
+            {
+                var propValue = prop.GetValue(this);
 
-            foreach (var gadcs in typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) && typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).Select(prop => (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)))
-                foreach (var gadc in gadcs)
-                    if (gadc != null)
-                        gadc.SetGame(game);
+                if (propValue == null)
+                    continue;
+
+                if (typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType))
+                    ((GenericAssetDataContainer)propValue).SetGame(game);
+                else if (prop.PropertyType.GetInterfaces().Any(i =>
+                    i.IsGenericType &&
+                    i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) &&
+                    typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0])))
+                {
+                    var gadcs = (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this);
+                    if (gadcs != null)
+                    {
+                        foreach (var gadc in gadcs)
+                        {
+                            if (gadc != null)
+                                gadc.SetGame(game);
+                        }
+                    }
+                }
+                
+            }
         }
 
         public abstract void Serialize(EndianBinaryWriter writer);

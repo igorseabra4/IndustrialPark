@@ -128,24 +128,14 @@ namespace IndustrialPark
             return file.ToArray();
         }
 
-        public int GetDefaultSampleRate()
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_GCN_V2 SNDI_G2)
-                    if (SNDI_G2.Entry_Sounds != null)
-                        return SNDI_G2.Entry_Sounds.SampleHeader.Frequency;
-
-            return 32000;
-        }
-
-        public byte[] CreateSoundFile(AssetType assetType, string fileName, bool ps2Looping = false, bool xboxcompress = true, bool forcemono = false, int samplerate = 0)
+        public byte[] CreateSoundFile(string fileName, bool ps2Looping = false, bool compress = true, bool forcemono = false, int samplerate = 0)
         {
             if (platform == Platform.Xbox)
-                return SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(fileName, xboxcompress, forcemono, samplerate);
+                return SoundUtility_XboxADPCM.ConvertSoundToXboxADPCM(fileName, compress, forcemono, samplerate);
             if (platform == Platform.PS2)
                 return SoundUtility_PS2VAG.ConvertSoundToPS2VAG(fileName, ps2Looping, samplerate);
             if (platform == Platform.GameCube && game >= Game.Incredibles)
-                return SoundUtility_FMOD.ConvertSoundToFSB3(fileName, assetType == AssetType.Sound ? GetDefaultSampleRate() : samplerate, assetType == AssetType.Sound ? true : forcemono);
+                return SoundUtility_FMOD.ConvertSoundToFSB3(fileName, samplerate, forcemono, compress);
             if (platform == Platform.GameCube)
                 return SoundUtility_DSP.ConvertSoundToDSP(fileName, samplerate);
 
@@ -156,6 +146,7 @@ namespace IndustrialPark
         public void ImportSounds(bool raw, string[] fileNames, AssetType assetType, bool forceOverwrite, out List<uint> assetIDs)
         {
             assetIDs = new List<uint>();
+
             ProgressBar progressBar = new ProgressBar("Import Sounds");
             progressBar.SetProgressBar(0, fileNames.Count(), 1);
             progressBar.Show();
@@ -176,7 +167,7 @@ namespace IndustrialPark
                         continue;
                 }
 
-                byte[] data = raw ? File.ReadAllBytes(fileName) : CreateSoundFile(assetType, fileName);
+                byte[] data = raw ? File.ReadAllBytes(fileName) : CreateSoundFile(fileName);
                 if (data == null)
                     continue;
 
@@ -195,7 +186,7 @@ namespace IndustrialPark
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
                 UnsavedChanges = true;

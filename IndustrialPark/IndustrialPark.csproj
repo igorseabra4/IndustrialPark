@@ -233,9 +233,7 @@
     <Compile Include="Assets\Shared\Enums\AnimTableStates.cs" />
     <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />
     <Compile Include="Assets\Shared\FMOD\FSB3_Header.cs" />
-    <Compile Include="Assets\Shared\FMOD\FSB3_SampleHeaderBasic.cs" />
     <Compile Include="Assets\Shared\FMOD\GcnV2SoundWrapper.cs" />
-    <Compile Include="Assets\Shared\FMOD\GcWavInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
     <Compile Include="ArchiveEditor\InternalEditors\Transformation.cs" />
     <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
