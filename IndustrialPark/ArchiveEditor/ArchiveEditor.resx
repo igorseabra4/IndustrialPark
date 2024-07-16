@@ -126,7 +126,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="newToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;New</value>
@@ -135,7 +135,7 @@
     <value>Ctrl+O</value>
   </data>
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="openToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Open</value>
@@ -148,7 +148,7 @@
     <value>Ctrl+S</value>
   </data>
   <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="saveToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Save</value>
@@ -157,19 +157,19 @@
     <value>False</value>
   </data>
   <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
     <value>Save &amp;As...</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>145, 6</value>
+    <value>177, 6</value>
   </data>
   <data name="closeToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+W</value>
   </data>
   <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="closeToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Close</value>
@@ -473,6 +473,45 @@
   </data>
   <data name="generateToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Generate Report</value>
+  </data>
+  <data name="coll31ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="coll31ToolStripMenuItem.Text" xml:space="preserve">
+    <value>3.1</value>
+  </data>
+  <data name="coll36toolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="coll36toolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="coll36toolStripMenuItem.Text" xml:space="preserve">
+    <value>3.6</value>
+  </data>
+  <data name="coll36sortTrianglesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="coll36sortTrianglesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="coll36sortTrianglesToolStripMenuItem.Text" xml:space="preserve">
+    <value>3.6 (Sort Triangles)</value>
+  </data>
+  <data name="buildCollisionTreeForAllModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="buildCollisionTreeForAllModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="buildCollisionTreeForAllModelsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Build Collision Tree</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 22</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tools</value>
   </data>
   <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>47, 22</value>
@@ -1730,6 +1769,30 @@ Focus</value>
     <value>generateToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;generateToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buildCollisionTreeForAllModelsToolStripMenuItem.Name" xml:space="preserve">
+    <value>buildCollisionTreeForAllModelsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;buildCollisionTreeForAllModelsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;coll31ToolStripMenuItem.Name" xml:space="preserve">
+    <value>coll31ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;coll31ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;coll36toolStripMenuItem.Name" xml:space="preserve">
+    <value>coll36toolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;coll36toolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;coll36sortTrianglesToolStripMenuItem.Name" xml:space="preserve">
+    <value>coll36sortTrianglesToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;coll36sortTrianglesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;viewToolStripMenuItem.Name" xml:space="preserve">

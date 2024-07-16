@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Models.CollisionTree;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using SharpDX;
 using System;
@@ -261,6 +262,10 @@ namespace IndustrialPark
             var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
             toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
             toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditSingleAsset && archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset;
+
+            buildCollisionTreeForAllModelsToolStripMenuItem.Enabled = archive.ContainsAssetWithType(AssetType.Model);
+            coll36toolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
+            coll36sortTrianglesToolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
         }
 
         private void PopulateLayerTypeComboBox()
@@ -2030,6 +2035,43 @@ namespace IndustrialPark
 
             noLayersToolStripMenuItem.Enabled = !isLegacy;
             renameLayerToolStripMenuItem.Enabled = !isLegacy;
+        }
+
+        private void BuildCollTree(object sender, EventArgs e)
+        {
+            Enum.TryParse(((ToolStripMenuItem)sender).Tag.ToString(), out CollTreeVersion collVer);
+            List<string> skipped = new List<string>();
+
+            ProgressBar progressBar = new ProgressBar("Building Collision PLG...");
+            progressBar.Show();
+            progressBar.SetProgressBar(0, archive.GetAllAssets().OfType<AssetMODL>().Count(), 1);
+
+            foreach (var modl in archive.GetAllAssets().OfType<AssetMODL>())
+            {
+                try 
+                {
+                    modl.BuildCollisionTree(collVer);
+                }
+                catch (NotSupportedException ex)
+                {
+                    progressBar.Close();
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+                catch (Exception ex)
+                {
+                    skipped.Add($"{modl.assetName} | Reason: {ex.Message}");
+                }
+                finally
+                {
+                    progressBar.PerformStep(modl.assetName);
+                }
+            }
+
+            archive.UnsavedChanges = true;
+            PopulateAssetListAndComboBox();
+            if (skipped.Any())
+                MessageBox.Show($"Following models were skipped:\n{string.Join("\n", skipped)}", $"{skipped.Count} models skipped", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
         }
 
         private void copyAssetNamesToolStripMenuItem_Click(object sender, EventArgs e)

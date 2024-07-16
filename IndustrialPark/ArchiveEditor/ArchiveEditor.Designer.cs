@@ -78,6 +78,10 @@
             this.importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.buildCollisionTreeForAllModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.coll31ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.coll36toolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.coll36sortTrianglesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hideButtonsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -465,7 +469,8 @@
             // toolsToolStripMenuItem
             // 
             this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.generateToolStripMenuItem});
+            this.generateToolStripMenuItem,
+            this.buildCollisionTreeForAllModelsToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             resources.ApplyResources(this.toolsToolStripMenuItem, "toolsToolStripMenuItem");
             // 
@@ -474,6 +479,36 @@
             this.generateToolStripMenuItem.Name = "generateToolStripMenuItem";
             resources.ApplyResources(this.generateToolStripMenuItem, "generateToolStripMenuItem");
             this.generateToolStripMenuItem.Click += new System.EventHandler(this.generateToolStripMenuItem_Click);
+            // 
+            // buildCollisionTreeForAllModelsToolStripMenuItem
+            // 
+            this.buildCollisionTreeForAllModelsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.coll31ToolStripMenuItem,
+            this.coll36toolStripMenuItem,
+            this.coll36sortTrianglesToolStripMenuItem});
+            resources.ApplyResources(this.buildCollisionTreeForAllModelsToolStripMenuItem, "buildCollisionTreeForAllModelsToolStripMenuItem");
+            this.buildCollisionTreeForAllModelsToolStripMenuItem.Name = "buildCollisionTreeForAllModelsToolStripMenuItem";
+            // 
+            // coll31ToolStripMenuItem
+            // 
+            this.coll31ToolStripMenuItem.Name = "coll31ToolStripMenuItem";
+            resources.ApplyResources(this.coll31ToolStripMenuItem, "coll31ToolStripMenuItem");
+            this.coll31ToolStripMenuItem.Tag = "COLLTREE_31";
+            this.coll31ToolStripMenuItem.Click += new System.EventHandler(this.BuildCollTree);
+            // 
+            // coll36toolStripMenuItem
+            // 
+            resources.ApplyResources(this.coll36toolStripMenuItem, "coll36toolStripMenuItem");
+            this.coll36toolStripMenuItem.Name = "coll36toolStripMenuItem";
+            this.coll36toolStripMenuItem.Tag = "COLLTREE_36";
+            this.coll36toolStripMenuItem.Click += new System.EventHandler(this.BuildCollTree);
+            // 
+            // coll36sortTrianglesToolStripMenuItem
+            // 
+            resources.ApplyResources(this.coll36sortTrianglesToolStripMenuItem, "coll36sortTrianglesToolStripMenuItem");
+            this.coll36sortTrianglesToolStripMenuItem.Name = "coll36sortTrianglesToolStripMenuItem";
+            this.coll36sortTrianglesToolStripMenuItem.Tag = "COLLTREE_36_SORTTRIANGLES";
+            this.coll36sortTrianglesToolStripMenuItem.Click += new System.EventHandler(this.BuildCollTree);
             // 
             // viewToolStripMenuItem
             // 
@@ -1003,5 +1038,9 @@
         private System.Windows.Forms.ToolStripMenuItem legacySaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem copyAssetNamesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildCollisionTreeForAllModelsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem coll31ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem coll36toolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem coll36sortTrianglesToolStripMenuItem;
     }
 }

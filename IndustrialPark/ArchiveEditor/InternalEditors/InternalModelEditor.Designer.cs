@@ -63,6 +63,8 @@
             this.propertyGridCollision = new System.Windows.Forms.PropertyGrid();
             this.buttonCreateCollision = new System.Windows.Forms.Button();
             this.checkBoxUseTemplates = new System.Windows.Forms.CheckBox();
+            this.buildCollTreeButton = new System.Windows.Forms.Button();
+            this.removeCollPlgButton = new System.Windows.Forms.Button();
             this.groupBoxImport.SuspendLayout();
             this.groupBoxExport.SuspendLayout();
             this.groupBoxTextures.SuspendLayout();
@@ -106,7 +108,7 @@
             // 
             // buttonApplyVertexColors
             // 
-            this.buttonApplyVertexColors.Location = new System.Drawing.Point(270, 554);
+            this.buttonApplyVertexColors.Location = new System.Drawing.Point(143, 554);
             this.buttonApplyVertexColors.Name = "buttonApplyVertexColors";
             this.buttonApplyVertexColors.Size = new System.Drawing.Size(120, 22);
             this.buttonApplyVertexColors.TabIndex = 29;
@@ -116,7 +118,7 @@
             // 
             // buttonApplyScale
             // 
-            this.buttonApplyScale.Location = new System.Drawing.Point(144, 554);
+            this.buttonApplyScale.Location = new System.Drawing.Point(18, 582);
             this.buttonApplyScale.Name = "buttonApplyScale";
             this.buttonApplyScale.Size = new System.Drawing.Size(120, 22);
             this.buttonApplyScale.TabIndex = 31;
@@ -473,7 +475,7 @@
             // checkBoxUseTemplates
             // 
             this.checkBoxUseTemplates.AutoSize = true;
-            this.checkBoxUseTemplates.Location = new System.Drawing.Point(18, 586);
+            this.checkBoxUseTemplates.Location = new System.Drawing.Point(12, 610);
             this.checkBoxUseTemplates.Name = "checkBoxUseTemplates";
             this.checkBoxUseTemplates.Size = new System.Drawing.Size(213, 17);
             this.checkBoxUseTemplates.TabIndex = 46;
@@ -481,11 +483,34 @@
             this.checkBoxUseTemplates.UseVisualStyleBackColor = true;
             this.checkBoxUseTemplates.Click += new System.EventHandler(this.checkBoxUseTemplates_Click);
             // 
+            // buildCollTreeButton
+            // 
+            this.buildCollTreeButton.Location = new System.Drawing.Point(269, 554);
+            this.buildCollTreeButton.Name = "buildCollTreeButton";
+            this.buildCollTreeButton.Size = new System.Drawing.Size(120, 22);
+            this.buildCollTreeButton.TabIndex = 47;
+            this.buildCollTreeButton.Text = "Build Collision PLG";
+            this.buildCollTreeButton.UseVisualStyleBackColor = true;
+            this.buildCollTreeButton.Click += new System.EventHandler(this.buildCollTreeButton_Click);
+            // 
+            // removeCollPlgButton
+            // 
+            this.removeCollPlgButton.Enabled = false;
+            this.removeCollPlgButton.Location = new System.Drawing.Point(269, 582);
+            this.removeCollPlgButton.Name = "removeCollPlgButton";
+            this.removeCollPlgButton.Size = new System.Drawing.Size(120, 22);
+            this.removeCollPlgButton.TabIndex = 48;
+            this.removeCollPlgButton.Text = "Remove Collision PLG";
+            this.removeCollPlgButton.UseVisualStyleBackColor = true;
+            this.removeCollPlgButton.Click += new System.EventHandler(this.removeCollPlgButton_Click);
+            // 
             // InternalModelEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 612);
+            this.ClientSize = new System.Drawing.Size(527, 633);
+            this.Controls.Add(this.removeCollPlgButton);
+            this.Controls.Add(this.buildCollTreeButton);
             this.Controls.Add(this.checkBoxUseTemplates);
             this.Controls.Add(this.groupBoxCollisionModel);
             this.Controls.Add(this.groupBoxShadow);
@@ -560,5 +585,7 @@
         private System.Windows.Forms.Button buttonArrowDown;
         private System.Windows.Forms.Button buttonArrowUp;
         private System.Windows.Forms.Label labelPipeInfos;
+        private System.Windows.Forms.Button buildCollTreeButton;
+        private System.Windows.Forms.Button removeCollPlgButton;
     }
 }

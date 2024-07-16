@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Models.CollisionTree;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
@@ -58,6 +59,23 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public bool IsNativeData => model != null && model.isNativeData;
+
+        [Browsable(false)]
+        public bool HasCollisionPLG
+        {
+            get
+            {
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                    {
+                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                            foreach (var ext in geo.geometryExtension.extensionSectionList)
+                                if (ext.sectionIdentifier == RenderWareFile.Section.CollisionPLG)
+                                    return true;
+                    }
+                return false;
+            }
+        }
 
         [Browsable(false)]
         public string[] Textures
@@ -292,6 +310,56 @@ namespace IndustrialPark
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
             if (Program.MainForm != null)
                 Setup(Program.MainForm.renderer);
+        }
+
+        public void RemoveCollisionTree()
+        {
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            renderWareVersion = sections[0].renderWareVersion;
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    foreach (Geometry_000F geom in clump.geometryList.geometryList)
+                        geom.geometryExtension.extensionSectionList.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+        }
+
+        public void BuildCollisionTree(CollTreeVersion ver = CollTreeVersion.NONE)
+        {
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            renderWareVersion = sections[0].renderWareVersion;
+
+            if (ver == CollTreeVersion.NONE)
+                ver = (Shared.UnpackLibraryVersion(renderWareVersion) >= 0x36001) ? CollTreeVersion.COLLTREE_36 : CollTreeVersion.COLLTREE_31;
+
+            if (game <= Game.BFBB && ver > CollTreeVersion.COLLTREE_31)
+                throw new NotSupportedException("Scooby/BFBB only support version 3.1 collision plg's");
+
+            if (IsNativeData)
+                throw new Exception("Native Data");
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    if (clump.geometryList.geometryList.All(g => g.geometryStruct.triangles.Length == 0))
+                        throw new Exception("No geometry faces");
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    foreach (Geometry_000F geom in clump.geometryList.geometryList)
+                    {
+                        geom.geometryExtension.extensionSectionList.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+
+                        if (geom.geometryStruct.triangles.Length == 0)
+                            continue;
+
+                        if (ver == CollTreeVersion.COLLTREE_31)
+                            geom.geometryExtension.extensionSectionList.Add(Collis_31.RpCollisionGeometryBuildData(geom));
+                        else
+                            geom.geometryExtension.extensionSectionList.Add(Collis_36.RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
+                    }
+
+                                
+            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
         }
 
         private void ApplyVertexColors(NativeDataGC nativeData, Func<Vector4, Vector4> getColor)

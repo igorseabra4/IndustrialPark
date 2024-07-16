@@ -35,6 +35,7 @@ namespace IndustrialPark
                 SetupLodtBox();
                 SetupCollBox();
                 SetupShdwBox();
+                SetupCollButton();
             }
             else
             {
@@ -188,6 +189,7 @@ namespace IndustrialPark
                 archive.UnsavedChanges = true;
                 updateListView(asset);
                 SetupTexturesBox();
+                SetupCollButton();
             }
         }
 
@@ -472,6 +474,26 @@ namespace IndustrialPark
         public void ClearModelTemplateFocus()
         {
             checkBoxUseTemplates.Checked = false;
+        }
+
+        private void SetupCollButton()
+        {
+            if (asset.IsNativeData)
+                buildCollTreeButton.Enabled = false;
+            if (asset.HasCollisionPLG)
+                removeCollPlgButton.Enabled = true;
+        }
+
+        private void buildCollTreeButton_Click(object sender, EventArgs e)
+        {
+            asset.BuildCollisionTree();
+            SetupCollButton();
+        }
+
+        private void removeCollPlgButton_Click(object sender, EventArgs e)
+        {
+            asset.RemoveCollisionTree();
+            removeCollPlgButton.Enabled = false;
         }
     }
 }
