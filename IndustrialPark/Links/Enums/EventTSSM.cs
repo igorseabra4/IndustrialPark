@@ -804,6 +804,22 @@
         Promptisdead = 0x031F,
         UIFlipVisibility = 0x0320,
         XBLiveRebootToDashboard = 0x0321,
-        FirstPowerupPoint = 0x0322
+        FirstPowerupPoint = 0x0322,
+        // Incredibles only
+        UIIsBattleScene = 0x0323,
+        UIBattleSceneYes = 0x0324,
+        UIBattleSceneNo = 0x0325,
+        UILockelement = 0x0326,
+        UIUnlockelement = 0x0327,
+        DrivenbyOff = 0x0328,
+        DrivenbyOn = 0x0329,
+        UISignalCreditCode = 0x032a,
+        UISignalHILogo = 0x032b,
+        DisableAutoSave = 0x032c,
+        UISignalEnlargeWindow = 0x032d,
+        PromptExiting = 0x032e,
+        PromptForceExit = 0x032f,
+        UISysMessageActionConfirmed = 0x0330,
+        UISysMessageActionDeclined = 0x0331,
     }
 }

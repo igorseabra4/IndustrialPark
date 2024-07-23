@@ -140,6 +140,12 @@
   <data name="importLevelToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Open Level...</value>
   </data>
+  <data name="openLastToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
+  </data>
+  <data name="openLastToolStripMenuItem.Text" xml:space="preserve">
+    <value>Recent Archives</value>
+  </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="closeAllEditorsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -290,6 +296,15 @@
   </data>
   <data name="runGameF5ToolStripMenuItem.Text" xml:space="preserve">
     <value>Run Game</value>
+  </data>
+  <data name="buildAndRunPS2ISOToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F6</value>
+  </data>
+  <data name="buildAndRunPS2ISOToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>271, 22</value>
+  </data>
+  <data name="buildAndRunPS2ISOToolStripMenuItem.Text" xml:space="preserve">
+    <value>Build/Run PS2 ISO</value>
   </data>
   <data name="stopSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>271, 22</value>
@@ -2453,6 +2468,12 @@
   <data name="&gt;&gt;importLevelToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;openLastToolStripMenuItem.Name" xml:space="preserve">
+    <value>openLastToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;openLastToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;closeAllEditorsToolStripMenuItem.Name" xml:space="preserve">
     <value>closeAllEditorsToolStripMenuItem</value>
   </data>
@@ -2601,6 +2622,12 @@
     <value>runGameF5ToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;runGameF5ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buildAndRunPS2ISOToolStripMenuItem.Name" xml:space="preserve">
+    <value>buildAndRunPS2ISOToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;buildAndRunPS2ISOToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;stopSoundToolStripMenuItem.Name" xml:space="preserve">

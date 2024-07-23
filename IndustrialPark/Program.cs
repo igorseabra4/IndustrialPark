@@ -16,6 +16,8 @@ namespace IndustrialPark
         public static AssetIDGenerator AssetIDGenerator;
         public static PickupSearch PickupSearch;
 
+        public static BuildISO BuildISO;
+
         public static SharpRenderer Renderer => MainForm != null && MainForm.renderer != null ? MainForm.renderer : null;
 
         [STAThread]

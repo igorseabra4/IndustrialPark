@@ -188,6 +188,7 @@ namespace IndustrialPark
             if (!standalone)
             {
                 Program.MainForm.SetToolStripItemName(this, Text);
+                Program.MainForm.SetRecentOpenedArchives(fileName);
                 Show();
             }
         }
@@ -333,7 +334,10 @@ namespace IndustrialPark
 
                 Text = Path.GetFileName(saveFileDialog.FileName);
                 if (!standalone)
+                {
                     Program.MainForm.SetToolStripItemName(this, Text);
+                    Program.MainForm.SetRecentOpenedArchives(saveFileDialog.FileName);
+                }
                 toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
                 archive.UnsavedChanges = false;
             }
