@@ -145,12 +145,7 @@ namespace IndustrialPark
             // 
             // archiveEditorToolStripMenuItem
             // 
-            this.archiveEditorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newToolStripMenuItem,
-            this.importLevelToolStripMenuItem,
-            this.openLastToolStripMenuItem,
-            this.closeAllEditorsToolStripMenuItem,
-            this.toolStripSeparator3});
+            this.archiveEditorToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.newToolStripMenuItem, this.importLevelToolStripMenuItem, this.openLastToolStripMenuItem, this.closeAllEditorsToolStripMenuItem, this.toolStripSeparator3 });
             this.archiveEditorToolStripMenuItem.Name = "archiveEditorToolStripMenuItem";
             resources.ApplyResources(this.archiveEditorToolStripMenuItem, "archiveEditorToolStripMenuItem");
             // 
@@ -309,22 +304,7 @@ namespace IndustrialPark
             // 
             // toolsToolStripMenuItem
             // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveAllOpenHIPsToolStripMenuItem,
-            this.runGameF5ToolStripMenuItem,
-            this.buildAndRunPS2ISOToolStripMenuItem,
-            this.stopSoundToolStripMenuItem,
-            this.exportSceneToolStripMenuItem,
-            this.toolStripSeparator8,
-            this.checkForUpdatesOnStartupToolStripMenuItem,
-            this.checkForUpdatesNowToolStripMenuItem,
-            this.downloadIndustrialParkEditorFilesToolStripMenuItem,
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem,
-            this.downloadVgmstreamToolStripMenuItem,
-            this.toolStripSeparator2,
-            this.ensureAssociationsToolStripMenuItem,
-            this.discordRichPresenceToolStripMenuItem,
-            this.aboutToolStripMenuItem});
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.saveAllOpenHIPsToolStripMenuItem, this.runGameF5ToolStripMenuItem, this.buildAndRunPS2ISOToolStripMenuItem, this.stopSoundToolStripMenuItem, this.exportSceneToolStripMenuItem, this.toolStripSeparator8, this.checkForUpdatesOnStartupToolStripMenuItem, this.checkForUpdatesNowToolStripMenuItem, this.downloadIndustrialParkEditorFilesToolStripMenuItem, this.checkForUpdatesOnEditorFilesToolStripMenuItem, this.downloadVgmstreamToolStripMenuItem, this.toolStripSeparator2, this.ensureAssociationsToolStripMenuItem, this.discordRichPresenceToolStripMenuItem, this.aboutToolStripMenuItem });
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             resources.ApplyResources(this.toolsToolStripMenuItem, "toolsToolStripMenuItem");
             // 
@@ -842,7 +822,7 @@ namespace IndustrialPark
         private ToolStripMenuItem saveAllOpenHIPsToolStripMenuItem;
         private ToolStripMenuItem manageUserTemplatesToolStripMenuItem;
         private ToolStripMenuItem templatesPersistentShiniesToolStripMenuItem;
-        private ToolStripMenuItem runGameF5ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem runGameF5ToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator8;
         private ToolStripMenuItem downloadIndustrialParkEditorFilesToolStripMenuItem;
         private ToolStripMenuItem checkForUpdatesOnEditorFilesToolStripMenuItem;

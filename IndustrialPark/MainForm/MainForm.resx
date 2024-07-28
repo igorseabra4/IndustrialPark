@@ -141,7 +141,7 @@
     <value>&amp;Open Level...</value>
   </data>
   <data name="openLastToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>185, 22</value>
   </data>
   <data name="openLastToolStripMenuItem.Text" xml:space="preserve">
     <value>Recent Archives</value>
@@ -295,7 +295,7 @@
     <value>271, 22</value>
   </data>
   <data name="runGameF5ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Run Game</value>
+    <value>Run Game in Dolphin</value>
   </data>
   <data name="buildAndRunPS2ISOToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>F6</value>
