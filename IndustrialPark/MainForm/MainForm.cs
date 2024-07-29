@@ -628,6 +628,8 @@ namespace IndustrialPark
                 TryToRunGame();
             else if (e.KeyCode == Keys.F6)
                 buildAndRunPS2ISOToolStripMenuItem_Click(sender, e);
+            else if (e.KeyCode == Keys.F7)
+                createGameCubeBannerToolStripMenuItem_Click(sender, e);
 
             if (PressedKeys.Contains(Keys.S)
                 && PressedKeys.Contains(Keys.ControlKey)
@@ -1916,6 +1918,12 @@ namespace IndustrialPark
             if (Program.BuildISO == null)
                 Program.BuildISO = new BuildISO();
             Program.BuildISO.Show();
+        }
+
+        private void createGameCubeBannerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var bannerCreator = new CreateGameCubeBanner();
+            bannerCreator.Show();
         }
     }
 }
