@@ -485,6 +485,7 @@
     <Compile Include="MainForm\OpenLevel.Designer.cs">
       <DependentUpon>OpenLevel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Other\GameCubeBanner.cs" />
     <Compile Include="Other\MessageBox.cs" />
     <Compile Include="Models\BSP_IO_Shared.cs" />
     <Compile Include="Models\ChooseTarget.cs">
@@ -939,6 +940,7 @@
     <Content Include="Resources\ArrowDefault.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\PlaceholderBanner1.png" />
     <Content Include="Resources\Scripts\readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -120,28 +120,4 @@
   <data name="label1.Text" xml:space="preserve">
     <value>GameCube banners, named "opening.bnr", contain metadata about the game, including its title and creator, and a 96px x 32px banner image which is displayed in menu mode. It is also displayed in Dolphin's game list.</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        iVBORw0KGgoAAAANSUhEUgAAAGAAAAAgCAYAAADtwH1UAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACxMAAAsTAQCanBgAAAPpSURBVGhD7ZfpKzdRFMefP+pnl2xRtlKWCAlZsiZCIkmJ
-        LIUi8sIaUpZs2UO2f+o+fU7daWbMz7OY6b65Lz5xz5zfnXvP99xzz/yKxWLKYg4rgGGsAIaxAhjGCmAY
-        K4BhrACGsQIYxgpgGCuAYSIVoLGxUe3t7anr62t1eHioBgcHVUJCQqBvcnKymp+fF7/e3t5An5+QkpKi
-        hoaG1P7+vrq8vFQbGxuqvr7e48PaWltb1fb2trq6ulK7u7uylnhrDoPIBBgZGVGfn5/q8fFR7ezsqLu7
-        OxkvLCwE+s/OzspzNo0YQT7/S2JiolpfX5f5WQciv7+/y7ipqcnxGx0dFdvz87M6ODhQLy8vMp6cnPTM
-        FyaRCJCbm6ve3t5ks9nZ2WJLS0tTp6ensqGCggKPf0tLi9jJuqysLM+zINLT07/YmN9v09TW1sr8bnHJ
-        dGxbW1syzsjIcNack5MjNtb5+voqYqWmpjrzhUkkAlB62Nzi4qLHPjExIfbm5mbHxiafnp4k20pLSz3+
-        QdTV1amHhwdVUVHh2EpKStTt7a0E1e2rqa6ulhNWXFzs2EgS1sJpYJyfn6+mp6dVQ0OD4wMkBX7+pAmL
-        SAWg9Ljtq6urYm9ra5MxpYGjjo0A9fT0SLZid//ODSfk6OhIykRlZaUEn6ylrhPEoN/4SUpKUuPj4/Je
-        yk6QD2RmZsqp4F3cIUE+PyUSASgRXLw6sO3t7Wpubk59fHyITWdTZ2enjP0QYDbvn1fjFuFfgz88POzU
-        9qmpqW/FnpmZET9ObtDzMIjsEi4vL1dnZ2eyAQJPieB/XXNBP6f7IYBFRUXSnWBbWlryzOeHsoIfxCs9
-        QVD+VlZWpOxR2zs6OgL96H6Ymy4uquyHyATQUGsLCwullnKhEWTsXHps8P7+3pOFeXl5YqfOa5sfd9lx
-        l6Mg33ggOALQpflPQXd3tzxjbtbpfhY2kQvA5sh6gjowMODYKVOcDE6B218LE08ALlIdfMSiVP1JBC7W
-        sbGxL+0twedd7iB3dXVJ8I+Pj/+qI/spkQtAD80mNzc3v3zQ6H68qqpKxjzXl+Py8rLHV8N9cnFxIcHX
-        Ni1CX1+fx1fDtwdzums+pQjbzc2Nsy4dfNpl5kcY+K7F/SmRCkC3wybJZt1bu6GOU5boNKi1+jvB3YsH
-        EVSTv6vTBJM5mZuTQ3Zz+kDfH3wVE3x8OE381eDn/2oOi8gEIIB8+EBNTU2gD5SVlam1tTW5I87Pz6Vr
-        cmd3WNB5cRJOTk6k7PFOGgX9vL+/X05kPGit3fOFReQlyPI9VgDDWAEMYwUwjBXAMFYAw1gBDGMFMIwV
-        wDBWAKPE1G/YBaLgvglMKQAAAABJRU5ErkJggg==
-</value>
-  </data>
 </root>
