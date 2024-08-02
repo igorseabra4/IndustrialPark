@@ -33,6 +33,10 @@ namespace IndustrialPark.Other
         /// The typical filename for a GameCube banner.
         /// </summary>
         public const string DEFAULT_FILENAME = "opening.bnr";
+        /// <summary>
+        /// The typical file extension for a GameCube banner.
+        /// </summary>
+        public const string DEFAULT_FILE_EXTENSION = ".bnr";
 
         /// <summary>
         /// The 96x32 bitmap image to use on the banner.

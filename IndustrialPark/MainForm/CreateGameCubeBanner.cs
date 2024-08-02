@@ -86,6 +86,39 @@ namespace IndustrialPark
             }
         }
 
+        private void UpdateFieldsFromBanner(string filepath)
+        {
+            // Import banner from file
+            GameCubeBanner banner = GameCubeBanner.ImportFromFile(filepath);
+                
+            if (banner != null)
+            {
+                // Set metadata fields
+                titleTextBox.Text = banner.Title;
+                creatorTextBox.Text = banner.Creator;
+                titleFullTextBox.Text = banner.TitleFull;
+                creatorFullTextBox.Text = banner.CreatorFull;
+                descriptionTextBox.Text = banner.Description;
+                    
+                // Convert image to PictureBox
+                bannerPictureBox.Image = banner.Image;
+                    
+                // Update image path text box
+                imagePathTextBox.Text = filepath;
+            }
+            else
+            {
+                MessageBox.Show("Failed to import banner.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        
+        private bool IsSupportedImageFile(string extension)
+        {
+            // List of image file extensions
+            string[] imageExtensions = { ".jpg", ".jpeg", ".png", ".bmp", ".gif", ".tiff", ".tif" };
+            return Array.Exists(imageExtensions, ext => ext == extension);
+        }
+
         private void metadataTextChanged(object sender, EventArgs e)
         {
             // Enable save button if all metadata fields are filled
@@ -109,27 +142,66 @@ namespace IndustrialPark
             
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                // Import banner from file
-                GameCubeBanner banner = GameCubeBanner.ImportFromFile(dialog.FileName);
-                
-                if (banner != null)
+                UpdateFieldsFromBanner(dialog.FileName);
+            }
+        }
+
+        private void CreateGameCubeBanner_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (files.Length > 0)
                 {
-                    // Set metadata fields
-                    titleTextBox.Text = banner.Title;
-                    creatorTextBox.Text = banner.Creator;
-                    titleFullTextBox.Text = banner.TitleFull;
-                    creatorFullTextBox.Text = banner.CreatorFull;
-                    descriptionTextBox.Text = banner.Description;
-                    
-                    // Convert image to PictureBox
-                    bannerPictureBox.Image = banner.Image;
-                    
-                    // Update image path text box
-                    imagePathTextBox.Text = dialog.FileName;
+                    string extension = Path.GetExtension(files[0]).ToLower();
+                    if (IsSupportedImageFile(extension) || extension == GameCubeBanner.DEFAULT_FILE_EXTENSION)
+                    {
+                        e.Effect = DragDropEffects.Copy;
+                    }
+                    else
+                    {
+                        e.Effect = DragDropEffects.None;
+                    }
                 }
-                else
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None;
+            }
+        }
+
+        private void CreateGameCubeBanner_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                if (files.Length > 0)
                 {
-                    MessageBox.Show("Failed to import banner.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    string filePath = files[0];
+                    string extension = Path.GetExtension(filePath).ToLower();
+
+                    try
+                    {
+                        if (IsSupportedImageFile(extension))
+                        {
+                            var image = System.Drawing.Image.FromFile(filePath);
+                            bannerPictureBox.Image = image;
+                            imagePathTextBox.Text = filePath;
+                        }
+                        else if (extension == GameCubeBanner.DEFAULT_FILE_EXTENSION)
+                        {
+                            UpdateFieldsFromBanner(filePath);
+                        }
+                        else
+                        {
+                            MessageBox.Show("Unsupported file type. Must be a supported image or GameCube Banner file.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("Error: " + ex.Message);
+                    }
                 }
             }
         }
