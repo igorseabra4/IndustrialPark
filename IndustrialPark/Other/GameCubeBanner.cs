@@ -4,7 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Text;
 
-namespace IndustrialPark.Other
+namespace IndustrialPark
 {
     /// <summary>
     /// Represents a (single-language) GameCube banner (BNR1).

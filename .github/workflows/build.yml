@@ -26,3 +26,9 @@ jobs:
 
       - name: Build solution
         run: msbuild IndustrialPark.sln -t:rebuild -property:Configuration=Release -property:platform="Any CPU"
+
+      - name: Run unit tests
+        uses: microsoft/vstest-action@v1.0.0
+        with:
+          testAssembly: '**\bin\Release\**\*Test.dll'
+

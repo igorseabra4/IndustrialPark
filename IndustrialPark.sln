@@ -18,6 +18,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Randomizer", "IndustrialPar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ArchiveEditor", "ArchiveEditor\ArchiveEditor.csproj", "{2B20165D-B6D3-4FA5-93B4-64EC117BA732}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IndustrialParkTest", "IndustrialParkTest\IndustrialParkTest.csproj", "{BD22CB98-D975-4E37-8707-9FA07C067806}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,6 +50,10 @@ Global
 		{2B20165D-B6D3-4FA5-93B4-64EC117BA732}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2B20165D-B6D3-4FA5-93B4-64EC117BA732}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2B20165D-B6D3-4FA5-93B4-64EC117BA732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD22CB98-D975-4E37-8707-9FA07C067806}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD22CB98-D975-4E37-8707-9FA07C067806}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD22CB98-D975-4E37-8707-9FA07C067806}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD22CB98-D975-4E37-8707-9FA07C067806}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
