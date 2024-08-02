@@ -130,6 +130,7 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
+            this.createGameCubeBannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -304,7 +305,7 @@ namespace IndustrialPark
             // 
             // toolsToolStripMenuItem
             // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.saveAllOpenHIPsToolStripMenuItem, this.runGameF5ToolStripMenuItem, this.buildAndRunPS2ISOToolStripMenuItem, this.stopSoundToolStripMenuItem, this.exportSceneToolStripMenuItem, this.toolStripSeparator8, this.checkForUpdatesOnStartupToolStripMenuItem, this.checkForUpdatesNowToolStripMenuItem, this.downloadIndustrialParkEditorFilesToolStripMenuItem, this.checkForUpdatesOnEditorFilesToolStripMenuItem, this.downloadVgmstreamToolStripMenuItem, this.toolStripSeparator2, this.ensureAssociationsToolStripMenuItem, this.discordRichPresenceToolStripMenuItem, this.aboutToolStripMenuItem });
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.saveAllOpenHIPsToolStripMenuItem, this.runGameF5ToolStripMenuItem, this.buildAndRunPS2ISOToolStripMenuItem, this.stopSoundToolStripMenuItem, this.exportSceneToolStripMenuItem, this.createGameCubeBannerToolStripMenuItem, this.toolStripSeparator8, this.checkForUpdatesOnStartupToolStripMenuItem, this.checkForUpdatesNowToolStripMenuItem, this.downloadIndustrialParkEditorFilesToolStripMenuItem, this.checkForUpdatesOnEditorFilesToolStripMenuItem, this.downloadVgmstreamToolStripMenuItem, this.toolStripSeparator2, this.ensureAssociationsToolStripMenuItem, this.discordRichPresenceToolStripMenuItem, this.aboutToolStripMenuItem });
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             resources.ApplyResources(this.toolsToolStripMenuItem, "toolsToolStripMenuItem");
             // 
@@ -736,6 +737,12 @@ namespace IndustrialPark
             resources.ApplyResources(this.toolStripComboBoxUserTemplate, "toolStripComboBoxUserTemplate");
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
+            // createGameCubeBannerToolStripMenuItem
+            // 
+            this.createGameCubeBannerToolStripMenuItem.Name = "createGameCubeBannerToolStripMenuItem";
+            resources.ApplyResources(this.createGameCubeBannerToolStripMenuItem, "createGameCubeBannerToolStripMenuItem");
+            this.createGameCubeBannerToolStripMenuItem.Click += new System.EventHandler(this.createGameCubeBannerToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -766,6 +773,8 @@ namespace IndustrialPark
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.ToolStripMenuItem createGameCubeBannerToolStripMenuItem;
+
         #endregion
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
@@ -774,7 +783,7 @@ namespace IndustrialPark
         private ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem noCullingCToolStripMenuItem;
         private ToolStripMenuItem wireframeFToolStripMenuItem;
-        private ToolStripMenuItem viewConfigToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewConfigToolStripMenuItem;
         private ToolStripMenuItem archiveEditorToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator3;
@@ -784,7 +793,7 @@ namespace IndustrialPark
         private ToolStripMenuItem backgroundColorToolStripMenuItem1;
         private ToolStripMenuItem widgetColorToolStripMenuItem;
         private ToolStripMenuItem selectionColorToolStripMenuItem1;
-        private ToolStripMenuItem useLegacyAssetIDFormatToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem useLegacyAssetIDFormatToolStripMenuItem;
         private ToolStripMenuItem resetColorsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripMenuItem projectToolStripMenuItem;
@@ -818,10 +827,10 @@ namespace IndustrialPark
         private ToolStripMenuItem assetIDGeneratorToolStripMenuItem;
         private ToolStripMenuItem useLODTForRenderingToolStripMenuItem;
         private ToolStripMenuItem usePIPTForRenderingToolStripMenuItem;
-        private ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
         private ToolStripMenuItem saveAllOpenHIPsToolStripMenuItem;
-        private ToolStripMenuItem manageUserTemplatesToolStripMenuItem;
-        private ToolStripMenuItem templatesPersistentShiniesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem manageUserTemplatesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem templatesPersistentShiniesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runGameF5ToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator8;
         private ToolStripMenuItem downloadIndustrialParkEditorFilesToolStripMenuItem;
@@ -833,7 +842,7 @@ namespace IndustrialPark
         private ToolStripMenuItem hideInvisibleMeshesToolStripMenuItem;
         private ToolStripMenuItem downloadVgmstreamToolStripMenuItem;
         private ToolStripMenuItem stopSoundToolStripMenuItem;
-        private ToolStripMenuItem templatesChainPointMVPTsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem templatesChainPointMVPTsToolStripMenuItem;
         private ToolStripMenuItem dYNASearchToolStripMenuItem;
         private ToolStripMenuItem exportSceneToolStripMenuItem;
         private ToolStripMenuItem discordRichPresenceToolStripMenuItem;
@@ -845,7 +854,7 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripSeparator toolStripSeparator9;
         private ToolStripSeparator toolStripSeparator7;
-        private ToolStripMenuItem viewControlsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewControlsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator11;
         private ToolStripMenuItem openFolderToolStripMenuItem;
         private ToolStripMenuItem dynaNameSearcherToolStripMenuItem;
@@ -856,9 +865,9 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparatorAssetTypes;
         private ToolStripMenuItem pickupSearcherToolStripMenuItem;
         private ToolStripMenuItem drawOnlyFirstMINFReferenceToolStripMenuItem;
-        private ToolStripMenuItem useLegacyAssetTypeFormatToolStripMenuItem;
-        private ToolStripMenuItem updateReferencesOnCopyPasteToolStripMenuItem;
-        private ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem useLegacyAssetTypeFormatToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem updateReferencesOnCopyPasteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
         private ToolStripMenuItem addTextureFolderToolStripMenuItem;
         private ToolStripMenuItem addTXDArchiveToolStripMenuItem;
         private ToolStripMenuItem refreshTexturesAndModelsToolStripMenuItem;

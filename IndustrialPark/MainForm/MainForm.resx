@@ -217,13 +217,13 @@
     <value>301, 22</value>
   </data>
   <data name="viewConfigToolStripMenuItem.Text" xml:space="preserve">
-    <value>View Config</value>
+    <value>&amp;View Config</value>
   </data>
   <data name="viewControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="viewControlsToolStripMenuItem.Text" xml:space="preserve">
-    <value>View Controls...</value>
+    <value>View &amp;Controls</value>
   </data>
   <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
     <value>298, 6</value>
@@ -232,19 +232,19 @@
     <value>301, 22</value>
   </data>
   <data name="manageUserTemplatesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Manage User Templates...</value>
+    <value>Manage User &amp;Templates...</value>
   </data>
   <data name="templatesPersistentShiniesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="templatesPersistentShiniesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Templates: Persistent Shinies</value>
+    <value>Templates: &amp;Persistent Shinies</value>
   </data>
   <data name="templatesChainPointMVPTsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="templatesChainPointMVPTsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Templates: Chain Point MVPTs</value>
+    <value>Templates: Chain Point &amp;MVPTs</value>
   </data>
   <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
     <value>298, 6</value>
@@ -253,25 +253,25 @@
     <value>301, 22</value>
   </data>
   <data name="updateReferencesOnCopyPasteToolStripMenuItem.Text" xml:space="preserve">
-    <value>Update References on Rename/Copy/Paste</value>
+    <value>Update &amp;References on Rename/Copy/Paste</value>
   </data>
   <data name="replaceAssetsOnPasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="replaceAssetsOnPasteToolStripMenuItem.Text" xml:space="preserve">
-    <value>Replace Assets on Paste</value>
+    <value>Replace &amp;Assets on Paste</value>
   </data>
   <data name="useLegacyAssetIDFormatToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="useLegacyAssetIDFormatToolStripMenuItem.Text" xml:space="preserve">
-    <value>Use Legacy Asset ID Format</value>
+    <value>Use &amp;Legacy Asset ID Format</value>
   </data>
   <data name="useLegacyAssetTypeFormatToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="useLegacyAssetTypeFormatToolStripMenuItem.Text" xml:space="preserve">
-    <value>Use Legacy Asset Type Format</value>
+    <value>Use Legacy Asset Type &amp;Format</value>
   </data>
   <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 19</value>
@@ -317,6 +317,15 @@
   </data>
   <data name="exportSceneToolStripMenuItem.Text" xml:space="preserve">
     <value>Export Scene...</value>
+  </data>
+  <data name="createGameCubeBannerToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F7</value>
+  </data>
+  <data name="createGameCubeBannerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>271, 22</value>
+  </data>
+  <data name="createGameCubeBannerToolStripMenuItem.Text" xml:space="preserve">
+    <value>Create GameCube Banner...</value>
   </data>
   <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
     <value>268, 6</value>
@@ -3013,6 +3022,12 @@
   </data>
   <data name="&gt;&gt;toolStripComboBoxUserTemplate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;createGameCubeBannerToolStripMenuItem.Name" xml:space="preserve">
+    <value>createGameCubeBannerToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;createGameCubeBannerToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainForm</value>

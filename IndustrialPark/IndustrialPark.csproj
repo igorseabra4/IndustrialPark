@@ -473,12 +473,19 @@
     <Compile Include="MainForm\BuildISO.Designer.cs">
       <DependentUpon>BuildISO.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainForm\CreateGameCubeBanner.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm\CreateGameCubeBanner.Designer.cs">
+      <DependentUpon>CreateGameCubeBanner.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainForm\OpenLevel.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="MainForm\OpenLevel.Designer.cs">
       <DependentUpon>OpenLevel.cs</DependentUpon>
     </Compile>
+    <Compile Include="Other\GameCubeBanner.cs" />
     <Compile Include="Other\MessageBox.cs" />
     <Compile Include="Models\BSP_IO_Shared.cs" />
     <Compile Include="Models\ChooseTarget.cs">
@@ -701,6 +708,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\BuildISO.resx">
       <DependentUpon>BuildISO.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MainForm\CreateGameCubeBanner.resx">
+      <DependentUpon>CreateGameCubeBanner.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\MainForm.en-GB.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
@@ -930,6 +940,7 @@
     <Content Include="Resources\ArrowDefault.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\PlaceholderBanner1.png" />
     <Content Include="Resources\Scripts\readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
