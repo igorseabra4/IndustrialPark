@@ -7,26 +7,62 @@ using System.Text;
 namespace IndustrialPark.Other
 {
     /// <summary>
-    /// Represents a GameCube banner (BNR1).
-    ///
+    /// Represents a (single-language) GameCube banner (BNR1).
+    /// Supports ASCII text only (no Shift JIS).
+    /// <para>
     /// Contains a 96x32 image, a title, a creator, a full title, a full creator, and a description.
     /// It appears in the GameCube system menu when a game disc is inserted.
+    /// Read more about the BNR format here: https://hitmen.c02.at/files/yagcd/yagcd/chap14.html#sec14.1
+    /// </para>
     /// </summary>
     public class GameCubeBanner
     {
+        /// <summary>
+        /// The width of the banner image.
+        /// </summary>
         public const int IMAGE_WIDTH = 96;
+        /// <summary>
+        /// The height of the banner image.
+        /// </summary>
         public const int IMAGE_HEIGHT = 32;
+        /// <summary>
+        /// The magic bytes at the start of the file.
+        /// </summary>
         public const string MAGIC = "BNR1";
+        /// <summary>
+        /// The typical filename for a GameCube banner.
+        /// </summary>
         public const string DEFAULT_FILENAME = "opening.bnr";
-        
-        public Bitmap Image { get; set; }           // 96x32 image
+
+        /// <summary>
+        /// The 96x32 bitmap image to use on the banner.
+        /// </summary>
+        public Bitmap Image { get; set; }
+        /// <summary>
+        /// The game's short title. Limited to 20 bytes.
+        /// </summary>
         public string Title { get; set; }
+        /// <summary>
+        /// The game's short creator. Limited to 20 bytes.
+        /// </summary>
         public string Creator { get; set; }
+        /// <summary>
+        /// The game's full title. Limited to 40 bytes.
+        /// </summary>
         public string TitleFull { get; set; }
-        public string CreatorFull { get; set; }
+        /// <summary>
+        /// The game's full creator. Limited to 40 bytes.
+        /// </summary>
+        public string CreatorFull { get; set; } 
+        /// <summary>
+        /// The game's description. Limited to 80 bytes.
+        /// </summary>
         public string Description { get; set; }
         
         
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameCubeBanner"/> class.
+        /// </summary>
         public GameCubeBanner()
         {
             Image = new Bitmap(IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -37,6 +73,15 @@ namespace IndustrialPark.Other
             Description = "";
         }
         
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GameCubeBanner"/> class.
+        /// </summary>
+        /// <param name="image">The image to use on the banner</param>
+        /// <param name="title">The game's title</param>
+        /// <param name="creator">The game's creator</param>
+        /// <param name="titleFull">The game's full title</param>
+        /// <param name="creatorFull">The game's full creator</param>
+        /// <param name="description">The game's description</param>
         public GameCubeBanner(Bitmap image, string title, string creator, string titleFull, string creatorFull, string description)
         {
             Image = image;
@@ -47,6 +92,11 @@ namespace IndustrialPark.Other
             Description = description;
         }
 
+        /// <summary>
+        /// Imports a GameCube banner from a file.
+        /// </summary>
+        /// <param name="filePath">The filepath to a .bnr file</param>
+        /// <returns>The GameCube banner</returns>
         public static GameCubeBanner ImportFromFile(string filePath)
         {
             // Import a GameCube banner by reading from a file
@@ -73,7 +123,7 @@ namespace IndustrialPark.Other
             fileStream.Read(imageData, 0, imageData.Length);
             
             // Convert image data to bitmap
-            banner.Image = ConvertRGB5A1ToImage(imageData);
+            banner.Image = ConvertRGB5A1ToBitmap(imageData);
             
             // Read game name
             Debug.WriteLine("Position of metadata: " + fileStream.Position);
@@ -107,19 +157,31 @@ namespace IndustrialPark.Other
             return banner;
         }
 
-        private static Bitmap ConvertRGB5A1ToImage(byte[] imageData)
+        /// <summary>
+        /// Converts an image in RGB5A1 format to a bitmap.
+        /// <para>
+        /// The RGB5A1 image data is stored in a byte array where each pixel is 2 bytes
+        /// (1 bit Alpha, followed by 5 bits each for Red, Green, and Blue) in 4x4 pixel tiles.
+        /// Read more about the format here: https://hitmen.c02.at/files/yagcd/yagcd/chap17.html#sec17.11
+        /// </para>
+        /// </summary>
+        /// <param name="imageData">The image data in a byte array</param>
+        /// <returns>The bitmap image</returns>
+        private static Bitmap ConvertRGB5A1ToBitmap(byte[] imageData)
         {
             // Convert bytes into a bitmage image
             // Each pixel is 2 bytes (5 bits for R, 5 bits for G, 5 bits for B, 1 bit for A)
             var bitmap = new Bitmap(IMAGE_WIDTH, IMAGE_HEIGHT);
             
+            // Each tile is 4x4 pixels, so the image is 24 tiles wide and 8 tiles tall.
             int gridSize = 4;
             int gridWidth = IMAGE_WIDTH / gridSize;
             int gridHeight = IMAGE_HEIGHT / gridSize;
             
             int index = 0;
             
-            // Read each 16 pixels in a 4x4 tile, then move to the next tile
+            // Read each 16 pixels in a 4x4 tile, write to byte stream, then move
+            // to the next tile.
             for (int gridY = 0; gridY < gridHeight; gridY++)
             {
                 for (int gridX = 0; gridX < gridWidth; gridX++)
@@ -152,7 +214,17 @@ namespace IndustrialPark.Other
             return bitmap;
         }
 
-        private static byte[] ConvertImageToRGB5A1(Bitmap image)
+        /// <summary>
+        /// Converts a bitmap to an image in RGB5A1 format.
+        /// <para>
+        /// The RGB5A1 image data is stored in a byte array where each pixel is 2 bytes
+        /// (1 bit Alpha, followed by 5 bits each for Red, Green, and Blue) in 4x4 pixel tiles.
+        /// Read more about the format here: https://hitmen.c02.at/files/yagcd/yagcd/chap17.html#sec17.11
+        /// </para>
+        /// </summary>
+        /// <param name="image">The bitmap image</param>
+        /// <returns>The RGB5A1 image as a byte array</returns>
+        private static byte[] ConvertBitmapToRGB5A1(Bitmap image)
         {
             // Convert image to RGB5A1 format
             // Each pixel is 2 bytes (5 bits for R, 5 bits for G, 5 bits for B, 1 bit for A)
@@ -175,7 +247,6 @@ namespace IndustrialPark.Other
                     {
                         for (int x = 0; x < gridSize; x++)
                         {
-         
                             pixelX = gridX * gridSize + x;
                             pixelY = gridY * gridSize + y;
                             
@@ -190,7 +261,6 @@ namespace IndustrialPark.Other
                             // Combine into two bytes
                             // format: ARRR RRGG GGGB BBBB
                             ushort rgb5a1 = (ushort)((a << 15) | (r << 10) | (g << 5) | b);
-                    
  
                             // Store the two bytes in the byte array
                             // Upper byte first
@@ -200,19 +270,15 @@ namespace IndustrialPark.Other
                     }
                 }
             }
-            
-            
-
-            // FIXME: The pixels need to be in 4x4 tiles
             return rgb5a1Bytes;
         }
         
         /// <summary>
         /// Saves the banner to a file.
         /// </summary>
-        /// <param name="filename">The file path</param>
+        /// <param name="filepath">The destination file path</param>
         /// <returns>true if the file was saved, otherwise false</returns>
-        public bool SaveToFile(string filename)
+        public bool SaveToFile(string filepath)
         {
             // Save this banner to a file
             
@@ -220,10 +286,10 @@ namespace IndustrialPark.Other
             {
                 // Convert image to RGB5A1 format
                 // Each pixel is 2 bytes (5 bits for R, 5 bits for G, 5 bits for B, 1 bit for A)
-                byte[] imageData = ConvertImageToRGB5A1(Image);
+                byte[] imageData = ConvertBitmapToRGB5A1(Image);
              
                 // Write byte stream to file
-                var fileStream = new FileStream(filename, FileMode.Create, FileAccess.Write);
+                var fileStream = new FileStream(filepath, FileMode.Create, FileAccess.Write);
             
                 // Write magic "BNR1"
                 var magic = Encoding.ASCII.GetBytes(MAGIC);
