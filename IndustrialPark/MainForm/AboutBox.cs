@@ -76,17 +76,17 @@ namespace IndustrialPark
 
         private void button1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/igorseabra4/IndustrialPark");
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "https://github.com/igorseabra4/IndustrialPark", UseShellExecute = true });
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://discord.gg/9eAE6UB");
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "https://discord.gg/9eAE6UB", UseShellExecute = true });
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(WikiLink);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = WikiLink, UseShellExecute = true });
         }
 
         public static string WikiLink => "https://www.heavyironmodding.org/wiki/";

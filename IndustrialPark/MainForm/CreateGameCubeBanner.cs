@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Image = System.Web.UI.WebControls.Image;
 
 namespace IndustrialPark
 {

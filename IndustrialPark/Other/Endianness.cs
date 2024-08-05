@@ -3,6 +3,7 @@ using IndustrialPark.AssetEditorColors;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace IndustrialPark
 {
@@ -85,7 +86,7 @@ namespace IndustrialPark
 
         public bool ReadInt32Bool() => ReadInt32() != 0;
 
-        public string ReadString(int length) => System.Text.Encoding.GetEncoding(1252).GetString(ReadBytes(length));
+        public string ReadString(int length) => CodePagesEncodingProvider.Instance.GetEncoding(1252).GetString(ReadBytes(length));
 
         public AssetColor ReadColor() => new AssetColor(ReadByte(), ReadByte(), ReadByte(), ReadByte());
 
@@ -159,7 +160,7 @@ namespace IndustrialPark
 
         public override void Write(string f)
         {
-            foreach (byte c in System.Text.Encoding.GetEncoding(1252).GetBytes(f))
+            foreach (byte c in CodePagesEncodingProvider.Instance.GetEncoding(1252).GetBytes(f))
                 Write(c);
         }
 

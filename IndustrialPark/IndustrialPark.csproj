@@ -1,19 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{62F1A222-225B-463F-85A7-70F56C34C324}</ProjectGuid>
+    <TargetFramework>net8.0-windows7.0</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>IndustrialPark</RootNamespace>
-    <AssemblyName>IndustrialPark</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
     <IsWebBootstrapper>false</IsWebBootstrapper>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -29,25 +18,14 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>2</WarningLevel>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>3</WarningLevel>
+    <NoWarn>1701;1702;SYSLIB0014</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -58,7 +36,6 @@
   <PropertyGroup>
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
-  <PropertyGroup />
   <PropertyGroup>
     <SignManifests>false</SignManifests>
   </PropertyGroup>
@@ -67,892 +44,86 @@
   </PropertyGroup>
   <PropertyGroup>
     <ManifestKeyFile>IndustrialPark_TemporaryKey.pfx</ManifestKeyFile>
+    <Company>Heavy Iron Modding</Company>
+    <Copyright>Copyright ©  2024 igorseabra4</Copyright>
+    <AssemblyVersion>2024.02.10</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AssimpNetter, Version=6.0.5.0, Culture=neutral, PublicKeyToken=0d51b391f59f42a6, processorArchitecture=MSIL">
-      <HintPath>..\packages\AssimpNetter.6.0.5\lib\net48\AssimpNetter.dll</HintPath>
-    </Reference>
-    <Reference Include="DiscordRPC, Version=1.6.1.70, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\DiscordRichPresence.1.6.1.70\lib\net45\DiscordRPC.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.Win32.Registry, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Win32.Registry.5.0.0\lib\net461\Microsoft.Win32.Registry.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack-Core.1.1.2\lib\Microsoft.WindowsAPICodePack.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\WindowsAPICodePack-Shell.1.1.1\lib\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.13.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Ps2IsoTools, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Ps2IsoTools.1.1.2\lib\netstandard2.0\Ps2IsoTools.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.4.2.0\lib\net45\SharpDX.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SharpDX.D3DCompiler, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.D3DCompiler.4.2.0\lib\net45\SharpDX.D3DCompiler.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Desktop, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Desktop.4.2.0\lib\net45\SharpDX.Desktop.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Direct3D11, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Direct3D11.4.2.0\lib\net45\SharpDX.Direct3D11.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.DXGI, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.DXGI.4.2.0\lib\net45\SharpDX.DXGI.dll</HintPath>
-    </Reference>
-    <Reference Include="SharpDX.Mathematics, Version=4.2.0.0, Culture=neutral, PublicKeyToken=b4dcf0f35e5521f1, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpDX.Mathematics.4.2.0\lib\net45\SharpDX.Mathematics.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Buffers, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Buffers.4.6.1\lib\net462\System.Buffers.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Design" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Memory, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Memory.4.6.3\lib\net462\System.Memory.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Numerics.Vectors, Version=4.1.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Numerics.Vectors.4.6.1\lib\net462\System.Numerics.Vectors.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=6.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.AccessControl, Version=6.0.0.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.AccessControl.6.0.1\lib\net461\System.Security.AccessControl.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
-    </Reference>
-    <Reference Include="System.ValueTuple" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms">
-      <HintPath>..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\System.Windows.Forms.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_IO.cs" />
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Sounds.cs" />
-    <Compile Include="ArchiveEditor\Dialogs\ChooseGame.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ChooseGame.Designer.cs">
-      <DependentUpon>ChooseGame.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\CollectionEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\CollectionEditor.Designer.cs">
-      <DependentUpon>CollectionEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\RWAnalyze.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\RWAnalyze.Designer.cs">
-      <DependentUpon>RWAnalyze.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\RenameLayer.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\RenameLayer.Designer.cs">
-      <DependentUpon>RenameLayer.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_DSP.cs" />
-    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_ffmpeg.cs" />
-    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_FMOD.cs" />
-    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_PS2VAG.cs" />
-    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_XboxADPCM.cs" />
-    <Compile Include="ArchiveEditor\Other\Sound\SoundUtility_vgmstream.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoGcn1Wrapper.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoXboxWrapper.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\SoundInfoPs2Wrapper.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\CollWrapper.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalModelEditor.Designer.cs">
-      <DependentUpon>InternalModelEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\LodtWrapper.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\PipeInfoWrapper.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\Wrappers\ShdwWrapper.cs" />
-    <Compile Include="Assets\Binary\AssetANIM_V1.cs" />
-    <Compile Include="Assets\Binary\AssetANIM_V2.cs" />
-    <Compile Include="Assets\Binary\AssetSNDI_GCN_V2.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaAudioConversation.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaCameraBinary.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaCameraTransitionTime.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLightFlicker.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLightStrobe.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBulletMark.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBulletTime.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectCameraRband.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaNpcCustomAV.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Bomber.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2BossUnderminerDrill.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2BossUnderminerUM.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Chicken.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Driller.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Enforcer.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Humanoid.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Rat.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2RobotTank.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Scientist.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyIN2\DynaEnemyIN2Shooter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATS.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSLeftArm.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSRightArm.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSSwarm.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSSwarmBug.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSSwarmOwl.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSThief.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemyRATS\DynaEnemyRATSWaiter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCarryableProperty.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaAnalogDeflection.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaAnalogDirection.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCObjectPoleSwing.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCObjectSpringBoard.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaCObjectTightrope.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaHudCompassSystem.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaLogicMission.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaLogicTask.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaNpcGate.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaNpcWalls.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaPourWidget.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RatProtoDynas\DynaTwiddler.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectLight.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectScreenWarp.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectSparkEmitter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaHudCompassObject.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaInterestPointer.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaNpcCoverpoint.cs" />
-    <Compile Include="Assets\Models\RWSections\CollisionData_Section1_00BEEF01.cs" />
-    <Compile Include="Assets\Models\RWSections\CollisionData_Section2_00BEEF02.cs" />
-    <Compile Include="Assets\Models\RWSections\CollisionData_Section3_00BEEF03.cs" />
-    <Compile Include="Assets\Models\RWSections\CollisionData_Section4_00BEEF04.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetCCRV.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetSPLP.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\ParticleCommand.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\ParticleSystem.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLightInfo.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\xBound.cs" />
-    <Compile Include="Assets\Shared\Editors\AssetIdWrapper.cs" />
-    <Compile Include="Assets\Shared\Editors\ByteArrayEditor.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\Cutscene.cs" />
-    <Compile Include="Assets\Shared\Editors\CrdtAddEditor.cs" />
-    <Compile Include="Assets\Shared\Enums\AnimTableStates.cs" />
-    <Compile Include="Assets\Shared\FMOD\FMOD_GCADPCMINFO.cs" />
-    <Compile Include="Assets\Shared\FMOD\FSB3_Header.cs" />
-    <Compile Include="Assets\Shared\FMOD\GcnV2SoundWrapper.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLocation.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\Transformation.cs" />
-    <Compile Include="Assets\Shared\Editors\AssetIDEditor.cs" />
-    <Compile Include="Assets\Shared\Editors\AssetPropertyCollectionEditor.cs" />
-    <Compile Include="ArchiveEditor\Other\LayerComparer.cs" />
-    <Compile Include="ArchiveEditor\Other\AssetTypeContainer.cs" />
-    <Compile Include="ArchiveEditor\Dialogs\ApplyVertexColors.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ApplyVertexColors.designer.cs">
-      <DependentUpon>ApplyVertexColors.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\MaterialEffectEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\MaterialEffectEditor.Designer.cs">
-      <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Gizmos\BoxTrigPositionGizmo.cs" />
-    <Compile Include="ArchiveEditor\Other\Layer.cs" />
-    <Compile Include="Assets\Binary\AssetATKT.cs" />
-    <Compile Include="Assets\Binary\AssetONEL.cs" />
-    <Compile Include="Assets\Binary\AssetCTOC.cs" />
-    <Compile Include="Assets\Binary\AssetSHRP.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectUberLaser.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaCheckpoint.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectRubbleGenerator.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTrainJunction.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaGObjectTrainCar.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaCameraPreset.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectGrass.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLensFlareSomething.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectSplash.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectLensFlare.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTurret.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectGrapple.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectWaterBody.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectDashCameraSpline.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectLaserBeam.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectHangable.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectCameraParamAsset.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaLogicFunctionGenerator.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionTurn.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionLift.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaNpcGroup.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudImage.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectFlamethrower.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectVent.cs" />
-    <Compile Include="Assets\Shared\Enums\EVersion.cs" />
-    <Compile Include="Assets\Shared\Enums\EBrainID.cs" />
-    <Compile Include="Assets\Shared\Enums\EMinfParamType.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetRANM.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetTRWT.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetUIM.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetZLIN.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetGRSM.cs" />
-    <Compile Include="Assets\Shared\AssetSound.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\UIMCommand.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\VolumeSpecific.cs" />
-    <Compile Include="Assets\Shared\DataTypes\WireVector.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableRotatableDynaBase.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\RenderableDynaBase.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUITextUserString.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIText.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIModel.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIImage.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIController.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUIBox.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\UIDynas\DynaUI.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetDTRK.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetPGRS.cs" />
-    <Compile Include="Assets\Shared\AssetGenericBase.cs" />
-    <Compile Include="Assets\Shared\AssetWithData.cs" />
-    <Compile Include="Assets\Shared\DataTypes\AssetByte.cs" />
-    <Compile Include="Assets\Shared\DataTypes\AssetSingle.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\FlagBitmask.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\DynamicTypeDescriptor.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.Designer.cs">
-      <DependentUpon>InternalMultiAssetEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Other\TextureIOHelper.cs" />
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Textures.cs" />
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_Gizmos.cs" />
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetTemplates.cs" />
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions_AssetEditing.cs" />
-    <Compile Include="ArchiveEditor\Other\AssetClipboard.cs" />
-    <Compile Include="ArchiveEditor\Dialogs\ImportTextures.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ImportTextures.Designer.cs">
-      <DependentUpon>ImportTextures.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ScrollableMessageBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ScrollableMessageBox.Designer.cs">
-      <DependentUpon>ScrollableMessageBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ImportModel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ImportModel.Designer.cs">
-      <DependentUpon>ImportModel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\LinkEditor.Designer.cs">
-      <DependentUpon>LinkEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalTextureEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalTextureEditor.Designer.cs">
-      <DependentUpon>InternalTextureEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalFlyEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalFlyEditor.designer.cs">
-      <DependentUpon>InternalFlyEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\LinkEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Assets\Shared\Editors\LinkListEditor.cs" />
-    <Compile Include="ArchiveEditor\Gizmos\GizmoBase.cs" />
-    <Compile Include="ArchiveEditor\Gizmos\PositionGizmo.cs" />
-    <Compile Include="ArchiveEditor\Gizmos\PositionLocalGizmo.cs" />
-    <Compile Include="ArchiveEditor\Gizmos\RotationGizmo.cs" />
-    <Compile Include="ArchiveEditor\Gizmos\ScaleGizmo.cs" />
-    <Compile Include="ArchiveEditor\Dialogs\ProgressBar.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ProgressBar.Designer.cs">
-      <DependentUpon>ProgressBar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Assets\ObjectAssets\AssetTPIK.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelEntry.cs" />
-    <Compile Include="Assets\Binary\AssetCRDT.cs" />
-    <Compile Include="Assets\Binary\AssetFLY.cs" />
-    <Compile Include="Assets\Binary\AssetLKIT.cs" />
-    <Compile Include="Assets\Binary\AssetCSN.cs" />
-    <Compile Include="Assets\Binary\AssetDEST.cs" />
-    <Compile Include="Assets\Binary\AssetVILP.cs" />
-    <Compile Include="Assets\Binary\AssetWIRE.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectSpotlight.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaLogicReference.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectRaceTimer.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaInteractionLaunch.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectRumbleSphere.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectRumble.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaIncrediblesIcon.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectFlameEmitter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectSmokeEmitter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectInPickup.cs" />
-    <Compile Include="ArchiveEditor\Other\Operation.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetSPLN.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetLOBM.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSDFX.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDUPC.cs" />
-    <Compile Include="Assets\Shared\AssetGeneric.cs" />
-    <Compile Include="Assets\Shared\FMOD\FSB3_File.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHud.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudMeter.cs" />
-    <Compile Include="Assets\Shared\Enums\FontEnum.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaJSPExtraData.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyCastNCrew.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyDennis.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyFrogFish.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyMindy.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyNeptune.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyTurret.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectLightning.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyBucketOTron.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyStandard.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemySupplyCrate.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaEffectParticleGenerator.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectVentType.cs" />
-    <Compile Include="Assets\Models\AssetJSP_INFO.cs" />
-    <Compile Include="Assets\Models\AssetRenderWareModel.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetCSNM.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetGUST.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetLITE.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetPARE.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetPARP.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetPARS.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetPRJT.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetSCRP.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetSGRP.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetSURF.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTaskBox.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\EffectDynas\DynaEffectScreenFade.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\EnemySB\DynaEnemyCritter.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\PlaceableDynas\DynaEnemy.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectRing.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectRingControl.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\DynaSceneProperties.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetVOLU.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMVPT.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetDSTR.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetNPC.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLAT.cs" />
-    <Compile Include="Assets\Shared\FMOD\FSB3_SampleHeader.cs" />
-    <Compile Include="Assets\Shared\GenericAssetDataContainer.cs" />
-    <Compile Include="Assets\Shared\AssetWithMotion.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\PareSpecific.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\Motion.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\PlatSpecific.cs" />
-    <Compile Include="Assets\Shared\AssetSpecifics\CamSpecific.cs" />
-    <Compile Include="Assets\Shared\DataTypes\FlagField.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IAssetAddSelected.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IAssetCopyPasteTransformation.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IVolumeAsset.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\SingleTypeConverter.cs" />
-    <Compile Include="Links\Enums\EventRatProto.cs" />
-    <Compile Include="Links\Enums\EventROTU.cs" />
-    <Compile Include="Links\Enums\EventScooby.cs" />
-    <Compile Include="Links\Enums\EventBFBB.cs" />
-    <Compile Include="Assets\Shared\Enums\PlatType.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IRotatableAsset.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IScalableAsset.cs" />
-    <Compile Include="ArchiveEditor\Dialogs\ApplyScale.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ApplyScale.designer.cs">
-      <DependentUpon>ApplyScale.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Links\Enums\EventTSSM.cs" />
-    <Compile Include="Links\Link.cs" />
-    <Compile Include="MainForm\BuildISO.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\BuildISO.Designer.cs">
-      <DependentUpon>BuildISO.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainForm\CreateGameCubeBanner.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\CreateGameCubeBanner.Designer.cs">
-      <DependentUpon>CreateGameCubeBanner.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainForm\OpenLevel.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\OpenLevel.Designer.cs">
-      <DependentUpon>OpenLevel.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Other\GameCubeBanner.cs" />
-    <Compile Include="Other\MessageBox.cs" />
-    <Compile Include="Models\BSP_IO_Shared.cs" />
-    <Compile Include="Models\ChooseTarget.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Models\ChooseTarget.Designer.cs">
-      <DependentUpon>ChooseTarget.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Models\Assimp_IO.cs" />
-    <Compile Include="Other\DiscordRPCController.cs" />
-    <Compile Include="Other\RemoteControl.cs" />
-    <Compile Include="Other\AutomaticUpdater.cs" />
-    <Compile Include="MainForm\EditName.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\EditName.designer.cs">
-      <DependentUpon>EditName.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Other\IPversion.cs" />
-    <Compile Include="MainForm\UserTemplateManager.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\UserTemplateManager.Designer.cs">
-      <DependentUpon>UserTemplateManager.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\AddMultipleAssets.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\AddMultipleAssets.Designer.cs">
-      <DependentUpon>AddMultipleAssets.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Other\AssetTemplate.cs" />
-    <Compile Include="ArchiveEditor\Dialogs\ChoosePlatform.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\ChoosePlatform.Designer.cs">
-      <DependentUpon>ChoosePlatform.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\AssetHeader.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\AssetHeader.Designer.cs">
-      <DependentUpon>AssetHeader.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\ArchiveEditorFunctions.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\InternalAssetEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalAssetEditor.Designer.cs">
-      <DependentUpon>InternalAssetEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalSoundEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalSoundEditor.Designer.cs">
-      <DependentUpon>InternalSoundEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\IInternalEditor.cs" />
-    <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\InternalEditors\InternalTextEditor.designer.cs">
-      <DependentUpon>InternalTextEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\NewArchive.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\Dialogs\NewArchive.Designer.cs">
-      <DependentUpon>NewArchive.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Assets\Binary\AssetALST.cs" />
-    <Compile Include="Assets\Binary\AssetATBL.cs" />
-    <Compile Include="Assets\Binary\AssetCOLL.cs" />
-    <Compile Include="Assets\Binary\AssetJAW.cs" />
-    <Compile Include="Assets\Binary\AssetLODT.cs" />
-    <Compile Include="Assets\Binary\AssetMAPR.cs" />
-    <Compile Include="Assets\Binary\AssetPIPT.cs" />
-    <Compile Include="Assets\Binary\AssetSHDW.cs" />
-    <Compile Include="Assets\Binary\AssetSNDI_GCN_V1.cs" />
-    <Compile Include="Assets\Binary\AssetSNDI_PS2.cs" />
-    <Compile Include="Assets\Binary\AssetSNDI_XBOX.cs" />
-    <Compile Include="Assets\Binary\AssetTEXT.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetCNTR.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetCOND.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetDPAT.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetDSCO.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetENV.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetSFX.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetCAM.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetEGEN.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetHANG.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPEND.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUI.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetUIFT.cs" />
-    <Compile Include="Assets\DYNA\AssetDYNA.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetFOG.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetPORT.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetTIMR.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBOUL.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaGObjectTeleport.cs" />
-    <Compile Include="Assets\Shared\Enums\NpcType_BFBB.cs" />
-    <Compile Include="Other\IPSettings.cs" />
-    <Compile Include="Other\ProjectJson.cs" />
-    <Compile Include="Models\BSP_IO.cs" />
-    <Compile Include="Models\BSP_IO_ReadOBJ.cs" />
-    <Compile Include="Other\FileAssociation.cs" />
-    <Compile Include="Assets\Shared\DataTypes\AssetColor.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\AssetColorTypeConverter.cs" />
-    <Compile Include="Assets\Shared\Editors\AssetColorEditor.cs" />
-    <Compile Include="Assets\DYNA\DynaGeneric.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBoulderGen.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBungeeDrop.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBungeeHook.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectBusStop.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectCamTweak.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectFlythrough.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudMeterFont.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudMeterUnit.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudModel.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\HudDynas\DynaHudText.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectNPCSettings.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\RenderableDynas\DynaPointer.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTalkBox.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTaxi.cs" />
-    <Compile Include="Assets\DYNA\DynaTypes\GameObjectDynas\DynaGObjectTextBox.cs" />
-    <Compile Include="Assets\Shared\Asset.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\AssetSingleTypeConverter.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\HexByteTypeConverter.cs" />
-    <Compile Include="Assets\Shared\TypeConverter\HexUShortTypeConverter.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IClickableAsset.cs" />
-    <Compile Include="Assets\Shared\BaseAsset.cs" />
-    <Compile Include="Assets\Shared\Enums\BaseAssetType.cs" />
-    <Compile Include="Assets\Shared\EntityAsset.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IAssetWithModel.cs" />
-    <Compile Include="Assets\Shared\Interfaces\IRenderableAsset.cs" />
-    <Compile Include="Assets\ObjectAssets\AssetGRUP.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetBUTN.cs" />
-    <Compile Include="Assets\Shared\DataTypes\AssetID.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\AssetMRKR.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPLYR.cs" />
-    <Compile Include="Assets\Models\AssetJSP.cs" />
-    <Compile Include="Assets\Models\AssetMINF.cs" />
-    <Compile Include="Assets\Models\AssetMODL.cs" />
-    <Compile Include="Assets\Binary\AssetPICK.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetPKUP.cs" />
-    <Compile Include="Assets\Models\AssetRWTX.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetSIMP.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetTRIG.cs" />
-    <Compile Include="Assets\ObjectAssets\ClickableAssets\PlaceableAssets\AssetVIL.cs" />
-    <Compile Include="MainForm\AboutBox.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\AboutBox.Designer.cs">
-      <DependentUpon>AboutBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Assets\Shared\TypeConverter\HexUIntTypeConverter.cs" />
-    <Compile Include="ArchiveEditor\ArchiveEditor.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ArchiveEditor\ArchiveEditor.Designer.cs">
-      <DependentUpon>ArchiveEditor.cs</DependentUpon>
-    </Compile>
-    <Compile Include="MainForm\MainForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\MainForm.Designer.cs">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Other\Endianness.cs" />
-    <Compile Include="Models\ModelConverterData.cs" />
-    <Compile Include="Models\Triangle.cs" />
-    <Compile Include="Models\Vertex.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.en-GB.resx">
-      <DependentUpon>ArchiveEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyVertexColors.resx">
-      <DependentUpon>ApplyVertexColors.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ChooseGame.resx">
-      <DependentUpon>ChooseGame.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\CollectionEditor.resx">
-      <DependentUpon>CollectionEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\RWAnalyze.resx">
-      <DependentUpon>RWAnalyze.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\RenameLayer.resx">
-      <DependentUpon>RenameLayer.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportTextures.resx">
-      <DependentUpon>ImportTextures.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\MaterialEffectEditor.en-GB.resx">
-      <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\MaterialEffectEditor.resx">
-      <DependentUpon>MaterialEffectEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ScrollableMessageBox.resx">
-      <DependentUpon>ScrollableMessageBox.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ImportModel.resx">
-      <DependentUpon>ImportModel.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalModelEditor.resx">
-      <DependentUpon>InternalModelEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalMultiAssetEditor.resx">
-      <DependentUpon>InternalMultiAssetEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextureEditor.resx">
-      <DependentUpon>InternalTextureEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\LinkEditor.resx">
-      <DependentUpon>LinkEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ProgressBar.resx">
-      <DependentUpon>ProgressBar.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ApplyScale.resx">
-      <DependentUpon>ApplyScale.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\BuildISO.resx">
-      <DependentUpon>BuildISO.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\CreateGameCubeBanner.resx">
-      <DependentUpon>CreateGameCubeBanner.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\MainForm.en-GB.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\OpenLevel.resx">
-      <DependentUpon>OpenLevel.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Research\AssetIDGenerator.resx">
-      <DependentUpon>AssetIDGenerator.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Research\PickupSearch.resx">
-      <DependentUpon>PickupSearch.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Research\DynaSearch.resx">
-      <DependentUpon>DynaSearch.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Research\EventSearch.resx">
-      <DependentUpon>EventSearch.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Research\AssetIDGenerator.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Research\AssetIDGenerator.Designer.cs">
-      <DependentUpon>AssetIDGenerator.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Research\PickupSearch.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Research\PickupSearch.Designer.cs">
-      <DependentUpon>PickupSearch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Research\DynaSearch.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Research\DynaSearch.Designer.cs">
-      <DependentUpon>DynaSearch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Research\EventSearch.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Research\EventSearch.Designer.cs">
-      <DependentUpon>EventSearch.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SharpDX\Camera\CameraVectors.cs" />
-    <Compile Include="SharpDX\Camera\ProjectionMatrix.cs" />
-    <Compile Include="SharpDX\Camera\ViewMatrix.cs" />
-    <Compile Include="SharpDX\RenderWareModelFile.cs" />
-    <Compile Include="SharpDX\SharpCamera.cs" />
-    <Compile Include="SharpDX\SharpDevice.cs" />
-    <Compile Include="SharpDX\SharpFPS.cs" />
-    <Compile Include="SharpDX\SharpMesh.cs" />
-    <Compile Include="SharpDX\SharpRenderer.cs" />
-    <Compile Include="SharpDX\SharpShader.cs" />
-    <Compile Include="SharpDX\SharpSubSet.cs" />
-    <Compile Include="SharpDX\TextureManager.cs" />
-    <Compile Include="SharpDX\TextureUtility.cs" />
-    <Compile Include="SharpDX\VertexTypes.cs" />
-    <Compile Include="MainForm\ViewConfig.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MainForm\ViewConfig.designer.cs">
-      <DependentUpon>ViewConfig.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalFlyEditor.resx">
-      <DependentUpon>InternalFlyEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\EditName.resx">
-      <DependentUpon>EditName.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\UserTemplateManager.resx">
-      <DependentUpon>UserTemplateManager.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\AddMultipleAssets.resx">
-      <DependentUpon>AddMultipleAssets.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\ChoosePlatform.resx">
-      <DependentUpon>ChoosePlatform.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\AssetHeader.resx">
-      <DependentUpon>AssetHeader.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.resx">
-      <DependentUpon>ArchiveEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalAssetEditor.resx">
-      <DependentUpon>InternalAssetEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalSoundEditor.resx">
-      <DependentUpon>InternalSoundEditor.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\InternalEditors\InternalTextEditor.resx">
-      <DependentUpon>InternalTextEditor.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ArchiveEditor\Dialogs\NewArchive.resx">
-      <DependentUpon>NewArchive.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\AboutBox.resx">
-      <DependentUpon>AboutBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\MainForm.resx">
-      <DependentUpon>MainForm.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainForm\ViewConfig.resx">
-      <DependentUpon>ViewConfig.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="packages.config" />
-    <None Include="release.cmd">
+    <None Update="Resources\FSBank.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Properties\app.manifest" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <None Include="Resources\FSBank.zip">
+    <None Update="Resources\jf01_light_kit">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\jf01_light_kit">
+    <None Update="Resources\JF_SB_lights">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\JF_SB_lights">
+    <None Update="Resources\lights">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\lights">
+    <None Update="Resources\Models\Torus.mtl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Torus.mtl">
+    <None Update="Resources\Models\Torus.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Torus.obj">
+    <None Update="Resources\Scripts\importvcolorobj_v1.3.9.ms">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Scripts\importvcolorobj_v1.3.9.ms">
+    <None Update="Resources\Models\Box.mtl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\ip_version.json" />
-    <None Include="Resources\Models\Box.mtl">
+    <None Update="Resources\Models\Box.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Box.obj">
+    <None Update="Resources\Models\Cylinder.mtl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Cylinder.mtl">
+    <None Update="Resources\Models\Cylinder.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Cylinder.obj">
+    <None Update="Resources\Models\Pyramid.mtl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Pyramid.mtl">
+    <None Update="Resources\Models\Pyramid.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Pyramid.obj">
+    <None Update="Resources\Models\Sphere.mtl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Sphere.mtl">
+    <None Update="Resources\Models\Sphere.obj">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\Models\Sphere.obj">
+    <None Update="Resources\txdgen_1.0\LICENSES\eirrepo\LICENSE">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\eirrepo\LICENSE">
+    <None Update="Resources\txdgen_1.0\LICENSES\libimagequant\COPYRIGHT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\libimagequant\COPYRIGHT">
+    <None Update="Resources\txdgen_1.0\LICENSES\libjpeg\COPYRIGHT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\libjpeg\COPYRIGHT">
+    <None Update="Resources\txdgen_1.0\LICENSES\libpng\COPYRIGHT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\libpng\COPYRIGHT">
+    <None Update="Resources\txdgen_1.0\LICENSES\libsquish\COPYRIGHT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\libsquish\COPYRIGHT">
+    <None Update="Resources\txdgen_1.0\LICENSES\lzo-2.08\COPYING">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\lzo-2.08\COPYING">
+    <None Update="Resources\txdgen_1.0\LICENSES\pvrtextool\COPYRIGHT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\pvrtextool\COPYRIGHT">
+    <None Update="Resources\txdgen_1.0\LICENSES\rwtools\COPYRIGHT">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\rwtools\COPYRIGHT">
+    <None Update="Resources\txdgen_1.0\LICENSES\rwtools\README.md">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\txdgen_1.0\LICENSES\rwtools\README.md">
+    <None Update="Resources\vgmstream_ip_fix.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="Resources\vgmstream_ip_fix.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
@@ -1004,14 +175,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\HipHopTool\HipHopFile\HipHopFile.csproj">
-      <Project>{f68908e6-6947-477e-8a88-3130be2fdb06}</Project>
-      <Name>HipHopFile</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\RenderWareFile\RenderWareFile\RenderWareFile.csproj">
-      <Project>{005f2d00-06de-4ef9-bfee-80efac49e114}</Project>
-      <Name>RenderWareFile</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\HipHopTool\HipHopFile\HipHopFile.csproj" />
+    <ProjectReference Include="..\RenderWareFile\RenderWareFile\RenderWareFile.csproj" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
@@ -1028,7 +193,22 @@
   <ItemGroup>
     <Folder Include="Resources\CountryFlagIcons\" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+	<PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
+    <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
+    <PackageReference Include="DSoft.SharpDX.Desktop" Version="4.3.2406.51" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Ps2IsoTools" Version="1.1.2" />
+    <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
+    <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
+    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Remove="ArchiveEditor\Dialogs\ApplyVertexColors.en-GB.resx" />
+    <EmbeddedResource Remove="MainForm\OpenLevel.en-GB.resx" />
+  </ItemGroup>
   <ProjectExtensions />
   <Target Name="AfterBuild">
     <ItemGroup>
@@ -1036,32 +216,11 @@
     </ItemGroup>
     <Move SourceFiles="@(MoveToLibFolder)" DestinationFolder="$(OutputPath)lib" OverwriteReadOnlyFiles="true" />
   </Target>
-  <PropertyGroup>
-    <PostBuildEvent>if $(ConfigurationName) == Debug (
-:: Delete all build_test folders
-for /d %25%25G in ("$(TargetDir)build_test*") do rd  /s /q %25%25G &amp;&amp; echo Deleted Directory: %25%25G
-:: Delete all orderlog files
- del "$(TargetDir)*orderlog.txt"
-:: Move all assemblies and related files to lib folder
-:: ROBOCOPY "$(TargetDir) " "$(TargetDir)lib\ " /XF *.exe *.config *.json *.manifest *.xml *.pdb *.txt *.cmd *.application /XD app.publish Resources runtimes lib logs data /E /IS /MOVE
-if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25
-) ELSE (
-cd $(TargetDir)
-del *.xml
-del *.pdb
-del *.manifest
-del *.application
-del *.json
-rd /s /q "app.publish"
-del *.cmd
-)</PostBuildEvent>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <NoWarn>1701;1702;SYSLIB0014</NoWarn>
   </PropertyGroup>
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\AssimpNetter.6.0.5\build\AssimpNetter.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\AssimpNetter.6.0.5\build\AssimpNetter.targets'))" />
-    <Error Condition="!Exists('..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets'))" />
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;REM Delete all build_test folders&#xD;&#xA;for /d %25%25G in (&quot;$(TargetDir)build_test*&quot;) do rd  /s /q %25%25G &amp;&amp; echo Deleted Directory: %25%25G&#xD;&#xA;REM Delete all orderlog files&#xD;&#xA;del &quot;$(TargetDir)*orderlog.txt&quot;&#xD;&#xA;) ELSE (&#xD;&#xA;cd $(TargetDir)&#xD;&#xA;del *.pdb&#xD;&#xA;)" />
   </Target>
   <Import Project="..\packages\AssimpNetter.6.0.5\build\AssimpNetter.targets" Condition="Exists('..\packages\AssimpNetter.6.0.5\build\AssimpNetter.targets')" />
   <Import Project="..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />

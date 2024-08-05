@@ -119,7 +119,7 @@ namespace IndustrialPark
             var code = asset.assetType.GetCode();
             if (asset.assetType.IsDyna())
                 code += $"/{asset.TypeString}";
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + code);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = AboutBox.WikiLink + code, UseShellExecute = true }) ;
         }
 
         public void ClearModelTemplateFocus()

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using static HipHopFile.Functions;
 
@@ -64,16 +65,10 @@ namespace IndustrialPark
 
                 File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
 
-                var t = new Thread(() =>
-                {
-                    Thread.Sleep(5000);
-                    closeConverter();
-                });
-                t.Start();
+                Task.Delay(5000).ContinueWith(i => { closeConverter(); });
 
                 txdgenProcess.Start();
                 txdgenProcess.WaitForExit();
-                t.Abort();
             }
         }
 

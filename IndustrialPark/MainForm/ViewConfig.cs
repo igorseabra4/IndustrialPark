@@ -1,6 +1,7 @@
 ﻿using SharpDX;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -9,7 +10,8 @@ namespace IndustrialPark
     {
         public static bool ProgramIsUpdatingValues { get; set; } = true;
         private static bool _invalidCameraValues { get; set; } = false;
-        private Thread _updateViewValuesThread;
+        private Task _updateViewValuesTask;
+        private CancellationTokenSource _cancellationTokenSource;
 
         /*
             ------------
@@ -32,16 +34,23 @@ namespace IndustrialPark
         /// Updates the GUI if the invalid flag has been set.
         /// </summary>
         /// <param name="obj"></param>
-        private void UpdateGUIValues(object obj)
+        private async void UpdateGUIValues(CancellationToken token)
         {
-            while (true)
+            while (!token.IsCancellationRequested)
             {
                 if (_invalidCameraValues)
                 {
                     NumericFOV.Invoke((MethodInvoker)UpdateValues);
                 }
 
-                Thread.Sleep(33);
+                try
+                {
+                    await Task.Delay(33, token);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
             }
         }
 
@@ -126,13 +135,13 @@ namespace IndustrialPark
             if (Visible)
             {
                 UpdateValues();
-                _updateViewValuesThread = new Thread(UpdateGUIValues);
-                _updateViewValuesThread.IsBackground = true;
-                _updateViewValuesThread.Start();
+                _cancellationTokenSource = new CancellationTokenSource();
+                _updateViewValuesTask = Task.Run(() => UpdateGUIValues(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
             }
             else
             {
-                _updateViewValuesThread?.Abort();
+                _cancellationTokenSource?.Cancel();
+                _updateViewValuesTask?.Wait();
             }
 
         }

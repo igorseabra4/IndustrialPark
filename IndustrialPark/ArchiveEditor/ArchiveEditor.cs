@@ -1831,7 +1831,7 @@ namespace IndustrialPark
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information) == DialogResult.Yes)
                 {
-                    Process.Start(filepath);
+                    Process.Start(new ProcessStartInfo { FileName = filepath, UseShellExecute = true});
                 }
             }
             else

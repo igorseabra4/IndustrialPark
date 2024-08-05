@@ -550,7 +550,7 @@ namespace IndustrialPark
 
         private void button1_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + "Events");
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = AboutBox.WikiLink + "Events", UseShellExecute = true});
         }
 
         private void buttonTargetSelf_Click(object sender, EventArgs e)

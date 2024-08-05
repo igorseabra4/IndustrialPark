@@ -11,14 +11,18 @@ namespace IndustrialPark
         // The process is canceled if it takes more than 10 seconds.
         public static void TryToRunGame(string dolPath)
         {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            CancellationToken token = cts.Token;
+
             Thread t = new Thread(() =>
             {
+                token.ThrowIfCancellationRequested();
                 CloseDolphin();
                 // this might throw a win32exception if .dol is not associated with Dolphin
                 Process.Start(dolPath);
             });
 
-            ScheduleAction(t.Abort, 10000);
+            ScheduleAction(cts.Cancel, 10000);
 
             t.Start();
         }
