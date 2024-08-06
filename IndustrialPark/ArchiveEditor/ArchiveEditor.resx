@@ -120,66 +120,14 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+N</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
-  </data>
-  <data name="newToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;New</value>
-  </data>
-  <data name="openToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+O</value>
-  </data>
-  <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
-  </data>
-  <data name="openToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Open</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="saveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="saveToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+S</value>
-  </data>
-  <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
-  </data>
-  <data name="saveToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Save</value>
-  </data>
-  <data name="saveAsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
-  </data>
-  <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Save &amp;As...</value>
-  </data>
-  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>145, 6</value>
-  </data>
-  <data name="closeToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+W</value>
-  </data>
-  <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>148, 22</value>
-  </data>
-  <data name="closeToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Close</value>
-  </data>
   <data name="fileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>37, 22</value>
   </data>
   <data name="fileToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;File</value>
   </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="convertArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -188,36 +136,6 @@
   </data>
   <data name="convertArchiveToolStripMenuItem.Text" xml:space="preserve">
     <value>Convert Archive</value>
-  </data>
-  <data name="noLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="noLayersToolStripMenuItem.Text" xml:space="preserve">
-    <value>No Layers</value>
-  </data>
-  <data name="organizeLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="organizeLayersToolStripMenuItem.Text" xml:space="preserve">
-    <value>Organize</value>
-  </data>
-  <data name="organizeLegacyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="organizeLegacyToolStripMenuItem.Text" xml:space="preserve">
-    <value>Organize (semi-legacy)</value>
-  </data>
-  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 6</value>
-  </data>
-  <data name="renameLayerToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="renameLayerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>196, 22</value>
-  </data>
-  <data name="renameLayerToolStripMenuItem.Text" xml:space="preserve">
-    <value>Rename</value>
   </data>
   <data name="layersToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -255,8 +173,186 @@
   <data name="verifyArchiveToolStripMenuItem.Text" xml:space="preserve">
     <value>Verify Archive</value>
   </data>
+  <data name="legacySaveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="legacySaveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Legacy Save</value>
+  </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>190, 6</value>
+  </data>
+  <data name="hipHopFileToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="hipHopFileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="hipHopFileToolStripMenuItem.Text" xml:space="preserve">
+    <value>HIP/HOP File</value>
+  </data>
+  <data name="texturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="texturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="texturesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Textures</value>
+  </data>
+  <data name="soundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="soundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="soundsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sounds</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="importModelsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Models</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import Multiple Assets</value>
+  </data>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 22</value>
+  </data>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Edit</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 22</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tools</value>
+  </data>
+  <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 22</value>
+  </data>
+  <data name="viewToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;View</value>
+  </data>
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 1, 0, 1</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>624, 24</value>
+  </data>
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+N</value>
+  </data>
+  <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="newToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;New</value>
+  </data>
+  <data name="openToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="openToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Open</value>
+  </data>
+  <data name="saveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="saveToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+S</value>
+  </data>
+  <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="saveToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Save</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Save &amp;As...</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>145, 6</value>
+  </data>
+  <data name="closeToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+W</value>
+  </data>
+  <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="closeToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Close</value>
+  </data>
+  <data name="noLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="noLayersToolStripMenuItem.Text" xml:space="preserve">
+    <value>No Layers</value>
+  </data>
+  <data name="organizeLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="organizeLayersToolStripMenuItem.Text" xml:space="preserve">
+    <value>Organize</value>
+  </data>
+  <data name="organizeLegacyToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="organizeLegacyToolStripMenuItem.Text" xml:space="preserve">
+    <value>Organize (semi-legacy)</value>
+  </data>
+  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 6</value>
+  </data>
+  <data name="renameLayerToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="renameLayerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="renameLayerToolStripMenuItem.Text" xml:space="preserve">
+    <value>Rename</value>
   </data>
   <data name="importHipArchiveToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -284,15 +380,6 @@
   </data>
   <data name="exportAssetsIniToolStripMenuItem.Text" xml:space="preserve">
     <value>Export Assets + INI</value>
-  </data>
-  <data name="hipHopFileToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="hipHopFileToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
-  </data>
-  <data name="hipHopFileToolStripMenuItem.Text" xml:space="preserve">
-    <value>HIP/HOP File</value>
   </data>
   <data name="importTexturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -351,27 +438,6 @@
   <data name="importNoRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Import TXD (No RW3)</value>
   </data>
-  <data name="texturesToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="texturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
-  </data>
-  <data name="texturesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Textures</value>
-  </data>
-  <data name="importAsSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="importAsSoundToolStripMenuItem.Text" xml:space="preserve">
-    <value>Sound</value>
-  </data>
-  <data name="importAsSoundStreamToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
-  </data>
-  <data name="importAsSoundStreamToolStripMenuItem.Text" xml:space="preserve">
-    <value>Sound Stream</value>
-  </data>
   <data name="importSoundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -380,6 +446,27 @@
   </data>
   <data name="importSoundsToolStripMenuItem.Text" xml:space="preserve">
     <value>Import</value>
+  </data>
+  <data name="importAsSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="importAsSoundToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sound</value>
+  </data>
+  <data name="importAsSoundStreamToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>148, 22</value>
+  </data>
+  <data name="importAsSoundStreamToolStripMenuItem.Text" xml:space="preserve">
+    <value>Sound Stream</value>
+  </data>
+  <data name="importRawSoundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="importRawSoundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>215, 22</value>
+  </data>
+  <data name="importRawSoundsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import (Raw)</value>
   </data>
   <data name="importRawSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>148, 22</value>
@@ -392,15 +479,6 @@
   </data>
   <data name="importRawSoundStreamToolStripMenuItem.Text" xml:space="preserve">
     <value>Sound Stream</value>
-  </data>
-  <data name="importRawSoundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importRawSoundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>215, 22</value>
-  </data>
-  <data name="importRawSoundsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import (Raw)</value>
   </data>
   <data name="exportAllSoundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -429,50 +507,11 @@
   <data name="overwriteOnImportToolStripMenuItem.Text" xml:space="preserve">
     <value>Force Overwrite On Import</value>
   </data>
-  <data name="soundsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="soundsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
-  </data>
-  <data name="soundsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Sounds</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
-  </data>
-  <data name="importModelsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Models</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>193, 22</value>
-  </data>
-  <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Import Multiple Assets</value>
-  </data>
-  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>39, 22</value>
-  </data>
-  <data name="editToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Edit</value>
-  </data>
   <data name="generateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>159, 22</value>
   </data>
   <data name="generateToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Generate Report</value>
-  </data>
-  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>46, 22</value>
-  </data>
-  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Tools</value>
   </data>
   <data name="hideButtonsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>143, 22</value>
@@ -480,63 +519,9 @@
   <data name="hideButtonsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Hide Buttons</value>
   </data>
-  <data name="viewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 22</value>
-  </data>
-  <data name="viewToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;View</value>
-  </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 1, 0, 1</value>
-  </data>
-  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>624, 24</value>
-  </data>
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
-  <data name="toolStripStatusLabelCurrentFilename.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
-  </data>
-  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>10, 17</value>
-  </data>
-  <data name="toolStripStatusLabel1.Text" xml:space="preserve">
-    <value>|</value>
-  </data>
-  <data name="toolStripStatusLabelSelectionCount.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
-  </data>
-  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>10, 17</value>
-  </data>
-  <data name="toolStripStatusLabel2.Text" xml:space="preserve">
-    <value>|</value>
-  </data>
-  <data name="toolStripStatusLabelFileSize.Size" type="System.Drawing.Size, System.Drawing">
-    <value>0, 17</value>
-  </data>
   <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 431</value>
   </data>
@@ -561,8 +546,137 @@
   <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
+  <data name="toolStripStatusLabelCurrentFilename.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
+  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>10, 17</value>
+  </data>
+  <data name="toolStripStatusLabel1.Text" xml:space="preserve">
+    <value>|</value>
+  </data>
+  <data name="toolStripStatusLabelSelectionCount.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
+  <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>10, 17</value>
+  </data>
+  <data name="toolStripStatusLabel2.Text" xml:space="preserve">
+    <value>|</value>
+  </data>
+  <data name="toolStripStatusLabelFileSize.Size" type="System.Drawing.Size, System.Drawing">
+    <value>0, 17</value>
+  </data>
   <data name="groupBoxLayers.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.Name" xml:space="preserve">
+    <value>buttonArrowDown</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowDown.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.Name" xml:space="preserve">
+    <value>buttonArrowUp</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;buttonArrowUp.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.Name" xml:space="preserve">
+    <value>comboBoxLayerTypes</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayerTypes.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.Name" xml:space="preserve">
+    <value>buttonRemoveLayer</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveLayer.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.Name" xml:space="preserve">
+    <value>buttonAddLayer</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;buttonAddLayer.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.Name" xml:space="preserve">
+    <value>comboBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;comboBoxLayers.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="groupBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 27</value>
+  </data>
+  <data name="groupBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
+    <value>600, 47</value>
+  </data>
+  <data name="groupBoxLayers.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="groupBoxLayers.Text" xml:space="preserve">
+    <value>Layer</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.Name" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxLayers.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="buttonArrowDown.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -759,32 +873,224 @@
   <data name="&gt;&gt;comboBoxLayers.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
-  <data name="groupBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 27</value>
-  </data>
-  <data name="groupBoxLayers.Size" type="System.Drawing.Size, System.Drawing">
-    <value>600, 47</value>
-  </data>
-  <data name="groupBoxLayers.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="groupBoxLayers.Text" xml:space="preserve">
-    <value>Layer</value>
-  </data>
-  <data name="&gt;&gt;groupBoxLayers.Name" xml:space="preserve">
-    <value>groupBoxLayers</value>
-  </data>
-  <data name="&gt;&gt;groupBoxLayers.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBoxLayers.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;groupBoxLayers.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="groupBoxAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEditAsset.Name" xml:space="preserve">
+    <value>buttonMultiEditAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEditAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEditAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonMultiEditAsset.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.Name" xml:space="preserve">
+    <value>checkBoxTemplateFocus</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTemplateFocus.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Name" xml:space="preserve">
+    <value>listViewAssets</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;buttonCopyAsset.Name" xml:space="preserve">
+    <value>buttonCopyAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonCopyAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonCopyAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonCopyAsset.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;buttonPasteAssets.Name" xml:space="preserve">
+    <value>buttonPasteAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonPasteAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonPasteAssets.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonPasteAssets.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Name" xml:space="preserve">
+    <value>textBoxFindAsset</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="&gt;&gt;label3.Name" xml:space="preserve">
+    <value>label3</value>
+  </data>
+  <data name="&gt;&gt;label3.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;buttonEditDataAsset.Name" xml:space="preserve">
+    <value>buttonEditDataAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonEditDataAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonEditDataAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonEditDataAsset.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;buttonView.Name" xml:space="preserve">
+    <value>buttonView</value>
+  </data>
+  <data name="&gt;&gt;buttonView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonView.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonView.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRawAsset.Name" xml:space="preserve">
+    <value>buttonExportRawAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRawAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRawAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonExportRawAsset.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.Name" xml:space="preserve">
+    <value>buttonEditAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonEditAsset.ZOrder" xml:space="preserve">
+    <value>10</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicateAsset.Name" xml:space="preserve">
+    <value>buttonDuplicateAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicateAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicateAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonDuplicateAsset.ZOrder" xml:space="preserve">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.Name" xml:space="preserve">
+    <value>buttonRemoveAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonRemoveAsset.ZOrder" xml:space="preserve">
+    <value>12</value>
+  </data>
+  <data name="&gt;&gt;buttonImportAsset.Name" xml:space="preserve">
+    <value>buttonImportAsset</value>
+  </data>
+  <data name="&gt;&gt;buttonImportAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonImportAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;buttonImportAsset.ZOrder" xml:space="preserve">
+    <value>13</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.Name" xml:space="preserve">
+    <value>comboBoxAssetTypes</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;comboBoxAssetTypes.ZOrder" xml:space="preserve">
+    <value>14</value>
+  </data>
+  <data name="&gt;&gt;label2.Name" xml:space="preserve">
+    <value>label2</value>
+  </data>
+  <data name="&gt;&gt;label2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label2.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
+    <value>15</value>
+  </data>
+  <data name="groupBoxAssets.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 80</value>
+  </data>
+  <data name="groupBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>600, 348</value>
+  </data>
+  <data name="groupBoxAssets.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="groupBoxAssets.Text" xml:space="preserve">
+    <value>Assets</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.Name" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxAssets.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="buttonMultiEditAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -856,6 +1162,27 @@ Focus</value>
   <data name="listViewAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="listViewAssets.Location" type="System.Drawing.Point, System.Drawing">
+    <value>9, 40</value>
+  </data>
+  <data name="listViewAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>507, 301</value>
+  </data>
+  <data name="listViewAssets.TabIndex" type="System.Int32, mscorlib">
+    <value>11</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Name" xml:space="preserve">
+    <value>listViewAssets</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;listViewAssets.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="AssetNameCol.DisplayIndex" type="System.Int32, mscorlib">
     <value>1</value>
   </data>
@@ -891,27 +1218,6 @@ Focus</value>
   </data>
   <data name="AssetLinksCol.Width" type="System.Int32, mscorlib">
     <value>37</value>
-  </data>
-  <data name="listViewAssets.Location" type="System.Drawing.Point, System.Drawing">
-    <value>9, 40</value>
-  </data>
-  <data name="listViewAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>507, 301</value>
-  </data>
-  <data name="listViewAssets.TabIndex" type="System.Int32, mscorlib">
-    <value>11</value>
-  </data>
-  <data name="&gt;&gt;listViewAssets.Name" xml:space="preserve">
-    <value>listViewAssets</value>
-  </data>
-  <data name="&gt;&gt;listViewAssets.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListView, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;listViewAssets.Parent" xml:space="preserve">
-    <value>groupBoxAssets</value>
-  </data>
-  <data name="&gt;&gt;listViewAssets.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="buttonCopyAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1282,33 +1588,18 @@ Focus</value>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
     <value>15</value>
   </data>
-  <data name="groupBoxAssets.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 80</value>
-  </data>
-  <data name="groupBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>600, 348</value>
-  </data>
-  <data name="groupBoxAssets.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
-  </data>
-  <data name="groupBoxAssets.Text" xml:space="preserve">
-    <value>Assets</value>
-  </data>
-  <data name="&gt;&gt;groupBoxAssets.Name" xml:space="preserve">
-    <value>groupBoxAssets</value>
-  </data>
-  <data name="&gt;&gt;groupBoxAssets.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBoxAssets.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;groupBoxAssets.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
   <metadata name="contextMenuStrip_ListBoxAssets.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
   </metadata>
+  <data name="contextMenuStrip_ListBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
+    <value>223, 280</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Name" xml:space="preserve">
+    <value>contextMenuStrip_ListBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="addTemplateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
@@ -1407,15 +1698,6 @@ Focus</value>
   </data>
   <data name="toolStripMenuItem_MultiEdit.Text" xml:space="preserve">
     <value>Multi Edit</value>
-  </data>
-  <data name="contextMenuStrip_ListBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>223, 280</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Name" xml:space="preserve">
-    <value>contextMenuStrip_ListBoxAssets</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -1675,6 +1957,18 @@ Focus</value>
   <data name="&gt;&gt;exportAllSoundsRawToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparator7.Name" xml:space="preserve">
+    <value>toolStripSeparator7</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator7.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;overwriteOnImportToolStripMenuItem.Name" xml:space="preserve">
+    <value>overwriteOnImportToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;overwriteOnImportToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;importModelsToolStripMenuItem.Name" xml:space="preserve">
     <value>importModelsToolStripMenuItem</value>
   </data>
@@ -1855,16 +2149,10 @@ Focus</value>
   <data name="&gt;&gt;toolStripMenuItem_MultiEdit.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator7.Name" xml:space="preserve">
-    <value>toolStripSeparator7</value>
+  <data name="&gt;&gt;legacySaveToolStripMenuItem.Name" xml:space="preserve">
+    <value>legacySaveToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator7.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;overwriteOnImportToolStripMenuItem.Name" xml:space="preserve">
-    <value>overwriteOnImportToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;overwriteOnImportToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;legacySaveToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
