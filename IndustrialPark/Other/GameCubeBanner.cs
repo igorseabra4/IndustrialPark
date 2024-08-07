@@ -153,7 +153,7 @@ namespace IndustrialPark
             // Read description
             var description = new byte[0x80];
             fileStream.Read(description, 0, 0x80);
-            banner.Description = Encoding.ASCII.GetString(description).TrimEnd('\0');
+            banner.Description = Encoding.ASCII.GetString(description).TrimEnd('\0').Replace("\n", "\r\n");
             
             // Close filestream
             fileStream.Close();            
@@ -326,7 +326,7 @@ namespace IndustrialPark
                 
                 // Write the description
                 fileStream.Position = 0x18E0;
-                var description = Encoding.ASCII.GetBytes(Description);
+                var description = Encoding.ASCII.GetBytes(Description.Replace("\r\n", "\n"));
                 fileStream.Write(description, 0, description.Length);
 
                 // Ensure file length is 0x195F
