@@ -65,6 +65,7 @@ namespace IndustrialPark
             this.buildAndRunPS2ISOToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.stopSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSceneToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createGameCubeBannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -74,7 +75,6 @@ namespace IndustrialPark
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.ensureAssociationsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.discordRichPresenceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.displayToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.assetTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.enableAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -114,6 +114,8 @@ namespace IndustrialPark
             this.openFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dynaNameSearcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pickupSearcherToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -130,7 +132,6 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.createGameCubeBannerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -139,7 +140,7 @@ namespace IndustrialPark
             // menuStrip1
             // 
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.archiveEditorToolStripMenuItem, this.projectToolStripMenuItem, this.optionsToolStripMenuItem, this.toolsToolStripMenuItem, this.displayToolStripMenuItem, this.researchToolStripMenuItem });
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.archiveEditorToolStripMenuItem, this.projectToolStripMenuItem, this.optionsToolStripMenuItem, this.toolsToolStripMenuItem, this.displayToolStripMenuItem, this.researchToolStripMenuItem, this.helpToolStripMenuItem });
             this.menuStrip1.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.Flow;
             resources.ApplyResources(this.menuStrip1, "menuStrip1");
             this.menuStrip1.Name = "menuStrip1";
@@ -305,7 +306,7 @@ namespace IndustrialPark
             // 
             // toolsToolStripMenuItem
             // 
-            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.saveAllOpenHIPsToolStripMenuItem, this.runGameF5ToolStripMenuItem, this.buildAndRunPS2ISOToolStripMenuItem, this.stopSoundToolStripMenuItem, this.exportSceneToolStripMenuItem, this.createGameCubeBannerToolStripMenuItem, this.toolStripSeparator8, this.checkForUpdatesOnStartupToolStripMenuItem, this.checkForUpdatesNowToolStripMenuItem, this.downloadIndustrialParkEditorFilesToolStripMenuItem, this.checkForUpdatesOnEditorFilesToolStripMenuItem, this.downloadVgmstreamToolStripMenuItem, this.toolStripSeparator2, this.ensureAssociationsToolStripMenuItem, this.discordRichPresenceToolStripMenuItem, this.aboutToolStripMenuItem });
+            this.toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.saveAllOpenHIPsToolStripMenuItem, this.runGameF5ToolStripMenuItem, this.buildAndRunPS2ISOToolStripMenuItem, this.stopSoundToolStripMenuItem, this.exportSceneToolStripMenuItem, this.createGameCubeBannerToolStripMenuItem, this.toolStripSeparator8, this.checkForUpdatesOnStartupToolStripMenuItem, this.checkForUpdatesNowToolStripMenuItem, this.downloadIndustrialParkEditorFilesToolStripMenuItem, this.checkForUpdatesOnEditorFilesToolStripMenuItem, this.downloadVgmstreamToolStripMenuItem, this.toolStripSeparator2, this.ensureAssociationsToolStripMenuItem, this.discordRichPresenceToolStripMenuItem });
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             resources.ApplyResources(this.toolsToolStripMenuItem, "toolsToolStripMenuItem");
             // 
@@ -338,6 +339,12 @@ namespace IndustrialPark
             this.exportSceneToolStripMenuItem.Name = "exportSceneToolStripMenuItem";
             resources.ApplyResources(this.exportSceneToolStripMenuItem, "exportSceneToolStripMenuItem");
             this.exportSceneToolStripMenuItem.Click += new System.EventHandler(this.exportSceneToolStripMenuItem_Click);
+            // 
+            // createGameCubeBannerToolStripMenuItem
+            // 
+            this.createGameCubeBannerToolStripMenuItem.Name = "createGameCubeBannerToolStripMenuItem";
+            resources.ApplyResources(this.createGameCubeBannerToolStripMenuItem, "createGameCubeBannerToolStripMenuItem");
+            this.createGameCubeBannerToolStripMenuItem.Click += new System.EventHandler(this.createGameCubeBannerToolStripMenuItem_Click);
             // 
             // toolStripSeparator8
             // 
@@ -394,12 +401,6 @@ namespace IndustrialPark
             this.discordRichPresenceToolStripMenuItem.Name = "discordRichPresenceToolStripMenuItem";
             resources.ApplyResources(this.discordRichPresenceToolStripMenuItem, "discordRichPresenceToolStripMenuItem");
             this.discordRichPresenceToolStripMenuItem.Click += new System.EventHandler(this.discordRichPresenceToolStripMenuItem_Click);
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
-            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // displayToolStripMenuItem
             // 
@@ -636,6 +637,18 @@ namespace IndustrialPark
             resources.ApplyResources(this.pickupSearcherToolStripMenuItem, "pickupSearcherToolStripMenuItem");
             this.pickupSearcherToolStripMenuItem.Click += new System.EventHandler(this.pickupSearcherToolStripMenuItem_Click);
             // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.aboutToolStripMenuItem });
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            resources.ApplyResources(this.helpToolStripMenuItem, "helpToolStripMenuItem");
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            resources.ApplyResources(this.aboutToolStripMenuItem, "aboutToolStripMenuItem");
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
@@ -737,12 +750,6 @@ namespace IndustrialPark
             resources.ApplyResources(this.toolStripComboBoxUserTemplate, "toolStripComboBoxUserTemplate");
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // createGameCubeBannerToolStripMenuItem
-            // 
-            this.createGameCubeBannerToolStripMenuItem.Name = "createGameCubeBannerToolStripMenuItem";
-            resources.ApplyResources(this.createGameCubeBannerToolStripMenuItem, "createGameCubeBannerToolStripMenuItem");
-            this.createGameCubeBannerToolStripMenuItem.Click += new System.EventHandler(this.createGameCubeBannerToolStripMenuItem_Click);
-            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -757,6 +764,7 @@ namespace IndustrialPark
             this.Deactivate += new System.EventHandler(this.MainForm_Deactivate);
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.MainForm_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.MainForm_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.MainForm_KeyDown);
@@ -772,6 +780,8 @@ namespace IndustrialPark
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem createGameCubeBannerToolStripMenuItem;
 
@@ -833,18 +843,18 @@ namespace IndustrialPark
         private System.Windows.Forms.ToolStripMenuItem templatesPersistentShiniesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runGameF5ToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator8;
-        private ToolStripMenuItem downloadIndustrialParkEditorFilesToolStripMenuItem;
-        private ToolStripMenuItem checkForUpdatesOnEditorFilesToolStripMenuItem;
-        private ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
-        private ToolStripMenuItem checkForUpdatesNowToolStripMenuItem;
-        private ToolStripMenuItem ensureAssociationsToolStripMenuItem;
-        private ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadIndustrialParkEditorFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnEditorFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesNowToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ensureAssociationsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private ToolStripMenuItem hideInvisibleMeshesToolStripMenuItem;
-        private ToolStripMenuItem downloadVgmstreamToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadVgmstreamToolStripMenuItem;
         private ToolStripMenuItem stopSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem templatesChainPointMVPTsToolStripMenuItem;
         private ToolStripMenuItem dYNASearchToolStripMenuItem;
-        private ToolStripMenuItem exportSceneToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportSceneToolStripMenuItem;
         private ToolStripMenuItem discordRichPresenceToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripMenuItem vSyncToolStripMenuItem;

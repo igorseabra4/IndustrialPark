@@ -13,6 +13,15 @@ namespace IndustrialPark
         {
             InitializeComponent();
         }
+        
+        /// <summary>
+        /// Create a new CreateGameCubeBanner form with the specified banner filepath.
+        /// </summary>
+        /// <param name="banner">The filepath to the GameCube Banner (.bnr)</param>
+        public CreateGameCubeBanner(string banner) : this()
+        {
+            UpdateFieldsFromBanner(banner);
+        }
 
         private void cancelButton_Click(object sender, EventArgs e)
         {

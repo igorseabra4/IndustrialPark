@@ -40,6 +40,14 @@ namespace FileAssociations
                     FileTypeDescription = "Heavy Iron Studios HIP Archive",
                     ExecutableFilePath = filePath
                 });
+            EnsureAssociationsSet(
+                new FileAssociation
+                {
+                    Extension = ".bnr",
+                    ProgId = "Industrial_Park_GameCube_Banner",
+                    FileTypeDescription = "GameCube Banner",
+                    ExecutableFilePath = filePath
+                });
         }
 
         public static void EnsureAssociationsSet(params FileAssociation[] associations)

@@ -179,6 +179,12 @@ namespace IndustrialPark
                     SetProjectToolStripStatusLabel();
                     return;
                 }
+                if (Path.GetExtension(args[1]).ToLower() == GameCubeBanner.DEFAULT_FILE_EXTENSION)
+                {
+                    CreateGameCubeBanner b = new CreateGameCubeBanner(args[1]);
+                    b.Show();
+                    return;
+                }
             }
 
             if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath) && File.Exists(settings.LastProjectPath))
@@ -1402,7 +1408,12 @@ namespace IndustrialPark
 
         private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (DialogResult.OK == MessageBox.Show("Will set Industrial Park as default application for HIP and HOP file formats on registry.", "Associate HIP/HOP files", MessageBoxButtons.OKCancel))
+            if (DialogResult.OK == MessageBox.Show(
+                    "Will set Industrial Park as default application for HIP, HOP and BNR (GameCube banner) file formats on registry.", 
+                    "Associate HIP/HOP files",  
+                    MessageBoxButtons.OKCancel,
+                    MessageBoxIcon.Information))
+                
                 FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
@@ -1924,6 +1935,18 @@ namespace IndustrialPark
         {
             var bannerCreator = new CreateGameCubeBanner();
             bannerCreator.Show();
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form.GetType() == typeof(CreateGameCubeBanner))
+                {
+                    form.BringToFront();
+                    form.Focus();
+                }
+            }
         }
     }
 }
