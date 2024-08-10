@@ -42,6 +42,19 @@ namespace ShellExtensions
                     throw new InvalidOperationException("SelectedItemStream is null.");
                 }
                 
+                // Check first four bytes read "BNR1"
+                // If they are not, return null.
+                // TODO: Add support for BNR2 files as well
+                
+                byte[] bnr1 = new byte[4];
+                string magic = "BNR1";
+                stream.Read(bnr1, 0, 4);
+                
+                if (!System.Text.Encoding.ASCII.GetString(bnr1).Equals(magic))
+                {
+                    return null;
+                }
+                
                 // Banner data starts at 0x20
                 stream.Seek(0x20, SeekOrigin.Begin);
                 var imageData = new byte[96 * 32 * 2];
