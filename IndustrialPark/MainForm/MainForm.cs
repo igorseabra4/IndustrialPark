@@ -1,8 +1,10 @@
 ﻿using HipHopFile;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
+
 using SharpDX;
 using SharpDX.Direct3D11;
+
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,6 +13,8 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+
+using ShellExtensions;
 
 namespace IndustrialPark
 {
@@ -1947,6 +1951,11 @@ namespace IndustrialPark
                     form.Focus();
                 }
             }
+        }
+
+        private void registerBNRShellExtensionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            return;
         }
     }
 }

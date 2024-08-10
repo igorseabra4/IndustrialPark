@@ -57,7 +57,8 @@ namespace IndustrialPark
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.Location = new System.Drawing.Point(147, 9);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(371, 46);
@@ -68,11 +69,11 @@ namespace IndustrialPark
             // 
             this.saveButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.saveButton.Enabled = false;
-            this.saveButton.Location = new System.Drawing.Point(323, 306);
+            this.saveButton.Location = new System.Drawing.Point(296, 306);
             this.saveButton.Name = "saveButton";
-            this.saveButton.Size = new System.Drawing.Size(97, 23);
+            this.saveButton.Size = new System.Drawing.Size(124, 23);
             this.saveButton.TabIndex = 16;
-            this.saveButton.Text = "Save Banner";
+            this.saveButton.Text = "Save Banner As...";
             this.saveButton.UseVisualStyleBackColor = true;
             this.saveButton.Click += new System.EventHandler(this.saveButton_Click);
             // 
@@ -101,7 +102,9 @@ namespace IndustrialPark
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.descriptionTextBox);
             this.groupBox1.Controls.Add(this.label7);
             this.groupBox1.Controls.Add(this.creatorFullTextBox);
@@ -125,7 +128,9 @@ namespace IndustrialPark
             // 
             // descriptionTextBox
             // 
-            this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.descriptionTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.descriptionTextBox.Location = new System.Drawing.Point(90, 178);
             this.descriptionTextBox.MaxLength = 128;
             this.descriptionTextBox.Multiline = true;
@@ -145,7 +150,8 @@ namespace IndustrialPark
             // 
             // creatorFullTextBox
             // 
-            this.creatorFullTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.creatorFullTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.creatorFullTextBox.Location = new System.Drawing.Point(90, 139);
             this.creatorFullTextBox.MaxLength = 64;
             this.creatorFullTextBox.Name = "creatorFullTextBox";
@@ -164,7 +170,8 @@ namespace IndustrialPark
             // 
             // titleFullTextBox
             // 
-            this.titleFullTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.titleFullTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.titleFullTextBox.Location = new System.Drawing.Point(90, 104);
             this.titleFullTextBox.MaxLength = 64;
             this.titleFullTextBox.Name = "titleFullTextBox";
@@ -183,7 +190,8 @@ namespace IndustrialPark
             // 
             // creatorTextBox
             // 
-            this.creatorTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) | System.Windows.Forms.AnchorStyles.Right)));
+            this.creatorTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.creatorTextBox.Location = new System.Drawing.Point(358, 67);
             this.creatorTextBox.MaxLength = 32;
             this.creatorTextBox.Name = "creatorTextBox";
@@ -282,6 +290,7 @@ namespace IndustrialPark
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+
         }
 
         private System.Windows.Forms.Button importBnrButton;
