@@ -16,7 +16,7 @@ using System.Windows.Forms;
 using SharpShell.ServerRegistration;
 using ShellExtensions;
 using System.Diagnostics;
-using IndustrialPark.Other;
+using IndustrialPark;
 
 namespace IndustrialPark
 {
