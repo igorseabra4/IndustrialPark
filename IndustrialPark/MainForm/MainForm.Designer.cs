@@ -132,7 +132,9 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
-            this.registerBNRShellExtensionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bNRThumbnailShellExtensionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.registerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.unregisterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -352,7 +354,7 @@ namespace IndustrialPark
             this.downloadVgmstreamToolStripMenuItem,
             this.toolStripSeparator2,
             this.ensureAssociationsToolStripMenuItem,
-            this.registerBNRShellExtensionToolStripMenuItem,
+            this.bNRThumbnailShellExtensionToolStripMenuItem,
             this.discordRichPresenceToolStripMenuItem});
             this.toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             resources.ApplyResources(this.toolsToolStripMenuItem, "toolsToolStripMenuItem");
@@ -848,11 +850,25 @@ namespace IndustrialPark
             resources.ApplyResources(this.toolStripComboBoxUserTemplate, "toolStripComboBoxUserTemplate");
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
-            // registerBNRShellExtensionToolStripMenuItem
+            // bNRThumbnailShellExtensionToolStripMenuItem
             // 
-            this.registerBNRShellExtensionToolStripMenuItem.Name = "registerBNRShellExtensionToolStripMenuItem";
-            resources.ApplyResources(this.registerBNRShellExtensionToolStripMenuItem, "registerBNRShellExtensionToolStripMenuItem");
-            this.registerBNRShellExtensionToolStripMenuItem.Click += new System.EventHandler(this.registerBNRShellExtensionToolStripMenuItem_Click);
+            this.bNRThumbnailShellExtensionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.registerToolStripMenuItem,
+            this.unregisterToolStripMenuItem});
+            this.bNRThumbnailShellExtensionToolStripMenuItem.Name = "bNRThumbnailShellExtensionToolStripMenuItem";
+            resources.ApplyResources(this.bNRThumbnailShellExtensionToolStripMenuItem, "bNRThumbnailShellExtensionToolStripMenuItem");
+            // 
+            // registerToolStripMenuItem
+            // 
+            this.registerToolStripMenuItem.Name = "registerToolStripMenuItem";
+            resources.ApplyResources(this.registerToolStripMenuItem, "registerToolStripMenuItem");
+            this.registerToolStripMenuItem.Click += new System.EventHandler(this.registerToolStripMenuItem_Click);
+            // 
+            // unregisterToolStripMenuItem
+            // 
+            this.unregisterToolStripMenuItem.Name = "unregisterToolStripMenuItem";
+            resources.ApplyResources(this.unregisterToolStripMenuItem, "unregisterToolStripMenuItem");
+            this.unregisterToolStripMenuItem.Click += new System.EventHandler(this.unregisterToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -990,7 +1006,9 @@ namespace IndustrialPark
         private ToolStripMenuItem showVertexColorsToolStripMenuItem;
         private ToolStripMenuItem buildAndRunPS2ISOToolStripMenuItem;
         private ToolStripMenuItem openLastToolStripMenuItem;
-        private ToolStripMenuItem registerBNRShellExtensionToolStripMenuItem;
+        private ToolStripMenuItem bNRThumbnailShellExtensionToolStripMenuItem;
+        private ToolStripMenuItem registerToolStripMenuItem;
+        private ToolStripMenuItem unregisterToolStripMenuItem;
     }
 }
 

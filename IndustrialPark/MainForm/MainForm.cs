@@ -13,8 +13,10 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-
+using SharpShell.ServerRegistration;
 using ShellExtensions;
+using System.Diagnostics;
+using IndustrialPark.Other;
 
 namespace IndustrialPark
 {
@@ -1953,9 +1955,15 @@ namespace IndustrialPark
             }
         }
 
-        private void registerBNRShellExtensionToolStripMenuItem_Click(object sender, EventArgs e)
+        private void registerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            return;
+            ShellExtensionManager.RegisterBannerExtension();
+
+        }
+
+        private void unregisterToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ShellExtensionManager.UnregisterBannerExtension();
         }
     }
 }

@@ -679,6 +679,7 @@
     <Compile Include="Models\ModelConverterData.cs" />
     <Compile Include="Models\Triangle.cs" />
     <Compile Include="Models\Vertex.cs" />
+    <Compile Include="Other\ShellExtensionManager.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="ArchiveEditor\ArchiveEditor.en-GB.resx">
