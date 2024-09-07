@@ -470,6 +470,7 @@ namespace IndustrialPark
             others.DropDownItems.AddRange(new ToolStripItem[]
             {
                 GetTemplateMenuItem(AssetTemplate.Animation_List, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Boulder_Generator, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Collision_Table, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Credits, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.DefaultGlowSceneProp, eventHandler),
@@ -890,6 +891,8 @@ namespace IndustrialPark
         {
             switch (template)
             {
+                case AssetTemplate.Boulder_Generator:
+                    return new DynaGObjectBoulderGen(assetName);
                 case AssetTemplate.Counter:
                     return new AssetCNTR(assetName);
                 case AssetTemplate.Conditional:

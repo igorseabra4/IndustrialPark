@@ -40,6 +40,10 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle AngVel { get; set; }
 
+        public DynaGObjectBoulderGen(string assetName) : base(assetName, DynaType.game_object__BoulderGenerator)
+        {
+        }
+
         public DynaGObjectBoulderGen(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BoulderGenerator, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))

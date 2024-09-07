@@ -52,6 +52,7 @@
 
         // Other
         Animation_List,
+        Boulder_Generator,
         Camera_Curve,
         Credits,
         DefaultGlowSceneProp,
