@@ -567,9 +567,7 @@ namespace IndustrialPark
                         items.Add(ListViewItemFromAsset(asset, (select == true) && selectionAssetIDs.Contains(asset.assetID)));
                 }
                 var itemsArray = items.ToArray();
-                listViewAssets.BeginUpdate();
                 listViewAssets.Items.AddRange(itemsArray);
-                listViewAssets.EndUpdate();
             }
 
             listViewAssets.EndUpdate();
