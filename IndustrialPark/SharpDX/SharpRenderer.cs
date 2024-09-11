@@ -28,11 +28,11 @@ namespace IndustrialPark
         public SharpCamera Camera = new SharpCamera();
         public SharpFPS sharpFPS;
 
-        public SharpRenderer(Control control)
+        public SharpRenderer(Control control, int msaaSampleCount = 1)
         {
             try
             {
-                device = new SharpDevice(control, false);
+                device = new SharpDevice(control, false, msaaSampleCount);
             }
             catch (Exception e)
             {
@@ -78,6 +78,10 @@ namespace IndustrialPark
                         new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0)
             });
         }
+
+        public List<int> GetSupportedMsaaSampleCounts() => device.GetSupportedMsaaSampleCounts();
+
+        public void UpdateMsaaSampleCount(int msaaSampleCount) => device.UpdateMsaaSampleCount(msaaSampleCount);
 
         public void SetSharpShader()
         {

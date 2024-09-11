@@ -492,6 +492,18 @@
   <data name="vSyncToolStripMenuItem.Text" xml:space="preserve">
     <value>VSync</value>
   </data>
+  <data name="none1xToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="none1xToolStripMenuItem.Text" xml:space="preserve">
+    <value>1x (None)</value>
+  </data>
+  <data name="multiSampleAntiAliasingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>258, 22</value>
+  </data>
+  <data name="multiSampleAntiAliasingToolStripMenuItem.Text" xml:space="preserve">
+    <value>Multisample Anti-Aliasing</value>
+  </data>
   <data name="lowerQualityGraphicsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>258, 22</value>
   </data>
@@ -2841,6 +2853,18 @@
     <value>vSyncToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;vSyncToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;multiSampleAntiAliasingToolStripMenuItem.Name" xml:space="preserve">
+    <value>multiSampleAntiAliasingToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;multiSampleAntiAliasingToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;none1xToolStripMenuItem.Name" xml:space="preserve">
+    <value>none1xToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;none1xToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lowerQualityGraphicsToolStripMenuItem.Name" xml:space="preserve">

@@ -32,7 +32,28 @@ namespace IndustrialPark
 
             templateButtons = ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
-            renderer = new SharpRenderer(renderPanel);
+            renderer = new SharpRenderer(renderPanel, 8);
+            UpdateMsaaToolStripItems();
+        }
+
+        private void UpdateMsaaToolStripItems()
+        {
+            List<int> msaaLevels = renderer.GetSupportedMsaaSampleCounts();
+            
+            // Add a toolstrip item for each
+            foreach (int msaaLevel in msaaLevels)
+            {
+                ToolStripMenuItem item = new ToolStripMenuItem(msaaLevel + "x MSAA");
+                
+                // Bind click event to changeMsaaToolStripMenuItem_Click
+                item.Click += new EventHandler((object sender, EventArgs e) =>
+                {
+                    changeMsaaToolStripMenuItem_Click(sender, e);
+                });
+                
+                // Add to the toolstrip multiSampleAntiAliasingToolStripMenuItem
+                multiSampleAntiAliasingToolStripMenuItem.DropDownItems.Add(item);
+            }
         }
 
         public void UpdateTitleBar()
@@ -1946,6 +1967,36 @@ namespace IndustrialPark
                     form.BringToFront();
                     form.Focus();
                 }
+            }
+        }
+
+        private void changeMsaaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var menuItem = sender as ToolStripMenuItem;
+
+            if (menuItem == null)
+                return;
+            
+            int msaaSamples = Convert.ToInt32(menuItem.Tag);
+            
+            // Update the msaa value in the renderer
+            try
+            {
+                renderer.UpdateMsaaSampleCount(msaaSamples);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    "Failed to set MSAA: " + ex.Message, 
+                    "Error setting MSAA",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            
+            // Update the check state of the menu items
+            foreach (ToolStripMenuItem item in multiSampleAntiAliasingToolStripMenuItem.DropDownItems)
+            {
+                item.Checked = item == menuItem;
             }
         }
     }

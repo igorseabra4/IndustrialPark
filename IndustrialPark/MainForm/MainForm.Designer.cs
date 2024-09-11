@@ -96,6 +96,8 @@ namespace IndustrialPark
             this.noCullingCToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wireframeFToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.vSyncToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.multiSampleAntiAliasingToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.none1xToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lowerQualityGraphicsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
             this.uIModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -404,7 +406,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            this.displayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.assetTypesToolStripMenuItem, this.addTextureFolderToolStripMenuItem, this.addTXDArchiveToolStripMenuItem, this.refreshTexturesAndModelsToolStripMenuItem, this.toolStripSeparator10, this.colorsToolStripMenuItem, this.noCullingCToolStripMenuItem, this.wireframeFToolStripMenuItem, this.vSyncToolStripMenuItem, this.lowerQualityGraphicsToolStripMenuItem, this.toolStripSeparator6, this.uIModeToolStripMenuItem, this.uIModeAutoSizeToolStripMenuItem, this.toolStripSeparator9, this.drawOnlyFirstMINFReferenceToolStripMenuItem, this.showVertexColorsToolStripMenuItem, this.useLODTForRenderingToolStripMenuItem, this.usePIPTForRenderingToolStripMenuItem, this.hideInvisibleMeshesToolStripMenuItem, this.movementPreviewToolStripMenuItem });
+            this.displayToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.assetTypesToolStripMenuItem, this.addTextureFolderToolStripMenuItem, this.addTXDArchiveToolStripMenuItem, this.refreshTexturesAndModelsToolStripMenuItem, this.toolStripSeparator10, this.colorsToolStripMenuItem, this.noCullingCToolStripMenuItem, this.wireframeFToolStripMenuItem, this.vSyncToolStripMenuItem, this.multiSampleAntiAliasingToolStripMenuItem, this.lowerQualityGraphicsToolStripMenuItem, this.toolStripSeparator6, this.uIModeToolStripMenuItem, this.uIModeAutoSizeToolStripMenuItem, this.toolStripSeparator9, this.drawOnlyFirstMINFReferenceToolStripMenuItem, this.showVertexColorsToolStripMenuItem, this.useLODTForRenderingToolStripMenuItem, this.usePIPTForRenderingToolStripMenuItem, this.hideInvisibleMeshesToolStripMenuItem, this.movementPreviewToolStripMenuItem });
             this.displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             resources.ApplyResources(this.displayToolStripMenuItem, "displayToolStripMenuItem");
             // 
@@ -526,6 +528,21 @@ namespace IndustrialPark
             this.vSyncToolStripMenuItem.Name = "vSyncToolStripMenuItem";
             resources.ApplyResources(this.vSyncToolStripMenuItem, "vSyncToolStripMenuItem");
             this.vSyncToolStripMenuItem.Click += new System.EventHandler(this.vSyncToolStripMenuItem_Click);
+            // 
+            // multiSampleAntiAliasingToolStripMenuItem
+            // 
+            this.multiSampleAntiAliasingToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.none1xToolStripMenuItem });
+            this.multiSampleAntiAliasingToolStripMenuItem.Name = "multiSampleAntiAliasingToolStripMenuItem";
+            resources.ApplyResources(this.multiSampleAntiAliasingToolStripMenuItem, "multiSampleAntiAliasingToolStripMenuItem");
+            // 
+            // none1xToolStripMenuItem
+            // 
+            this.none1xToolStripMenuItem.Checked = true;
+            this.none1xToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.none1xToolStripMenuItem.Name = "none1xToolStripMenuItem";
+            resources.ApplyResources(this.none1xToolStripMenuItem, "none1xToolStripMenuItem");
+            this.none1xToolStripMenuItem.Tag = "1";
+            this.none1xToolStripMenuItem.Click += new System.EventHandler(this.changeMsaaToolStripMenuItem_Click);
             // 
             // lowerQualityGraphicsToolStripMenuItem
             // 
@@ -781,6 +798,10 @@ namespace IndustrialPark
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.ToolStripMenuItem none1xToolStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem multiSampleAntiAliasingToolStripMenuItem;
+
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem createGameCubeBannerToolStripMenuItem;
@@ -797,7 +818,7 @@ namespace IndustrialPark
         private ToolStripMenuItem archiveEditorToolStripMenuItem;
         private ToolStripMenuItem newToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator3;
-        private ToolStripMenuItem displayToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem displayToolStripMenuItem;
 
         private ToolStripMenuItem colorsToolStripMenuItem;
         private ToolStripMenuItem backgroundColorToolStripMenuItem1;

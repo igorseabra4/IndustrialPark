@@ -3,6 +3,7 @@ using SharpDX.Direct3D;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using System;
+using System.Collections.Generic;
 using Buffer11 = SharpDX.Direct3D11.Buffer;
 using Device11 = SharpDX.Direct3D11.Device;
 
@@ -67,9 +68,12 @@ namespace IndustrialPark
         /// </summary>
         /// <param name="form">Rendering form</param>
         /// <param name="debug">Active the debug mode</param>
-        public SharpDevice(System.Windows.Forms.Control control, bool debug = false)
+        public SharpDevice(System.Windows.Forms.Control control, bool debug = false, int sampleCount = 1)
         {
             Control = control;
+            // Create sampledescription with specified count
+            // TODO: Check hardware support for this sample count 
+            multisampleDesc = new SampleDescription(sampleCount, 0);
 
             // SwapChain description
             SwapChainDescription desc = new SwapChainDescription()
@@ -78,7 +82,7 @@ namespace IndustrialPark
                 ModeDescription = new ModeDescription(Control.ClientSize.Width, Control.ClientSize.Height, new Rational(60, 1), Format.R8G8B8A8_UNorm),
                 IsWindowed = true,
                 OutputHandle = Control.Handle,
-                SampleDescription = new SampleDescription(1, 0),
+                SampleDescription = multisampleDesc,
                 SwapEffect = SwapEffect.Discard,
                 Usage = Usage.RenderTargetOutput,
             };
@@ -112,6 +116,20 @@ namespace IndustrialPark
 
             //Resize all items
             Resize();
+        }
+
+        public List<int> GetSupportedMsaaSampleCounts()
+        {
+            var counts = new List<int>();
+        
+            for (int i = 2; i <= 16; i *= 2)
+            {
+                int quality = _device.CheckMultisampleQualityLevels(Format.R8G8B8A8_UNorm, i);
+            
+                if (quality > 0)
+                    counts.Add(i);
+            }
+            return counts;
         }
 
         /// <summary>
@@ -149,7 +167,7 @@ namespace IndustrialPark
                 MipLevels = 1,
                 Width = Control.Width,
                 Height = Control.Height,
-                SampleDescription = new SampleDescription(1, 0),
+                SampleDescription = multisampleDesc,
                 BindFlags = BindFlags.DepthStencil
             });
 
@@ -162,7 +180,7 @@ namespace IndustrialPark
                     Dimension = currentMode ? DepthStencilViewDimension.Texture2DMultisampled : DepthStencilViewDimension.Texture2D
                 });
 
-            SetDefaultTargers();
+            SetDefaultTargets();
 
             // End resize
             MustResize = false;
@@ -171,7 +189,7 @@ namespace IndustrialPark
         /// <summary>
         /// Set default render and depth buffer inside device context
         /// </summary>
-        public void SetDefaultTargers()
+        public void SetDefaultTargets()
         {
             // Setup targets and viewport for rendering
             DeviceContext.Rasterizer.SetViewport(0, 0, Control.Width, Control.Height);
@@ -290,6 +308,14 @@ namespace IndustrialPark
         public FillMode GetFillMode()
         {
             return normalFillMode;
+        }
+
+        public void UpdateMsaaSampleCount(int msaaSampleCount)
+        {
+            // Update the device to use the new MSAA sample count.
+            this.multisampleDesc = new SampleDescription(msaaSampleCount, 0);
+
+           // TODO Update the device with the new sample count
         }
 
         /// <summary>
