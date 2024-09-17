@@ -344,6 +344,7 @@ namespace IndustrialPark
                 g.isSelected = false;
             foreach (PositionLocalGizmo g in positionLocalGizmos)
                 g.isSelected = false;
+            totalDistanceMoved = 0;
         }
 
         private void RefreshAssetEditors()
@@ -359,6 +360,14 @@ namespace IndustrialPark
                     v.RefreshPropertyGrid();
         }
 
+        // Used for snapping to grid when moving assets (Issue #63)
+        // Sum the total distance moved for each mouse move action (resets on mouse up)
+        // Find the "target position" by adding the original position to the total distance moved
+        // Snap the target position to the grid (quantize)
+        private static float totalDistanceMoved;
+        private static float originalPosition;
+        private static float movementScale = 0.1f;
+        
         public void MouseMoveForPosition(Matrix viewProjection, int distanceX, int distanceY, bool grid)
         {
             if (positionGizmos[0].isSelected || positionGizmos[1].isSelected || positionGizmos[2].isSelected)
@@ -378,11 +387,18 @@ namespace IndustrialPark
                         direction.Z = 0;
                         direction.Normalize();
 
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.PositionX;
+                        
                         float movement = distanceX * direction.X - distanceY * direction.Y;
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
                         if (grid)
-                            ra.PositionX = SnapToGrid(ra.PositionX + movement, GizmoType.X);
+                        {
+                            ra.PositionX = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.X);
+                        }
                         else
-                            ra.PositionX += movement / 10;
+                            ra.PositionX += movement * movementScale;
 
                         if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
                             trig.MinimumX = trig.PositionX;
@@ -393,16 +409,23 @@ namespace IndustrialPark
                         Vector3 direction = direction2 - direction1;
                         direction.Z = 0;
                         direction.Normalize();
+                        
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.PositionY;
 
                         float movement = distanceX * direction.X - distanceY * direction.Y;
 
                         if (ra is AssetUI)
                             movement *= -1;
-
+                        
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
                         if (grid)
-                            ra.PositionY = SnapToGrid(ra.PositionY + movement, GizmoType.Y);
+                        {
+                            ra.PositionY = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.Y);
+                        }
                         else
-                            ra.PositionY += movement / 10;
+                            ra.PositionY += movement * movementScale;
 
                         if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
                             trig.MinimumY = trig.PositionY;
@@ -413,12 +436,21 @@ namespace IndustrialPark
                         Vector3 direction = direction2 - direction1;
                         direction.Z = 0;
                         direction.Normalize();
+                        
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.PositionZ;
 
                         float movement = distanceX * direction.X - distanceY * direction.Y;
+                        
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
                         if (grid)
-                            ra.PositionZ = SnapToGrid(ra.PositionZ + movement, GizmoType.Z);
+                        {
+                            totalDistanceMoved += movement * movementScale;
+                            ra.PositionZ = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.Z);
+                        }
                         else
-                            ra.PositionZ += movement / 10;
+                            ra.PositionZ += movement * movementScale;
 
                         if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
                             trig.MinimumZ = trig.PositionZ;
@@ -431,6 +463,7 @@ namespace IndustrialPark
                 }
             }
 
+            // Volumes (Box Triggers)
             if (triggerPositionGizmos[0].isSelected || triggerPositionGizmos[1].isSelected || triggerPositionGizmos[2].isSelected
                 || triggerPositionGizmos[3].isSelected || triggerPositionGizmos[4].isSelected || triggerPositionGizmos[5].isSelected)
             {
@@ -454,9 +487,20 @@ namespace IndustrialPark
                         direction.Z = 0;
                         direction.Normalize();
 
-                        ra.MaximumX += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.MaximumX;
+
+                        float movement = (distanceX * direction.X - distanceY * direction.Y);
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
                         if (grid)
-                            ra.MaximumX = SnapToGrid(ra.MaximumX, GizmoType.X);
+                        {
+                            ra.MaximumX = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.X);
+                        }
+                        else
+                        {
+                            ra.MaximumX += movement * movementScale;
+                        }
                     }
                     else if (triggerPositionGizmos[1].isSelected)
                     {
@@ -467,9 +511,21 @@ namespace IndustrialPark
                         direction.Z = 0;
                         direction.Normalize();
 
-                        ra.MaximumY += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.MaximumY;
+
+                        float movement = (distanceX * direction.X - distanceY * direction.Y);
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
+                        
                         if (grid)
-                            ra.MaximumY = SnapToGrid(ra.MaximumY, GizmoType.Y);
+                        {
+                            ra.MaximumY = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.Y);
+                        }
+                        else
+                        {
+                            ra.MaximumY += movement * movementScale;
+                        }
                     }
                     else if (triggerPositionGizmos[2].isSelected)
                     {
@@ -480,9 +536,21 @@ namespace IndustrialPark
                         direction.Z = 0;
                         direction.Normalize();
 
-                        ra.MaximumZ += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.MaximumZ;
+
+                        float movement = (distanceX * direction.X - distanceY * direction.Y);
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
+                        
                         if (grid)
-                            ra.MaximumZ = SnapToGrid(ra.MaximumZ, GizmoType.Z);
+                        {
+                            ra.MaximumZ = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.Z);
+                        }
+                        else
+                        {
+                            ra.MaximumZ += movement * movementScale;
+                        }
                     }
                     else if (triggerPositionGizmos[3].isSelected)
                     {
@@ -493,9 +561,21 @@ namespace IndustrialPark
                         direction.Z = 0;
                         direction.Normalize();
 
-                        ra.MinimumX += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.MinimumX;
+
+                        float movement = (distanceX * direction.X - distanceY * direction.Y);
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
+                        
                         if (grid)
-                            ra.MinimumX = SnapToGrid(ra.MinimumX, GizmoType.X);
+                        {
+                            ra.MinimumX = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.X);
+                        }
+                        else
+                        {
+                            ra.MinimumX += movement * movementScale;
+                        }
                     }
                     else if (triggerPositionGizmos[4].isSelected)
                     {
@@ -506,9 +586,21 @@ namespace IndustrialPark
                         direction.Z = 0;
                         direction.Normalize();
 
-                        ra.MinimumY += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.MinimumY;
+
+                        float movement = (distanceX * direction.X - distanceY * direction.Y);
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
+                        
                         if (grid)
-                            ra.MinimumY = SnapToGrid(ra.MinimumY, GizmoType.Y);
+                        {
+                            ra.MinimumY = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.Y);
+                        }
+                        else
+                        {
+                            ra.MinimumY += movement * movementScale;
+                        }
                     }
                     else if (triggerPositionGizmos[5].isSelected)
                     {
@@ -519,9 +611,21 @@ namespace IndustrialPark
                         direction.Z = 0;
                         direction.Normalize();
 
-                        ra.MinimumZ += (distanceX * direction.X - distanceY * direction.Y) / 10;
+                        if (totalDistanceMoved == 0)
+                            originalPosition = ra.MinimumZ;
+
+                        float movement = (distanceX * direction.X - distanceY * direction.Y);
+                        float scaledMoveDistance = movement * movementScale;
+                        totalDistanceMoved += scaledMoveDistance;
+                        
                         if (grid)
-                            ra.MinimumZ = SnapToGrid(ra.MinimumZ, GizmoType.Z);
+                        {
+                            ra.MinimumZ = SnapToGrid(originalPosition + totalDistanceMoved, GizmoType.Z);
+                        }
+                        else
+                        {
+                            ra.MinimumZ += movement * movementScale;
+                        }
                     }
 
                     RefreshAssetEditors();
