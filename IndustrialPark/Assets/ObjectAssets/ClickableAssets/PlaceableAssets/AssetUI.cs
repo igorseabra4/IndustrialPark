@@ -196,7 +196,7 @@ namespace IndustrialPark
         [Browsable(false)]
         public override bool SpecialBlendMode => true;
 
-        protected override float? TriangleIntersection(Ray r)
+        protected override float? TriangleIntersection(Ray r, bool hitBackFaces = true)
         {
             if (Texture == 0)
                 return base.TriangleIntersection(r);

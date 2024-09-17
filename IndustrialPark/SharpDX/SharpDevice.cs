@@ -241,6 +241,11 @@ namespace IndustrialPark
 
         private CullMode normalCullMode = CullMode.Back;
         private FillMode normalFillMode = FillMode.Solid;
+        
+        public CullMode NormalCullMode
+        {
+            get => normalCullMode;
+        }
 
         public void SetNormalCullMode(CullMode cullMode)
         {

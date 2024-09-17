@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
+using SharpDX.Direct3D11;
 using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
@@ -325,19 +326,34 @@ namespace IndustrialPark
 
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
+            var backfaceCulling = renderer.device.NormalCullMode == CullMode.Back;
+            // If backface culling is enabled, rays should pass through the back of the faces
+            
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world) : TriangleIntersection(ray);
+                return triangles == null ? TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world) : TriangleIntersection(ray, !backfaceCulling);
             return null;
         }
 
-        protected virtual float? TriangleIntersection(Ray ray)
+        protected virtual float? TriangleIntersection(Ray ray, bool hitBackfaces = true)
         {
             float? smallestDistance = null;
 
             foreach (RenderWareFile.Triangle t in triangles)
-                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
+                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3],
+                        out float distance))
+                {
+                    // If backface culling is enabled, rays should pass through the back of the faces
+                    if (!hitBackfaces)
+                    {
+                        var normal = Vector3.Cross(vertices[t.vertex2] - vertices[t.vertex1], vertices[t.vertex3] - vertices[t.vertex1]);
+                        if (Vector3.Dot(normal, ray.Direction) > 0)
+                            continue;
+                    }
+                    
                     if (smallestDistance == null || distance < smallestDistance)
                         smallestDistance = distance;
+                }
+                    
 
             return smallestDistance;
         }
