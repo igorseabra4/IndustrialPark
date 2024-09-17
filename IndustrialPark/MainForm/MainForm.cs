@@ -1024,7 +1024,7 @@ namespace IndustrialPark
         }
 
         public Vector3 GetScreenClickedPosition(SharpDX.Rectangle viewRectangle, int X, int Y) =>
-            ArchiveEditorFunctions.GetRayInterserctionPosition(renderer,
+            ArchiveEditorFunctions.GetRayIntersectionPosition(renderer,
                 Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection));
 
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)

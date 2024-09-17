@@ -168,7 +168,7 @@ namespace IndustrialPark
             return (from asset in assetDictionary.Values where asset.assetType == assetType select asset).FirstOrDefault();
         }
 
-        public static Vector3 GetRayInterserctionPosition(SharpRenderer renderer, Ray ray, uint assetIdSkip = 0)
+        public static Vector3 GetRayIntersectionPosition(SharpRenderer renderer, Ray ray, uint assetIdSkip = 0)
         {
             List<IRenderableAsset> l = new List<IRenderableAsset>();
             try
@@ -244,7 +244,7 @@ namespace IndustrialPark
                 if ((a is AssetTRIG trig && trig.Shape == TriggerShape.Box) || (a is AssetVOLU volu && volu.Shape == VolumeType.Box))
                     continue;
 
-                var position = GetRayInterserctionPosition(renderer,
+                var position = GetRayIntersectionPosition(renderer,
                     new Ray(new Vector3(a.PositionX, a.PositionY, a.PositionZ), new Vector3(0f, -1f, 0f)),
                     ((Asset)a).assetID);
 
