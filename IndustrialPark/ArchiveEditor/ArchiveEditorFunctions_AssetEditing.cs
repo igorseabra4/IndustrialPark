@@ -898,12 +898,32 @@ namespace IndustrialPark
             RecalculateAllMatrices();
         }
 
-        public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps)
+        public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps, bool placeOnExistingDefaultLayer)
         {
             if (!NoLayers)
             {
-                AddLayer();
-                SelectedLayerIndex = Layers.Count - 1;
+                bool defaultLayerExists = false;
+
+                if (placeOnExistingDefaultLayer)
+                {
+                    // Check every layer to see whether it is of type default
+                    for (int i = 0; i < Layers.Count; i++)
+                    {
+                        if (Layers[i].Type != LayerType.DEFAULT) continue;
+                    
+                        // If the layer is a default layer, select it.
+                        // Pick the first default layer found.
+                        defaultLayerExists = true;
+                        SelectedLayerIndex = i;
+                        break;
+                    }
+                }
+                
+                if (!placeOnExistingDefaultLayer || !defaultLayerExists)
+                {
+                    AddLayer();
+                    SelectedLayerIndex = Layers.Count - 1;
+                }
             }
 
             List<uint> outAssetIDs = new List<uint>();

@@ -11,7 +11,7 @@ namespace IndustrialPark
 {
     public partial class ImportModel : Form
     {
-        public ImportModel()
+        public ImportModel(bool noLayers)
         {
             InitializeComponent();
 
@@ -21,6 +21,7 @@ namespace IndustrialPark
             comboBoxAssetTypes.Items.Add(AssetType.BSP);
             // comboBoxAssetTypes.Items.Add(AssetType.JSP);
             comboBoxAssetTypes.SelectedItem = AssetType.Model;
+            checkBoxUseExistingDefaultLayer.Visible = !noLayers;
         }
 
         List<string> filePaths = new List<string>();
@@ -66,20 +67,14 @@ namespace IndustrialPark
             Close();
         }
 
-        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp) GetModels(Game game)
+        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp, bool useExistingDefaultLayer) GetModels(Game game, bool noLayers)
         {
-            using (ImportModel a = new ImportModel())
+            using (ImportModel a = new ImportModel(noLayers))
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     List<Section_AHDR> AHDRs = new List<Section_AHDR>();
 
                     AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
-
-                    if (assetType == AssetType.Model)
-                    {
-                        if (a.checkBoxGenSimps.Checked)
-                            MessageBox.Show("a SIMP for each imported MODL will be generated and placed on a new DEFAULT layer.");
-                    }
 
                     foreach (string filePath in a.filePaths)
                     {
@@ -110,7 +105,7 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false, false);
                             }
                             catch (Exception)
                             {
@@ -118,7 +113,7 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false, false);
                             }
                         }
                         else if (assetType == AssetType.BSP)
@@ -142,7 +137,7 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false, false);
                             }
                             catch (Exception)
                             {
@@ -150,7 +145,7 @@ namespace IndustrialPark
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false);
+                                return (null, false, false, false, false, false, false, false);
                             }
 
                         }
@@ -165,16 +160,24 @@ namespace IndustrialPark
                                 assetData));
                     }
 
-                    return (AHDRs, a.checkBoxOverwrite.Checked, a.checkBoxGenSimps.Checked, a.checkBoxLedgeGrab.Checked, a.checkBoxEnableVcolors.Checked, a.checkBoxSolidSimps.Checked, assetType == AssetType.JSP);
+                    return (AHDRs,
+                        a.checkBoxOverwrite.Checked,
+                        a.checkBoxGenSimps.Checked,
+                        a.checkBoxLedgeGrab.Checked,
+                        a.checkBoxEnableVcolors.Checked,
+                        a.checkBoxSolidSimps.Checked,
+                        assetType == AssetType.JSP,
+                        a.checkBoxUseExistingDefaultLayer.Checked);
                 }
 
-            return (null, false, false, false, false, false, false);
+            return (null, false, false, false, false, false, false, false);
         }
 
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
             checkBoxSolidSimps.Enabled = checkBoxGenSimps.Checked;
+            checkBoxUseExistingDefaultLayer.Enabled = checkBoxGenSimps.Checked;
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)

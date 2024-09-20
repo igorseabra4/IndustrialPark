@@ -45,6 +45,7 @@
             this.checkBoxSolidSimps = new System.Windows.Forms.CheckBox();
             this.grpImportSettings = new System.Windows.Forms.GroupBox();
             this.grpSIMP = new System.Windows.Forms.GroupBox();
+            this.checkBoxUseExistingDefaultLayer = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.grpImportSettings.SuspendLayout();
@@ -163,12 +164,21 @@
             // 
             // grpSIMP
             // 
+            this.grpSIMP.Controls.Add(this.checkBoxUseExistingDefaultLayer);
             this.grpSIMP.Controls.Add(this.checkBoxGenSimps);
             this.grpSIMP.Controls.Add(this.checkBoxSolidSimps);
             this.grpSIMP.Controls.Add(this.checkBoxLedgeGrab);
             resources.ApplyResources(this.grpSIMP, "grpSIMP");
             this.grpSIMP.Name = "grpSIMP";
             this.grpSIMP.TabStop = false;
+            // 
+            // checkBoxUseExistingDefaultLayer
+            // 
+            resources.ApplyResources(this.checkBoxUseExistingDefaultLayer, "checkBoxUseExistingDefaultLayer");
+            this.checkBoxUseExistingDefaultLayer.Checked = true;
+            this.checkBoxUseExistingDefaultLayer.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxUseExistingDefaultLayer.Name = "checkBoxUseExistingDefaultLayer";
+            this.checkBoxUseExistingDefaultLayer.UseVisualStyleBackColor = true;
             // 
             // ImportModel
             // 
@@ -195,8 +205,9 @@
             this.grpSIMP.ResumeLayout(false);
             this.grpSIMP.PerformLayout();
             this.ResumeLayout(false);
-
         }
+
+        private System.Windows.Forms.CheckBox checkBoxUseExistingDefaultLayer;
 
         #endregion
 

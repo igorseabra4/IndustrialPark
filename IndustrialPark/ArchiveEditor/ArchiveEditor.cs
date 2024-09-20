@@ -731,7 +731,14 @@ namespace IndustrialPark
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (List<Section_AHDR> AHDRs, bool overwrite, bool makeSimps, bool ledgeGrabSimps, bool piptVcolors, bool solidSimps, bool jsp) = ImportModel.GetModels(archive.game);
+            (List<Section_AHDR> AHDRs,
+                bool overwrite, 
+                bool makeSimps, 
+                bool ledgeGrabSimps, 
+                bool piptVcolors, 
+                bool solidSimps, 
+                bool jsp, 
+                bool placeOnExistingDefaultLayer) = ImportModel.GetModels(archive.game, archive.NoLayers);
 
             if (AHDRs != null)
             {
@@ -739,7 +746,7 @@ namespace IndustrialPark
                 if (piptVcolors)
                     archive.MakePiptVcolors(assetIDs);
                 if (makeSimps)
-                    assetIDs.AddRange(archive.MakeSimps(assetIDs, solidSimps, ledgeGrabSimps));
+                    assetIDs.AddRange(archive.MakeSimps(assetIDs, solidSimps, ledgeGrabSimps, placeOnExistingDefaultLayer));
                 PopulateLayerComboBox();
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs, true);

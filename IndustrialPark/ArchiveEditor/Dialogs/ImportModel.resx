@@ -189,7 +189,7 @@
     <value>6</value>
   </data>
   <data name="buttonOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>295, 231</value>
+    <value>296, 248</value>
   </data>
   <data name="buttonOK.Size" type="System.Drawing.Size, System.Drawing">
     <value>92, 23</value>
@@ -213,7 +213,7 @@
     <value>5</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>393, 231</value>
+    <value>394, 248</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>92, 23</value>
@@ -360,7 +360,7 @@
     <value>grpSIMP</value>
   </data>
   <data name="&gt;&gt;checkBoxGenSimps.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="checkBoxEnableVcolors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -444,7 +444,7 @@
     <value>grpSIMP</value>
   </data>
   <data name="&gt;&gt;checkBoxLedgeGrab.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="checkBoxSolidSimps.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -474,7 +474,7 @@
     <value>grpSIMP</value>
   </data>
   <data name="&gt;&gt;checkBoxSolidSimps.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="grpImportSettings.Location" type="System.Drawing.Point, System.Drawing">
     <value>225, 68</value>
@@ -500,11 +500,45 @@
   <data name="&gt;&gt;grpImportSettings.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="checkBoxUseExistingDefaultLayer.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxUseExistingDefaultLayer.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="checkBoxUseExistingDefaultLayer.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
+  <data name="checkBoxUseExistingDefaultLayer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>43, 73</value>
+  </data>
+  <data name="checkBoxUseExistingDefaultLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>183, 17</value>
+  </data>
+  <data name="checkBoxUseExistingDefaultLayer.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="checkBoxUseExistingDefaultLayer.Text" xml:space="preserve">
+    <value>Place on existing DEFAULT layer</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Name" xml:space="preserve">
+    <value>checkBoxUseExistingDefaultLayer</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Parent" xml:space="preserve">
+    <value>grpSIMP</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="grpSIMP.Location" type="System.Drawing.Point, System.Drawing">
     <value>225, 140</value>
   </data>
   <data name="grpSIMP.Size" type="System.Drawing.Size, System.Drawing">
-    <value>261, 82</value>
+    <value>261, 102</value>
   </data>
   <data name="grpSIMP.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -531,9 +565,8 @@
     <value>6, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>497, 266</value>
+    <value>497, 283</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterScreen</value>
   </data>
