@@ -719,29 +719,29 @@ namespace IndustrialPark
                 return;
 
             if (PressedKeys.Contains(Keys.A) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddYaw(-0.05f);
+                renderer.Camera.AddYaw(-0.05f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.A))
-                renderer.Camera.AddPositionSideways(0.25f);
+                renderer.Camera.AddPositionSideways(0.25f * renderer.TransformScaleFactor);
 
             if (PressedKeys.Contains(Keys.D) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddYaw(0.05f);
+                renderer.Camera.AddYaw(0.05f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.D))
-                renderer.Camera.AddPositionSideways(-0.25f);
+                renderer.Camera.AddPositionSideways(-0.25f * renderer.TransformScaleFactor);
 
             if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPitch(-0.05f);
+                renderer.Camera.AddPitch(-0.05f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ShiftKey))
-                renderer.Camera.AddPositionUp(0.25f);
+                renderer.Camera.AddPositionUp(0.25f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.W))
-                renderer.Camera.AddPositionForward(0.25f);
+                renderer.Camera.AddPositionForward(0.25f * renderer.TransformScaleFactor);
 
             // Added extra conditions to stop camera moving when saving all archive editors
             if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey) & !PressedKeys.Contains(Keys.ShiftKey))
-                renderer.Camera.AddPitch(0.05f);
+                renderer.Camera.AddPitch(0.05f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPositionUp(-0.25f);
+                renderer.Camera.AddPositionUp(-0.25f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.S) & !PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPositionForward(-0.25f);
+                renderer.Camera.AddPositionForward(-0.25f * renderer.TransformScaleFactor);
 
             if (PressedKeys.Contains(Keys.R))
                 renderer.Camera.Reset();
