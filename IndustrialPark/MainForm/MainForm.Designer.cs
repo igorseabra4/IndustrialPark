@@ -59,6 +59,10 @@ namespace IndustrialPark
             this.replaceAssetsOnPasteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLegacyAssetIDFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.useLegacyAssetTypeFormatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cursorInFlyModeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.defaultToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.crosshairToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hiddenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveAllOpenHIPsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.runGameF5ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -232,7 +236,7 @@ namespace IndustrialPark
             // 
             // optionsToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.viewConfigToolStripMenuItem, this.viewControlsToolStripMenuItem, this.toolStripSeparator4, this.manageUserTemplatesToolStripMenuItem, this.templatesPersistentShiniesToolStripMenuItem, this.templatesChainPointMVPTsToolStripMenuItem, this.toolStripSeparator7, this.updateReferencesOnCopyPasteToolStripMenuItem, this.replaceAssetsOnPasteToolStripMenuItem, this.useLegacyAssetIDFormatToolStripMenuItem, this.useLegacyAssetTypeFormatToolStripMenuItem });
+            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.viewConfigToolStripMenuItem, this.viewControlsToolStripMenuItem, this.toolStripSeparator4, this.manageUserTemplatesToolStripMenuItem, this.templatesPersistentShiniesToolStripMenuItem, this.templatesChainPointMVPTsToolStripMenuItem, this.toolStripSeparator7, this.updateReferencesOnCopyPasteToolStripMenuItem, this.replaceAssetsOnPasteToolStripMenuItem, this.useLegacyAssetIDFormatToolStripMenuItem, this.useLegacyAssetTypeFormatToolStripMenuItem, this.cursorInFlyModeToolStripMenuItem });
             this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             resources.ApplyResources(this.optionsToolStripMenuItem, "optionsToolStripMenuItem");
             // 
@@ -303,6 +307,35 @@ namespace IndustrialPark
             this.useLegacyAssetTypeFormatToolStripMenuItem.Name = "useLegacyAssetTypeFormatToolStripMenuItem";
             resources.ApplyResources(this.useLegacyAssetTypeFormatToolStripMenuItem, "useLegacyAssetTypeFormatToolStripMenuItem");
             this.useLegacyAssetTypeFormatToolStripMenuItem.Click += new System.EventHandler(this.useLegacyAssetTypeFormatToolStripMenuItem_Click);
+            // 
+            // cursorInFlyModeToolStripMenuItem
+            // 
+            this.cursorInFlyModeToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { this.defaultToolStripMenuItem, this.crosshairToolStripMenuItem, this.hiddenToolStripMenuItem });
+            this.cursorInFlyModeToolStripMenuItem.Name = "cursorInFlyModeToolStripMenuItem";
+            resources.ApplyResources(this.cursorInFlyModeToolStripMenuItem, "cursorInFlyModeToolStripMenuItem");
+            // 
+            // defaultToolStripMenuItem
+            // 
+            this.defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
+            resources.ApplyResources(this.defaultToolStripMenuItem, "defaultToolStripMenuItem");
+            this.defaultToolStripMenuItem.Tag = "0";
+            this.defaultToolStripMenuItem.Click += new System.EventHandler(this.changeFlyModeCursor);
+            // 
+            // crosshairToolStripMenuItem
+            // 
+            this.crosshairToolStripMenuItem.Checked = true;
+            this.crosshairToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.crosshairToolStripMenuItem.Name = "crosshairToolStripMenuItem";
+            resources.ApplyResources(this.crosshairToolStripMenuItem, "crosshairToolStripMenuItem");
+            this.crosshairToolStripMenuItem.Tag = "1";
+            this.crosshairToolStripMenuItem.Click += new System.EventHandler(this.changeFlyModeCursor);
+            // 
+            // hiddenToolStripMenuItem
+            // 
+            this.hiddenToolStripMenuItem.Name = "hiddenToolStripMenuItem";
+            resources.ApplyResources(this.hiddenToolStripMenuItem, "hiddenToolStripMenuItem");
+            this.hiddenToolStripMenuItem.Tag = "2";
+            this.hiddenToolStripMenuItem.Click += new System.EventHandler(this.changeFlyModeCursor);
             // 
             // toolsToolStripMenuItem
             // 
@@ -781,6 +814,12 @@ namespace IndustrialPark
             this.PerformLayout();
         }
 
+        private System.Windows.Forms.ToolStripMenuItem defaultToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem crosshairToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hiddenToolStripMenuItem;
+
+        private System.Windows.Forms.ToolStripMenuItem cursorInFlyModeToolStripMenuItem;
+
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem createGameCubeBannerToolStripMenuItem;
@@ -790,7 +829,7 @@ namespace IndustrialPark
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.Panel renderPanel;
         private ToolStripStatusLabel toolStripStatusLabel1;
-        private ToolStripMenuItem optionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem noCullingCToolStripMenuItem;
         private ToolStripMenuItem wireframeFToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewConfigToolStripMenuItem;

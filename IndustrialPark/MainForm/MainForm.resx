@@ -273,6 +273,30 @@
   <data name="useLegacyAssetTypeFormatToolStripMenuItem.Text" xml:space="preserve">
     <value>Use Legacy Asset Type &amp;Format</value>
   </data>
+  <data name="defaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="defaultToolStripMenuItem.Text" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="crosshairToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="crosshairToolStripMenuItem.Text" xml:space="preserve">
+    <value>Crosshair</value>
+  </data>
+  <data name="hiddenToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>152, 22</value>
+  </data>
+  <data name="hiddenToolStripMenuItem.Text" xml:space="preserve">
+    <value>Hidden</value>
+  </data>
+  <data name="cursorInFlyModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="cursorInFlyModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Cursor in Fly Mode</value>
+  </data>
   <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>61, 19</value>
   </data>
@@ -2619,6 +2643,30 @@
     <value>useLegacyAssetTypeFormatToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;useLegacyAssetTypeFormatToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cursorInFlyModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>cursorInFlyModeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;cursorInFlyModeToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;defaultToolStripMenuItem.Name" xml:space="preserve">
+    <value>defaultToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;defaultToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;crosshairToolStripMenuItem.Name" xml:space="preserve">
+    <value>crosshairToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;crosshairToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hiddenToolStripMenuItem.Name" xml:space="preserve">
+    <value>hiddenToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;hiddenToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolsToolStripMenuItem.Name" xml:space="preserve">

@@ -16,6 +16,13 @@ namespace IndustrialPark
 {
     public partial class MainForm : Form
     {
+        public enum FlyModeCursor
+        {
+            Default = 0,
+            Crosshair = 1,
+            Hide = 2
+        }
+        
         public MainForm()
         {
             StartPosition = FormStartPosition.CenterScreen;
@@ -126,6 +133,7 @@ namespace IndustrialPark
             SetProjectToolStripStatusLabel();
             StartRenderer();
             UpdateTitleBar();
+            ResetMouseCenter(null, null);
         }
 
         private void ApplyIPSettings(IPSettings settings)
@@ -160,6 +168,8 @@ namespace IndustrialPark
 
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
+            
+            setFlyCursor(settings.flyModeCursor);
 
             foreach (string filepath in settings.recentArchivePaths)
                 SetRecentOpenedArchives(filepath);
@@ -234,6 +244,7 @@ namespace IndustrialPark
                 pcsx2Path = BuildISO.PCSX2Path,
                 recentBuildIsoGamePaths = BuildISO.recentGameDirPaths,
                 recentArchivePaths = openLastToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Text).ToArray(),
+                flyModeCursor = (int)flyModeCursor
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -519,7 +530,9 @@ namespace IndustrialPark
         public SharpRenderer renderer;
 
         private bool mouseMode = false;
-        private System.Drawing.Point MouseCenter = new System.Drawing.Point();
+        private bool cursorHidden = false;
+        private FlyModeCursor flyModeCursor = FlyModeCursor.Crosshair;
+        private System.Drawing.Point MouseCenter;
         private MouseEventArgs oldMousePosition = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
 
         private void MouseMoveControl(object sender, MouseEventArgs e)
@@ -539,6 +552,27 @@ namespace IndustrialPark
             {
                 if (mouseMode)
                 {
+                    
+
+                    switch (flyModeCursor)
+                    {
+                        case FlyModeCursor.Default:
+                            if (Cursor.Current != Cursors.Default)
+                                Cursor = Cursors.Default;
+                            break;
+                        case FlyModeCursor.Crosshair:
+                            if (Cursor.Current != Cursors.Cross)
+                                Cursor = Cursors.Cross;
+                            break;
+                        case FlyModeCursor.Hide:
+                            if (!cursorHidden)
+                            {
+                                cursorHidden = true;
+                                Cursor.Hide();
+                            }
+                            break;
+                    }
+                    
                     renderer.Camera.AddYaw(MathUtil.DegreesToRadians(Cursor.Position.X - MouseCenter.X) / 4);
                     renderer.Camera.AddPitch(MathUtil.DegreesToRadians(Cursor.Position.Y - MouseCenter.Y) / 4);
 
@@ -546,6 +580,15 @@ namespace IndustrialPark
                 }
                 else
                 {
+                    if (cursorHidden)
+                    {
+                        cursorHidden = false;
+                        Cursor.Show();
+                    }
+                    
+                    if (Cursor.Current != Cursors.Default)
+                        Cursor = Cursors.Default;
+                    
                     if (e.Button == MouseButtons.Middle)
                     {
                         renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
@@ -1947,6 +1990,20 @@ namespace IndustrialPark
                     form.Focus();
                 }
             }
+        }
+
+        private void changeFlyModeCursor(object sender, EventArgs e)
+        {
+            setFlyCursor(Convert.ToInt32(((ToolStripMenuItem)sender).Tag));
+        }
+
+        private void setFlyCursor(int flyModeCursor)
+        {
+            this.flyModeCursor = (FlyModeCursor)flyModeCursor;
+            
+            // Updaate the toolstrip dropdown items
+            foreach (ToolStripMenuItem item in cursorInFlyModeToolStripMenuItem.DropDownItems)
+                item.Checked = Convert.ToInt32(item.Tag) == flyModeCursor;
         }
     }
 }

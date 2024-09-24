@@ -22,5 +22,6 @@
 
         public string pcsx2Path;
         public string[] recentBuildIsoGamePaths;
+        public int flyModeCursor = 1;
     }
 }
