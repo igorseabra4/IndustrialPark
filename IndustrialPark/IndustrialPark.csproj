@@ -14,12 +14,9 @@
     <UpdatePeriodically>false</UpdatePeriodically>
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>1</ApplicationRevision>
-    <ApplicationVersion>0.1.3.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
@@ -44,10 +41,13 @@
     <ManifestCertificateThumbprint>571814D25AD139C19B5C2C683A0747AA22C9C798</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
+	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+  <PropertyGroup>
     <ManifestKeyFile>IndustrialPark_TemporaryKey.pfx</ManifestKeyFile>
     <Company>Heavy Iron Modding</Company>
     <Copyright>Copyright ©  2024 igorseabra4</Copyright>
-    <AssemblyVersion>2024.02.10</AssemblyVersion>
+	<AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
     <None Update="Resources\FSBank.zip">

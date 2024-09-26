@@ -1,8 +1,10 @@
-﻿namespace IndustrialPark
+﻿using System.Windows.Forms;
+
+namespace IndustrialPark
 {
     public class IPversion
     {
-        public string version = "v2026.03.06";
+        public string version = $"v{Application.ProductVersion}beta";
         public string versionName;
     }
 }
