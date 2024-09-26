@@ -1,0 +1,65 @@
+name: Build and publish
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+            submodules: recursive
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '8.x'
+
+      - name: Set timezone
+        run: tzutil /s "W. Europe Standard Time"
+        
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build solution
+        id: build_solution
+        shell: pwsh
+        run: |
+          $currentDate = Get-Date -Format "yyyy.MM.dd"
+          $secondsInDay = [math]::Round((Get-Date).TimeOfDay.TotalSeconds)
+          $buildVersion = "$($currentDate)-$($secondsInDay)"
+          
+          dotnet build -c Release /p:Version=$($buildVersion) --no-restore
+          
+          echo "build_version=$buildVersion" >> $env:GITHUB_OUTPUT
+          
+      - name: Clean and zip output
+        run: |
+          cd ./IndustrialPark/bin/Release/net8.0-windows7.0/
+          del *.pdb
+          Compress-Archive * -DestinationPath ../../../../IndustrialPark_v${{ steps.build_solution.outputs.build_version }}.zip
+          
+      - name: Create tag
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.git.createRef({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'refs/tags/v${{ steps.build_solution.outputs.build_version }}',
+              sha: context.sha
+            })
+            
+      - name: Create Release
+        uses: softprops/action-gh-release@v2.0.8
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          name: Industrial Park v${{ steps.build_solution.outputs.build_version }}
+          generate_release_notes: true
+          draft: true
+          tag_name: v${{ steps.build_solution.outputs.build_version }}
+          files: |
+            IndustrialPark_v${{ steps.build_solution.outputs.build_version }}.zip
