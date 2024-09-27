@@ -1,112 +1,102 @@
 ﻿using Newtonsoft.Json;
+using Octokit;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Net;
 using System.Windows.Forms;
+using Application = System.Windows.Forms.Application;
 
 namespace IndustrialPark
 {
     public static class AutomaticUpdater
     {
-        public static bool UpdateIndustrialPark(out bool hasChecked)
+        public static DateTime LastCheckedForUpdate;
+        public static bool UpdateIndustrialPark(out bool hasChecked, bool forceCheck = false)
         {
             hasChecked = false;
+            string owner = "energydrink02";
+            string repo = "IndustrialPark";
 
             try
             {
-                string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark/master/IndustrialPark/Resources/ip_version.json";
-
-                string updatedJson;
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(versionInfoURL);
-                request.AutomaticDecompression = DecompressionMethods.GZip;
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                    updatedJson = reader.ReadToEnd();
-
-                IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
-                IPversion oldVersion = new IPversion();
-
-                hasChecked = true;
-
-                if (oldVersion.version != updatedVersion.version)
+                if (forceCheck || LastCheckedForUpdate == DateTime.MinValue || DateTime.Now.Subtract(LastCheckedForUpdate).TotalMinutes >= 10)
                 {
-                    string messageText = $"There is an update available: Industrial Park ({updatedVersion.version}).\n\n{updatedVersion.versionName}\n\nDo you wish to download it?";
+                    var client = new GitHubClient(new ProductHeaderValue("IP"));
+                    Release newRelease = client.Repository.Release.GetLatest(owner, repo).GetAwaiter().GetResult();
+
+                    LastCheckedForUpdate = DateTime.Now;
+
+                    if (newRelease.TagName.Substring(1) == Application.ProductVersion)
+                    {
+                        hasChecked = true;
+                        return false;
+                    }
+
+                    string messageText = $"There is an update available: Industrial Park ({newRelease.Name}).\n\n{newRelease.Body}\n\nDo you wish to download it?";
                     DialogResult d = MessageBox.Show(messageText, "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                     if (d == DialogResult.Yes)
                     {
-                        string updatedIPfileName = "IndustrialPark_" + updatedVersion.version + ".zip";
-                        string updatedIPURL = "https://github.com/igorseabra4/IndustrialPark/releases/download/" + updatedVersion.version + "/" + updatedIPfileName;
-
-                        string updatedIPfilePath = Application.StartupPath + "/Resources/" + updatedIPfileName;
+                        string updatedIPfilePath = Path.Combine(Application.StartupPath, "release.zip");
+                        string oldIPdestinationPath = Path.Combine(Application.StartupPath, "IndustrialPark_old");
 
                         using (var webClient = new WebClient())
-                            webClient.DownloadFile(updatedIPURL, updatedIPfilePath);
+                        {
+                            webClient.Headers.Add(HttpRequestHeader.UserAgent, "Anything");
+                            webClient.DownloadFile(newRelease.Assets[0].BrowserDownloadUrl, updatedIPfilePath);
+                        }
 
-                        string oldIPdestinationPath = Application.StartupPath + "/IndustrialPark_old/";
-
-                        if (!Directory.Exists(oldIPdestinationPath))
+                        if (Directory.Exists(oldIPdestinationPath))
+                            RecursiveDelete(oldIPdestinationPath, false);
+                        else
                             Directory.CreateDirectory(oldIPdestinationPath);
 
-                        string[] directoryNames = new string[]
+                        List<string> directories = new()
                         {
-                            "",
-                            "/lib",
-                            "/lib/en-GB",
-                            "/Resources",
-                            "/Resources/Models",
-                            "/Resources/Scripts",
-                            "/Resources/SharpDX",
-                            "/Resources/txdgen_1.0",
-                            "/Resources/txdgen_1.0/LICENSES",
-                            "/Resources/txdgen_1.0/LICENSES/eirrepo",
-                            "/Resources/txdgen_1.0/LICENSES/libimagequant",
-                            "/Resources/txdgen_1.0/LICENSES/libjpeg",
-                            "/Resources/txdgen_1.0/LICENSES/libpng",
-                            "/Resources/txdgen_1.0/LICENSES/libsquish",
-                            "/Resources/txdgen_1.0/LICENSES/lzo-2.08",
-                            "/Resources/txdgen_1.0/LICENSES/pvrtextool",
-                            "/Resources/txdgen_1.0/LICENSES/rwtools",
-                            "/runtimes/",
-                            "/runtimes/linux-x64",
-                            "/runtimes/linux-x64/native",
-                            "/runtimes/osx-x64",
-                            "/runtimes/osx-x64/native",
-                            "/runtimes/win-x64",
-                            "/runtimes/win-x64/native",
-                            "/runtimes/win-x86",
-                            "/runtimes/win-x86/native",
+                            "en-GB",
+                            "lib",
+                            "runtimes",
+                            "Resources"
                         };
 
-                        foreach (string localDirPath in directoryNames)
-                            if (Directory.Exists(Application.StartupPath + localDirPath))
-                            {
-                                if (!Directory.Exists(oldIPdestinationPath + localDirPath))
-                                    Directory.CreateDirectory(oldIPdestinationPath + localDirPath);
+                        List<string> copyOnly = new()
+                        {
+                            "ip_settings.json",
+                            "default_project.json",
+                        };
 
-                                foreach (string previousFile in Directory.GetFiles(Application.StartupPath + localDirPath))
-                                {
-                                    if ((Path.GetFileNameWithoutExtension(previousFile).StartsWith("IndustrialPark") && Path.GetExtension(previousFile).ToLower().Equals(".zip")) || (Path.GetExtension(previousFile).ToLower().Equals(".json") && Path.GetFileNameWithoutExtension(previousFile) != "default_project"))
-                                        continue;
+                        foreach (string dir in Directory.GetDirectories(Application.StartupPath, "*", SearchOption.TopDirectoryOnly))
+                        {
+                            if (!directories.Contains(Path.GetRelativePath(Application.StartupPath, dir)))
+                                continue;
 
-                                    string newFilePath = oldIPdestinationPath + localDirPath + "/" + Path.GetFileName(previousFile);
+                            CloneDirectory(dir, oldIPdestinationPath);
+                        }
 
-                                    if (File.Exists(newFilePath))
-                                        File.Delete(newFilePath);
+                        foreach (string file in Directory.GetFiles(Application.StartupPath, "*", SearchOption.TopDirectoryOnly))
+                        {
+                            if (copyOnly.Contains(Path.GetFileName(file).ToLower()))
+                                File.Copy(file, Path.Combine(oldIPdestinationPath, Path.GetFileName(file)), true);
+                            else if (Path.GetFileName(file).ToLower().Equals(Path.GetFileName(updatedIPfilePath)))
+                                continue;
+                            else
+                                File.Move(file, Path.Combine(oldIPdestinationPath, Path.GetFileName(file)), true);
+                        }
 
-                                    File.Move(previousFile, newFilePath);
-                                }
-                            }
-
-                        ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath);
+                        ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath, true);
 
                         File.Delete(updatedIPfilePath);
 
                         return true;
                     }
                 }
+            }
+            catch (ApiException apiex)
+            {
+                MessageBox.Show("There was an api error checking for updates: " + apiex.Message, "API Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             catch (Exception ex)
             {
@@ -116,18 +106,36 @@ namespace IndustrialPark
             return false;
         }
 
-        private static void RecursiveDelete(string directory)
+        private static void CloneDirectory(string src, string dest)
         {
-            if (!Directory.Exists(directory))
+            string relativeSrcPath = Path.GetRelativePath(Application.StartupPath, src);
+            string newPath = Path.Combine(Application.StartupPath, dest, relativeSrcPath);
+
+            Directory.CreateDirectory(newPath);
+            foreach (var dir in Directory.GetDirectories(src, "*", SearchOption.AllDirectories))
+            {
+                CloneDirectory(dir, dest);
+            }
+
+            foreach (var file in Directory.GetFiles(src))
+            {
+                File.Copy(file, Path.Combine(newPath, Path.GetFileName(file)), true);
+            }
+        }
+
+        private static void RecursiveDelete(string directory, bool deleteRoot = true)
+        {
+            if (!Directory.Exists(directory) || !directory.Contains(Application.StartupPath))
                 return;
 
-            foreach (var dir in Directory.GetDirectories(directory))
-                RecursiveDelete(dir);
+            foreach (string dir in Directory.GetDirectories(directory))
+                Directory.Delete(dir, true);
 
-            foreach (var s in Directory.GetFiles(directory))
-                File.Delete(s);
+            foreach (string file in Directory.GetFiles(directory))
+                File.Delete(file);
 
-            Directory.Delete(directory);
+            if (deleteRoot)
+                Directory.Delete(directory);
         }
 
         public static bool VerifyEditorFiles()
