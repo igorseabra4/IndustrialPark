@@ -2,7 +2,10 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -91,8 +94,14 @@ namespace IndustrialPark
 
         public void RefreshPropertyGrid()
         {
-            propertyGridAsset.Refresh();
-            updateListView(asset);
+            Task.Run(() =>
+            {
+                Invoke((Action)(() =>
+                {
+                    propertyGridAsset.Refresh();
+                    updateListView(asset);
+                }));
+            });
         }
 
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
