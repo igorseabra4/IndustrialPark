@@ -60,7 +60,7 @@ namespace IndustrialPark
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("HIP could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("HIP could not be opened: " + ex.Message, "Open failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     importSuccessful = false;
                 }
             }
@@ -75,7 +75,7 @@ namespace IndustrialPark
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("HOP could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("HOP could not be opened: " + ex.Message, "Open failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     importSuccessful = false;
                 }
             }
@@ -88,7 +88,7 @@ namespace IndustrialPark
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("BOOT.HIP could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("BOOT.HIP could not be opened: " + ex.Message, "Open failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     importSuccessful = false;
                 }
             }
@@ -103,7 +103,7 @@ namespace IndustrialPark
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show("Localization file could not be opened: " + ex.Message, "Import failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Localization file could not be opened: " + ex.Message, "Open failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         importSuccessful = false;
                     }
                 }
