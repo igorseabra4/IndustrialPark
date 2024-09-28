@@ -239,7 +239,7 @@ namespace IndustrialPark
 
         public void DropSelectedAssets(SharpRenderer renderer)
         {
-            foreach (var a in from Asset a in currentlySelectedAssets where a is IClickableAsset select (IClickableAsset)a)
+            foreach (var a in from Asset a in CurrentlySelectedAssets where a is IClickableAsset select (IClickableAsset)a)
             {
                 if ((a is AssetTRIG trig && trig.Shape == TriggerShape.Box) || (a is AssetVOLU volu && volu.Shape == VolumeType.Box))
                     continue;

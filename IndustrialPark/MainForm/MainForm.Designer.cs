@@ -136,6 +136,8 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.toolStripStatusLabelNumSelected = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -685,7 +687,7 @@ namespace IndustrialPark
             // statusStrip1
             // 
             this.statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.toolStripStatusLabel1, this.toolStripStatusLabel2, this.toolStripStatusLabelProject, this.toolStripStatusLabel3, this.toolStripStatusLabelTemplate });
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { this.toolStripStatusLabel1, this.toolStripStatusLabel2, this.toolStripStatusLabelProject, this.toolStripStatusLabel3, this.toolStripStatusLabelTemplate, this.toolStripStatusLabel4, this.toolStripStatusLabelNumSelected });
             resources.ApplyResources(this.statusStrip1, "statusStrip1");
             this.statusStrip1.Name = "statusStrip1";
             // 
@@ -783,6 +785,16 @@ namespace IndustrialPark
             resources.ApplyResources(this.toolStripComboBoxUserTemplate, "toolStripComboBoxUserTemplate");
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
+            // toolStripStatusLabel4
+            // 
+            this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
+            resources.ApplyResources(this.toolStripStatusLabel4, "toolStripStatusLabel4");
+            // 
+            // toolStripStatusLabelNumSelected
+            // 
+            this.toolStripStatusLabelNumSelected.Name = "toolStripStatusLabelNumSelected";
+            resources.ApplyResources(this.toolStripStatusLabelNumSelected, "toolStripStatusLabelNumSelected");
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -813,6 +825,9 @@ namespace IndustrialPark
             this.ResumeLayout(false);
             this.PerformLayout();
         }
+
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelNumSelected;
 
         private System.Windows.Forms.ToolStripMenuItem defaultToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem crosshairToolStripMenuItem;
@@ -862,7 +877,7 @@ namespace IndustrialPark
         private ToolStripStatusLabel toolStripStatusLabelProject;
         public ContextMenuStrip contextMenuStripMain;
         private ToolStripMenuItem toolStripMenuItem_Templates;
-        private ToolStripStatusLabel toolStripStatusLabel3;
+        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel3;
         private ToolStripStatusLabel toolStripStatusLabelTemplate;
         private ToolStripMenuItem userTemplateToolStripMenuItem;
         private ToolStripComboBox toolStripComboBoxUserTemplate;

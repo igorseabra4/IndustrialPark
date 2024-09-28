@@ -5,6 +5,7 @@ using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -820,6 +821,7 @@ namespace IndustrialPark
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
 
             ae.archive.ChangesMade += UpdateTitleBar;
+            ae.archive.CurrentlySelectedAssets.CollectionChanged += UpdateSelectedAssetStatusBarItem;
             ae.EditorUpdate += EditorUpdate;
             UpdateTitleBar();
             SetupAssetVisibilityButtons();
@@ -1087,6 +1089,23 @@ namespace IndustrialPark
                 return;
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.SetSelectedIndex(assetID ?? 0, false, add);
+        }
+
+        /// <summary>
+        /// Gets the number of currently selected assets across all archive Editors.
+        /// </summary>
+        /// <returns>The number of selected assets</returns>
+        private int GetNumberOfSelectedAssets()
+        {
+            return archiveEditors.Sum(ae => ae.archive.GetNumberOfSelectedAssets);
+        }
+
+        /// <summary>
+        /// Updates the status bar to show the number of selected assets.
+        /// </summary>
+        private void UpdateSelectedAssetStatusBarItem(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            toolStripStatusLabelNumSelected.Text = $"{GetNumberOfSelectedAssets()} selected";
         }
 
         private void OpenInternalEditors()

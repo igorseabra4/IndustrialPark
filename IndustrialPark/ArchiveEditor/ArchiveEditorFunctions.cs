@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -117,7 +118,7 @@ namespace IndustrialPark
             {
                 Dispose();
 
-                currentlySelectedAssets = new List<Asset>();
+                CurrentlySelectedAssets = new ObservableCollection<Asset>();
                 currentlyOpenFilePath = null;
                 assetDictionary.Clear();
 
@@ -153,7 +154,7 @@ namespace IndustrialPark
 
             assetDictionary = new Dictionary<uint, Asset>();
 
-            currentlySelectedAssets = new List<Asset>();
+            CurrentlySelectedAssets = new ObservableCollection<Asset>();
             currentlyOpenFilePath = fileName;
 
             HipFile hipFile;
@@ -573,7 +574,7 @@ namespace IndustrialPark
         public void DisposeOfAsset(uint assetID)
         {
             var asset = assetDictionary[assetID];
-            currentlySelectedAssets.Remove(asset);
+            CurrentlySelectedAssets.Remove(asset);
             CloseInternalEditor(assetID);
             CloseInternalEditorMulti(assetID);
 
@@ -1393,7 +1394,7 @@ namespace IndustrialPark
             Dictionary<uint, uint> referenceUpdate = new Dictionary<uint, uint>();
             var newAHDRs = new List<Section_AHDR>();
 
-            foreach (var asset in currentlySelectedAssets)
+            foreach (var asset in CurrentlySelectedAssets)
             {
                 string serializedObject = JsonConvert.SerializeObject(asset.BuildAHDR(platform.Endianness()));
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
@@ -1416,7 +1417,7 @@ namespace IndustrialPark
         {
             var clipboard = new AssetClipboard();
 
-            foreach (Asset asset in currentlySelectedAssets)
+            foreach (Asset asset in CurrentlySelectedAssets)
             {
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.BuildAHDR(platform.Endianness())));
 
@@ -1583,15 +1584,23 @@ namespace IndustrialPark
             return assetIDs;
         }
 
-        private List<Asset> currentlySelectedAssets = new List<Asset>();
+        public ObservableCollection<Asset> CurrentlySelectedAssets { get; private set; } = new ObservableCollection<Asset>();
+        
 
-        private static List<Asset> allCurrentlySelectedAssets
+        private static IList<Asset> allCurrentlySelectedAssets
         {
             get
             {
-                List<Asset> currentlySelectedAssets = new List<Asset>();
+                IList<Asset> currentlySelectedAssets = new ObservableCollection<Asset>();
                 foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    currentlySelectedAssets.AddRange(ae.archive.currentlySelectedAssets);
+                {
+                    foreach (Asset assetToAdd in ae.archive.CurrentlySelectedAssets)
+                    {
+                        if (!currentlySelectedAssets.Contains(assetToAdd))
+                            currentlySelectedAssets.Add(assetToAdd);
+                    }
+                }
+                    
                 return currentlySelectedAssets;
             }
         }
@@ -1606,16 +1615,20 @@ namespace IndustrialPark
                     continue;
 
                 assetDictionary[assetID].isSelected = true;
-                currentlySelectedAssets.Add(assetDictionary[assetID]);
+                CurrentlySelectedAssets.Add(assetDictionary[assetID]);
             }
         }
 
-        public IEnumerable<uint> GetCurrentlySelectedAssetIDs() => currentlySelectedAssets.Select(a => a.assetID);
+        public IEnumerable<uint> GetCurrentlySelectedAssetIDs() => CurrentlySelectedAssets.Select(a => a.assetID);
+
+        public int GetNumberOfSelectedAssets => CurrentlySelectedAssets.Count;
 
         public void ClearSelectedAssets()
         {
-            currentlySelectedAssets.ForEach(a => a.isSelected = false);
-            currentlySelectedAssets.Clear();
+            foreach (var asset in CurrentlySelectedAssets)
+                asset.isSelected = false;
+            
+            CurrentlySelectedAssets.Clear();
         }
 
         public void ResetModels(SharpRenderer renderer)

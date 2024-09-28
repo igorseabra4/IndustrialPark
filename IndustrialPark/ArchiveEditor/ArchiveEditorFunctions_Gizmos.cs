@@ -372,7 +372,7 @@ namespace IndustrialPark
         {
             if (positionGizmos[0].isSelected || positionGizmos[1].isSelected || positionGizmos[2].isSelected)
             {
-                var selectedClickableAssets = from Asset a in currentlySelectedAssets where a is IClickableAsset ica select (IClickableAsset)a;
+                var selectedClickableAssets = from Asset a in CurrentlySelectedAssets where a is IClickableAsset ica select (IClickableAsset)a;
                 if (!selectedClickableAssets.Any())
                     return;
 
@@ -468,8 +468,8 @@ namespace IndustrialPark
                 || triggerPositionGizmos[3].isSelected || triggerPositionGizmos[4].isSelected || triggerPositionGizmos[5].isSelected)
             {
                 var selectedVolumes = new List<IVolumeAsset>();
-                selectedVolumes.AddRange((from a in currentlySelectedAssets where a is AssetTRIG trig && trig.Shape == TriggerShape.Box select (AssetTRIG)a).ToList());
-                selectedVolumes.AddRange((from a in currentlySelectedAssets where a is AssetVOLU volu && volu.VolumeShape is VolumeBox select (VolumeBox)((AssetVOLU)a).VolumeShape).ToList());
+                selectedVolumes.AddRange((from a in CurrentlySelectedAssets where a is AssetTRIG trig && trig.Shape == TriggerShape.Box select (AssetTRIG)a).ToList());
+                selectedVolumes.AddRange((from a in CurrentlySelectedAssets where a is AssetVOLU volu && volu.VolumeShape is VolumeBox select (VolumeBox)((AssetVOLU)a).VolumeShape).ToList());
 
                 if (!selectedVolumes.Any())
                     return;
@@ -640,7 +640,7 @@ namespace IndustrialPark
         {
             if (rotationGizmos[0].isSelected || rotationGizmos[1].isSelected || rotationGizmos[2].isSelected)
             {
-                var selectedRotatableAssets = from Asset a in currentlySelectedAssets where a is IRotatableAsset ica select (IRotatableAsset)a;
+                var selectedRotatableAssets = from Asset a in CurrentlySelectedAssets where a is IRotatableAsset ica select (IRotatableAsset)a;
                 if (!selectedRotatableAssets.Any())
                     return;
 
@@ -709,7 +709,7 @@ namespace IndustrialPark
         {
             if (scaleGizmos[0].isSelected || scaleGizmos[1].isSelected || scaleGizmos[2].isSelected || scaleGizmos[3].isSelected)
             {
-                var selectedScalableAssets = from Asset a in currentlySelectedAssets where a is IScalableAsset ica select (IScalableAsset)a;
+                var selectedScalableAssets = from Asset a in CurrentlySelectedAssets where a is IScalableAsset ica select (IScalableAsset)a;
                 if (!selectedScalableAssets.Any())
                     return;
 
@@ -769,7 +769,7 @@ namespace IndustrialPark
         {
             if (positionLocalGizmos[0].isSelected || positionLocalGizmos[1].isSelected || positionLocalGizmos[2].isSelected)
             {
-                var selectedClickableAssets = from Asset a in currentlySelectedAssets where a is IClickableAsset ica select (IClickableAsset)a;
+                var selectedClickableAssets = from Asset a in CurrentlySelectedAssets where a is IClickableAsset ica select (IClickableAsset)a;
                 if (!selectedClickableAssets.Any())
                     return;
 
