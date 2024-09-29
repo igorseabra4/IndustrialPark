@@ -344,7 +344,10 @@ namespace IndustrialPark
                 g.isSelected = false;
             foreach (PositionLocalGizmo g in positionLocalGizmos)
                 g.isSelected = false;
+            
+            // Reset the transformation values
             totalDistanceMoved = 0;
+            totalDistanceRotated = 0;
         }
 
         private void RefreshAssetEditors()
@@ -703,6 +706,9 @@ namespace IndustrialPark
             }
         }
 
+        private static float totalDistanceRotated;
+        private static float originalRotation;
+        
         public void MouseMoveForRotation(Matrix viewProjection, int distanceX, bool grid)//, int distanceY)
         {
             bool assetModified = false;
@@ -729,10 +735,15 @@ namespace IndustrialPark
 
                         //ra.Yaw -= (distanceX * direction.X - distanceY * direction.Y) / 10;
                         
-                        var prevYaw = ra.Yaw;
+                        if (totalDistanceRotated == 0)
+                            originalRotation = ra.Yaw;
+
+                        totalDistanceRotated += distanceX;
                         
+                        var prevYaw = ra.Yaw;
+
                         if (grid)
-                            ra.Yaw = SnapToGrid(ra.Yaw + distanceX, GizmoType.X);
+                            ra.Yaw = SnapToIncrement(originalRotation + totalDistanceRotated);
                         else
                             ra.Yaw += distanceX;
                         
@@ -751,10 +762,15 @@ namespace IndustrialPark
 
                         //ra.Pitch -= (distanceX * direction.X - distanceY * direction.Y) / 10;
 
-                        var prevPitch = ra.Pitch;
+                        if (totalDistanceRotated == 0)
+                            originalRotation = ra.Pitch;
+
+                        totalDistanceRotated += distanceX;
                         
+                        var prevPitch = ra.Pitch;
+
                         if (grid)
-                            ra.Pitch = SnapToGrid(ra.Pitch + distanceX, GizmoType.Y);
+                            ra.Pitch = SnapToIncrement(originalRotation + totalDistanceRotated);
                         else
                             ra.Pitch += distanceX;
                         
@@ -773,10 +789,15 @@ namespace IndustrialPark
 
                         //ra.Roll -= (distanceX * direction.X - distanceY * direction.Y) / 10;
                         
-                        var prevRoll = ra.Roll;
+                        if (totalDistanceRotated == 0)
+                            originalRotation = ra.Roll;
+
+                        totalDistanceRotated += distanceX;
                         
+                        var prevRoll = ra.Roll;
+
                         if (grid)
-                            ra.Roll = SnapToGrid(ra.Roll + distanceX, GizmoType.Z);
+                            ra.Roll = SnapToIncrement(originalRotation + totalDistanceRotated);
                         else
                             ra.Roll += distanceX;
 
@@ -970,6 +991,19 @@ namespace IndustrialPark
             return CurrentGizmoMode;
         }
 
+        /// <summary>
+        /// Rounds a value to the nearest specified increment.
+        /// Useful for snapping an arbitrary rotation value
+        /// </summary>
+        /// <param name="value">The value to round</param>
+        /// <param name="increment">The increment</param>
+        /// <returns>The value rounded to the nearest increment</returns>
+        private float SnapToIncrement(float value, float increment = 15.0f)
+        {
+            // Round to the nearest increment
+            return (float)Math.Round(value / increment) * increment;
+        }
+        
         private float SnapToGrid(float value, GizmoType gizmo)
         {
             if (gizmo == GizmoType.X)
