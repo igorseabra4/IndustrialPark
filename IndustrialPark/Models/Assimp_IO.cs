@@ -860,9 +860,13 @@ namespace IndustrialPark.Models
                             foreach (var v in geo.morphTargets[0].normals)
                                 mesh.Normals.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
 
-                        if ((geo.geometryFlags & GeometryFlags.hasTextCoords) != 0)
+                        if ((geo.geometryFlags & (GeometryFlags.hasTextCoords | GeometryFlags.hasTextCoords2)) != 0)
                             foreach (var v in geo.textCoords)
                                 mesh.TextureCoordinateChannels[0].Add(new System.Numerics.Vector3(v.X, v.Y, 0));
+
+                        if ((geo.geometryFlags & GeometryFlags.hasTextCoords2) != 0)
+                            foreach (var v in geo.textCoords2)
+                                mesh.TextureCoordinateChannels[1].Add(new Vector3D(v.X, v.Y, 0));
 
                         if ((geo.geometryFlags & GeometryFlags.hasVertexColors) != 0)
                             foreach (var color in geo.vertexColors)

@@ -255,7 +255,7 @@ namespace IndustrialPark
                     colorList.Add(new SharpDX.Color(1f, 1f, 1f, 1f));
             }
 
-            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasTextCoords) != 0)
+            if ((g.geometryStruct.geometryFlags & (GeometryFlags.hasTextCoords | GeometryFlags.hasTextCoords2)) != 0)
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                 {
