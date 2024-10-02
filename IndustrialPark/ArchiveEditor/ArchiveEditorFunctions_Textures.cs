@@ -329,7 +329,7 @@ namespace IndustrialPark
                 textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textures.Count, unknown = 0 },
                 textureNativeList = textures,
                 textureDictionaryExtension = new Extension_0003()
-            }, currentTextureVersion(game)));
+            }, currentTextureVersion(game, platform)));
         }
 
         public List<(string, Bitmap)> GetAllTexturesAsBitmaps()
@@ -362,7 +362,7 @@ namespace IndustrialPark
                 textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textures.Count, unknown = 0 },
                 textureNativeList = textures,
                 textureDictionaryExtension = new Extension_0003()
-            }, currentTextureVersion(game))).Select(b => (b.Key, b.Value)).ToList();
+            }, currentTextureVersion(game, platform))).Select(b => (b.Key, b.Value)).ToList();
         }
     }
 }

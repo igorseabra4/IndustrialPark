@@ -94,19 +94,24 @@ namespace IndustrialPark
                 txdgenProcess.Kill();
         }
 
-        public static int scoobyTextureVersion => 0x0C02FFFF;
-        public static int bfbbTextureVersion => 0x1003FFFF;
-        public static int tssmTextureVersion => 0x1C02000A;
-
-        public static int currentTextureVersion(Game game)
+        public static int currentTextureVersion(Game game, Platform platform)
         {
-            if (game == Game.Scooby)
-                return scoobyTextureVersion;
-            if (game == Game.BFBB)
-                return bfbbTextureVersion; // VC
-            if (game >= Game.Incredibles)
-                return tssmTextureVersion; // Bully
-            return 0;
+            switch (game)
+            {
+                case Game.Scooby when platform == Platform.PS2:
+                    return 0x00000310; // 3.1.0.0
+                case Game.Scooby when platform == Platform.GameCube:
+                    return 0x0C02FFFF; // 3.3.0.2
+                case Game.BFBB when platform == Platform.GameCube:
+                    return 0x1003FFFF; // 3.4.0.3
+                case Game.Scooby when platform == Platform.Xbox:
+                    return 0x1005FFFF; // 3.4.0.5
+                case Game.BFBB:
+                case Game.Incredibles when platform == Platform.PS2:
+                    return 0x1400FFFF; // 3.5.0.0
+                default:
+                    return 0x1C02000A; // 3.7.0.2-A
+            }
         }
 
         public static void ExportSingleTextureToRWTEX(byte[] data, string fileName)
@@ -232,7 +237,7 @@ namespace IndustrialPark
                     textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textureNativeList.Count, unknown = 0 },
                     textureNativeList = textureNativeList,
                     textureDictionaryExtension = new Extension_0003()
-                }, currentTextureVersion(game)));
+                }, currentTextureVersion(game, platform)));
 
                 PerformTXDConversionExternal(platform, false, compress, mipmaps);
 
@@ -248,7 +253,7 @@ namespace IndustrialPark
                             textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                             textureNativeList = new List<TextureNative_0015>() { texture },
                             textureDictionaryExtension = new Extension_0003()
-                        }, currentTextureVersion(game))));
+                        }, currentTextureVersion(game, platform))));
 
                 // fix for apparent transparency issue
                 if (transFix && platform == Platform.GameCube)

@@ -84,7 +84,7 @@ namespace IndustrialPark
                             textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                             textureNativeList = new List<TextureNative_0015>() { new TextureNative_0015().FromBytes(File.ReadAllBytes(a.filePaths[i])) },
                             textureDictionaryExtension = new Extension_0003()
-                        }, currentTextureVersion(game));
+                        }, currentTextureVersion(game, platform));
 
                         string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
 
