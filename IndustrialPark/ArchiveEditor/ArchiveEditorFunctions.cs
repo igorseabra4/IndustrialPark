@@ -311,6 +311,8 @@ namespace IndustrialPark
             }
         }
 
+        public bool LegacySave = false;
+
         private HipFile BuildHipFile()
         {
             var DICT = new Section_DICT();
@@ -323,11 +325,12 @@ namespace IndustrialPark
                 DICT.ATOC.AHDRList.Add(asset.BuildAHDR(platform.Endianness()));
             }
 
-            var HIPB = new Section_HIPB();
-            if (NoLayers)
-                HIPB.HasNoLayers = 1;
-            HIPB.ScoobyPlatform = platform;
-            HIPB.IncrediblesGame = game;
+            var HIPB = new Section_HIPB()
+            {
+                HasNoLayers = Convert.ToInt32(NoLayers),
+                ScoobyPlatform = platform,
+                IncrediblesGame = game
+            };
 
             var layers = NoLayers ? BuildLayers() : Layers;
             for (int i = 0; i < layers.Count; i++)
@@ -344,7 +347,7 @@ namespace IndustrialPark
 
             PACK.PMOD.modDate = (int)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
 
-            return new HipFile(new Section_HIPA(), PACK, DICT, new Section_STRM(), HIPB);
+            return new HipFile(new Section_HIPA(), PACK, DICT, new Section_STRM(), LegacySave ? null : HIPB);
         }
 
         private static int LayerTypeGenericToSpecific(LayerType layerType, Game game)
@@ -527,15 +530,25 @@ namespace IndustrialPark
             throw new Exception($"Asset ID {assetID:X8} is not present in any layer.");
         }
 
-        public void RenameLayer(int selectedIndex)
+        /// <summary>
+        /// Rename a layer
+        /// </summary>
+        /// <param name="selectedIndex"></param>
+        /// <returns>True if layer has been successfully renamed, false otherwise</returns>
+        public bool RenameLayer(int selectedIndex)
         {
             if (NoLayers)
-                return;
+                return false;
+
             var layer = Layers[selectedIndex];
             var rn = new RenameLayer(layer.LayerName);
-            rn.ShowDialog();
-            layer.LayerName = string.IsNullOrWhiteSpace(rn.LayerName) ? null : rn.LayerName;
-            UnsavedChanges = true;
+            if (rn.ShowDialog() == DialogResult.OK)
+            {
+                layer.LayerName = string.IsNullOrWhiteSpace(rn.LayerName) ? null : rn.LayerName;
+                UnsavedChanges = true;
+                return true;
+            }
+            return false;
         }
 
         public void Dispose(bool showProgress = true)

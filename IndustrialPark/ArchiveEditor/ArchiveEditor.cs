@@ -443,7 +443,8 @@ namespace IndustrialPark
                         comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType();
                     else
                         comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType();
-                    renameLayerToolStripMenuItem.Enabled = true;
+                    if (!archive.LegacySave)
+                        renameLayerToolStripMenuItem.Enabled = true;
                 }
                 else
                     renameLayerToolStripMenuItem.Enabled = false;
@@ -1821,6 +1822,7 @@ namespace IndustrialPark
             if (archive.NoLayers)
             {
                 noLayersToolStripMenuItem.Checked = true;
+                renameLayerToolStripMenuItem.Enabled = false;
 
                 groupBoxLayers.Visible = false;
 
@@ -1855,9 +1857,11 @@ namespace IndustrialPark
         {
             if (comboBoxLayers.SelectedIndex != -1)
             {
-                archive.RenameLayer(comboBoxLayers.SelectedIndex);
-                PopulateLayerComboBox();
-                PopulateAssetListAndComboBox();
+                if (archive.RenameLayer(comboBoxLayers.SelectedIndex))
+                {
+                    PopulateLayerComboBox();
+                    PopulateAssetListAndComboBox();
+                }
             }
         }
 
@@ -1965,6 +1969,21 @@ namespace IndustrialPark
         private void overwriteOnImportToolStripMenuItem_Click(object sender, EventArgs e)
         {
             overwriteOnImportToolStripMenuItem.Checked = !overwriteOnImportToolStripMenuItem.Checked;
+        }
+
+        private void legacySaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool isLegacy = ((ToolStripMenuItem)sender).Checked;
+            archive.LegacySave = isLegacy;
+
+            if (isLegacy && archive.NoLayers)
+            {
+                archive.NoLayers = false;
+                SetNoLayers();
+            }
+
+            noLayersToolStripMenuItem.Enabled = !isLegacy;
+            renameLayerToolStripMenuItem.Enabled = !isLegacy;
         }
     }
 }
