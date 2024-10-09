@@ -399,7 +399,7 @@ namespace IndustrialPark.Models
 
             GeometryStruct_0001 gs = g.geometryStruct;
 
-            if (gs.geometryFlags2 == (GeometryFlags2)0x0101)
+            if ((gs.geometryFlags & GeometryFlags.rpGEOMETRYNATIVE) != 0)
             {
                 GetNativeTriangleList(writer, g.geometryExtension, materialList, ref triangleList, ref totalVertexIndices, flipUVs);
                 return;
@@ -441,14 +441,14 @@ namespace IndustrialPark.Models
                     writer.WriteLine();
                 }
 
-                if ((gs.geometryFlags & GeometryFlags.hasVertexColors) != 0)
+                if ((gs.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0)
                 {
                     foreach (Color c in gs.vertexColors)
                         writer.WriteLine("vc " + c.R.ToString() + " " + c.G.ToString() + " " + c.B.ToString() + " " + c.A.ToString());
                     writer.WriteLine();
                 }
 
-                if ((gs.geometryFlags & GeometryFlags.hasTextCoords) != 0)
+                if ((gs.geometryFlags & GeometryFlags.rpGEOMETRYTEXTURED) != 0)
                 {
                     foreach (Vertex2 tc in gs.textCoords)
                         writer.WriteLine("vt " + tc.X.ToString() + " " + tc.Y.ToString());
@@ -471,13 +471,13 @@ namespace IndustrialPark.Models
                         v2.AddRange(n2.ToString());
                         v3.AddRange(n3.ToString());
                     }
-                    if (((gs.geometryFlags & GeometryFlags.hasTextCoords) != 0) & (m.hasNormals != 0))
+                    if (((gs.geometryFlags & GeometryFlags.rpGEOMETRYTEXTURED) != 0) & (m.hasNormals != 0))
                     {
                         v1.AddRange("/" + n1.ToString() + "/" + n1.ToString());
                         v2.AddRange("/" + n2.ToString() + "/" + n2.ToString());
                         v3.AddRange("/" + n3.ToString() + "/" + n3.ToString());
                     }
-                    else if ((gs.geometryFlags & GeometryFlags.hasTextCoords) != 0)
+                    else if ((gs.geometryFlags & GeometryFlags.rpGEOMETRYTEXTURED) != 0)
                     {
                         v1.AddRange("/" + n1.ToString());
                         v2.AddRange("/" + n2.ToString());

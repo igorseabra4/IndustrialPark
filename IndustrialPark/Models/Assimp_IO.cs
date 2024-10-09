@@ -263,13 +263,12 @@ namespace IndustrialPark.Models
                             geometryStruct = new GeometryStruct_0001()
                             {
                                 geometryFlags =
-                                GeometryFlags.hasLights |
-                                GeometryFlags.modeulateMaterialColor |
-                                GeometryFlags.hasTextCoords |
-                                (hasVertexColors ? GeometryFlags.hasVertexColors : 0) |
-                                GeometryFlags.hasVertexPositions |
-                                GeometryFlags.hasNormals,
-                                geometryFlags2 = (GeometryFlags2)1,
+                                GeometryFlags.rpGEOMETRYLIGHTS |
+                                GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR |
+                                GeometryFlags.rpGEOMETRYTEXTURED |
+                                (hasVertexColors ? GeometryFlags.rpGEOMETRYPRELIT : 0) |
+                                GeometryFlags.rpGEOMETRYPOSITIONS |
+                                GeometryFlags.rpGEOMETRYNORMALS,
                                 numTriangles = triangles.Length,
                                 numVertices = vertices.Length,
                                 numMorphTargets = 1,
@@ -835,18 +834,16 @@ namespace IndustrialPark.Models
                         Name = "mesh_" + material.Name.Replace("mat_", "")
                     };
 
-                    if ((geo.geometryFlags2 & GeometryFlags2.isNativeGeometry) != 0)
+                    if ((geo.geometryFlags & GeometryFlags.rpGEOMETRYNATIVE) != 0)
                     {
                         NativeDataGC n = null;
 
                         foreach (RWSection rws in clump.geometryList.geometryList[i].geometryExtension.extensionSectionList)
                             if (rws is NativeDataPLG_0510 native)
-                                n = native.nativeDataStruct.nativeData;
-
-                        if (n == null)
-                            throw new Exception("Unable to find native data section");
-
-                        GetNativeTriangleList(scene, n, totalMaterials);
+                                if (native.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
+                                    GetNativeTriangleList(scene, native.nativeDataStruct.nativeData, totalMaterials);
+                                else
+                                    throw new Exception("Unable to find native data section");
                     }
                     else
                     {
@@ -856,19 +853,19 @@ namespace IndustrialPark.Models
                             mesh.Vertices.Add(new System.Numerics.Vector3(vt.X, vt.Y, vt.Z));
                         }
 
-                        if ((geo.geometryFlags & GeometryFlags.hasNormals) != 0)
+                        if ((geo.geometryFlags & GeometryFlags.rpGEOMETRYNORMALS) != 0)
                             foreach (var v in geo.morphTargets[0].normals)
                                 mesh.Normals.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
 
-                        if ((geo.geometryFlags & (GeometryFlags.hasTextCoords | GeometryFlags.hasTextCoords2)) != 0)
+                        if ((geo.geometryFlags & (GeometryFlags.rpGEOMETRYTEXTURED | GeometryFlags.rpGEOMETRYTEXTURED2)) != 0)
                             foreach (var v in geo.textCoords)
                                 mesh.TextureCoordinateChannels[0].Add(new System.Numerics.Vector3(v.X, v.Y, 0));
 
-                        if ((geo.geometryFlags & GeometryFlags.hasTextCoords2) != 0)
+                        if ((geo.geometryFlags & GeometryFlags.rpGEOMETRYTEXTURED2) != 0)
                             foreach (var v in geo.textCoords2)
                                 mesh.TextureCoordinateChannels[1].Add(new Vector3D(v.X, v.Y, 0));
 
-                        if ((geo.geometryFlags & GeometryFlags.hasVertexColors) != 0)
+                        if ((geo.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0)
                             foreach (var color in geo.vertexColors)
                                 mesh.VertexColorChannels[0].Add(new System.Numerics.Vector4(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
 

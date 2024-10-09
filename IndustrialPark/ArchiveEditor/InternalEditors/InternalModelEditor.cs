@@ -45,6 +45,9 @@ namespace IndustrialPark
                 groupBoxShadow.Enabled = false;
                 checkBoxUseTemplates.Enabled = false;
             }
+
+            if (asset.IsNativeData && archive.platform == Platform.PS2)
+                buttonExport.Enabled = false;
         }
 
         public void RefreshPropertyGrid()

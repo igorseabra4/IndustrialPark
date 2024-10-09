@@ -213,7 +213,7 @@ namespace IndustrialPark
                     materialList.Add(DefaultTexture);
             }
 
-            if ((g.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYNATIVE) != 0)
             {
                 AddNativeData(device, g.geometryExtension, materialList, transformMatrix);
                 return;
@@ -224,7 +224,7 @@ namespace IndustrialPark
             List<Vector2> textCoordList = new List<Vector2>();
             List<SharpDX.Color> colorList = new List<SharpDX.Color>();
 
-            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasVertexPositions) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPOSITIONS) != 0)
             {
                 MorphTarget m = g.geometryStruct.morphTargets[0];
                 foreach (Vertex3 v in m.vertices)
@@ -235,13 +235,13 @@ namespace IndustrialPark
                 }
             }
 
-            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasNormals) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYNORMALS) != 0)
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                     normalList.Add(new Vector3(g.geometryStruct.morphTargets[0].normals[i].X, g.geometryStruct.morphTargets[0].normals[i].Y, g.geometryStruct.morphTargets[0].normals[i].Z));
             }
 
-            if ((g.geometryStruct.geometryFlags & GeometryFlags.hasVertexColors) != 0)
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0)
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                 {
@@ -255,7 +255,7 @@ namespace IndustrialPark
                     colorList.Add(new SharpDX.Color(1f, 1f, 1f, 1f));
             }
 
-            if ((g.geometryStruct.geometryFlags & (GeometryFlags.hasTextCoords | GeometryFlags.hasTextCoords2)) != 0)
+            if ((g.geometryStruct.geometryFlags & (GeometryFlags.rpGEOMETRYTEXTURED | GeometryFlags.rpGEOMETRYTEXTURED2)) != 0)
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                 {
@@ -313,6 +313,7 @@ namespace IndustrialPark
         {
             isNativeData = true;
             NativeDataGC n = null;
+            NativeDataPS2 nativeps2 = null;
 
             foreach (RWSection rw in extension.extensionSectionList)
             {
@@ -323,14 +324,86 @@ namespace IndustrialPark
                 }
                 if (rw is NativeDataPLG_0510 native)
                 {
-                    n = native.nativeDataStruct.nativeData;
+                    if (native.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
+                        n = native.nativeDataStruct.nativeData;
+                    else if (native.nativeDataStruct.nativeDataType == NativeDataType.PS2)
+                        nativeps2 = native.nativeDataStruct.nativeDataPs2;
                     break;
                 }
             }
 
-            if (n == null)
+            if (n != null)
+                AddGameCubeNativeData(device, extension, MaterialStream, transformMatrix, n);
+            else if (nativeps2 != null)
+                AddPS2NativeData(device, extension, MaterialStream, transformMatrix, nativeps2);
+            else
                 throw new Exception();
+        }
 
+        public void AddPS2NativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix, NativeDataPS2 nativeps2)
+        {
+            List<Vertex3> vertexList1 = nativeps2.GetLinearVerticesList();
+            List<Vertex3> normalList = nativeps2.GetLinearNormalsList();
+            List<RenderWareFile.Color> colorList = nativeps2.GetLinearColorList();
+            List<Vertex2> textCoordList = nativeps2.GetLinearTexCoordsList();
+            List<Vertex4> vec4vertices = nativeps2.GetLinearVerticesFlagList();
+
+
+            List<VertexColoredTextured> vertexList = new List<VertexColoredTextured>();
+            int previousAmount = 0;
+            List<SharpSubSet> subSetList = new List<SharpSubSet>();
+
+
+            if (vec4vertices.Count == 0)
+            {
+                for (int i = 0; i < vertexList1.Count; i++)
+                {
+                    Vector3 position = (Vector3)Vector3.Transform(new Vector3(vertexList1[i].X, vertexList1[i].Y, vertexList1[i].Z), transformMatrix);
+                    SharpDX.Color color = new SharpDX.Color(colorList[i].R, colorList[i].G, colorList[i].B, colorList[i].A);
+                    Vector2 texcoord = new Vector2(textCoordList[i].X, textCoordList[i].Y);
+
+                    vertexList.Add(new VertexColoredTextured(position, texcoord, color));
+                    vertexListG.Add(position);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < vec4vertices.Count; i++)
+                {
+                    Vector3 position = (Vector3)Vector3.Transform(new Vector3(vec4vertices[i].X, vec4vertices[i].Y, vec4vertices[i].Z), transformMatrix);
+                    SharpDX.Color color = (colorList.Count != 0) ? new SharpDX.Color(colorList[i].R * 2, colorList[i].G * 2, colorList[i].B * 2, colorList[i].A * 2) : new SharpDX.Color(255,255,255,255);
+                    Vector2 texcoord = new Vector2(textCoordList[i].X, textCoordList[i].Y);
+
+                    if ((vec4vertices[i].W & 0xffff) == 0x8000 && vertexList.Count != 0) 
+                    {
+                        vertexList.Add(vertexList.Last());
+                        vertexList.Add(vertexList.Last());
+                    }
+
+                    vertexList.Add(new VertexColoredTextured(position, texcoord, color));
+                    vertexListG.Add(position);
+                }
+            }
+
+            subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount, TextureManager.GetTextureFromDictionary(MaterialStream[0]), MaterialStream[0]));
+            previousAmount = vertexList.Count();
+
+            if (vertexList.Count > 0)
+            {
+                for (int i = 2; i < vertexList.Count; i++)
+                    triangleList.Add(new Triangle(0, (ushort)(i + triangleListOffset - 2), (ushort)(i + triangleListOffset - 1), (ushort)(i + triangleListOffset)));
+
+                triangleListOffset += vertexList.Count;
+
+                AddToMeshList(SharpMesh.Create(device, vertexList.ToArray(), subSetList));
+            }
+            else
+                AddToMeshList(null);
+
+        }
+
+        public void AddGameCubeNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix, NativeDataGC n)
+        { 
             List<Vertex3> vertexList1 = new List<Vertex3>();
             List<Vertex3> normalList = new List<Vertex3>();
             List<RenderWareFile.Color> colorList = new List<RenderWareFile.Color>();
@@ -462,8 +535,8 @@ namespace IndustrialPark
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                     meshList[i].Draw(renderer.device, j);
+                }
             }
-        }
 
         public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool[] atomicFlags, Dictionary<uint, (SharpDX.Direct3D11.BlendOption, SharpDX.Direct3D11.BlendOption)> blendModes)
         {
