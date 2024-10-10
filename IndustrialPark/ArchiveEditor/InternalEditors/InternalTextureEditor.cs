@@ -21,7 +21,9 @@ namespace IndustrialPark
             this.archive = archive;
             this.updateListView = updateListView;
 
-            propertyGridAsset.SelectedObject = asset;
+            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
+            asset.SetDynamicProperties(dt);
+            propertyGridAsset.SelectedObject = dt.FromComponent(asset);
             Text = $"[{asset.assetType}] {asset}";
 
             RefreshPropertyGrid();

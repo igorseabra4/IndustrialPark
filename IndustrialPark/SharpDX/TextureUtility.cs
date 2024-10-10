@@ -1002,7 +1002,7 @@ namespace IndustrialPark
             if ((tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_PAL4) != 0 | (tnStruct.rasterFormatFlags & TextureRasterFormat.RASTER_PAL8) != 0)
             {
                 mipMaps = ConvertFromPalette(tnStruct.mipMaps, tnStruct.mipMapCount, tnStruct.rasterFormatFlags, tnStruct.palette);
-                if (tnStruct.platformType == 5)
+                if (tnStruct.platformType == TexturePlatformID.Xbox)
                     format = Format.R8G8B8A8_UNorm;
             }
             else

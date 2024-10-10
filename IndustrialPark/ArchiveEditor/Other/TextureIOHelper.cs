@@ -213,7 +213,7 @@ namespace IndustrialPark
                                 addressModeV = TextureAddressMode.TEXTUREADDRESSWRAP,
                                 filterMode = TextureFilterMode.FILTERLINEAR,
                                 bitDepth = 32,
-                                platformType = 8,
+                                platformType = TexturePlatformID.PCD3D8,
                                 compression = 0,
                                 hasAlpha = false,
                                 rasterFormatFlags = TextureRasterFormat.RASTER_C8888,

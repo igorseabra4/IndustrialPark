@@ -515,6 +515,26 @@ public class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyPropertyChang
         }
     }
 
+    public void RemovePropertiesByCategory(string name)
+    {
+        if (name == null)
+            throw new ArgumentNullException("name");
+
+        List<PropertyDescriptor> remove = new List<PropertyDescriptor>();
+        foreach (PropertyDescriptor pd in Properties)
+        {
+            if (pd.Category == name)
+            {
+                remove.Add(pd);
+            }
+        }
+
+        foreach (PropertyDescriptor pd in remove)
+        {
+            Properties.Remove(pd);
+        }
+    }
+
     public void AddProperty(PropertyDescriptor property)
     {
         if (property == null)
