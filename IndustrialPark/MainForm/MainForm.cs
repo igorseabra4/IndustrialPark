@@ -833,8 +833,11 @@ namespace IndustrialPark
             SetupAssetVisibilityButtons();
             closeAllEditorsToolStripMenuItem.Enabled = true;
             
-            if (show)
-                ae.Show();
+            ae.Show();
+            
+            // Cannot select assets if the editor isn't shown first?
+            if (!show)
+                ae.Hide();
         }
 
         public void EditorUpdate()
