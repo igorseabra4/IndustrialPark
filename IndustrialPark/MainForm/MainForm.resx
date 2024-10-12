@@ -166,43 +166,49 @@
     <value>&amp;Archive Editor</value>
   </data>
   <data name="newToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+    <value>262, 22</value>
   </data>
   <data name="newToolStripMenuItem1.Text" xml:space="preserve">
     <value>&amp;New</value>
   </data>
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+    <value>262, 22</value>
   </data>
   <data name="openToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Open</value>
   </data>
   <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+    <value>262, 22</value>
   </data>
   <data name="saveToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Save</value>
   </data>
   <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+    <value>262, 22</value>
   </data>
   <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
     <value>Save &amp;As...</value>
   </data>
   <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 6</value>
+    <value>259, 6</value>
   </data>
   <data name="autoSaveOnClosingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+    <value>262, 22</value>
   </data>
   <data name="autoSaveOnClosingToolStripMenuItem.Text" xml:space="preserve">
     <value>Auto-Save On Closing</value>
   </data>
   <data name="autoLoadOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+    <value>262, 22</value>
   </data>
   <data name="autoLoadOnStartupToolStripMenuItem.Text" xml:space="preserve">
     <value>Auto-Load On Startup</value>
+  </data>
+  <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Text" xml:space="preserve">
+    <value>Show Editors When Loading Project</value>
   </data>
   <data name="projectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>56, 19</value>
@@ -2585,6 +2591,12 @@
   <data name="&gt;&gt;autoLoadOnStartupToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;showEditorsWhenLoadingProjectToolStripMenuItem.Name" xml:space="preserve">
+    <value>showEditorsWhenLoadingProjectToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;showEditorsWhenLoadingProjectToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;optionsToolStripMenuItem.Name" xml:space="preserve">
     <value>optionsToolStripMenuItem</value>
   </data>
@@ -3053,6 +3065,18 @@
   <data name="&gt;&gt;toolStripStatusLabelTemplate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripStatusLabel4.Name" xml:space="preserve">
+    <value>toolStripStatusLabel4</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabel4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelNumSelected.Name" xml:space="preserve">
+    <value>toolStripStatusLabelNumSelected</value>
+  </data>
+  <data name="&gt;&gt;toolStripStatusLabelNumSelected.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;gizmoToolStripMenuItem.Name" xml:space="preserve">
     <value>gizmoToolStripMenuItem</value>
   </data>
@@ -3100,18 +3124,6 @@
   </data>
   <data name="&gt;&gt;toolStripComboBoxUserTemplate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabel4.Name" xml:space="preserve">
-    <value>toolStripStatusLabel4</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabel4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabelNumSelected.Name" xml:space="preserve">
-    <value>toolStripStatusLabelNumSelected</value>
-  </data>
-  <data name="&gt;&gt;toolStripStatusLabelNumSelected.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainForm</value>
