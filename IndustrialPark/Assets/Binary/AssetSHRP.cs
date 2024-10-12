@@ -17,6 +17,7 @@ namespace IndustrialPark
         public Shrapnel[] Entries { get; set; }
         [Browsable(false)]
         public AssetID ThisAssetID { get; set; }
+        private int _internalpointer { get; set; }
 
         public AssetSHRP(string assetName) : base(assetName, AssetType.Shrapnel)
         {
@@ -29,7 +30,7 @@ namespace IndustrialPark
             {
                 int count = reader.ReadInt32();
                 ThisAssetID = reader.ReadUInt32();
-                reader.ReadInt32(); // internal pointer
+                _internalpointer = reader.ReadInt32();
                 Entries = new Shrapnel[count];
 
                 for (int i = 0; i < Entries.Length; i++)
@@ -92,7 +93,7 @@ namespace IndustrialPark
                         writer.Write(tryId);
                 }
             }
-            writer.Write(0);
+            writer.Write(_internalpointer);
             foreach (var e in Entries)
                 e.Serialize(writer);
         }
