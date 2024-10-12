@@ -22,6 +22,10 @@ namespace IndustrialPark
     {
         public static string PCSX2Path;
         public static string[] recentGameDirPaths;
+        private FileSystemWatcher fileSystemWatcher;
+        private string[] lastCheckedNodes = [];
+        private DirectoryInfo currentDirectory;
+
         public BuildISO()
         {
             InitializeComponent();
@@ -54,18 +58,40 @@ namespace IndustrialPark
 
             if (dialog.ShowDialog() == DialogResult.OK)
                 pcsx2PathTextBox.Text = dialog.FileName;
-            
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dialog = new FolderBrowserDialog();
-            
+
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 gameDirBox.Text = dialog.SelectedPath;
                 CreateDirectoryNodeTree(dialog.SelectedPath);
             }
+        }
+
+        private void InitializeFileSystemWatcher(string path)
+        {
+            fileSystemWatcher = new FileSystemWatcher(path)
+            {
+                EnableRaisingEvents = true,
+                IncludeSubdirectories = true,
+                Filter = "*.*",
+                NotifyFilter = NotifyFilters.Attributes | NotifyFilters.FileName | NotifyFilters.DirectoryName | NotifyFilters.Size,
+                SynchronizingObject = this
+            };
+            fileSystemWatcher.Renamed += OnFileRenamed;
+            fileSystemWatcher.Changed += (s, e) =>
+            {
+                if (e.ChangeType != WatcherChangeTypes.Renamed)
+                    CalculateTotalISOSize();
+            };
+            fileSystemWatcher.Deleted += OnFileDeleted;
+            fileSystemWatcher.Created += (s, e) => CreateDirectoryNodeTree(gameDirBox.Text);
+            fileSystemWatcher.Error += OnFileSystemError;
+
         }
 
         private void CreateDirectoryNodeTree(string path)
@@ -75,15 +101,23 @@ namespace IndustrialPark
                 MessageBox.Show("Not a valid directory path!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            InitializeFileSystemWatcher(path);
+
             if (!gameDirBox.Items.Contains(path))
                 gameDirBox.Items.Add(path);
             while (gameDirBox.Items.Count > 5)
                 gameDirBox.Items.RemoveAt(0);
             recentGameDirPaths = gameDirBox.Items.Cast<string>().ToArray();
 
+            if (path == currentDirectory?.FullName)
+                lastCheckedNodes = GetCheckedNodes(treeView1.Nodes).Select(node => node.Text).ToArray();
+            else
+                lastCheckedNodes = [];
+            currentDirectory = new DirectoryInfo(path);
+
             treeView1.BeginUpdate();
             treeView1.Nodes.Clear();
-            treeView1.Nodes.Add(CreateDirectoryNode(new DirectoryInfo(path)));
+            treeView1.Nodes.Add(CreateDirectoryNode(currentDirectory));
             treeView1.TopNode.Expand();
             treeView1.EndUpdate();
 
@@ -92,13 +126,18 @@ namespace IndustrialPark
 
         private TreeNode CreateDirectoryNode(DirectoryInfo directoryInfo)
         {
-            var directoryNode = new TreeNode(directoryInfo.Name) { Checked = true, ImageIndex = 0, SelectedImageIndex = 0 };
-         
+            var directoryNode = new TreeNode(directoryInfo.Name)
+            { 
+                Checked = lastCheckedNodes.Contains(directoryInfo.Name) || !lastCheckedNodes.Any(), 
+                ImageIndex = 0, 
+                SelectedImageIndex = 0 
+            };
+
             foreach (var directory in directoryInfo.GetDirectories())
                 directoryNode.Nodes.Add(CreateDirectoryNode(directory));
             foreach (var file in directoryInfo.GetFiles())
             {
-                var fileNode = new TreeNode(file.Name) { Checked = true };
+                var fileNode = new TreeNode(file.Name) { Checked = lastCheckedNodes.Contains(file.Name) || !lastCheckedNodes.Any() };
                 if (!imageList1.Images.ContainsKey(file.Extension))
                     imageList1.Images.Add(file.Extension, Icon.ExtractAssociatedIcon(file.FullName));
                 fileNode.ImageKey = file.Extension;
@@ -110,7 +149,7 @@ namespace IndustrialPark
 
         private void treeView1_AfterCheck(object sender, TreeViewEventArgs e)
         {
-            if (e.Action == TreeViewAction.Unknown) 
+            if (e.Action == TreeViewAction.Unknown)
                 return;
 
             CheckAllChildNodes(e.Node);
@@ -139,12 +178,18 @@ namespace IndustrialPark
         private void CalculateTotalISOSize()
         {
             long totalISOSize = 0;
+            long totalISOSizeChecked = 0;
 
-            foreach (TreeNode node in GetCheckedNodes(treeView1.Nodes))
+            foreach (TreeNode node in GetCheckedNodes(treeView1.Nodes, true))
                 if (node.ImageIndex != 0)
-                    totalISOSize += new FileInfo(GetAbsoluteFilePathFromNode(node)).Length;
+                {
+                    long fileSize = new FileInfo(GetAbsoluteFilePathFromNode(node)).Length;
+                    totalISOSize += fileSize;
+                    if (node.Checked)
+                        totalISOSizeChecked += fileSize;
+                }
 
-            toolStripStatusLabel2.Text = ArchiveEditor.ConvertSize((int)totalISOSize);
+            toolStripStatusLabel2.Text = $"{ArchiveEditor.ConvertSize((int)totalISOSizeChecked)}/{ArchiveEditor.ConvertSize((int)totalISOSize)}";
         }
 
         private void buttonRunButton_Click(object sender, EventArgs e)
@@ -183,17 +228,17 @@ namespace IndustrialPark
                 outputIsoPath.Text = Path.GetFullPath(dialog.FileName);
         }
 
-        private List<TreeNode> GetCheckedNodes(TreeNodeCollection nodes)
+        private List<TreeNode> GetCheckedNodes(TreeNodeCollection nodes, bool allNodes = false)
         {
             List<TreeNode> checkedNodes = new List<TreeNode>();
 
             foreach (TreeNode node in nodes)
             {
-                if (node.Checked)
+                if (node.Checked || allNodes)
                     checkedNodes.Add(node);
 
                 if (node.Nodes.Count > 0)
-                    checkedNodes.AddRange(GetCheckedNodes(node.Nodes));
+                    checkedNodes.AddRange(GetCheckedNodes(node.Nodes, allNodes));
             }
 
             return checkedNodes;
@@ -213,12 +258,15 @@ namespace IndustrialPark
             try
             {
                 UdfBuilder builder = new UdfBuilder();
-                builder.VolumeIdentifier = Path.GetDirectoryName(gameDirBox.Text);
+                builder.VolumeIdentifier = new DirectoryInfo(gameDirBox.Text).Name;
 
                 foreach (TreeNode node in GetCheckedNodes(treeView1.Nodes))
                 {
+                    if (node.Parent == null)
+                        continue;
+
                     string fullpath = GetAbsoluteFilePathFromNode(node);
-                    string relativePath = GetRelativePath(gameDirBox.Text, fullpath);
+                    string relativePath = Path.GetRelativePath(gameDirBox.Text, fullpath);
 
                     FileAttributes attr = File.GetAttributes(fullpath);
                     if ((attr & FileAttributes.Directory) != 0)
@@ -229,65 +277,15 @@ namespace IndustrialPark
                 builder.Build(outputDir);
                 toolStripStatusLabel1.Text = "ISO successfully built";
             }
-            catch
+            catch (Exception e)
             {
                 toolStripStatusLabel1.Text = "ISO building failed!";
+                MessageBox.Show(e.Message, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
             Task.Delay(5000).ContinueWith(i => { toolStripStatusLabel1.Text = ""; });
             return true;
-        }
-
-        private void AddDirectory(UdfBuilder builder, string srcDir, string rootDir)
-        {
-
-            foreach (string filepath in Directory.GetFiles(srcDir))
-            {
-                string relativePath = GetRelativePath(rootDir, filepath);
-                Console.WriteLine(relativePath);
-                builder.AddFile(relativePath, filepath);
-            }
-
-            foreach (string dirPath in Directory.GetDirectories(srcDir))
-            {
-                string relativePath = GetRelativePath(srcDir, dirPath);
-                Console.WriteLine(relativePath);
-                AddDirectory(builder, dirPath, rootDir);
-                builder.AddDirectory(relativePath);
-            }
-        }
-
-        public static string GetRelativePath(string fromPath, string toPath)
-        {
-            if (string.IsNullOrEmpty(fromPath)) throw new ArgumentNullException(nameof(fromPath));
-            if (string.IsNullOrEmpty(toPath)) throw new ArgumentNullException(nameof(toPath));
-
-            Uri fromUri = new Uri(AppendDirectorySeparatorChar(fromPath));
-            Uri toUri = new Uri(AppendDirectorySeparatorChar(toPath));
-
-            if (fromUri.Scheme != toUri.Scheme) { return toPath; }
-
-            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
-            string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
-
-            if (string.Equals(toUri.Scheme, Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
-            {
-                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-            }
-
-            return relativePath;
-        }
-
-        private static string AppendDirectorySeparatorChar(string path)
-        {
-            if (!Path.HasExtension(path) &&
-                !path.EndsWith(Path.DirectorySeparatorChar.ToString()) &&
-                !path.EndsWith(Path.AltDirectorySeparatorChar.ToString()))
-            {
-                return path + Path.DirectorySeparatorChar;
-            }
-            return path;
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -314,6 +312,25 @@ namespace IndustrialPark
         private void gameDirBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             CreateDirectoryNodeTree(gameDirBox.Text);
+        }
+
+        private void OnFileRenamed(object sender, RenamedEventArgs e)
+        {
+            foreach (TreeNode node in GetCheckedNodes(treeView1.Nodes, true))
+                if (node.Text == e.OldName)
+                    node.Text = e.Name;
+        }
+
+        private void OnFileDeleted(object sender, FileSystemEventArgs e)
+        {
+            foreach (TreeNode node in GetCheckedNodes(treeView1.Nodes, true))
+                if (node.Text == e.Name)
+                    node.Remove();
+        }
+        private void OnFileSystemError(object sender, ErrorEventArgs e)
+        {
+            MessageBox.Show($"Failed to watch for filesystem changes ({e.GetException()})\n.FileSystemWatcher is now disabled", "FileSystemWatcher Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            fileSystemWatcher.EnableRaisingEvents = false;
         }
     }
 
