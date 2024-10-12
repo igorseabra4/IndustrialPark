@@ -340,7 +340,17 @@ namespace IndustrialPark
 
             foreach (AssetRWTX RWTX in GetAllAssets().OfType<AssetRWTX>())
             {
-                foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(RWTX.Data)[0]).textureNativeList)
+                var data = RWTX.Data;
+                
+                // Some RWTX files seem to have no data, causing a crash when exporting as PNG
+                // e.g. bubble_wand.RW3 in JF01.hop
+                if (data.Length == 0)
+                    continue;
+                
+                var textureDictionary = ReadFileMethods.ReadRenderWareFile(data)[0] as TextureDictionary_0016;
+                var texNativeList = textureDictionary.textureNativeList;
+                
+                foreach (TextureNative_0015 texture in texNativeList)
                 {
                     texture.textureNativeStruct.textureName = RWTX.assetName;
                     textures.Add(texture);
