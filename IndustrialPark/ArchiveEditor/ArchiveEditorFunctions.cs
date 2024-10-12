@@ -215,6 +215,11 @@ namespace IndustrialPark
 #endif
                 }
 
+            // Fix to filter out empty ANIM assets ending with ".ATBL" #67
+            // SpongeBob Movie has some of these in native HIPs (e.g. BB02.hop)
+            assetsWithError.RemoveAll(a =>
+                a.reason == ErrorReason.NoData && a.assetname.EndsWith(".ATBL"));
+            
             if (assetsWithError.Any())
                 MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", assetsWithError), 
                     $"{assetsWithError.Count} Asset(s) with errors", 
