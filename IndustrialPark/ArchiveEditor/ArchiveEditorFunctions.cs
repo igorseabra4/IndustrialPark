@@ -720,6 +720,19 @@ namespace IndustrialPark
             if (fast && err.reason == ErrorReason.NoError)
             {
                 var built = newAsset.BuildAHDR(platform.Endianness()).data;
+
+                // A previous error in SNDI building causes correct SNDI's to show up as an error.
+                // This is caused by a wrong AssetID set in the first 4 bytes.
+                // When serializing, the correct id will be written but testing fails with the existing data.
+                // Happens with levels created before the fix commit (823f78662b1c4660c39d6dc6e8b8d71d9db8b033)
+                if (newAsset.assetType == AssetType.SoundInfo && platform == Platform.GameCube && game >= Game.Incredibles)
+                {
+                    // Skip asset id and test remaining data
+                    if (Enumerable.SequenceEqual(AHDR.data.Skip(4), built.Skip(4)))
+                        goto continueFunction;
+                }
+
+
                 if (!Enumerable.SequenceEqual(AHDR.data, built))
                 {
                     // IP version 2023.07.30 didn't seem to save the right asset ID
@@ -753,6 +766,7 @@ namespace IndustrialPark
                     }
                 }
             }
+            continueFunction:
 
             assetDictionary[AHDR.assetID] = newAsset;
 
