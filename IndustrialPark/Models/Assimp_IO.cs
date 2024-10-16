@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Color = RenderWareFile.Color;
 
 namespace IndustrialPark.Models
 {
@@ -55,7 +56,7 @@ namespace IndustrialPark.Models
             mode == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
             TextureAddressMode.TEXTUREADDRESSWRAP;
 
-        public static RWSection CreateDFFFromAssimp(string fileName, bool flipUVs, bool ignoreMeshColors)
+        public static RWSection CreateDFFFromAssimp(string fileName, bool flipUVs, bool useMeshColors, bool addWhiteVertexColors)
         {
             PostProcessSteps pps =
                 PostProcessSteps.Debone |
@@ -93,18 +94,18 @@ namespace IndustrialPark.Models
                     materialStruct = new MaterialStruct_0001()
                     {
                         unusedFlags = 0,
-                        color = ignoreMeshColors ?
-                        new RenderWareFile.Color(255, 255, 255, 255) :
+                        color = useMeshColors ?
                         new RenderWareFile.Color(
                             (byte)(m.ColorDiffuse.R * 255),
                             (byte)(m.ColorDiffuse.G * 255),
                             (byte)(m.ColorDiffuse.B * 255),
-                            (byte)(m.ColorDiffuse.A * 255)),
+                            (byte)(m.ColorDiffuse.A * 255)) : 
+                        new RenderWareFile.Color(255, 255, 255, 255),
                         unusedInt2 = 0x2DF53E84,
                         isTextured = m.HasTextureDiffuse ? 1 : 0,
-                        ambient = ignoreMeshColors ? 1f : m.ColorAmbient.A,
-                        specular = ignoreMeshColors ? 1f : m.ColorSpecular.A,
-                        diffuse = ignoreMeshColors ? 1f : m.ColorDiffuse.A
+                        ambient = useMeshColors ? 1f : m.ColorAmbient.A,
+                        specular = useMeshColors ? 1f : m.ColorSpecular.A,
+                        diffuse = useMeshColors ? 1f : m.ColorDiffuse.A
                     },
                     texture = m.HasTextureDiffuse ? RWTextureFromAssimpMaterial(m.TextureDiffuse) : null,
                     materialExtension = new Extension_0003()
@@ -159,7 +160,7 @@ namespace IndustrialPark.Models
                             (byte)(c.G * 255),
                             (byte)(c.B * 255),
                             (byte)(c.A * 255)));
-                else
+                else if (addWhiteVertexColors)
                     for (int i = 0; i < m.VertexCount; i++)
                         vertexColors.Add(new RenderWareFile.Color(255, 255, 255, 255));
 
@@ -209,6 +210,8 @@ namespace IndustrialPark.Models
             Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, RenderWareFile.Color[] vertexColors, RenderWareFile.Triangle[] triangles,
             BinMesh[] binMeshes, bool atomicNeedsMaterialEffects)
         {
+            bool hasVertexColors = vertexColors != null && vertexColors.Length > 0;
+            
             Clump_0010 clump = new Clump_0010()
             {
                 clumpStruct = new ClumpStruct_0001()
@@ -267,7 +270,7 @@ namespace IndustrialPark.Models
                                 GeometryFlags.hasLights |
                                 GeometryFlags.modeulateMaterialColor |
                                 GeometryFlags.hasTextCoords |
-                                GeometryFlags.hasVertexColors |
+                                (hasVertexColors ? GeometryFlags.hasVertexColors : 0) |
                                 GeometryFlags.hasVertexPositions |
                                 GeometryFlags.hasNormals,
                                 geometryFlags2 = (GeometryFlags2)1,

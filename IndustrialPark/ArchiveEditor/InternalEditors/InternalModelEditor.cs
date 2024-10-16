@@ -178,7 +178,7 @@ namespace IndustrialPark
                 if (asset.assetType == AssetType.Model)
                     asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ?
                     File.ReadAllBytes(openFile.FileName) :
-                    ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, checkBoxFilpUvs.Checked, checkBoxIgnoreMeshColors.Checked), modelRenderWareVersion(asset.game));
+                    ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, checkBoxFilpUvs.Checked, checkBoxIgnoreMeshColors.Checked, false), modelRenderWareVersion(asset.game));
                 else if (asset.assetType == AssetType.BSP)
                     asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".bsp") ?
                     File.ReadAllBytes(openFile.FileName) :

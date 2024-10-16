@@ -95,21 +95,23 @@ namespace IndustrialPark
                                     ReadFileMethods.ExportRenderWareFile(
                                         CreateDFFFromAssimp(filePath,
                                         a.checkBoxFlipUVs.Checked,
-                                        a.checkBoxIgnoreMeshColors.Checked),
+                                        a.checkBoxUseMeshColors.Checked,
+                                        a.radioButtonWhiteVCol.Checked
+                                        ),
                                         modelRenderWareVersion(game));
                             }
-                            catch (ArgumentException)
+                            catch (ArgumentException e)
                             {
                                 MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed "
-                                    + TRI_AND_VERTEX_LIMIT + ".",
+                                    + TRI_AND_VERTEX_LIMIT + ".\n " + e.Message,
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
                                 return (null, false, false, false, false, false, false, false);
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                MessageBox.Show("Model could not be imported.",
+                                MessageBox.Show($"Model could not be imported.\n{e.Message}",
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
@@ -127,7 +129,7 @@ namespace IndustrialPark
                                     ReadFileMethods.ExportRenderWareFile(
                                         CreateBSPFromAssimp(filePath,
                                         a.checkBoxFlipUVs.Checked,
-                                        a.checkBoxIgnoreMeshColors.Checked),
+                                        a.checkBoxUseMeshColors.Checked),
                                         modelRenderWareVersion(game));
                             }
                             catch (ArgumentException)
