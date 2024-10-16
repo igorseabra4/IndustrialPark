@@ -110,6 +110,8 @@
             // checkBoxFlipUVs
             // 
             resources.ApplyResources(this.checkBoxFlipUVs, "checkBoxFlipUVs");
+            this.checkBoxFlipUVs.Checked = true;
+            this.checkBoxFlipUVs.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxFlipUVs.Name = "checkBoxFlipUVs";
             this.checkBoxFlipUVs.UseVisualStyleBackColor = true;
             // 
