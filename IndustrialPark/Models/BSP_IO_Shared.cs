@@ -10,11 +10,7 @@
         {
             if (game == HipHopFile.Game.Scooby)
                 return scoobyRenderWareVersion;
-            if (game == HipHopFile.Game.BFBB)
-                return bfbbRenderWareVersion;
-            if (game == HipHopFile.Game.Incredibles)
-                return tssmRenderWareVersion;
-            return 0;
+            return tssmRenderWareVersion;
         }
     }
 }

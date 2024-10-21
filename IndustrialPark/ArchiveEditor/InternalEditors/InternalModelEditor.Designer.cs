@@ -28,525 +28,495 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonHelp = new System.Windows.Forms.Button();
-            this.buttonFindCallers = new System.Windows.Forms.Button();
-            this.buttonApplyRotation = new System.Windows.Forms.Button();
-            this.buttonApplyVertexColors = new System.Windows.Forms.Button();
-            this.buttonApplyScale = new System.Windows.Forms.Button();
-            this.groupBoxImport = new System.Windows.Forms.GroupBox();
-            this.buttonImport = new System.Windows.Forms.Button();
-            this.checkBoxIgnoreMeshColors = new System.Windows.Forms.CheckBox();
-            this.checkBoxFilpUvs = new System.Windows.Forms.CheckBox();
-            this.groupBoxExport = new System.Windows.Forms.GroupBox();
-            this.buttonExport = new System.Windows.Forms.Button();
-            this.checkBoxExportTextures = new System.Windows.Forms.CheckBox();
-            this.buttonMaterialEditor = new System.Windows.Forms.Button();
-            this.flowLayoutPanelTextures = new System.Windows.Forms.FlowLayoutPanel();
-            this.groupBoxTextures = new System.Windows.Forms.GroupBox();
-            this.groupBoxAtomics = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanelAtomics = new System.Windows.Forms.TableLayoutPanel();
-            this.buttonEditAtomics = new System.Windows.Forms.Button();
-            this.groupBoxPipeInfo = new System.Windows.Forms.GroupBox();
-            this.labelPipeInfos = new System.Windows.Forms.Label();
-            this.buttonArrowDown = new System.Windows.Forms.Button();
-            this.buttonArrowUp = new System.Windows.Forms.Button();
-            this.buttonDeletePipeInfo = new System.Windows.Forms.Button();
-            this.propertyGridPipeInfo = new System.Windows.Forms.PropertyGrid();
-            this.buttonCreatePipeInfo = new System.Windows.Forms.Button();
-            this.groupBoxLevelOfDetail = new System.Windows.Forms.GroupBox();
-            this.propertyGridLevelOfDetail = new System.Windows.Forms.PropertyGrid();
-            this.buttonCreateLevelOfDetail = new System.Windows.Forms.Button();
-            this.groupBoxShadow = new System.Windows.Forms.GroupBox();
-            this.propertyGridShadow = new System.Windows.Forms.PropertyGrid();
-            this.buttonCreateShadow = new System.Windows.Forms.Button();
-            this.groupBoxCollisionModel = new System.Windows.Forms.GroupBox();
-            this.propertyGridCollision = new System.Windows.Forms.PropertyGrid();
-            this.buttonCreateCollision = new System.Windows.Forms.Button();
-            this.checkBoxUseTemplates = new System.Windows.Forms.CheckBox();
-            this.buildCollTreeButton = new System.Windows.Forms.Button();
-            this.removeCollPlgButton = new System.Windows.Forms.Button();
-            this.groupBoxImport.SuspendLayout();
-            this.groupBoxExport.SuspendLayout();
-            this.groupBoxTextures.SuspendLayout();
-            this.groupBoxAtomics.SuspendLayout();
-            this.tableLayoutPanelAtomics.SuspendLayout();
-            this.groupBoxPipeInfo.SuspendLayout();
-            this.groupBoxLevelOfDetail.SuspendLayout();
-            this.groupBoxShadow.SuspendLayout();
-            this.groupBoxCollisionModel.SuspendLayout();
-            this.SuspendLayout();
+            buttonHelp = new System.Windows.Forms.Button();
+            buttonFindCallers = new System.Windows.Forms.Button();
+            buttonApplyRotation = new System.Windows.Forms.Button();
+            buttonApplyVertexColors = new System.Windows.Forms.Button();
+            buttonApplyScale = new System.Windows.Forms.Button();
+            groupBoxImport = new System.Windows.Forms.GroupBox();
+            buttonImport = new System.Windows.Forms.Button();
+            groupBoxExport = new System.Windows.Forms.GroupBox();
+            buttonExport = new System.Windows.Forms.Button();
+            checkBoxExportTextures = new System.Windows.Forms.CheckBox();
+            buttonMaterialEditor = new System.Windows.Forms.Button();
+            flowLayoutPanelTextures = new System.Windows.Forms.FlowLayoutPanel();
+            groupBoxTextures = new System.Windows.Forms.GroupBox();
+            groupBoxAtomics = new System.Windows.Forms.GroupBox();
+            tableLayoutPanelAtomics = new System.Windows.Forms.TableLayoutPanel();
+            buttonEditAtomics = new System.Windows.Forms.Button();
+            groupBoxPipeInfo = new System.Windows.Forms.GroupBox();
+            labelPipeInfos = new System.Windows.Forms.Label();
+            buttonArrowDown = new System.Windows.Forms.Button();
+            buttonArrowUp = new System.Windows.Forms.Button();
+            buttonDeletePipeInfo = new System.Windows.Forms.Button();
+            propertyGridPipeInfo = new System.Windows.Forms.PropertyGrid();
+            buttonCreatePipeInfo = new System.Windows.Forms.Button();
+            groupBoxLevelOfDetail = new System.Windows.Forms.GroupBox();
+            propertyGridLevelOfDetail = new System.Windows.Forms.PropertyGrid();
+            buttonCreateLevelOfDetail = new System.Windows.Forms.Button();
+            groupBoxShadow = new System.Windows.Forms.GroupBox();
+            propertyGridShadow = new System.Windows.Forms.PropertyGrid();
+            buttonCreateShadow = new System.Windows.Forms.Button();
+            groupBoxCollisionModel = new System.Windows.Forms.GroupBox();
+            buttonImportColl = new System.Windows.Forms.Button();
+            propertyGridCollision = new System.Windows.Forms.PropertyGrid();
+            buttonCreateCollision = new System.Windows.Forms.Button();
+            checkBoxUseTemplates = new System.Windows.Forms.CheckBox();
+            buildCollTreeButton = new System.Windows.Forms.Button();
+            removeCollPlgButton = new System.Windows.Forms.Button();
+            groupBoxImport.SuspendLayout();
+            groupBoxExport.SuspendLayout();
+            groupBoxTextures.SuspendLayout();
+            groupBoxAtomics.SuspendLayout();
+            tableLayoutPanelAtomics.SuspendLayout();
+            groupBoxPipeInfo.SuspendLayout();
+            groupBoxLevelOfDetail.SuspendLayout();
+            groupBoxShadow.SuspendLayout();
+            groupBoxCollisionModel.SuspendLayout();
+            SuspendLayout();
             // 
             // buttonHelp
             // 
-            this.buttonHelp.Location = new System.Drawing.Point(396, 554);
-            this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(120, 22);
-            this.buttonHelp.TabIndex = 27;
-            this.buttonHelp.Text = "Open Wiki Page";
-            this.buttonHelp.UseVisualStyleBackColor = true;
-            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
+            buttonHelp.Location = new System.Drawing.Point(396, 554);
+            buttonHelp.Name = "buttonHelp";
+            buttonHelp.Size = new System.Drawing.Size(120, 22);
+            buttonHelp.TabIndex = 27;
+            buttonHelp.Text = "Open Wiki Page";
+            buttonHelp.UseVisualStyleBackColor = true;
+            buttonHelp.Click += buttonHelp_Click;
             // 
             // buttonFindCallers
             // 
-            this.buttonFindCallers.Location = new System.Drawing.Point(396, 582);
-            this.buttonFindCallers.Name = "buttonFindCallers";
-            this.buttonFindCallers.Size = new System.Drawing.Size(120, 22);
-            this.buttonFindCallers.TabIndex = 28;
-            this.buttonFindCallers.Text = "Find Who Targets Me";
-            this.buttonFindCallers.UseVisualStyleBackColor = true;
-            this.buttonFindCallers.Click += new System.EventHandler(this.buttonFindCallers_Click);
+            buttonFindCallers.Location = new System.Drawing.Point(396, 582);
+            buttonFindCallers.Name = "buttonFindCallers";
+            buttonFindCallers.Size = new System.Drawing.Size(120, 22);
+            buttonFindCallers.TabIndex = 28;
+            buttonFindCallers.Text = "Find Who Targets Me";
+            buttonFindCallers.UseVisualStyleBackColor = true;
+            buttonFindCallers.Click += buttonFindCallers_Click;
             // 
             // buttonApplyRotation
             // 
-            this.buttonApplyRotation.Location = new System.Drawing.Point(18, 554);
-            this.buttonApplyRotation.Name = "buttonApplyRotation";
-            this.buttonApplyRotation.Size = new System.Drawing.Size(120, 22);
-            this.buttonApplyRotation.TabIndex = 30;
-            this.buttonApplyRotation.Text = "Apply Rotation";
-            this.buttonApplyRotation.UseVisualStyleBackColor = true;
-            this.buttonApplyRotation.Click += new System.EventHandler(this.buttonApplyRotation_Click);
+            buttonApplyRotation.Location = new System.Drawing.Point(18, 554);
+            buttonApplyRotation.Name = "buttonApplyRotation";
+            buttonApplyRotation.Size = new System.Drawing.Size(120, 22);
+            buttonApplyRotation.TabIndex = 30;
+            buttonApplyRotation.Text = "Apply Rotation";
+            buttonApplyRotation.UseVisualStyleBackColor = true;
+            buttonApplyRotation.Click += buttonApplyRotation_Click;
             // 
             // buttonApplyVertexColors
             // 
-            this.buttonApplyVertexColors.Location = new System.Drawing.Point(143, 554);
-            this.buttonApplyVertexColors.Name = "buttonApplyVertexColors";
-            this.buttonApplyVertexColors.Size = new System.Drawing.Size(120, 22);
-            this.buttonApplyVertexColors.TabIndex = 29;
-            this.buttonApplyVertexColors.Text = "Apply Vertex Colors";
-            this.buttonApplyVertexColors.UseVisualStyleBackColor = true;
-            this.buttonApplyVertexColors.Click += new System.EventHandler(this.buttonApplyVertexColors_Click);
+            buttonApplyVertexColors.Location = new System.Drawing.Point(143, 554);
+            buttonApplyVertexColors.Name = "buttonApplyVertexColors";
+            buttonApplyVertexColors.Size = new System.Drawing.Size(120, 22);
+            buttonApplyVertexColors.TabIndex = 29;
+            buttonApplyVertexColors.Text = "Apply Vertex Colors";
+            buttonApplyVertexColors.UseVisualStyleBackColor = true;
+            buttonApplyVertexColors.Click += buttonApplyVertexColors_Click;
             // 
             // buttonApplyScale
             // 
-            this.buttonApplyScale.Location = new System.Drawing.Point(18, 582);
-            this.buttonApplyScale.Name = "buttonApplyScale";
-            this.buttonApplyScale.Size = new System.Drawing.Size(120, 22);
-            this.buttonApplyScale.TabIndex = 31;
-            this.buttonApplyScale.Text = "Apply Scale";
-            this.buttonApplyScale.UseVisualStyleBackColor = true;
-            this.buttonApplyScale.Click += new System.EventHandler(this.buttonApplyScale_Click);
+            buttonApplyScale.Location = new System.Drawing.Point(18, 582);
+            buttonApplyScale.Name = "buttonApplyScale";
+            buttonApplyScale.Size = new System.Drawing.Size(120, 22);
+            buttonApplyScale.TabIndex = 31;
+            buttonApplyScale.Text = "Apply Scale";
+            buttonApplyScale.UseVisualStyleBackColor = true;
+            buttonApplyScale.Click += buttonApplyScale_Click;
             // 
             // groupBoxImport
             // 
-            this.groupBoxImport.Controls.Add(this.buttonImport);
-            this.groupBoxImport.Controls.Add(this.checkBoxIgnoreMeshColors);
-            this.groupBoxImport.Controls.Add(this.checkBoxFilpUvs);
-            this.groupBoxImport.Location = new System.Drawing.Point(396, 376);
-            this.groupBoxImport.Name = "groupBoxImport";
-            this.groupBoxImport.Size = new System.Drawing.Size(124, 93);
-            this.groupBoxImport.TabIndex = 32;
-            this.groupBoxImport.TabStop = false;
-            this.groupBoxImport.Text = "Import Model";
+            groupBoxImport.Controls.Add(buttonImport);
+            groupBoxImport.Location = new System.Drawing.Point(396, 376);
+            groupBoxImport.Name = "groupBoxImport";
+            groupBoxImport.Size = new System.Drawing.Size(124, 54);
+            groupBoxImport.TabIndex = 32;
+            groupBoxImport.TabStop = false;
+            groupBoxImport.Text = "Import Model";
             // 
             // buttonImport
             // 
-            this.buttonImport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonImport.Location = new System.Drawing.Point(6, 65);
-            this.buttonImport.Name = "buttonImport";
-            this.buttonImport.Size = new System.Drawing.Size(112, 22);
-            this.buttonImport.TabIndex = 33;
-            this.buttonImport.Text = "Import";
-            this.buttonImport.UseVisualStyleBackColor = true;
-            this.buttonImport.Click += new System.EventHandler(this.buttonImport_Click);
-            // 
-            // checkBoxIgnoreMeshColors
-            // 
-            this.checkBoxIgnoreMeshColors.AutoSize = true;
-            this.checkBoxIgnoreMeshColors.Checked = true;
-            this.checkBoxIgnoreMeshColors.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxIgnoreMeshColors.Location = new System.Drawing.Point(6, 42);
-            this.checkBoxIgnoreMeshColors.Name = "checkBoxIgnoreMeshColors";
-            this.checkBoxIgnoreMeshColors.Size = new System.Drawing.Size(117, 17);
-            this.checkBoxIgnoreMeshColors.TabIndex = 1;
-            this.checkBoxIgnoreMeshColors.Text = "Ignore Mesh Colors";
-            this.checkBoxIgnoreMeshColors.UseVisualStyleBackColor = true;
-            // 
-            // checkBoxFilpUvs
-            // 
-            this.checkBoxFilpUvs.AutoSize = true;
-            this.checkBoxFilpUvs.Location = new System.Drawing.Point(6, 19);
-            this.checkBoxFilpUvs.Name = "checkBoxFilpUvs";
-            this.checkBoxFilpUvs.Size = new System.Drawing.Size(65, 17);
-            this.checkBoxFilpUvs.TabIndex = 0;
-            this.checkBoxFilpUvs.Text = "Flip UVs";
-            this.checkBoxFilpUvs.UseVisualStyleBackColor = true;
+            buttonImport.Location = new System.Drawing.Point(6, 20);
+            buttonImport.Name = "buttonImport";
+            buttonImport.Size = new System.Drawing.Size(112, 22);
+            buttonImport.TabIndex = 33;
+            buttonImport.Text = "Import";
+            buttonImport.UseVisualStyleBackColor = true;
+            buttonImport.Click += buttonImport_Click;
             // 
             // groupBoxExport
             // 
-            this.groupBoxExport.Controls.Add(this.buttonExport);
-            this.groupBoxExport.Controls.Add(this.checkBoxExportTextures);
-            this.groupBoxExport.Location = new System.Drawing.Point(396, 475);
-            this.groupBoxExport.Name = "groupBoxExport";
-            this.groupBoxExport.Size = new System.Drawing.Size(124, 73);
-            this.groupBoxExport.TabIndex = 34;
-            this.groupBoxExport.TabStop = false;
-            this.groupBoxExport.Text = "Export Model";
+            groupBoxExport.Controls.Add(buttonExport);
+            groupBoxExport.Controls.Add(checkBoxExportTextures);
+            groupBoxExport.Location = new System.Drawing.Point(396, 436);
+            groupBoxExport.Name = "groupBoxExport";
+            groupBoxExport.Size = new System.Drawing.Size(124, 73);
+            groupBoxExport.TabIndex = 34;
+            groupBoxExport.TabStop = false;
+            groupBoxExport.Text = "Export Model";
             // 
             // buttonExport
             // 
-            this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonExport.Location = new System.Drawing.Point(6, 45);
-            this.buttonExport.Name = "buttonExport";
-            this.buttonExport.Size = new System.Drawing.Size(112, 22);
-            this.buttonExport.TabIndex = 33;
-            this.buttonExport.Text = "Export";
-            this.buttonExport.UseVisualStyleBackColor = true;
-            this.buttonExport.Click += new System.EventHandler(this.buttonExport_Click);
+            buttonExport.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            buttonExport.Location = new System.Drawing.Point(6, 45);
+            buttonExport.Name = "buttonExport";
+            buttonExport.Size = new System.Drawing.Size(112, 22);
+            buttonExport.TabIndex = 33;
+            buttonExport.Text = "Export";
+            buttonExport.UseVisualStyleBackColor = true;
+            buttonExport.Click += buttonExport_Click;
             // 
             // checkBoxExportTextures
             // 
-            this.checkBoxExportTextures.AutoSize = true;
-            this.checkBoxExportTextures.Location = new System.Drawing.Point(6, 19);
-            this.checkBoxExportTextures.Name = "checkBoxExportTextures";
-            this.checkBoxExportTextures.Size = new System.Drawing.Size(100, 17);
-            this.checkBoxExportTextures.TabIndex = 0;
-            this.checkBoxExportTextures.Text = "Export Textures";
-            this.checkBoxExportTextures.UseVisualStyleBackColor = true;
+            checkBoxExportTextures.AutoSize = true;
+            checkBoxExportTextures.Location = new System.Drawing.Point(6, 19);
+            checkBoxExportTextures.Name = "checkBoxExportTextures";
+            checkBoxExportTextures.Size = new System.Drawing.Size(100, 17);
+            checkBoxExportTextures.TabIndex = 0;
+            checkBoxExportTextures.Text = "Export Textures";
+            checkBoxExportTextures.UseVisualStyleBackColor = true;
             // 
             // buttonMaterialEditor
             // 
-            this.buttonMaterialEditor.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonMaterialEditor.Location = new System.Drawing.Point(6, 144);
-            this.buttonMaterialEditor.Name = "buttonMaterialEditor";
-            this.buttonMaterialEditor.Size = new System.Drawing.Size(171, 22);
-            this.buttonMaterialEditor.TabIndex = 35;
-            this.buttonMaterialEditor.Text = "Open Material Editor";
-            this.buttonMaterialEditor.UseVisualStyleBackColor = true;
-            this.buttonMaterialEditor.Click += new System.EventHandler(this.buttonMaterialEditor_Click);
+            buttonMaterialEditor.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            buttonMaterialEditor.Location = new System.Drawing.Point(6, 144);
+            buttonMaterialEditor.Name = "buttonMaterialEditor";
+            buttonMaterialEditor.Size = new System.Drawing.Size(171, 22);
+            buttonMaterialEditor.TabIndex = 35;
+            buttonMaterialEditor.Text = "Open Material Editor";
+            buttonMaterialEditor.UseVisualStyleBackColor = true;
+            buttonMaterialEditor.Click += buttonMaterialEditor_Click;
             // 
             // flowLayoutPanelTextures
             // 
-            this.flowLayoutPanelTextures.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.flowLayoutPanelTextures.AutoScroll = true;
-            this.flowLayoutPanelTextures.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
-            this.flowLayoutPanelTextures.Location = new System.Drawing.Point(6, 19);
-            this.flowLayoutPanelTextures.Name = "flowLayoutPanelTextures";
-            this.flowLayoutPanelTextures.Size = new System.Drawing.Size(171, 119);
-            this.flowLayoutPanelTextures.TabIndex = 36;
-            this.flowLayoutPanelTextures.WrapContents = false;
+            flowLayoutPanelTextures.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            flowLayoutPanelTextures.AutoScroll = true;
+            flowLayoutPanelTextures.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            flowLayoutPanelTextures.Location = new System.Drawing.Point(6, 19);
+            flowLayoutPanelTextures.Name = "flowLayoutPanelTextures";
+            flowLayoutPanelTextures.Size = new System.Drawing.Size(171, 119);
+            flowLayoutPanelTextures.TabIndex = 36;
+            flowLayoutPanelTextures.WrapContents = false;
             // 
             // groupBoxTextures
             // 
-            this.groupBoxTextures.Controls.Add(this.flowLayoutPanelTextures);
-            this.groupBoxTextures.Controls.Add(this.buttonMaterialEditor);
-            this.groupBoxTextures.Location = new System.Drawing.Point(12, 376);
-            this.groupBoxTextures.Name = "groupBoxTextures";
-            this.groupBoxTextures.Size = new System.Drawing.Size(183, 172);
-            this.groupBoxTextures.TabIndex = 34;
-            this.groupBoxTextures.TabStop = false;
-            this.groupBoxTextures.Text = "Textures";
+            groupBoxTextures.Controls.Add(flowLayoutPanelTextures);
+            groupBoxTextures.Controls.Add(buttonMaterialEditor);
+            groupBoxTextures.Location = new System.Drawing.Point(12, 376);
+            groupBoxTextures.Name = "groupBoxTextures";
+            groupBoxTextures.Size = new System.Drawing.Size(183, 172);
+            groupBoxTextures.TabIndex = 34;
+            groupBoxTextures.TabStop = false;
+            groupBoxTextures.Text = "Textures";
             // 
             // groupBoxAtomics
             // 
-            this.groupBoxAtomics.Controls.Add(this.tableLayoutPanelAtomics);
-            this.groupBoxAtomics.Location = new System.Drawing.Point(201, 376);
-            this.groupBoxAtomics.Name = "groupBoxAtomics";
-            this.groupBoxAtomics.Size = new System.Drawing.Size(189, 172);
-            this.groupBoxAtomics.TabIndex = 37;
-            this.groupBoxAtomics.TabStop = false;
-            this.groupBoxAtomics.Text = "Atomics";
+            groupBoxAtomics.Controls.Add(tableLayoutPanelAtomics);
+            groupBoxAtomics.Location = new System.Drawing.Point(201, 376);
+            groupBoxAtomics.Name = "groupBoxAtomics";
+            groupBoxAtomics.Size = new System.Drawing.Size(189, 172);
+            groupBoxAtomics.TabIndex = 37;
+            groupBoxAtomics.TabStop = false;
+            groupBoxAtomics.Text = "Atomics";
             // 
             // tableLayoutPanelAtomics
             // 
-            this.tableLayoutPanelAtomics.AutoScroll = true;
-            this.tableLayoutPanelAtomics.ColumnCount = 2;
-            this.tableLayoutPanelAtomics.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelAtomics.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanelAtomics.Controls.Add(this.buttonEditAtomics, 1, 0);
-            this.tableLayoutPanelAtomics.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanelAtomics.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanelAtomics.Name = "tableLayoutPanelAtomics";
-            this.tableLayoutPanelAtomics.RowCount = 1;
-            this.tableLayoutPanelAtomics.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanelAtomics.Size = new System.Drawing.Size(183, 153);
-            this.tableLayoutPanelAtomics.TabIndex = 42;
+            tableLayoutPanelAtomics.AutoScroll = true;
+            tableLayoutPanelAtomics.ColumnCount = 2;
+            tableLayoutPanelAtomics.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanelAtomics.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            tableLayoutPanelAtomics.Controls.Add(buttonEditAtomics, 1, 0);
+            tableLayoutPanelAtomics.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanelAtomics.Location = new System.Drawing.Point(3, 16);
+            tableLayoutPanelAtomics.Name = "tableLayoutPanelAtomics";
+            tableLayoutPanelAtomics.RowCount = 1;
+            tableLayoutPanelAtomics.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            tableLayoutPanelAtomics.Size = new System.Drawing.Size(183, 153);
+            tableLayoutPanelAtomics.TabIndex = 42;
             // 
             // buttonEditAtomics
             // 
-            this.buttonEditAtomics.Dock = System.Windows.Forms.DockStyle.Top;
-            this.buttonEditAtomics.Location = new System.Drawing.Point(3, 3);
-            this.buttonEditAtomics.Name = "buttonEditAtomics";
-            this.buttonEditAtomics.Size = new System.Drawing.Size(177, 23);
-            this.buttonEditAtomics.TabIndex = 38;
-            this.buttonEditAtomics.Text = "Edit";
-            this.buttonEditAtomics.UseVisualStyleBackColor = true;
-            this.buttonEditAtomics.Click += new System.EventHandler(this.buttonEditAtomics_Click);
+            buttonEditAtomics.Dock = System.Windows.Forms.DockStyle.Top;
+            buttonEditAtomics.Location = new System.Drawing.Point(3, 3);
+            buttonEditAtomics.Name = "buttonEditAtomics";
+            buttonEditAtomics.Size = new System.Drawing.Size(177, 23);
+            buttonEditAtomics.TabIndex = 38;
+            buttonEditAtomics.Text = "Edit";
+            buttonEditAtomics.UseVisualStyleBackColor = true;
+            buttonEditAtomics.Click += buttonEditAtomics_Click;
             // 
             // groupBoxPipeInfo
             // 
-            this.groupBoxPipeInfo.Controls.Add(this.labelPipeInfos);
-            this.groupBoxPipeInfo.Controls.Add(this.buttonArrowDown);
-            this.groupBoxPipeInfo.Controls.Add(this.buttonArrowUp);
-            this.groupBoxPipeInfo.Controls.Add(this.buttonDeletePipeInfo);
-            this.groupBoxPipeInfo.Controls.Add(this.propertyGridPipeInfo);
-            this.groupBoxPipeInfo.Controls.Add(this.buttonCreatePipeInfo);
-            this.groupBoxPipeInfo.Location = new System.Drawing.Point(12, 12);
-            this.groupBoxPipeInfo.Name = "groupBoxPipeInfo";
-            this.groupBoxPipeInfo.Size = new System.Drawing.Size(251, 258);
-            this.groupBoxPipeInfo.TabIndex = 41;
-            this.groupBoxPipeInfo.TabStop = false;
-            this.groupBoxPipeInfo.Text = "Pipe Info";
+            groupBoxPipeInfo.Controls.Add(labelPipeInfos);
+            groupBoxPipeInfo.Controls.Add(buttonArrowDown);
+            groupBoxPipeInfo.Controls.Add(buttonArrowUp);
+            groupBoxPipeInfo.Controls.Add(buttonDeletePipeInfo);
+            groupBoxPipeInfo.Controls.Add(propertyGridPipeInfo);
+            groupBoxPipeInfo.Controls.Add(buttonCreatePipeInfo);
+            groupBoxPipeInfo.Location = new System.Drawing.Point(12, 12);
+            groupBoxPipeInfo.Name = "groupBoxPipeInfo";
+            groupBoxPipeInfo.Size = new System.Drawing.Size(251, 258);
+            groupBoxPipeInfo.TabIndex = 41;
+            groupBoxPipeInfo.TabStop = false;
+            groupBoxPipeInfo.Text = "Pipe Info";
             // 
             // labelPipeInfos
             // 
-            this.labelPipeInfos.AutoSize = true;
-            this.labelPipeInfos.Location = new System.Drawing.Point(6, 21);
-            this.labelPipeInfos.Name = "labelPipeInfos";
-            this.labelPipeInfos.Size = new System.Drawing.Size(73, 13);
-            this.labelPipeInfos.TabIndex = 46;
-            this.labelPipeInfos.Text = "labelPipeInfos";
+            labelPipeInfos.AutoSize = true;
+            labelPipeInfos.Location = new System.Drawing.Point(6, 21);
+            labelPipeInfos.Name = "labelPipeInfos";
+            labelPipeInfos.Size = new System.Drawing.Size(73, 13);
+            labelPipeInfos.TabIndex = 46;
+            labelPipeInfos.Text = "labelPipeInfos";
             // 
             // buttonArrowDown
             // 
-            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowDown.Enabled = false;
-            this.buttonArrowDown.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.buttonArrowDown.Location = new System.Drawing.Point(161, 16);
-            this.buttonArrowDown.Name = "buttonArrowDown";
-            this.buttonArrowDown.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowDown.TabIndex = 45;
-            this.buttonArrowDown.Text = "▼";
-            this.buttonArrowDown.UseVisualStyleBackColor = true;
-            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
+            buttonArrowDown.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonArrowDown.Enabled = false;
+            buttonArrowDown.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            buttonArrowDown.Location = new System.Drawing.Point(161, 16);
+            buttonArrowDown.Name = "buttonArrowDown";
+            buttonArrowDown.Size = new System.Drawing.Size(22, 22);
+            buttonArrowDown.TabIndex = 45;
+            buttonArrowDown.Text = "▼";
+            buttonArrowDown.UseVisualStyleBackColor = true;
+            buttonArrowDown.Click += buttonArrowDown_Click;
             // 
             // buttonArrowUp
             // 
-            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonArrowUp.Enabled = false;
-            this.buttonArrowUp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.buttonArrowUp.Location = new System.Drawing.Point(133, 16);
-            this.buttonArrowUp.Name = "buttonArrowUp";
-            this.buttonArrowUp.Size = new System.Drawing.Size(22, 22);
-            this.buttonArrowUp.TabIndex = 44;
-            this.buttonArrowUp.Text = "▲";
-            this.buttonArrowUp.UseVisualStyleBackColor = true;
-            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
+            buttonArrowUp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonArrowUp.Enabled = false;
+            buttonArrowUp.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            buttonArrowUp.Location = new System.Drawing.Point(133, 16);
+            buttonArrowUp.Name = "buttonArrowUp";
+            buttonArrowUp.Size = new System.Drawing.Size(22, 22);
+            buttonArrowUp.TabIndex = 44;
+            buttonArrowUp.Text = "▲";
+            buttonArrowUp.UseVisualStyleBackColor = true;
+            buttonArrowUp.Click += buttonArrowUp_Click;
             // 
             // buttonDeletePipeInfo
             // 
-            this.buttonDeletePipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonDeletePipeInfo.Location = new System.Drawing.Point(195, 16);
-            this.buttonDeletePipeInfo.Name = "buttonDeletePipeInfo";
-            this.buttonDeletePipeInfo.Size = new System.Drawing.Size(22, 22);
-            this.buttonDeletePipeInfo.TabIndex = 43;
-            this.buttonDeletePipeInfo.Text = "-";
-            this.buttonDeletePipeInfo.UseVisualStyleBackColor = true;
-            this.buttonDeletePipeInfo.Click += new System.EventHandler(this.buttonDeletePipeInfo_Click);
+            buttonDeletePipeInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            buttonDeletePipeInfo.Location = new System.Drawing.Point(195, 16);
+            buttonDeletePipeInfo.Name = "buttonDeletePipeInfo";
+            buttonDeletePipeInfo.Size = new System.Drawing.Size(22, 22);
+            buttonDeletePipeInfo.TabIndex = 43;
+            buttonDeletePipeInfo.Text = "-";
+            buttonDeletePipeInfo.UseVisualStyleBackColor = true;
+            buttonDeletePipeInfo.Click += buttonDeletePipeInfo_Click;
             // 
             // propertyGridPipeInfo
             // 
-            this.propertyGridPipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGridPipeInfo.Enabled = false;
-            this.propertyGridPipeInfo.HelpVisible = false;
-            this.propertyGridPipeInfo.Location = new System.Drawing.Point(6, 44);
-            this.propertyGridPipeInfo.Name = "propertyGridPipeInfo";
-            this.propertyGridPipeInfo.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridPipeInfo.Size = new System.Drawing.Size(239, 208);
-            this.propertyGridPipeInfo.TabIndex = 42;
-            this.propertyGridPipeInfo.ToolbarVisible = false;
-            this.propertyGridPipeInfo.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridPipeInfo_PropertyValueChanged);
+            propertyGridPipeInfo.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridPipeInfo.Enabled = false;
+            propertyGridPipeInfo.HelpVisible = false;
+            propertyGridPipeInfo.Location = new System.Drawing.Point(6, 44);
+            propertyGridPipeInfo.Name = "propertyGridPipeInfo";
+            propertyGridPipeInfo.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            propertyGridPipeInfo.Size = new System.Drawing.Size(239, 208);
+            propertyGridPipeInfo.TabIndex = 42;
+            propertyGridPipeInfo.ToolbarVisible = false;
+            propertyGridPipeInfo.PropertyValueChanged += propertyGridPipeInfo_PropertyValueChanged;
             // 
             // buttonCreatePipeInfo
             // 
-            this.buttonCreatePipeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCreatePipeInfo.Location = new System.Drawing.Point(223, 16);
-            this.buttonCreatePipeInfo.Name = "buttonCreatePipeInfo";
-            this.buttonCreatePipeInfo.Size = new System.Drawing.Size(22, 22);
-            this.buttonCreatePipeInfo.TabIndex = 42;
-            this.buttonCreatePipeInfo.Text = "+";
-            this.buttonCreatePipeInfo.UseVisualStyleBackColor = true;
-            this.buttonCreatePipeInfo.Click += new System.EventHandler(this.buttonCreatePipeInfo_Click);
+            buttonCreatePipeInfo.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            buttonCreatePipeInfo.Location = new System.Drawing.Point(223, 16);
+            buttonCreatePipeInfo.Name = "buttonCreatePipeInfo";
+            buttonCreatePipeInfo.Size = new System.Drawing.Size(22, 22);
+            buttonCreatePipeInfo.TabIndex = 42;
+            buttonCreatePipeInfo.Text = "+";
+            buttonCreatePipeInfo.UseVisualStyleBackColor = true;
+            buttonCreatePipeInfo.Click += buttonCreatePipeInfo_Click;
             // 
             // groupBoxLevelOfDetail
             // 
-            this.groupBoxLevelOfDetail.Controls.Add(this.propertyGridLevelOfDetail);
-            this.groupBoxLevelOfDetail.Controls.Add(this.buttonCreateLevelOfDetail);
-            this.groupBoxLevelOfDetail.Location = new System.Drawing.Point(269, 12);
-            this.groupBoxLevelOfDetail.Name = "groupBoxLevelOfDetail";
-            this.groupBoxLevelOfDetail.Size = new System.Drawing.Size(251, 258);
-            this.groupBoxLevelOfDetail.TabIndex = 43;
-            this.groupBoxLevelOfDetail.TabStop = false;
-            this.groupBoxLevelOfDetail.Text = "Level of Detail";
+            groupBoxLevelOfDetail.Controls.Add(propertyGridLevelOfDetail);
+            groupBoxLevelOfDetail.Controls.Add(buttonCreateLevelOfDetail);
+            groupBoxLevelOfDetail.Location = new System.Drawing.Point(269, 12);
+            groupBoxLevelOfDetail.Name = "groupBoxLevelOfDetail";
+            groupBoxLevelOfDetail.Size = new System.Drawing.Size(251, 258);
+            groupBoxLevelOfDetail.TabIndex = 43;
+            groupBoxLevelOfDetail.TabStop = false;
+            groupBoxLevelOfDetail.Text = "Level of Detail";
             // 
             // propertyGridLevelOfDetail
             // 
-            this.propertyGridLevelOfDetail.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGridLevelOfDetail.Enabled = false;
-            this.propertyGridLevelOfDetail.HelpVisible = false;
-            this.propertyGridLevelOfDetail.Location = new System.Drawing.Point(6, 45);
-            this.propertyGridLevelOfDetail.Name = "propertyGridLevelOfDetail";
-            this.propertyGridLevelOfDetail.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridLevelOfDetail.Size = new System.Drawing.Size(239, 207);
-            this.propertyGridLevelOfDetail.TabIndex = 42;
-            this.propertyGridLevelOfDetail.ToolbarVisible = false;
-            this.propertyGridLevelOfDetail.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridLevelOfDetail_PropertyValueChanged);
+            propertyGridLevelOfDetail.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridLevelOfDetail.Enabled = false;
+            propertyGridLevelOfDetail.HelpVisible = false;
+            propertyGridLevelOfDetail.Location = new System.Drawing.Point(6, 45);
+            propertyGridLevelOfDetail.Name = "propertyGridLevelOfDetail";
+            propertyGridLevelOfDetail.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            propertyGridLevelOfDetail.Size = new System.Drawing.Size(239, 207);
+            propertyGridLevelOfDetail.TabIndex = 42;
+            propertyGridLevelOfDetail.ToolbarVisible = false;
+            propertyGridLevelOfDetail.PropertyValueChanged += propertyGridLevelOfDetail_PropertyValueChanged;
             // 
             // buttonCreateLevelOfDetail
             // 
-            this.buttonCreateLevelOfDetail.Location = new System.Drawing.Point(6, 16);
-            this.buttonCreateLevelOfDetail.Name = "buttonCreateLevelOfDetail";
-            this.buttonCreateLevelOfDetail.Size = new System.Drawing.Size(65, 22);
-            this.buttonCreateLevelOfDetail.TabIndex = 42;
-            this.buttonCreateLevelOfDetail.Text = "Create";
-            this.buttonCreateLevelOfDetail.UseVisualStyleBackColor = true;
-            this.buttonCreateLevelOfDetail.Click += new System.EventHandler(this.buttonCreateLevelOfDetail_Click);
+            buttonCreateLevelOfDetail.Location = new System.Drawing.Point(6, 16);
+            buttonCreateLevelOfDetail.Name = "buttonCreateLevelOfDetail";
+            buttonCreateLevelOfDetail.Size = new System.Drawing.Size(65, 22);
+            buttonCreateLevelOfDetail.TabIndex = 42;
+            buttonCreateLevelOfDetail.Text = "Create";
+            buttonCreateLevelOfDetail.UseVisualStyleBackColor = true;
+            buttonCreateLevelOfDetail.Click += buttonCreateLevelOfDetail_Click;
             // 
             // groupBoxShadow
             // 
-            this.groupBoxShadow.Controls.Add(this.propertyGridShadow);
-            this.groupBoxShadow.Controls.Add(this.buttonCreateShadow);
-            this.groupBoxShadow.Location = new System.Drawing.Point(269, 276);
-            this.groupBoxShadow.Name = "groupBoxShadow";
-            this.groupBoxShadow.Size = new System.Drawing.Size(251, 94);
-            this.groupBoxShadow.TabIndex = 44;
-            this.groupBoxShadow.TabStop = false;
-            this.groupBoxShadow.Text = "Shadow Model";
+            groupBoxShadow.Controls.Add(propertyGridShadow);
+            groupBoxShadow.Controls.Add(buttonCreateShadow);
+            groupBoxShadow.Location = new System.Drawing.Point(269, 276);
+            groupBoxShadow.Name = "groupBoxShadow";
+            groupBoxShadow.Size = new System.Drawing.Size(251, 94);
+            groupBoxShadow.TabIndex = 44;
+            groupBoxShadow.TabStop = false;
+            groupBoxShadow.Text = "Shadow Model";
             // 
             // propertyGridShadow
             // 
-            this.propertyGridShadow.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGridShadow.Enabled = false;
-            this.propertyGridShadow.HelpVisible = false;
-            this.propertyGridShadow.Location = new System.Drawing.Point(6, 41);
-            this.propertyGridShadow.Name = "propertyGridShadow";
-            this.propertyGridShadow.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridShadow.Size = new System.Drawing.Size(239, 47);
-            this.propertyGridShadow.TabIndex = 42;
-            this.propertyGridShadow.ToolbarVisible = false;
-            this.propertyGridShadow.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridShadow_PropertyValueChanged);
+            propertyGridShadow.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridShadow.Enabled = false;
+            propertyGridShadow.HelpVisible = false;
+            propertyGridShadow.Location = new System.Drawing.Point(6, 41);
+            propertyGridShadow.Name = "propertyGridShadow";
+            propertyGridShadow.PropertySort = System.Windows.Forms.PropertySort.NoSort;
+            propertyGridShadow.Size = new System.Drawing.Size(239, 47);
+            propertyGridShadow.TabIndex = 42;
+            propertyGridShadow.ToolbarVisible = false;
+            propertyGridShadow.PropertyValueChanged += propertyGridShadow_PropertyValueChanged;
             // 
             // buttonCreateShadow
             // 
-            this.buttonCreateShadow.Location = new System.Drawing.Point(6, 16);
-            this.buttonCreateShadow.Name = "buttonCreateShadow";
-            this.buttonCreateShadow.Size = new System.Drawing.Size(65, 22);
-            this.buttonCreateShadow.TabIndex = 42;
-            this.buttonCreateShadow.Text = "Create";
-            this.buttonCreateShadow.UseVisualStyleBackColor = true;
-            this.buttonCreateShadow.Click += new System.EventHandler(this.buttonCreateShadow_Click);
+            buttonCreateShadow.Location = new System.Drawing.Point(6, 16);
+            buttonCreateShadow.Name = "buttonCreateShadow";
+            buttonCreateShadow.Size = new System.Drawing.Size(65, 22);
+            buttonCreateShadow.TabIndex = 42;
+            buttonCreateShadow.Text = "Create";
+            buttonCreateShadow.UseVisualStyleBackColor = true;
+            buttonCreateShadow.Click += buttonCreateShadow_Click;
             // 
             // groupBoxCollisionModel
             // 
-            this.groupBoxCollisionModel.Controls.Add(this.propertyGridCollision);
-            this.groupBoxCollisionModel.Controls.Add(this.buttonCreateCollision);
-            this.groupBoxCollisionModel.Location = new System.Drawing.Point(12, 276);
-            this.groupBoxCollisionModel.Name = "groupBoxCollisionModel";
-            this.groupBoxCollisionModel.Size = new System.Drawing.Size(251, 94);
-            this.groupBoxCollisionModel.TabIndex = 45;
-            this.groupBoxCollisionModel.TabStop = false;
-            this.groupBoxCollisionModel.Text = "Collision Model";
+            groupBoxCollisionModel.Controls.Add(buttonImportColl);
+            groupBoxCollisionModel.Controls.Add(propertyGridCollision);
+            groupBoxCollisionModel.Controls.Add(buttonCreateCollision);
+            groupBoxCollisionModel.Location = new System.Drawing.Point(12, 276);
+            groupBoxCollisionModel.Name = "groupBoxCollisionModel";
+            groupBoxCollisionModel.Size = new System.Drawing.Size(251, 94);
+            groupBoxCollisionModel.TabIndex = 45;
+            groupBoxCollisionModel.TabStop = false;
+            groupBoxCollisionModel.Text = "Collision Model";
+            // 
+            // buttonImportColl
+            // 
+            buttonImportColl.Enabled = false;
+            buttonImportColl.Location = new System.Drawing.Point(77, 16);
+            buttonImportColl.Name = "buttonImportColl";
+            buttonImportColl.Size = new System.Drawing.Size(75, 22);
+            buttonImportColl.TabIndex = 43;
+            buttonImportColl.Text = "Import";
+            buttonImportColl.UseVisualStyleBackColor = true;
+            buttonImportColl.Click += buttonImportColl_Click;
             // 
             // propertyGridCollision
             // 
-            this.propertyGridCollision.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGridCollision.Enabled = false;
-            this.propertyGridCollision.HelpVisible = false;
-            this.propertyGridCollision.Location = new System.Drawing.Point(6, 41);
-            this.propertyGridCollision.Name = "propertyGridCollision";
-            this.propertyGridCollision.PropertySort = System.Windows.Forms.PropertySort.NoSort;
-            this.propertyGridCollision.Size = new System.Drawing.Size(239, 47);
-            this.propertyGridCollision.TabIndex = 42;
-            this.propertyGridCollision.ToolbarVisible = false;
-            this.propertyGridCollision.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridCollision_PropertyValueChanged);
+            propertyGridCollision.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridCollision.Enabled = false;
+            propertyGridCollision.HelpVisible = false;
+            propertyGridCollision.Location = new System.Drawing.Point(6, 41);
+            propertyGridCollision.Name = "propertyGridCollision";
+            propertyGridCollision.PropertySort = System.Windows.Forms.PropertySort.NoSort;
+            propertyGridCollision.Size = new System.Drawing.Size(239, 47);
+            propertyGridCollision.TabIndex = 42;
+            propertyGridCollision.ToolbarVisible = false;
+            propertyGridCollision.PropertyValueChanged += propertyGridCollision_PropertyValueChanged;
             // 
             // buttonCreateCollision
             // 
-            this.buttonCreateCollision.Location = new System.Drawing.Point(6, 16);
-            this.buttonCreateCollision.Name = "buttonCreateCollision";
-            this.buttonCreateCollision.Size = new System.Drawing.Size(65, 22);
-            this.buttonCreateCollision.TabIndex = 42;
-            this.buttonCreateCollision.Text = "Create";
-            this.buttonCreateCollision.UseVisualStyleBackColor = true;
-            this.buttonCreateCollision.Click += new System.EventHandler(this.buttonCreateCollision_Click);
+            buttonCreateCollision.Location = new System.Drawing.Point(6, 16);
+            buttonCreateCollision.Name = "buttonCreateCollision";
+            buttonCreateCollision.Size = new System.Drawing.Size(65, 22);
+            buttonCreateCollision.TabIndex = 42;
+            buttonCreateCollision.Text = "Create";
+            buttonCreateCollision.UseVisualStyleBackColor = true;
+            buttonCreateCollision.Click += buttonCreateCollision_Click;
             // 
             // checkBoxUseTemplates
             // 
-            this.checkBoxUseTemplates.AutoSize = true;
-            this.checkBoxUseTemplates.Location = new System.Drawing.Point(12, 610);
-            this.checkBoxUseTemplates.Name = "checkBoxUseTemplates";
-            this.checkBoxUseTemplates.Size = new System.Drawing.Size(213, 17);
-            this.checkBoxUseTemplates.TabIndex = 46;
-            this.checkBoxUseTemplates.Text = "Use this model when placing a template";
-            this.checkBoxUseTemplates.UseVisualStyleBackColor = true;
-            this.checkBoxUseTemplates.Click += new System.EventHandler(this.checkBoxUseTemplates_Click);
+            checkBoxUseTemplates.AutoSize = true;
+            checkBoxUseTemplates.Location = new System.Drawing.Point(12, 610);
+            checkBoxUseTemplates.Name = "checkBoxUseTemplates";
+            checkBoxUseTemplates.Size = new System.Drawing.Size(213, 17);
+            checkBoxUseTemplates.TabIndex = 46;
+            checkBoxUseTemplates.Text = "Use this model when placing a template";
+            checkBoxUseTemplates.UseVisualStyleBackColor = true;
+            checkBoxUseTemplates.Click += checkBoxUseTemplates_Click;
             // 
             // buildCollTreeButton
             // 
-            this.buildCollTreeButton.Location = new System.Drawing.Point(269, 554);
-            this.buildCollTreeButton.Name = "buildCollTreeButton";
-            this.buildCollTreeButton.Size = new System.Drawing.Size(120, 22);
-            this.buildCollTreeButton.TabIndex = 47;
-            this.buildCollTreeButton.Text = "Build Collision PLG";
-            this.buildCollTreeButton.UseVisualStyleBackColor = true;
-            this.buildCollTreeButton.Click += new System.EventHandler(this.buildCollTreeButton_Click);
+            buildCollTreeButton.Location = new System.Drawing.Point(269, 554);
+            buildCollTreeButton.Name = "buildCollTreeButton";
+            buildCollTreeButton.Size = new System.Drawing.Size(120, 22);
+            buildCollTreeButton.TabIndex = 47;
+            buildCollTreeButton.Text = "Build Collision PLG";
+            buildCollTreeButton.UseVisualStyleBackColor = true;
+            buildCollTreeButton.Click += buildCollTreeButton_Click;
             // 
             // removeCollPlgButton
             // 
-            this.removeCollPlgButton.Enabled = false;
-            this.removeCollPlgButton.Location = new System.Drawing.Point(269, 582);
-            this.removeCollPlgButton.Name = "removeCollPlgButton";
-            this.removeCollPlgButton.Size = new System.Drawing.Size(120, 22);
-            this.removeCollPlgButton.TabIndex = 48;
-            this.removeCollPlgButton.Text = "Remove Collision PLG";
-            this.removeCollPlgButton.UseVisualStyleBackColor = true;
-            this.removeCollPlgButton.Click += new System.EventHandler(this.removeCollPlgButton_Click);
+            removeCollPlgButton.Enabled = false;
+            removeCollPlgButton.Location = new System.Drawing.Point(269, 582);
+            removeCollPlgButton.Name = "removeCollPlgButton";
+            removeCollPlgButton.Size = new System.Drawing.Size(120, 22);
+            removeCollPlgButton.TabIndex = 48;
+            removeCollPlgButton.Text = "Remove Collision PLG";
+            removeCollPlgButton.UseVisualStyleBackColor = true;
+            removeCollPlgButton.Click += removeCollPlgButton_Click;
             // 
             // InternalModelEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(527, 633);
-            this.Controls.Add(this.removeCollPlgButton);
-            this.Controls.Add(this.buildCollTreeButton);
-            this.Controls.Add(this.checkBoxUseTemplates);
-            this.Controls.Add(this.groupBoxCollisionModel);
-            this.Controls.Add(this.groupBoxShadow);
-            this.Controls.Add(this.groupBoxLevelOfDetail);
-            this.Controls.Add(this.groupBoxPipeInfo);
-            this.Controls.Add(this.groupBoxAtomics);
-            this.Controls.Add(this.groupBoxTextures);
-            this.Controls.Add(this.groupBoxExport);
-            this.Controls.Add(this.groupBoxImport);
-            this.Controls.Add(this.buttonApplyScale);
-            this.Controls.Add(this.buttonApplyRotation);
-            this.Controls.Add(this.buttonApplyVertexColors);
-            this.Controls.Add(this.buttonFindCallers);
-            this.Controls.Add(this.buttonHelp);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.MaximizeBox = false;
-            this.Name = "InternalModelEditor";
-            this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Asset Data Editor";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalAssetEditor_FormClosing);
-            this.groupBoxImport.ResumeLayout(false);
-            this.groupBoxImport.PerformLayout();
-            this.groupBoxExport.ResumeLayout(false);
-            this.groupBoxExport.PerformLayout();
-            this.groupBoxTextures.ResumeLayout(false);
-            this.groupBoxAtomics.ResumeLayout(false);
-            this.tableLayoutPanelAtomics.ResumeLayout(false);
-            this.groupBoxPipeInfo.ResumeLayout(false);
-            this.groupBoxPipeInfo.PerformLayout();
-            this.groupBoxLevelOfDetail.ResumeLayout(false);
-            this.groupBoxShadow.ResumeLayout(false);
-            this.groupBoxCollisionModel.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(527, 633);
+            Controls.Add(removeCollPlgButton);
+            Controls.Add(buildCollTreeButton);
+            Controls.Add(checkBoxUseTemplates);
+            Controls.Add(groupBoxCollisionModel);
+            Controls.Add(groupBoxShadow);
+            Controls.Add(groupBoxLevelOfDetail);
+            Controls.Add(groupBoxPipeInfo);
+            Controls.Add(groupBoxAtomics);
+            Controls.Add(groupBoxTextures);
+            Controls.Add(groupBoxExport);
+            Controls.Add(groupBoxImport);
+            Controls.Add(buttonApplyScale);
+            Controls.Add(buttonApplyRotation);
+            Controls.Add(buttonApplyVertexColors);
+            Controls.Add(buttonFindCallers);
+            Controls.Add(buttonHelp);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            MaximizeBox = false;
+            Name = "InternalModelEditor";
+            ShowIcon = false;
+            Text = "Asset Data Editor";
+            FormClosing += InternalAssetEditor_FormClosing;
+            groupBoxImport.ResumeLayout(false);
+            groupBoxExport.ResumeLayout(false);
+            groupBoxExport.PerformLayout();
+            groupBoxTextures.ResumeLayout(false);
+            groupBoxAtomics.ResumeLayout(false);
+            tableLayoutPanelAtomics.ResumeLayout(false);
+            groupBoxPipeInfo.ResumeLayout(false);
+            groupBoxPipeInfo.PerformLayout();
+            groupBoxLevelOfDetail.ResumeLayout(false);
+            groupBoxShadow.ResumeLayout(false);
+            groupBoxCollisionModel.ResumeLayout(false);
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -556,8 +526,6 @@
         private System.Windows.Forms.Button buttonApplyVertexColors;
         private System.Windows.Forms.Button buttonApplyScale;
         private System.Windows.Forms.GroupBox groupBoxImport;
-        private System.Windows.Forms.CheckBox checkBoxIgnoreMeshColors;
-        private System.Windows.Forms.CheckBox checkBoxFilpUvs;
         private System.Windows.Forms.Button buttonImport;
         private System.Windows.Forms.GroupBox groupBoxExport;
         private System.Windows.Forms.Button buttonExport;
@@ -587,5 +555,6 @@
         private System.Windows.Forms.Label labelPipeInfos;
         private System.Windows.Forms.Button buildCollTreeButton;
         private System.Windows.Forms.Button removeCollPlgButton;
+        private System.Windows.Forms.Button buttonImportColl;
     }
 }

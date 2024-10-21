@@ -74,6 +74,9 @@ namespace IndustrialPark
         {
             switch (asset.assetType)
             {
+                case AssetType.Model when ((AssetMODL)asset).IsCollisionModel:
+                    internalEditors.Add(new InternalCollModelEditor((AssetRenderWareModel)asset, this, updateListView));
+                    break;
                 case AssetType.Model:
                 case AssetType.BSP:
                 case AssetType.JSP:

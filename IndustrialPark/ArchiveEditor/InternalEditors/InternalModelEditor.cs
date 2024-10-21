@@ -172,23 +172,13 @@ namespace IndustrialPark
 
         private void buttonImport_Click(object sender, EventArgs e)
         {
-            OpenFileDialog openFile = new OpenFileDialog()
+            if (ImportModel.GetModel(archive.game, archive.platform, out byte[] newModel, out bool createPipt))
             {
-                Filter = GetImportFilter(), // "All supported types|*.dae;*.obj;*.bsp|DAE Files|*.dae|OBJ Files|*.obj|BSP Files|*.bsp|All files|*.*",
-            };
-
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                if (asset.assetType == AssetType.Model)
-                    asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".dff") ?
-                    File.ReadAllBytes(openFile.FileName) :
-                    ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(openFile.FileName, checkBoxFilpUvs.Checked, checkBoxIgnoreMeshColors.Checked, false), modelRenderWareVersion(asset.game));
-                else if (asset.assetType == AssetType.BSP)
-                    asset.Data = Path.GetExtension(openFile.FileName).ToLower().Equals(".bsp") ?
-                    File.ReadAllBytes(openFile.FileName) :
-                    ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(openFile.FileName, checkBoxFilpUvs.Checked, checkBoxIgnoreMeshColors.Checked), modelRenderWareVersion(asset.game));
-
+                asset.Data = newModel;
                 asset.Setup(Program.MainForm.renderer);
+                if (createPipt && propertyGridPipeInfo.SelectedObject == null)
+                    buttonCreatePipeInfo.PerformClick();
+                archive.RecalculateAllMatrices();
                 archive.UnsavedChanges = true;
                 updateListView(asset);
                 SetupTexturesBox();
@@ -204,8 +194,10 @@ namespace IndustrialPark
             {
                 SaveFileDialog a = new SaveFileDialog()
                 {
-                    Filter = format == null ? "RenderWare BSP/DFF|*.bsp;*.dff" : format.Description + "|*." + format.FileExtension,
+                    FileName = asset.assetName,
+                    Filter = format == null ? "RenderWare DFF|*.dff" : format.Description + "|*." + format.FileExtension,
                 };
+
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     if (format == null)
@@ -380,6 +372,7 @@ namespace IndustrialPark
                         buttonCreateCollision.Text = "Remove";
                         propertyGridCollision.Enabled = true;
                         propertyGridCollision.SelectedObject = new CollWrapper(entry);
+                        buttonImportColl.Enabled = true;
                         return;
                     }
             }
@@ -406,6 +399,7 @@ namespace IndustrialPark
                 buttonCreateCollision.Text = "Create";
                 propertyGridCollision.SelectedObject = null;
                 propertyGridCollision.Enabled = false;
+                buttonImportColl.Enabled = false;
             }
         }
 
@@ -497,6 +491,51 @@ namespace IndustrialPark
         {
             asset.RemoveCollisionTree();
             removeCollPlgButton.Enabled = false;
+        }
+
+        private void importCollModlButton_Click(object sender, EventArgs e)
+        {
+            var coll = archive.GetCOLL(true);
+
+        }
+
+        private void buttonImportColl_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFile = new OpenFileDialog()
+            {
+                Filter = GetImportFilter(),
+            };
+
+            if (openFile.ShowDialog() != DialogResult.OK)
+                return;
+
+            RWSection rwmodel = CreateCollDFFFromAssimp(openFile.FileName);
+
+            string collName = asset.assetName + "_COLL";
+            Section_AHDR collmodelAhdr = new Section_AHDR(
+                Functions.BKDRHash(collName),
+                AssetType.Model,
+                ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.Model),
+                new Section_ADBG(0, collName, "", 0),
+                rwmodel.GetBytes(asset.RenderWareVersion));
+            Asset collModel = archive.AddAssetWithUniqueID(collmodelAhdr, archive.game, archive.platform.Endianness());
+
+            var coll = archive.GetCOLL();
+            foreach (var item in coll.Entries)
+                if (item.Model == asset.assetID)
+                {
+                    if (item.CollisionModel != 0)
+                        archive.RemoveAsset(item.CollisionModel);
+                    item.CollisionModel = collModel.assetID;
+                    propertyGridCollision.SelectedObject = new CollWrapper(item);
+                }
+
+            asset.RemoveCollisionTree();
+            foreach (var ae in Program.MainForm.archiveEditors)
+                if (ae.archive == archive)
+                {
+                    ae.PopulateAssetListAndComboBox();
+                }
         }
     }
 }

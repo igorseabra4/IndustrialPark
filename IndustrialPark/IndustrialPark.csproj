@@ -50,6 +50,9 @@
 	<AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
   </PropertyGroup>
   <ItemGroup>
+    <None Update="Libraries\NvTriStripDotNet.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\FSBank.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -192,6 +195,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Libraries\" />
     <Folder Include="Resources\CountryFlagIcons\" />
   </ItemGroup>
   <ItemGroup>
@@ -210,6 +214,11 @@
   <ItemGroup>
     <EmbeddedResource Remove="ArchiveEditor\Dialogs\ApplyVertexColors.en-GB.resx" />
     <EmbeddedResource Remove="MainForm\OpenLevel.en-GB.resx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="NvTriStripDotNet">
+      <HintPath>Libraries\NvTriStripDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ProjectExtensions />
   <Target Name="AfterBuild">

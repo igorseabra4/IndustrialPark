@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -122,7 +122,7 @@
     <value>6, 19</value>
   </data>
   <data name="comboBoxAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>248, 21</value>
+    <value>248, 23</value>
   </data>
   <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="comboBoxAssetTypes.TabIndex" type="System.Int32, mscorlib">
@@ -132,7 +132,7 @@
     <value>comboBoxAssetTypes</value>
   </data>
   <data name="&gt;&gt;comboBoxAssetTypes.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;comboBoxAssetTypes.Parent" xml:space="preserve">
     <value>groupBox1</value>
@@ -156,13 +156,13 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>5</value>
   </data>
   <data name="buttonImportRawData.Location" type="System.Drawing.Point, System.Drawing">
     <value>18, 12</value>
@@ -180,16 +180,20 @@
     <value>buttonImportRawData</value>
   </data>
   <data name="&gt;&gt;buttonImportRawData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonImportRawData.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonImportRawData.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>7</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="buttonOK.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
   <data name="buttonOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>289, 290</value>
+    <value>296, 389</value>
   </data>
   <data name="buttonOK.Size" type="System.Drawing.Size, System.Drawing">
     <value>92, 23</value>
@@ -204,16 +208,19 @@
     <value>buttonOK</value>
   </data>
   <data name="&gt;&gt;buttonOK.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonOK.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonOK.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>6</value>
+  </data>
+  <data name="buttonCancel.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Right</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>387, 290</value>
+    <value>394, 389</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>92, 23</value>
@@ -228,28 +235,22 @@
     <value>buttonCancel</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>4</value>
   </data>
-  <data name="listBox1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 19</value>
-  </data>
-  <data name="listBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 223</value>
-  </data>
-  <data name="listBox1.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
+  <data name="groupBox2.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left</value>
   </data>
   <data name="&gt;&gt;listBox1.Name" xml:space="preserve">
     <value>listBox1</value>
   </data>
   <data name="&gt;&gt;listBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;listBox1.Parent" xml:space="preserve">
     <value>groupBox2</value>
@@ -261,7 +262,7 @@
     <value>12, 41</value>
   </data>
   <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>202, 251</value>
+    <value>202, 342</value>
   </data>
   <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -273,13 +274,40 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>3</value>
+  </data>
+  <data name="listBox1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Bottom, Left</value>
+  </data>
+  <data name="listBox1.ItemHeight" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="listBox1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 19</value>
+  </data>
+  <data name="listBox1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>190, 317</value>
+  </data>
+  <data name="listBox1.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;listBox1.Name" xml:space="preserve">
+    <value>listBox1</value>
+  </data>
+  <data name="&gt;&gt;listBox1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;listBox1.Parent" xml:space="preserve">
+    <value>groupBox2</value>
+  </data>
+  <data name="&gt;&gt;listBox1.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="checkBoxFlipUVs.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -288,7 +316,7 @@
     <value>240, 68</value>
   </data>
   <data name="checkBoxFlipUVs.Size" type="System.Drawing.Size, System.Drawing">
-    <value>118, 17</value>
+    <value>68, 19</value>
   </data>
   <data name="checkBoxFlipUVs.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>
@@ -300,7 +328,7 @@
     <value>checkBoxFlipUVs</value>
   </data>
   <data name="&gt;&gt;checkBoxFlipUVs.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxFlipUVs.Parent" xml:space="preserve">
     <value>$this</value>
@@ -312,10 +340,10 @@
     <value>True</value>
   </data>
   <data name="checkBoxOverwrite.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 267</value>
+    <value>15, 37</value>
   </data>
   <data name="checkBoxOverwrite.Size" type="System.Drawing.Size, System.Drawing">
-    <value>173, 17</value>
+    <value>77, 19</value>
   </data>
   <data name="checkBoxOverwrite.TabIndex" type="System.Int32, mscorlib">
     <value>12</value>
@@ -327,13 +355,13 @@
     <value>checkBoxOverwrite</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="checkBoxGenSimps.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -342,7 +370,7 @@
     <value>15, 19</value>
   </data>
   <data name="checkBoxGenSimps.Size" type="System.Drawing.Size, System.Drawing">
-    <value>141, 17</value>
+    <value>154, 19</value>
   </data>
   <data name="checkBoxGenSimps.TabIndex" type="System.Int32, mscorlib">
     <value>13</value>
@@ -354,7 +382,7 @@
     <value>checkBoxGenSimps</value>
   </data>
   <data name="&gt;&gt;checkBoxGenSimps.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxGenSimps.Parent" xml:space="preserve">
     <value>grpSIMP</value>
@@ -362,41 +390,41 @@
   <data name="&gt;&gt;checkBoxGenSimps.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="checkBoxEnableVcolors.AutoSize" type="System.Boolean, mscorlib">
+  <data name="checkBoxCreatePIPT.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="checkBoxEnableVcolors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 244</value>
+  <data name="checkBoxCreatePIPT.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 19</value>
   </data>
-  <data name="checkBoxEnableVcolors.Size" type="System.Drawing.Size, System.Drawing">
-    <value>152, 17</value>
+  <data name="checkBoxCreatePIPT.Size" type="System.Drawing.Size, System.Drawing">
+    <value>86, 19</value>
   </data>
-  <data name="checkBoxEnableVcolors.TabIndex" type="System.Int32, mscorlib">
+  <data name="checkBoxCreatePIPT.TabIndex" type="System.Int32, mscorlib">
     <value>14</value>
   </data>
-  <data name="checkBoxEnableVcolors.Text" xml:space="preserve">
-    <value>Create pipe info table entry</value>
+  <data name="checkBoxCreatePIPT.Text" xml:space="preserve">
+    <value>Create PIPT</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnableVcolors.Name" xml:space="preserve">
-    <value>checkBoxEnableVcolors</value>
+  <data name="&gt;&gt;checkBoxCreatePIPT.Name" xml:space="preserve">
+    <value>checkBoxCreatePIPT</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnableVcolors.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;checkBoxCreatePIPT.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnableVcolors.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;checkBoxCreatePIPT.Parent" xml:space="preserve">
+    <value>grpImportSettings</value>
   </data>
-  <data name="&gt;&gt;checkBoxEnableVcolors.ZOrder" xml:space="preserve">
-    <value>2</value>
+  <data name="&gt;&gt;checkBoxCreatePIPT.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="checkBoxUseMeshColors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="checkBoxUseMeshColors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 91</value>
+  <data name="checkBoxIgnoreMeshColors.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 90</value>
   </data>
-  <data name="checkBoxUseMeshColors.Size" type="System.Drawing.Size, System.Drawing">
-    <value>104, 17</value>
+  <data name="checkBoxIgnoreMeshColors.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 19</value>
   </data>
   <data name="checkBoxUseMeshColors.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
@@ -407,14 +435,14 @@
   <data name="&gt;&gt;checkBoxUseMeshColors.Name" xml:space="preserve">
     <value>checkBoxUseMeshColors</value>
   </data>
-  <data name="&gt;&gt;checkBoxUseMeshColors.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;checkBoxIgnoreMeshColors.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;checkBoxUseMeshColors.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="&gt;&gt;checkBoxIgnoreMeshColors.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
   </data>
-  <data name="&gt;&gt;checkBoxUseMeshColors.ZOrder" xml:space="preserve">
-    <value>4</value>
+  <data name="&gt;&gt;checkBoxIgnoreMeshColors.ZOrder" xml:space="preserve">
+    <value>1</value>
   </data>
   <data name="checkBoxLedgeGrab.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -426,7 +454,7 @@
     <value>43, 55</value>
   </data>
   <data name="checkBoxLedgeGrab.Size" type="System.Drawing.Size, System.Drawing">
-    <value>108, 17</value>
+    <value>115, 19</value>
   </data>
   <data name="checkBoxLedgeGrab.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
@@ -438,7 +466,7 @@
     <value>checkBoxLedgeGrab</value>
   </data>
   <data name="&gt;&gt;checkBoxLedgeGrab.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxLedgeGrab.Parent" xml:space="preserve">
     <value>grpSIMP</value>
@@ -456,7 +484,7 @@
     <value>43, 37</value>
   </data>
   <data name="checkBoxSolidSimps.Size" type="System.Drawing.Size, System.Drawing">
-    <value>49, 17</value>
+    <value>52, 19</value>
   </data>
   <data name="checkBoxSolidSimps.TabIndex" type="System.Int32, mscorlib">
     <value>17</value>
@@ -468,7 +496,7 @@
     <value>checkBoxSolidSimps</value>
   </data>
   <data name="&gt;&gt;checkBoxSolidSimps.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxSolidSimps.Parent" xml:space="preserve">
     <value>grpSIMP</value>
@@ -476,33 +504,35 @@
   <data name="&gt;&gt;checkBoxSolidSimps.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="checkBoxUseExistingDefaultLayer.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="grpImportSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>225, 68</value>
   </data>
-  <data name="checkBoxUseExistingDefaultLayer.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
+  <data name="grpImportSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>261, 64</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="checkBoxUseExistingDefaultLayer.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
-  <data name="checkBoxUseExistingDefaultLayer.Location" type="System.Drawing.Point, System.Drawing">
-    <value>43, 73</value>
-  </data>
-  <data name="checkBoxUseExistingDefaultLayer.Size" type="System.Drawing.Size, System.Drawing">
-    <value>183, 17</value>
-  </data>
-  <data name="checkBoxUseExistingDefaultLayer.TabIndex" type="System.Int32, mscorlib">
+  <data name="grpImportSettings.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
   </data>
-  <data name="checkBoxUseExistingDefaultLayer.Text" xml:space="preserve">
-    <value>Place on existing DEFAULT layer</value>
+  <data name="grpImportSettings.Text" xml:space="preserve">
+    <value>Import Settings</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.Name" xml:space="preserve">
+    <value>grpImportSettings</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Name" xml:space="preserve">
     <value>checkBoxUseExistingDefaultLayer</value>
   </data>
   <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Parent" xml:space="preserve">
     <value>grpSIMP</value>
@@ -511,10 +541,10 @@
     <value>0</value>
   </data>
   <data name="grpSIMP.Location" type="System.Drawing.Point, System.Drawing">
-    <value>225, 137</value>
+    <value>225, 281</value>
   </data>
   <data name="grpSIMP.Size" type="System.Drawing.Size, System.Drawing">
-    <value>261, 101</value>
+    <value>261, 102</value>
   </data>
   <data name="grpSIMP.TabIndex" type="System.Int32, mscorlib">
     <value>19</value>
@@ -526,52 +556,328 @@
     <value>grpSIMP</value>
   </data>
   <data name="&gt;&gt;grpSIMP.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;grpSIMP.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;grpSIMP.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>1</value>
   </data>
-  <data name="checkBoxAddWhiteVColors.AutoSize" type="System.Boolean, mscorlib">
+  <data name="checkBoxUseExistingDefaultLayer.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
-  <data name="checkBoxAddWhiteVColors.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+  <data name="checkBoxUseExistingDefaultLayer.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="checkBoxUseExistingDefaultLayer.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
     <value>NoControl</value>
   </data>
-  <data name="checkBoxAddWhiteVColors.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 114</value>
+  <data name="checkBoxUseExistingDefaultLayer.Location" type="System.Drawing.Point, System.Drawing">
+    <value>43, 73</value>
   </data>
-  <data name="checkBoxAddWhiteVColors.Size" type="System.Drawing.Size, System.Drawing">
-    <value>209, 17</value>
+  <data name="checkBoxUseExistingDefaultLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>192, 19</value>
   </data>
-  <data name="checkBoxAddWhiteVColors.TabIndex" type="System.Int32, mscorlib">
+  <data name="checkBoxUseExistingDefaultLayer.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="checkBoxUseExistingDefaultLayer.Text" xml:space="preserve">
+    <value>Place on existing DEFAULT layer</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Name" xml:space="preserve">
+    <value>checkBoxUseExistingDefaultLayer</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.Parent" xml:space="preserve">
+    <value>grpSIMP</value>
+  </data>
+  <data name="&gt;&gt;checkBoxUseExistingDefaultLayer.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="checkBoxBinMesh.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxBinMesh.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 90</value>
+  </data>
+  <data name="checkBoxBinMesh.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 19</value>
+  </data>
+  <data name="checkBoxBinMesh.TabIndex" type="System.Int32, mscorlib">
     <value>16</value>
   </data>
-  <data name="checkBoxAddWhiteVColors.Text" xml:space="preserve">
-    <value>Add white vertex colors if none present</value>
+  <data name="checkBoxBinMesh.Text" xml:space="preserve">
+    <value>Bin Mesh PLG</value>
   </data>
-  <data name="&gt;&gt;checkBoxAddWhiteVColors.Name" xml:space="preserve">
-    <value>checkBoxAddWhiteVColors</value>
+  <data name="&gt;&gt;checkBoxBinMesh.Name" xml:space="preserve">
+    <value>checkBoxBinMesh</value>
   </data>
-  <data name="&gt;&gt;checkBoxAddWhiteVColors.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;checkBoxBinMesh.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;checkBoxAddWhiteVColors.Parent" xml:space="preserve">
+  <data name="&gt;&gt;checkBoxBinMesh.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxBinMesh.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="checkBoxMultiAtomic.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxMultiAtomic.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 67</value>
+  </data>
+  <data name="checkBoxMultiAtomic.Size" type="System.Drawing.Size, System.Drawing">
+    <value>98, 19</value>
+  </data>
+  <data name="checkBoxMultiAtomic.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="checkBoxMultiAtomic.Text" xml:space="preserve">
+    <value>Multi-Atomic</value>
+  </data>
+  <data name="&gt;&gt;checkBoxMultiAtomic.Name" xml:space="preserve">
+    <value>checkBoxMultiAtomic</value>
+  </data>
+  <data name="&gt;&gt;checkBoxMultiAtomic.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxMultiAtomic.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxMultiAtomic.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="checkBoxNativeData.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxNativeData.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 44</value>
+  </data>
+  <data name="checkBoxNativeData.Size" type="System.Drawing.Size, System.Drawing">
+    <value>87, 19</value>
+  </data>
+  <data name="checkBoxNativeData.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="checkBoxNativeData.Text" xml:space="preserve">
+    <value>Native Data</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNativeData.Name" xml:space="preserve">
+    <value>checkBoxNativeData</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNativeData.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNativeData.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNativeData.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="checkBoxTriStrips.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxTriStrips.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="checkBoxTriStrips.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 67</value>
+  </data>
+  <data name="checkBoxTriStrips.Size" type="System.Drawing.Size, System.Drawing">
+    <value>99, 19</value>
+  </data>
+  <data name="checkBoxTriStrips.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="checkBoxTriStrips.Text" xml:space="preserve">
+    <value>Triangle Strips</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTriStrips.Name" xml:space="preserve">
+    <value>checkBoxTriStrips</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTriStrips.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTriStrips.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTriStrips.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="checkBoxCollTree.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxCollTree.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 113</value>
+  </data>
+  <data name="checkBoxCollTree.Size" type="System.Drawing.Size, System.Drawing">
+    <value>96, 19</value>
+  </data>
+  <data name="checkBoxCollTree.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="checkBoxCollTree.Text" xml:space="preserve">
+    <value>Collision Tree</value>
+  </data>
+  <data name="&gt;&gt;checkBoxCollTree.Name" xml:space="preserve">
+    <value>checkBoxCollTree</value>
+  </data>
+  <data name="&gt;&gt;checkBoxCollTree.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxCollTree.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxCollTree.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="checkBoxGeoTriangles.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxGeoTriangles.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 113</value>
+  </data>
+  <data name="checkBoxGeoTriangles.Size" type="System.Drawing.Size, System.Drawing">
+    <value>127, 19</value>
+  </data>
+  <data name="checkBoxGeoTriangles.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="checkBoxGeoTriangles.Text" xml:space="preserve">
+    <value>Geometry Triangles</value>
+  </data>
+  <data name="&gt;&gt;checkBoxGeoTriangles.Name" xml:space="preserve">
+    <value>checkBoxGeoTriangles</value>
+  </data>
+  <data name="&gt;&gt;checkBoxGeoTriangles.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxGeoTriangles.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxGeoTriangles.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="checkBoxVertexColors.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxVertexColors.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 44</value>
+  </data>
+  <data name="checkBoxVertexColors.Size" type="System.Drawing.Size, System.Drawing">
+    <value>95, 19</value>
+  </data>
+  <data name="checkBoxVertexColors.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="checkBoxVertexColors.Text" xml:space="preserve">
+    <value>Vertex Colors</value>
+  </data>
+  <data name="&gt;&gt;checkBoxVertexColors.Name" xml:space="preserve">
+    <value>checkBoxVertexColors</value>
+  </data>
+  <data name="&gt;&gt;checkBoxVertexColors.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxVertexColors.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxVertexColors.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="checkBoxNormals.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxNormals.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 22</value>
+  </data>
+  <data name="checkBoxNormals.Size" type="System.Drawing.Size, System.Drawing">
+    <value>71, 19</value>
+  </data>
+  <data name="checkBoxNormals.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="checkBoxNormals.Text" xml:space="preserve">
+    <value>Normals</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNormals.Name" xml:space="preserve">
+    <value>checkBoxNormals</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNormals.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNormals.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNormals.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="checkBoxTexCoords.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxTexCoords.Location" type="System.Drawing.Point, System.Drawing">
+    <value>14, 22</value>
+  </data>
+  <data name="checkBoxTexCoords.Size" type="System.Drawing.Size, System.Drawing">
+    <value>105, 19</value>
+  </data>
+  <data name="checkBoxTexCoords.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="checkBoxTexCoords.Text" xml:space="preserve">
+    <value>Texture Coords</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTexCoords.Name" xml:space="preserve">
+    <value>checkBoxTexCoords</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTexCoords.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTexCoords.Parent" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxTexCoords.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="groupBoxModelSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>226, 135</value>
+  </data>
+  <data name="groupBoxModelSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>260, 142</value>
+  </data>
+  <data name="groupBoxModelSettings.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="groupBoxModelSettings.Text" xml:space="preserve">
+    <value>Model Settings</value>
+  </data>
+  <data name="&gt;&gt;groupBoxModelSettings.Name" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;groupBoxModelSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxModelSettings.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="&gt;&gt;checkBoxAddWhiteVColors.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="&gt;&gt;groupBoxModelSettings.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
   <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
+    <value>7, 15</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>497, 323</value>
+    <value>497, 424</value>
+  </data>
+  <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
+    <value>Segoe UI, 9pt</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>
@@ -583,6 +889,6 @@
     <value>ImportModel</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

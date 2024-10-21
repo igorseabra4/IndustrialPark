@@ -3,6 +3,7 @@ using RenderWareFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
 using static IndustrialPark.Models.BSP_IO_Shared;
@@ -11,17 +12,36 @@ namespace IndustrialPark
 {
     public partial class ImportModel : Form
     {
-        public ImportModel(bool noLayers)
+        private bool isSingleModel = false;
+        public ImportModel(Platform platform, bool noLayers, bool isSingleModel)
         {
             InitializeComponent();
 
             buttonOK.Enabled = false;
             TopMost = true;
+            this.isSingleModel = isSingleModel;
+
             comboBoxAssetTypes.Items.Add(AssetType.Model);
             comboBoxAssetTypes.Items.Add(AssetType.BSP);
-            // comboBoxAssetTypes.Items.Add(AssetType.JSP);
             comboBoxAssetTypes.SelectedItem = AssetType.Model;
+
             checkBoxUseExistingDefaultLayer.Visible = !noLayers;
+
+            if (isSingleModel)
+            {
+                grpSIMP.Visible = false;
+                Text = "Select Model";
+                buttonImportRawData.Text = "Select Model...";
+                checkBoxOverwrite.Enabled = false;
+                Height -= grpSIMP.Height;
+            }
+
+            if (platform != Platform.GameCube)
+                checkBoxNativeData.Enabled = false;
+
+            if (platform == Platform.PS2)
+                (checkBoxCreatePIPT.Checked, checkBoxCreatePIPT.Enabled) = (true, false);
+
         }
 
         List<string> filePaths = new List<string>();
@@ -30,7 +50,7 @@ namespace IndustrialPark
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Multiselect = true,
+                Multiselect = isSingleModel ? false : true,
                 Filter = GetImportFilter()
             };
 
@@ -38,6 +58,12 @@ namespace IndustrialPark
             {
                 foreach (string s in openFileDialog.FileNames)
                     filePaths.Add(s);
+
+                if (isSingleModel)
+                {
+                    filePaths.Clear();
+                    filePaths.Add(openFileDialog.FileName);
+                }
 
                 UpdateListBox();
             }
@@ -47,8 +73,11 @@ namespace IndustrialPark
         {
             listBox1.Items.Clear();
 
-            foreach (string s in filePaths)
-                listBox1.Items.Add(Path.GetFileName(s));
+            if (isSingleModel)
+                listBox1.Items.Add(Path.GetFileName(filePaths[0]));
+            else
+                foreach (string s in filePaths)
+                    listBox1.Items.Add(Path.GetFileName(s));
 
             buttonOK.Enabled = listBox1.Items.Count > 0;
         }
@@ -67,9 +96,56 @@ namespace IndustrialPark
             Close();
         }
 
-        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp, bool useExistingDefaultLayer) GetModels(Game game, bool noLayers)
+        /// <summary>
+        /// Opens a dialog and creates a renderware model from the selected model file. 
+        /// If the file extension ends with ".dff" or ".bsp" it will be read raw.
+        /// </summary>
+        /// <param name="game"></param>
+        /// <param name="platform"></param>
+        /// <param name="model"></param>
+        /// <returns>True if model was created/read successfully, false otherwise</returns>
+        public static bool GetModel(Game game, Platform platform, out byte[] model, out bool createPipt)
         {
-            using (ImportModel a = new ImportModel(noLayers))
+            model = null;
+            createPipt = false;
+
+            using (ImportModel a = new ImportModel(platform, false, true))
+                if (a.ShowDialog() == DialogResult.OK)
+                {
+                    createPipt = a.checkBoxCreatePIPT.Checked;
+                    ReadFileMethods.treatStuffAsByteArray = false;
+
+                    if (((AssetType)a.comboBoxAssetTypes.SelectedItem) == AssetType.Model)
+                    {
+                        model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".dff") ? File.ReadAllBytes(a.filePaths[0]) :
+                            ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0],
+                                a.checkBoxTriStrips.Checked,
+                                a.checkBoxFlipUVs.Checked,
+                                a.checkBoxIgnoreMeshColors.Checked,
+                                a.checkBoxVertexColors.Checked,
+                                a.checkBoxTexCoords.Checked,
+                                a.checkBoxNormals.Checked,
+                                a.checkBoxGeoTriangles.Checked,
+                                a.checkBoxMultiAtomic.Checked,
+                                a.checkBoxNativeData.Checked,
+                                a.checkBoxCollTree.Checked,
+                                a.checkBoxBinMesh.Checked), modelRenderWareVersion(game));
+                    }
+                    else if (((AssetType)a.comboBoxAssetTypes.SelectedItem) == AssetType.BSP)
+                    {
+                        model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".bsp") ? File.ReadAllBytes(a.filePaths[0]) :
+                            ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(a.filePaths[0], a.checkBoxFlipUVs.Checked, a.checkBoxIgnoreMeshColors.Checked),
+                            modelRenderWareVersion(game));
+                    }
+
+                    return true;
+                }
+            return false;
+        }
+
+        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp, bool useExistingDefaultLayer) GetModels(Game game, Platform platform, bool noLayers)
+        {
+            using (ImportModel a = new ImportModel(platform, noLayers, false))
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     List<Section_AHDR> AHDRs = new List<Section_AHDR>();
@@ -94,10 +170,17 @@ namespace IndustrialPark
                                     File.ReadAllBytes(filePath) :
                                     ReadFileMethods.ExportRenderWareFile(
                                         CreateDFFFromAssimp(filePath,
-                                        a.checkBoxFlipUVs.Checked,
-                                        a.checkBoxUseMeshColors.Checked,
-                                        a.checkBoxAddWhiteVColors.Checked
-                                        ),
+                                            a.checkBoxTriStrips.Checked,
+                                            a.checkBoxFlipUVs.Checked,
+                                            a.checkBoxIgnoreMeshColors.Checked,
+                                            a.checkBoxVertexColors.Checked,
+                                            a.checkBoxTexCoords.Checked,
+                                            a.checkBoxNormals.Checked,
+                                            a.checkBoxGeoTriangles.Checked,
+                                            a.checkBoxMultiAtomic.Checked,
+                                            a.checkBoxNativeData.Checked,
+                                            a.checkBoxCollTree.Checked,
+                                            a.checkBoxBinMesh.Checked),
                                         modelRenderWareVersion(game));
                             }
                             catch (ArgumentException e)
@@ -166,7 +249,7 @@ namespace IndustrialPark
                         a.checkBoxOverwrite.Checked,
                         a.checkBoxGenSimps.Checked,
                         a.checkBoxLedgeGrab.Checked,
-                        a.checkBoxEnableVcolors.Checked,
+                        a.checkBoxCreatePIPT.Checked,
                         a.checkBoxSolidSimps.Checked,
                         assetType == AssetType.JSP,
                         a.checkBoxUseExistingDefaultLayer.Checked);
@@ -192,16 +275,39 @@ namespace IndustrialPark
                 checkBoxSolidSimps.Enabled = false;
                 checkBoxLedgeGrab.Checked = false;
                 checkBoxLedgeGrab.Enabled = false;
-                checkBoxEnableVcolors.Checked = false;
-                checkBoxEnableVcolors.Enabled = false;
+                checkBoxCreatePIPT.Checked = false;
+                checkBoxCreatePIPT.Enabled = false;
             }
             else
             {
                 checkBoxGenSimps.Enabled = true;
-                checkBoxEnableVcolors.Enabled = true;
+                checkBoxCreatePIPT.Enabled = true;
                 checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
                 checkBoxSolidSimps.Enabled = checkBoxGenSimps.Checked;
             }
+        }
+
+        private void checkBoxCollision_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxCollTree.Enabled = checkBoxGeoTriangles.Checked;
+        }
+
+        private void checkBoxNativeData_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxTriStrips.Checked = checkBoxNativeData.Checked;
+            checkBoxTriStrips.Enabled = !checkBoxNativeData.Checked;
+            checkBoxGeoTriangles.Checked = !checkBoxNativeData.Checked;
+            checkBoxGeoTriangles.Enabled = !checkBoxNativeData.Checked;
+            checkBoxMultiAtomic.Checked = checkBoxNativeData.Checked;
+            checkBoxMultiAtomic.Enabled = !checkBoxNativeData.Checked;
+            checkBoxSolidSimps.Checked = !checkBoxNativeData.Checked;
+            checkBoxBinMesh.Checked = checkBoxNativeData.Checked;
+            checkBoxBinMesh.Enabled = !checkBoxNativeData.Checked;
+        }
+
+        private void checkBoxBinMesh_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxTriStrips.Enabled = checkBoxBinMesh.Checked;
         }
     }
 }

@@ -1,9 +1,12 @@
-﻿using RenderWareFile;
+﻿using Assimp;
+using Newtonsoft.Json;
+using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 
 namespace IndustrialPark
@@ -218,6 +221,8 @@ namespace IndustrialPark
                 AddNativeData(device, g.geometryExtension, materialList, transformMatrix);
                 return;
             }
+            vertexAmount += (uint)g.geometryStruct.numVertices;
+            triangleAmount += (uint)g.geometryStruct.numTriangles;
 
             List<Vector3> vertexList1 = new List<Vector3>();
             List<Vector3> normalList = new List<Vector3>();
@@ -273,19 +278,17 @@ namespace IndustrialPark
             List<int> indexList = new List<int>();
             int previousIndexCount = 0;
 
+            BinMesh[] binmeshes = g.geometryExtension.extensionSectionList.Where(b => b.sectionIdentifier == Section.BinMeshPLG)
+                .OfType<BinMeshPLG_050E>()
+                .SelectMany(b => b.binMeshList)
+                .ToArray();
+
             for (int i = 0; i < materialList.Count; i++)
             {
-                foreach (Triangle t in g.geometryStruct.triangles)
-                {
-                    if (t.materialIndex == i)
-                    {
-                        indexList.Add(t.vertex1);
-                        indexList.Add(t.vertex2);
-                        indexList.Add(t.vertex3);
-
-                        triangleList.Add(new Triangle(t.materialIndex, (ushort)(t.vertex1 + triangleListOffset), (ushort)(t.vertex2 + triangleListOffset), (ushort)(t.vertex3 + triangleListOffset)));
-                    }
-                }
+                if (binmeshes.Any())
+                    indexList.AddRange(binmeshes.Where(b => b.materialIndex == i).SelectMany(b => b.vertexIndices));
+                else
+                    indexList.AddRange(GetIndicesFromTriangles(g.geometryStruct.triangles.Where(t => t.materialIndex == i).ToList()));
 
                 if (indexList.Count - previousIndexCount > 0)
                 {
@@ -296,6 +299,12 @@ namespace IndustrialPark
                 previousIndexCount = indexList.Count();
             }
 
+            if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYTRISTRIP) != 0 && binmeshes.Any())
+                triangleList.AddRange(FilterTriangleStrip(indexList.ToArray(), offset: triangleListOffset));
+            else
+                triangleList.AddRange(FilterTriangleList(indexList.ToArray(), offset: triangleListOffset));
+
+
             triangleListOffset += vertexList1.Count;
 
             if (SubsetList.Count > 0)
@@ -303,7 +312,11 @@ namespace IndustrialPark
                 VertexColoredTextured[] vertices = new VertexColoredTextured[vertexList1.Count];
                 for (int i = 0; i < vertices.Length; i++)
                     vertices[i] = new VertexColoredTextured(vertexList1[i], textCoordList[i], colorList[i]);
-                AddToMeshList(SharpMesh.Create(device, vertices, indexList.ToArray(), SubsetList));
+                AddToMeshList(SharpMesh.Create(device, 
+                    vertices, 
+                    indexList.ToArray(), 
+                    SubsetList, 
+                    (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYTRISTRIP) != 0 ? SharpDX.Direct3D.PrimitiveTopology.TriangleStrip : SharpDX.Direct3D.PrimitiveTopology.TriangleList));
             }
             else
                 AddToMeshList(null);
@@ -580,6 +593,67 @@ namespace IndustrialPark
                     m.Dispose();
             }
             meshList.Clear();
+        }
+
+        public static bool IsDegenerate(int i1, int i2, int i3)
+        {
+            return i1 == i2 || i2 == i3 || i1 == i3;
+        }
+
+        /// <summary>
+        /// Create a list of RenderWareFile.Triangles from a raw triangle list indices array (like used in BinMesh PLG).
+        /// </summary>
+        /// <param name="indices">Raw indices array</param>
+        /// <param name="materialIndex">Material index, default is 0</param>
+        /// <param name="offset">Offset to apply to every index</param>
+        /// <returns></returns>
+        public static List<Triangle> FilterTriangleList(int[] indices, int materialIndex = 0, int offset = 0)
+        {
+            List<Triangle> triangles = new();
+
+            for (int i = 0; i < indices.Length; i += 3)
+            {
+                int i1 = indices[i] + offset;
+                int i2 = indices[i + 1] + offset;
+                int i3 = indices[i + 2] + offset;
+
+                triangles.Add(new Triangle((ushort)materialIndex, (ushort)i1, (ushort)i2, (ushort)i3));
+            }
+
+            return triangles;
+        }
+
+        /// <summary>
+        /// Create a list of RenderWareFile.Triangles from a raw triangle strip indices array (like used in BinMesh PLG).
+        /// </summary>
+        /// <param name="indices">Raw indices array</param>
+        /// <param name="materialIndex">Material index, default is 0</param>
+        /// <param name="offset">Offset to apply to every index</param>
+        /// <returns>List of RenderWareFile.Triangles excluding degenerated triangles</returns>
+        public static List<Triangle> FilterTriangleStrip(int[] indices, int materialIndex = 0, int offset = 0)
+        {
+            List<Triangle> triangles = new();
+
+            for (int i = 2; i < indices.Length; i++)
+            {
+                if (IsDegenerate(indices[i - 2], indices[i - 1], indices[i]))
+                    continue;
+
+                if (i % 2 == 0)
+                    triangles.Add(new Triangle((ushort)materialIndex, (ushort)(indices[i - 2] + offset), (ushort)(indices[i - 1] + offset), (ushort)(indices[i] + offset)));
+                else
+                    triangles.Add(new Triangle((ushort)materialIndex, (ushort)(indices[i - 1] + offset), (ushort)(indices[i - 2] + offset), (ushort)(indices[i] + offset)));
+            }
+
+            return triangles;
+        }
+
+        public static int[] GetIndicesFromTriangles(List<Triangle> triangles)
+        {
+            if (triangles == null || triangles.Count == 0)
+                return Array.Empty<int>();
+
+            return triangles.SelectMany(tri => new int[] { tri.vertex1, tri.vertex2, tri.vertex3 }).ToArray();
         }
     }
 }

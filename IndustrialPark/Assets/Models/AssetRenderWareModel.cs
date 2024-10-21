@@ -3,10 +3,12 @@ using IndustrialPark.Models.CollisionTree;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
+using SharpDX.Text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Cryptography;
 
 namespace IndustrialPark
 {
@@ -78,6 +80,21 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
+        public bool IsCollisionModel
+        {
+            get
+            {
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                        foreach (RWSection section in clump.clumpExtension.extensionSectionList)
+                            if (section.sectionIdentifier == RenderWareFile.Section.String)
+                                if (Encoding.ASCII.GetString(((GenericSection)section).data, 0, 4).Contains("COLL"))
+                                    return true;
+                return false;
+            }
+        }
+
+        [Browsable(false)]
         public string[] Textures
         {
             get
@@ -131,6 +148,10 @@ namespace IndustrialPark
         }
 
         private int renderWareVersion;
+        public int RenderWareVersion
+        {
+            get { return renderWareVersion; }
+        }
 
         public RWSection[] ModelAsRWSections
         {
@@ -360,7 +381,7 @@ namespace IndustrialPark
                             geom.geometryExtension.extensionSectionList.Add(Collis_36.RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
                     }
 
-                                
+
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
         }
 
@@ -377,11 +398,7 @@ namespace IndustrialPark
                         var newColor = getColor(
                             new Vector4(oldColor.R / 255f, oldColor.G / 255f, oldColor.B / 255f, oldColor.A / 255f));
 
-                        vd.entryList[k] = new RenderWareFile.Color(
-                            (byte)(newColor.X * 255),
-                            (byte)(newColor.Y * 255),
-                            (byte)(newColor.Z * 255),
-                            (byte)(newColor.W * 255));
+                        vd.entryList[k] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
                     }
                 }
         }
@@ -396,7 +413,7 @@ namespace IndustrialPark
                         {
                             RenderWareFile.Color oldColor = clusterColor.entryList[i];
                             Vector4 newColor = getColor(new Vector4(oldColor.R / 255f, oldColor.G / 255f, oldColor.B / 255f, oldColor.A / 255f));
-                            clusterColor.entryList[i] = new RenderWareFile.Color((byte)(newColor.X * 255), (byte)(newColor.Y * 255), (byte)(newColor.Z * 255), (byte)(newColor.W * 255));
+                            clusterColor.entryList[i] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
                         }
                     }
         }
@@ -407,11 +424,7 @@ namespace IndustrialPark
             {
                 var oldColor = geometry.geometryStruct.vertexColors[i];
                 var newColor = getColor(new Vector4(oldColor.R / 255.0f, oldColor.G / 255.0f, oldColor.B / 255.0f, oldColor.A / 255.0f));
-                geometry.geometryStruct.vertexColors[i] = new RenderWareFile.Color(
-                    (byte)(newColor.X * 255f),
-                    (byte)(newColor.Y * 255f),
-                    (byte)(newColor.Z * 255f),
-                    (byte)(newColor.W * 255f));
+                geometry.geometryStruct.vertexColors[i] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
             }
         }
 

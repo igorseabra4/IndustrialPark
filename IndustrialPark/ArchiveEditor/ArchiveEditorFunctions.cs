@@ -411,7 +411,7 @@ namespace IndustrialPark
                     asset is DynaGeneric ||
                     asset is AssetJSP ||
                     asset is AssetJSP_INFO ||
-                    asset is AssetMODL ||
+                    (asset is AssetMODL modl && modl.IsNativeData) ||
                     asset is AssetRWTX)
                     result.Add($"[{AssetTypeContainer.AssetTypeToString(asset.assetType)}] {asset.assetName}");
             }
