@@ -31,9 +31,15 @@ namespace IndustrialPark
         {
             // Check for duplicates and warn as necessary
             List<string> files = new List<string>();
-            files.Add(txtHIP.Text);
-            files.Add(txtHOP.Text);
-            files.Add(txtBOOT.Text);
+            
+            // Only add the files that are checked
+            if (chkHIP.Checked)
+                files.Add(txtHIP.Text);
+            if (chkHOP.Checked)
+                files.Add(txtHOP.Text);
+            if (chkBOOT.Checked)
+                files.Add(txtBOOT.Text);
+            
             foreach (var item in lvwLocalization.CheckedItems)
             {
                 files.Add(((ListViewItem)item).Text);
