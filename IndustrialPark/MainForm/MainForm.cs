@@ -82,6 +82,10 @@ namespace IndustrialPark
             builder.Append("Industrial Park ");
             builder.Append(new IPversion().version);
 
+#if DEBUG
+            builder.Append(" (Debug)");
+#endif
+
             // Prevents a crash if form is updated from a different thread.
             if (InvokeRequired)
             {
