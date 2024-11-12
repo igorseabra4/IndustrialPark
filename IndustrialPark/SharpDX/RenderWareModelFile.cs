@@ -1,4 +1,5 @@
-﻿using Assimp;
+﻿using IndustrialPark.RenderData;
+using Assimp;
 using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
@@ -8,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Eventing.Reader;
 using System.Linq;
+using IndustrialPark.AssetEditorColors;
 
 namespace IndustrialPark
 {
@@ -33,7 +35,8 @@ namespace IndustrialPark
         public List<Triangle> triangleList;
         private int triangleListOffset;
 
-        public UvAnimRenderData renderData;
+        public FogLightRenderData renderData;
+        public JspRenderData jspRenderData;
 
         public RenderWareModelFile(SharpDevice device, RWSection[] rwSectionArray)
         {
@@ -42,7 +45,7 @@ namespace IndustrialPark
             vertexListG = new List<Vector3>();
             triangleList = new List<Triangle>();
             triangleListOffset = 0;
-            List<string> materialList = new List<string>();
+            List<Material_0007> materialList = new();
 
             foreach (RWSection rwSection in rwSectionArray)
             {
@@ -55,20 +58,20 @@ namespace IndustrialPark
                     {
                         if (m.texture != null)
                         {
-                            materialList.Add(m.texture.diffuseTextureName.stringString);
+                            materialList.Add(m);
                         }
                         else
                         {
-                            materialList.Add(DefaultTexture);
+                            materialList.Add(null);
                         }
                     }
                     if (w.firstWorldChunk is AtomicSector_0009 a)
                     {
-                        AddAtomic(device, a, materialList);
+                        AddAtomic(device, a, materialList, w);
                     }
                     else if (w.firstWorldChunk is PlaneSector_000A p)
                     {
-                        AddPlane(device, p, materialList);
+                        AddPlane(device, p, materialList, w);
                     }
                 }
                 else if (rwSection is Clump_0010 c)
@@ -109,36 +112,36 @@ namespace IndustrialPark
             return transform;
         }
 
-        private void AddPlane(SharpDevice device, PlaneSector_000A planeSection, List<string> materialList)
+        private void AddPlane(SharpDevice device, PlaneSector_000A planeSection, List<Material_0007> materialList, World_000B w)
         {
             if (planeSection.leftSection is AtomicSector_0009 al)
             {
-                AddAtomic(device, al, materialList);
+                AddAtomic(device, al, materialList, w);
             }
             else if (planeSection.leftSection is PlaneSector_000A pl)
             {
-                AddPlane(device, pl, materialList);
+                AddPlane(device, pl, materialList, w);
             }
             else
                 throw new Exception();
 
             if (planeSection.rightSection is AtomicSector_0009 ar)
             {
-                AddAtomic(device, ar, materialList);
+                AddAtomic(device, ar, materialList, w);
             }
             else if (planeSection.rightSection is PlaneSector_000A pr)
             {
-                AddPlane(device, pr, materialList);
+                AddPlane(device, pr, materialList, w);
             }
             else
                 throw new Exception();
         }
 
-        private void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector, List<string> MaterialList)
+        private void AddAtomic(SharpDevice device, AtomicSector_0009 AtomicSector, List<Material_0007> MaterialList, World_000B world)
         {
             if (AtomicSector.atomicSectorStruct.isNativeData)
             {
-                AddNativeData(device, AtomicSector.atomicSectorExtension, MaterialList, Matrix.Identity);
+                AddNativeData(device, AtomicSector.atomicSectorExtension, MaterialList, Matrix.Identity, world);
                 return;
             }
 
@@ -190,7 +193,9 @@ namespace IndustrialPark
                 if (indexList.Count - previousIndexCount > 0)
                 {
                     SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount,
-                        TextureManager.GetTextureFromDictionary(MaterialList[i]), MaterialList[i]));
+                        TextureManager.GetTextureFromDictionary(MaterialList[i]), MaterialList[i] != null ? ((AssetColor)MaterialList[i]?.materialStruct.color).ToVector4() : Vector4.One, 
+                        MaterialList[i]?.texture?.DiffuseTextureName ?? DefaultTexture,
+                        EnablePrelight: (world.worldStruct.worldFlags & WorldFlags.HasVertexColors) != 0, EnableLights: (world.worldStruct.worldFlags & WorldFlags.UseLighting) != 0));
                 }
 
                 previousIndexCount = indexList.Count();
@@ -204,21 +209,11 @@ namespace IndustrialPark
 
         private void AddGeometry(SharpDevice device, Geometry_000F g, Matrix transformMatrix)
         {
-            List<string> materialList = new List<string>();
-            foreach (Material_0007 m in g.materialList.materialList)
-            {
-                if (m.texture != null)
-                {
-                    string textureName = m.texture.diffuseTextureName.stringString;
-                    materialList.Add(textureName);
-                }
-                else
-                    materialList.Add(DefaultTexture);
-            }
+            List<Material_0007> materialList = g.materialList.materialList.ToList();
 
             if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYNATIVE) != 0)
             {
-                AddNativeData(device, g.geometryExtension, materialList, transformMatrix);
+                AddNativeData(device, g.geometryExtension, materialList, transformMatrix, g);
                 return;
             }
             vertexAmount += (uint)g.geometryStruct.numVertices;
@@ -245,6 +240,9 @@ namespace IndustrialPark
                 for (int i = 0; i < vertexList1.Count; i++)
                     normalList.Add(new Vector3(g.geometryStruct.morphTargets[0].normals[i].X, g.geometryStruct.morphTargets[0].normals[i].Y, g.geometryStruct.morphTargets[0].normals[i].Z));
             }
+            else
+                for (int i = 0; i < vertexList1.Count; i++)
+                    normalList.Add(new Vector3(0f, 0f, 0f));
 
             if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0)
             {
@@ -293,7 +291,10 @@ namespace IndustrialPark
                 if (indexList.Count - previousIndexCount > 0)
                 {
                     SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount,
-                        TextureManager.GetTextureFromDictionary(materialList[i]), materialList[i]));
+                        TextureManager.GetTextureFromDictionary(materialList[i]), 
+                        materialList[i] != null && (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR) != 0 ? ((AssetColor)materialList[i]?.materialStruct.color).ToVector4() : Vector4.One,
+                        materialList[i]?.texture?.DiffuseTextureName ?? DefaultTexture, materialList[i]?.materialStruct.diffuse ?? 1f, materialList[i]?.materialStruct.ambient ?? 1f,
+                        (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0, (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYLIGHTS) != 0));
                 }
 
                 previousIndexCount = indexList.Count();
@@ -309,20 +310,20 @@ namespace IndustrialPark
 
             if (SubsetList.Count > 0)
             {
-                VertexColoredTextured[] vertices = new VertexColoredTextured[vertexList1.Count];
+                VertexColoredTexturedNormalized[] vertices = new VertexColoredTexturedNormalized[vertexList1.Count];
                 for (int i = 0; i < vertices.Length; i++)
-                    vertices[i] = new VertexColoredTextured(vertexList1[i], textCoordList[i], colorList[i]);
-                AddToMeshList(SharpMesh.Create(device, 
-                    vertices, 
-                    indexList.ToArray(), 
-                    SubsetList, 
+                    vertices[i] = new VertexColoredTexturedNormalized(vertexList1[i], textCoordList[i], colorList[i], normalList[i]);
+                AddToMeshList(SharpMesh.Create(device,
+                    vertices,
+                    indexList.ToArray(),
+                    SubsetList,
                     (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYTRISTRIP) != 0 ? SharpDX.Direct3D.PrimitiveTopology.TriangleStrip : SharpDX.Direct3D.PrimitiveTopology.TriangleList));
             }
             else
                 AddToMeshList(null);
         }
 
-        private void AddNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix)
+        private void AddNativeData(SharpDevice device, Extension_0003 extension, List<Material_0007> MaterialStream, Matrix transformMatrix, RWSection geo)
         {
             isNativeData = true;
             NativeDataGC n = null;
@@ -346,14 +347,14 @@ namespace IndustrialPark
             }
 
             if (n != null)
-                AddGameCubeNativeData(device, extension, MaterialStream, transformMatrix, n);
+                AddGameCubeNativeData(device, extension, MaterialStream, transformMatrix, n, geo);
             else if (nativeps2 != null)
-                AddPS2NativeData(device, extension, MaterialStream, transformMatrix, nativeps2);
+                AddPS2NativeData(device, extension, MaterialStream, transformMatrix, nativeps2, geo);
             else
                 throw new Exception();
         }
 
-        public void AddPS2NativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix, NativeDataPS2 nativeps2)
+        public void AddPS2NativeData(SharpDevice device, Extension_0003 extension, List<Material_0007> MaterialStream, Matrix transformMatrix, NativeDataPS2 nativeps2, RWSection geo)
         {
             List<Vertex3> vertexList1 = nativeps2.GetLinearVerticesList();
             List<Vertex3> normalList = nativeps2.GetLinearNormalsList();
@@ -361,6 +362,9 @@ namespace IndustrialPark
             List<Vertex2> textCoordList = nativeps2.GetLinearTexCoordsList();
             List<Vertex4> vec4vertices = nativeps2.GetLinearVerticesFlagList();
 
+            bool useLights = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.UseLighting) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYLIGHTS) != 0;
+            bool usePrelight = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.HasVertexColors) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0;
+            bool modulateMaterialColor = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.ModulateMaterialColors) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR) != 0;
 
             List<VertexColoredTextured> vertexList = new List<VertexColoredTextured>();
             int previousAmount = 0;
@@ -384,10 +388,10 @@ namespace IndustrialPark
                 for (int i = 0; i < vec4vertices.Count; i++)
                 {
                     Vector3 position = (Vector3)Vector3.Transform(new Vector3(vec4vertices[i].X, vec4vertices[i].Y, vec4vertices[i].Z), transformMatrix);
-                    SharpDX.Color color = (colorList.Count != 0) ? new SharpDX.Color(colorList[i].R * 2, colorList[i].G * 2, colorList[i].B * 2, colorList[i].A * 2) : new SharpDX.Color(255,255,255,255);
+                    SharpDX.Color color = (colorList.Count != 0) ? new SharpDX.Color(colorList[i].R * 2, colorList[i].G * 2, colorList[i].B * 2, colorList[i].A * 2) : new SharpDX.Color(255, 255, 255, 255);
                     Vector2 texcoord = new Vector2(textCoordList[i].X, textCoordList[i].Y);
 
-                    if ((vec4vertices[i].W & 0xffff) == 0x8000 && vertexList.Count != 0) 
+                    if ((vec4vertices[i].W & 0xffff) == 0x8000 && vertexList.Count != 0)
                     {
                         vertexList.Add(vertexList.Last());
                         vertexList.Add(vertexList.Last());
@@ -398,7 +402,10 @@ namespace IndustrialPark
                 }
             }
 
-            subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount, TextureManager.GetTextureFromDictionary(MaterialStream[0]), MaterialStream[0]));
+            subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount, TextureManager.GetTextureFromDictionary(MaterialStream[0]),
+                modulateMaterialColor ? ((AssetColor)MaterialStream[0]?.materialStruct.color).ToVector4() : Vector4.One,
+                MaterialStream[0]?.texture?.DiffuseTextureName ?? DefaultTexture,
+                MaterialStream[0]?.materialStruct.diffuse ?? 1f, MaterialStream[0]?.materialStruct.ambient ?? 1f, usePrelight, useLights));
             previousAmount = vertexList.Count();
 
             if (vertexList.Count > 0)
@@ -415,12 +422,16 @@ namespace IndustrialPark
 
         }
 
-        public void AddGameCubeNativeData(SharpDevice device, Extension_0003 extension, List<string> MaterialStream, Matrix transformMatrix, NativeDataGC n)
-        { 
+        public void AddGameCubeNativeData(SharpDevice device, Extension_0003 extension, List<Material_0007> MaterialStream, Matrix transformMatrix, NativeDataGC n, RWSection geo)
+        {
             List<Vertex3> vertexList1 = new List<Vertex3>();
             List<Vertex3> normalList = new List<Vertex3>();
             List<RenderWareFile.Color> colorList = new List<RenderWareFile.Color>();
             List<Vertex2> textCoordList = new List<Vertex2>();
+
+            bool useLights = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.UseLighting) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYLIGHTS) != 0;
+            bool usePrelight = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.HasVertexColors) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0;
+            bool modulateMaterialColor = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.ModulateMaterialColors) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR) != 0;
 
             foreach (Declaration d in n.declarations)
             {
@@ -450,7 +461,7 @@ namespace IndustrialPark
                 }
             }
 
-            List<VertexColoredTextured> vertexList = new List<VertexColoredTextured>();
+            List<VertexColoredTexturedNormalized> vertexList = new();
             List<int> indexList = new List<int>();
             int k = 0;
             int previousAmount = 0;
@@ -498,7 +509,7 @@ namespace IndustrialPark
                             }
                         }
 
-                        vertexList.Add(new VertexColoredTextured(position, textureCoordinate, color));
+                        vertexList.Add(new VertexColoredTexturedNormalized(position, textureCoordinate, color, normal));
 
                         indexList.Add(k);
                         k++;
@@ -507,7 +518,11 @@ namespace IndustrialPark
                     }
 
                     subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount,
-                        TextureManager.GetTextureFromDictionary(MaterialStream[td.MaterialIndex]), MaterialStream[td.MaterialIndex]));
+                        TextureManager.GetTextureFromDictionary(MaterialStream[td.MaterialIndex]),
+                        MaterialStream[td.MaterialIndex] != null && modulateMaterialColor ? ((AssetColor)MaterialStream[td.MaterialIndex]?.materialStruct.color).ToVector4() : Vector4.One,
+                        MaterialStream[td.MaterialIndex]?.texture?.DiffuseTextureName ?? DefaultTexture,
+                        MaterialStream[td.MaterialIndex]?.materialStruct.diffuse ?? 1f, MaterialStream[td.MaterialIndex]?.materialStruct.ambient ?? 1f,
+                        usePrelight, useLights));
 
                     previousAmount = vertexList.Count();
                 }
@@ -520,64 +535,270 @@ namespace IndustrialPark
 
                 triangleListOffset += vertexList.Count;
 
-                VertexColoredTextured[] vertices = vertexList.ToArray();
+                VertexColoredTexturedNormalized[] vertices = vertexList.ToArray();
                 AddToMeshList(SharpMesh.Create(device, vertices, subSetList));
             }
             else
                 AddToMeshList(null);
         }
 
-        public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool[] atomicFlags)
+        public void Render(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool isSelected, bool[] atomicFlags)
         {
             renderData.worldViewProjection = world * renderer.viewProjection;
-            renderData.Color = color;
+            renderData.world = world;
+            renderData.ColorMultiplier = color;
+            renderData.SelectedObjectColor = isSelected ? renderer.selectedObjectColor : Vector4.Zero;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
+            renderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
+            renderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
+            renderData.FogEnd = SharpRenderer.Fog?.EndDistance ?? 0f;
+            renderData.FogEnable = SharpRenderer.Fog != null && !AssetFOG.DontRender;
+            renderData.VertexColorEnable = false;
+            renderData.AlphaDiscard = 0;
+            renderData.DirectionalLights = new DirectionalLight[8];
 
-            renderer.device.SetBlendStateAlphaBlend();
-            renderer.device.UpdateAllStates();
-
-            renderer.device.UpdateData(renderer.tintedBuffer, renderData);
-            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
-            renderer.tintedShader.Apply();
-
-            for (int i = 0; i < meshList.Count; i++)
+            Vector4 ambientColor = new Vector4(0f, 0f, 0f, 1f);
+            int directionalLightCount = 0;
+            if (AssetLKIT.SceneLightKit?.Lights != null)
             {
-                if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
-                    continue;
-
-                meshList[i].Begin(renderer.device);
-                for (int j = 0; j < meshList[i].SubSets.Count; j++)
-                    meshList[i].Draw(renderer.device, j);
+                foreach (var light in AssetLKIT.SceneLightKit.Lights)
+                {
+                    if (light.Type == 2)
+                    {
+                        if (directionalLightCount < AssetLKIT.MAX_DIRECTIONAL_LIGHTS)
+                        {
+                            renderData.DirectionalLights[directionalLightCount] = new DirectionalLight() { Direction = (Vector4)(light.DirectionVector), Color = light.ColorRGBA.ToVector4() };
+                        }
+                        directionalLightCount++;
+                    }
+                    else
+                    {
+                        ambientColor.X += light.ColorRed * light.ColorAlpha;
+                        ambientColor.Y += light.ColorGreen * light.ColorAlpha;
+                        ambientColor.Z += light.ColorBlue * light.ColorAlpha;
+                    }
                 }
             }
+            renderData.AmbientColor = ambientColor;
 
-        public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool[] atomicFlags, Dictionary<uint, (SharpDX.Direct3D11.BlendOption, SharpDX.Direct3D11.BlendOption)> blendModes)
-        {
-            renderData.worldViewProjection = world * renderer.viewProjection;
-            renderData.Color = color;
-            renderData.UvAnimOffset = (Vector4)uvAnimOffset;
+            renderer.device.SetBlendStateAlphaBlend();
+            renderer.device.SetCullModeNone();
+            renderer.device.SetDefaultDepthState();
+            renderer.device.ApplyRasterState();
+            renderer.device.UpdateAllStates();
 
-            renderer.device.UpdateData(renderer.tintedBuffer, renderData);
-            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
-            renderer.tintedShader.Apply();
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
+            renderer.device.DeviceContext.PixelShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
+#if DEBUG
+            SharpRenderer.TotalObjectsDrawn++;
+#endif
 
             for (int i = meshList.Count - 1; i >= 0; i--)
             {
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
-                if (blendModes.ContainsKey((uint)i))
-                    renderer.device.SetBlend(BlendOperation.Add, blendModes[(uint)i].Item1, blendModes[(uint)i].Item2);
-                else if (blendModes.ContainsKey(uint.MaxValue))
-                    renderer.device.SetBlend(BlendOperation.Add, blendModes[uint.MaxValue].Item1, blendModes[uint.MaxValue].Item2);
-                else
-                    renderer.device.SetDefaultBlendState();
+                meshList[i].Begin(renderer.device);
+                for (int j = 0; j < meshList[i].SubSets.Count; j++)
+                {
+                    renderData.LightingEnable = !AssetLKIT.DontRender && meshList[i].SubSets[j].EnableLights;
+                    renderData.DiffuseMult = meshList[i].SubSets[j].DiffuseMult;
+                    renderData.AmbientMult = meshList[i].SubSets[j].AmbientMult;
 
+                    renderData.MaterialColor = meshList[i].SubSets[j].DiffuseColor;
+                    renderData.MaterialColor.X *= color.Y;
+                    renderData.MaterialColor.Y *= color.Y;
+                    renderData.MaterialColor.Z *= color.Z;
+                    renderData.MaterialColor.W = color.W;
+
+                    renderer.fogLightBuffer.UpdateValue(renderData);
+                    renderer.fogLightShader.Apply();
+                    meshList[i].Draw(renderer.device, j);
+                }
+#if DEBUG
+                SharpRenderer.TotalVerticesDrawn += meshList[i].VerticesAmount;
+                SharpRenderer.TotalAtomicsDrawn++;
+#endif
+            }
+        }
+
+        public void RenderJsp(SharpRenderer renderer, Matrix world, bool isSelected, bool[] atomicFlags, xJSPNodeInfo[] nodeinfos)
+        {
+            jspRenderData.worldViewProjection = world * renderer.viewProjection;
+            jspRenderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
+            jspRenderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
+            jspRenderData.FogEnd = SharpRenderer.Fog?.EndDistance ?? 0f;
+            jspRenderData.FogEnable = SharpRenderer.Fog != null && !AssetFOG.DontRender;
+            jspRenderData.SelectedObjectColor = isSelected ? renderer.selectedObjectColor : Vector4.Zero;
+
+            renderer.device.SetBlendStateAlphaBlend();
+
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.jspBuffer.Buffer);
+            renderer.device.DeviceContext.PixelShader.SetConstantBuffer(0, renderer.jspBuffer.Buffer);
+
+#if DEBUG
+            SharpRenderer.TotalObjectsDrawn++;
+#endif
+
+            for (int i = meshList.Count - 1; i >= 0; i--)
+            {
+                if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
+                    continue;
+
+                renderer.device.SetDefaultDepthState();
+                renderer.device.SetCullModeDefault();
+
+                if (nodeinfos != null && nodeinfos.Length == meshList.Count)
+                {
+                    if ((nodeinfos?[i].nodeFlags & 2) != 0)
+                        renderer.device.DisableDepthBufferWrite();
+                    if ((nodeinfos?[i].nodeFlags & 4) != 0)
+                        renderer.device.SetCullModeNone();
+                }
                 renderer.device.UpdateAllStates();
+                renderer.device.ApplyRasterState();
 
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
+                {
+                    jspRenderData.VertexColorEnable = SharpRenderer.RenderVertexColors && meshList[i].SubSets[j].EnablePrelight;
+                    jspRenderData.MaterialColor = meshList[i].SubSets[j].DiffuseColor;
+
+                    renderer.jspBuffer.UpdateValue(jspRenderData);
+                    renderer.jspShader.Apply();
+
                     meshList[i].Draw(renderer.device, j);
+                }
+#if DEBUG
+                SharpRenderer.TotalVerticesDrawn += meshList[i].VerticesAmount;
+                SharpRenderer.TotalAtomicsDrawn++;
+#endif
+            }
+        }
+
+        public void RenderPipt(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool isSelected, bool[] atomicFlags, Dictionary<uint, PipeInfo> pipeEntries)
+        {
+            renderData.worldViewProjection = world * renderer.viewProjection;
+            renderData.world = world;
+            renderData.ColorMultiplier = color;
+            renderData.SelectedObjectColor = isSelected ? renderer.selectedColor : Vector4.Zero;
+            renderData.UvAnimOffset = (Vector4)uvAnimOffset;
+            renderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
+            renderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
+            renderData.FogEnd = SharpRenderer.Fog?.EndDistance ?? 0f;
+            renderData.FogEnable = SharpRenderer.Fog != null && !AssetFOG.DontRender;
+
+            renderData.DirectionalLights = new DirectionalLight[8];
+            Vector4 ambientColor = new Vector4(0f, 0f, 0f, 1f);
+            int directionalLightCount = 0;
+            if (AssetLKIT.SceneLightKit?.Lights != null)
+            {
+                foreach (var light in AssetLKIT.SceneLightKit.Lights)
+                {
+                    if (light.Type == 2)
+                    {
+                        if (directionalLightCount < AssetLKIT.MAX_DIRECTIONAL_LIGHTS)
+                        {
+                            renderData.DirectionalLights[directionalLightCount] = new DirectionalLight() { Direction = (Vector4)(light.DirectionVector), Color = light.ColorRGBA.ToVector4() };
+                        }
+                        directionalLightCount++;
+                    }
+                    else
+                    {
+                        ambientColor.X += light.ColorRed * light.ColorAlpha;
+                        ambientColor.Y += light.ColorGreen * light.ColorAlpha;
+                        ambientColor.Z += light.ColorBlue * light.ColorAlpha;
+                    }
+                }
+            }
+            renderData.AmbientColor = ambientColor;
+
+#if DEBUG
+            SharpRenderer.TotalObjectsDrawn++;
+#endif
+
+            for (int i = meshList.Count - 1; i >= 0; i--)
+            {
+                if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
+                    continue;
+
+                renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
+                renderer.device.DeviceContext.PixelShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
+
+                renderData.AlphaDiscard = 0;
+                renderer.device.SetDefaultDepthState();
+                renderer.device.SetBlendStateAlphaBlend();
+                renderer.device.SetCullModeNone();
+
+                PipeInfo pipe;
+                bool drawTwice = false;
+                if (pipeEntries.TryGetValue((uint)i, out pipe) || pipeEntries.TryGetValue(uint.MaxValue, out pipe))
+                {
+                    renderData.AlphaDiscard = pipe.AlphaDiscard / 255f;
+                    renderer.device.SetBlend(BlendOperation.Add, 
+                        pipe.SourceBlend != BlendFactorType.None ? pipe.GetSharpBlendMode(true) : BlendOption.SourceAlpha, 
+                        pipe.DestinationBlend != BlendFactorType.None ? pipe.GetSharpBlendMode(false) : BlendOption.InverseSourceAlpha);
+
+                    if (pipe.ZWriteMode != ZWriteMode.Enabled)
+                    {
+                        renderer.device.DisableDepthBufferWrite();
+                        if (pipe.ZWriteMode == ZWriteMode.ZFirst)
+                            drawTwice = true;
+                    }
+                    if (pipe.IgnoreFog)
+                        renderData.FogEnable = false;
+                    if (pipe.LightingMode != LightingMode.LightKit)
+                        renderData.VertexColorEnable = true;
+                    if (pipe.CullMode >= PiptCullMode.Back)
+                    {
+                        renderer.device.SetCullModeNormal();
+                        if (pipe.CullMode == PiptCullMode.BackThenFront)
+                            drawTwice = true;
+                    }
+
+                }
+                renderer.device.ApplyRasterState();
+                renderer.device.UpdateAllStates();
+
+            Draw:
+                meshList[i].Begin(renderer.device);
+                for (int j = 0; j < meshList[i].SubSets.Count; j++)
+                {
+                    renderData.VertexColorEnable = SharpRenderer.RenderVertexColors &&
+                        meshList[i].SubSets[j].EnablePrelight &&
+                        ((pipe?.LightingMode == LightingMode.Prelight || pipe?.LightingMode == LightingMode.Both) |
+                        (pipe?.LightingMode == LightingMode.LightKit && AssetLKIT.SceneLightKit == null));
+
+                    renderData.LightingEnable = !AssetLKIT.DontRender && meshList[i].SubSets[j].EnableLights && pipe?.LightingMode != LightingMode.Prelight;
+                    renderData.DiffuseMult = meshList[i].SubSets[j].DiffuseMult;
+                    renderData.AmbientMult = meshList[i].SubSets[j].AmbientMult;
+
+                    renderData.MaterialColor = meshList[i].SubSets[j].DiffuseColor;
+                    renderData.MaterialColor.X *= color.X;
+                    renderData.MaterialColor.Y *= color.Y;
+                    renderData.MaterialColor.Z *= color.Z;
+                    renderData.MaterialColor.W = color.W;
+
+                    renderer.fogLightBuffer.UpdateValue(renderData);
+                    renderer.fogLightShader.Apply();
+
+                    meshList[i].Draw(renderer.device, j);
+                }
+#if DEBUG
+                SharpRenderer.TotalVerticesDrawn += meshList[i].VerticesAmount;
+                SharpRenderer.TotalAtomicsDrawn++;
+#endif
+
+                if (drawTwice)
+                {
+                    if (pipe.CullMode == PiptCullMode.BackThenFront)
+                        renderer.device.SetCullModeReverse();
+                    if (pipe.ZWriteMode == ZWriteMode.ZFirst)
+                        renderer.device.SetDefaultDepthState();
+                    renderer.device.ApplyRasterState();
+                    drawTwice = false;
+                    goto Draw;
+                }
             }
         }
 

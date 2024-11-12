@@ -44,7 +44,8 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            model.Render(renderer, Matrix.Identity, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero, _dontDrawMeshNumber);
+            ArchiveEditorFunctions.jspInfoNodeInfo.TryGetValue(assetID, out xJSPNodeInfo[] nodeFlags);
+            model.RenderJsp(renderer, Matrix.Identity, isSelected, _dontDrawMeshNumber, nodeFlags);
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)

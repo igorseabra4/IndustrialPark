@@ -260,7 +260,7 @@ namespace IndustrialPark
 
         public static bool drawOnlyFirst = false;
 
-        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
+        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool isSelected)
         {
             bool noneDrawn = true;
             foreach (var reference in References)
@@ -268,7 +268,7 @@ namespace IndustrialPark
                 uint _model = reference.Model;
                 if (renderingDictionary.ContainsKey(_model))
                 {
-                    renderingDictionary[_model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset);
+                    renderingDictionary[_model].Draw(renderer, world, color, uvAnimOffset, isSelected);
                     noneDrawn = false;
                 }
                 if (drawOnlyFirst)

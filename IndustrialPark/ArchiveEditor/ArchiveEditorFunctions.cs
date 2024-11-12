@@ -12,6 +12,55 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
+        public static HashSet<AssetLKIT> renderableLightKits = new HashSet<AssetLKIT>();
+        public static void AddToRenderableLightKits(AssetLKIT lkit)
+        {
+            lock (renderableLightKits)
+            {
+                foreach (var light in lkit.Lights)
+                {
+                    if (light.ColorRed > 1f || light.ColorGreen > 1f || light.ColorBlue > 1f)
+                    {
+                        float s = Math.Max(light.ColorRed, Math.Max(light.ColorGreen, light.ColorBlue));
+                        s = Math.Max(s, 0.00001f);
+                        s = 1f / s;
+
+                        light.ColorRed *= s;
+                        light.ColorGreen *= s;
+                        light.ColorBlue *= s;
+                    }
+                }
+                renderableLightKits.Add(lkit);
+                AssetLKIT.SceneLightKit = lkit;
+            }
+        }
+        public static void RemoveFromRenderableLightKits(AssetLKIT lkit)
+        {
+            lock (renderableLightKits)
+            {
+                renderableLightKits.Remove(lkit);
+                AssetLKIT.SceneLightKit = renderableLightKits.LastOrDefault();
+            }
+        }
+
+        public static HashSet<AssetFOG> renderableFOGs = new HashSet<AssetFOG>();
+        public static void AddToRenderableFOGs(AssetFOG fog)
+        {
+            lock (renderableFOGs)
+            {
+                renderableFOGs.Add(fog);
+                SharpRenderer.Fog = fog;
+            }
+        }
+        public static void RemoveFromRenderableFOGs(AssetFOG fog)
+        {
+            lock (renderableFOGs)
+            {
+                renderableFOGs.Remove(fog);
+                SharpRenderer.Fog = renderableFOGs.LastOrDefault();
+            }
+        }
+
         public static HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
         public static void AddToRenderableAssets(IRenderableAsset ira)
         {
@@ -22,14 +71,15 @@ namespace IndustrialPark
             }
         }
 
-        public static HashSet<AssetJSP> renderableJSPs = new HashSet<AssetJSP>();
+        public static List<AssetJSP> renderableJSPs = new List<AssetJSP>();
         public static void AddToRenderableJSPs(AssetJSP jsp)
         {
             lock (renderableJSPs)
             {
                 renderableJSPs.Remove(jsp);
-                renderableJSPs.Add(jsp);
+                renderableJSPs.Insert(0, jsp);
             }
+        }
 
         public static Dictionary<uint, xJSPNodeInfo[]> jspInfoNodeInfo = new Dictionary<uint, xJSPNodeInfo[]>();
         public static void AddToJspNodeInfo(uint id, xJSPNodeInfo[] info)
@@ -241,6 +291,12 @@ namespace IndustrialPark
             if (ContainsAssetWithType(AssetType.PipeInfoTable) && ContainsAssetWithType(AssetType.Model))
                 foreach (var PIPT in assetDictionary.Values.Where(a => a is AssetPIPT).Select(a => (AssetPIPT)a))
                     PIPT.UpdateDictionary();
+            if (ContainsAssetWithType(AssetType.Environment) && ContainsAssetWithType(AssetType.LightKit))
+            {
+                var lkit = assetDictionary.Values.OfType<AssetENV>().FirstOrDefault();
+                lkit.updateLightKit.Invoke(lkit.Object_LightKit);
+            }
+
 
             if (NoLayers)
                 Layers = new List<Layer>();
@@ -627,6 +683,10 @@ namespace IndustrialPark
                 jsp.GetRenderWareModelFile()?.Dispose();
             else if (asset is AssetJSP_INFO jspinfo)
                 jspInfoNodeInfo.Remove(jspinfo.assetID);
+            else if (asset is AssetFOG fog)
+                RemoveFromRenderableFOGs(fog);
+            else if (asset is AssetLKIT lkit)
+                RemoveFromRenderableLightKits(lkit);
             else if (asset is IAssetWithModel iawm)
                 iawm.RemoveFromDictionary();
             else if (asset is AssetPICK pick)
@@ -910,7 +970,7 @@ namespace IndustrialPark
                 case AssetType.ElectricArcGenerator:
                     return new AssetEGEN(AHDR, game, endianness);
                 case AssetType.Environment:
-                    return new AssetENV(AHDR, game, endianness);
+                    return new AssetENV(AHDR, game, endianness, UpdateLightKit);
                 case AssetType.Flythrough:
                     return new AssetFLY(AHDR, game);
                 case AssetType.Fog:
@@ -1711,18 +1771,26 @@ namespace IndustrialPark
                     a.CreateTransformMatrix();
         }
 
-        public void UpdateModelBlendModes(Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> blendModes)
+        public void UpdateModelBlendModes(Dictionary<uint, PipeInfo[]> blendModes)
         {
             foreach (var asset in assetDictionary.Values)
                 if (asset is AssetMODL MODL)
-                    MODL.ResetBlendModes();
+                    MODL.ResetPipeline();
 
             if (blendModes != null)
             {
                 foreach (var k in blendModes.Keys)
                     if (renderingDictionary.ContainsKey(k) && renderingDictionary[k] is AssetMODL MODL)
-                        MODL.SetBlendModes(blendModes[k]);
+                        MODL.SetPipeline(blendModes[k]);
             }
+        }
+
+        public void UpdateLightKit(AssetID lkitid)
+        {
+            AssetLKIT.SceneLightKit = null;
+            foreach (var asset in assetDictionary.Values.OfType<AssetLKIT>())
+                if (asset.assetID == lkitid)
+                    AddToRenderableLightKits(asset);
         }
 
         public AssetMRKR GetMRKR(uint mrkr)

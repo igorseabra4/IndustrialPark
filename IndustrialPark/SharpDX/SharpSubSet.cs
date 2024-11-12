@@ -24,6 +24,26 @@ namespace IndustrialPark
         public Vector4 DiffuseColor { get; set; }
 
         /// <summary>
+        /// Diffuse color multiplier
+        /// </summary>
+        public float DiffuseMult { get; set; }
+
+        /// <summary>
+        /// Ambient color multiplier
+        /// </summary>
+        public float AmbientMult { get; set; }
+
+        /// <summary>
+        /// Has vertex color
+        /// </summary>
+        public bool EnablePrelight { get; set; }
+
+        /// <summary>
+        /// Should render light kits
+        /// </summary>
+        public bool EnableLights { get; set; }
+
+        /// <summary>
         /// Index Start inside IndexBuffer
         /// </summary>
         public int StartIndex { get; set; }
@@ -33,14 +53,20 @@ namespace IndustrialPark
         /// </summary>
         public int IndexCount { get; set; }
 
-        public SharpSubSet(int StartIndex, int IndexCount, ShaderResourceView DiffuseMap, string DiffuseMapName = "")
+        public SharpSubSet(int StartIndex, int IndexCount, ShaderResourceView DiffuseMap, Vector4 DiffuseColor, string DiffuseMapName = "", float DiffuseMult = 1f, float AmbientMult = 1f,
+            bool EnablePrelight = true, bool EnableLights = true)
         {
             this.StartIndex = StartIndex;
             this.IndexCount = IndexCount;
             this.DiffuseMap = DiffuseMap;
             this.DiffuseMapName = DiffuseMapName;
-
-            DiffuseColor = Vector4.One;
+            this.DiffuseColor = DiffuseColor;
+            this.DiffuseMult = DiffuseMult;
+            this.AmbientMult = AmbientMult;
+            this.EnablePrelight = EnablePrelight;
+            this.EnableLights = EnableLights;
         }
+
+        public SharpSubSet(int StartIndex, int IndexCount, ShaderResourceView DiffuseMap) : this(StartIndex, IndexCount, DiffuseMap, Vector4.One) { }
     }
 }

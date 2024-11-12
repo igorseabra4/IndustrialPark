@@ -391,13 +391,21 @@ namespace IndustrialPark
         }
 
         /// <summary>
-        /// Set current depth state to default
+        /// Set current depth state to none
         /// </summary>
         public void SetDepthStateNone()
         {
             Utilities.Dispose(ref _depthState);
             DepthStencilStateDescription description = DepthStencilStateDescription.Default();
             description.IsDepthEnabled = false;
+            _depthState = new DepthStencilState(Device, description);
+        }
+
+        public void DisableDepthBufferWrite()
+        {
+            Utilities.Dispose(ref _depthState);
+            DepthStencilStateDescription description = DepthStencilStateDescription.Default();
+            description.DepthWriteMask = DepthWriteMask.Zero;
             _depthState = new DepthStencilState(Device, description);
         }
 

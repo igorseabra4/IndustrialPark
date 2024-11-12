@@ -53,6 +53,10 @@
     <None Update="Libraries\NvTriStripDotNet.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
     <None Update="Resources\FSBank.zip">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -96,6 +100,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Models\Sphere.obj">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\SharpDX\Shader_FogLight.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Resources\txdgen_1.0\LICENSES\eirrepo\LICENSE">
@@ -153,7 +160,7 @@
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\SharpDX\Shader_Tinted_NoVertexColor.hlsl">
+    <Content Include="Resources\SharpDX\Shader_JSP.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\SharpDX\Shader_Tinted.hlsl">
@@ -206,6 +213,7 @@
     <PackageReference Include="Octokit" Version="13.0.1" />
     <PackageReference Include="Ps2IsoTools" Version="1.1.2" />
     <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
+    <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
     <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
@@ -216,9 +224,19 @@
     <EmbeddedResource Remove="MainForm\OpenLevel.en-GB.resx" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Resources\SharpDX\Shader_JSP.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="NvTriStripDotNet">
       <HintPath>Libraries\NvTriStripDotNet.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ProjectExtensions />
   <Target Name="AfterBuild">

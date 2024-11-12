@@ -7,22 +7,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using IndustrialPark.RenderData;
 using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 
 namespace IndustrialPark
 {
-    public struct DefaultRenderData
-    {
-        public Matrix worldViewProjection;
-        public Vector4 Color;
-    }
-    public struct UvAnimRenderData
-    {
-        public Matrix worldViewProjection;
-        public Vector4 Color;
-        public Vector4 UvAnimOffset;
-    }
-
     public class SharpRenderer
     {
         public SharpDevice device;
@@ -31,15 +20,19 @@ namespace IndustrialPark
 
         public SharpRenderer(Control control)
         {
+#if !DEBUG
             try
             {
+#endif
                 device = new SharpDevice(control, false);
-            }
+#if !DEBUG
+        }
             catch (Exception e)
             {
                 MessageBox.Show("Error setting up DirectX11 renderer: " + e.Message);
                 return;
             }
+#endif
 
             LoadModels();
 
@@ -58,28 +51,19 @@ namespace IndustrialPark
         }
 
         public SharpShader basicShader;
-        public SharpDX.Direct3D11.Buffer basicBuffer;
+        public ConstantBuffer<DefaultRenderData> basicBuffer;
 
         public SharpShader defaultShader;
-        public SharpDX.Direct3D11.Buffer defaultBuffer;
+        public ConstantBuffer<Matrix> defaultBuffer;
 
         public SharpShader tintedShader;
-        public SharpDX.Direct3D11.Buffer tintedBuffer;
+        public ConstantBuffer<UvAnimRenderData> tintedBuffer;
 
-        public void ToggleVertexColors(bool showVertexColors)
-        {
-            string shaderPath = showVertexColors ? "/Resources/SharpDX/Shader_Tinted.hlsl"
-                : "/Resources/SharpDX/Shader_Tinted_NoVertexColor.hlsl";
+        public SharpShader fogLightShader;
+        public ConstantBuffer<FogLightRenderData> fogLightBuffer;
 
-            tintedShader.Dispose();
-            tintedShader = new SharpShader(device, Application.StartupPath + shaderPath,
-            new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
-            new InputElement[] {
-                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
-                        new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 16, 0),
-                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0)
-            });
-        }
+        public SharpShader jspShader;
+        public ConstantBuffer<JspRenderData> jspBuffer;
 
         public void SetSharpShader()
         {
@@ -89,7 +73,7 @@ namespace IndustrialPark
                         new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0)
                 });
 
-            basicBuffer = basicShader.CreateBuffer<DefaultRenderData>();
+            basicBuffer = new ConstantBuffer<DefaultRenderData>(device.Device);
 
             defaultShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Default.hlsl",
                 new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
@@ -99,7 +83,7 @@ namespace IndustrialPark
                         new InputElement("TEXCOORD", 0, Format.R32G32_Float, 16, 0)
                 });
 
-            defaultBuffer = defaultShader.CreateBuffer<Matrix>();
+            defaultBuffer = new ConstantBuffer<Matrix>(device.Device);
 
             tintedShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Tinted.hlsl",
                 new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
@@ -109,7 +93,28 @@ namespace IndustrialPark
                         new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0)
                 });
 
-            tintedBuffer = tintedShader.CreateBuffer<UvAnimRenderData>();
+            tintedBuffer = new ConstantBuffer<UvAnimRenderData>(device.Device);
+
+            fogLightShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_FogLight.hlsl",
+                new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
+                new InputElement[] {
+                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                        new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 16, 0),
+                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0),
+                        new InputElement("NORMAL", 0, Format.R32G32B32_Float, 28, 0)
+                });
+            fogLightBuffer = new ConstantBuffer<FogLightRenderData>(device.Device);
+
+
+            jspShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_JSP.hlsl",
+                new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
+                new InputElement[] {
+                        new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
+                        new InputElement("COLOR", 0, Format.R8G8B8A8_UNorm, 16, 0),
+                        new InputElement("TEXCOORD", 0, Format.R32G32_Float, 20, 0),
+                });
+            jspBuffer = new ConstantBuffer<JspRenderData>(device.Device);
+
         }
 
         public static ShaderResourceView whiteDefault;
@@ -349,7 +354,7 @@ namespace IndustrialPark
         {
             var defaultAlpha = 0.5f;
 
-            backgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
+            backgroundColor = defaultBackgroundColor;
             normalColor = new Vector4(0.2f, 0.6f, 0.8f, defaultAlpha);
             trigColor = new Vector4(0.3f, 0.8f, 0.7f, defaultAlpha);
             mvptColor = new Vector4(0.7f, 0.2f, 0.6f, defaultAlpha);
@@ -399,10 +404,11 @@ namespace IndustrialPark
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
+            device.SetDefaultDepthState();
             device.UpdateAllStates();
 
-            device.UpdateData(basicBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
             basicShader.Apply();
 
             Cube.Draw(device);
@@ -416,10 +422,11 @@ namespace IndustrialPark
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
+            device.SetDefaultDepthState();
             device.UpdateAllStates();
 
-            device.UpdateData(basicBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
             basicShader.Apply();
 
             Pyramid.Draw(device);
@@ -433,10 +440,11 @@ namespace IndustrialPark
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
+            device.SetDefaultDepthState();
             device.UpdateAllStates();
 
-            device.UpdateData(basicBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
             basicShader.Apply();
 
             Sphere.Draw(device);
@@ -450,10 +458,11 @@ namespace IndustrialPark
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
+            device.SetDefaultDepthState();
             device.UpdateAllStates();
 
-            device.UpdateData(basicBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
             basicShader.Apply();
 
             Cylinder.Draw(device);
@@ -466,8 +475,8 @@ namespace IndustrialPark
             renderData.Color = isSelected ? selectedColor : Vector4.One;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
 
-            device.UpdateData(tintedBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer);
+            tintedBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer.Buffer);
             tintedShader.Apply();
 
             device.DeviceContext.PixelShader.SetShaderResource(0, TextureManager.GetTextureFromDictionary(textureAssetID));
@@ -482,8 +491,8 @@ namespace IndustrialPark
             renderData.Color = isSelected ? selectedColor : Vector4.One;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
 
-            device.UpdateData(tintedBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer);
+            tintedBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer.Buffer);
             tintedShader.Apply();
 
             if (texture == null)
@@ -501,8 +510,8 @@ namespace IndustrialPark
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = color;
 
-            device.UpdateData(basicBuffer, renderData);
-            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer);
+            basicBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
             basicShader.Apply();
 
             device.DeviceContext.InputAssembler.PrimitiveTopology =
@@ -535,14 +544,32 @@ namespace IndustrialPark
         }
 
         public Matrix viewProjection;
-        public Color4 backgroundColor;
+        public static Color4 backgroundColor;
+        public static readonly Color4 defaultBackgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
+
         public BoundingFrustum frustum;
 
         public bool isDrawingUI = false;
         public HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
         public const float DefaultLODTDistance = 100f;
+        public static bool RenderVertexColors = true;
 
         public bool allowRender = true;
+
+        private static AssetFOG _fog;
+        public static AssetFOG Fog
+        {
+            get => _fog;
+            set
+            {
+                _fog = value;
+                if (value != null)
+                    backgroundColor = new Color4(value.BackgroundColor.ToVector4());
+                else
+                    backgroundColor = defaultBackgroundColor;
+            }
+
+        }
 
         private Stopwatch stopwatch = new Stopwatch();
         private const float TARGET_FRAME_TIME = 1.0f / 60.0f;
@@ -590,6 +617,11 @@ namespace IndustrialPark
             debugSelectedObjects.Clear();
 #endif
 
+            if (!AssetFOG.DontRender && SharpRenderer.Fog != null)
+                Camera.FarPlane = (float)Fog.EndDistance;
+            else
+                Camera.FarPlane = Camera.DefaultFarPlane;
+
             if (allowRender)
                 lock (renderableAssets)
                     if (isDrawingUI)
@@ -624,10 +656,6 @@ namespace IndustrialPark
                         frustum = new BoundingFrustum(view * Camera.BiggerFovProjectionMatrix);
 
                         device.SetFillModeDefault();
-                        device.SetCullModeDefault();
-                        device.ApplyRasterState();
-                        device.SetDefaultDepthState();
-                        device.UpdateAllStates();
 
                         lock (ArchiveEditorFunctions.renderableJSPs)
                             foreach (var a in ArchiveEditorFunctions.renderableJSPs)
@@ -642,9 +670,6 @@ namespace IndustrialPark
                                 else
                                     renderableAssets.Remove(a);
                             }
-
-                        //foreach (IRenderableAsset a in renderableAssets.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
-                        //    a.Draw(this);
 
                         var renderableAssetsTrans = new HashSet<IRenderableAsset>();
 
@@ -706,6 +731,12 @@ namespace IndustrialPark
 
             tintedBuffer.Dispose();
             tintedShader.Dispose();
+
+            fogLightBuffer.Dispose();
+            fogLightShader.Dispose();
+
+            jspBuffer.Dispose();
+            jspShader.Dispose();
 
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 if (mesh != null)

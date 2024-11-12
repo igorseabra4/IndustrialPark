@@ -27,10 +27,10 @@ namespace IndustrialPark
             return Textures.ContainsKey(textureName);
         }
 
-        public static ShaderResourceView GetTextureFromDictionary(string textureName)
+        public static ShaderResourceView GetTextureFromDictionary(Material_0007 material)
         {
-            if (Textures.ContainsKey(textureName))
-                return Textures[textureName];
+            if (material != null && material.texture != null && Textures.ContainsKey(material.texture.DiffuseTextureName))
+                return Textures[material.texture.DiffuseTextureName];
             return SharpRenderer.whiteDefault;
         }
 

@@ -540,7 +540,7 @@ namespace IndustrialPark.Models
         {
             SharpDX.BoundingSphere boundingSphere = SharpDX.BoundingSphere.FromPoints(vertices.Select(v => new SharpDX.Vector3(v.X, v.Y, v.Z)).ToArray());
             TriangleDeclaration declaration = new() { TriangleListList = [] };
-            SharpDX.
+
             foreach (NvTriStripDotNet.PrimitiveGroup primgroup in indices)
             {
                 List<int[]> triEntries = new List<int[]>();

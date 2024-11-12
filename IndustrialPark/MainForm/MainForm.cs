@@ -442,7 +442,7 @@ namespace IndustrialPark
                 FarPlane = renderer.Camera.FarPlane,
                 NoCulling = noCullingCToolStripMenuItem.Checked,
                 Wireframe = wireframeFToolStripMenuItem.Checked,
-                BackgroundColor = renderer.backgroundColor,
+                BackgroundColor = SharpRenderer.backgroundColor,
                 WidgetColor = renderer.normalColor,
                 TrigColor = renderer.trigColor,
                 MvptColor = renderer.mvptColor,
@@ -451,6 +451,9 @@ namespace IndustrialPark
                 isDrawingUI = renderer.isDrawingUI,
                 Grid = ArchiveEditorFunctions.Grid,
                 dontRender = dontRender,
+                FogRender = !AssetFOG.DontRender,
+                LightKitRender = !AssetLKIT.DontRender,
+                VertexColorRender = SharpRenderer.RenderVertexColors,
             };
         }
 
@@ -516,7 +519,7 @@ namespace IndustrialPark
             else
                 renderer.device.SetNormalFillMode(FillMode.Solid);
 
-            renderer.backgroundColor = ipSettings.BackgroundColor;
+            SharpRenderer.backgroundColor = ipSettings.BackgroundColor;
             renderer.SetWidgetColor(ipSettings.WidgetColor);
             renderer.SetMvptColor(ipSettings.MvptColor);
             renderer.SetTrigColor(ipSettings.TrigColor);
@@ -534,6 +537,14 @@ namespace IndustrialPark
                     assetViewToolStripMenuItems[i].Checked = !value;
                     assetViewTypes[type].GetField("dontRender").SetValue(null, value);
                 }
+
+            
+            fogToolStripMenuItem.Checked = ipSettings.FogRender;
+            AssetFOG.DontRender = !ipSettings.FogRender;
+            showVertexColorsToolStripMenuItem.Checked = ipSettings.VertexColorRender;
+            SharpRenderer.RenderVertexColors = ipSettings.VertexColorRender;
+            useLightKitsForRenderingToolStripMenuItem.Checked = ipSettings.LightKitRender;
+            AssetLKIT.DontRender = !ipSettings.LightKitRender;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -671,15 +682,17 @@ namespace IndustrialPark
             else if (e.KeyCode == Keys.C)
                 ToggleBackfaceCulling();
             else if (e.KeyCode == Keys.F)
-                ToggleWireFrame();
+                fogToolStripMenuItem.PerformClick();
             else if (e.KeyCode == Keys.H)
                 DropSelectedAssets();
             else if (e.KeyCode == Keys.G)
                 OpenInternalEditors();
+            else if (e.KeyCode == Keys.L)
+                useLightKitsForRenderingToolStripMenuItem.PerformClick();
             else if (e.KeyCode == Keys.V)
                 ToggleGizmoType();
             else if (e.KeyCode == Keys.P)
-                showVertexColorsToolStripMenuItem_Click(null, null);
+                showVertexColorsToolStripMenuItem.PerformClick();
             else if (e.KeyCode == Keys.Delete)
                 DeleteSelectedAssets();
             else if (e.KeyCode == Keys.U)
@@ -699,6 +712,9 @@ namespace IndustrialPark
                 buildAndRunPS2ISOToolStripMenuItem_Click(sender, e);
             else if (e.KeyCode == Keys.F7)
                 createGameCubeBannerToolStripMenuItem_Click(sender, e);
+
+            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.F))
+                ToggleWireFrame();
 
             if (PressedKeys.Contains(Keys.S)
                 && PressedKeys.Contains(Keys.ControlKey)
@@ -940,10 +956,10 @@ namespace IndustrialPark
         {
             ColorDialog colorDialog = new ColorDialog
             {
-                Color = System.Drawing.Color.FromArgb(BitConverter.ToInt32(BitConverter.GetBytes(renderer.backgroundColor.ToBgra()).Reverse().ToArray(), 0))
+                Color = System.Drawing.Color.FromArgb(BitConverter.ToInt32(BitConverter.GetBytes(SharpRenderer.backgroundColor.ToBgra()).Reverse().ToArray(), 0))
             };
             if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.backgroundColor = new SharpDX.Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
+                SharpRenderer.backgroundColor = new SharpDX.Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
         }
 
         private void widgetColorToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1007,9 +1023,11 @@ namespace IndustrialPark
                 "1, 3: decrease rotation interval, increase rotation interval (view rotation speed)\n" +
                 "B and N: select previous/next template\n" +
                 "C: toggles backface culling\n" +
-                "F: toggles wireframe mode\n" +
+                "Ctrl + F: toggles wireframe mode\n" +
+                "F: Toogle fog\n" +
                 "G: open Asset Data Editor for selected assets\n" +
                 "H: drop selected assets\n" +
+                "L: use light kits for rendering\n" +
                 "P: Toggle vertex color display\n" +
                 "R: reset view\n" +
                 "T: snap gizmos to grid\n" +
@@ -2012,8 +2030,7 @@ namespace IndustrialPark
 
         private void showVertexColorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            showVertexColorsToolStripMenuItem.Checked = !showVertexColorsToolStripMenuItem.Checked;
-            renderer.ToggleVertexColors(showVertexColorsToolStripMenuItem.Checked);
+            SharpRenderer.RenderVertexColors = showVertexColorsToolStripMenuItem.Checked;
         }
 
         private void buildAndRunPS2ISOToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2070,6 +2087,21 @@ namespace IndustrialPark
                 foreach (ArchiveEditor ae in archiveEditors)
                     if (!ae.Focused)
                         ae.Opacity = 0.5f;
+        }
+
+        private void showEditorsWhenLoadingProjectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            showEditorsWhenLoadingProjectToolStripMenuItem.Checked = !showEditorsWhenLoadingProjectToolStripMenuItem.Checked;
+        }
+
+        private void fogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AssetFOG.DontRender = !fogToolStripMenuItem.Checked;
+        }
+
+        private void useLightKitsForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AssetLKIT.DontRender = !useLightKitsForRenderingToolStripMenuItem.Checked;
         }
     }
 }

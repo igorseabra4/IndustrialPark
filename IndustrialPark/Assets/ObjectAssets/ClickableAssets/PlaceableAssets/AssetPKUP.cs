@@ -331,7 +331,7 @@ namespace IndustrialPark
             if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
                 if (renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]))
                 {
-                    renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+                    renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
                     return;
                 }
 

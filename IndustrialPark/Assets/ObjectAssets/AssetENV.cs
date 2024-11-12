@@ -20,8 +20,18 @@ namespace IndustrialPark
         public AssetSingle ClimateStrengthMax { get; set; }
         [Category(categoryName)]
         public AssetID BSP_LightKit { get; set; }
+
+        private AssetID _object_lightkit;
         [Category(categoryName)]
-        public AssetID Object_LightKit { get; set; }
+        public AssetID Object_LightKit
+        {
+            get => _object_lightkit;
+            set
+            {
+                _object_lightkit = value;
+                updateLightKit(value);
+            }
+        }
         [Category(categoryName)]
         public int Padding24 { get; set; }
         [Category(categoryName)]
@@ -57,8 +67,11 @@ namespace IndustrialPark
             LoldHeight = 10f;
         }
 
-        public AssetENV(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public delegate void UpdateLightKit(AssetID lkitid);
+        public readonly UpdateLightKit updateLightKit;
+        public AssetENV(Section_AHDR AHDR, Game game, Endianness endianness, UpdateLightKit updateLightKit) : base(AHDR, game, endianness)
         {
+            this.updateLightKit = updateLightKit;
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;

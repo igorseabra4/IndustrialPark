@@ -22,7 +22,7 @@ namespace IndustrialPark
             Matrix localW = LocalWorld();
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
-                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, localW, isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, localW, _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(localW, isSelected);
         }

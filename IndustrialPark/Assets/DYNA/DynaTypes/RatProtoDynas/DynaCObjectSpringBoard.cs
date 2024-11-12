@@ -134,7 +134,7 @@ namespace IndustrialPark
         {
 
             if (renderingDictionary.ContainsKey(ModelID))
-                renderingDictionary[ModelID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
+                renderingDictionary[ModelID].Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
             else
                 renderer.DrawCube(world, isSelected);
         }

@@ -73,7 +73,7 @@ namespace IndustrialPark
             isSelected = false;
         }
 
-        protected DefaultRenderData renderData;
+        protected RenderData.DefaultRenderData renderData;
 
         public void Draw(SharpRenderer renderer)
         {
@@ -86,8 +86,8 @@ namespace IndustrialPark
             renderer.device.SetDepthStateNone();
             renderer.device.UpdateAllStates();
 
-            renderer.device.UpdateData(renderer.basicBuffer, renderData);
-            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.basicBuffer);
+            renderer.basicBuffer.UpdateValue(renderData);
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.basicBuffer.Buffer);
             renderer.basicShader.Apply();
 
             Mesh.Draw(renderer.device);

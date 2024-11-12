@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class ProjectJson
     {
-        public static int getCurrentVersion => 4;
+        public static int getCurrentVersion => 5;
         public int version;
 
         public List<string> hipPaths;
@@ -37,6 +37,10 @@ namespace IndustrialPark
 
         public Dictionary<string, bool> dontRender;
 
+        public bool FogRender;
+        public bool LightKitRender;
+        public bool VertexColorRender;
+
         public ProjectJson()
         {
             version = getCurrentVersion;
@@ -52,7 +56,7 @@ namespace IndustrialPark
             Speed = 5f;
             SpeedRot = 5f;
 
-            FieldOfView = MathUtil.PiOverFour;
+            FieldOfView = MathUtil.DegreesToRadians(60);
             FarPlane = 10000F;
 
             NoCulling = false;
@@ -69,6 +73,10 @@ namespace IndustrialPark
             isDrawingUI = false;
 
             dontRender = new Dictionary<string, bool>();
+
+            FogRender = true;
+            LightKitRender = true;
+            VertexColorRender = true;
         }
     }
 }

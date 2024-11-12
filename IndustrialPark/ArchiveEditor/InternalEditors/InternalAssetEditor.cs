@@ -42,6 +42,8 @@ namespace IndustrialPark
                 SetupForUim(uim);
             else if (asset is AssetWIRE wire)
                 SetupForWire(wire);
+            else if (asset is AssetFOG fog)
+                SetupForFog(fog);
 
             if (asset is EntityAsset entity && !new AssetType[] {
                 AssetType.Trigger,
@@ -159,6 +161,17 @@ namespace IndustrialPark
             };
             tableLayoutPanel1.Controls.Add(buttonAddSelected, 0, rowIndex);
             tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
+        }
+        private void SetupForFog(AssetFOG asset)
+        {
+            AddRow(ButtonSize);
+
+            Button buttonPreviewFog = new Button() { Dock = DockStyle.Fill, Text = "Preview Fog", AutoSize = true };
+            buttonPreviewFog.Click += (object sender, EventArgs e) =>
+            {
+                SharpRenderer.Fog = asset;
+            };
+            tableLayoutPanel1.Controls.Add(buttonPreviewFog);
         }
 
         private void SetupForScrp(AssetSCRP asset)

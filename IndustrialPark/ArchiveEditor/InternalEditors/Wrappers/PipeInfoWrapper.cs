@@ -28,7 +28,7 @@ namespace IndustrialPark
         }
 
         [Category(categoryPipeInfo)]
-        public int PipeFlags
+        public uint PipeFlags
         {
             get => Entry.PipeFlags;
             set => Entry.PipeFlags = value;
@@ -36,25 +36,11 @@ namespace IndustrialPark
 
         private const string categoryFlags = "Flags";
 
-        [Category(categoryFlags), DisplayName("AlphaCompareValue (0 - 255)")]
-        public byte AlphaCompareValue
+        [Category(categoryFlags + " (Movie/Incredibles only)")]
+        public bool HDR_Brightening
         {
-            get => Entry.AlphaCompareValue;
-            set => Entry.AlphaCompareValue = value;
-        }
-
-        [Category(categoryFlags), DisplayName("UnknownFlagB (0 - 15)")]
-        public byte UnknownFlagB
-        {
-            get => Entry.UnknownFlagB;
-            set => Entry.UnknownFlagB = value;
-        }
-
-        [Category(categoryFlags), DisplayName("UnknownFlagC (0 - 7)")]
-        public byte UnknownFlagC
-        {
-            get => Entry.UnknownFlagC;
-            set => Entry.UnknownFlagC = value;
+            get => Entry.HDR_Brightening;
+            set => Entry.HDR_Brightening = value;
         }
 
         [Category(categoryFlags)]
@@ -99,25 +85,25 @@ namespace IndustrialPark
             set => Entry.ZWriteMode = value;
         }
 
-        [Category(categoryFlags), DisplayName("UnknownFlagJ (0 - 3)")]
-        public byte UnknownFlagJ
-        {
-            get => Entry.UnknownFlagJ;
-            set => Entry.UnknownFlagJ = value;
-        }
-
-        [Category(categoryPipeInfo + " (Movie/Incredibles only)")]
+        [Category(categoryPipeInfo)]
         public PIPTLayerType Layer
         {
             get => Entry.Layer;
             set => Entry.Layer = value;
         }
 
-        [Category(categoryPipeInfo + " (Movie/Incredibles only)")]
+        [Category(categoryPipeInfo)]
         public byte AlphaDiscard
         {
             get => Entry.AlphaDiscard;
             set => Entry.AlphaDiscard = value;
+        }
+
+        [Category(categoryPipeInfo)]
+        public uint UnknownFlags
+        {
+            get => Entry.UnknownFlags;
+            set => Entry.UnknownFlags = value;
         }
     }
 }

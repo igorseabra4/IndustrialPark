@@ -65,7 +65,7 @@ namespace IndustrialPark
             Color.W = Color.W == 0f ? 1f : Color.W;
 
             if (renderingDictionary.ContainsKey(_model))
-                renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
+                renderingDictionary[_model].Draw(renderer, LocalWorld(), Color, UvAnimOffset, isSelected);
             else
                 renderer.DrawPyramid(LocalWorld(), isSelected, 1f);
         }

@@ -155,7 +155,7 @@ namespace IndustrialPark
             Color.W = Color.W == 0f ? 1f : Color.W;
 
             if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
-                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * Color : Color, UvAnimOffset);
+                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), Color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }

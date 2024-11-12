@@ -327,7 +327,7 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        private UvAnimRenderData renderData;
+        private RenderData.UvAnimRenderData renderData;
 
         public void Draw(SharpRenderer renderer)
         {
@@ -338,8 +338,8 @@ namespace IndustrialPark
             else
                 renderData.Color = Vector4.One;
 
-            renderer.device.UpdateData(renderer.tintedBuffer, renderData);
-            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
+            renderer.tintedBuffer.UpdateValue(renderData);
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer.Buffer);
             renderer.tintedShader.Apply();
 
             renderer.device.SetBlendStateAlphaBlend();

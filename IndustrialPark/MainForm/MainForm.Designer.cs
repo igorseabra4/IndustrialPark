@@ -100,11 +100,15 @@ namespace IndustrialPark
             tRIGColorToolStripMenuItem = new ToolStripMenuItem();
             sFXInColorToolStripMenuItem = new ToolStripMenuItem();
             noCullingCToolStripMenuItem = new ToolStripMenuItem();
+            fogToolStripMenuItem = new ToolStripMenuItem();
             wireframeFToolStripMenuItem = new ToolStripMenuItem();
             showVertexColorsToolStripMenuItem = new ToolStripMenuItem();
             vSyncToolStripMenuItem = new ToolStripMenuItem();
             lowerQualityGraphicsToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator9 = new ToolStripSeparator();
+            drawOnlyFirstMINFReferenceToolStripMenuItem = new ToolStripMenuItem();
+            showVertexColorsToolStripMenuItem = new ToolStripMenuItem();
+            useLightKitsForRenderingToolStripMenuItem = new ToolStripMenuItem();
             useLODTForRenderingToolStripMenuItem = new ToolStripMenuItem();
             usePIPTForRenderingToolStripMenuItem = new ToolStripMenuItem();
             hideInvisibleMeshesToolStripMenuItem = new ToolStripMenuItem();
@@ -458,7 +462,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, addTextureFolderToolStripMenuItem, addTXDArchiveToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, toolStripSeparator10, colorsToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, showVertexColorsToolStripMenuItem, vSyncToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, toolStripSeparator9, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, movementPreviewToolStripMenuItem, toolStripSeparator6, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem });
+            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, addTextureFolderToolStripMenuItem, addTXDArchiveToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, toolStripSeparator10, colorsToolStripMenuItem, noCullingCToolStripMenuItem, fogToolStripMenuItem, wireframeFToolStripMenuItem, vSyncToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, toolStripSeparator6, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator9, drawOnlyFirstMINFReferenceToolStripMenuItem, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, movementPreviewToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             resources.ApplyResources(displayToolStripMenuItem, "displayToolStripMenuItem");
             // 
@@ -567,6 +571,15 @@ namespace IndustrialPark
             resources.ApplyResources(noCullingCToolStripMenuItem, "noCullingCToolStripMenuItem");
             noCullingCToolStripMenuItem.Click += noCullingCToolStripMenuItem_Click;
             // 
+            // fogToolStripMenuItem
+            // 
+            fogToolStripMenuItem.Checked = true;
+            fogToolStripMenuItem.CheckOnClick = true;
+            fogToolStripMenuItem.CheckState = CheckState.Checked;
+            fogToolStripMenuItem.Name = "fogToolStripMenuItem";
+            resources.ApplyResources(fogToolStripMenuItem, "fogToolStripMenuItem");
+            fogToolStripMenuItem.Click += fogToolStripMenuItem_Click;
+            // 
             // wireframeFToolStripMenuItem
             // 
             wireframeFToolStripMenuItem.Name = "wireframeFToolStripMenuItem";
@@ -599,6 +612,30 @@ namespace IndustrialPark
             // 
             toolStripSeparator9.Name = "toolStripSeparator9";
             resources.ApplyResources(toolStripSeparator9, "toolStripSeparator9");
+            // 
+            // drawOnlyFirstMINFReferenceToolStripMenuItem
+            // 
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Name = "drawOnlyFirstMINFReferenceToolStripMenuItem";
+            resources.ApplyResources(drawOnlyFirstMINFReferenceToolStripMenuItem, "drawOnlyFirstMINFReferenceToolStripMenuItem");
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Click += drawOnlyFirstMINFReferenceToolStripMenuItem_Click;
+            // 
+            // showVertexColorsToolStripMenuItem
+            // 
+            showVertexColorsToolStripMenuItem.Checked = true;
+            showVertexColorsToolStripMenuItem.CheckOnClick = true;
+            showVertexColorsToolStripMenuItem.CheckState = CheckState.Checked;
+            showVertexColorsToolStripMenuItem.Name = "showVertexColorsToolStripMenuItem";
+            resources.ApplyResources(showVertexColorsToolStripMenuItem, "showVertexColorsToolStripMenuItem");
+            showVertexColorsToolStripMenuItem.Click += showVertexColorsToolStripMenuItem_Click;
+            // 
+            // useLightKitsForRenderingToolStripMenuItem
+            // 
+            useLightKitsForRenderingToolStripMenuItem.Checked = true;
+            useLightKitsForRenderingToolStripMenuItem.CheckOnClick = true;
+            useLightKitsForRenderingToolStripMenuItem.CheckState = CheckState.Checked;
+            useLightKitsForRenderingToolStripMenuItem.Name = "useLightKitsForRenderingToolStripMenuItem";
+            resources.ApplyResources(useLightKitsForRenderingToolStripMenuItem, "useLightKitsForRenderingToolStripMenuItem");
+            useLightKitsForRenderingToolStripMenuItem.Click += useLightKitsForRenderingToolStripMenuItem_Click;
             // 
             // useLODTForRenderingToolStripMenuItem
             // 
@@ -967,6 +1004,8 @@ namespace IndustrialPark
         private ToolStripMenuItem showVertexColorsToolStripMenuItem;
         private ToolStripMenuItem buildAndRunPS2ISOToolStripMenuItem;
         private ToolStripMenuItem openLastToolStripMenuItem;
+        private ToolStripMenuItem fogToolStripMenuItem;
+        private ToolStripMenuItem useLightKitsForRenderingToolStripMenuItem;
         private ToolStripMenuItem hansToolStripMenuItem;
         private ToolStripMenuItem translucentToolStripMenuItem;
     }

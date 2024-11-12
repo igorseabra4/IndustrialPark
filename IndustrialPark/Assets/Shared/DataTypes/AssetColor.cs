@@ -62,6 +62,8 @@ namespace IndustrialPark.AssetEditorColors
 
         public static implicit operator uint(AssetColor color) => (uint)(color.R << 24 | color.G << 16 | color.B << 8 | color.A);
 
+        public static implicit operator AssetColor(RenderWareFile.Color color) => new AssetColor(color.R, color.G, color.B, color.A);
+
         public int GetARGB()
         {
             return BitConverter.ToInt32(new byte[] { B, G, R, A }, 0);

@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -9,9 +10,19 @@ namespace IndustrialPark
         private const string categoryName = "Fog";
 
         [Category(categoryName)]
-        public AssetColor StartColor { get; set; }
+        public AssetColor FogColor { get; set; }
+        private AssetColor _backgroundColor;
         [Category(categoryName)]
-        public AssetColor EndColor { get; set; }
+        public AssetColor BackgroundColor
+        {
+            get => _backgroundColor;
+            set
+            {
+                _backgroundColor = value;
+                if (SharpRenderer.Fog == this)
+                    SharpRenderer.backgroundColor = new SharpDX.Color4(value.ToVector4());
+            }
+        }
         [Category(categoryName)]
         public AssetSingle FogDensity { get; set; }
         [Category(categoryName)]
@@ -25,8 +36,8 @@ namespace IndustrialPark
 
         public AssetFOG(string assetName) : base(assetName, AssetType.Fog, BaseAssetType.Fog)
         {
-            EndColor = new AssetColor();
-            StartColor = new AssetColor();
+            BackgroundColor = new AssetColor();
+            FogColor = new AssetColor();
             FogDensity = 1;
             StartDistance = 100;
             EndDistance = 400;
@@ -38,22 +49,27 @@ namespace IndustrialPark
             {
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
-                EndColor = reader.ReadColor();
-                StartColor = reader.ReadColor();
+                BackgroundColor = reader.ReadColor();
+                FogColor = reader.ReadColor();
                 FogDensity = reader.ReadSingle();
                 StartDistance = reader.ReadSingle();
                 EndDistance = reader.ReadSingle();
                 TransitionTime = reader.ReadSingle();
                 FogType = reader.ReadByte();
             }
+            if (Links.Any(l => (EventBFBB)l.EventSendID == EventBFBB.On))
+                ArchiveEditorFunctions.AddToRenderableFOGs(this);
         }
+
+        [Browsable(false)]
+        public static bool DontRender = false;
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
 
-            writer.Write(EndColor);
-            writer.Write(StartColor);
+            writer.Write(BackgroundColor);
+            writer.Write(FogColor);
             writer.Write(FogDensity);
             writer.Write(StartDistance);
             writer.Write(EndDistance);

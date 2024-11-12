@@ -123,7 +123,7 @@ namespace IndustrialPark
         /// <summary>
         /// Position
         /// </summary>
-        public Vector3 Position;
+        public Vector4 Position;
 
         /// <summary>
         /// Color
@@ -138,7 +138,7 @@ namespace IndustrialPark
         /// <summary>
         /// Normal
         /// </summary>
-        public Vector4 Normal;
+        public Vector3 Normal;
 
         /// <summary>
         /// Constructor
@@ -147,11 +147,11 @@ namespace IndustrialPark
         /// <param name="color">Vertex Color</param>
         public VertexColoredTexturedNormalized(Vector3 position, Vector2 textureCoordinate, Color color, Vector3 normal)
         {
-            Position = position;
+            Position = (Vector4)position;
+            Position.W = 1f;
             TextureCoordinate = textureCoordinate;
             Color = color;
-            Normal = (Vector4)normal;
-            Normal.W = 1F;
+            Normal = normal;
         }
     }
 

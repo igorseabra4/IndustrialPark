@@ -310,7 +310,7 @@ namespace IndustrialPark
         {
             Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
             if (renderingDictionary.ContainsKey(_model))
-                renderingDictionary[_model].Draw(renderer, world, isSelected ? renderer.selectedObjectColor * Color : Color, Vector3.Zero);
+                renderingDictionary[_model].Draw(renderer, world, Color, Vector3.Zero, isSelected);
             else
                 renderer.DrawCube(world, isSelected);
         }

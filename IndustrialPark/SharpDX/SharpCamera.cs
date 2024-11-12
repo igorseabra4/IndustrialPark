@@ -101,6 +101,9 @@ namespace IndustrialPark
             RaiseCameraChangedEvent();
         }
 
+        public readonly float DefaultFarPlane = 10000F;
+        public readonly float DefaultNearPlane = 0.1F;
+
         internal void Reset()
         {
             Position = Vector3.Zero;
@@ -113,8 +116,8 @@ namespace IndustrialPark
             SpeedRot = 5f;
 
             FieldOfView = MathUtil.Pi / 3f;
-            NearPlane = 0.1F;
-            FarPlane = 10000F;
+            NearPlane = DefaultNearPlane;
+            FarPlane = DefaultFarPlane;
 
             UpdateCamera();
         }
