@@ -18,6 +18,9 @@ namespace IndustrialPark
         private PrimitiveTopology primitiveTopology;
 
         private bool isTriStrip = false;
+#if DEBUG
+        public int VerticesAmount = 0;
+#endif
 
         public void Draw(SharpDevice Device)
         {
@@ -25,6 +28,10 @@ namespace IndustrialPark
             Device.DeviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexSize, 0));
             Device.DeviceContext.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
             Device.DeviceContext.DrawIndexed(IndexCount, 0, 0);
+#if DEBUG
+            SharpRenderer.TotalVerticesDrawn += VerticesAmount;
+            SharpRenderer.TotalDrawCalls++;
+#endif
         }
 
         // indexed with subsets
@@ -32,6 +39,9 @@ namespace IndustrialPark
         {
             return new SharpMesh()
             {
+#if DEBUG
+                VerticesAmount = vertices.Length,
+#endif
                 VertexBuffer = Buffer11.Create<VType>(device.Device, BindFlags.VertexBuffer, vertices),
                 IndexBuffer = Buffer11.Create(device.Device, BindFlags.IndexBuffer, indices),
                 VertexSize = Utilities.SizeOf<VType>(),
@@ -45,6 +55,9 @@ namespace IndustrialPark
         {
             return new SharpMesh()
             {
+#if DEBUG
+                VerticesAmount = vertices.Length,
+#endif
                 VertexBuffer = Buffer11.Create<VType>(device.Device, BindFlags.VertexBuffer, vertices),
                 IndexBuffer = null,
                 isTriStrip = true,
@@ -60,6 +73,9 @@ namespace IndustrialPark
         {
             return new SharpMesh()
             {
+#if DEBUG
+                VerticesAmount = vertices.Length,
+#endif
                 VertexBuffer = Buffer11.Create<VType>(device.Device, BindFlags.VertexBuffer, vertices),
                 IndexBuffer = Buffer11.Create(device.Device, BindFlags.IndexBuffer, indices),
                 VertexSize = Utilities.SizeOf<VType>(),
@@ -86,6 +102,9 @@ namespace IndustrialPark
                 Device.DeviceContext.Draw(SubSets[subset].IndexCount, SubSets[subset].StartIndex);
             else
                 Device.DeviceContext.DrawIndexed(SubSets[subset].IndexCount, SubSets[subset].StartIndex, 0);
+#if DEBUG
+            SharpRenderer.TotalDrawCalls++;
+#endif
         }
 
         public void DrawPoints(SharpDevice Device, int count = int.MaxValue)
@@ -94,6 +113,9 @@ namespace IndustrialPark
             Device.DeviceContext.InputAssembler.SetVertexBuffers(0, new VertexBufferBinding(VertexBuffer, VertexSize, 0));
             Device.DeviceContext.InputAssembler.SetIndexBuffer(IndexBuffer, Format.R32_UInt, 0);
             Device.DeviceContext.DrawIndexed(Math.Min(count, SubSets[0].IndexCount), 0, 0);
+#if DEBUG
+            SharpRenderer.TotalDrawCalls++;
+#endif
         }
 
         public void Dispose()

@@ -491,6 +491,13 @@ namespace IndustrialPark
 
         private Stopwatch stopwatch = new Stopwatch();
         private const float TARGET_FRAME_TIME = 1.0f / 60.0f;
+#if DEBUG
+        public static int TotalDrawCalls = 0;
+        public static int TotalVerticesDrawn = 0;
+        public static int TotalObjectsDrawn = 0;
+        public static int TotalAtomicsDrawn = 0;
+        public List<string> debugSelectedObjects = new();
+#endif
 
         public float TransformScaleFactor { get; private set; } = 1.0f;
 
@@ -520,6 +527,13 @@ namespace IndustrialPark
             sharpFPS.Update();
 
             device.Clear(backgroundColor);
+#if DEBUG
+            TotalDrawCalls = 0;
+            TotalVerticesDrawn = 0;
+            TotalObjectsDrawn = 0;
+            TotalAtomicsDrawn = 0;
+            debugSelectedObjects.Clear();
+#endif
 
             if (allowRender)
                 lock (renderableAssets)
@@ -588,7 +602,17 @@ namespace IndustrialPark
                         foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
                             a.Draw(this);
                     }
-
+#if DEBUG
+            device.Font.Begin();
+            device.Font.DrawString($"Draw Calls: {TotalDrawCalls}", 0, 0);
+            device.Font.DrawString($"Vertices: {TotalVerticesDrawn}", 0, 20);
+            device.Font.DrawString($"Frame Time (ms): {elapsedSeconds * 1000}", 0, 40);
+            device.Font.DrawString($"Objects: {TotalObjectsDrawn}", 0, 60);
+            device.Font.DrawString($"Atomics: {TotalAtomicsDrawn}", 0, 80);
+            for (int i = 0; i < debugSelectedObjects.Count; i++)
+                device.Font.DrawString(debugSelectedObjects[i], 1000, i * 15);
+            device.Font.End();
+#endif
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();

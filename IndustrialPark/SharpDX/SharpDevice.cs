@@ -63,6 +63,13 @@ namespace IndustrialPark
         private static FeatureLevel featureLevel = FeatureLevel.Level_11_0;
 
         /// <summary>
+        /// Font batch
+        /// </summary>
+#if DEBUG
+        public Sharp2D Font { get; private set; }
+#endif
+
+        /// <summary>
         /// Init all object to start rendering
         /// </summary>
         /// <param name="form">Rendering form</param>
@@ -89,7 +96,7 @@ namespace IndustrialPark
             FeatureLevel[] levels = new FeatureLevel[] { featureLevel };
 
             //create device and swapchain
-            DeviceCreationFlags flag = DeviceCreationFlags.None;
+            DeviceCreationFlags flag = DeviceCreationFlags.None | DeviceCreationFlags.BgraSupport;
             if (debug)
                 flag = DeviceCreationFlags.Debug;
 
@@ -110,6 +117,10 @@ namespace IndustrialPark
             SetDefaultDepthState();
             SetDefaultBlendState();
 
+#if DEBUG
+            Font = new Sharp2D(this);
+#endif
+
             //Resize all items
             Resize();
         }
@@ -119,6 +130,9 @@ namespace IndustrialPark
         /// </summary>
         public void Resize()
         {
+#if DEBUG
+            Font.Release();
+#endif
             SetDefaultSamplerState();
             // Dispose all previous allocated resources
             Utilities.Dispose(ref _backbufferView);
@@ -132,6 +146,11 @@ namespace IndustrialPark
 
             // Get the backbuffer from the swapchain
             var _backBufferTexture = SwapChain.GetBackBuffer<Texture2D>(0);
+
+            // update font
+#if DEBUG
+            Font.UpdateResources(_backBufferTexture);
+#endif
 
             // Backbuffer
             _backbufferView = new RenderTargetView(Device, _backBufferTexture);
@@ -183,6 +202,9 @@ namespace IndustrialPark
         /// </summary>
         public void Dispose()
         {
+#if DEBUG
+            Font.Dispose();
+#endif
             _rasterState.Dispose();
             _blendState.Dispose();
             _depthState.Dispose();
