@@ -29,10 +29,10 @@ namespace IndustrialPark
         [Category(categoryName)]
         public CollisionData_Section4_00BEEF04 Section4 { get; set; }
 
-        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Platform platform, AssetID[] jspAssetIds) : base(AHDR, game)
+        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Platform platform, AssetJSP[] jspAssets) : base(AHDR, game)
         {
             Platform = platform;
-            JSP_AssetIDs = jspAssetIds;
+            JSP_AssetIDs = jspAssets.Select(j => (AssetID)j.assetID).ToArray();
 
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
             {
@@ -40,12 +40,15 @@ namespace IndustrialPark
 
                 renderWareVersion = Section1.RenderWareVersion;
 
-                if (game == Game.BFBB)
-                    Section2 = new CollisionData_Section2_00BEEF02(reader, platform);
-                else
+                Section2 = new CollisionData_Section2_00BEEF02(reader, platform);
+                int done = 0;
+                foreach (AssetJSP jsp in jspAssets.Reverse())
                 {
-                    var currentSection = (RenderWareFile.Section)reader.ReadInt32();
-                    Section2_Data = new GenericSection().Read(reader, currentSection);
+                    xJSPNodeInfo[] entries = new xJSPNodeInfo[jsp.AtomicFlags.Length];
+                    for (int i = 0; i < entries.Length; i++)
+                        entries[i] = Section2.jspNodeList[done + i];
+                    done += entries.Length;
+                    ArchiveEditorFunctions.AddToJspNodeInfo(jsp.assetID, entries.Reverse().ToArray());
                 }
 
                 if (game == Game.BFBB && Platform == Platform.GameCube)
@@ -88,14 +91,8 @@ namespace IndustrialPark
         {
             Section1.RenderWareVersion = renderWareVersion;
             Section1.Serialize(writer);
-
-            if (game == Game.BFBB)
-            {
-                Section2.RenderWareVersion = renderWareVersion;
-                Section2.Serialize(writer);
-            }
-            else
-                writer.Write(Section2_Data.GetBytes(renderWareVersion));
+            Section2.RenderWareVersion = renderWareVersion;
+            Section2.Serialize(writer);
 
             if (game == Game.BFBB && Platform == Platform.GameCube)
             {

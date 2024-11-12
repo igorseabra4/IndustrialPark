@@ -30,6 +30,12 @@ namespace IndustrialPark
                 renderableJSPs.Remove(jsp);
                 renderableJSPs.Add(jsp);
             }
+
+        public static Dictionary<uint, xJSPNodeInfo[]> jspInfoNodeInfo = new Dictionary<uint, xJSPNodeInfo[]>();
+        public static void AddToJspNodeInfo(uint id, xJSPNodeInfo[] info)
+        {
+            lock (jspInfoNodeInfo)
+                jspInfoNodeInfo[id] = info;
         }
 
         public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
@@ -619,6 +625,8 @@ namespace IndustrialPark
 
             if (asset is AssetRenderWareModel jsp)
                 jsp.GetRenderWareModelFile()?.Dispose();
+            else if (asset is AssetJSP_INFO jspinfo)
+                jspInfoNodeInfo.Remove(jspinfo.assetID);
             else if (asset is IAssetWithModel iawm)
                 iawm.RemoveFromDictionary();
             else if (asset is AssetPICK pick)
@@ -837,7 +845,7 @@ namespace IndustrialPark
                 case AssetType.JSP:
                     return new AssetJSP(AHDR, game, endianness, Program.Renderer);
                 case AssetType.JSPInfo:
-                    return new AssetJSP_INFO(AHDR, game, platform, defaultJspAssetIds ?? GetJspAssetIDs(AHDR.assetID));
+                    return new AssetJSP_INFO(AHDR, game, platform, GetJspAssets(AHDR.assetID));
                 case AssetType.Model:
                     return new AssetMODL(AHDR, game, endianness, Program.Renderer);
                 case AssetType.Texture:
@@ -1733,9 +1741,9 @@ namespace IndustrialPark
 
         protected AssetID[] defaultJspAssetIds = null;
 
-        private AssetID[] GetJspAssetIDs(uint jspInfo)
+        private AssetJSP[] GetJspAssets(uint jspInfo)
         {
-            var result = new List<AssetID>();
+            var result = new List<AssetJSP>();
             var layerIndex = GetLayerFromAssetID(jspInfo);
             for (int i = layerIndex - 3; i < layerIndex; i++)
                 if (i > 0 && i < Layers.Count)
@@ -1744,7 +1752,7 @@ namespace IndustrialPark
                     {
                         foreach (var u in Layers[i].AssetIDs)
                             if (GetFromAssetID(u).assetType == AssetType.JSP)
-                                result.Add(u);
+                                result.Add((AssetJSP)GetFromAssetID(u));
                     }
                     else if (Layers[i].Type == LayerType.JSPINFO)
                         result.Clear();
