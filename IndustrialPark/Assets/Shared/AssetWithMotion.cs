@@ -14,6 +14,10 @@ namespace IndustrialPark
         {
             if (movementPreview)
                 Motion.Increment();
+#if DEBUG
+            if (isSelected)
+                base.DrawDebug(renderer);
+#endif
 
             Matrix localW = LocalWorld();
 

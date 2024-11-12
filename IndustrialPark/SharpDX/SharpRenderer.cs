@@ -129,6 +129,10 @@ namespace IndustrialPark
         public static SharpMesh Sphere { get; private set; }
         public static SharpMesh Plane { get; private set; }
         public static SharpMesh Torus { get; private set; }
+#if DEBUG
+        public static SharpMesh BoundingBox { get; private set; }
+        public static List<Vector3> boundingBoxVertices;
+#endif
 
         public static List<Vector3> cubeVertices;
         public static List<Models.Triangle> cubeTriangles;
@@ -234,6 +238,9 @@ namespace IndustrialPark
             }
 
             CreatePlaneMesh(tiny);
+#if DEBUG
+            CreateBoundingBoxMesh();
+#endif
         }
 
         public void CreatePlaneMesh(bool tiny)
@@ -263,6 +270,30 @@ namespace IndustrialPark
             if (!tiny)
                 Plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
         }
+
+#if DEBUG
+        private void CreateBoundingBoxMesh()
+        {
+            boundingBoxVertices = new()
+            {
+                new Vector3(-0.5f, 0.5f, -0.5f),
+                new Vector3(-0.5f, 0.5f, 0.5f),
+                new Vector3(0.5f, 0.5f, 0.5f),
+                new Vector3(0.5f, 0.5f, -0.5f),
+                new Vector3(-0.5f, -0.5f, -0.5f),
+                new Vector3(-0.5f, -0.5f, 0.5f),
+                new Vector3(0.5f, -0.5f, 0.5f),
+                new Vector3(0.5f, -0.5f, -0.5f),
+            };
+
+            List<int> bboxLines = new()
+            {
+               0, 1, 1, 2, 2, 3, 3, 0, 0, 4, 4, 5, 5, 6, 6, 7, 7, 4, 1, 5, 2, 6, 3, 7
+            };
+
+            BoundingBox = SharpMesh.Create(device, boundingBoxVertices.Select(v => new Vertex(v)).ToArray(), bboxLines.ToArray(), SharpDX.Direct3D.PrimitiveTopology.LineList);
+        }
+#endif
 
         public void SetSelectionColor(System.Drawing.Color color)
         {
@@ -335,6 +366,30 @@ namespace IndustrialPark
         public Vector4 selectedObjectColor;
 
         DefaultRenderData renderData;
+
+#if DEBUG
+        public void DrawBoundingBox(BoundingBox bbox)
+        {
+            float height = bbox.Maximum.Y - bbox.Minimum.Y;
+            float width = bbox.Maximum.X - bbox.Minimum.X;
+            float depth = bbox.Maximum.Z - bbox.Minimum.Z;
+
+            renderData.worldViewProjection = Matrix.Scaling(width, height, depth) * Matrix.Translation(bbox.Center) * viewProjection;
+            renderData.Color = new Vector4(1f, 0f, 0f, 1f);
+
+            device.SetCullModeNone();
+            device.ApplyRasterState();
+            device.SetBlendStateAlphaBlend();
+            device.SetDefaultDepthState();
+            device.UpdateAllStates();
+
+            basicBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
+            basicShader.Apply();
+
+            BoundingBox.Draw(device);
+        }
+#endif
 
         public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
         {

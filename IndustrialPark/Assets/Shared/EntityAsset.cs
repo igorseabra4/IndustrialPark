@@ -313,8 +313,20 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
+#if DEBUG
+        public void DrawDebug(SharpRenderer renderer)
+        {
+            renderer.DrawBoundingBox(boundingBox);
+            renderer.debugSelectedObjects.Add($"[{assetID:X8}] {assetName}");
+        }
+#endif
+
         public virtual void Draw(SharpRenderer renderer)
         {
+#if DEBUG
+            if (isSelected)
+                DrawDebug(renderer);
+#endif
             if (renderingDictionary.ContainsKey(_model))
                 renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
             else
