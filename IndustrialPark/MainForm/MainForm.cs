@@ -439,7 +439,7 @@ namespace IndustrialPark
                 Speed = renderer.Camera.Speed,
                 SpeedRot = renderer.Camera.SpeedRot,
                 FieldOfView = renderer.Camera.FieldOfView,
-                FarPlane = renderer.Camera.FarPlane,
+                FarPlane = renderer.Camera.DefaultFarPlane,
                 NoCulling = noCullingCToolStripMenuItem.Checked,
                 Wireframe = wireframeFToolStripMenuItem.Checked,
                 BackgroundColor = SharpRenderer.backgroundColor,
@@ -504,6 +504,7 @@ namespace IndustrialPark
             renderer.Camera.Speed = ipSettings.Speed;
             renderer.Camera.SpeedRot = ipSettings.SpeedRot;
             renderer.Camera.FieldOfView = ipSettings.FieldOfView;
+            renderer.Camera.DefaultFarPlane = ipSettings.FarPlane;
             renderer.Camera.FarPlane = ipSettings.FarPlane;
             ArchiveEditorFunctions.Grid = ipSettings.Grid;
 

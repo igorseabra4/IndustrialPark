@@ -101,8 +101,8 @@ namespace IndustrialPark
             RaiseCameraChangedEvent();
         }
 
-        public readonly float DefaultFarPlane = 10000F;
-        public readonly float DefaultNearPlane = 0.1F;
+        public float DefaultFarPlane = 10000F;
+        public float DefaultNearPlane = 0.1F;
 
         internal void Reset()
         {
