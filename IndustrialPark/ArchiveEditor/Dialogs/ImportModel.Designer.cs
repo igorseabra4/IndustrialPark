@@ -209,6 +209,8 @@
             // checkBoxBinMesh
             // 
             resources.ApplyResources(checkBoxBinMesh, "checkBoxBinMesh");
+            checkBoxBinMesh.Checked = true;
+            checkBoxBinMesh.CheckState = System.Windows.Forms.CheckState.Checked;
             checkBoxBinMesh.Name = "checkBoxBinMesh";
             checkBoxBinMesh.UseVisualStyleBackColor = true;
             checkBoxBinMesh.CheckedChanged += checkBoxBinMesh_CheckedChanged;
