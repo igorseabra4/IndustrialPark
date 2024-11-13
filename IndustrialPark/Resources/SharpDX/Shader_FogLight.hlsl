@@ -99,12 +99,13 @@ float4 PS(PS_IN input) : SV_Target
     float4 finalColor = input.color;
     finalColor *= textureMap.Sample(textureSampler, input.texcoord);
 	
+    // TODO
 	// Only testing the alpha channel causes certain tikis in movie to disappear
 	// We discard fully transparent pixels with no RGB values
-    //if (dot(finalColor, finalColor) == 0)
-    //    discard;
-    if (!(finalColor.a > AlphaDiscard))
+    if (dot(finalColor, finalColor) == 0)
         discard;
+    //if (!(finalColor.a > AlphaDiscard))
+    //    discard;
 
     if (FogEnable)
         finalColor.rgb = input.fogfactor * finalColor.rgb + (1.0 - input.fogfactor) * FogColor.rgb;
