@@ -1773,16 +1773,11 @@ namespace IndustrialPark
 
         public void UpdateModelBlendModes(Dictionary<uint, PipeInfo[]> blendModes)
         {
-            foreach (var asset in assetDictionary.Values)
-                if (asset is AssetMODL MODL)
-                    MODL.ResetPipeline();
-
             if (blendModes != null)
-            {
                 foreach (var k in blendModes.Keys)
                     if (renderingDictionary.ContainsKey(k) && renderingDictionary[k] is AssetMODL MODL)
                         MODL.SetPipeline(blendModes[k]);
-            }
+
         }
 
         public void UpdateLightKit(AssetID lkitid)
