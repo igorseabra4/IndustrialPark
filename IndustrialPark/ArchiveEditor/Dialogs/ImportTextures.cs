@@ -109,6 +109,8 @@ namespace IndustrialPark
                     {
                         byte[] data = AHDRs[i].data;
                         FixTextureForScooby(ref data);
+                        if (platform == Platform.GameCube) // TEMP FIX
+                            data[0x8E] = 0x1;
                         AHDRs[i].data = data;
                     }
 

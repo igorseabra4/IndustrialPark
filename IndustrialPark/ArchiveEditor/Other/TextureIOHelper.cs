@@ -201,7 +201,7 @@ namespace IndustrialPark
                         {
                             textureNativeStruct = new TextureNativeStruct_0001()
                             {
-                                textureName = textureName + (appendRW3 ? ".RW3" : ""),
+                                textureName = textureName + (appendRW3 && game != Game.Scooby ? ".RW3" : ""),
                                 alphaName = "",
                                 height = (short)bitmap.Height,
                                 width = (short)bitmap.Width,
@@ -242,15 +242,19 @@ namespace IndustrialPark
 
                 List<Section_AHDR> AHDRs = new List<Section_AHDR>();
 
+
                 foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(pathToGcTXD)[0]).textureNativeList)
-                    AHDRs.Add(new Section_AHDR(BKDRHash(texture.textureNativeStruct.textureName), AssetType.Texture, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.Texture),
-                        new Section_ADBG(0, texture.textureNativeStruct.textureName, "", 0),
+                {
+                    string sanitizedTexture = game == Game.Scooby && appendRW3 ? texture.textureNativeStruct.textureName + ".RW3" : texture.textureNativeStruct.textureName;
+                    AHDRs.Add(new Section_AHDR(BKDRHash(sanitizedTexture), AssetType.Texture, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.Texture),
+                        new Section_ADBG(0, sanitizedTexture, "", 0),
                         ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
                         {
                             textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
                             textureNativeList = new List<TextureNative_0015>() { texture },
                             textureDictionaryExtension = new Extension_0003()
                         }, currentTextureVersion(game, platform))));
+                }
 
                 // fix for apparent transparency issue
                 if (transFix && platform == Platform.GameCube)
