@@ -322,7 +322,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxFlipUVs.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="checkBoxOverwrite.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -349,7 +349,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="checkBoxGenSimps.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -403,7 +403,7 @@
     <value>grpImportSettings</value>
   </data>
   <data name="&gt;&gt;checkBoxCreatePIPT.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="checkBoxUseMeshColors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -491,6 +491,33 @@
   </data>
   <data name="&gt;&gt;checkBoxSolidSimps.ZOrder" xml:space="preserve">
     <value>2</value>
+  </data>
+  <data name="checkBoxNoMaterials.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxNoMaterials.Location" type="System.Drawing.Point, System.Drawing">
+    <value>150, 42</value>
+  </data>
+  <data name="checkBoxNoMaterials.Size" type="System.Drawing.Size, System.Drawing">
+    <value>93, 19</value>
+  </data>
+  <data name="checkBoxNoMaterials.TabIndex" type="System.Int32, mscorlib">
+    <value>15</value>
+  </data>
+  <data name="checkBoxNoMaterials.Text" xml:space="preserve">
+    <value>No Materials</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNoMaterials.Name" xml:space="preserve">
+    <value>checkBoxNoMaterials</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNoMaterials.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNoMaterials.Parent" xml:space="preserve">
+    <value>grpImportSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxNoMaterials.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="grpImportSettings.Location" type="System.Drawing.Point, System.Drawing">
     <value>225, 68</value>
@@ -656,9 +683,6 @@
   </data>
   <data name="checkBoxTriStrips.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
-  </data>
-  <data name="checkBoxTriStrips.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
   </data>
   <data name="checkBoxTriStrips.Location" type="System.Drawing.Point, System.Drawing">
     <value>14, 67</value>

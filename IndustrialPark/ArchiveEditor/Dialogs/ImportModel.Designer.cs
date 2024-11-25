@@ -44,6 +44,7 @@
             checkBoxLedgeGrab = new System.Windows.Forms.CheckBox();
             checkBoxSolidSimps = new System.Windows.Forms.CheckBox();
             grpImportSettings = new System.Windows.Forms.GroupBox();
+            checkBoxNoMaterials = new System.Windows.Forms.CheckBox();
             grpSIMP = new System.Windows.Forms.GroupBox();
             checkBoxUseExistingDefaultLayer = new System.Windows.Forms.CheckBox();
             groupBoxModelSettings = new System.Windows.Forms.GroupBox();
@@ -165,12 +166,19 @@
             // 
             // grpImportSettings
             // 
+            grpImportSettings.Controls.Add(checkBoxNoMaterials);
             grpImportSettings.Controls.Add(checkBoxFlipUVs);
             grpImportSettings.Controls.Add(checkBoxCreatePIPT);
             grpImportSettings.Controls.Add(checkBoxOverwrite);
             resources.ApplyResources(grpImportSettings, "grpImportSettings");
             grpImportSettings.Name = "grpImportSettings";
             grpImportSettings.TabStop = false;
+            // 
+            // checkBoxNoMaterials
+            // 
+            resources.ApplyResources(checkBoxNoMaterials, "checkBoxNoMaterials");
+            checkBoxNoMaterials.Name = "checkBoxNoMaterials";
+            checkBoxNoMaterials.UseVisualStyleBackColor = true;
             // 
             // grpSIMP
             // 
@@ -341,5 +349,6 @@
         private System.Windows.Forms.CheckBox checkBoxNativeData;
         private System.Windows.Forms.CheckBox checkBoxTriStrips;
         private System.Windows.Forms.CheckBox checkBoxBinMesh;
+        private System.Windows.Forms.CheckBox checkBoxNoMaterials;
     }
 }

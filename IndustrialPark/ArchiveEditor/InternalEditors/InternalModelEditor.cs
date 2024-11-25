@@ -172,7 +172,7 @@ namespace IndustrialPark
 
         private void buttonImport_Click(object sender, EventArgs e)
         {
-            if (ImportModel.GetModel(archive.game, archive.platform, out byte[] newModel, out bool createPipt))
+            if (ImportModel.GetModel(archive.game, archive.platform, asset.assetType, out byte[] newModel, out bool createPipt))
             {
                 asset.Data = newModel;
                 asset.Setup(Program.MainForm.renderer);

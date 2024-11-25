@@ -1,7 +1,9 @@
 ﻿using HipHopFile;
+using IndustrialPark.RenderWare;
 using RenderWareFile;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -13,13 +15,13 @@ namespace IndustrialPark
     public partial class ImportModel : Form
     {
         private bool isSingleModel = false;
-        public ImportModel(Platform platform, bool noLayers, bool isSingleModel)
+        public ImportModel(Platform platform, AssetType assetType, bool noLayers)
         {
             InitializeComponent();
 
             buttonOK.Enabled = false;
             TopMost = true;
-            this.isSingleModel = isSingleModel;
+            isSingleModel = assetType != AssetType.Null;
 
             comboBoxAssetTypes.Items.Add(AssetType.Model);
             comboBoxAssetTypes.Items.Add(AssetType.BSP);
@@ -34,6 +36,8 @@ namespace IndustrialPark
                 buttonImportRawData.Text = "Select Model...";
                 checkBoxOverwrite.Enabled = false;
                 Height -= grpSIMP.Height;
+                comboBoxAssetTypes.SelectedItem = assetType;
+                comboBoxAssetTypes.Enabled = false;
             }
 
             if (platform != Platform.GameCube)
@@ -41,6 +45,9 @@ namespace IndustrialPark
 
             if (platform == Platform.PS2)
                 (checkBoxCreatePIPT.Checked, checkBoxCreatePIPT.Enabled) = (true, false);
+
+            if (assetType != AssetType.BSP)
+                checkBoxNoMaterials.Visible = false;
 
         }
 
@@ -104,38 +111,47 @@ namespace IndustrialPark
         /// <param name="platform"></param>
         /// <param name="model"></param>
         /// <returns>True if model was created/read successfully, false otherwise</returns>
-        public static bool GetModel(Game game, Platform platform, out byte[] model, out bool createPipt)
+        public static bool GetModel(Game game, Platform platform, AssetType assetType, out byte[] model, out bool createPipt)
         {
             model = null;
             createPipt = false;
 
-            using (ImportModel a = new ImportModel(platform, false, true))
+            using (ImportModel a = new ImportModel(platform, assetType, false))
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     createPipt = a.checkBoxCreatePIPT.Checked;
                     ReadFileMethods.treatStuffAsByteArray = false;
 
-                    if (((AssetType)a.comboBoxAssetTypes.SelectedItem) == AssetType.Model)
+                    try
                     {
-                        model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".dff") ? File.ReadAllBytes(a.filePaths[0]) :
-                            ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0],
-                                a.checkBoxTriStrips.Checked,
-                                a.checkBoxFlipUVs.Checked,
-                                a.checkBoxIgnoreMeshColors.Checked,
-                                a.checkBoxVertexColors.Checked,
-                                a.checkBoxTexCoords.Checked,
-                                a.checkBoxNormals.Checked,
-                                a.checkBoxGeoTriangles.Checked,
-                                a.checkBoxMultiAtomic.Checked,
-                                a.checkBoxNativeData.Checked,
-                                a.checkBoxCollTree.Checked,
-                                a.checkBoxBinMesh.Checked), modelRenderWareVersion(game));
+                        if (assetType == AssetType.Model)
+                        {
+                            model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".dff") ? File.ReadAllBytes(a.filePaths[0]) :
+                                ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0],
+                                    a.checkBoxTriStrips.Checked,
+                                    a.checkBoxFlipUVs.Checked,
+                                    a.checkBoxIgnoreMeshColors.Checked,
+                                    a.checkBoxVertexColors.Checked,
+                                    a.checkBoxTexCoords.Checked,
+                                    a.checkBoxNormals.Checked,
+                                    a.checkBoxGeoTriangles.Checked,
+                                    a.checkBoxMultiAtomic.Checked,
+                                    a.checkBoxNativeData.Checked,
+                                    a.checkBoxCollTree.Checked,
+                                    a.checkBoxBinMesh.Checked), modelRenderWareVersion(game));
+                        }
+                        else if (assetType == AssetType.BSP)
+                        {
+                            model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".bsp") ? File.ReadAllBytes(a.filePaths[0]) :
+                                RwUtility.PerformBSPConversion(a.filePaths[0], game, 
+                                a.checkBoxNormals.Checked, a.checkBoxVertexColors.Checked, a.checkBoxTexCoords.Checked, a.checkBoxTriStrips.Checked,
+                                a.checkBoxIgnoreMeshColors.Checked, a.checkBoxNoMaterials.Checked, a.checkBoxFlipUVs.Checked, a.checkBoxCollTree.Checked);
+                        }
                     }
-                    else if (((AssetType)a.comboBoxAssetTypes.SelectedItem) == AssetType.BSP)
+                    catch (Exception e)
                     {
-                        model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".bsp") ? File.ReadAllBytes(a.filePaths[0]) :
-                            ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(a.filePaths[0], a.checkBoxFlipUVs.Checked, a.checkBoxIgnoreMeshColors.Checked),
-                            modelRenderWareVersion(game));
+                        MessageBox.Show(e.Message, "Error importing BSP", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
                     }
 
                     return true;
@@ -145,7 +161,7 @@ namespace IndustrialPark
 
         public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp, bool useExistingDefaultLayer) GetModels(Game game, Platform platform, bool noLayers)
         {
-            using (ImportModel a = new ImportModel(platform, noLayers, false))
+            using (ImportModel a = new ImportModel(platform, AssetType.Null, noLayers))
                 if (a.ShowDialog() == DialogResult.OK)
                 {
                     List<Section_AHDR> AHDRs = new List<Section_AHDR>();
@@ -207,13 +223,10 @@ namespace IndustrialPark
 
                             try
                             {
-                                assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
-                                    File.ReadAllBytes(filePath) :
-                                    ReadFileMethods.ExportRenderWareFile(
-                                        CreateBSPFromAssimp(filePath,
-                                        a.checkBoxFlipUVs.Checked,
-                                        a.checkBoxUseMeshColors.Checked),
-                                        modelRenderWareVersion(game));
+                                assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ? File.ReadAllBytes(filePath) :
+                                    RwUtility.PerformBSPConversion(filePath, game,
+                                    a.checkBoxNormals.Checked, a.checkBoxVertexColors.Checked, a.checkBoxTexCoords.Checked, a.checkBoxTriStrips.Checked,
+                                    a.checkBoxIgnoreMeshColors.Checked, a.checkBoxNoMaterials.Checked, a.checkBoxFlipUVs.Checked, a.checkBoxCollTree.Checked);
                             }
                             catch (ArgumentException)
                             {
@@ -224,9 +237,9 @@ namespace IndustrialPark
                                     MessageBoxIcon.Error);
                                 return (null, false, false, false, false, false, false, false);
                             }
-                            catch (Exception)
+                            catch (Exception e)
                             {
-                                MessageBox.Show("Model could not be imported.",
+                                MessageBox.Show($"{e.Message}",
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
@@ -277,6 +290,17 @@ namespace IndustrialPark
                 checkBoxLedgeGrab.Enabled = false;
                 checkBoxCreatePIPT.Checked = false;
                 checkBoxCreatePIPT.Enabled = false;
+
+                checkBoxNativeData.Checked = false;
+                checkBoxNativeData.Enabled = false;
+                checkBoxCollTree.Checked = true;
+                checkBoxGeoTriangles.Enabled = false;
+                checkBoxIgnoreMeshColors.Enabled = false;
+                checkBoxBinMesh.Enabled = false;
+                checkBoxMultiAtomic.Enabled = false;
+                checkBoxTexCoords.Checked = true;
+                checkBoxNormals.Checked = false;
+                checkBoxVertexColors.Checked = true;
             }
             else
             {
