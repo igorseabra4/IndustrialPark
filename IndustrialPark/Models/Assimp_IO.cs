@@ -932,35 +932,35 @@ namespace IndustrialPark.Models
             List<RenderWareFile.Color> colorList_init = new List<RenderWareFile.Color>();
             List<Vertex2> textCoordList_init = new List<Vertex2>();
 
-            foreach (Declaration d in n.declarations)
+            foreach (VertexAttribute d in n.attr)
             {
-                if (d.declarationType == Declarations.Vertex)
+                if (d.attr == rwGCNVertexAttribute.rwGCNVA_POS)
                 {
-                    var dec = (Vertex3Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex3>)d;
+                    foreach (var v in dec.entries)
                         vertexList_init.Add(v);
                 }
-                else if (d.declarationType == Declarations.Normal)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_NRM)
                 {
-                    var dec = (Vertex3Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex3>)d;
+                    foreach (var v in dec.entries)
                         normalList_init.Add(v);
                 }
-                else if (d.declarationType == Declarations.Color)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                 {
-                    var dec = (ColorDeclaration)d;
-                    foreach (var c in dec.entryList)
+                    var dec = (VertexAttribute<RenderWareFile.Color>)d;
+                    foreach (var c in dec.entries)
                         colorList_init.Add(c);
                 }
-                else if (d.declarationType == Declarations.TextCoord)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
                 {
-                    var dec = (Vertex2Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex2>)d;
+                    foreach (var v in dec.entries)
                         textCoordList_init.Add(v);
                 }
             }
 
-            foreach (TriangleDeclaration td in n.triangleDeclarations)
+            foreach (TriangleDeclaration td in n.displayList)
             {
                 Mesh mesh = new Mesh(PrimitiveType.Triangle)
                 {
@@ -968,27 +968,27 @@ namespace IndustrialPark.Models
                     Name = scene.Materials[td.MaterialIndex + totalMaterials].Name.Replace("mat_", "mesh_") + "_" + (scene.MeshCount + 1).ToString()
                 };
 
-                foreach (TriangleList tl in td.TriangleListList)
+                foreach (TriangleStrip tl in td.strips)
                 {
                     int totalVertexIndices = mesh.VertexCount;
                     int vcount = 0;
 
-                    foreach (int[] objectList in tl.entries)
+                    foreach (ushort[] objectList in tl.indices)
                     {
                         for (int j = 0; j < objectList.Count(); j++)
                         {
-                            if (n.declarations[j].declarationType == Declarations.Vertex)
+                            if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_POS)
                             {
                                 var v = vertexList_init[objectList[j]];
                                 mesh.Vertices.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
                                 vcount++;
                             }
-                            else if (n.declarations[j].declarationType == Declarations.Normal)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_NRM)
                             {
                                 var v = normalList_init[objectList[j]];
                                 mesh.Normals.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
                             }
-                            else if (n.declarations[j].declarationType == Declarations.Color)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                             {
                                 var c = colorList_init[objectList[j]];
                                 mesh.VertexColorChannels[0].Add(new System.Numerics.Vector4(
@@ -997,7 +997,7 @@ namespace IndustrialPark.Models
                                         c.B / 255f,
                                         c.A / 255f));
                             }
-                            else if (n.declarations[j].declarationType == Declarations.TextCoord)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
                             {
                                 var v = textCoordList_init[objectList[j]];
                                 mesh.TextureCoordinateChannels[0].Add(new System.Numerics.Vector3(v.X, v.Y, 0f));

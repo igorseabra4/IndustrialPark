@@ -433,30 +433,30 @@ namespace IndustrialPark
             bool usePrelight = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.HasVertexColors) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0;
             bool modulateMaterialColor = geo is World_000B ? (((World_000B)geo).worldStruct.worldFlags & WorldFlags.ModulateMaterialColors) != 0 : (((Geometry_000F)geo).geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR) != 0;
 
-            foreach (Declaration d in n.declarations)
+            foreach (VertexAttribute d in n.attr)
             {
-                if (d.declarationType == Declarations.Vertex)
+                if (d.attr == rwGCNVertexAttribute.rwGCNVA_POS)
                 {
-                    var dec = (Vertex3Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex3>)d;
+                    foreach (var v in dec.entries)
                         vertexList1.Add(v);
                 }
-                else if (d.declarationType == Declarations.Normal)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_NRM)
                 {
-                    var dec = (Vertex3Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex3>)d;
+                    foreach (var v in dec.entries)
                         normalList.Add(v);
                 }
-                else if (d.declarationType == Declarations.Color)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                 {
-                    var dec = (ColorDeclaration)d;
-                    foreach (var c in dec.entryList)
+                    var dec = (VertexAttribute<RenderWareFile.Color>)d;
+                    foreach (var c in dec.entries)
                         colorList.Add(c);
                 }
-                else if (d.declarationType == Declarations.TextCoord)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
                 {
-                    var dec = (Vertex2Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex2>)d;
+                    foreach (var v in dec.entries)
                         textCoordList.Add(v);
                 }
             }
@@ -467,11 +467,11 @@ namespace IndustrialPark
             int previousAmount = 0;
             List<SharpSubSet> subSetList = new List<SharpSubSet>();
 
-            foreach (TriangleDeclaration td in n.triangleDeclarations)
+            foreach (TriangleDeclaration td in n.displayList)
             {
-                foreach (TriangleList tl in td.TriangleListList)
+                foreach (TriangleStrip tl in td.strips)
                 {
-                    foreach (int[] objectList in tl.entries)
+                    foreach (ushort[] objectList in tl.indices)
                     {
                         Vector3 position = new Vector3();
                         SharpDX.Color color = new SharpDX.Color(255, 255, 255, 255);
@@ -480,7 +480,7 @@ namespace IndustrialPark
 
                         for (int j = 0; j < objectList.Count(); j++)
                         {
-                            if (n.declarations[j].declarationType == Declarations.Vertex)
+                            if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_POS)
                             {
                                 position = (Vector3)Vector3.Transform(
                                     new Vector3(
@@ -489,18 +489,18 @@ namespace IndustrialPark
                                         vertexList1[objectList[j]].Z),
                                     transformMatrix);
                             }
-                            else if (n.declarations[j].declarationType == Declarations.Color)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                             {
                                 color = new SharpDX.Color(colorList[objectList[j]].R, colorList[objectList[j]].G, colorList[objectList[j]].B, colorList[objectList[j]].A);
                                 if (color.A == 0)
                                     color = new SharpDX.Color(255, 255, 255, 255);
                             }
-                            else if (n.declarations[j].declarationType == Declarations.TextCoord)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
                             {
                                 textureCoordinate.X = textCoordList[objectList[j]].X;
                                 textureCoordinate.Y = textCoordList[objectList[j]].Y;
                             }
-                            else if (n.declarations[j].declarationType == Declarations.Normal)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_NRM)
                             {
                                 normal = new Vector3(
                                         normalList[objectList[j]].X,

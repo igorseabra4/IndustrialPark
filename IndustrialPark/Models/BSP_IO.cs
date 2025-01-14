@@ -161,60 +161,60 @@ namespace IndustrialPark.Models
             List<Color> colorList_init = new List<Color>();
             List<Vertex2> textCoordList_init = new List<Vertex2>();
 
-            foreach (Declaration d in n.declarations)
+            foreach (VertexAttribute d in n.attr)
             {
-                if (d.declarationType == Declarations.Vertex)
+                if (d.attr == rwGCNVertexAttribute.rwGCNVA_POS)
                 {
-                    var dec = (Vertex3Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex3>)d;
+                    foreach (var v in dec.entries)
                         vertexList_init.Add(v);
                 }
-                else if (d.declarationType == Declarations.Normal)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_NRM)
                 {
-                    var dec = (Vertex3Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex3>)d;
+                    foreach (var v in dec.entries)
                         normalList_init.Add(v);
                 }
-                else if (d.declarationType == Declarations.Color)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                 {
-                    var dec = (ColorDeclaration)d;
-                    foreach (var c in dec.entryList)
+                    var dec = (VertexAttribute<RenderWareFile.Color>)d;
+                    foreach (var c in dec.entries)
                         colorList_init.Add(c);
                 }
-                else if (d.declarationType == Declarations.TextCoord)
+                else if (d.attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
                 {
-                    var dec = (Vertex2Declaration)d;
-                    foreach (var v in dec.entryList)
+                    var dec = (VertexAttribute<Vertex2>)d;
+                    foreach (var v in dec.entries)
                         textCoordList_init.Add(v);
                 }
             }
 
-            foreach (TriangleDeclaration td in n.triangleDeclarations)
+            foreach (TriangleDeclaration td in n.displayList)
             {
-                foreach (TriangleList tl in td.TriangleListList)
+                foreach (TriangleStrip tl in td.strips)
                 {
                     List<Vertex3> vertexList_final = new List<Vertex3>();
                     List<Vertex3> normalList_final = new List<Vertex3>();
                     List<Color> colorList_final = new List<Color>();
                     List<Vertex2> textCoordList_final = new List<Vertex2>();
 
-                    foreach (int[] objectList in tl.entries)
+                    foreach (ushort[] objectList in tl.indices)
                     {
                         for (int j = 0; j < objectList.Count(); j++)
                         {
-                            if (n.declarations[j].declarationType == Declarations.Vertex)
+                            if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_POS)
                             {
                                 vertexList_final.Add(vertexList_init[objectList[j]]);
                             }
-                            else if (n.declarations[j].declarationType == Declarations.Normal)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_NRM)
                             {
                                 normalList_final.Add(normalList_init[objectList[j]]);
                             }
-                            else if (n.declarations[j].declarationType == Declarations.Color)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                             {
                                 colorList_final.Add(colorList_init[objectList[j]]);
                             }
-                            else if (n.declarations[j].declarationType == Declarations.TextCoord)
+                            else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
                             {
                                 textCoordList_final.Add(textCoordList_init[objectList[j]]);
                             }

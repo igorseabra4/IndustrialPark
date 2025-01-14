@@ -387,18 +387,18 @@ namespace IndustrialPark
 
         private void ApplyVertexColors(NativeDataGC nativeData, Func<Vector4, Vector4> getColor)
         {
-            for (int j = 0; j < nativeData.declarations.Length; j++)
-                if (nativeData.declarations[j].declarationType == Declarations.Color)
+            for (int j = 0; j < nativeData.attr.Length; j++)
+                if (nativeData.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                 {
-                    var vd = (ColorDeclaration)nativeData.declarations[j];
-                    for (int k = 0; k < vd.entryList.Count; k++)
+                    var vd = (VertexAttribute<RenderWareFile.Color>)nativeData.attr[j];
+                    for (int k = 0; k < vd.entries.Count; k++)
                     {
-                        var oldColor = vd.entryList[k];
+                        var oldColor = vd.entries[k];
 
                         var newColor = getColor(
                             new Vector4(oldColor.R / 255f, oldColor.G / 255f, oldColor.B / 255f, oldColor.A / 255f));
 
-                        vd.entryList[k] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
+                        vd.entries[k] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
                     }
                 }
         }
@@ -534,14 +534,14 @@ namespace IndustrialPark
 
         private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, NativeDataPLG_0510 nativeData, ref List<Vector3> allVertices)
         {
-            for (int i = 0; i < nativeData.nativeDataStruct.nativeData.declarations.Length; i++)
-                if (nativeData.nativeDataStruct.nativeData.declarations[i].declarationType == Declarations.Vertex)
+            for (int i = 0; i < nativeData.nativeDataStruct.nativeData.attr.Length; i++)
+                if (nativeData.nativeDataStruct.nativeData.attr[i].attr == rwGCNVertexAttribute.rwGCNVA_POS)
                 {
-                    var vd = (Vertex3Declaration)nativeData.nativeDataStruct.nativeData.declarations[i];
-                    for (int j = 0; j < vd.entryList.Count; j++)
-                        vd.entryList[j] = transform(vd.entryList[j].X, vd.entryList[j].Y, vd.entryList[j].Z);
+                    var vd = (VertexAttribute<Vertex3>)nativeData.nativeDataStruct.nativeData.attr[i];
+                    for (int j = 0; j < vd.entries.Count; j++)
+                        vd.entries[j] = transform(vd.entries[j].X, vd.entries[j].Y, vd.entries[j].Z);
 
-                    allVertices.AddRange(vd.entryList.Select(v => new Vector3(v.X, v.Y, v.Z)));
+                    allVertices.AddRange(vd.entries.Select(v => new Vector3(v.X, v.Y, v.Z)));
                 }
         }
 
