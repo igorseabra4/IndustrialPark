@@ -1,7 +1,11 @@
 ﻿using HipHopFile;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -44,6 +48,8 @@ namespace IndustrialPark
                 SetupForWire(wire);
             else if (asset is AssetFOG fog)
                 SetupForFog(fog);
+            else if (asset is AssetJSP_INFO info)
+                SetupForJSPInfo(info);
 
             if (asset is EntityAsset entity && !new AssetType[] {
                 AssetType.Trigger,
@@ -119,6 +125,20 @@ namespace IndustrialPark
             tableLayoutPanel1.RowCount += 1;
             RowSizes.Add(size);
             return tableLayoutPanel1.RowCount - 1;
+        }
+
+        private void SetupForJSPInfo(AssetJSP_INFO asset)
+        {
+            var rowIndex = AddRow(ButtonSize);
+
+            Button buttonGenerate = new Button() { Dock = DockStyle.Fill, Text = "Generate JSPINFO", AutoSize = true };
+            buttonGenerate.Click += (s, e) =>
+            {
+                archive.GenerateJSPInfo(asset);
+                RefreshPropertyGrid();
+                archive.UnsavedChanges = true;
+            };
+            tableLayoutPanel1.Controls.Add(buttonGenerate, 0, rowIndex);
         }
 
         private void SetupForCam(AssetCAM asset)

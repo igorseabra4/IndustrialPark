@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using Newtonsoft.Json;
+using RenderWareFile;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -71,23 +72,6 @@ namespace IndustrialPark
             }
         }
 
-        public static List<AssetJSP> renderableJSPs = new List<AssetJSP>();
-        public static void AddToRenderableJSPs(AssetJSP jsp)
-        {
-            lock (renderableJSPs)
-            {
-                renderableJSPs.Remove(jsp);
-                renderableJSPs.Insert(0, jsp);
-            }
-        }
-
-        public static Dictionary<uint, xJSPNodeInfo[]> jspInfoNodeInfo = new Dictionary<uint, xJSPNodeInfo[]>();
-        public static void AddToJspNodeInfo(uint id, xJSPNodeInfo[] info)
-        {
-            lock (jspInfoNodeInfo)
-                jspInfoNodeInfo[id] = info;
-        }
-
         public static Dictionary<uint, IAssetWithModel> renderingDictionary = new Dictionary<uint, IAssetWithModel>();
         public static void AddToRenderingDictionary(uint assetID, IAssetWithModel value)
         {
@@ -157,7 +141,6 @@ namespace IndustrialPark
 
         protected Section_PACK PACK;
 
-        protected List<Layer> Layers;
 
         protected Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
 
@@ -307,14 +290,6 @@ namespace IndustrialPark
 #endif
         }
 
-        private static Layer LHDRToLayer(Section_LHDR LHDR, Game game, string layerName)
-        {
-            var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType, game), LHDR.assetIDlist.Count, layerName);
-            foreach (var u in LHDR.assetIDlist)
-                layer.AssetIDs.Add(u);
-            return layer;
-        }
-
         private void LogAssetOrder(Section_DICT DICT, Dictionary<uint, Section_AHDR> tempAhdrUglyDict)
         {
             var tempLog = new List<string>();
@@ -415,20 +390,6 @@ namespace IndustrialPark
             return new HipFile(game, platform, new Section_HIPA(), PACK, DICT, new Section_STRM(), LegacySave ? null : HIPB);
         }
 
-        private static int LayerTypeGenericToSpecific(LayerType layerType, Game game)
-        {
-            if (game >= Game.Incredibles || layerType < LayerType.BSP)
-                return (int)layerType;
-            return (int)layerType - 1;
-        }
-
-        private static LayerType LayerTypeSpecificToGeneric(int layerType, Game game)
-        {
-            if (game >= Game.Incredibles || layerType < 2)
-                return (LayerType)layerType;
-            return (LayerType)(layerType + 1);
-        }
-
         public bool EditPack()
         {
             var (PACK, newPlatform, newGame) = NewArchive.GetExistingArchive(platform, game, this.PACK.PCRT.fileDate, this.PACK.PCRT.dateString);
@@ -480,150 +441,6 @@ namespace IndustrialPark
             if (result.Count > 0)
                 return "The following asset types could not be converted. You might need to re-create them or replace them with the appropriate version on the game and/or platform.\n\n" + string.Join("\n", result.OrderBy(x => x));
             return null;
-        }
-
-        private bool _noLayers = false;
-        public bool NoLayers
-        {
-            get => _noLayers;
-            set
-            {
-                if (value)
-                {
-                    Layers = new List<Layer>();
-                }
-                else
-                {
-                    try
-                    {
-                        Layers = BuildLayers();
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                        return;
-                    }
-                }
-                _noLayers = value;
-                UnsavedChanges = true;
-                SelectedLayerIndex = -1;
-            }
-        }
-
-        public int SelectedLayerIndex = -1;
-
-        public int LayerCount => Layers.Count;
-
-        public int GetLayerType() => LayerTypeGenericToSpecific(Layers[SelectedLayerIndex].Type, game);
-
-        public void SetLayerType(int type) => Layers[SelectedLayerIndex].Type = LayerTypeSpecificToGeneric(type, game);
-
-        public string LayerToString() => LayerToString(SelectedLayerIndex);
-
-        public string LayerToString(int index) => "Layer " + index.ToString("D2") + ": "
-            + (string.IsNullOrWhiteSpace(Layers[index].LayerName) ? Layers[index].Type.ToString() : Layers[index].LayerName)
-            + " [" + Layers[index].AssetIDs.Count() + "]";
-
-        public List<uint> GetAssetIDsOnLayer(int layer = -1) => NoLayers ?
-            (from Asset a in assetDictionary.Values select a.assetID).ToList() :
-            Layers[layer == -1 ? SelectedLayerIndex : layer].AssetIDs;
-
-        public int GetFirstActiveLayerIndex()
-        {
-            if (NoLayers || Layers.Count == 0)
-                return -1;
-            for (int i = 0; i < Layers.Count; i++)
-                if (Layers[i].AssetIDs.Count > 0)
-                    return i;
-            return 0;
-        }
-
-        public void AddLayer(LayerType layerType = LayerType.DEFAULT)
-        {
-            if (NoLayers)
-                return;
-
-            Layers.Add(new Layer(layerType));
-
-            SelectedLayerIndex = Layers.Count - 1;
-
-            UnsavedChanges = true;
-        }
-
-        public void RemoveLayer()
-        {
-            if (NoLayers)
-                return;
-
-            foreach (uint u in Layers[SelectedLayerIndex].AssetIDs.ToArray())
-                RemoveAsset(u);
-
-            Layers.RemoveAt(SelectedLayerIndex);
-
-            SelectedLayerIndex--;
-
-            UnsavedChanges = true;
-        }
-
-        public void MoveLayerUp()
-        {
-            if (NoLayers)
-                return;
-
-            if (SelectedLayerIndex > 0)
-            {
-                var previous = Layers[SelectedLayerIndex - 1];
-                Layers[SelectedLayerIndex - 1] = Layers[SelectedLayerIndex];
-                Layers[SelectedLayerIndex] = previous;
-                UnsavedChanges = true;
-            }
-        }
-
-        public void MoveLayerDown()
-        {
-            if (NoLayers)
-                return;
-
-            if (SelectedLayerIndex < Layers.Count - 1)
-            {
-                var post = Layers[SelectedLayerIndex + 1];
-                Layers[SelectedLayerIndex + 1] = Layers[SelectedLayerIndex];
-                Layers[SelectedLayerIndex] = post;
-                UnsavedChanges = true;
-            }
-        }
-
-        public int GetLayerFromAssetID(uint assetID)
-        {
-            if (NoLayers)
-                return -1;
-
-            for (int i = 0; i < Layers.Count; i++)
-                if (Layers[i].AssetIDs.Contains(assetID))
-                    return i;
-
-            throw new Exception($"Asset ID {assetID:X8} is not present in any layer.");
-        }
-
-        /// <summary>
-        /// Rename a layer
-        /// </summary>
-        /// <param name="selectedIndex"></param>
-        /// <returns>True if layer has been successfully renamed, false otherwise</returns>
-        public bool RenameLayer(int selectedIndex)
-        {
-            if (NoLayers)
-                return false;
-
-            var layer = Layers[selectedIndex];
-            var rn = new RenameLayer(layer.LayerName);
-            if (rn.ShowDialog() == DialogResult.OK)
-            {
-                layer.LayerName = string.IsNullOrWhiteSpace(rn.LayerName) ? null : rn.LayerName;
-                UnsavedChanges = true;
-                return true;
-            }
-            return false;
         }
 
         public void Dispose(bool showProgress = true)
@@ -724,9 +541,6 @@ namespace IndustrialPark
             asset is AssetFLY
              select asset.assetType).Distinct();
 
-        public List<AssetType> AssetTypesOnLayer() => NoLayers ?
-            (from Asset a in assetDictionary.Values select a.assetType).Distinct().ToList() :
-            (from uint a in Layers[SelectedLayerIndex].AssetIDs select assetDictionary[a].assetType).Distinct().ToList();
 
         public bool ContainsAssetWithType(AssetType assetType) =>
             assetDictionary.Values.Any(a => a.assetType.Equals(assetType));
@@ -905,7 +719,7 @@ namespace IndustrialPark
                 case AssetType.JSP:
                     return new AssetJSP(AHDR, game, endianness, Program.Renderer);
                 case AssetType.JSPInfo:
-                    return new AssetJSP_INFO(AHDR, game, platform, GetJspAssets(AHDR.assetID));
+                    return new AssetJSP_INFO(AHDR, game, endianness, GetJspAssets(AHDR.assetID));
                 case AssetType.Model:
                     return new AssetMODL(AHDR, game, endianness, Program.Renderer);
                 case AssetType.Texture:
@@ -1621,7 +1435,28 @@ namespace IndustrialPark
                     }
                 }
                 else if (asset is AssetJSP_INFO jspInfo)
+                {
                     jspInfo.JSP_AssetIDs = clipboard.jspExtraInfo[i];
+
+                    if ((clipboard.games[i] >= Game.Incredibles && game == Game.BFBB) || (clipboard.games[i] == Game.BFBB && game >= Game.Incredibles))
+                    {
+                        if (jspInfo.JSP_AssetIDs.All(i => ContainsAsset(i)))
+                        {
+                            if (MessageBox.Show("The JSPINFO asset you are about to copy might not be compatible with the destination game if using native data, but can be converted. Convert?",
+                                $"JSPINFO: Convert to {(game == Game.BFBB ? "Legacy" : "Newer")} Format", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                            {
+                                if (game == Game.BFBB)
+                                    ConvertJSPINFOToLegacyFormat(jspInfo);
+                                else
+                                    ConvertJSPINFOToNewerFormat(jspInfo);
+                            }
+                        }
+                        else
+                            MessageBox.Show("The JSPINFO asset you are about to copy might not be compatible with the destination game, but can be converted. " +
+                                "In order to proceed, please make sure the specified JSP AssetID's exists in the target archive.", "JSPINFO: Cannot find JSP assets",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                }
 
                 finalIndices.Add(AHDR.assetID);
             }
@@ -1700,12 +1535,6 @@ namespace IndustrialPark
 
                     UnsavedChanges = true;
                     assetIDs.Add(AHDR.assetID);
-
-                    if (AHDR.assetType == AssetType.JSP)
-                    {
-                        AssetJSP_INFO jspInfo = (AssetJSP_INFO)PlaceTemplate(AHDR.ADBG.assetName + "_jspInfo", AssetTemplate.Jsp_Info);
-                        jspInfo.CreateFromJsp((AssetJSP)GetFromAssetID(AHDR.assetID));
-                    }
                 }
                 catch (Exception ex)
                 {
@@ -1862,14 +1691,6 @@ namespace IndustrialPark
                         result.Clear();
                 }
             return result.ToArray();
-        }
-
-        public Dictionary<LayerType, HashSet<AssetType>> AssetTypesPerLayer()
-        {
-            var result = new Dictionary<LayerType, HashSet<AssetType>>();
-            foreach (var l in Layers)
-                result[l.Type] = (from uint a in l.AssetIDs select assetDictionary[a].assetType).Distinct().ToHashSet();
-            return result;
         }
     }
 }

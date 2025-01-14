@@ -193,7 +193,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="buttonOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 389</value>
+    <value>296, 410</value>
   </data>
   <data name="buttonOK.Size" type="System.Drawing.Size, System.Drawing">
     <value>92, 23</value>
@@ -220,7 +220,7 @@
     <value>Bottom, Right</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>394, 389</value>
+    <value>394, 410</value>
   </data>
   <data name="buttonCancel.Size" type="System.Drawing.Size, System.Drawing">
     <value>92, 23</value>
@@ -256,7 +256,7 @@
     <value>6, 19</value>
   </data>
   <data name="listBox1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>190, 317</value>
+    <value>190, 332</value>
   </data>
   <data name="listBox1.TabIndex" type="System.Int32, mscorlib">
     <value>9</value>
@@ -277,7 +277,7 @@
     <value>12, 41</value>
   </data>
   <data name="groupBox2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>202, 342</value>
+    <value>202, 363</value>
   </data>
   <data name="groupBox2.TabIndex" type="System.Int32, mscorlib">
     <value>3</value>
@@ -301,7 +301,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxFlipUVs.Location" type="System.Drawing.Point, System.Drawing">
-    <value>240, 68</value>
+    <value>15, 18</value>
   </data>
   <data name="checkBoxFlipUVs.Size" type="System.Drawing.Size, System.Drawing">
     <value>68, 19</value>
@@ -322,13 +322,13 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxFlipUVs.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="checkBoxOverwrite.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="checkBoxOverwrite.Location" type="System.Drawing.Point, System.Drawing">
-    <value>15, 37</value>
+    <value>15, 39</value>
   </data>
   <data name="checkBoxOverwrite.Size" type="System.Drawing.Size, System.Drawing">
     <value>77, 19</value>
@@ -349,7 +349,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="checkBoxGenSimps.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -382,7 +382,7 @@
     <value>True</value>
   </data>
   <data name="checkBoxCreatePIPT.Location" type="System.Drawing.Point, System.Drawing">
-    <value>150, 19</value>
+    <value>150, 18</value>
   </data>
   <data name="checkBoxCreatePIPT.Size" type="System.Drawing.Size, System.Drawing">
     <value>86, 19</value>
@@ -403,7 +403,7 @@
     <value>grpImportSettings</value>
   </data>
   <data name="&gt;&gt;checkBoxCreatePIPT.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="checkBoxUseMeshColors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -492,11 +492,38 @@
   <data name="&gt;&gt;checkBoxSolidSimps.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
+  <data name="checkBoxSplitClump.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="checkBoxSplitClump.Location" type="System.Drawing.Point, System.Drawing">
+    <value>15, 57</value>
+  </data>
+  <data name="checkBoxSplitClump.Size" type="System.Drawing.Size, System.Drawing">
+    <value>116, 19</value>
+  </data>
+  <data name="checkBoxSplitClump.TabIndex" type="System.Int32, mscorlib">
+    <value>16</value>
+  </data>
+  <data name="checkBoxSplitClump.Text" xml:space="preserve">
+    <value>Split Clump (JSP)</value>
+  </data>
+  <data name="&gt;&gt;checkBoxSplitClump.Name" xml:space="preserve">
+    <value>checkBoxSplitClump</value>
+  </data>
+  <data name="&gt;&gt;checkBoxSplitClump.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkBoxSplitClump.Parent" xml:space="preserve">
+    <value>grpImportSettings</value>
+  </data>
+  <data name="&gt;&gt;checkBoxSplitClump.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="checkBoxNoMaterials.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="checkBoxNoMaterials.Location" type="System.Drawing.Point, System.Drawing">
-    <value>150, 42</value>
+    <value>150, 39</value>
   </data>
   <data name="checkBoxNoMaterials.Size" type="System.Drawing.Size, System.Drawing">
     <value>93, 19</value>
@@ -517,13 +544,13 @@
     <value>grpImportSettings</value>
   </data>
   <data name="&gt;&gt;checkBoxNoMaterials.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="grpImportSettings.Location" type="System.Drawing.Point, System.Drawing">
     <value>225, 68</value>
   </data>
   <data name="grpImportSettings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>261, 64</value>
+    <value>261, 80</value>
   </data>
   <data name="grpImportSettings.TabIndex" type="System.Int32, mscorlib">
     <value>18</value>
@@ -577,7 +604,7 @@
     <value>0</value>
   </data>
   <data name="grpSIMP.Location" type="System.Drawing.Point, System.Drawing">
-    <value>225, 281</value>
+    <value>224, 302</value>
   </data>
   <data name="grpSIMP.Size" type="System.Drawing.Size, System.Drawing">
     <value>261, 102</value>
@@ -656,6 +683,9 @@
   </data>
   <data name="checkBoxNativeData.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
+  </data>
+  <data name="checkBoxNativeData.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
   </data>
   <data name="checkBoxNativeData.Location" type="System.Drawing.Point, System.Drawing">
     <value>150, 44</value>
@@ -844,7 +874,7 @@
     <value>9</value>
   </data>
   <data name="groupBoxModelSettings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>226, 135</value>
+    <value>226, 154</value>
   </data>
   <data name="groupBoxModelSettings.Size" type="System.Drawing.Size, System.Drawing">
     <value>260, 142</value>
@@ -874,7 +904,7 @@
     <value>7, 15</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>497, 424</value>
+    <value>497, 445</value>
   </data>
   <data name="$this.Font" type="System.Drawing.Font, System.Drawing">
     <value>Segoe UI, 9pt</value>

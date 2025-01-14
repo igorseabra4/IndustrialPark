@@ -462,6 +462,12 @@
   <data name="importMultipleAssetsToolStripMenuItem.Text" xml:space="preserve">
     <value>Import Multiple Assets</value>
   </data>
+  <data name="importJSPToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 22</value>
+  </data>
+  <data name="importJSPToolStripMenuItem.Text" xml:space="preserve">
+    <value>Import JSP</value>
+  </data>
   <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>39, 22</value>
   </data>
@@ -1944,6 +1950,12 @@ Focus</value>
     <value>toolStripMenuItem_MultiEdit</value>
   </data>
   <data name="&gt;&gt;toolStripMenuItem_MultiEdit.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;importJSPToolStripMenuItem.Name" xml:space="preserve">
+    <value>importJSPToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;importJSPToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator8.Name" xml:space="preserve">

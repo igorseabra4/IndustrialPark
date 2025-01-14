@@ -76,7 +76,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.User_Interface_Font, eventHandler),
             });
 
-            // Scooby
+            #region Scooby
             ToolStripMenuItem scoobyPickups = new ToolStripMenuItem("Pickups");
             scoobyPickups.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -183,8 +183,9 @@ namespace IndustrialPark
                 scoobyEnemies,
                 stageitemsScooby
             });
+            #endregion
 
-            // BFBB
+            #region BFBB
             ToolStripMenuItem pickupsBFBB = new ToolStripMenuItem("Pickups and Tikis");
             pickupsBFBB.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -266,8 +267,9 @@ namespace IndustrialPark
                 enemiesBFBB,
                 stageitemsBFBB
             });
+            #endregion
 
-            // Movie
+            #region TSSM
             ToolStripMenuItem pickupsTSSM = new ToolStripMenuItem("Pickups and Crates");
             pickupsTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -383,9 +385,9 @@ namespace IndustrialPark
                 stageitemsTSSM,
                 floatingBlocksTSSM
             });
+            #endregion
 
-
-            // Incredibles
+            #region Incredibles
             ToolStripMenuItem incrediblesPickups = new ToolStripMenuItem("Pickups");
             incrediblesPickups.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -410,8 +412,9 @@ namespace IndustrialPark
                 incrediblesPickups,
                 incrediblesObjects
             });
+            #endregion
 
-            // ROTU
+            #region ROTU
             ToolStripMenuItem rotuEnemies = new ToolStripMenuItem("Enemies");
             rotuEnemies.DropDownItems.AddRange(new ToolStripMenuItem[]
             {
@@ -433,8 +436,9 @@ namespace IndustrialPark
             {
                 rotuEnemies,
             });
+            #endregion
 
-            // RatProto
+            #region RatProto
             ToolStripMenuItem stageitemsRatproto = new ToolStripMenuItem("Stage Items");
             stageitemsRatproto.DropDownItems.AddRange(new ToolStripItem[]
             {
@@ -464,7 +468,7 @@ namespace IndustrialPark
                 stageitemsRatproto,
                 ratprotoEnemies,
             });
-
+            #endregion
 
             ToolStripMenuItem others = new ToolStripMenuItem("Other");
             others.DropDownItems.AddRange(new ToolStripItem[]
@@ -489,6 +493,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Throwable_Table, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Empty_BSP, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Jsp_Info, eventHandler),
                 new ToolStripSeparator(),
                 GetTemplateMenuItem(AssetTemplate.Camera_Curve, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint, eventHandler),

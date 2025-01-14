@@ -80,6 +80,13 @@ namespace IndustrialPark
             return new byte[4] { b3, b2, b1, b0 };
         }
 
+        public uint PeekUInt32()
+        {
+            uint value = base.ReadUInt32();
+            BaseStream.Position -= 4;
+            return value;
+        }
+
         public bool ReadByteBool() => ReadByte() != 0;
 
         public bool ReadInt16Bool() => ReadInt16() != 0;

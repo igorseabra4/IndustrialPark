@@ -44,6 +44,7 @@
             checkBoxLedgeGrab = new System.Windows.Forms.CheckBox();
             checkBoxSolidSimps = new System.Windows.Forms.CheckBox();
             grpImportSettings = new System.Windows.Forms.GroupBox();
+            checkBoxSplitClump = new System.Windows.Forms.CheckBox();
             checkBoxNoMaterials = new System.Windows.Forms.CheckBox();
             grpSIMP = new System.Windows.Forms.GroupBox();
             checkBoxUseExistingDefaultLayer = new System.Windows.Forms.CheckBox();
@@ -166,6 +167,7 @@
             // 
             // grpImportSettings
             // 
+            grpImportSettings.Controls.Add(checkBoxSplitClump);
             grpImportSettings.Controls.Add(checkBoxNoMaterials);
             grpImportSettings.Controls.Add(checkBoxFlipUVs);
             grpImportSettings.Controls.Add(checkBoxCreatePIPT);
@@ -173,6 +175,12 @@
             resources.ApplyResources(grpImportSettings, "grpImportSettings");
             grpImportSettings.Name = "grpImportSettings";
             grpImportSettings.TabStop = false;
+            // 
+            // checkBoxSplitClump
+            // 
+            resources.ApplyResources(checkBoxSplitClump, "checkBoxSplitClump");
+            checkBoxSplitClump.Name = "checkBoxSplitClump";
+            checkBoxSplitClump.UseVisualStyleBackColor = true;
             // 
             // checkBoxNoMaterials
             // 
@@ -221,7 +229,6 @@
             checkBoxBinMesh.CheckState = System.Windows.Forms.CheckState.Checked;
             checkBoxBinMesh.Name = "checkBoxBinMesh";
             checkBoxBinMesh.UseVisualStyleBackColor = true;
-            checkBoxBinMesh.CheckedChanged += checkBoxBinMesh_CheckedChanged;
             // 
             // checkBoxMultiAtomic
             // 
@@ -257,7 +264,7 @@
             checkBoxGeoTriangles.CheckState = System.Windows.Forms.CheckState.Checked;
             checkBoxGeoTriangles.Name = "checkBoxGeoTriangles";
             checkBoxGeoTriangles.UseVisualStyleBackColor = true;
-            checkBoxGeoTriangles.CheckedChanged += checkBoxCollision_CheckedChanged;
+            checkBoxGeoTriangles.CheckedChanged += checkBoxGeoTriangles_CheckedChanged;
             // 
             // checkBoxVertexColors
             // 
@@ -350,5 +357,6 @@
         private System.Windows.Forms.CheckBox checkBoxTriStrips;
         private System.Windows.Forms.CheckBox checkBoxBinMesh;
         private System.Windows.Forms.CheckBox checkBoxNoMaterials;
+        private System.Windows.Forms.CheckBox checkBoxSplitClump;
     }
 }

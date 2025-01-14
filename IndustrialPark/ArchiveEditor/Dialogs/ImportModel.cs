@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using IndustrialPark.RenderWare;
 using RenderWareFile;
+using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -25,6 +26,7 @@ namespace IndustrialPark
 
             comboBoxAssetTypes.Items.Add(AssetType.Model);
             comboBoxAssetTypes.Items.Add(AssetType.BSP);
+            comboBoxAssetTypes.Items.Add(AssetType.JSP);
             comboBoxAssetTypes.SelectedItem = AssetType.Model;
 
             checkBoxUseExistingDefaultLayer.Visible = !noLayers;
@@ -34,7 +36,6 @@ namespace IndustrialPark
                 grpSIMP.Visible = false;
                 Text = "Select Model";
                 buttonImportRawData.Text = "Select Model...";
-                checkBoxOverwrite.Enabled = false;
                 Height -= grpSIMP.Height;
                 comboBoxAssetTypes.SelectedItem = assetType;
                 comboBoxAssetTypes.Enabled = false;
@@ -47,7 +48,7 @@ namespace IndustrialPark
                 (checkBoxCreatePIPT.Checked, checkBoxCreatePIPT.Enabled) = (true, false);
 
             if (assetType != AssetType.BSP)
-                checkBoxNoMaterials.Visible = false;
+                checkBoxNoMaterials.Enabled = false;
 
         }
 
@@ -124,7 +125,7 @@ namespace IndustrialPark
 
                     try
                     {
-                        if (assetType == AssetType.Model)
+                        if (assetType == AssetType.Model || assetType == AssetType.JSP)
                         {
                             model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".dff") ? File.ReadAllBytes(a.filePaths[0]) :
                                 ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0],
@@ -159,6 +160,65 @@ namespace IndustrialPark
             return false;
         }
 
+        public static (List<Section_AHDR> AHDRs, bool overwrite) GetJSP(Game game, Platform platform, bool noLayers)
+        {
+            using (ImportModel a = new ImportModel(platform, AssetType.JSP, noLayers))
+                if (a.ShowDialog() == DialogResult.OK)
+                {
+                    List<Section_AHDR> AHDRs = new List<Section_AHDR>();
+                    string assetName;
+                    byte[] assetData;
+                    ReadFileMethods.treatStuffAsByteArray = false;
+
+                    assetName = Path.GetFileNameWithoutExtension(a.filePaths[0]);
+
+                    try
+                    {
+                        assetData = ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0],
+                                a.checkBoxTriStrips.Checked,
+                                a.checkBoxFlipUVs.Checked,
+                                a.checkBoxIgnoreMeshColors.Checked,
+                                a.checkBoxVertexColors.Checked,
+                                a.checkBoxTexCoords.Checked,
+                                a.checkBoxNormals.Checked,
+                                a.checkBoxGeoTriangles.Checked,
+                                a.checkBoxMultiAtomic.Checked,
+                                a.checkBoxNativeData.Checked,
+                                a.checkBoxCollTree.Checked,
+                                a.checkBoxBinMesh.Checked),
+                            GetModelRenderWareVersion(game));
+                    }
+                    catch (ArgumentException)
+                    {
+                        MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed "
+                            + TRI_AND_VERTEX_LIMIT + ".",
+                            "Error Importing Model",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return (null, false);
+                    }
+                    catch (Exception)
+                    {
+                        MessageBox.Show("Model could not be imported.",
+                            "Error Importing Model",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                        return (null, false);
+                    }
+
+                    var clumps = a.checkBoxSplitClump.Checked ? SplitClump(assetData) : ReadFileMethods.ReadRenderWareFile(assetData);
+                    for (int i = 0; i < clumps.Length; i++)
+                    {
+                        AHDRs.Add(new Section_AHDR(Functions.BKDRHash(assetName + i), AssetType.JSP, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.JSP),
+                            new Section_ADBG(0, assetName + i, "", 0),
+                            ReadFileMethods.ExportRenderWareFile(clumps[i], GetModelRenderWareVersion(game))));
+                    }
+
+                    return (AHDRs, a.checkBoxOverwrite.Checked);
+                }
+            return (null, false);
+        }
+
         public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp, bool useExistingDefaultLayer) GetModels(Game game, Platform platform, bool noLayers)
         {
             using (ImportModel a = new ImportModel(platform, AssetType.Null, noLayers))
@@ -178,7 +238,7 @@ namespace IndustrialPark
 
                         if (assetType == AssetType.Model || assetType == AssetType.JSP)
                         {
-                            assetName = Path.GetFileNameWithoutExtension(filePath) + ".dff";
+                            assetName = Path.GetFileNameWithoutExtension(filePath) + (assetType != AssetType.JSP ? ".dff" : "");
 
                             try
                             {
@@ -250,10 +310,18 @@ namespace IndustrialPark
                         else
                             throw new ArgumentException();
 
-                        AHDRs.Add(new Section_AHDR(
-                                Functions.BKDRHash(assetName),
-                                assetType,
-                                ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
+                        if (assetType == AssetType.JSP)
+                        {
+                            var clumps = a.checkBoxSplitClump.Checked ? SplitClump(assetData) : ReadFileMethods.ReadRenderWareFile(assetData);
+                            for (int i = 0; i < clumps.Length; i++)
+                            {
+                                AHDRs.Add(new Section_AHDR(Functions.BKDRHash(assetName + i), AssetType.JSP, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.JSP),
+                                    new Section_ADBG(0, assetName + i, "", 0),
+                                    ReadFileMethods.ExportRenderWareFile(clumps[i], GetModelRenderWareVersion(game))));
+                            }
+                        }
+                        else
+                            AHDRs.Add(new Section_AHDR(Functions.BKDRHash(assetName), assetType, ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
                                 new Section_ADBG(0, assetName, "", 0),
                                 assetData));
                     }
@@ -282,49 +350,59 @@ namespace IndustrialPark
         {
             if ((AssetType)comboBoxAssetTypes.SelectedItem != AssetType.Model)
             {
-                checkBoxGenSimps.Checked = false;
-                checkBoxGenSimps.Enabled = false;
-                checkBoxSolidSimps.Checked = false;
-                checkBoxSolidSimps.Enabled = false;
-                checkBoxLedgeGrab.Checked = false;
-                checkBoxLedgeGrab.Enabled = false;
-                checkBoxCreatePIPT.Checked = false;
+                bool isJSP = (AssetType)comboBoxAssetTypes.SelectedItem == AssetType.JSP;
                 checkBoxCreatePIPT.Enabled = false;
+                checkBoxSplitClump.Enabled = isJSP;
+                grpSIMP.Enabled = false;
 
-                checkBoxNativeData.Checked = false;
-                checkBoxNativeData.Enabled = false;
-                checkBoxCollTree.Checked = true;
-                checkBoxGeoTriangles.Enabled = false;
-                checkBoxIgnoreMeshColors.Enabled = false;
-                checkBoxBinMesh.Enabled = false;
-                checkBoxMultiAtomic.Enabled = false;
                 checkBoxTexCoords.Checked = true;
-                checkBoxNormals.Checked = false;
+                (checkBoxNormals.Enabled, checkBoxNormals.Checked) = (!isJSP, false);
                 checkBoxVertexColors.Checked = true;
+                checkBoxNativeData.Checked = checkBoxNativeData.Enabled = false;
+                checkBoxTriStrips.Checked = false;
+                (checkBoxMultiAtomic.Enabled, checkBoxMultiAtomic.Checked) = (false, isJSP);
+                checkBoxIgnoreMeshColors.Enabled = true;
+                (checkBoxBinMesh.Enabled, checkBoxBinMesh.Checked) = (false, isJSP);
+                checkBoxGeoTriangles.Enabled = checkBoxGeoTriangles.Checked = false;
+                checkBoxCollTree.Enabled = checkBoxCollTree.Checked = !isJSP;
             }
             else
             {
+                grpSIMP.Enabled = true;
                 checkBoxGenSimps.Enabled = true;
-                checkBoxCreatePIPT.Enabled = true;
-                checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
-                checkBoxSolidSimps.Enabled = checkBoxGenSimps.Checked;
+                checkBoxGenSimps.Checked = false;
+
+                checkBoxTexCoords.Checked = true;
+                checkBoxNormals.Checked = true;
+                checkBoxVertexColors.Checked = false;
+                (checkBoxNativeData.Enabled, checkBoxNativeData.Checked) = (true, false);
+                checkBoxTriStrips.Checked = false;
+                (checkBoxMultiAtomic.Enabled, checkBoxMultiAtomic.Checked) = (true, false);
+                checkBoxIgnoreMeshColors.Checked = true;
+                checkBoxBinMesh.Enabled = checkBoxBinMesh.Checked = true;
+                checkBoxGeoTriangles.Enabled = checkBoxGeoTriangles.Checked = true;
+                checkBoxCollTree.Enabled = checkBoxCollTree.Checked = true;
             }
         }
 
-        private void checkBoxCollision_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxGeoTriangles_CheckedChanged(object sender, EventArgs e)
         {
             checkBoxCollTree.Enabled = checkBoxGeoTriangles.Checked;
         }
 
         private void checkBoxNativeData_CheckedChanged(object sender, EventArgs e)
         {
+            if ((AssetType)comboBoxAssetTypes.SelectedItem == AssetType.BSP)
+                return;
+
+            bool isJSP = ((AssetType)comboBoxAssetTypes.SelectedItem) == AssetType.JSP;
             checkBoxTriStrips.Checked = checkBoxNativeData.Checked;
             checkBoxTriStrips.Enabled = !checkBoxNativeData.Checked;
-            checkBoxGeoTriangles.Checked = !checkBoxNativeData.Checked;
-            checkBoxGeoTriangles.Enabled = !checkBoxNativeData.Checked;
+            checkBoxGeoTriangles.Checked = !isJSP && !checkBoxNativeData.Checked;
+            checkBoxGeoTriangles.Enabled = !isJSP && !checkBoxNativeData.Checked;
             checkBoxMultiAtomic.Checked = checkBoxNativeData.Checked;
             checkBoxMultiAtomic.Enabled = !checkBoxNativeData.Checked;
-            checkBoxSolidSimps.Checked = !checkBoxNativeData.Checked;
+            checkBoxSolidSimps.Checked = !isJSP && !checkBoxNativeData.Checked;
             checkBoxBinMesh.Checked = checkBoxNativeData.Checked;
             checkBoxBinMesh.Enabled = !checkBoxNativeData.Checked;
         }
@@ -337,8 +415,75 @@ namespace IndustrialPark
                 _ => new RWVersion(3, 5)
             };
         }
+
+        /// <summary>
+        /// Splits a single clump to 3 smaller ones with balanced geometry count. 
+        /// Very primitive and only guaranteed to work with imported JSP's.
+        /// </summary>
+        /// <param name="dff"></param>
+        /// <returns>3 <see cref="Clump_0010"/>s</returns>
+        /// <exception cref="Exception"></exception>
+        public static RWSection[] SplitClump(byte[] dff)
         {
-            checkBoxTriStrips.Enabled = checkBoxBinMesh.Checked;
+            List<RWSection> clumps = new();
+
+            if (ReadFileMethods.ReadRenderWareFile(dff)[0] is Clump_0010 clump)
+            {
+                if (clump.geometryList.geometryList.Count < 3)
+                    throw new Exception("Clump needs to have at least 3 geometries for splitting");
+
+                List<Frame> frames = new();
+                List<Geometry_000F> geometries = new();
+                List<Atomic_0014> atomics = new();
+
+                int start = 0;
+                for (int i = 0; i < 3; i++)
+                {
+                    int step = (clump.atomicList.Count - start + (3 - i - 1)) / (3 - i);
+                    int newIndex = 0;
+                    for (int atomIndex = start; atomIndex < start + step; atomIndex++)
+                    {
+                        Atomic_0014 atomic = clump.atomicList[atomIndex];
+
+                        frames.Add(clump.frameList.frameListStruct.frames[atomic.atomicStruct.frameIndex]);
+                        geometries.Add(clump.geometryList.geometryList[atomic.atomicStruct.geometryIndex]);
+
+                        atomic.atomicStruct.geometryIndex = atomic.atomicStruct.frameIndex = newIndex++;
+                        atomics.Add(atomic);
+                    }
+
+                    clumps.Add(new Clump_0010()
+                    {
+                        clumpStruct = new ClumpStruct_0001()
+        {
+                            atomicCount = atomics.Count,
+                        },
+                        frameList = new FrameList_000E()
+                        {
+                            frameListStruct = new FrameListStruct_0001()
+                            {
+                                frames = frames.GetRange(0, frames.Count),
+                            },
+                            extensionList = Enumerable.Range(0, 1).Select(_ => new Extension_0003()).ToList()
+                        },
+                        geometryList = new GeometryList_001A()
+                        {
+                            geometryListStruct = new GeometryListStruct_0001()
+                            {
+                                numberOfGeometries = geometries.Count,
+                            },
+                            geometryList = geometries.GetRange(0, geometries.Count),
+                        },
+                        atomicList = atomics.GetRange(0, atomics.Count),
+                        clumpExtension = new Extension_0003()
+                    });
+                    frames.Clear();
+                    geometries.Clear();
+                    atomics.Clear();
+                    start += step;
+                }
+            }
+            return clumps.ToArray();
         }
     }
 }

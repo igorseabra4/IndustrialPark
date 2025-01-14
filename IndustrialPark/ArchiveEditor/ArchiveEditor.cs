@@ -266,6 +266,8 @@ namespace IndustrialPark
             buildCollisionTreeForAllModelsToolStripMenuItem.Enabled = archive.ContainsAssetWithType(AssetType.Model);
             coll36toolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
             coll36sortTrianglesToolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
+
+            importJSPToolStripMenuItem.Enabled = archive.game >= Game.BFBB;
         }
 
         private void PopulateLayerTypeComboBox()
@@ -762,6 +764,25 @@ namespace IndustrialPark
                 PopulateLayerComboBox();
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs);
+                SetMenuItemsEnabled();
+            }
+        }
+
+        private void importJSPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            (List<Section_AHDR> AHDRs, bool overwrite) = ImportModel.GetJSP(archive.game, archive.platform, archive.NoLayers);
+
+            if (AHDRs != null)
+            {
+                if (archive.game == Game.BFBB)
+                {
+                    archive.RemoveLayerOfType(LayerType.BSP);
+                    archive.RemoveLayerOfType(LayerType.JSPINFO);
+                }
+                OnEditorUpdate();
+                AssetID jspInfoId = archive.CreateJSPInfoAndBSPLayers(AHDRs, overwrite);
+                PopulateLayerComboBox();
+                SetSelectedIndices([jspInfoId], true);
                 SetMenuItemsEnabled();
             }
         }

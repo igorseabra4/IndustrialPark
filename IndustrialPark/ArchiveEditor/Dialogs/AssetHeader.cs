@@ -176,9 +176,7 @@ namespace IndustrialPark
             else
             {
                 assetName = textBoxAssetName.Text;
-
-                if ( assetType != AssetType.JSP)
-                    textBoxAssetID.Text = "0x" + Functions.BKDRHash(assetName).ToString("X8");
+                textBoxAssetID.Text = "0x" + Functions.BKDRHash(assetName).ToString("X8");
             }
         }
 
