@@ -61,8 +61,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle MaxBounds_Z { get; set; }
 
-        public AssetENV(string assetName, string startCamName) : base(assetName, AssetType.Environment, BaseAssetType.Env)
+        public AssetENV(string assetName, string startCamName, UpdateLightKit updateLightKit) : base(assetName, AssetType.Environment, BaseAssetType.Env)
         {
+            this.updateLightKit = updateLightKit;
             StartCamera = startCamName;
             LoldHeight = 10f;
         }

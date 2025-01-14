@@ -1221,7 +1221,7 @@ namespace IndustrialPark
                 case AssetTemplate.Credits:
                     return new AssetCRDT(assetName, game);
                 case AssetTemplate.Environment:
-                    return new AssetENV(assetName, startCamName);
+                    return new AssetENV(assetName, startCamName, UpdateLightKit);
                 case AssetTemplate.Flythrough:
                 {
                     var fly = new AssetFLY(assetName);
