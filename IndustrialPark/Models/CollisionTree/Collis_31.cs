@@ -1,7 +1,9 @@
 ﻿using RenderWareFile.Sections;
 using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 namespace IndustrialPark.Models.CollisionTree
@@ -10,124 +12,49 @@ namespace IndustrialPark.Models.CollisionTree
 
     public sealed class Collis_31 : Collis_Shared
     {
-        private const int rpCOLLBSP_LEAF_NODE = 1;
-        private const int rpCOLLBSP_BRANCH_NODE = 2;
+        private RpCollBSPBranchNode[] branchNodes { get; set; }
+        private RpCollBSPLeafNode[] leafNodes { get; set; }
+        private ushort[] triangleMap { get; set; }
 
-        private class RpCollBSPLeafNode
+        public Collis_31() : base() { }
+
+        public CollisionPLG_011D_Pre36001 RpCollisionGeometryBuildData(Geometry_000F geometry)
         {
-            public ushort numPolygons;
-            public ushort firstPolygon;
-        }
-
-        private class RpCollBSPBranchNode
-        {
-            public ushort type;
-            public byte leftType;
-            public byte rightType;
-            public ushort leftNode;
-            public ushort rightNode;
-            public float leftValue;
-            public float rightValue;
-        }
-
-        private class RpCollBSPTree
-        {
-            public int numLeafNodes;
-            public RpCollBSPBranchNode[] branchNodes;
-            public RpCollBSPLeafNode[] leafNodes;
-
-            public RpCollBSPTree(int numLeafNodes)
-            {
-                this.numLeafNodes = numLeafNodes;
-                branchNodes = Enumerable.Range(0, numLeafNodes - 1).Select(_ => new RpCollBSPBranchNode()).ToArray();
-                leafNodes = Enumerable.Range(0, numLeafNodes).Select(_ => new RpCollBSPLeafNode()).ToArray();
-            }
-        }
-
-        private class RpCollisionData
-        {
-            public int flags;
-            public RpCollBSPTree tree;
-            public int numTriangles;
-            public ushort[] triangleMap;
-
-            public RpCollisionData(Vector3[] vertices, Triangle[] triangles)
-            {
-                flags = 0;
-                numTriangles = triangles.Length;
-                triangleMap = new ushort[numTriangles];
-                tree = _rpCollBSPTreeBuild(vertices, triangles, triangleMap);
-            }
-        }
-
-        public static CollisionPLG_011D_Scooby RpCollisionGeometryBuildData(Geometry_000F geometry)
-        {
-            RpCollisionData collData = new RpCollisionData(geometry.geometryStruct.morphTargets[0].vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray(),
+            BuildData data = new BuildData(geometry.geometryStruct.morphTargets[0].vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray(), 
                 geometry.geometryStruct.triangles);
+            BuildSector tree = BuildTreeGenerate(data);
 
-            CollisionPLG_011D_Scooby collPLG = new CollisionPLG_011D_Scooby()
+            leafNodes = new RpCollBSPLeafNode[BuildTreeCountLeafNodes(tree)];
+            branchNodes = new RpCollBSPBranchNode[leafNodes.Length - 1];
+
+            int iBranch = 0;
+            int iLeaf = 0;
+            int numTotalPolygons = 0;
+
+            ConvertNode(tree, ref iBranch, ref iLeaf, ref numTotalPolygons);
+
+            Assert(iLeaf == leafNodes.Length);
+            Assert(iBranch == branchNodes.Length);
+            Assert(numTotalPolygons == data.numPolygons);
+
+            triangleMap = new ushort[geometry.geometryStruct.triangles.Length];
+            for (int iTri = 0; iTri < geometry.geometryStruct.triangles.Length; iTri++)
+                triangleMap[iTri] = (ushort)Array.IndexOf(geometry.geometryStruct.triangles, data.polygons[iTri].poly);
+
+            return new CollisionPLG_011D_Pre36001()
             {
-                splits = collData.tree.branchNodes.Where(b => b != null).Select(b => new Split_Scooby()
-                {
-                    positiveType = (ScoobySectorType)b.rightType,
-                    negativeType = (ScoobySectorType)b.leftType,
-                    splitDirection = (SectorType)b.type,
-                    positiveIndex = (short)b.rightNode,
-                    negativeIndex = (short)b.leftNode,
-                    negativeSplitPos = b.rightValue,
-                    positiveSplitPos = b.leftValue,
-                }).ToArray(),
-                startIndex_amountOfTriangles = collData.tree.leafNodes.Select(l => new short[] { (short)l.firstPolygon, (short)l.numPolygons }).ToArray(),
-                triangles = collData.triangleMap.Select(t => (int)t).ToArray()
+                branchNodes = branchNodes,
+                leafNodes = leafNodes,
+                triangleMap = triangleMap.Select(t => (int)t).ToArray()
             };
-
-            return collPLG;
         }
 
-        private static BuildSector BuildTreeGenerate(BuildData data)
+        private ushort ConvertNode(BuildSector sector, ref int iBranch, ref int iLeaf, ref int numTotalPolygons)
         {
-            int plane = 0;
-            float value = 0;
-
-            SetSortVertices(data);
-
-            if (data.bspDepth >= rpCOLLTREE_MAXDEPTH || data.numPolygons < rpCOLLTREE_MIN_POLYGONS_FOR_SPLIT || !FindDividingPlane(data, ref plane, ref value))
-            {
-                return new BuildPolySector((ushort)data.numPolygons, (ushort)data.polygonOffset);
-            }
-            else
-            {
-                BuildData subdata;
-
-                data.bspDepth++;
-
-                SetClipCodes(data.numSortVerts, data.sortVerts, plane, value);
-                GetClipStats(data, plane, value, out ClipStats stats);
-                SortPolygons(data);
-
-                BuildPlaneSector planeSector = new BuildPlaneSector(plane, stats.leftValue, stats.rightValue);
-
-                subdata = data.Clone();
-                subdata.numPolygons = stats.nLeft;
-                SETCOORD(ref subdata.bbox.Maximum, plane, stats.leftValue);
-                planeSector.leftSubTree = BuildTreeGenerate(subdata);
-
-                subdata = data.Clone();
-                subdata.numPolygons = stats.nRight;
-                subdata.polygonOffset = data.polygonOffset + stats.nLeft;
-                SETCOORD(ref subdata.bbox.Minimum, plane, stats.rightValue);
-                planeSector.rightSubTree = BuildTreeGenerate(subdata);
-
-                return planeSector;
-            }
-        }
-
-        private static ushort ConvertNode(RpCollBSPTree flatTree, BuildSector sector, ref int iBranch, ref int iLeaf, ref int numTotalPolygons)
-        {
-            if (sector.type < 0) // Leaf node
+            if (sector.type < 0)
             {
                 BuildPolySector polySector = (BuildPolySector)sector;
-                RpCollBSPLeafNode node = flatTree.leafNodes[iLeaf];
+                ref RpCollBSPLeafNode node = ref leafNodes[iLeaf];
 
                 node.numPolygons = polySector.numPolygons;
                 node.firstPolygon = polySector.iFirstPolygon;
@@ -136,53 +63,24 @@ namespace IndustrialPark.Models.CollisionTree
 
                 return (ushort)iLeaf++;
             }
-            else // Branch node
+            else
             {
                 BuildPlaneSector planeSector = (BuildPlaneSector)sector;
-                RpCollBSPBranchNode node = flatTree.branchNodes[iBranch];
+                ref RpCollBSPBranchNode branch = ref branchNodes[iBranch];
 
-                node.type = (ushort)planeSector.type;
-                node.leftValue = planeSector.leftValue;
-                node.rightValue = planeSector.rightValue;
-                node.leftType = (byte)((planeSector.leftSubTree.type < 0) ? rpCOLLBSP_LEAF_NODE : rpCOLLBSP_BRANCH_NODE);
-                node.rightType = (byte)((planeSector.rightSubTree.type < 0) ? rpCOLLBSP_LEAF_NODE : rpCOLLBSP_BRANCH_NODE);
+                branch.type = (SectorAxis)planeSector.type;
+                branch.leftValue = planeSector.leftValue;
+                branch.rightValue = planeSector.rightValue;
+                branch.leftType = (planeSector.leftSubTree.type < 0) ? SectorType.rpCOLLBSP_LEAF_NODE : SectorType.rpCOLLBSP_BRANCH_NODE;
+                branch.rightType = (planeSector.rightSubTree.type < 0) ? SectorType.rpCOLLBSP_LEAF_NODE : SectorType.rpCOLLBSP_BRANCH_NODE;
 
                 ushort currentIndex = (ushort)iBranch++;
 
-                node.leftNode = ConvertNode(flatTree, planeSector.leftSubTree, ref iBranch, ref iLeaf, ref numTotalPolygons);
-                node.rightNode = ConvertNode(flatTree, planeSector.rightSubTree, ref iBranch, ref iLeaf, ref numTotalPolygons);
+                branch.leftNode = ConvertNode(planeSector.leftSubTree, ref iBranch, ref iLeaf, ref numTotalPolygons);
+                branch.rightNode = ConvertNode(planeSector.rightSubTree, ref iBranch, ref iLeaf, ref numTotalPolygons);
 
                 return currentIndex;
             }
-        }
-
-        private static RpCollBSPTree BuildTreeConvertNodes(RpCollBSPTree flatTree, BuildSector buildTree, BuildData data)
-        {
-            int iBranch = 0;
-            int iLeaf = 0;
-            int numTotalPolygons = 0;
-
-            ConvertNode(flatTree, buildTree, ref iBranch, ref iLeaf, ref numTotalPolygons);
-
-            Assert(iLeaf == flatTree.numLeafNodes);
-            Assert(iBranch == flatTree.numLeafNodes - 1);
-            Assert(numTotalPolygons == data.numPolygons);
-
-            return flatTree;
-        }
-
-        private static RpCollBSPTree _rpCollBSPTreeBuild(Vector3[] vertices,Triangle[] triangles, ushort[] triangleSortMap)
-        {
-            BuildData data = new BuildData(vertices, triangles);
-            BuildSector tree = BuildTreeGenerate(data);
-            RpCollBSPTree collBSPTree = new RpCollBSPTree(BuildTreeCountLeafNodes(tree));
-
-            BuildTreeConvertNodes(collBSPTree, tree, data);
-
-            for (int iTri = 0; iTri < triangles.Length; iTri++)
-                triangleSortMap[iTri] = (ushort)Array.IndexOf(triangles, data.polygons[iTri].poly);
-
-            return collBSPTree;
         }
 
     }

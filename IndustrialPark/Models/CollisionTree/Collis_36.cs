@@ -60,7 +60,9 @@ namespace IndustrialPark.Models.CollisionTree
             public float value;
         }
 
-        public static CollisionPLG_011D RpCollisionGeometryBuildData(Geometry_000F geometry, bool sortTriangles = false)
+        public Collis_36() : base() { }
+
+        public CollisionPLG_011D RpCollisionGeometryBuildData(Geometry_000F geometry, bool sortTriangles = false)
         {
             Vector3[] vertices = geometry.geometryStruct.morphTargets[0].vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray();
             Triangle[] tris = (Triangle[])geometry.geometryStruct.triangles.Clone();
@@ -75,7 +77,7 @@ namespace IndustrialPark.Models.CollisionTree
 
             CollisionPLG_011D collPLG = new CollisionPLG_011D()
             {
-                unknownValue = 0x37002, // Version
+                version = 0x37002,
                 colTree = new ColTree_002C()
                 {
                     colTreeStruct = new ColTreeStruct_0001()
@@ -89,14 +91,14 @@ namespace IndustrialPark.Models.CollisionTree
                         {
                             negativeSector = new Sector()
                             {
-                                type = (SectorType)s.leftSector.type,
+                                type = (SectorAxis)s.leftSector.type,
                                 triangleAmount = s.leftSector.contents,
                                 referenceIndex = s.leftSector.index,
                                 splitPosition = s.leftSector.value
                             },
                             positiveSector = new Sector()
                             {
-                                type = (SectorType)s.rightSector.type,
+                                type = (SectorAxis)s.rightSector.type,
                                 triangleAmount = s.rightSector.contents,
                                 referenceIndex = s.rightSector.index,
                                 splitPosition = s.rightSector.value
@@ -110,7 +112,7 @@ namespace IndustrialPark.Models.CollisionTree
             return collPLG;
         }
 
-        private static RpCollTree CreateCollTreeFromBuildTree(BuildData buildData, BuildSector rootSector, ushort[] map)
+        private RpCollTree CreateCollTreeFromBuildTree(BuildData buildData, BuildSector rootSector, ushort[] map)
         {
             int numSplits = BuildTreeCountLeafNodes(rootSector) - 1;
             bool useMap = (map != null) ? false : true;
@@ -190,7 +192,7 @@ namespace IndustrialPark.Models.CollisionTree
 
         }
 
-        private static BuildSector BuildTreeGenerate(BuildData data)
+        protected override BuildSector BuildTreeGenerate(BuildData data)
         {
             int plane = 0;
             float value = 0;

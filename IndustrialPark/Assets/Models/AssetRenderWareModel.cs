@@ -376,9 +376,9 @@ namespace IndustrialPark
                             continue;
 
                         if (ver == CollTreeVersion.COLLTREE_31)
-                            geom.geometryExtension.extensionSectionList.Add(Collis_31.RpCollisionGeometryBuildData(geom));
+                            geom.geometryExtension.extensionSectionList.Add(new Collis_31().RpCollisionGeometryBuildData(geom));
                         else
-                            geom.geometryExtension.extensionSectionList.Add(Collis_36.RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
+                            geom.geometryExtension.extensionSectionList.Add(new Collis_36().RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
                     }
 
 

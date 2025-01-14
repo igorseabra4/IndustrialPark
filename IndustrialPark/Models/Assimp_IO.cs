@@ -248,7 +248,7 @@ namespace IndustrialPark.Models
                 }
             };
 
-            clump.geometryList.geometryList[0].geometryExtension.extensionSectionList.Add(Collis_31.RpCollisionGeometryBuildData(clump.geometryList.geometryList[0]));
+            clump.geometryList.geometryList[0].geometryExtension.extensionSectionList.Add(new Collis_31().RpCollisionGeometryBuildData(clump.geometryList.geometryList[0]));
 
             return clump;
 
@@ -513,7 +513,7 @@ namespace IndustrialPark.Models
                         triangles.ToArray(), binMeshes.ToArray(), tristrip, ignoreMeshColors, collTree);
 
                     if (geoTriangles && collTree)
-                        geometry.geometryExtension.extensionSectionList.Add(Collis_31.RpCollisionGeometryBuildData(geometry));
+                        geometry.geometryExtension.extensionSectionList.Add(new Collis_31().RpCollisionGeometryBuildData(geometry));
                     geometries.Add(geometry);
                 }
 

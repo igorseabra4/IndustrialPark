@@ -1825,11 +1825,11 @@ namespace IndustrialPark
                                 totalIndexCount = 0,
                                 binMeshList = new BinMesh[0]
                             },
-                            new CollisionPLG_011D_Scooby()
+                            new CollisionPLG_011D_Pre36001()
                             {
-                                splits = new Split_Scooby[0],
-                                startIndex_amountOfTriangles = new short[][] { new short[] { 0, 0 } },
-                                triangles = new int[0]
+                                branchNodes = new RpCollBSPBranchNode[0],
+                                leafNodes = new RpCollBSPLeafNode[0],
+                                triangleMap = new int[0]
                             }
                         }
                     }

@@ -25,10 +25,10 @@ namespace IndustrialPark.Models.CollisionTree
         protected const int CLIPPOLYGONLEFT = 1;
         protected const int CLIPPOLYGONRIGHT = 2;
 
-        protected const int rpCOLLTREE_MIN_POLYGONS_FOR_SPLIT = 4;
-        protected const int rpCOLLTREE_MAXDEPTH = 32;
-        protected const int MAXCLOSESTCHECK = 50;
-        protected const float RANGEEPS = 0.0001f;
+        protected readonly int rpCOLLTREE_MIN_POLYGONS_FOR_SPLIT;
+        protected readonly int rpCOLLTREE_MAXDEPTH;
+        protected readonly int MAXCLOSESTCHECK;
+        protected readonly float RANGEEPS;
 
         protected class BuildSector
         {
@@ -137,7 +137,15 @@ namespace IndustrialPark.Models.CollisionTree
             public float rightValue;
         }
 
-        protected static bool FindDividingPlane(BuildData data, ref int plane, ref float value)
+        public Collis_Shared(int minPolygonsForSplit = 4, int maxDepth = 32, int maxClosestCheck = 50, float rangeEps = 0.0001f)
+        {
+            rpCOLLTREE_MIN_POLYGONS_FOR_SPLIT = minPolygonsForSplit;
+            rpCOLLTREE_MAXDEPTH = maxDepth;
+            MAXCLOSESTCHECK = maxClosestCheck;
+            RANGEEPS = rangeEps;
+        }
+
+        protected bool FindDividingPlane(BuildData data, ref int plane, ref float value)
         {
             float bestScore = float.MaxValue;
             int bestPlane = 0;
@@ -233,7 +241,45 @@ namespace IndustrialPark.Models.CollisionTree
             return false;
         }
 
-        protected static void SetClipCodes(int numVert, BuildVertex[] sortVerts, int plane, float value)
+        protected virtual BuildSector BuildTreeGenerate(BuildData data)
+        {
+            int plane = 0;
+            float value = 0;
+
+            SetSortVertices(data);
+
+            if (data.bspDepth >= rpCOLLTREE_MAXDEPTH || data.numPolygons < rpCOLLTREE_MIN_POLYGONS_FOR_SPLIT || !FindDividingPlane(data, ref plane, ref value))
+            {
+                return new BuildPolySector((ushort)data.numPolygons, (ushort)data.polygonOffset);
+            }
+            else
+            {
+                BuildData subdata;
+
+                data.bspDepth++;
+
+                SetClipCodes(data.numSortVerts, data.sortVerts, plane, value);
+                GetClipStats(data, plane, value, out ClipStats stats);
+                SortPolygons(data);
+
+                BuildPlaneSector planeSector = new BuildPlaneSector(plane, stats.leftValue, stats.rightValue);
+
+                subdata = data.Clone();
+                subdata.numPolygons = stats.nLeft;
+                SETCOORD(ref subdata.bbox.Maximum, plane, stats.leftValue);
+                planeSector.leftSubTree = BuildTreeGenerate(subdata);
+
+                subdata = data.Clone();
+                subdata.numPolygons = stats.nRight;
+                subdata.polygonOffset = data.polygonOffset + stats.nLeft;
+                SETCOORD(ref subdata.bbox.Minimum, plane, stats.rightValue);
+                planeSector.rightSubTree = BuildTreeGenerate(subdata);
+
+                return planeSector;
+            }
+        }
+
+        protected void SetClipCodes(int numVert, BuildVertex[] sortVerts, int plane, float value)
         {
             for (int iVert = 0; iVert < numVert; iVert++)
             {
@@ -249,7 +295,7 @@ namespace IndustrialPark.Models.CollisionTree
             }
         }
 
-        protected static void GetClipStats(BuildData data, int plane, float value, out ClipStats stats)
+        protected void GetClipStats(BuildData data, int plane, float value, out ClipStats stats)
         {
             float overlapLeft = 0;
             float overlapRight = 0;
@@ -321,7 +367,7 @@ namespace IndustrialPark.Models.CollisionTree
             };
         }
 
-        private static float DivisionScore(BuildData data, ClipStats stats, int plane)
+        private float DivisionScore(BuildData data, ClipStats stats, int plane)
         {
             float sectorExtent = GETCOORD(data.bbox.Maximum, plane) - GETCOORD(data.bbox.Minimum, plane);
             float leftExtent = stats.leftValue - GETCOORD(data.bbox.Minimum, plane);
@@ -330,7 +376,7 @@ namespace IndustrialPark.Models.CollisionTree
             return (leftExtent * AverageTreeDepth(stats.nLeft) + rightExtent * AverageTreeDepth(stats.nRight)) / sectorExtent;
         }
 
-        private static float AverageTreeDepth(int numLeaves)
+        private float AverageTreeDepth(int numLeaves)
         {
             Assert(numLeaves > 0);
 
@@ -345,7 +391,7 @@ namespace IndustrialPark.Models.CollisionTree
             return (depth + 2f) - (float)(1 << (depth + 1)) / numLeaves;
         }
 
-        protected static int BuildTreeCountLeafNodes(BuildSector tree)
+        protected int BuildTreeCountLeafNodes(BuildSector tree)
         {
             if (tree.type < 0)
                 return 1;
@@ -354,7 +400,7 @@ namespace IndustrialPark.Models.CollisionTree
             return BuildTreeCountLeafNodes(sector.leftSubTree) + BuildTreeCountLeafNodes(sector.rightSubTree);
         }
 
-        protected static void SetSortVertices(BuildData data)
+        protected void SetSortVertices(BuildData data)
         {
             int iVert;
 
@@ -377,13 +423,13 @@ namespace IndustrialPark.Models.CollisionTree
             data.numSortVerts = iSort;
         }
 
-        private static float FuzzyExtentScore(float extent, float maxExtent)
+        private float FuzzyExtentScore(float extent, float maxExtent)
         {
             float value = extent / maxExtent;
             return (value > 0.5f) ? 1f : 1f / (0.5f + value);
         }
 
-        protected static void SortPolygons(BuildData data)
+        protected void SortPolygons(BuildData data)
         {
             int pidx = data.polygonOffset;
             int leftCount = 0;
@@ -403,18 +449,18 @@ namespace IndustrialPark.Models.CollisionTree
                 }
             }
         }
-        protected static void Assert(bool condition)
+        protected void Assert(bool condition)
         {
             if (!condition)
                 throw new Exception();
         }
 
-        private static float GETCOORD(Vector3 v, int size)
+        private float GETCOORD(Vector3 v, int size)
         {
             return v[size / 4];
         }
 
-        protected static void SETCOORD(ref Vector3 v, int size, float value)
+        protected void SETCOORD(ref Vector3 v, int size, float value)
         {
             v[size / 4] = value;
         }
