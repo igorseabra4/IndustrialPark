@@ -136,6 +136,9 @@ namespace IndustrialPark
         /// <param name="height">Max heigh</param>
         public void DrawString(string text, int x, int y)
         {
+            if ( (_direct2DRenderTarget == null))
+                return;
+
             float scaledX = x * (float)_direct2DRenderTarget.Size.Width / initialWidth;
             float scaledY = y * (float)_direct2DRenderTarget.Size.Height / initialHeight;
             _direct2DRenderTarget.DrawText(text, _directWriteTextFormat, new RawRectangleF(scaledX, scaledY, _direct2DRenderTarget.Size.Width, _direct2DRenderTarget.Size.Height), _directWriteFontColor);
