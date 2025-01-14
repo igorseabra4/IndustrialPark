@@ -117,7 +117,7 @@ namespace IndustrialPark
                 prop.SetValue(this, new AssetID(newAssetId));
 
             foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
-                gadc.ReplaceReferences(oldAssetId, newAssetId);
+                gadc?.ReplaceReferences(oldAssetId, newAssetId);
 
             foreach (var array in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID[]))).Select(prop => (AssetID[])prop.GetValue(this)))
                 for (int i = 0; i < array.Length; i++)
