@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
-using static IndustrialPark.Models.BSP_IO_Shared;
 
 namespace IndustrialPark
 {
@@ -41,8 +40,8 @@ namespace IndustrialPark
                 comboBoxAssetTypes.Enabled = false;
             }
 
-            if (platform != Platform.GameCube)
-                checkBoxNativeData.Enabled = false;
+            //if (platform != Platform.GameCube || assetType == AssetType.JSP)
+            //    checkBoxNativeData.Enabled = false;
 
             if (platform == Platform.PS2)
                 (checkBoxCreatePIPT.Checked, checkBoxCreatePIPT.Enabled) = (true, false);
@@ -322,8 +321,8 @@ namespace IndustrialPark
                         }
                         else
                             AHDRs.Add(new Section_AHDR(Functions.BKDRHash(assetName), assetType, ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
-                                new Section_ADBG(0, assetName, "", 0),
-                                assetData));
+                                    new Section_ADBG(0, assetName, "", 0),
+                                    assetData));
                     }
 
                     return (AHDRs,
@@ -358,7 +357,7 @@ namespace IndustrialPark
                 checkBoxTexCoords.Checked = true;
                 (checkBoxNormals.Enabled, checkBoxNormals.Checked) = (!isJSP, false);
                 checkBoxVertexColors.Checked = true;
-                checkBoxNativeData.Checked = checkBoxNativeData.Enabled = false;
+                //checkBoxNativeData.Checked = checkBoxNativeData.Enabled = false;
                 checkBoxTriStrips.Checked = false;
                 (checkBoxMultiAtomic.Enabled, checkBoxMultiAtomic.Checked) = (false, isJSP);
                 checkBoxIgnoreMeshColors.Enabled = true;
@@ -375,7 +374,7 @@ namespace IndustrialPark
                 checkBoxTexCoords.Checked = true;
                 checkBoxNormals.Checked = true;
                 checkBoxVertexColors.Checked = false;
-                (checkBoxNativeData.Enabled, checkBoxNativeData.Checked) = (true, false);
+                //(checkBoxNativeData.Enabled, checkBoxNativeData.Checked) = (true, false);
                 checkBoxTriStrips.Checked = false;
                 (checkBoxMultiAtomic.Enabled, checkBoxMultiAtomic.Checked) = (true, false);
                 checkBoxIgnoreMeshColors.Checked = true;
@@ -455,7 +454,7 @@ namespace IndustrialPark
                     clumps.Add(new Clump_0010()
                     {
                         clumpStruct = new ClumpStruct_0001()
-        {
+                        {
                             atomicCount = atomics.Count,
                         },
                         frameList = new FrameList_000E()

@@ -302,8 +302,8 @@ namespace IndustrialPark.Models
                 scene.Meshes.Sum(m => m.VertexCount) > TRI_AND_VERTEX_LIMIT || scene.Meshes.Sum(m => m.FaceCount) > TRI_AND_VERTEX_LIMIT)
                 throw new ArgumentException("Model has too many vertices or triangles. Please import a simpler model.");
 
-            if (nativeData) // Force tristrip and multi-atomic when importing as native data
-                tristrip = multiAtomic = true;
+            //if (nativeData) // Force tristrip and multi-atomic when importing as native data
+                //tristrip = multiAtomic = true;
             if (geoTriangles && !binMesh) // Force trilist when bin mesh is disabled
                 tristrip = false;
 
@@ -362,10 +362,10 @@ namespace IndustrialPark.Models
             List<RenderWareFile.Triangle> triangles = new();
             List<BinMesh> binMeshes = new();
 
-            Dictionary<System.Numerics.Vector3, ushort> normIndices = new();
-            Dictionary<System.Numerics.Vector3, ushort> uvIndices = new();
-            Dictionary<System.Numerics.Vector3, ushort> uvIndices2 = new();
-            Dictionary<System.Numerics.Vector4, ushort> colorIndices = new();
+            //Dictionary<System.Numerics.Vector3, ushort> normIndices = new();
+            //Dictionary<System.Numerics.Vector3, ushort> uvIndices = new();
+            //Dictionary<System.Numerics.Vector3, ushort> uvIndices2 = new();
+            //Dictionary<System.Numerics.Vector4, ushort> colorIndices = new();
 
             int meshIndex = -1;
             foreach (var m in scene.Meshes)
@@ -389,50 +389,50 @@ namespace IndustrialPark.Models
                 else
                     vertices.AddRange(m.Vertices.Select(v => new Vertex3(v.X, v.Y, v.Z)).ToList());
 
-                if (nativeData)
-                {
-                    for (int i = 0; i < m.VertexCount; i++)
-                    {
-                        Vertex3 norm = new Vertex3(m.Normals[i].X, m.Normals[i].Y, m.Normals[i].Z);
-                        if (!Normals.Contains(norm))
-                        {
-                            normIndices[m.Normals[i]] = (ushort)Normals.Count;
-                            Normals.Add(norm);
-                        }
+                //if (nativeData)
+                //{
+                //    for (int i = 0; i < m.VertexCount; i++)
+                //    {
+                //        Vertex3 norm = new Vertex3(m.Normals[i].X, m.Normals[i].Y, m.Normals[i].Z);
+                //        if (!Normals.Contains(norm))
+                //        {
+                //            normIndices[m.Normals[i]] = (ushort)Normals.Count;
+                //            Normals.Add(norm);
+                //        }
 
-                        if (m.HasTextureCoords(0))
-                        {
-                            Vertex2 coord = new Vertex2(m.TextureCoordinateChannels[0][i].X, m.TextureCoordinateChannels[0][i].Y);
-                            if (!textCoords.Contains(coord))
-                            {
-                                uvIndices[m.TextureCoordinateChannels[0][i]] = (ushort)textCoords.Count;
-                                textCoords.Add(coord);
-                            }
-                        }
+                //        if (m.HasTextureCoords(0))
+                //        {
+                //            Vertex2 coord = new Vertex2(m.TextureCoordinateChannels[0][i].X, m.TextureCoordinateChannels[0][i].Y);
+                //            if (!textCoords.Contains(coord))
+                //            {
+                //                uvIndices[m.TextureCoordinateChannels[0][i]] = (ushort)textCoords.Count;
+                //                textCoords.Add(coord);
+                //            }
+                //        }
 
-                        if (m.HasTextureCoords(1))
-                        {
-                            Vertex2 coord = new Vertex2(m.TextureCoordinateChannels[1][i].X, m.TextureCoordinateChannels[1][i].Y);
-                            if (!textCoords2.Contains(coord))
-                            {
-                                uvIndices2[m.TextureCoordinateChannels[1][i]] = (ushort)textCoords2.Count;
-                                textCoords2.Add(coord);
-                            }
-                        }
+                        //if (m.HasTextureCoords(1))
+                        //{
+                        //    Vertex2 coord = new Vertex2(m.TextureCoordinateChannels[1][i].X, m.TextureCoordinateChannels[1][i].Y);
+                        //    if (!textCoords2.Contains(coord))
+                        //    {
+                        //        uvIndices2[m.TextureCoordinateChannels[1][i]] = (ushort)textCoords2.Count;
+                        //        textCoords2.Add(coord);
+                        //    }
+                        //}
 
-                        if (m.HasVertexColors(0))
-                        {
-                            RenderWareFile.Color color = new RenderWareFile.Color(m.VertexColorChannels[0][i].X, m.VertexColorChannels[0][i].Y, m.VertexColorChannels[0][i].Z, m.VertexColorChannels[0][i].W);
-                            if (!colorIndices.ContainsKey(m.VertexColorChannels[0][i]))
-                            {
-                                colorIndices[m.VertexColorChannels[0][i]] = (ushort)vertexColors.Count;
-                                vertexColors.Add(color);
-                            }
-                        }
-                    }
-                }
-                else
-                {
+                //        if (m.HasVertexColors(0))
+                //        {
+                //            RenderWareFile.Color color = new RenderWareFile.Color(m.VertexColorChannels[0][i].R, m.VertexColorChannels[0][i].G, m.VertexColorChannels[0][i].B, m.VertexColorChannels[0][i].A);
+                //            if (!colorIndices.ContainsKey(m.VertexColorChannels[0][i]))
+                //            {
+                //                colorIndices[m.VertexColorChannels[0][i]] = (ushort)vertexColors.Count;
+                //                vertexColors.Add(color);
+                //            }
+                //        }
+                //    }
+                //}
+                //else
+                //{
                     Normals.AddRange(m.Normals.Select(n => new Vertex3(n.X, n.Y, n.Z)).ToList());
                     //textCoords2.AddRange(m.TextureCoordinateChannels[1].Select(t => new Vertex2(t.X, t.Y)).ToList());
 
@@ -447,7 +447,7 @@ namespace IndustrialPark.Models
                     else if (vertexcolors)
                         for (int i = 0; i < m.VertexCount; i++)
                             vertexColors.Add(new RenderWareFile.Color(1f, 1f, 1f, 1f));
-                }
+                //}
 
                 foreach (var t in m.Faces)
                 {
@@ -499,15 +499,15 @@ namespace IndustrialPark.Models
                 if (!binMesh)
                     binMeshes.Clear();
 
-                if (nativeData)
-                {
-                    geometries.Add(ToNativeGeometry(multiAtomic ? [materials[m.MaterialIndex]] : materials.ToArray(), m,
-                        vertices.ToArray(), Normals.ToArray(), textCoords.ToArray(), textCoords2.ToArray(), vertexColors.ToArray(),
-                        normIndices, uvIndices, uvIndices2, colorIndices,
-                        triangles.ToArray(), primitives, ignoreMeshColors));
-                }
-                else
-                {
+                //if (nativeData)
+                //{
+                //    geometries.Add(ToNativeGeometry(multiAtomic ? [materials[m.MaterialIndex]] : materials.ToArray(), m,
+                //        vertices.ToArray(), Normals.ToArray(), textCoords.ToArray(), textCoords2.ToArray(), vertexColors.ToArray(),
+                //        normIndices, uvIndices, uvIndices2, colorIndices,
+                //        triangles.ToArray(), primitives, ignoreMeshColors));
+                //}
+                //else
+                //{
                     var geometry = ToGeometry(multiAtomic ? [materials[m.MaterialIndex]] : materials.ToArray(),
                         vertices.ToArray(), Normals.ToArray(), textCoords.ToArray(), textCoords2.ToArray(), vertexColors.ToArray(),
                         triangles.ToArray(), binMeshes.ToArray(), tristrip, ignoreMeshColors, collTree);
@@ -515,7 +515,7 @@ namespace IndustrialPark.Models
                     if (geoTriangles && collTree)
                         geometry.geometryExtension.extensionSectionList.Add(new Collis_31().RpCollisionGeometryBuildData(geometry));
                     geometries.Add(geometry);
-                }
+                //}
 
                 triangles.Clear();
                 vertices.Clear();
@@ -523,129 +523,127 @@ namespace IndustrialPark.Models
                 textCoords2.Clear();
                 vertexColors.Clear();
                 Normals.Clear();
-                normIndices.Clear();
-                uvIndices.Clear();
-                uvIndices2.Clear();
-                colorIndices.Clear();
+                //normIndices.Clear();
+                //uvIndices.Clear();
+                //uvIndices2.Clear();
+                //colorIndices.Clear();
                 binMeshes.Clear();
             }
 
             return ToClump(geometries, atomicNeedsMaterialEffects);
         }
 
-        private static Geometry_000F ToNativeGeometry(Material_0007[] materials, Mesh mesh,
-            Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, Vertex2[] textCoords2, RenderWareFile.Color[] vertexColors,
-            Dictionary<System.Numerics.Vector3, ushort> normalIndices, Dictionary<System.Numerics.Vector3, ushort> uvIndices,
-            Dictionary<System.Numerics.Vector3, ushort> uvIndices2, Dictionary<System.Numerics.Vector4, ushort> colorIndices,
-            RenderWareFile.Triangle[] triangles, NvTriStripDotNet.PrimitiveGroup[] indices, bool ignoreMeshColor)
-        {
-            SharpDX.BoundingSphere boundingSphere = SharpDX.BoundingSphere.FromPoints(vertices.Select(v => new SharpDX.Vector3(v.X, v.Y, v.Z)).ToArray());
-            TriangleDeclaration declaration = new() { TriangleListList = [] };
+        //private static Geometry_000F ToNativeGeometry(Material_0007[] materials, Mesh mesh,
+        //    Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, Vertex2[] textCoords2, RenderWareFile.Color[] vertexColors,
+        //    Dictionary<Vector3D, ushort> normalIndices, Dictionary<Vector3D, ushort> uvIndices, Dictionary<Vector3D, ushort> uvIndices2, Dictionary<Color4D, ushort> colorIndices,
+        //    RenderWareFile.Triangle[] triangles, NvTriStripDotNet.PrimitiveGroup[] indices, bool ignoreMeshColor)
+        //{
+        //    BoundingSphere boundingSphere = BoundingSphere.FromPoints(vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray());
+        //    TriangleDeclaration declaration = new() { strips = [] };
 
-            foreach (NvTriStripDotNet.PrimitiveGroup primgroup in indices)
-            {
-                List<int[]> triEntries = new List<int[]>();
+        //    foreach (NvTriStripDotNet.PrimitiveGroup primgroup in indices)
+        //    {
+        //        List<ushort[]> triEntries = new();
 
-                foreach (var i in primgroup.Indices)
-                {
-                    List<int> ind = new List<int> { i };
+        //        foreach (var i in primgroup.Indices)
+        //        {
+        //            List<ushort> ind = new List<ushort> { i };
 
-                    if (normals.Any())
-                        ind.Add(normalIndices[mesh.Normals[i]]);
-                    if (textCoords.Any())
-                        ind.Add(uvIndices[mesh.TextureCoordinateChannels[0][i]]);
-                    if (textCoords2.Any())
-                        ind.Add(uvIndices2[mesh.TextureCoordinateChannels[1][i]]);
-                    if (vertexColors.Any())
-                        ind.Add(colorIndices[mesh.VertexColorChannels[0][i]]);
-                    triEntries.Add(ind.ToArray());
-                }
+        //            if (normals.Any())
+        //                ind.Add(normalIndices[mesh.Normals[i]]);
+        //            if (textCoords.Any())
+        //                ind.Add(uvIndices[mesh.TextureCoordinateChannels[0][i]]);
+        //            if (textCoords2.Any())
+        //                ind.Add(uvIndices2[mesh.TextureCoordinateChannels[1][i]]);
+        //            if (vertexColors.Any())
+        //                ind.Add(colorIndices[mesh.VertexColorChannels[0][i]]);
+        //            triEntries.Add(ind.ToArray());
+        //        }
 
-                declaration.TriangleListList.Add(new TriangleList()
-                {
-                    setting = 0x98,
-                    setting2 = 0,
-                    entryAmount = (byte)primgroup.IndexCount,
-                    entries = triEntries,
-                });
-            }
+        //        declaration.strips.Add(new TriangleStrip()
+        //        {
+        //            primitive = GXPrimitive.GX_TRIANGLESTRIP,
+        //            numIndices = (byte)primgroup.IndexCount,
+        //            indices = triEntries,
+        //        });
+        //    }
 
-            List<Declaration> declarations = new List<Declaration>() { new Vertex3Declaration(vertices, true) };
-            if (normals.Any())
-                declarations.Add(new Vertex3Declaration(normals, false));
-            if (textCoords.Any())
-                declarations.Add(new Vertex2Declaration(textCoords, false));
-            if (textCoords2.Any())
-                declarations.Add(new Vertex2Declaration(textCoords2, true));
-            if (vertexColors.Any())
-                declarations.Add(new ColorDeclaration(vertexColors));
+        //    List<VertexAttribute> declarations = new List<VertexAttribute>() { new VertexAttribute<Vertex3>(vertices, rwGCNVertexAttribute.rwGCNVA_POS) };
+        //    if (normals.Any())
+        //        declarations.Add(new VertexAttribute<Vertex3>(normals, rwGCNVertexAttribute.rwGCNVA_NRM));
+        //    if (textCoords.Any())
+        //        declarations.Add(new VertexAttribute<Vertex2>(textCoords, rwGCNVertexAttribute.rwGCNVA_TEX0));
+        //    if (textCoords2.Any())
+        //        declarations.Add(new VertexAttribute<Vertex2>(textCoords2, rwGCNVertexAttribute.rwGCNVA_TEX1));
+        //    if (vertexColors.Any())
+        //        declarations.Add(new VertexAttribute<RenderWareFile.Color>(vertexColors, rwGCNVertexAttribute.rwGCNVA_CLR0));
 
-            return new Geometry_000F()
-            {
-                materialList = new MaterialList_0008()
-                {
-                    materialListStruct = new MaterialListStruct_0001()
-                    {
-                        materialCount = materials.Length
-                    },
-                    materialList = materials
-                },
-                geometryStruct = new GeometryStruct_0001()
-                {
-                    geometryFlags = GeometryFlags.rpGEOMETRYNATIVE |
-                        GeometryFlags.rpGEOMETRYLIGHTS |
-                        (textCoords2.Any() ? GeometryFlags.rpGEOMETRYTEXTURED2 : (textCoords.Any() ? GeometryFlags.rpGEOMETRYTEXTURED : 0)) |
-                        (vertexColors.Any() ? GeometryFlags.rpGEOMETRYPRELIT : 0) |
-                        GeometryFlags.rpGEOMETRYPOSITIONS |
-                        GeometryFlags.rpGEOMETRYTRISTRIP |
-                        (normals.Any() ? GeometryFlags.rpGEOMETRYNORMALS : 0) |
-                        (ignoreMeshColor ? 0 : GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR),
-                    numTriangles = triangles.Length,
-                    numVertices = vertices.Length,
-                    numMorphTargets = 1,
-                    ambient = 1f,
-                    specular = 1f,
-                    diffuse = 1f,
-                    vertexColors = [],
-                    textCoords = [],
-                    triangles = [],
-                    sphereCenterX = boundingSphere.Center.X,
-                    sphereCenterY = boundingSphere.Center.Y,
-                    sphereCenterZ = boundingSphere.Center.Z,
-                    sphereRadius = boundingSphere.Radius,
-                    unknown1 = 0,
-                    unknown2 = 0,
-                },
-                geometryExtension = new Extension_0003()
-                {
-                    extensionSectionList = new List<RWSection>()
-                    {
-                        new BinMeshPLG_050E()
-                        {
-                             binMeshHeaderFlags = BinMeshHeaderFlags.TriangleStrip,
-                             numMeshes = 1,
-                             totalIndexCount = indices.Sum(i => i.IndexCount),
-                             binMeshList = [new BinMesh() { indexCount = indices.Sum(i => i.IndexCount), materialIndex = 0, vertexIndices = [] }]
-                        },
-                        new NativeDataPLG_0510()
-                        {
-                            nativeDataStruct = new NativeDataStruct_0001()
-                            {
-                                nativeDataType = NativeDataType.GameCube,
-                                nativeData = new NativeDataGC()
-                                {
-                                    unknown1 = 1,
-                                    meshIndex = 1,
-                                    unknown2 = 0,
-                                    declarations = declarations.ToArray(),
-                                    triangleDeclarations = [declaration],
-                                }
-                            }
-                        }
-                    }
-                }
-            };
-        }
+        //    return new Geometry_000F()
+        //    {
+        //        materialList = new MaterialList_0008()
+        //        {
+        //            materialListStruct = new MaterialListStruct_0001()
+        //            {
+        //                materialCount = materials.Length
+        //            },
+        //            materialList = materials
+        //        },
+        //        geometryStruct = new GeometryStruct_0001()
+        //        {
+        //            geometryFlags = GeometryFlags.rpGEOMETRYNATIVE |
+        //                GeometryFlags.rpGEOMETRYLIGHTS |
+        //                (textCoords2.Any() ? GeometryFlags.rpGEOMETRYTEXTURED2 : (textCoords.Any() ? GeometryFlags.rpGEOMETRYTEXTURED : 0)) |
+        //                (vertexColors.Any() ? GeometryFlags.rpGEOMETRYPRELIT : 0) |
+        //                GeometryFlags.rpGEOMETRYPOSITIONS |
+        //                GeometryFlags.rpGEOMETRYTRISTRIP |
+        //                (normals.Any() ? GeometryFlags.rpGEOMETRYNORMALS : 0) |
+        //                (ignoreMeshColor ? 0 : GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR),
+        //            numTriangles = triangles.Length,
+        //            numVertices = vertices.Length,
+        //            numMorphTargets = 1,
+        //            ambient = 1f,
+        //            specular = 1f,
+        //            diffuse = 1f,
+        //            vertexColors = [],
+        //            textCoords = [],
+        //            triangles = [],
+        //            sphereCenterX = boundingSphere.Center.X,
+        //            sphereCenterY = boundingSphere.Center.Y,
+        //            sphereCenterZ = boundingSphere.Center.Z,
+        //            sphereRadius = boundingSphere.Radius,
+        //            hasVertices = 0,
+        //            hasNormals = 0,
+        //        },
+        //        geometryExtension = new Extension_0003()
+        //        {
+        //            extensionSectionList = new List<RWSection>()
+        //            {
+        //                new BinMeshPLG_050E()
+        //                {
+        //                     binMeshHeaderFlags = BinMeshHeaderFlags.TriangleStrip,
+        //                     numMeshes = 1,
+        //                     totalIndexCount = indices.Sum(i => i.IndexCount),
+        //                     binMeshList = [new BinMesh() { indexCount = indices.Sum(i => i.IndexCount), materialIndex = 0, vertexIndices = [] }]
+        //                },
+        //                new NativeDataPLG_0510()
+        //                {
+        //                    nativeDataStruct = new NativeDataStruct_0001()
+        //                    {
+        //                        nativeDataType = NativeDataType.GameCube,
+        //                        nativeData = new NativeDataGC()
+        //                        {
+        //                            token = 1,
+        //                            serialNumber = 1,
+        //                            flags = 0,
+        //                            attr = declarations.ToArray(),
+        //                            displayList = [declaration],
+        //                        }
+        //                    }
+        //                }
+        //            }
+        //        }
+        //    };
+        //}
 
         private static Geometry_000F ToGeometry(Material_0007[] materials,
             Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, Vertex2[] textCoords2, RenderWareFile.Color[] vertexColors,
