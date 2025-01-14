@@ -16,7 +16,7 @@ namespace IndustrialPark
     {
         protected RenderWareModelFile model;
 
-        public override string AssetInfo => $"{RwVersion(renderWareVersion)} {(IsNativeData ? "native" : "")} {base.AssetInfo}";
+        public override string AssetInfo => $"{renderWareVersion} {(IsNativeData ? "native" : "")} {base.AssetInfo}";
 
         public AssetRenderWareModel(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data)
         {
@@ -147,8 +147,8 @@ namespace IndustrialPark
                 result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
         }
 
-        private int renderWareVersion;
-        public int RenderWareVersion
+        private RWVersion renderWareVersion;
+        public RWVersion RenderWareVersion
         {
             get { return renderWareVersion; }
         }
@@ -353,7 +353,7 @@ namespace IndustrialPark
             renderWareVersion = sections[0].renderWareVersion;
 
             if (ver == CollTreeVersion.NONE)
-                ver = (Shared.UnpackLibraryVersion(renderWareVersion) >= 0x36001) ? CollTreeVersion.COLLTREE_36 : CollTreeVersion.COLLTREE_31;
+                ver = (renderWareVersion >= (3,6,0,1)) ? CollTreeVersion.COLLTREE_36 : CollTreeVersion.COLLTREE_31;
 
             if (game <= Game.BFBB && ver > CollTreeVersion.COLLTREE_31)
                 throw new NotSupportedException("Scooby/BFBB only support version 3.1 collision plg's");

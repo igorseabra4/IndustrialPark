@@ -11,7 +11,7 @@ namespace IndustrialPark
 {
     public class AssetRWTX : AssetWithData
     {
-        public override string AssetInfo => $"{platformFormat} {RwVersion(renderWareVersion)} {base.AssetInfo}";
+        public override string AssetInfo => $"{platformFormat} {renderWareVersion} {base.AssetInfo}";
         private const string categoryName = "\t\t\tTexture";
 
         private string platformFormat;
@@ -44,7 +44,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public string Name { get => Path.GetFileNameWithoutExtension(assetName); }
 
-        private int renderWareVersion;
+        private RWVersion renderWareVersion;
 
         private RWSection[] _textureAsRWSections;
         private RWSection[] TextureAsRWSections

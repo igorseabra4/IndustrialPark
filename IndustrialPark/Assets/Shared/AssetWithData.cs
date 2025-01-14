@@ -24,11 +24,5 @@ namespace IndustrialPark
         {
             writer.Write(Data);
         }
-
-        public string RwVersion(int renderWareVersion)
-        {
-            var str = RenderWareFile.Shared.UnpackLibraryVersion(renderWareVersion).ToString("X5");
-            return $"RW {str[0]}.{str[1]}.{str[2]}.{str[3]}{str[4]}";
-        }
     }
 }

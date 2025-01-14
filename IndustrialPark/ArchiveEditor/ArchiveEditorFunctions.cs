@@ -1555,7 +1555,7 @@ namespace IndustrialPark
                         MessageBox.Show(e.Message + " The asset will be copied as it is.");
                     }
                 }
-                clipboard.Add(asset.game, platform.Endianness(), AHDR, asset is AssetJSP_INFO jspInfo ? jspInfo.JSP_AssetIDs : null);
+                clipboard.Add(asset.game, platform, AHDR, asset is AssetJSP_INFO jspInfo ? jspInfo.JSP_AssetIDs : null, GetRWVersion(AHDR));
             }
 
             Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
@@ -1564,7 +1564,7 @@ namespace IndustrialPark
         public static bool updateReferencesOnCopy = true;
         public static bool replaceAssetsOnPaste = false;
 
-        public bool PasteAssetsFromClipboard(out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
+        internal bool PasteAssetsFromClipboard(out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
         {
             finalIndices = new List<uint>();
 
@@ -1572,6 +1572,7 @@ namespace IndustrialPark
             {
                 if (clipboard == null)
                     clipboard = JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
+                clipboard.GetType();
             }
             catch (Exception ex)
             {
@@ -1583,16 +1584,24 @@ namespace IndustrialPark
 
             Dictionary<uint, uint> referenceUpdate = new Dictionary<uint, uint>();
 
+            RWVersion? targetVersion = null;
+            bool rememberForAll = false;
+
             for (int i = 0; i < clipboard.assets.Count; i++)
             {
-                Section_AHDR AHDR = clipboard.assets[i];
+                Section_AHDR AHDR = clipboard.assets[i].ToAHDR();
+
+                if (IsRenderWareStream(AHDR.assetType) && Dialogs.ChangeRWVersion.IsVersionMismatch(platform, game, AHDR.assetType, clipboard.rwVersions?[i]))
+                {
+                    AHDR.data = Dialogs.ChangeRWVersion.ChangeVersion(AHDR, ref targetVersion, ref rememberForAll);
+                }
 
                 uint previousAssetID = AHDR.assetID;
 
                 if (replaceAssetsOnPaste && !dontReplace && ContainsAsset(AHDR.assetID))
                     RemoveAsset(AHDR.assetID);
 
-                var asset = AddAssetWithUniqueID(AHDR, clipboard.games[i], clipboard.endiannesses[i]);
+                var asset = AddAssetWithUniqueID(AHDR, clipboard.games[i], clipboard.platforms[i].Endianness());
 
                 asset.SetGame(game);
 
@@ -1618,7 +1627,7 @@ namespace IndustrialPark
             }
 
             if (updateReferencesOnCopy || forceRefUpdate)
-                UpdateReferencesOnCopy(referenceUpdate, clipboard.assets);
+                UpdateReferencesOnCopy(referenceUpdate, clipboard.assets.Select(a => a.ToAHDR()).ToList());
 
             return true;
         }
@@ -1799,6 +1808,38 @@ namespace IndustrialPark
         {
             if (ContainsAsset(sgrp) && GetFromAssetID(sgrp) is AssetSGRP SGRP)
                 return SGRP;
+            return null;
+        }
+
+        /// <summary>
+        /// Returns boolean if <see cref="AssetType"/> is a RenderWare binary
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        private static bool IsRenderWareStream(AssetType type)
+        {
+            if (type == AssetType.Model || type == AssetType.Texture || type == AssetType.TextureStream ||
+                type == AssetType.BSP || type == AssetType.JSP || type == AssetType.JSPInfo)
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Returns the version from a RenderWare binary.
+        /// </summary>
+        /// <param name="ahdr"></param>
+        /// <returns>RenderWare version if successful. Undefined if no data or invalid version. null if not a renderware asset</returns>
+        private static RWVersion? GetRWVersion(Section_AHDR ahdr)
+        {
+            if (IsRenderWareStream(ahdr.assetType))
+            {
+                if (ahdr.data.Length > 12)
+                {
+                    RWVersion ver = new RWVersion(BitConverter.ToInt32(ahdr.data.Skip(8).Take(4).ToArray()));
+                    return RWVersion.IsValidRange(ver) ? ver : RWVersion.Undefined;
+                }
+                return RWVersion.Undefined;
+            }
             return null;
         }
 

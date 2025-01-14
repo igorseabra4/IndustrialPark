@@ -11,7 +11,6 @@ using System.Linq;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
 using static IndustrialPark.Models.BSP_IO;
-using static IndustrialPark.Models.BSP_IO_Shared;
 
 namespace IndustrialPark
 {

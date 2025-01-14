@@ -91,23 +91,23 @@ namespace IndustrialPark
                 txdgenProcess.Kill();
         }
 
-        public static int currentTextureVersion(Game game, Platform platform)
+        public static RWVersion currentTextureVersion(Game game, Platform platform)
         {
             switch (game)
             {
                 case Game.Scooby when platform == Platform.PS2:
-                    return 0x00000310; // 3.1.0.0
+                    return (3,1,0,0);
                 case Game.Scooby when platform == Platform.GameCube:
-                    return 0x0C02FFFF; // 3.3.0.2
+                    return (3,3,0,2);
                 case Game.BFBB when platform == Platform.GameCube:
-                    return 0x1003FFFF; // 3.4.0.3
+                    return (3,4,0,3); 
                 case Game.Scooby when platform == Platform.Xbox:
-                    return 0x1005FFFF; // 3.4.0.5
+                    return (3,4,0,5); 
                 case Game.BFBB:
                 case Game.Incredibles when platform == Platform.PS2:
-                    return 0x1400FFFF; // 3.5.0.0
+                    return (3,5,0,0); 
                 default:
-                    return 0x1C02000A; // 3.7.0.2-A
+                    return (3,7,0,2,0xA);
             }
         }
 

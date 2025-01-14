@@ -138,7 +138,7 @@ namespace IndustrialPark
                                     a.checkBoxMultiAtomic.Checked,
                                     a.checkBoxNativeData.Checked,
                                     a.checkBoxCollTree.Checked,
-                                    a.checkBoxBinMesh.Checked), modelRenderWareVersion(game));
+                                    a.checkBoxBinMesh.Checked), GetModelRenderWareVersion(game));
                         }
                         else if (assetType == AssetType.BSP)
                         {
@@ -197,7 +197,7 @@ namespace IndustrialPark
                                             a.checkBoxNativeData.Checked,
                                             a.checkBoxCollTree.Checked,
                                             a.checkBoxBinMesh.Checked),
-                                        modelRenderWareVersion(game));
+                                        GetModelRenderWareVersion(game));
                             }
                             catch (ArgumentException e)
                             {
@@ -329,7 +329,14 @@ namespace IndustrialPark
             checkBoxBinMesh.Enabled = !checkBoxNativeData.Checked;
         }
 
-        private void checkBoxBinMesh_CheckedChanged(object sender, EventArgs e)
+        public static RWVersion GetModelRenderWareVersion(Game game)
+        {
+            return game switch
+            {
+                Game.Scooby => new RWVersion(3, 1),
+                _ => new RWVersion(3, 5)
+            };
+        }
         {
             checkBoxTriStrips.Enabled = checkBoxBinMesh.Checked;
         }

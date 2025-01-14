@@ -1,29 +1,69 @@
 ﻿using HipHopFile;
+using Newtonsoft.Json;
+using RenderWareFile;
 using System.Collections.Generic;
 
 namespace IndustrialPark
 {
-    public class AssetClipboard
+    [JsonObject(MemberSerialization.Fields)]
+    internal class AssetClipboard
     {
-        public List<Game> games;
-        public List<Endianness> endiannesses;
-        public List<Section_AHDR> assets;
-        public List<AssetID[]> jspExtraInfo;
+        internal List<Game> games;
+        internal List<Platform> platforms;
+        internal List<Section_AHDR_Clipboard> assets;
+        internal List<AssetID[]> jspExtraInfo;
+        internal List<int?> rwVersions;
 
-        public AssetClipboard()
+        internal AssetClipboard()
         {
             games = new List<Game>();
-            endiannesses = new List<Endianness>();
-            assets = new List<Section_AHDR>();
+            platforms = new List<Platform>();
+            assets = new List<Section_AHDR_Clipboard>();
             jspExtraInfo = new List<AssetID[]>();
+            rwVersions = new List<int?>();
         }
 
-        public void Add(Game game, Endianness endianness, Section_AHDR asset, AssetID[] jspExtraInfo)
+        internal void Add(Game game, Platform platform, Section_AHDR asset, AssetID[] jspExtraInfo, RWVersion? rwVer)
         {
             games.Add(game);
-            endiannesses.Add(endianness);
-            assets.Add(asset);
+            platforms.Add(platform);
+            assets.Add(new Section_AHDR_Clipboard(asset));
             this.jspExtraInfo.Add(jspExtraInfo);
+            rwVersions.Add(rwVer?.Write());
         }
+    }
+
+    /// <summary>
+    /// A more basic class of AHDR for clipboard
+    /// </summary>
+    [JsonObject(MemberSerialization.Fields)]
+    internal class Section_AHDR_Clipboard
+    {
+        internal uint assetID;
+        internal AssetType assetType;
+        internal AHDRFlags flags;
+        internal string assetName;
+        internal string assetFileName;
+        internal int checksum;
+        internal byte[] data;
+
+        internal Section_AHDR_Clipboard(Section_AHDR ahdr)
+        {
+            assetID = ahdr.assetID;
+            assetType = ahdr.assetType;
+            flags = ahdr.flags;
+            assetName = ahdr.ADBG.assetName;
+            assetFileName = ahdr.ADBG.assetFileName;
+            checksum = ahdr.ADBG.checksum;
+            data = ahdr.data;
+        }
+
+        internal Section_AHDR ToAHDR()
+        {
+            return new Section_AHDR(assetID, assetType, flags,
+                new Section_ADBG(0, assetName, assetFileName, checksum),
+                data);
+        }
+        
     }
 }

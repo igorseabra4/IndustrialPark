@@ -65,7 +65,7 @@ namespace IndustrialPark
 
             string templateName = "";
             foreach (var AHDR in clipboard.assets)
-                templateName += "[" + AHDR.assetType.ToString() + "][" + AHDR.ADBG.assetName + "]";
+                templateName += "[" + AHDR.assetType.ToString() + "][" + AHDR.assetName + "]";
 
             File.WriteAllText(
                 Path.Combine(Program.MainForm.userTemplatesFolder, templateName),
