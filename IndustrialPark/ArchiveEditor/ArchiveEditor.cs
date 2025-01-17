@@ -1432,8 +1432,7 @@ namespace IndustrialPark
             {
                 var asset = (AssetGRUP)archive.GetFromAssetID(assetIDs[0]);
                 asset.AddItems(ids);
-                PopulateAssetListAndComboBox();
-                SetSelectedIndex(asset.assetID);
+                UpdateCurrentListView(asset);
             }
         }
 
