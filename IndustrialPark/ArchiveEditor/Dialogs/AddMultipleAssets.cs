@@ -32,7 +32,17 @@ namespace IndustrialPark
             {
                 foreach (string s in openFileDialog.FileNames)
                 {
-                    assetNames.Add(Path.GetFileNameWithoutExtension(s));
+                    // if (Path.GetExtension(s).ToLower() == ".anim")
+                    // If importing 'Animation' files keep the extension ".anm"
+                    if (assetType == AssetType.Animation)
+                    {
+                        assetNames.Add(Path.GetFileName(s));
+                    }
+                    else
+                    {
+                        assetNames.Add(Path.GetFileNameWithoutExtension(s));
+                    }
+                    
                     assetData.Add(File.ReadAllBytes(s));
                 }
                 buttonOK.Enabled = true;
@@ -45,7 +55,15 @@ namespace IndustrialPark
             listBox1.Items.Clear();
 
             foreach (string s in assetNames)
-                listBox1.Items.Add(Path.GetFileNameWithoutExtension(s));
+                // If importing 'Animation' files keep the extension ".anm"
+                if (assetType == AssetType.Animation)
+                {
+                    listBox1.Items.Add(Path.GetFileName(s));
+                }
+                else
+                {
+                    listBox1.Items.Add(Path.GetFileNameWithoutExtension(s));
+                }
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)

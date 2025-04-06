@@ -1,4 +1,5 @@
-﻿using HipHopFile;
+﻿using DiscordRPC;
+using HipHopFile;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using SharpDX;
 using System;
@@ -957,9 +958,17 @@ namespace IndustrialPark
 
             if (CurrentlySelectedAssetIDs().Count == 1)
             {
+                var FinalName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName;
+                var CheckName = Path.GetExtension(archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetFileName).ToLower();
+                // Check to see if the extension is '.anm' and use 'assetFileName'
+                if (CheckName == ".anm")
+                {
+                    FinalName = Path.GetFileName(archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetFileName);
+                }
                 SaveFileDialog saveFileDialog = new SaveFileDialog()
                 {
-                    FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName
+                    //FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName
+                    FileName = FinalName
                 };
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
@@ -982,8 +991,20 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
+                            var asset = archive.GetFromAssetID(u);
                             var AHDR = archive.GetFromAssetID(u).BuildAHDR(archive.platform.Endianness());
-                            File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
+
+                            // Check to see if the file is an '.anm' before exporting raw file(s)
+                            if (Path.GetExtension(asset.assetFileName) == ".anm")
+                            {
+                                // Combine the selected folder path with the filename
+                                string fullPath = Path.Combine(saveFileDialog.FileName, Path.GetFileName(asset.assetFileName));
+                                File.WriteAllBytes(fullPath, AHDR.data);
+                            }
+                            else
+                            {
+                                File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
+                            }
                         }
                         catch (Exception ex)
                         {
