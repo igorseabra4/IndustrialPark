@@ -32,8 +32,7 @@ namespace IndustrialPark
             {
                 foreach (string s in openFileDialog.FileNames)
                 {
-                    // if (Path.GetExtension(s).ToLower() == ".anim")
-                    // If importing 'Animation' files keep the extension ".anm"
+                    // If importing 'Animation' type files keep the extension ".anm"
                     if (assetType == AssetType.Animation)
                     {
                         assetNames.Add(Path.GetFileName(s));
@@ -55,7 +54,7 @@ namespace IndustrialPark
             listBox1.Items.Clear();
 
             foreach (string s in assetNames)
-                // If importing 'Animation' files keep the extension ".anm"
+                // If importing 'Animation' type files keep the extension ".anm"
                 if (assetType == AssetType.Animation)
                 {
                     listBox1.Items.Add(Path.GetFileName(s));

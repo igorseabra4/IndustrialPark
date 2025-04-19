@@ -1,5 +1,4 @@
-﻿using DiscordRPC;
-using HipHopFile;
+﻿using HipHopFile;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using SharpDX;
 using System;
@@ -956,24 +955,26 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0)
                 return;
 
+            uint selectedAssetID = CurrentlySelectedAssetIDs()[0];
+
             if (CurrentlySelectedAssetIDs().Count == 1)
             {
-                var FinalName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName;
-                var CheckName = Path.GetExtension(archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetFileName).ToLower();
+                var finalAssetName = archive.GetFromAssetID(selectedAssetID).assetName;
+                var assetFileExtension = Path.GetExtension(archive.GetFromAssetID(selectedAssetID).assetFileName).ToLower();
                 // Check to see if the extension is '.anm' and use 'assetFileName'
-                if (CheckName == ".anm")
+                if (assetFileExtension == ".anm")
                 {
-                    FinalName = Path.GetFileName(archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetFileName);
+                    finalAssetName = Path.GetFileName(archive.GetFromAssetID(selectedAssetID).assetFileName);
                 }
                 SaveFileDialog saveFileDialog = new SaveFileDialog()
                 {
                     //FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName
-                    FileName = FinalName
+                    FileName = finalAssetName
                 };
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        var AHDR = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).BuildAHDR(archive.platform.Endianness());
+                        var AHDR = archive.GetFromAssetID(selectedAssetID).BuildAHDR(archive.platform.Endianness());
                         File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                     }
                     catch (Exception ex)
@@ -992,7 +993,7 @@ namespace IndustrialPark
                         try
                         {
                             var asset = archive.GetFromAssetID(u);
-                            var AHDR = archive.GetFromAssetID(u).BuildAHDR(archive.platform.Endianness());
+                            var AHDR = asset.BuildAHDR(archive.platform.Endianness());
 
                             // Check to see if the file is an '.anm' before exporting raw file(s)
                             if (Path.GetExtension(asset.assetFileName) == ".anm")
