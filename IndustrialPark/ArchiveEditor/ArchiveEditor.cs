@@ -955,16 +955,26 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0)
                 return;
 
+            uint selectedAssetID = CurrentlySelectedAssetIDs()[0];
+
             if (CurrentlySelectedAssetIDs().Count == 1)
             {
+                var finalAssetName = archive.GetFromAssetID(selectedAssetID).assetName;
+                var assetFileExtension = Path.GetExtension(archive.GetFromAssetID(selectedAssetID).assetFileName).ToLower();
+                // Check to see if the extension is '.anm' and use 'assetFileName'
+                if (assetFileExtension == ".anm")
+                {
+                    finalAssetName = Path.GetFileName(archive.GetFromAssetID(selectedAssetID).assetFileName);
+                }
                 SaveFileDialog saveFileDialog = new SaveFileDialog()
                 {
-                    FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName
+                    //FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName
+                    FileName = finalAssetName
                 };
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        var AHDR = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).BuildAHDR(archive.platform.Endianness());
+                        var AHDR = archive.GetFromAssetID(selectedAssetID).BuildAHDR(archive.platform.Endianness());
                         File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                     }
                     catch (Exception ex)
@@ -982,8 +992,20 @@ namespace IndustrialPark
                     foreach (uint u in CurrentlySelectedAssetIDs())
                         try
                         {
-                            var AHDR = archive.GetFromAssetID(u).BuildAHDR(archive.platform.Endianness());
-                            File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
+                            var asset = archive.GetFromAssetID(u);
+                            var AHDR = asset.BuildAHDR(archive.platform.Endianness());
+
+                            // Check to see if the file is an '.anm' before exporting raw file(s)
+                            if (Path.GetExtension(asset.assetFileName) == ".anm")
+                            {
+                                // Combine the selected folder path with the filename
+                                string fullPath = Path.Combine(saveFileDialog.FileName, Path.GetFileName(asset.assetFileName));
+                                File.WriteAllBytes(fullPath, AHDR.data);
+                            }
+                            else
+                            {
+                                File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
+                            }
                         }
                         catch (Exception ex)
                         {
