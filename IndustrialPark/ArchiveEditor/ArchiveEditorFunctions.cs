@@ -714,20 +714,35 @@ namespace IndustrialPark
                 var built = newAsset.BuildAHDR(platform.Endianness()).data;
                 if (!Enumerable.SequenceEqual(AHDR.data, built))
                 {
-                    err.reason = ErrorReason.SequenceNotEqual;
-                    err.errorMessage = "unsupported format";
-                    if (showMessageBox)
-                        MessageBox.Show($"There was an error loading asset " + err + " and editing has been disabled for it.");
+                    // IP version 2023.07.30 didn't seem to save the right asset ID
+                    // in the AHDR for SNDI assets? 🤔
+                    // i.e. First four bytes of ADHR.data are 4E0826A4 instead of 
+                    // 7AB6743A as you'd expect for a SNDI called "sound_info"
+                    // This ignores the error - but the SoundStream entries don't
+                    // seem to appear in the asset editor if the SNDI was originally
+                    // built in pre-2024.02.10.
+                    
+                    bool assetIsSNDI = AHDR.assetType == AssetType.SoundInfo;
+                    bool ahdrsMatchExcludingAssetId = Enumerable.SequenceEqual(AHDR.data.Skip(4), built.Skip(4));
 
-                    newAsset = new AssetGeneric(AHDR, game, endianness);
+                    if (!assetIsSNDI || !ahdrsMatchExcludingAssetId)
+                    {
+                        err.reason = ErrorReason.SequenceNotEqual;
+                        err.errorMessage = "unsupported format";
+                        if (showMessageBox)
+                            MessageBox.Show($"There was an error loading asset " + err +
+                                            " and editing has been disabled for it.");
+
+                        newAsset = new AssetGeneric(AHDR, game, endianness);
 #if DEBUG
-                    string folder = "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\";
-                    if (!Directory.Exists(folder))
-                        Directory.CreateDirectory(folder);
-                    string assetName = $"[{AHDR.assetType}] {AHDR.ADBG.assetName}";
-                    File.WriteAllBytes(folder + assetName + " ok", AHDR.data);
-                    File.WriteAllBytes(folder + assetName + " bad", built);
+                        string folder = "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\";
+                        if (!Directory.Exists(folder))
+                            Directory.CreateDirectory(folder);
+                        string assetName = $"[{AHDR.assetType}] {AHDR.ADBG.assetName}";
+                        File.WriteAllBytes(folder + assetName + " ok", AHDR.data);
+                        File.WriteAllBytes(folder + assetName + " bad", built);
 #endif
+                    }
                 }
             }
 
