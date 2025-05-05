@@ -48,6 +48,7 @@
     <Company>Heavy Iron Modding</Company>
     <Copyright>Copyright ©  2024 igorseabra4</Copyright>
 	<AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
+	<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <None Update="Libraries\NvTriStripDotNet.dll">
