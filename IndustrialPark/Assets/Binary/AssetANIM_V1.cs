@@ -63,8 +63,10 @@ namespace IndustrialPark
         [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetANIM_KeyFrame[] KeyFrames { get; set; }
         [Category(categoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetSingle[] Times { get; set; }
         [Category(categoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public short[][] Offsets { get; set; }
 
         public AssetANIM_V1()

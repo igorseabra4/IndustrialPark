@@ -1,5 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 
@@ -179,6 +181,7 @@ namespace IndustrialPark
 
         private int _audioTrackCount;
         private CutsceneAudioTrackV1[] _audioTracks;
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public CutsceneAudioTrackV1[] AudioTracks
         {
             get => _audioTracks;
@@ -191,9 +194,13 @@ namespace IndustrialPark
             }
         }
 
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public CutsceneData[] CutsceneData { get; set; }
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public TimeChunk[] TimeChunks { get; set; }
         public byte[][] Visibility { get; set; }
+
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public CutsceneBreak[] CutsceneBreaks { get; set; }
 
         public void ExtractToFolder(string folderName, Endianness endianness)

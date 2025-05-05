@@ -1,6 +1,8 @@
 ﻿using HipHopFile;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +25,9 @@ namespace IndustrialPark
         public AssetID SplineID { get; set; }
         public AssetID ForwardPath { get; set; }
         public AssetID BackwardsPath { get; set; }
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] ForwardIDs { get; set; }
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] BackwardsIDs { get; set; }
 
         public AssetSPLP(string assetName) : base(assetName, AssetType.SplinePath, BaseAssetType.SplinePath)

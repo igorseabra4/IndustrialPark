@@ -18,6 +18,12 @@ namespace IndustrialPark
         {
             JawData = new byte[0];
         }
+
+        public EntryJAW(Game game) : this()
+        {
+            _game = game;
+        }
+
         public EntryJAW(AssetID soundAssetID, byte[] jawData)
         {
             Sound = soundAssetID;

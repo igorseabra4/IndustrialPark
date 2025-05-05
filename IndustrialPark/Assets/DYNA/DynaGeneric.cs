@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -22,6 +23,7 @@ namespace IndustrialPark
         public byte[] Data { get; set; }
 
         [Category(dynaCategoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Data_AsHex
         {
             get
@@ -44,6 +46,7 @@ namespace IndustrialPark
         }
 
         [Category(dynaCategoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetSingle[] Data_AsFloat
         {
             get

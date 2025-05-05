@@ -2,6 +2,7 @@
 using IndustrialPark.AssetEditorColors;
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Numerics;
 using System.Security.Policy;
 using System.Drawing.Design;

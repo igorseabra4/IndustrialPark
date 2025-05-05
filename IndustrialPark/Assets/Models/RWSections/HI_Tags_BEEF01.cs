@@ -3,6 +3,7 @@ using HipHopFile;
 using RenderWareFile;
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Runtime.InteropServices;
 
@@ -145,7 +146,9 @@ namespace IndustrialPark
     {
         public int RenderWareVersion;
 
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public xClumpCollBSPBranchNode[] branchNodes { get; set; }
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public xClumpCollBSPTriangle[] triangles { get; set; }
 
         public HI_Tags_BEEF01()

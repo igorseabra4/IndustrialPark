@@ -75,6 +75,7 @@ namespace IndustrialPark
         }
         private AssetSingle[] _points2;
         [Category(categoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetSingle[] Points2
         {
             get => _points2;

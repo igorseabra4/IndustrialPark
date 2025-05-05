@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -15,6 +16,7 @@ namespace IndustrialPark
 
     public class DiscoPattern
     {
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public DiscoTileState[] Pattern { get; set; }
         public DiscoPattern()
         {
@@ -60,6 +62,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public string TileName_FirstRed { get; set; }
         [Category(categoryName), Description(discoDesc)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public DiscoPattern[] Patterns { get; set; }
 
         public AssetDSCO(string assetName) : base(assetName, AssetType.DiscoFloor, BaseAssetType.DiscoFloor)

@@ -4,6 +4,7 @@ using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -14,6 +15,8 @@ namespace IndustrialPark
     {
         public ushort Vertex0 { get; set; }
         public ushort Vertex1 { get; set; }
+
+        public Line() { }
 
         public Line(ushort vertex0, ushort vertex1)
         {
@@ -44,8 +47,10 @@ namespace IndustrialPark
         private const string categoryName = "Wireframe Model";
 
         [Category(categoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public WireVector[] Points { get; set; }
         [Category(categoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public Line[] Lines { get; set; }
         [Category(categoryName)]
         public AssetID hashID0 { get; set; }

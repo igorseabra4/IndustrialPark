@@ -2,6 +2,7 @@
 using RenderWareFile.Sections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -10,7 +11,7 @@ namespace IndustrialPark
     {
         public int RenderWareVersion;
 
-        [TypeConverter(typeof(ExpandableObjectConverter))]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public Vertex3[] vertexList { get; set; }
 
         public HI_Tags_BEEF03(EndianBinaryReader reader)

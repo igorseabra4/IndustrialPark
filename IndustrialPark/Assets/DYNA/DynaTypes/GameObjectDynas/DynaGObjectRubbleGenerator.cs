@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -54,6 +55,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID LandSoundGroup { get; set; }
         [Category(dynaCategoryName), ValidReferenceRequired]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Models { get; set; }
 
         public DynaGObjectRubbleGenerator(string assetName, int version) : base(assetName, DynaType.game_object__RubbleGenerator, (short)version)

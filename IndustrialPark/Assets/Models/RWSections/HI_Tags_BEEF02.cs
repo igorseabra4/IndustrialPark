@@ -5,6 +5,7 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using System.Numerics;
 using Vector3 = SharpDX.Vector3;
@@ -105,14 +106,19 @@ namespace IndustrialPark
         /// <summary>
         /// Rendering infos for all atomics 
         /// </summary>
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public xJSPNodeInfo[] jspNodeList { get; set; }
 
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public xJSPNodeTreeBranch[] branchNodes { get; set; }
+
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public xJSPNodeTreeLeaf[] leafNodes { get; set; }
 
         /// <summary>
         /// Pre-calculated vertices, accessed by <see cref="xClumpCollBSPTriangle.meshVertIndex"/>
         /// </summary>
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public Vertex3[] stripVecList { get; set; }
 
         /// <summary>
@@ -123,6 +129,7 @@ namespace IndustrialPark
         /// </summary>
         public ushort VertDataFlags { get; set; }
         public ushort VertDataStride { get; set; }
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public byte[] VertData { get; set; }
 
         public HI_Tags_BEEF02(EndianBinaryReader reader, Endianness endianness)

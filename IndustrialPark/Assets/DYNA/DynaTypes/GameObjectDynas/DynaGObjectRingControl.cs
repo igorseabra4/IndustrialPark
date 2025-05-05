@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -53,6 +54,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int NumNextRingsToShow { get; set; }
         [Category(dynaCategoryName), ValidReferenceRequired]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Rings { get; set; }
 
         public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl)

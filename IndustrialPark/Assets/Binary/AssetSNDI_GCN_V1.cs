@@ -17,7 +17,7 @@ namespace IndustrialPark
         public uint loop_start_offset { get; set; }
         public uint loop_end_offset { get; set; }
         public uint initial_offset_value { get; set; }
-        public short[] coefs { get; set; }
+        public short[] coefs { get; set; } = new short[16];
         public ushort gain_factor { get; set; }
         public ushort pred_scale { get; set; }
         public ushort yn1 { get; set; }
@@ -25,11 +25,13 @@ namespace IndustrialPark
         public ushort loop_pred_scale { get; set; }
         public ushort loop_yn1 { get; set; }
         public ushort loop_yn2 { get; set; }
-        public byte[] pad { get; set; }
+        public byte[] pad { get; set; } = new byte[22];
         [ValidReferenceRequired]
         public AssetID Sound { get; set; }
 
-        public EntrySoundInfo_GCN_V1() { }
+        public EntrySoundInfo_GCN_V1()
+        {
+        }
 
         public EntrySoundInfo_GCN_V1(EndianBinaryReader reader)
         {

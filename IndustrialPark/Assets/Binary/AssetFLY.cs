@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 
 namespace IndustrialPark
@@ -75,6 +76,7 @@ namespace IndustrialPark
         public override string AssetInfo => $"{Frames.Length} frames";
 
         [Category("Flythrough")]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public FlyFrame[] Frames { get; set; }
 
         public AssetFLY(string assetName) : base(assetName, AssetType.Flythrough)

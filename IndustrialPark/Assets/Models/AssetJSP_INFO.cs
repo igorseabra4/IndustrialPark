@@ -2,6 +2,7 @@
 using RenderWareFile;
 using SharpDX;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -13,6 +14,7 @@ namespace IndustrialPark
         public int renderWareVersion;
 
         [Category(categoryName)]
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] JSP_AssetIDs { get; set; }
 
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]

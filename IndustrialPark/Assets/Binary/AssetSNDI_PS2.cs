@@ -12,7 +12,7 @@ namespace IndustrialPark
 {
     public class EntrySoundInfo_PS2 : GenericAssetDataContainer
     {
-        public byte[] magic;
+        public byte[] magic = new byte[4] { (byte)'V', (byte)'A', (byte)'G', (byte)'p' };
         public uint Version { get; set; }
         public AssetID SoundAssetID { get; set; }
         public uint DataSize { get; set; }
@@ -20,7 +20,7 @@ namespace IndustrialPark
         public uint StreamInterleaveSize { get; set; }
         public uint StreamInterleaveCount { get; set; }
         public uint reserved2 { get; set; }
-        public string TrackName { get; set; }
+        public string TrackName { get; set; } = "";
 
         public static int StructSize = 0x30;
 
