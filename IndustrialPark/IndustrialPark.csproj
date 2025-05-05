@@ -44,9 +44,8 @@
 	<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>IndustrialPark_TemporaryKey.pfx</ManifestKeyFile>
     <Company>Heavy Iron Modding</Company>
-    <Copyright>Copyright ©  2024 igorseabra4</Copyright>
+    <Copyright>Copyright ©  2025 igorseabra4/EnergyDrink</Copyright>
 	<AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
 	<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
