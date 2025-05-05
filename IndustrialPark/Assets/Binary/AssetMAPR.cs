@@ -8,25 +8,46 @@ namespace IndustrialPark
     {
         [ValidReferenceRequired]
         public AssetID Surface { get; set; }
-        public int MeshIndex { get; set; }
+
+        private uint _meshIndex;
+        [DisplayName("MeshIndex")]
+        public AssetID MeshIndex_TSSM { get => _meshIndex; set => _meshIndex = value; }
+
+        [DisplayName("MeshIndex")]
+        public uint MeshIndex_BFBB { get => _meshIndex; set => _meshIndex = value; }
 
         public EntryMAPR() { }
 
-        public EntryMAPR(EndianBinaryReader reader)
+        public EntryMAPR(Game game)
+        {
+            _game = game;
+        }
+
+        public EntryMAPR(EndianBinaryReader reader, Game game) : this(game)
         {
             Surface = reader.ReadUInt32();
-            MeshIndex = reader.ReadInt32();
+            _meshIndex = reader.ReadUInt32();
         }
 
         public override string ToString()
         {
-            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {MeshIndex}]";
+            if (game == Game.BFBB)
+                return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {MeshIndex_BFBB}]";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {HexUIntTypeConverter.StringFromAssetID(MeshIndex_TSSM)}]";
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Surface);
-            writer.Write(MeshIndex);
+            writer.Write(_meshIndex);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.BFBB)
+                dt.RemoveProperty("MeshIndex_TSSM");
+            else
+                dt.RemoveProperty("MeshIndex_BFBB");
         }
     }
 
@@ -51,7 +72,7 @@ namespace IndustrialPark
                 Entries = new EntryMAPR[maprCount];
 
                 for (int i = 0; i < Entries.Length; i++)
-                    Entries[i] = new EntryMAPR(reader);
+                    Entries[i] = new EntryMAPR(reader, game);
             }
         }
 

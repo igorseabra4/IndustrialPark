@@ -367,6 +367,28 @@ namespace IndustrialPark.Models
             //Dictionary<System.Numerics.Vector3, ushort> uvIndices2 = new();
             //Dictionary<System.Numerics.Vector4, ushort> colorIndices = new();
 
+            Dictionary<int, Matrix> meshTransforms = new();
+            void CollectMeshTransforms(Node node, Matrix parentTransform)
+            {
+                var nodeTransform = new Matrix((float)node.Transform.A1, (float)node.Transform.B1, (float)node.Transform.C1, (float)node.Transform.D1,
+                        (float)node.Transform.A2, (float)node.Transform.B2, (float)node.Transform.C2, (float)node.Transform.D2,
+                        (float)node.Transform.A3, (float)node.Transform.B3, (float)node.Transform.C3, (float)node.Transform.D3,
+                        (float)node.Transform.A4, (float)node.Transform.B4, (float)node.Transform.C4, (float)node.Transform.D4);
+                var globalTransform = parentTransform * nodeTransform;
+
+                foreach (int meshIndex in node.MeshIndices)
+                {
+                    meshTransforms[meshIndex] = globalTransform;
+                }
+
+                foreach (var child in node.Children)
+                {
+                    CollectMeshTransforms(child, globalTransform);
+                }
+            }
+            CollectMeshTransforms(scene.RootNode, Matrix.Identity);
+
+
             int meshIndex = -1;
             foreach (var m in scene.Meshes)
             {
@@ -374,21 +396,15 @@ namespace IndustrialPark.Models
                 int materialIndex = multiAtomic ? 0 : m.MaterialIndex;
                 meshIndex++;
 
-                if (scene.RootNode.ChildCount > 0)
+                var transform = meshTransforms.ContainsKey(meshIndex) ? meshTransforms[meshIndex] : Matrix.Identity;
+
+                var transformedVertices = m.Vertices.Select(v =>
                 {
-                    var assimpMat = scene.RootNode.Children[meshIndex].Transform;
-                    var transform = new Matrix4x4(
-                        assimpMat.M11, assimpMat.M21, assimpMat.M31, assimpMat.M41,
-                        assimpMat.M12, assimpMat.M22, assimpMat.M32, assimpMat.M42,
-                        assimpMat.M13, assimpMat.M23, assimpMat.M33, assimpMat.M43,
-                        assimpMat.M14, assimpMat.M24, assimpMat.M34, assimpMat.M44);
-
-                    var transformedVertices = m.Vertices.Select(v => Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transform));
-                    vertices.AddRange(transformedVertices.Select(v => new Vertex3(v.X, v.Y, v.Z)).ToList());
-                }
-                else
-                    vertices.AddRange(m.Vertices.Select(v => new Vertex3(v.X, v.Y, v.Z)).ToList());
-
+                    var vec = new Vector3((float)v.X, (float)v.Y, (float)v.Z);
+                    return Vector3.Transform(vec, transform);
+                });
+                vertices.AddRange(transformedVertices.Select(v => new Vertex3(v.X, v.Y, v.Z)).ToList());
+           
                 //if (nativeData)
                 //{
                 //    for (int i = 0; i < m.VertexCount; i++)
@@ -410,15 +426,15 @@ namespace IndustrialPark.Models
                 //            }
                 //        }
 
-                        //if (m.HasTextureCoords(1))
-                        //{
-                        //    Vertex2 coord = new Vertex2(m.TextureCoordinateChannels[1][i].X, m.TextureCoordinateChannels[1][i].Y);
-                        //    if (!textCoords2.Contains(coord))
-                        //    {
-                        //        uvIndices2[m.TextureCoordinateChannels[1][i]] = (ushort)textCoords2.Count;
-                        //        textCoords2.Add(coord);
-                        //    }
-                        //}
+                //if (m.HasTextureCoords(1))
+                //{
+                //    Vertex2 coord = new Vertex2(m.TextureCoordinateChannels[1][i].X, m.TextureCoordinateChannels[1][i].Y);
+                //    if (!textCoords2.Contains(coord))
+                //    {
+                //        uvIndices2[m.TextureCoordinateChannels[1][i]] = (ushort)textCoords2.Count;
+                //        textCoords2.Add(coord);
+                //    }
+                //}
 
                 //        if (m.HasVertexColors(0))
                 //        {
@@ -433,7 +449,7 @@ namespace IndustrialPark.Models
                 //}
                 //else
                 //{
-                    Normals.AddRange(m.Normals.Select(n => new Vertex3(n.X, n.Y, n.Z)).ToList());
+                Normals.AddRange(m.Normals.Select(n => new Vertex3(n.X, n.Y, n.Z)).ToList());
                     //textCoords2.AddRange(m.TextureCoordinateChannels[1].Select(t => new Vertex2(t.X, t.Y)).ToList());
 
                     if (m.HasTextureCoords(0))
