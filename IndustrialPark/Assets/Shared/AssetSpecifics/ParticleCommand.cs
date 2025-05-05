@@ -1,5 +1,9 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
@@ -1015,28 +1019,25 @@ namespace IndustrialPark
     {
         private const string categoryNameE = categoryName + ": Shaper";
 
-        [Category(categoryNameE)]
-        public AssetSingle[] CustAlpha { get; set; }
-        [Category(categoryNameE)]
-        public AssetSingle[] CustSize { get; set; }
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustAlpha { get; set; } = new AssetSingle[4];
+
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustSize { get; set; } = new AssetSingle[4];
+
         [Category(categoryNameE)]
         public AssetSingle DampSpeed { get; set; }
+
         [Category(categoryNameE)]
         public AssetSingle Gravity { get; set; }
 
-        public ParticleCommand_Shaper() : base(ParticleCommandType.Shaper)
-        {
-            CustAlpha = new AssetSingle[4];
-            CustSize = new AssetSingle[4];
-        }
+        public ParticleCommand_Shaper() : base(ParticleCommandType.Shaper) { }
 
         public ParticleCommand_Shaper(EndianBinaryReader reader) : base(reader, ParticleCommandType.Shaper)
         {
-            CustAlpha = new AssetSingle[4];
             for (int i = 0; i < 4; i++)
                 CustAlpha[i] = reader.ReadSingle();
 
-            CustSize = new AssetSingle[4];
             for (int i = 0; i < 4; i++)
                 CustSize[i] = reader.ReadSingle();
 
@@ -1060,13 +1061,10 @@ namespace IndustrialPark
     {
         private const string categoryNameE = categoryName + ": AlphaInOut";
 
-        [Category(categoryNameE)]
-        public AssetSingle[] CustAlpha { get; set; }
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustAlpha { get; set; } = new AssetSingle[4];
 
-        public ParticleCommand_AlphaInOut() : base(ParticleCommandType.AlphaInOut)
-        {
-            CustAlpha = new AssetSingle[4];
-        }
+        public ParticleCommand_AlphaInOut() : base(ParticleCommandType.AlphaInOut) { }
 
         public ParticleCommand_AlphaInOut(EndianBinaryReader reader) : base(reader, ParticleCommandType.AlphaInOut)
         {
@@ -1087,13 +1085,10 @@ namespace IndustrialPark
     {
         private const string categoryNameE = categoryName + ": SizeInOut";
 
-        [Category(categoryNameE)]
-        public AssetSingle[] CustSize { get; set; }
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustSize { get; set; } = new AssetSingle[4];
 
-        public ParticleCommand_SizeInOut() : base(ParticleCommandType.SizeInOut)
-        {
-            CustSize = new AssetSingle[4];
-        }
+        public ParticleCommand_SizeInOut() : base(ParticleCommandType.SizeInOut) { }
 
         public ParticleCommand_SizeInOut(EndianBinaryReader reader) : base(reader, ParticleCommandType.SizeInOut)
         {
