@@ -1131,7 +1131,13 @@ namespace IndustrialPark
                 assets.Add(archive.GetFromAssetID(u));
             }
 
-            var firstOrDefault = assetIDs.FirstOrDefault();
+            bool found = listViewAssets.Items
+                .Cast<ListViewItem>()
+                .Any(item => item.Tag is uint tag && assetIDs.Contains(tag));
+            
+            if (listViewAssets.Items.Count == 0 || !found)
+                PopulateAssetListAndComboBox();
+
             AssetType assetType = assets[0].assetType;
 
             foreach (uint u in assetIDs)
