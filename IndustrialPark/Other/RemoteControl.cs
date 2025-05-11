@@ -1,7 +1,11 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -14,12 +18,32 @@ namespace IndustrialPark
             CancellationTokenSource cts = new CancellationTokenSource();
             CancellationToken token = cts.Token;
 
+            // First check if any program is associated with .dol (preferably dolphin :)) to prevent a Win32Exception
+            bool isAssociated;
+            using (RegistryKey extKey = Registry.ClassesRoot.OpenSubKey(".dol"))
+            {
+                isAssociated = extKey != null && !string.IsNullOrEmpty(extKey.GetValue("") as string);
+            }
+
+            if (!isAssociated)
+            {
+                MessageBox.Show("Please associate the .dol extension with Dolphin Emulator", "Cannot launch dol", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             Thread t = new Thread(() =>
             {
                 token.ThrowIfCancellationRequested();
                 CloseDolphin();
-                // this might throw a win32exception if .dol is not associated with Dolphin
-                Process.Start(dolPath);
+
+                ProcessStartInfo startInfo = new ProcessStartInfo()
+                {
+                    FileName = dolPath,
+                    UseShellExecute = true,
+                };
+
+                Process process = new Process() { StartInfo = startInfo };
+                process.Start();
             });
 
             ScheduleAction(cts.Cancel, 10000);

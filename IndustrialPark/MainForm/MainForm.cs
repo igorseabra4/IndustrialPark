@@ -1767,7 +1767,7 @@ namespace IndustrialPark
                 dolPath = null;
             }
 
-            var validIniNames = new string[] { "sb.ini", "sb04.ini", "sd2.ini", "in.ini", "in2.ini" };
+            var validIniNames = new string[] { "sb.ini", "sb04.ini", "sd2.ini", "in.ini", "in2.ini", "rats.ini" };
 
             if (hipName != null && !(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")) && filesPath != null)
                 foreach (string s in Directory.GetFiles(filesPath))
