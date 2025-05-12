@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Drawing;
 using System.Drawing.Design;
 using System.Linq;
@@ -13,14 +12,25 @@ namespace IndustrialPark
     public class EntrySoundInfo_PS2 : GenericAssetDataContainer
     {
         public byte[] magic = new byte[4] { (byte)'V', (byte)'A', (byte)'G', (byte)'p' };
+
+        [ReadOnly(true)]
         public uint Version { get; set; }
+
         public AssetID SoundAssetID { get; set; }
+
+        [ReadOnly(true)]
         public uint DataSize { get; set; }
+
         public uint SampleRate { get; set; }
+
         public uint StreamInterleaveSize { get; set; }
+
         public uint StreamInterleaveCount { get; set; }
+
         public uint reserved2 { get; set; }
+
         public string TrackName { get; set; } = "";
+
 
         public static int StructSize = 0x30;
 
@@ -66,6 +76,66 @@ namespace IndustrialPark
         {
             get => Serialize();
             set => Read(new EndianBinaryReader(value, Endianness.Little));
+        }
+
+        public static void ClearLoopingFlags(ref byte[] soundData, bool isStream = true)
+        {
+            int lastBlock = (soundData.Length / 16) - 1;
+
+            for (int block = 0; block <= lastBlock; block++)
+            {
+                soundData[block * 0x10 + 1] = 0;
+
+                if (!isStream && block == lastBlock - 1) soundData[block * 0x10 + 1] = 1;
+                if (!isStream && block == lastBlock) soundData[block * 0x10 + 1] = 7;
+            }
+        }
+
+        public static void SetLoopingRange(ref byte[] soundData, int startBlock = 0, int endBlock = -1)
+        {
+            ClearLoopingFlags(ref soundData);
+
+            int numBlocks = soundData.Length / 16;
+            int maxLogicalBlock = numBlocks - 2; // subtract 1 for null block, another for 0-based logic
+
+            if (endBlock == -1 || endBlock > maxLogicalBlock)
+                endBlock = maxLogicalBlock;
+
+
+            for (int logicalBlock = startBlock; logicalBlock <= endBlock; logicalBlock++)
+            {
+                int physicalBlock = logicalBlock + 1;
+
+                bool isFirstBlock = logicalBlock == startBlock;
+                bool isLastBlock = logicalBlock == endBlock;
+
+                // Bit 0 = Loop stop
+                // Bit 1 = Loop repeat
+                // Bit 2 = Loop start
+                int flag = isFirstBlock ? 6 : isLastBlock ? 3 : 2;
+                soundData[physicalBlock * 0x10 + 1] = (byte)flag;
+            }
+        }
+
+        public static bool GetLoopingRange(byte[] soundData, out int startblock, out int endBlock)
+        {
+            startblock = -1;
+            endBlock = -1;
+
+            int numBlocks = soundData.Length / 16;
+
+            for (int physicalBlock = 1; physicalBlock < numBlocks; physicalBlock++)
+            {
+                byte flag = soundData[physicalBlock * 0x10 + 1];
+
+                if ((flag & 4) != 0) // Loop start
+                    startblock = physicalBlock - 1;
+
+                if ((flag & 1) != 0) // Loop end
+                    endBlock = physicalBlock - 1;
+            }
+
+            return startblock != endBlock;
         }
 
         public override string ToString()
@@ -153,9 +223,29 @@ namespace IndustrialPark
             else
                 entries = Entries_SNDS.ToList();
 
-            entries.Add(new EntrySoundInfo_PS2(new EndianBinaryReader(soundData, Endianness.Little)) { SoundAssetID = assetID });
+            byte[] header = soundData.Take(EntrySoundInfo_PS2.StructSize).ToArray();
+            byte[] data = soundData.Skip(EntrySoundInfo_PS2.StructSize).ToArray();
 
-            finalData = soundData.Skip(EntrySoundInfo_PS2.StructSize).ToArray();
+            Array.Resize(ref data, data.Length - (data.Length % 16));
+
+            bool has16NullBytes = data.Take(16).All(b => b == 0);
+            if (!has16NullBytes)
+            {
+                byte[] paddedData = new byte[data.Length + 16];
+                Buffer.BlockCopy(data, 0, paddedData, 16, data.Length);
+                data = paddedData;
+            }
+            finalData = data;
+
+            if (assetType == AssetType.SoundStream)
+                EntrySoundInfo_PS2.ClearLoopingFlags(ref finalData);
+
+            EntrySoundInfo_PS2 entry = new EntrySoundInfo_PS2(new EndianBinaryReader(header, Endianness.Little))
+            {
+                SoundAssetID = assetID,
+                DataSize = (uint)finalData.Length,
+            };
+            entries.Add(entry);
 
             if (assetType == AssetType.Sound)
                 Entries_SND = entries.ToArray();

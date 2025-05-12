@@ -22,7 +22,7 @@ namespace IndustrialPark
 
             if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles && asset.assetType == AssetType.SoundStream))
                 compressCheckBox.Enabled = true;
-            if (archive.platform != Platform.PS2)
+            if (archive.platform != Platform.PS2 || (archive.platform == Platform.PS2 && asset.assetType == AssetType.SoundStream))
                 checkBoxPS2Looping.Enabled = false;
             if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles))
                 forceMonoCheckBox.Enabled = true;
@@ -39,7 +39,7 @@ namespace IndustrialPark
                     if (sndi is AssetSNDI_PS2 ps2)
                     {
                         var entry = ps2.GetEntry(asset.assetID, asset.assetType);
-                        propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(entry);
+                        propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(entry, asset.Data, asset.assetType == AssetType.SoundStream);
                         CalculateSoundLength(entry);
                         return;
                     }
@@ -86,6 +86,8 @@ namespace IndustrialPark
                 if (sndi is AssetSNDI_PS2 ps2)
                 {
                     ps2.SetEntry(((SoundInfoPs2Wrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
+                    asset.Data = ((SoundInfoPs2Wrapper)propertyGridSoundData.SelectedObject).SoundData;
+                    RefreshPropertyGrid();
                     archive.UnsavedChanges = true;
                 }
                 else if (sndi is AssetSNDI_XBOX xbox)
@@ -137,6 +139,10 @@ namespace IndustrialPark
                     try
                     {
                         archive.AddSoundToSNDI(file, asset.assetID, asset.assetType, out byte[] soundData);
+
+                        if (checkBoxPS2Looping.Checked)
+                            EntrySoundInfo_PS2.SetLoopingRange(ref soundData);
+
                         asset.Data = soundData;
                     }
                     catch (Exception ex)
