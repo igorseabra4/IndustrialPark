@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 
@@ -61,6 +62,8 @@ namespace IndustrialPark
         public int VariableFrequency { get; set; }
         public ushort VariableVolume { get; set; }
         public short VariablePan { get; set; }
+
+        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
         public FMOD_GcADPCMInfo[] GCADPCM { get; set; }
 
         private uint _assetid;
