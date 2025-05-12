@@ -1829,12 +1829,6 @@ namespace IndustrialPark
                                 numMeshes = 0,
                                 totalIndexCount = 0,
                                 binMeshList = new BinMesh[0]
-                            },
-                            new CollisionPLG_011D_Pre36001()
-                            {
-                                branchNodes = new RpCollBSPBranchNode[0],
-                                leafNodes = new RpCollBSPLeafNode[0],
-                                triangleMap = new int[0]
                             }
                         }
                     }
