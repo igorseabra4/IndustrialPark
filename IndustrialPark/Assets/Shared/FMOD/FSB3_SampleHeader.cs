@@ -63,7 +63,7 @@ namespace IndustrialPark
         public ushort VariableVolume { get; set; }
         public short VariablePan { get; set; }
 
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public FMOD_GcADPCMInfo[] GCADPCM { get; set; }
 
         private uint _assetid;
