@@ -2,8 +2,6 @@
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -40,6 +38,8 @@ namespace IndustrialPark
                 SetupForPars(pars);
             else if (asset is AssetSHRP shrp)
                 SetupForShrp(shrp);
+            else if (asset is AssetSCRP scrp)
+                SetupForScrp(scrp);
             else if (asset is AssetUIM uim)
                 SetupForUim(uim);
             else if (asset is AssetWIRE wire)
@@ -163,6 +163,22 @@ namespace IndustrialPark
             tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
         }
 
+        private void SetupForScrp(AssetSCRP asset)
+        {
+            var rowIndex = AddRow(ButtonSize);
+
+            Button buttonConvert = new Button() { Dock = DockStyle.Fill, Text = "Convert to group of timers", AutoSize = true };
+            buttonConvert.Click += (object sender, EventArgs e) =>
+            {
+                var newAssets = archive.ConvertScriptToGroupOfTimers(asset);
+                archive.UnsavedChanges = true;
+                for (int i = 0; i < newAssets.Count; i++)
+                    Program.MainForm.SetSelectedIndex(newAssets[i], i != 0);
+            };
+            tableLayoutPanel1.Controls.Add(buttonConvert, 0, rowIndex);
+            tableLayoutPanel1.SetColumnSpan(buttonConvert, 2);
+        }
+
         private void SetupForCsn(AssetCSN asset)
         {
             AddRow(ButtonSize);
@@ -234,7 +250,7 @@ namespace IndustrialPark
         {
             AddRow(ButtonSize);
 
-            ComboBox listBox = new ComboBox() {Dock = DockStyle.Fill, Text="Test", AutoSize = true };
+            ComboBox listBox = new ComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
             foreach (var o in Enum.GetValues(typeof(ParticleCommandType)))
                 listBox.Items.Add(o);
             listBox.SelectedIndex = 0;

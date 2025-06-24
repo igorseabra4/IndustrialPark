@@ -813,20 +813,18 @@ namespace IndustrialPark
             return PlaceTemplate(new Vector3(), customName, template);
         }
 
-        public Asset PlaceTemplate(Vector3 position, string customName, AssetTemplate template)
+        public Asset PlaceTemplate(Vector3 position = new Vector3(), string customName = null, AssetTemplate template = AssetTemplate.Null, bool ignoreNumber = false)
         {
             var assetIDs = new List<uint>();
-            return PlaceTemplate(position, ref assetIDs, customName, template);
+            return PlaceTemplate(position, ref assetIDs, customName, template, ignoreNumber);
         }
 
-        public Asset PlaceTemplate(Vector3 position, ref List<uint> assetIDs, string assetName = null, AssetTemplate template = AssetTemplate.Null)
+        public Asset PlaceTemplate(Vector3 position, ref List<uint> assetIDs, string assetName = null, AssetTemplate template = AssetTemplate.Null, bool ignoreNumber = false)
         {
             if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
             if (template == AssetTemplate.User_Template || template == AssetTemplate.Paste_Clipboard)
                 return PlaceUserTemplate(position, ref assetIDs, template);
-
-            bool ignoreNumber = false;
 
             if (assetName == null)
                 assetName = template.ToString().ToUpper() + "_01";
@@ -1684,15 +1682,15 @@ namespace IndustrialPark
                 case AssetTemplate.Swarm_Owl:
                     return new DynaEnemyRATSSwarmOwl(assetName, position);
                 case AssetTemplate.Thief:
-                    {
-                        var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
-                        return new DynaEnemyRATSThief(assetName, position, mvpt.assetID);
-                    }
+                {
+                    var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                    return new DynaEnemyRATSThief(assetName, position, mvpt.assetID);
+                }
                 case AssetTemplate.Waiter:
-                    {
-                        var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
-                        return new DynaEnemyRATSWaiter(assetName, position, mvpt.assetID);
-                    }
+                {
+                    var mvpt = PlaceTemplate(position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                    return new DynaEnemyRATSWaiter(assetName, position, mvpt.assetID);
+                }
                 case AssetTemplate.Carryable_Property_Attract:
                     return new DynaCarryablePropertyAttract(assetName);
                 case AssetTemplate.Carryable_Property_Generic:

@@ -909,8 +909,9 @@ namespace IndustrialPark
                     // Check every layer to see whether it is of type default
                     for (int i = 0; i < Layers.Count; i++)
                     {
-                        if (Layers[i].Type != LayerType.DEFAULT) continue;
-                    
+                        if (Layers[i].Type != LayerType.DEFAULT)
+                            continue;
+
                         // If the layer is a default layer, select it.
                         // Pick the first default layer found.
                         defaultLayerExists = true;
@@ -918,7 +919,7 @@ namespace IndustrialPark
                         break;
                     }
                 }
-                
+
                 if (!placeOnExistingDefaultLayer || !defaultLayerExists)
                 {
                     AddLayer();
@@ -1225,6 +1226,42 @@ namespace IndustrialPark
                     }
 
             textureNames = textureNamesList.ToArray();
+        }
+
+        public List<uint> ConvertScriptToGroupOfTimers(AssetSCRP script)
+        {
+            var previouslySelectedLayer = SelectedLayerIndex;
+            SelectedLayerIndex = GetLayerFromAssetID(script.assetID);
+            var timerAssetIDs = new List<uint>();
+            var assets = new List<Asset>();
+            var num = 1;
+            foreach (Link link in script.TimedLinks)
+            {
+                var timer = (AssetTIMR)PlaceTemplate(customName: $"{script.assetName}_TIMER_{num:D2}", template: AssetTemplate.Timer, ignoreNumber: true);
+                timer.Time = link.Time;
+                timer.Links = new Link[] {
+                    new Link(timer.game)
+                    {
+                        EventReceiveID = 0x0014,
+                        EventSendID = link.EventSendID,
+                        TargetAsset = link.TargetAsset,
+                        ArgumentAsset = link.ArgumentAsset,
+                        Parameter1 = link.Parameter1,
+                        Parameter2 = link.Parameter2,
+                        Parameter3 = link.Parameter3,
+                        Parameter4 = link.Parameter4,
+                    }
+                };
+                assets.Add(timer);
+                timerAssetIDs.Add(timer.assetID);
+                num++;
+            }
+            var group = (AssetGRUP)PlaceTemplate(customName: $"{script.assetName}_GROUP", template: AssetTemplate.Group, ignoreNumber: true);
+            group.Items = timerAssetIDs.Select(id => new AssetID(id)).ToArray();
+            group.Links = script.Links;
+            SelectedLayerIndex = previouslySelectedLayer;
+            timerAssetIDs.Insert(0, group.assetID);
+            return timerAssetIDs;
         }
     }
 }
