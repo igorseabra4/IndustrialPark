@@ -23,7 +23,7 @@ namespace IndustrialPark
             Crosshair = 1,
             Hide = 2
         }
-        
+
         public MainForm()
         {
             StartPosition = FormStartPosition.CenterScreen;
@@ -173,14 +173,15 @@ namespace IndustrialPark
 
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
-            
+
             bool showEditorsWhenLoadingProject = settings.showEditorsWhenLoadingProject;
             showEditorsWhenLoadingProjectToolStripMenuItem.Checked = showEditorsWhenLoadingProject;
-            
+
             setFlyCursor(settings.flyModeCursor);
 
-            foreach (string filepath in settings.recentArchivePaths)
-                SetRecentOpenedArchives(filepath);
+            if (settings.recentArchivePaths != null)
+                foreach (string filepath in settings.recentArchivePaths)
+                    SetRecentOpenedArchives(filepath);
 
             if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
             {
@@ -479,7 +480,7 @@ namespace IndustrialPark
                         AddArchiveEditor(ipSettings.hipPaths[i], ipSettings.scoobyPlatforms[i], showEditors);
                     else
                     {
-                        MessageBox.Show("Error opening " + ipSettings.hipPaths[i] + ": file not found", 
+                        MessageBox.Show("Error opening " + ipSettings.hipPaths[i] + ": file not found",
                             "File not Found",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
@@ -564,7 +565,7 @@ namespace IndustrialPark
             {
                 if (mouseMode)
                 {
-                    
+
 
                     switch (flyModeCursor)
                     {
@@ -584,7 +585,7 @@ namespace IndustrialPark
                             }
                             break;
                     }
-                    
+
                     renderer.Camera.AddYaw(MathUtil.DegreesToRadians(Cursor.Position.X - MouseCenter.X) / 4);
                     renderer.Camera.AddPitch(MathUtil.DegreesToRadians(Cursor.Position.Y - MouseCenter.Y) / 4);
 
@@ -597,10 +598,10 @@ namespace IndustrialPark
                         cursorHidden = false;
                         Cursor.Show();
                     }
-                    
+
                     if (Cursor.Current != Cursors.Default)
                         Cursor = Cursors.Default;
-                    
+
                     if (e.Button == MouseButtons.Middle)
                     {
                         renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
@@ -818,7 +819,7 @@ namespace IndustrialPark
         public void AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown, bool show = true)
         {
             ArchiveEditor ae = new ArchiveEditor();
-            
+
             ae.Begin(filePath, scoobyPlatform);
             archiveEditors.Add(ae);
 
@@ -836,9 +837,9 @@ namespace IndustrialPark
             UpdateTitleBar();
             SetupAssetVisibilityButtons();
             closeAllEditorsToolStripMenuItem.Enabled = true;
-            
+
             ae.Show();
-            
+
             // Cannot select assets if the editor isn't shown first?
             if (!show)
                 ae.Hide();
@@ -1487,11 +1488,11 @@ namespace IndustrialPark
         private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (DialogResult.OK == MessageBox.Show(
-                    "Will set Industrial Park as default application for HIP, HOP and BNR (GameCube banner) file formats on registry.", 
-                    "Associate HIP/HOP files",  
+                    "Will set Industrial Park as default application for HIP, HOP and BNR (GameCube banner) file formats on registry.",
+                    "Associate HIP/HOP files",
                     MessageBoxButtons.OKCancel,
                     MessageBoxIcon.Information))
-                
+
                 FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
@@ -2035,7 +2036,7 @@ namespace IndustrialPark
         private void setFlyCursor(int flyModeCursor)
         {
             this.flyModeCursor = (FlyModeCursor)flyModeCursor;
-            
+
             // Updaate the toolstrip dropdown items
             foreach (ToolStripMenuItem item in cursorInFlyModeToolStripMenuItem.DropDownItems)
                 item.Checked = Convert.ToInt32(item.Tag) == flyModeCursor;
