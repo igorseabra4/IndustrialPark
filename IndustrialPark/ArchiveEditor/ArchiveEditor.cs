@@ -1022,6 +1022,11 @@ namespace IndustrialPark
             return list;
         }
 
+        /// <summary>
+        /// Whether there are any assets selected in the asset list view.
+        /// </summary>
+        public bool HasSelectedAssets => listViewAssets.SelectedItems.Count > 0;
+
         private static uint GetAssetIDFromName(ListViewItem v)
         {
             return Convert.ToUInt32(v.SubItems[1].Text, 16);
