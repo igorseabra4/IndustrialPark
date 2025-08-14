@@ -161,7 +161,7 @@ namespace IndustrialPark.Randomizer
 
         private void ButtonHelp_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://heavyironmodding.org/wiki/Randomizer");
+            System.Diagnostics.Process.Start("https://www.heavyironmodding.org/wiki/Randomizer");
         }
 
         private void buttonReset_Click(object sender, EventArgs e)

@@ -89,7 +89,7 @@ namespace IndustrialPark
             System.Diagnostics.Process.Start(WikiLink);
         }
 
-        public static string WikiLink => "https://heavyironmodding.org/wiki/";
+        public static string WikiLink => "https://www.heavyironmodding.org/wiki/";
 
         private void button3_Click(object sender, EventArgs e)
         {
