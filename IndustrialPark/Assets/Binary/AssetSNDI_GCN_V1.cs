@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Web.UI;
 
 namespace IndustrialPark
 {
@@ -34,6 +33,7 @@ namespace IndustrialPark
         public EntrySoundInfo_GCN_V1(EndianBinaryReader reader)
         {
             Read(reader);
+            Sound = reader.ReadUInt32();
         }
 
         private void Read(EndianBinaryReader reader)
@@ -59,7 +59,6 @@ namespace IndustrialPark
             pad = new byte[22];
             for (int i = 0; i < pad.Length; i++)
                 pad[i] = reader.ReadByte();
-            Sound = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -68,33 +67,31 @@ namespace IndustrialPark
             writer.Write(Sound);
         }
 
-        public byte[] Serialize()
-        {
-            List<byte> array = new List<byte>();
-
-            array.AddRange(BitConverter.GetBytes(num_samples).Reverse());
-            array.AddRange(BitConverter.GetBytes(num_adpcm_nibbles).Reverse());
-            array.AddRange(BitConverter.GetBytes(sample_rate).Reverse());
-            array.AddRange(BitConverter.GetBytes(Convert.ToUInt16(Loop)).Reverse());
-            array.AddRange(BitConverter.GetBytes(format).Reverse());
-            array.AddRange(BitConverter.GetBytes(loop_start_offset).Reverse());
-            array.AddRange(BitConverter.GetBytes(loop_end_offset).Reverse());
-            array.AddRange(BitConverter.GetBytes(initial_offset_value).Reverse());
-            array.AddRange(coefs.SelectMany(i => BitConverter.GetBytes(i).Reverse()).ToArray());
-            array.AddRange(BitConverter.GetBytes(gain_factor).Reverse());
-            array.AddRange(BitConverter.GetBytes(pred_scale).Reverse());
-            array.AddRange(BitConverter.GetBytes(yn1).Reverse());
-            array.AddRange(BitConverter.GetBytes(yn2).Reverse());
-            array.AddRange(BitConverter.GetBytes(loop_pred_scale).Reverse());
-            array.AddRange(BitConverter.GetBytes(loop_yn1).Reverse());
-            array.AddRange(BitConverter.GetBytes(loop_yn2).Reverse());
-            array.AddRange(pad);
-            return array.ToArray();
-        }
-
         public byte[] SoundHeader
         {
-            get => Serialize();
+            get
+            {
+                List<byte> array = new List<byte>();
+
+                array.AddRange(BitConverter.GetBytes(num_samples).Reverse());
+                array.AddRange(BitConverter.GetBytes(num_adpcm_nibbles).Reverse());
+                array.AddRange(BitConverter.GetBytes(sample_rate).Reverse());
+                array.AddRange(BitConverter.GetBytes(Convert.ToUInt16(Loop)).Reverse());
+                array.AddRange(BitConverter.GetBytes(format).Reverse());
+                array.AddRange(BitConverter.GetBytes(loop_start_offset).Reverse());
+                array.AddRange(BitConverter.GetBytes(loop_end_offset).Reverse());
+                array.AddRange(BitConverter.GetBytes(initial_offset_value).Reverse());
+                array.AddRange(coefs.SelectMany(i => BitConverter.GetBytes(i).Reverse()).ToArray());
+                array.AddRange(BitConverter.GetBytes(gain_factor).Reverse());
+                array.AddRange(BitConverter.GetBytes(pred_scale).Reverse());
+                array.AddRange(BitConverter.GetBytes(yn1).Reverse());
+                array.AddRange(BitConverter.GetBytes(yn2).Reverse());
+                array.AddRange(BitConverter.GetBytes(loop_pred_scale).Reverse());
+                array.AddRange(BitConverter.GetBytes(loop_yn1).Reverse());
+                array.AddRange(BitConverter.GetBytes(loop_yn2).Reverse());
+                array.AddRange(pad);
+                return array.ToArray();
+            }
             set => Read(new EndianBinaryReader(value, Endianness.Big));
         }
 
