@@ -71,6 +71,7 @@ namespace IndustrialPark
             string shaderPath = showVertexColors ? "/Resources/SharpDX/Shader_Tinted.hlsl"
                 : "/Resources/SharpDX/Shader_Tinted_NoVertexColor.hlsl";
 
+            tintedShader.Dispose();
             tintedShader = new SharpShader(device, Application.StartupPath + shaderPath,
             new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
             new InputElement[] {
@@ -492,21 +493,21 @@ namespace IndustrialPark
         private const float TARGET_FRAME_TIME = 1.0f / 60.0f;
 
         public float TransformScaleFactor { get; private set; } = 1.0f;
-        
+
         private void MainLoop(System.Drawing.Size controlSize)
         {
             if (!stopwatch.IsRunning)
             {
                 stopwatch.Start(); // Start the stopwatch for the first frame
             }
-            
+
             //Resizing
             if (device.MustResize)
             {
                 device.Resize();
                 Camera.AspectRatio = (float)controlSize.Width / controlSize.Height;
             }
-            
+
             // Calculate the time elapsed since the last frame
             float elapsedSeconds = Convert.ToSingle(stopwatch.Elapsed.TotalSeconds);
             stopwatch.Restart(); // Restart the stopwatch for the next frame
