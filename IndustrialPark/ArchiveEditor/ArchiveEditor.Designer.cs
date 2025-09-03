@@ -49,6 +49,7 @@
             this.mergeSimilarAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.applyScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verifyArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.legacySaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.hipHopFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importHipArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -130,7 +131,8 @@
             this.toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.legacySaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            this.copyAssetNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.groupBoxLayers.SuspendLayout();
@@ -277,6 +279,13 @@
             resources.ApplyResources(this.verifyArchiveToolStripMenuItem, "verifyArchiveToolStripMenuItem");
             this.verifyArchiveToolStripMenuItem.Name = "verifyArchiveToolStripMenuItem";
             this.verifyArchiveToolStripMenuItem.Click += new System.EventHandler(this.verifyArchiveToolStripMenuItem_Click);
+            // 
+            // legacySaveToolStripMenuItem
+            // 
+            this.legacySaveToolStripMenuItem.CheckOnClick = true;
+            this.legacySaveToolStripMenuItem.Name = "legacySaveToolStripMenuItem";
+            resources.ApplyResources(this.legacySaveToolStripMenuItem, "legacySaveToolStripMenuItem");
+            this.legacySaveToolStripMenuItem.Click += new System.EventHandler(this.legacySaveToolStripMenuItem_Click);
             // 
             // toolStripSeparator3
             // 
@@ -761,7 +770,9 @@
             this.toolStripMenuItem_ExportRaw,
             this.toolStripMenuItem_EditHeader,
             this.toolStripMenuItem_EditData,
-            this.toolStripMenuItem_MultiEdit});
+            this.toolStripMenuItem_MultiEdit,
+            this.toolStripSeparator8,
+            this.copyAssetNamesToolStripMenuItem});
             this.contextMenuStrip_ListBoxAssets.Name = "contextMenuStrip_ListBoxAssets";
             resources.ApplyResources(this.contextMenuStrip_ListBoxAssets, "contextMenuStrip_ListBoxAssets");
             // 
@@ -846,12 +857,16 @@
             resources.ApplyResources(this.toolStripMenuItem_MultiEdit, "toolStripMenuItem_MultiEdit");
             this.toolStripMenuItem_MultiEdit.Click += new System.EventHandler(this.buttonMultiEdit_Click);
             // 
-            // legacySaveToolStripMenuItem
+            // toolStripSeparator8
             // 
-            this.legacySaveToolStripMenuItem.CheckOnClick = true;
-            this.legacySaveToolStripMenuItem.Name = "legacySaveToolStripMenuItem";
-            resources.ApplyResources(this.legacySaveToolStripMenuItem, "legacySaveToolStripMenuItem");
-            this.legacySaveToolStripMenuItem.Click += new System.EventHandler(this.legacySaveToolStripMenuItem_Click);
+            this.toolStripSeparator8.Name = "toolStripSeparator8";
+            resources.ApplyResources(this.toolStripSeparator8, "toolStripSeparator8");
+            // 
+            // copyAssetNamesToolStripMenuItem
+            // 
+            this.copyAssetNamesToolStripMenuItem.Name = "copyAssetNamesToolStripMenuItem";
+            resources.ApplyResources(this.copyAssetNamesToolStripMenuItem, "copyAssetNamesToolStripMenuItem");
+            this.copyAssetNamesToolStripMenuItem.Click += new System.EventHandler(this.copyAssetNamesToolStripMenuItem_Click);
             // 
             // ArchiveEditor
             // 
@@ -986,5 +1001,7 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem overwriteOnImportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem legacySaveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
+        private System.Windows.Forms.ToolStripMenuItem copyAssetNamesToolStripMenuItem;
     }
 }

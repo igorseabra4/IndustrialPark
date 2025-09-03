@@ -732,12 +732,12 @@ namespace IndustrialPark
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             (List<Section_AHDR> AHDRs,
-                bool overwrite, 
-                bool makeSimps, 
-                bool ledgeGrabSimps, 
-                bool piptVcolors, 
-                bool solidSimps, 
-                bool jsp, 
+                bool overwrite,
+                bool makeSimps,
+                bool ledgeGrabSimps,
+                bool piptVcolors,
+                bool solidSimps,
+                bool jsp,
                 bool placeOnExistingDefaultLayer) = ImportModel.GetModels(archive.game, archive.NoLayers);
 
             if (AHDRs != null)
@@ -1727,7 +1727,7 @@ namespace IndustrialPark
                                     eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
                                 }
-                                else if (archive.game == Game.Scooby) 
+                                else if (archive.game == Game.Scooby)
                                 {
                                     eventSendIDName = ((EventScooby)link.EventSendID).ToString();
                                     eventReceiveIDName = ((EventScooby)link.EventReceiveID).ToString();
@@ -2005,6 +2005,12 @@ namespace IndustrialPark
 
             noLayersToolStripMenuItem.Enabled = !isLegacy;
             renameLayerToolStripMenuItem.Enabled = !isLegacy;
+        }
+
+        private void copyAssetNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var names = from uint assetId in CurrentlySelectedAssetIDs() select GetAssetNameFromID(assetId);
+            Clipboard.SetText($"\"{string.Join("\", \"", names)}\"");
         }
     }
 }
