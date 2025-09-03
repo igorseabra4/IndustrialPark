@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
@@ -1070,6 +1066,7 @@ namespace IndustrialPark
 
         public ParticleCommand_AlphaInOut(EndianBinaryReader reader) : base(reader, ParticleCommandType.AlphaInOut)
         {
+            CustAlpha = new AssetSingle[4];
             for (int i = 0; i < 4; i++)
                 CustAlpha[i] = reader.ReadSingle();
         }
