@@ -58,6 +58,8 @@ namespace IndustrialPark.Randomizer
 
         public void Perform(string backupDir, string destinationDir, ProgressBar progressBar)
         {
+            HexUIntTypeConverter.Legacy = true;
+
             RandomizableArchive.random = new Random((int)this.seed);
 
             //if (isDir)
@@ -123,6 +125,7 @@ namespace IndustrialPark.Randomizer
             progressBar.SetProgressBar(0, hipPaths.Count * 3 + 3, 1);
 
             List<string> warpNames = new List<string>(); // Names of all warps in the game for the Warps randomizer
+            Dictionary<string, List<string>> markerNames = new Dictionary<string, List<string>>(); // Names of all markers which can be warp destinations
             List<string> namesForBoot = new List<string>(); // Names of all levels in the game for sb.ini boot level randomizer
 
             Game game = Game.Unknown;
@@ -161,10 +164,16 @@ namespace IndustrialPark.Randomizer
                     platformVerified = true;
                 }
 
-                if (settings.Warps && !FileInSecondBox(hipPath))
-                    warpNames.AddRange(hip.GetWarpNames(toSkip));
-
                 string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
+
+                if (settings.Warps && !FileInSecondBox(hipPath))
+                {
+                    warpNames.AddRange(hip.GetWarpNames(toSkip));
+                    if (!markerNames.ContainsKey(nameForBoot))
+                        markerNames[nameForBoot] = new List<string>();
+                    markerNames[nameForBoot].AddRange(hip.GetMarkerNames());
+                }
+
                 if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
                     namesForBoot.Add(nameForBoot);
             }
@@ -181,52 +190,114 @@ namespace IndustrialPark.Randomizer
             progressBar.PerformStep(" | Patching boot.hip...");
 
             // Perform things on boot.hip
-            if (settings.Music || settings.bootHipLodtMulti || settings.UnlockCharacters || settings.RandomCharacters)
+            string bootPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/boot.hip";
+            if (File.Exists(bootPath))
             {
-                string bootPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/boot.hip";
-                if (File.Exists(bootPath))
+                var boot = new RandomizableArchive();
+                boot.OpenFile(bootPath, false, scoobyPlatform);
+                boot.NoLayers = true;
+
+                bool shouldSave = false;
+
+                if (settings.Music)
                 {
-                    var boot = new RandomizableArchive();
-                    boot.OpenFile(bootPath, false, scoobyPlatform);
-                    boot.NoLayers = true;
+                    if (boot.game == Game.Scooby)
+                        shouldSave |= boot.RandomizeSounds(false, true);
+                    else
+                        shouldSave |= boot.RandomizePlaylist();
+                }
 
-                    bool shouldSave = false;
+                if (settings.bootHipLodtMulti)
+                    shouldSave |= boot.MultiplyLODT(settings.lodtValue);
 
-                    if (settings.Music)
-                    {
-                        if (boot.game == Game.Scooby)
-                            shouldSave |= boot.RandomizeSounds(false, true);
-                        else
-                            shouldSave |= boot.RandomizePlaylist();
-                    }
+                if (settings.UnlockCharacters)
+                {
+                    boot.ProgImportHip("Utility", "patrick.hip");
+                    boot.ProgImportHip("Utility", "sandy.hip");
+                    shouldSave = true;
+                }
 
-                    if (settings.bootHipLodtMulti)
-                        shouldSave |= boot.MultiplyLODT(settings.lodtValue);
+                if (settings.RandomCharacters)
+                    shouldSave |= boot.RandomizePlayerOnSpawn();
 
-                    if (settings.UnlockCharacters)
-                    {
-                        boot.ProgImportHip("Utility", "patrick.hip");
-                        boot.ProgImportHip("Utility", "sandy.hip");
-                        shouldSave = true;
-                    }
+                if (settings.Textures)
+                {
+                    boot.RemoveAsset(new AssetID("tiki_wooden.RW3"));
+                    shouldSave = true;
+                }
 
-                    if (settings.RandomCharacters)
-                        shouldSave |= boot.RandomizePlayerOnSpawn();
+                if (settings.PlayerSounds)
+                {
+                    shouldSave |= boot.RandomizeSounds(false, limited: true);
+                }
 
-                    if (shouldSave)
-                    {
-                        var destPath = boot.currentlyOpenFilePath.Replace(backupDir, destinationDir);
-                        var destDir = Path.GetDirectoryName(destPath);
-                        if (!Directory.Exists(destDir))
-                            Directory.CreateDirectory(destDir);
-                        boot.Save(destPath);
-                    }
+                if (shouldSave)
+                {
+                    var destPath = boot.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destDir = Path.GetDirectoryName(destPath);
+                    if (!Directory.Exists(destDir))
+                        Directory.CreateDirectory(destDir);
+                    boot.Save(destPath);
+                }
+            }
+
+            if (settings.PlayerSounds)
+            {
+                // Randomize sppa
+                string sppaPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/sp/sppa.hop";
+                if (File.Exists(sppaPath))
+                {
+                    var sppa = new RandomizableArchive();
+                    sppa.OpenFile(sppaPath, false, scoobyPlatform);
+                    sppa.NoLayers = true;
+
+                    sppa.RandomizeSounds(false, limited: true);
+
+                    var destPath = sppa.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destDir = Path.GetDirectoryName(destPath);
+                    if (!Directory.Exists(destDir))
+                        Directory.CreateDirectory(destDir);
+                    sppa.Save(destPath);
+                }
+
+                // Randomize spsb
+                string spsbPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/sp/spsb.hop";
+                if (File.Exists(spsbPath))
+                {
+                    var spsb = new RandomizableArchive();
+                    spsb.OpenFile(spsbPath, false, scoobyPlatform);
+                    spsb.NoLayers = true;
+
+                    spsb.RandomizeSounds(false, limited: true);
+
+                    var destPath = spsb.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destDir = Path.GetDirectoryName(destPath);
+                    if (!Directory.Exists(destDir))
+                        Directory.CreateDirectory(destDir);
+                    spsb.Save(destPath);
+                }
+
+                // Randomize spsc
+                string spscPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/sp/spsc.hop";
+                if (File.Exists(spscPath))
+                {
+                    var spsc = new RandomizableArchive();
+                    spsc.OpenFile(spscPath, false, scoobyPlatform);
+                    spsc.NoLayers = true;
+
+                    spsc.RandomizeSounds(false, limited: true);
+
+                    var destPath = spsc.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destDir = Path.GetDirectoryName(destPath);
+                    if (!Directory.Exists(destDir))
+                        Directory.CreateDirectory(destDir);
+                    spsc.Save(destPath);
                 }
             }
 
             progressBar.PerformStep(" | Patching mnu5.hip...");
 
-            if (settings.restoreRobotLaugh)
+            if (settings.restoreRobotLaugh || settings.PlayerSounds)
             {
                 string mnu5path = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/mn/mnu5.hip";
                 if (File.Exists(mnu5path))
@@ -235,20 +306,23 @@ namespace IndustrialPark.Randomizer
                     mnu5.OpenFile(mnu5path, false, scoobyPlatform);
                     mnu5.NoLayers = true;
 
-                    if (mnu5.RestoreRobotLaugh())
-                    {
-                        var destPath = mnu5.currentlyOpenFilePath.Replace(backupDir, destinationDir);
-                        var destDir = Path.GetDirectoryName(destPath);
-                        if (!Directory.Exists(destDir))
-                            Directory.CreateDirectory(destDir);
-                        mnu5.Save(destPath);
-                    }
+                    if (settings.restoreRobotLaugh)
+                        mnu5.RestoreRobotLaugh();
+
+                    if (settings.PlayerSounds)
+                        mnu5.RandomizeSounds(false, limited: true);
+
+                    var destPath = mnu5.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destDir = Path.GetDirectoryName(destPath);
+                    if (!Directory.Exists(destDir))
+                        Directory.CreateDirectory(destDir);
+                    mnu5.Save(destPath);
                 }
             }
 
             progressBar.PerformStep(" | Patching mnu4.hip...");
 
-            if (settings.widescreen)
+            if (settings.widescreen || settings.PlayerSounds)
             {
                 string mnu4path = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/mn/mnu4.hip";
                 if (File.Exists(mnu4path))
@@ -257,14 +331,17 @@ namespace IndustrialPark.Randomizer
                     mnu4.OpenFile(mnu4path, false, scoobyPlatform);
                     mnu4.NoLayers = true;
 
-                    if (mnu4.WidescreenMenu())
-                    {
-                        var destPath = mnu4.currentlyOpenFilePath.Replace(backupDir, destinationDir);
-                        var destDir = Path.GetDirectoryName(destPath);
-                        if (!Directory.Exists(destDir))
-                            Directory.CreateDirectory(destDir);
-                        mnu4.Save(destPath);
-                    }
+                    if (settings.widescreen)
+                        mnu4.WidescreenMenu();
+
+                    if (settings.PlayerSounds)
+                        mnu4.RandomizeSounds(false, limited: true);
+
+                    var destPath = mnu4.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destDir = Path.GetDirectoryName(destPath);
+                    if (!Directory.Exists(destDir))
+                        Directory.CreateDirectory(destDir);
+                    mnu4.Save(destPath);
                 }
             }
 
@@ -300,7 +377,7 @@ namespace IndustrialPark.Randomizer
                     hip.KillFinalBossCutscenes();
 
                 if (settings.Warps && !FileInSecondBox(hip.currentlyOpenFilePath))
-                    hip.SetWarpNames(toSkip, ref warpNames, ref warpRandomizerOutput, uinqueWarpNames);
+                    hip.SetWarpNames(toSkip, ref warpNames, ref warpRandomizerOutput, uinqueWarpNames, ref markerNames);
 
                 hip.Randomize(settings);
 

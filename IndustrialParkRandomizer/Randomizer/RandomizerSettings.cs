@@ -6,38 +6,35 @@ namespace IndustrialPark.Randomizer
 {
     public class RandomizerSettings
     {
+        [Category("\tRandomizer"), DisplayName("Patterns/files to skip entirely"), Description("The randomizer will leave these files unnafected.")]
+        public string[] skipFiles { get; set; }
+        [Category("\tRandomizer"), Description("Randomize pickup positions.")]
+        public bool Pickups { get; set; }
+        [Category("\tRandomizer"), DisplayName("Disco Floor Patterns")]
+        public bool Disco_Floors { get; set; }
+        [Category("\tRandomizer")]
+        public bool Music { get; set; }
+        [Category("\tRandomizer"), DisplayName("Floating Block Challenge")]
+        public bool FloatingBlockChallenge { get; set; }
+        [Category("\tRandomizer")]
+        public bool Cameras { get; set; }
+        [Category("\tRandomizer")]
+        public bool Textures { get; set; }
+        [Category("\tRandomizer"), DisplayName("Textures (Special)"), Description("Includes menu/HUD and particle textures.")]
+        public bool Textures_Special { get; set; }
+        [Category("\tRandomizer")]
+        public bool Sounds { get; set; }
+        [Category("\tRandomizer"), DisplayName("Mix Sound Types"), Description("NOT RECOMMENDED\nMixes sound effects and voices (SND/SNDS).")]
+        public bool Mix_Sound_Types { get; set; }
+        [Category("\tRandomizer"), DisplayName("Player Sounds"), Description("Randomizes the player's sound effects")]
+        public bool PlayerSounds { get; set; }
+
         [Category("Boulder Settings"), DisplayName("Boulder Settings"), Description("Randomizes floating point values in boulders, such as speed, gravity, mass, lifetime etc.")]
         public bool BoulderSettings { get; set; }
         [Category("Boulder Settings"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float boulderMin { get; set; } = 0.5f;
         [Category("Boulder Settings"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
         public float boulderMax { get; set; } = 2f;
-
-
-        [Category("Randomizer"),
-            DisplayName("Patterns/files to skip entirely"),
-            Description("The randomizer will leave these files unnafected.")]
-        public string[] skipFiles { get; set; }
-        [Category("Randomizer")]
-        public bool Pickups { get; set; }
-        [Category("Randomizer"), DisplayName("Disco Floors")]
-        public bool Disco_Floors { get; set; }
-        [Category("Randomizer")]
-        public bool Music { get; set; }
-        [Category("Randomizer"), DisplayName("Floating Block Challenge")]
-        public bool FloatingBlockChallenge { get; set; }
-        [Category("Randomizer")]
-        public bool Cameras { get; set; }
-        [Category("Randomizer")]
-        public bool Textures { get; set; }
-        [Category("Randomizer"), DisplayName("Textures (Special)"), Description("Includes menu/HUD and particle textures.")]
-        public bool Textures_Special { get; set; }
-        [Category("Randomizer")]
-        public bool Sounds { get; set; }
-
-        [Category("Randomizer (Not recommended)"), DisplayName("Mix Sound Types"), Description("NOT RECOMMENDED\nMixes sound effects and voices.")]
-        public bool Mix_Sound_Types { get; set; }
-
 
         [Category("Warps"), Description("Randomizes destination of level warps.")]
         public bool Warps { get; set; }
@@ -79,17 +76,15 @@ namespace IndustrialPark.Randomizer
         public float speedMax { get; set; }
 
 
-        [Category("Position Helpers"), Description(Constants.posHelpExample + " Markers are used in BFBB and Scooby for warping and checkpoints.")]
+        [Category("Positions"), Description(Constants.posHelpExample + " Markers are used in BFBB and Scooby for warping and checkpoints.")]
         public bool Markers { get; set; }
-        [Category("Position Helpers"), DisplayName("Player Start"), Description(Constants.posHelpExample)]
-        public bool Player_Start { get; set; }
-        [Category("Position Helpers"), DisplayName("Pointer Positions"), Description("NOT RECOMMENDED FOR BFBB\n" + Constants.posHelpExample + " Pointers are used for talking to NPCs in BFBB, but for warping and checkpoints in Movie.")]
+        [Category("Positions"), DisplayName("Pointer Positions"), Description("NOT RECOMMENDED FOR BFBB\n" + Constants.posHelpExample + " Pointers are used for talking to NPCs in BFBB, but for warps and checkpoints in Movie.")]
         public bool Pointer_Positions { get; set; }
-        [Category("Position Helpers"), DisplayName("Teleport Box Positions"), Description("NOT RECOMMENDED FOR BFBB\n" + Constants.posHelpExample)]
+        [Category("Positions"), DisplayName("Teleport Box Positions"), Description("NOT RECOMMENDED FOR BFBB\n" + Constants.posHelpExample)]
         public bool Teleport_Box_Positions { get; set; }
-        [Category("Position Helpers"), DisplayName("Taxi Trigger Positions"), Description("NOT RECOMMENDED\n" + Constants.posHelpExample)]
+        [Category("Positions"), DisplayName("Taxi Trigger Positions"), Description("NOT RECOMMENDED\n" + Constants.posHelpExample)]
         public bool Taxi_Trigger_Positions { get; set; }
-        [Category("Position Helpers"), DisplayName("Bus Stop Trigger Positions"), Description("NOT RECOMMENDED\n" + Constants.posHelpExample)]
+        [Category("Positions"), DisplayName("Bus Stop Trigger Positions"), Description("NOT RECOMMENDED\n" + Constants.posHelpExample)]
         public bool Bus_Stop_Trigger_Positions { get; set; }
 
 
@@ -128,7 +123,7 @@ namespace IndustrialPark.Randomizer
         public float ringScaleMax { get; set; }
 
 
-        [Category("Shiny Object/Snack Gates"), DisplayName("Shiny Object/Snack Gates"), Description("Randomizes clam/toll gate shiny object requirements in BFBB or snack gate requirements in Scooby.")]
+        [Category("Shiny Object/Snack Gates"), DisplayName("Shiny Object/Snack Gates"), Description("Randomizes clam\toll gate shiny object requirements in BFBB or snack gate requirements in Scooby.")]
         public bool Shiny_Object_Gates { get; set; }
         [Category("Shiny Object/Snack Gates"),
             DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
@@ -186,22 +181,22 @@ namespace IndustrialPark.Randomizer
         public bool RandomCharacters { get; set; }
 
 
-        [Category("Cheats"), DisplayName("Invincible")]
+        [Category("\tCheats"), DisplayName("Invincible")]
         public bool cheatInvincible { get; set; } = false;
-        [Category("Cheats"), DisplayName("BFBB Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category("\tCheats"), DisplayName("BFBB Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
         public PowerupCheatsBFBB PowerupCheatsBFBB { get; set; }
-        [Category("Cheats"), DisplayName("Scooby Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category("\tCheats"), DisplayName("Scooby Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
         public PowerupCheatsScooby PowerupCheatsScooby { get; set; }
-        [Category("Cheats"), DisplayName("Movie Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category("\tCheats"), DisplayName("Movie Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
         public PowerupCheatsMovie PowerupCheatsMovie { get; set; }
 
 
-        [Category("INI Mods"), DisplayName("Boot Level"), Description("Which level to start the game in.\n- Default: Unchanged.\n- Set: the one set in the box below.\n- Random: picks a random level.")]
+        [Category("\t\tINI Mods"), DisplayName("Boot Level"), Description("Which level to start the game in.\n- Default: Unchanged.\n- Set: the one set in the box below.\n- Random: picks a random level.")]
         public BootLevelMode bootLevelMode { get; set; }
 
         private string bootLevel;
 
-        [Category("INI Mods"), DisplayName("Set Boot Level"), Description("If Boot Level is 'set', start the game in this level.")]
+        [Category("\t\tINI Mods"), DisplayName("Set Boot Level"), Description("If Boot Level is 'set', start the game in this level.")]
         public string BootLevel
         {
             get => bootLevel;
@@ -213,47 +208,47 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        [Category("INI Mods"), DisplayName("Skip Main Menu")]
+        [Category("\t\tINI Mods"), DisplayName("Skip Main Menu")]
         public bool dontShowMenuOnBoot { get; set; }
 
-        [Category("INI Mods"), DisplayName("All Menu Warps HB01"),
+        [Category("\t\tINI Mods"), DisplayName("All Menu Warps HB01"),
             Description("If true, all menu warps will lead to the hub.")]
         public bool allMenuWarpsHB01 { get; set; }
 
-        [Category("Patches"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
+        [Category("\t\t\tPatches"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
         public bool restoreRobotLaugh { get; set; }
 
-        [Category("Patches"), DisplayName("Widescreen Patch"), Description("Patches the game to run in a 16:9 resolution by modifying some assets and enabling a widescreen Gecko code.")]
+        [Category("\t\t\tPatches"), DisplayName("Widescreen Patch"), Description("Patches the game to run in a 16:9 resolution by modifying some assets and enabling a widescreen Gecko code.")]
         public bool widescreen { get; set; }
 
-        [Category("Patches"), DisplayName("Disable Cutscenes")]
+        [Category("\t\t\tPatches"), DisplayName("Disable Cutscenes")]
         public bool disableCutscenes { get; set; }
 
-        [Category("Patches"), DisplayName("Disable Flythroughs")]
+        [Category("\t\t\tPatches"), DisplayName("Disable Flythroughs")]
         public bool disableFlythroughs { get; set; }
 
-        [Category("Patches"), DisplayName("Skip Spatula Animations")]
+        [Category("\t\t\tPatches"), DisplayName("Skip Spatula Animations")]
         public bool skipSpatulaAnims { get; set; }
 
-        [Category("Patches"), DisplayName("Open Teleport Boxes")]
+        [Category("\t\t\tPatches"), DisplayName("Open Teleport Boxes")]
         public bool openTeleportBoxes { get; set; }
 
-        [Category("Patches"),
+        [Category("\t\t\tPatches"),
             DisplayName("Spatulas for Chum Bucket Lab"),
             Description("This will be the amount of spatulas needed for the final boss. Set to -1 to include it in the Spatula Gates randomizer method.")]
         public int spatReqChum { get; set; }
 
-        [Category("Patches"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
+        [Category("\t\t\tPatches"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
         public bool invisibleLevel { get; set; }
 
-        [Category("Patches"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
+        [Category("\t\t\tPatches"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
         public bool invisibleObjects { get; set; }
 
-        [Category("Patches: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        [Category("\t\t\tPatches: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount.")]
         public bool bootHipLodtMulti { get; set; }
 
-        [Category("Patches: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        [Category("\t\t\tPatches: LODT"), DisplayName("boot.HIP LODT multiplier"),
             Description("If true, multiply the render distance for the pickups by this amount."),
             TypeConverter(typeof(SingleTypeConverter))]
         public float lodtValue { get; set; }
@@ -274,7 +269,6 @@ namespace IndustrialPark.Randomizer
             Scale_Of_Things = false;
             Texture_Animations = true;
             Markers = true;
-            Player_Start = true;
             Timers = true;
             Colors = true;
             brightColors = true;
@@ -295,6 +289,7 @@ namespace IndustrialPark.Randomizer
             widescreen = false;
             Set_Scale = false;
             VertexColors = false;
+            PlayerSounds = false;
 
             boulderMin = 0.5f;
             boulderMax = 2f;
@@ -360,6 +355,7 @@ namespace IndustrialPark.Randomizer
                 UnlockCharacters = false;
                 RandomCharacters = false;
                 Taxi_Trigger_Positions = false;
+                PlayerSounds = false;
 
                 disableCutscenes = false; // remove this line later
             }
@@ -417,7 +413,7 @@ namespace IndustrialPark.Randomizer
             PlatformSpeed = false;
             BoulderSettings = false;
             Markers = false;
-            Player_Start = false;
+            PlayerSounds = false;
             Pointer_Positions = false;
             Teleport_Box_Positions = false;
             Taxi_Trigger_Positions = false;
@@ -511,6 +507,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("ringScaleMin");
                     dt.RemoveProperty("ringScaleMax");
                     dt.RemoveProperty("widescreenMenu");
+                    dt.RemoveProperty("PlayerSounds");
                     break;
                 case 2: // Movie
                     dt.RemoveProperty("Tiki_Models");
@@ -532,6 +529,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("spatReqChum");
                     dt.RemoveProperty("restoreRobotLaugh");
                     dt.RemoveProperty("widescreenMenu");
+                    dt.RemoveProperty("PlayerSounds");
 
 
                     dt.RemoveProperty("disableCutscenes"); // remove this line later
@@ -543,10 +541,7 @@ namespace IndustrialPark.Randomizer
 
         public override int GetHashCode()
         {
-            int hashCode = -1981898164;
-            hashCode = hashCode * -1521134295 + BoulderSettings.GetHashCode();
-            hashCode = hashCode * -1521134295 + boulderMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + boulderMax.GetHashCode();
+            int hashCode = 2009126788;
             hashCode = hashCode * -1521134295 + EqualityComparer<string[]>.Default.GetHashCode(skipFiles);
             hashCode = hashCode * -1521134295 + Pickups.GetHashCode();
             hashCode = hashCode * -1521134295 + Disco_Floors.GetHashCode();
@@ -557,6 +552,10 @@ namespace IndustrialPark.Randomizer
             hashCode = hashCode * -1521134295 + Textures_Special.GetHashCode();
             hashCode = hashCode * -1521134295 + Sounds.GetHashCode();
             hashCode = hashCode * -1521134295 + Mix_Sound_Types.GetHashCode();
+            hashCode = hashCode * -1521134295 + PlayerSounds.GetHashCode();
+            hashCode = hashCode * -1521134295 + BoulderSettings.GetHashCode();
+            hashCode = hashCode * -1521134295 + boulderMin.GetHashCode();
+            hashCode = hashCode * -1521134295 + boulderMax.GetHashCode();
             hashCode = hashCode * -1521134295 + Warps.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string[]>.Default.GetHashCode(skipFilesWarps);
             hashCode = hashCode * -1521134295 + Tiki_Types.GetHashCode();
@@ -574,7 +573,6 @@ namespace IndustrialPark.Randomizer
             hashCode = hashCode * -1521134295 + speedMin.GetHashCode();
             hashCode = hashCode * -1521134295 + speedMax.GetHashCode();
             hashCode = hashCode * -1521134295 + Markers.GetHashCode();
-            hashCode = hashCode * -1521134295 + Player_Start.GetHashCode();
             hashCode = hashCode * -1521134295 + Pointer_Positions.GetHashCode();
             hashCode = hashCode * -1521134295 + Teleport_Box_Positions.GetHashCode();
             hashCode = hashCode * -1521134295 + Taxi_Trigger_Positions.GetHashCode();
@@ -624,6 +622,7 @@ namespace IndustrialPark.Randomizer
             hashCode = hashCode * -1521134295 + widescreen.GetHashCode();
             hashCode = hashCode * -1521134295 + disableCutscenes.GetHashCode();
             hashCode = hashCode * -1521134295 + disableFlythroughs.GetHashCode();
+            hashCode = hashCode * -1521134295 + skipSpatulaAnims.GetHashCode();
             hashCode = hashCode * -1521134295 + openTeleportBoxes.GetHashCode();
             hashCode = hashCode * -1521134295 + spatReqChum.GetHashCode();
             hashCode = hashCode * -1521134295 + invisibleLevel.GetHashCode();
