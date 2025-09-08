@@ -190,12 +190,14 @@ namespace IndustrialPark
                     PickReferenceID = 0xE80B345F;
                     break;
                 case AssetTemplate.Gum_Pack:
+                    StateIsPersistent = true;
                     PickReferenceID = 0x9CAACD2F;
                     break;
                 case AssetTemplate.Soap:
                     PickReferenceID = 0xDA8B4640;
                     break;
                 case AssetTemplate.Soap_Pack:
+                    StateIsPersistent = true;
                     PickReferenceID = 0x15AC3C90;
                     break;
                 case AssetTemplate.Sandwich:
