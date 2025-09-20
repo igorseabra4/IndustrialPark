@@ -463,7 +463,7 @@ namespace IndustrialPark
                             {
                                 frames = frames.GetRange(0, frames.Count),
                             },
-                            extensionList = Enumerable.Range(0, 1).Select(_ => new Extension_0003()).ToList()
+                            extensionList = Enumerable.Range(0, frames.Count).Select(_ => new Extension_0003()).ToList()
                         },
                         geometryList = new GeometryList_001A()
                         {
