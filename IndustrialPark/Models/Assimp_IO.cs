@@ -289,12 +289,14 @@ namespace IndustrialPark.Models
                 PostProcessSteps.SortByPrimitiveType |
                 (multiAtomic ? 0 : PostProcessSteps.PreTransformVertices) |
                 PostProcessSteps.Triangulate |
+                (multiAtomic ? PostProcessSteps.SplitLargeMeshes : 0) |
                 (flipUVs ? 0 : PostProcessSteps.FlipUVs);
 
             AssimpContext importer = new AssimpContext();
             importer.SetConfig(new RemoveComponentConfig((normals ? 0 : ExcludeComponent.Normals) | (texcoords ? 0 : ExcludeComponent.TexCoords) | (vertexcolors ? 0 :ExcludeComponent.Colors)));
             importer.SetConfig(new ColladaUseColladaNamesConfig(true));
             importer.SetConfig(new RootTransformationConfig(System.Numerics.Matrix4x4.Identity));
+            importer.SetConfig(new MeshVertexLimitConfig(300));
             importer.SetConfig(new SortByPrimitiveTypeConfig(PrimitiveType.Point | PrimitiveType.Line | PrimitiveType.Polygon));
             Scene scene = importer.ImportFile(fileName, pps);
 
