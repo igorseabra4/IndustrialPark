@@ -360,9 +360,77 @@ namespace IndustrialPark
         }
     }
 
+    /// <summary>
+    /// Used in TSSM and beyond
+    /// </summary>
+    public class zAnimFxSoundGroup : GenericAssetDataContainer
+    {
+        public static uint Size => 0x8;
+        public AssetID ID { get; set; }
+        public AssetByte Count { get; set; }
+
+        public zAnimFxSoundGroup() { }
+        public zAnimFxSoundGroup(EndianBinaryReader reader)
+        {
+            ID = reader.ReadUInt32();
+            Count = reader.ReadByte();
+            reader.BaseStream.Position += 3;
+        }
+
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(ID);
+            writer.Write(Count);
+            writer.Write((byte)0xCC);
+            writer.Write((byte)0xCC);
+            writer.Write((byte)0xCC);
+        }
+    }
+
+    /// <summary>
+    /// Used in BFBB
+    /// </summary>
+    public class zAnimFxSound : GenericAssetDataContainer
+    {
+        public static uint Size => 0x18;
+
+        public AssetID ID { get; set; }
+
+        [DisplayName("Volume")]
+        public AssetSingle Vol {  get; set; }
+
+        public AssetSingle Pitch {  get; set; }
+        
+        public uint Priority { get; set; }
+        public FlagBitmask Flags = IntFlagsDescriptor();
+        public AssetSingle Radius { get; set; }
+
+        public zAnimFxSound() { }
+        public zAnimFxSound(EndianBinaryReader reader)
+        {
+            ID = reader.ReadUInt32();
+            Vol = reader.ReadSingle();
+            Pitch = reader.ReadSingle();
+            Priority = reader.ReadUInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            Radius = reader.ReadSingle();
+        }
+
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(ID);
+            writer.Write(Vol);
+            writer.Write(Pitch);
+            writer.Write(Priority);
+            writer.Write(Flags?.FlagValueInt ?? 0);
+            writer.Write(Radius);
+        }
+    }
+
     public class AnimationEffect : GenericAssetDataContainer
     {
         public AssetID StateID { get; set; }
+
         public AnimTableStates StateID_Enum
         {
             get => Enum.GetValues(typeof(AnimTableStates)).Cast<AnimTableStates>().DefaultIfEmpty(AnimTableStates.Unknown).FirstOrDefault(p => StateID.Equals((uint)p));
@@ -371,36 +439,37 @@ namespace IndustrialPark
                 StateID = (uint)value;
             }
         }
-        public AssetSingle StartTime { get; set; }
-        public AssetSingle EndTime { get; set; }
-        public FlagBitmask Flags_BFBB { get; set; } = IntFlagsDescriptor();
-        public FlagBitmask Flags_TSSM { get; set; } = ByteFlagsDescriptor();
-        public int EffectType_BFBB { get; set; }
-        public AssetByte EffectType_TSSM { get; set; }
-        public AssetByte Probability { get; set; }
-        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
-        public byte[] UserDataBytes { get; set; }
 
-        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
-        {
-            if (game >= Game.Incredibles)
-            {
-                dt.RemoveProperty("EffectType_BFBB");
-                dt.RemoveProperty("Flags_BFBB");
-            }
-            else
-            {
-                dt.RemoveProperty("EffectType_TSSM");
-                dt.RemoveProperty("Flags_TSSM");
-                dt.RemoveProperty("Probability");
-            }
-        }
+        public AssetSingle StartTime { get; set; }
+
+        public AssetSingle EndTime { get; set; }
+
+        [DisplayName("Flags")]
+        public FlagBitmask Flags_BFBB { get; set; } = IntFlagsDescriptor();
+
+        [DisplayName("Flags")]
+        public FlagBitmask Flags_TSSM { get; set; } = ByteFlagsDescriptor();
+
+        [DisplayName("EffectType")]
+        public int EffectType_BFBB { get; set; }
+
+        [DisplayName("EffectType")]
+        public AssetByte EffectType_TSSM { get; set; }
+
+        public AssetByte Probability { get; set; }
+
+        [DisplayName("UserData")]
+        public zAnimFxSound UserDataBFBB { get; set; }
+
+        [DisplayName("UserData")]
+        public zAnimFxSoundGroup UserDataTSSM { get; set; }
 
         public AnimationEffect(Game game)
         {
             _game = game;
 
-            UserDataBytes = new byte[0];
+            UserDataBFBB = new zAnimFxSound();
+            UserDataTSSM = new zAnimFxSoundGroup();
         }
 
         public AnimationEffect(EndianBinaryReader reader, Game game) : this(game)
@@ -413,7 +482,7 @@ namespace IndustrialPark
                 Flags_BFBB.FlagValueInt = reader.ReadUInt32();
                 EffectType_BFBB = reader.ReadInt32();
                 int userDataSize = reader.ReadInt32();
-                UserDataBytes = reader.ReadBytes(userDataSize);
+                UserDataBFBB = new zAnimFxSound(reader);
             }
             else
             {
@@ -422,7 +491,7 @@ namespace IndustrialPark
                 EffectType_TSSM = reader.ReadByte();
                 Probability = reader.ReadByte();
                 reader.ReadByte();
-                UserDataBytes = reader.ReadBytes(userDataSize);
+                UserDataTSSM = new zAnimFxSoundGroup(reader);
             }
         }
 
@@ -436,17 +505,34 @@ namespace IndustrialPark
             {
                 writer.Write(Flags_BFBB.FlagValueInt);
                 writer.Write(EffectType_BFBB);
-                writer.Write(UserDataBytes.Length);
-                writer.Write(UserDataBytes);
+                writer.Write(zAnimFxSound.Size);
+                UserDataBFBB.Serialize(writer);
             }
             else
             {
-                writer.Write(UserDataBytes.Length);
+                writer.Write(zAnimFxSoundGroup.Size);
                 writer.Write(Flags_TSSM.FlagValueByte);
                 writer.Write(EffectType_TSSM);
                 writer.Write(Probability);
                 writer.Write((byte)0xCC);
-                writer.Write(UserDataBytes);
+                UserDataTSSM.Serialize(writer);
+            }
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game >= Game.Incredibles)
+            {
+                dt.RemoveProperty("EffectType_BFBB");
+                dt.RemoveProperty("Flags_BFBB");
+                dt.RemoveProperty("UserDataBFBB");
+            }
+            else
+            {
+                dt.RemoveProperty("EffectType_TSSM");
+                dt.RemoveProperty("Flags_TSSM");
+                dt.RemoveProperty("Probability");
+                dt.RemoveProperty("UserDataTSSM");
             }
         }
     }
