@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -29,5 +30,6 @@ namespace IndustrialPark
         public int flyModeCursor = 1;
         public bool translucentEditor = true;
         public bool showEditorsWhenLoadingProject = true;
+        public SystemColorMode ColorMode = SystemColorMode.System;
     }
 }

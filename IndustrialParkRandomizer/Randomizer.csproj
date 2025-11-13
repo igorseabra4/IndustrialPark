@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0-windows7.0</TargetFramework>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <LangVersion>preview</LangVersion>
     <OutputType>WinExe</OutputType>
     <RootNamespace>IndustrialParkRandomizer</RootNamespace>
     <GenerateAssemblyInfo>True</GenerateAssemblyInfo>

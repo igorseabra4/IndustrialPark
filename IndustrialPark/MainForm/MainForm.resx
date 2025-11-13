@@ -418,46 +418,46 @@
     <value>&amp;Tools</value>
   </data>
   <data name="enableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>129, 22</value>
   </data>
   <data name="enableAllToolStripMenuItem.Text" xml:space="preserve">
     <value>Enable All</value>
   </data>
   <data name="disableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>129, 22</value>
   </data>
   <data name="disableAllToolStripMenuItem.Text" xml:space="preserve">
     <value>Disable All</value>
   </data>
   <data name="toolStripSeparatorAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>126, 6</value>
   </data>
   <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="assetTypesToolStripMenuItem.Text" xml:space="preserve">
     <value>Asset Types</value>
   </data>
   <data name="addTextureFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="addTextureFolderToolStripMenuItem.Text" xml:space="preserve">
     <value>Add Texture Folder...</value>
   </data>
   <data name="addTXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="addTXDArchiveToolStripMenuItem.Text" xml:space="preserve">
     <value>Add TXD Archive...</value>
   </data>
   <data name="refreshTexturesAndModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="refreshTexturesAndModelsToolStripMenuItem.Text" xml:space="preserve">
     <value>Refresh Textures and Models</value>
   </data>
   <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 6</value>
+    <value>254, 6</value>
   </data>
   <data name="resetColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
@@ -505,25 +505,25 @@
     <value>SFX/SDFX Color...</value>
   </data>
   <data name="colorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="colorsToolStripMenuItem.Text" xml:space="preserve">
     <value>Colors</value>
   </data>
   <data name="noCullingCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="noCullingCToolStripMenuItem.Text" xml:space="preserve">
     <value>Backface Culling (C)</value>
   </data>
   <data name="fogToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="fogToolStripMenuItem.Text" xml:space="preserve">
     <value>Fog</value>
   </data>
   <data name="wireframeFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="wireframeFToolStripMenuItem.Text" xml:space="preserve">
     <value>Wireframe (F)</value>
@@ -535,40 +535,67 @@
     <value>Vertex Colors (P)</value>
   </data>
   <data name="vSyncToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="vSyncToolStripMenuItem.Text" xml:space="preserve">
     <value>VSync</value>
   </data>
   <data name="lowerQualityGraphicsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="lowerQualityGraphicsToolStripMenuItem.Text" xml:space="preserve">
     <value>Lower Quality Graphics</value>
   </data>
+  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>254, 6</value>
+  </data>
+  <data name="uIModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>257, 22</value>
+  </data>
+  <data name="uIModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>UI Mode (U)</value>
+  </data>
+  <data name="uIModeAutoSizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>257, 22</value>
+  </data>
+  <data name="uIModeAutoSizeToolStripMenuItem.Text" xml:space="preserve">
+    <value>UI Mode AutoSize</value>
+  </data>
   <data name="toolStripSeparator9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 6</value>
+    <value>254, 6</value>
+  </data>
+  <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>257, 22</value>
+  </data>
+  <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Text" xml:space="preserve">
+    <value>Draw Only First MINF Reference</value>
+  </data>
+  <data name="showVertexColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>257, 22</value>
+  </data>
+  <data name="showVertexColorsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Use Vertex Colors for Rendering (P)</value>
   </data>
   <data name="useLightKitsForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>258, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="useLightKitsForRenderingToolStripMenuItem.Text" xml:space="preserve">
     <value>Use Light Kits for Rendering (L)</value>
   </data>
   <data name="useLODTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="useLODTForRenderingToolStripMenuItem.Text" xml:space="preserve">
     <value>Use LODT For Rendering</value>
   </data>
   <data name="usePIPTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="usePIPTForRenderingToolStripMenuItem.Text" xml:space="preserve">
     <value>Use PIPT For Rendering</value>
   </data>
   <data name="hideInvisibleMeshesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="hideInvisibleMeshesToolStripMenuItem.Text" xml:space="preserve">
     <value>Hide Invisible Meshes</value>
@@ -580,25 +607,34 @@
     <value>Draw Only First MINF Reference</value>
   </data>
   <data name="movementPreviewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+    <value>257, 22</value>
   </data>
   <data name="movementPreviewToolStripMenuItem.Text" xml:space="preserve">
     <value>Movement Preview</value>
   </data>
-  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>238, 6</value>
+  <data name="systemDefaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="uIModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+  <data name="systemDefaultToolStripMenuItem.Text" xml:space="preserve">
+    <value>System Default</value>
   </data>
-  <data name="uIModeToolStripMenuItem.Text" xml:space="preserve">
-    <value>UI Mode (U)</value>
+  <data name="systemDefaultToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Apply the system default theme on restart</value>
   </data>
-  <data name="uIModeAutoSizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
+  <data name="darkModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>180, 22</value>
   </data>
-  <data name="uIModeAutoSizeToolStripMenuItem.Text" xml:space="preserve">
-    <value>UI Mode AutoSize</value>
+  <data name="darkModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Dark Mode</value>
+  </data>
+  <data name="darkModeToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Apply light/dark mode on restart</value>
+  </data>
+  <data name="themeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>257, 22</value>
+  </data>
+  <data name="themeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Theme</value>
   </data>
   <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 19</value>
@@ -806,13 +842,13 @@
     <value>Position (Local)</value>
   </data>
   <data name="gizmoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
+    <value>149, 22</value>
   </data>
   <data name="gizmoToolStripMenuItem.Text" xml:space="preserve">
     <value>Gizmo (V)</value>
   </data>
   <data name="toolStripMenuItem_Templates.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
+    <value>149, 22</value>
   </data>
   <data name="toolStripMenuItem_Templates.Text" xml:space="preserve">
     <value>Template (B/N)</value>
@@ -821,13 +857,13 @@
     <value>160, 23</value>
   </data>
   <data name="userTemplateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
+    <value>149, 22</value>
   </data>
   <data name="userTemplateToolStripMenuItem.Text" xml:space="preserve">
     <value>User Template</value>
   </data>
   <data name="contextMenuStripMain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 70</value>
+    <value>150, 70</value>
   </data>
   <data name="&gt;&gt;contextMenuStripMain.Name" xml:space="preserve">
     <value>contextMenuStripMain</value>
@@ -3018,22 +3054,22 @@
   <data name="&gt;&gt;movementPreviewToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator6.Name" xml:space="preserve">
-    <value>toolStripSeparator6</value>
+  <data name="&gt;&gt;themeToolStripMenuItem.Name" xml:space="preserve">
+    <value>themeToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;toolStripSeparator6.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;uIModeToolStripMenuItem.Name" xml:space="preserve">
-    <value>uIModeToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;uIModeToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;themeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Name" xml:space="preserve">
-    <value>uIModeAutoSizeToolStripMenuItem</value>
+  <data name="&gt;&gt;systemDefaultToolStripMenuItem.Name" xml:space="preserve">
+    <value>systemDefaultToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;systemDefaultToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;darkModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>darkModeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;darkModeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;researchToolStripMenuItem.Name" xml:space="preserve">

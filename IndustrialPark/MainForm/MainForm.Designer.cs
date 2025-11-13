@@ -117,6 +117,9 @@ namespace IndustrialPark
             toolStripSeparator6 = new ToolStripSeparator();
             uIModeToolStripMenuItem = new ToolStripMenuItem();
             uIModeAutoSizeToolStripMenuItem = new ToolStripMenuItem();
+            themeToolStripMenuItem = new ToolStripMenuItem();
+            systemDefaultToolStripMenuItem = new ToolStripMenuItem();
+            darkModeToolStripMenuItem = new ToolStripMenuItem();
             researchToolStripMenuItem = new ToolStripMenuItem();
             hansToolStripMenuItem = new ToolStripMenuItem();
             assetIDGeneratorToolStripMenuItem = new ToolStripMenuItem();
@@ -462,7 +465,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, addTextureFolderToolStripMenuItem, addTXDArchiveToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, toolStripSeparator10, colorsToolStripMenuItem, noCullingCToolStripMenuItem, fogToolStripMenuItem, wireframeFToolStripMenuItem, vSyncToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, toolStripSeparator6, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator9, drawOnlyFirstMINFReferenceToolStripMenuItem, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, movementPreviewToolStripMenuItem });
+            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, addTextureFolderToolStripMenuItem, addTXDArchiveToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, toolStripSeparator10, colorsToolStripMenuItem, noCullingCToolStripMenuItem, fogToolStripMenuItem, wireframeFToolStripMenuItem, vSyncToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, toolStripSeparator6, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator9, drawOnlyFirstMINFReferenceToolStripMenuItem, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, movementPreviewToolStripMenuItem, themeToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             resources.ApplyResources(displayToolStripMenuItem, "displayToolStripMenuItem");
             // 
@@ -685,6 +688,28 @@ namespace IndustrialPark
             uIModeAutoSizeToolStripMenuItem.Name = "uIModeAutoSizeToolStripMenuItem";
             resources.ApplyResources(uIModeAutoSizeToolStripMenuItem, "uIModeAutoSizeToolStripMenuItem");
             uIModeAutoSizeToolStripMenuItem.Click += uIModeAutoSizeToolStripMenuItem_Click;
+            // 
+            // themeToolStripMenuItem
+            // 
+            themeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { systemDefaultToolStripMenuItem, darkModeToolStripMenuItem });
+            themeToolStripMenuItem.Name = "themeToolStripMenuItem";
+            resources.ApplyResources(themeToolStripMenuItem, "themeToolStripMenuItem");
+            // 
+            // systemDefaultToolStripMenuItem
+            // 
+            systemDefaultToolStripMenuItem.Checked = true;
+            systemDefaultToolStripMenuItem.CheckOnClick = true;
+            systemDefaultToolStripMenuItem.CheckState = CheckState.Checked;
+            systemDefaultToolStripMenuItem.Name = "systemDefaultToolStripMenuItem";
+            resources.ApplyResources(systemDefaultToolStripMenuItem, "systemDefaultToolStripMenuItem");
+            systemDefaultToolStripMenuItem.Click += systemDefaultToolStripMenuItem_Click;
+            // 
+            // darkModeToolStripMenuItem
+            // 
+            darkModeToolStripMenuItem.CheckOnClick = true;
+            darkModeToolStripMenuItem.Name = "darkModeToolStripMenuItem";
+            resources.ApplyResources(darkModeToolStripMenuItem, "darkModeToolStripMenuItem");
+            darkModeToolStripMenuItem.Click += darkModeToolStripMenuItem_Click;
             // 
             // researchToolStripMenuItem
             // 
@@ -1008,6 +1033,9 @@ namespace IndustrialPark
         private ToolStripMenuItem useLightKitsForRenderingToolStripMenuItem;
         private ToolStripMenuItem hansToolStripMenuItem;
         private ToolStripMenuItem translucentToolStripMenuItem;
+        private ToolStripMenuItem themeToolStripMenuItem;
+        private ToolStripMenuItem systemDefaultToolStripMenuItem;
+        private ToolStripMenuItem darkModeToolStripMenuItem;
     }
 }
 

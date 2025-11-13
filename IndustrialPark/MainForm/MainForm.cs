@@ -24,9 +24,12 @@ namespace IndustrialPark
             Hide = 2
         }
 
-        public MainForm()
+        private IPSettings settings;
+
+        public MainForm(IPSettings settings)
         {
             StartPosition = FormStartPosition.CenterScreen;
+            this.settings = settings;
             InitializeComponent();
 
 #if !DEBUG
@@ -117,7 +120,9 @@ namespace IndustrialPark
         {
             UpdateUserTemplateComboBox();
 
-            if (File.Exists(pathToSettings))
+            if (this.settings != null)
+                ApplyIPSettings(this.settings);
+            else if (File.Exists(pathToSettings))
                 ApplyIPSettings(JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings)));
             else
             {
@@ -143,6 +148,8 @@ namespace IndustrialPark
 
         private void ApplyIPSettings(IPSettings settings)
         {
+            SystemColorMode = settings.ColorMode;
+
             autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
             autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
 
@@ -260,7 +267,8 @@ namespace IndustrialPark
                 recentArchivePaths = openLastToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Text).ToArray(),
                 flyModeCursor = (int)flyModeCursor,
                 translucentEditor = TranslucentWhenOutOfFocus,
-                showEditorsWhenLoadingProject = showEditorsWhenLoadingProjectToolStripMenuItem.Checked
+                showEditorsWhenLoadingProject = showEditorsWhenLoadingProjectToolStripMenuItem.Checked,
+                ColorMode = SystemColorMode
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -539,7 +547,7 @@ namespace IndustrialPark
                     assetViewTypes[type].GetField("dontRender").SetValue(null, value);
                 }
 
-            
+
             fogToolStripMenuItem.Checked = ipSettings.FogRender;
             AssetFOG.DontRender = !ipSettings.FogRender;
             showVertexColorsToolStripMenuItem.Checked = ipSettings.VertexColorRender;
@@ -2099,5 +2107,30 @@ namespace IndustrialPark
         {
             AssetLKIT.DontRender = !useLightKitsForRenderingToolStripMenuItem.Checked;
         }
+
+        #region Color Mode
+        private SystemColorMode SystemColorMode
+        {
+            get;
+            set
+            {
+                field = value;
+                systemDefaultToolStripMenuItem.Checked = value == SystemColorMode.System;
+                darkModeToolStripMenuItem.Checked = value == SystemColorMode.Dark;
+            }
+        }
+
+        private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            systemDefaultToolStripMenuItem.Checked = false;
+            SystemColorMode = darkModeToolStripMenuItem.Checked ? SystemColorMode.Dark : SystemColorMode.Classic;
+        }
+
+        private void systemDefaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            darkModeToolStripMenuItem.Checked = false;
+            SystemColorMode = SystemColorMode.System;
+        }
+        #endregion
     }
 }
