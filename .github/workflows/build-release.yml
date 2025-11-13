@@ -4,7 +4,10 @@ on:
   workflow_dispatch:
 
 env:
-  OUTPUT_PATH: ./IndustrialPark/bin/Release/net8.0-windows7.0/
+  OUTPUT_PATH: ./IndustrialPark/bin/Release/net10.0-windows/
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -16,24 +19,20 @@ jobs:
         with:
             submodules: recursive
 
-      - name: Cache dotnet
-        id: cache-dotnet
-        uses: actions/cache@v3
-        with:
-          path: ~/.dotnet
-          key: ${{ runner.os }}-dotnet-8
-
-      - name: Set up .NET 8
-        if: steps.cache-dotnet.outputs.cache-hit != 'true'
+      - name: Set up .NET 10
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '8.x'
+          dotnet-version: '10.x'
 
       - name: Set timezone
         run: tzutil /s "W. Europe Standard Time"
 
       - name: Clone RenderWare repo
-        run: git clone https://github.com/energydrink02/RenderWare.git
+        uses: actions/checkout@v5
+        with:
+          repository: energydrink02/RenderWare
+          token: ${{ secrets.RENDERWARE_ACCESS }}
+          path: ./RenderWare
 
       - name: Cache RenderWare
         id: cache-renderware
@@ -87,7 +86,7 @@ jobs:
           path: ${{ env.OUTPUT_PATH }}
           
       - name: Create tag
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             github.rest.git.createRef({
