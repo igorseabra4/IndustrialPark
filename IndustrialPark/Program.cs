@@ -44,10 +44,10 @@ namespace IndustrialPark
             try
             {
                 ipSettings = File.Exists(MainForm.pathToSettings) ? JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings)) : null;
-                if (ipSettings != null)
-                    Application.SetColorMode(ipSettings.ColorMode);
             }
             catch { }
+
+            Application.SetColorMode(ipSettings != null ? ipSettings.ColorMode : SystemColorMode.System);
 
             MainForm = new MainForm(ipSettings);
 
