@@ -639,7 +639,7 @@ namespace IndustrialPark
 
                         newAsset = new AssetGeneric(AHDR, game, endianness);
 #if DEBUG
-                    string folder = Path.Combine(Assembly.GetExecutingAssembly().Location, "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\");
+                    string folder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\");
                     if (!Directory.Exists(folder))
                         Directory.CreateDirectory(folder);
                     string assetName = $"[{AHDR.assetType}] {AHDR.ADBG.assetName}";
