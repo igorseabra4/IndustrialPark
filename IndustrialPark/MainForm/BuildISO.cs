@@ -35,17 +35,6 @@ namespace IndustrialPark
                 gameDirBox.Items.AddRange(recentGameDirPaths);
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.WindowsShutDown)
-                return;
-            if (e.CloseReason == CloseReason.FormOwnerClosing)
-                return;
-
-            e.Cancel = true;
-            Hide();
-        }
-
         private string GetAbsoluteFilePathFromNode(TreeNode node) => Path.Combine(Directory.GetParent(gameDirBox.Text).FullName, node.FullPath);
 
         private void button1_Click(object sender, EventArgs e)
@@ -83,13 +72,9 @@ namespace IndustrialPark
                 SynchronizingObject = this
             };
             fileSystemWatcher.Renamed += OnFileRenamed;
-            fileSystemWatcher.Changed += (s, e) =>
-            {
-                if (e.ChangeType != WatcherChangeTypes.Renamed)
-                    CalculateTotalISOSize();
-            };
+            fileSystemWatcher.Changed += OnFileChanged;
             fileSystemWatcher.Deleted += OnFileDeleted;
-            fileSystemWatcher.Created += (s, e) => CreateDirectoryNodeTree(gameDirBox.Text);
+            fileSystemWatcher.Created += OnFileCreated;
             fileSystemWatcher.Error += OnFileSystemError;
 
         }
@@ -324,9 +309,21 @@ namespace IndustrialPark
         private void OnFileDeleted(object sender, FileSystemEventArgs e)
         {
             foreach (TreeNode node in GetCheckedNodes(treeView1.Nodes, true))
-                if (node.Text == e.Name)
+                if (node.Text == Path.GetFileName(e.Name))
                     node.Remove();
         }
+
+        private void OnFileChanged(object sender, FileSystemEventArgs e)
+        {
+            if (e.ChangeType != WatcherChangeTypes.Renamed)
+                CalculateTotalISOSize();
+        }
+
+        private void OnFileCreated(object sender, FileSystemEventArgs e)
+        {
+            CreateDirectoryNodeTree(gameDirBox.Text);
+        }
+
         private void OnFileSystemError(object sender, ErrorEventArgs e)
         {
             MessageBox.Show($"Failed to watch for filesystem changes ({e.GetException()})\n.FileSystemWatcher is now disabled", "FileSystemWatcher Error", MessageBoxButtons.OK, MessageBoxIcon.Error);

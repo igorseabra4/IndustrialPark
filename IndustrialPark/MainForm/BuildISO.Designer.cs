@@ -1,4 +1,6 @@
-﻿namespace IndustrialPark
+﻿using System.IO;
+
+namespace IndustrialPark
 {
     partial class BuildISO
     {
@@ -15,6 +17,17 @@
         {
             if (disposing && (components != null))
             {
+                if (fileSystemWatcher != null)
+                {
+                    fileSystemWatcher.Renamed -= OnFileRenamed;
+                    fileSystemWatcher.Changed -= OnFileChanged;
+                    fileSystemWatcher.Deleted -= OnFileDeleted;
+                    fileSystemWatcher.Created -= OnFileCreated;
+                    fileSystemWatcher.Error -= OnFileSystemError;
+                    fileSystemWatcher.Dispose();
+                }
+                fileSystemWatcher = null;
+                Program.BuildISO = null;
                 components.Dispose();
             }
             base.Dispose(disposing);
