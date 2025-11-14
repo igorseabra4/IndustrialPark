@@ -72,6 +72,9 @@ namespace IndustrialPark
 
             propertyGridTextureInfo.SelectedObjects = (from Material_0007 mat in currentMaterials where mat.texture != null select mat.texture).ToArray();
 
+            // Using PropertyGrid with multiple objects is broken with "Categorized" sorting after switching to .NET 10
+            propertyGridTextureInfo.PropertySort = PropertySort.CategorizedAlphabetical;
+
             if (currentMaterials.Count() == 1)
             {
                 comboBoxMatEffects.Enabled = true;

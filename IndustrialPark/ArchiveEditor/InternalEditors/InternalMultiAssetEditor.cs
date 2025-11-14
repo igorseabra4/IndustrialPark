@@ -17,6 +17,10 @@ namespace IndustrialPark
             this.updateListView = updateListView;
 
             propertyGridAsset.SelectedObjects = assets.Select(a => DynamicTypeDescriptor.Create(a)).ToArray();
+
+            // Using PropertyGrid with multiple objects is broken with "Categorized" sorting after switching to .NET 10
+            propertyGridAsset.PropertySort = PropertySort.CategorizedAlphabetical;
+
             labelAssetName.Text = string.Join(" | ", from Asset asset in assets select asset.assetName);
         }
 
