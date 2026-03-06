@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Heavy Iron Modding")]
 [assembly: AssemblyProduct("IndustrialPark")]
-[assembly: AssemblyCopyright("Copyright ©  2023 igorseabra4")]
+[assembly: AssemblyCopyright("Copyright ©  2026 igorseabra4")]
 [assembly: AssemblyTrademark("Heavy Iron Modding")]
 [assembly: AssemblyCulture("")]
 
@@ -31,4 +31,4 @@ using System.Runtime.InteropServices;
 // É possível especificar todos os valores ou usar como padrão os Números de Build e da Revisão
 // utilizando o "*" como mostrado abaixo:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2024.02.10")]
+[assembly: AssemblyVersion("2026.03.06")]
