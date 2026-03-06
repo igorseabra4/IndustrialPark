@@ -1019,7 +1019,6 @@ if %25errorlevel%25 leq 4 exit 0 else exit %25errorlevel%25
 cd $(TargetDir)
 del *.xml
 del *.pdb
-del *.dll
 del *.manifest
 del *.application
 del *.json
