@@ -31,6 +31,12 @@ namespace IndustrialPark.Randomizer
 
         public static Random random;
 
+        public void OpenFile(string fileName, bool displayProgressBar, Platform scoobyPlatform)
+        {
+            base.OpenFile(fileName, displayProgressBar, scoobyPlatform, false);
+            random = new Random();
+        }
+
         public bool Randomize(RandomizerSettings settings)
         {
             if (LevelName == "hb09")
@@ -4090,6 +4096,46 @@ namespace IndustrialPark.Randomizer
                 shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
 
             return shuffled;
+        }
+
+        private static readonly HashSet<uint> scoobyPowerupsFrom = new HashSet<uint>() { 0xA9D3F180, 0x36A529FA, 0xF67E0CFF, 0x597E7EC4, 0x731AF2B3, 0x4B674863, 0x762BF547, 0x8DE96F8E, 0x36302F2D, 0xC69693F0, 0xDB0201DD, 0xB296AAA2, 0xD1840C2B };
+
+        internal void GetScoobyPowerupTable(Dictionary<uint, uint> scoobyPowerupsModels)
+        {
+            var pickupTable = (from asset in assetDictionary.Values where asset is AssetPICK select (AssetPICK)asset).First();
+            foreach (var picky in pickupTable.Entries)
+                if (scoobyPowerupsFrom.Contains(picky.PickupHash))
+                    scoobyPowerupsModels[picky.PickupHash] = picky.Model;
+        }
+
+        internal void GetScoobyPowerups(Dictionary<uint, uint> scoobyPowerupsModels, List<(uint, Section_AHDR)> scoobyPowerupsTo)
+        {
+            var pickups = (from asset in assetDictionary.Values where asset is AssetPKUP pkup && scoobyPowerupsModels.Keys.Contains(pkup.PickReferenceID) select (AssetPKUP)asset).ToList();
+            foreach (var pkup in pickups)
+            {
+                var assetModel = GetFromAssetID(scoobyPowerupsModels[pkup.PickReferenceID]);
+                if (assetModel is AssetMODL model)
+                    scoobyPowerupsTo.Add((pkup.PickReferenceID, model.BuildAHDR(platform.Endianness())));
+                else
+                    MessageBox.Show($"Powerups Error: Model asset not found 0x{pkup.PickReferenceID:X8}");
+            }
+        }
+
+        internal void RandomizePowerupLevels(Dictionary<uint, uint> scoobyPowerupsModels, List<(uint, Section_AHDR)> scoobyPowerupsTo)
+        {
+            var pickups = (from asset in assetDictionary.Values where asset is AssetPKUP pkup && scoobyPowerupsModels.Keys.Contains(pkup.PickReferenceID) select (AssetPKUP)asset).ToList();
+            foreach (var pkup in pickups)
+            {
+                var index = random.Next(scoobyPowerupsTo.Count);
+
+                RemoveAsset(scoobyPowerupsModels[pkup.PickReferenceID]);
+                AddAsset(scoobyPowerupsTo[index].Item2, game, platform.Endianness(), false);
+
+                pkup.PickReferenceID = scoobyPowerupsTo[index].Item1;
+                pkup.Shape = BitConverter.GetBytes(pkup.PickReferenceID)[0];
+
+                scoobyPowerupsTo.RemoveAt(index);
+            }
         }
     }
 }

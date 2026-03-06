@@ -128,6 +128,9 @@ namespace IndustrialPark.Randomizer
             Dictionary<string, List<string>> markerNames = new Dictionary<string, List<string>>(); // Names of all markers which can be warp destinations
             List<string> namesForBoot = new List<string>(); // Names of all levels in the game for sb.ini boot level randomizer
 
+            Dictionary<uint, uint> scoobyPowerupsModels = null;
+            List<(uint, Section_AHDR)> scoobyPowerupsTo = new List<(uint, Section_AHDR)>();
+
             Game game = Game.Unknown;
             Platform scoobyPlatform = Platform.Unknown;
 
@@ -172,6 +175,19 @@ namespace IndustrialPark.Randomizer
                     if (!markerNames.ContainsKey(nameForBoot))
                         markerNames[nameForBoot] = new List<string>();
                     markerNames[nameForBoot].AddRange(hip.GetMarkerNames());
+                }
+
+                if (settings.Power_Up_Levels_Scooby)
+                {
+                    if (scoobyPowerupsModels == null)
+                    {
+                        scoobyPowerupsModels = new Dictionary<uint, uint>();
+                        var boot = new RandomizableArchive();
+                        boot.OpenFile((string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/boot.hip", false, scoobyPlatform);
+                        boot.GetScoobyPowerupTable(scoobyPowerupsModels);
+                    }
+
+                    hip.GetScoobyPowerups(scoobyPowerupsModels, scoobyPowerupsTo);
                 }
 
                 if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
@@ -379,6 +395,9 @@ namespace IndustrialPark.Randomizer
                 if (settings.Warps && !FileInSecondBox(hip.currentlyOpenFilePath))
                     hip.SetWarpNames(toSkip, ref warpNames, ref warpRandomizerOutput, uinqueWarpNames, ref markerNames);
 
+                if (settings.Power_Up_Levels_Scooby)
+                    hip.RandomizePowerupLevels(scoobyPowerupsModels, scoobyPowerupsTo);
+
                 hip.Randomize(settings);
 
                 progressBar.PerformStep($" | Saving {Path.GetFileNameWithoutExtension(hip.currentlyOpenFilePath)}...");
@@ -389,6 +408,9 @@ namespace IndustrialPark.Randomizer
                     Directory.CreateDirectory(destDir);
                 hip.Save(destPath);
             }
+
+            if (settings.Power_Up_Levels_Scooby && scoobyPowerupsTo.Count != 0)
+                MessageBox.Show($"There was an error with the Scooby Powerups randomizer: {string.Join(", ", scoobyPowerupsTo.Select(a => $"0x{a:X8}"))} were not placed.");
 
             RemoveFiles = string.Join("\n", hops);
 

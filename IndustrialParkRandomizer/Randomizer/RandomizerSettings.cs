@@ -10,6 +10,8 @@ namespace IndustrialPark.Randomizer
         public string[] skipFiles { get; set; }
         [Category("\tRandomizer"), Description("Randomize pickup positions.")]
         public bool Pickups { get; set; }
+        [Category("\tRandomizer"), DisplayName("Power Up Levels"), Description("Randomize power up locations among each other.")]
+        public bool Power_Up_Levels_Scooby { get; set; }
         [Category("\tRandomizer"), DisplayName("Disco Floor Patterns")]
         public bool Disco_Floors { get; set; }
         [Category("\tRandomizer")]
@@ -256,6 +258,7 @@ namespace IndustrialPark.Randomizer
         public RandomizerSettings(int game)
         {
             Pickups = true;
+            Power_Up_Levels_Scooby = true;
             BoulderSettings = true;
             MovePoint_Radius = true;
             PlatformSpeed = true;
@@ -356,6 +359,7 @@ namespace IndustrialPark.Randomizer
                 RandomCharacters = false;
                 Taxi_Trigger_Positions = false;
                 PlayerSounds = false;
+                skipSpatulaAnims = false;
 
                 disableCutscenes = false; // remove this line later
             }
@@ -370,6 +374,7 @@ namespace IndustrialPark.Randomizer
                 openTeleportBoxes = false;
                 Bus_Stop_Trigger_Positions = false;
                 bootLevel = "h001";
+                Power_Up_Levels_Scooby = true;
             }
             else
             {
@@ -377,6 +382,7 @@ namespace IndustrialPark.Randomizer
                 Tiki_Types = true;
                 Tiki_Allow_Any_Type = true;
                 Enemy_Types = true;
+                Power_Up_Levels_Scooby = false;
             }
 
             if (game == 2)
@@ -434,6 +440,7 @@ namespace IndustrialPark.Randomizer
             Timers = false;
             brightColors = false;
             strongColors = false;
+            VertexColors = false;
             PlayerCharacters = false;
             cheatInvincible = false;
             PowerupCheatsMovie.Preset = Preset.Nothing;
@@ -452,6 +459,7 @@ namespace IndustrialPark.Randomizer
             invisibleObjects = false;
             CombatArenaCounts = false;
             Set_Scale = false;
+            Power_Up_Levels_Scooby = false;
         }
 
         public void SetDynamicProperties(DynamicTypeDescriptor dt, int game)
@@ -469,6 +477,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("RingSizes");
                     dt.RemoveProperty("ringScaleMin");
                     dt.RemoveProperty("ringScaleMax");
+                    dt.RemoveProperty("Power_Up_Levels");
                     break;
                 case 1: // Scooby
                     dt.RemoveProperty("Disco_Floors");
@@ -508,6 +517,7 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("ringScaleMax");
                     dt.RemoveProperty("widescreenMenu");
                     dt.RemoveProperty("PlayerSounds");
+                    dt.RemoveProperty("skipSpatulaAnims");
                     break;
                 case 2: // Movie
                     dt.RemoveProperty("Tiki_Models");
@@ -530,6 +540,8 @@ namespace IndustrialPark.Randomizer
                     dt.RemoveProperty("restoreRobotLaugh");
                     dt.RemoveProperty("widescreenMenu");
                     dt.RemoveProperty("PlayerSounds");
+                    dt.RemoveProperty("Power_Up_Levels");
+                    dt.RemoveProperty("skipSpatulaAnims");
 
 
                     dt.RemoveProperty("disableCutscenes"); // remove this line later

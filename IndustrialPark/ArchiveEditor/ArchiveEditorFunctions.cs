@@ -143,7 +143,7 @@ namespace IndustrialPark
             return false;
         }
 
-        public void OpenFile(string fileName, bool displayProgressBar, Platform scoobyPlatform)
+        public void OpenFile(string fileName, bool displayProgressBar, Platform scoobyPlatform, bool showErrorMessageBox = true)
         {
             Dispose();
 
@@ -219,10 +219,10 @@ namespace IndustrialPark
             // SpongeBob Movie has some of these in native HIPs (e.g. BB02.hop)
             assetsWithError.RemoveAll(a =>
                 a.reason == ErrorReason.NoData && a.assetname.EndsWith(".ATBL"));
-            
-            if (assetsWithError.Any())
-                MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", assetsWithError), 
-                    $"{assetsWithError.Count} Asset(s) with errors", 
+
+            if (showErrorMessageBox && assetsWithError.Any())
+                MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", assetsWithError),
+                    $"{assetsWithError.Count} Asset(s) with errors",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             if (hipFile.HIPB != null && hipFile.HIPB.HasNoLayers != 0)
@@ -721,7 +721,7 @@ namespace IndustrialPark
                     // This ignores the error - but the SoundStream entries don't
                     // seem to appear in the asset editor if the SNDI was originally
                     // built in pre-2024.02.10.
-                    
+
                     bool assetIsSNDI = AHDR.assetType == AssetType.SoundInfo;
                     bool ahdrsMatchExcludingAssetId = Enumerable.SequenceEqual(AHDR.data.Skip(4), built.Skip(4));
 
@@ -1618,7 +1618,7 @@ namespace IndustrialPark
         }
 
         public ObservableCollection<Asset> CurrentlySelectedAssets { get; private set; } = new ObservableCollection<Asset>();
-        
+
 
         private static IList<Asset> allCurrentlySelectedAssets
         {
@@ -1633,7 +1633,7 @@ namespace IndustrialPark
                             currentlySelectedAssets.Add(assetToAdd);
                     }
                 }
-                    
+
                 return currentlySelectedAssets;
             }
         }
@@ -1660,7 +1660,7 @@ namespace IndustrialPark
         {
             foreach (var asset in CurrentlySelectedAssets)
                 asset.isSelected = false;
-            
+
             CurrentlySelectedAssets.Clear();
         }
 
