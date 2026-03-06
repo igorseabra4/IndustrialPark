@@ -763,42 +763,51 @@ namespace IndustrialPark
             }
 
             if (assetIDs.Count > 0)
-                foreach (uint assetID in assetIDs)
-                    if (GetFromAssetID(assetID) is AssetCAM cam)
-                    {
-                        cam.SetPosition(Program.MainForm.renderer.Camera.Position);
-                        cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
-                        cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
-                        cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
-                    }
-                    else if (GetFromAssetID(assetID) is IClickableAsset ica)
-                    {
-                        Vector3 delta = position - new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ);
+            {
+                Vector3 center = Vector3.Zero;
+                int count = 0;
 
-                        ica.PositionX = position.X;
-                        ica.PositionY = position.Y;
-                        ica.PositionZ = position.Z;
+                foreach (uint assetID in assetIDs)
+                    if (GetFromAssetID(assetID) is IClickableAsset ica)
+                    {
+                        center += new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ);
+                        count++;
+                    }
+
+                if (count > 0)
+                    center /= count;
+
+                foreach (uint assetID in assetIDs)
+                    if (GetFromAssetID(assetID) is IClickableAsset ica)
+                    {
+                        Vector3 groupDelta = count == 1 ? Vector3.Zero : (new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ) - center);
+                        Vector3 trigDelta = position - new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ);
+
+                        ica.PositionX = position.X + groupDelta.X;
+                        ica.PositionY = position.Y + groupDelta.Y;
+                        ica.PositionZ = position.Z + groupDelta.Z;
 
                         if (ica is AssetTRIG trig)
                         {
                             if (trig.Shape == TriggerShape.Box)
                             {
                                 trig.SetPositions(
-                                    trig.MinimumX + delta.X,
-                                    trig.MinimumY + delta.Y,
-                                    trig.MinimumZ + delta.Z,
-                                    trig.MaximumX + delta.X,
-                                    trig.MaximumY + delta.Y,
-                                    trig.MaximumZ + delta.Z);
+                                    trig.MinimumX + trigDelta.X + groupDelta.X,
+                                    trig.MinimumY + trigDelta.Y + groupDelta.Y,
+                                    trig.MinimumZ + trigDelta.Z + groupDelta.Z,
+                                    trig.MaximumX + trigDelta.X + groupDelta.X,
+                                    trig.MaximumY + trigDelta.Y + groupDelta.Y,
+                                    trig.MaximumZ + trigDelta.Z + groupDelta.Z);
                             }
                             else
                             {
-                                trig.MinimumX = position.X;
-                                trig.MinimumY = position.Y;
-                                trig.MinimumZ = position.Z;
+                                trig.MinimumX = position.X + groupDelta.X;
+                                trig.MinimumY = position.Y + groupDelta.Y;
+                                trig.MinimumZ = position.Z + groupDelta.Z;
                             }
                         }
                     }
+            }
 
             return null;
         }
