@@ -190,6 +190,11 @@ namespace IndustrialPark
                 Program.MainForm.SetToolStripItemName(this, Text);
                 Program.MainForm.SetRecentOpenedArchives(fileName);
             }
+
+            if (!archive.NoLayers && comboBoxLayers.SelectedIndex == -1)
+            {
+                comboBoxLayers.SelectedIndex = archive.GetFirstActiveLayerIndex();
+            }
         }
 
         private void SetupAssetVisibilityButtons()

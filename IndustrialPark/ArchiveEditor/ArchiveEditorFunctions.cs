@@ -468,6 +468,16 @@ namespace IndustrialPark
             (from Asset a in assetDictionary.Values select a.assetID).ToList() :
             Layers[SelectedLayerIndex].AssetIDs;
 
+        public int GetFirstActiveLayerIndex()
+        {
+            if (NoLayers || Layers.Count == 0)
+                return -1;
+            for (int i = 0; i < Layers.Count; i++)
+                if (Layers[i].AssetIDs.Count > 0)
+                    return i;
+            return 0;
+        }
+
         public void AddLayer(LayerType layerType = LayerType.DEFAULT)
         {
             if (NoLayers)
