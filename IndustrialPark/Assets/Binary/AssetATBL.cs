@@ -210,7 +210,7 @@ namespace IndustrialPark
 
     public class AnimationFile : GenericAssetDataContainer
     {
-        public int FileFlags { get; set; }
+        public FlagBitmask FileFlags { get; set; } = IntFlagsDescriptor();
         public AssetSingle Duration { get; set; }
         public AssetSingle TimeOffset { get; set; }
         public int[][] RawData { get; set; }
@@ -220,7 +220,7 @@ namespace IndustrialPark
 
         public AnimationFile()
         {
-            FileFlags = 240;
+            FileFlags.FlagValueInt = 240;
             Duration = 0f;
             TimeOffset = -1f;
             RawData = new int[1][];
@@ -232,7 +232,7 @@ namespace IndustrialPark
 
         public AnimationFile(EndianBinaryReader reader)
         {
-            FileFlags = reader.ReadInt32();
+            FileFlags.FlagValueInt = reader.ReadUInt32();
             Duration = reader.ReadSingle();
             TimeOffset = reader.ReadSingle();
             var animCount1 = reader.ReadInt16();
@@ -259,7 +259,7 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write(FileFlags);
+            writer.Write(FileFlags.FlagValueInt);
             writer.Write(Duration);
             writer.Write(TimeOffset);
             writer.Write((short)RawData.Length);
