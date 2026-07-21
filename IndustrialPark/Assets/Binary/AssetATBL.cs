@@ -220,8 +220,14 @@ namespace IndustrialPark
 
         public AnimationFile()
         {
+            FileFlags = 240;
+            Duration = 0f;
+            TimeOffset = -1f;
             RawData = new int[1][];
-            RawData[1] = new int[1];
+            RawData[0] = new int[1];
+            Physics = -1;
+            StartPose = -1;
+            EndPose = -1;
         }
 
         public AnimationFile(EndianBinaryReader reader)
