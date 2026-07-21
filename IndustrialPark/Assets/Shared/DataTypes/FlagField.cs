@@ -6,7 +6,7 @@ namespace IndustrialPark
     public class FlagField
     {
         private uint _flags;
-        public uint Flags
+        public uint FlagsValue
         {
             get => _flags;
             set
@@ -41,7 +41,7 @@ namespace IndustrialPark
             if (i < flagNames.Length && flagNames[i] != null)
                 flagName = flagNames[i];
             else
-                flagName = $"UnknownFlag_{i}";
+                flagName = $"Flag {i:d2}";
 
             dt.AddProperty(typeof(bool), $"Flag_{i}", GetFlag(i), flagName, "", "", true, false, false);
         }

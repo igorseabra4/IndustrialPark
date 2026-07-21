@@ -12,20 +12,20 @@ public class FlagBitmask : DynamicTypeDescriptor
     [Browsable(false)]
     public uint FlagValueInt
     {
-        get => _flagField.Flags;
-        set => _flagField.Flags = value;
+        get => _flagField.FlagsValue;
+        set => _flagField.FlagsValue = value;
     }
     [Browsable(false)]
     public ushort FlagValueShort
     {
-        get => (ushort)_flagField.Flags;
-        set => _flagField.Flags = value;
+        get => (ushort)_flagField.FlagsValue;
+        set => _flagField.FlagsValue = value;
     }
     [Browsable(false)]
     public byte FlagValueByte
     {
-        get => (byte)_flagField.Flags;
-        set => _flagField.Flags = value;
+        get => (byte)_flagField.FlagsValue;
+        set => _flagField.FlagsValue = value;
     }
 
     public override FlagBitmask DFD_FromComponent(object component)
