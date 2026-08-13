@@ -96,7 +96,7 @@ namespace IndustrialPark
                                         CreateDFFFromAssimp(filePath,
                                         a.checkBoxFlipUVs.Checked,
                                         a.checkBoxUseMeshColors.Checked,
-                                        a.radioButtonWhiteVCol.Checked
+                                        a.checkBoxAddWhiteVColors.Checked
                                         ),
                                         modelRenderWareVersion(game));
                             }

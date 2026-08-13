@@ -43,17 +43,12 @@
             this.checkBoxUseMeshColors = new System.Windows.Forms.CheckBox();
             this.checkBoxLedgeGrab = new System.Windows.Forms.CheckBox();
             this.checkBoxSolidSimps = new System.Windows.Forms.CheckBox();
-            this.grpImportSettings = new System.Windows.Forms.GroupBox();
-            this.radioButtonNoVCol = new System.Windows.Forms.RadioButton();
-            this.radioButtonWhiteVCol = new System.Windows.Forms.RadioButton();
             this.grpSIMP = new System.Windows.Forms.GroupBox();
             this.checkBoxUseExistingDefaultLayer = new System.Windows.Forms.CheckBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBoxAddWhiteVColors = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            this.grpImportSettings.SuspendLayout();
             this.grpSIMP.SuspendLayout();
-            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // comboBoxAssetTypes
@@ -139,8 +134,6 @@
             // checkBoxUseMeshColors
             // 
             resources.ApplyResources(this.checkBoxUseMeshColors, "checkBoxUseMeshColors");
-            this.checkBoxUseMeshColors.Checked = true;
-            this.checkBoxUseMeshColors.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxUseMeshColors.Name = "checkBoxUseMeshColors";
             this.checkBoxUseMeshColors.UseVisualStyleBackColor = true;
             // 
@@ -157,29 +150,6 @@
             this.checkBoxSolidSimps.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxSolidSimps.Name = "checkBoxSolidSimps";
             this.checkBoxSolidSimps.UseVisualStyleBackColor = true;
-            // 
-            // grpImportSettings
-            // 
-            this.grpImportSettings.Controls.Add(this.checkBoxFlipUVs);
-            this.grpImportSettings.Controls.Add(this.checkBoxEnableVcolors);
-            this.grpImportSettings.Controls.Add(this.checkBoxOverwrite);
-            resources.ApplyResources(this.grpImportSettings, "grpImportSettings");
-            this.grpImportSettings.Name = "grpImportSettings";
-            this.grpImportSettings.TabStop = false;
-            // 
-            // radioButtonNoVCol
-            // 
-            this.radioButtonNoVCol.Checked = true;
-            resources.ApplyResources(this.radioButtonNoVCol, "radioButtonNoVCol");
-            this.radioButtonNoVCol.Name = "radioButtonNoVCol";
-            this.radioButtonNoVCol.TabStop = true;
-            this.radioButtonNoVCol.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonWhiteVCol
-            // 
-            resources.ApplyResources(this.radioButtonWhiteVCol, "radioButtonWhiteVCol");
-            this.radioButtonWhiteVCol.Name = "radioButtonWhiteVCol";
-            this.radioButtonWhiteVCol.UseVisualStyleBackColor = true;
             // 
             // grpSIMP
             // 
@@ -199,14 +169,13 @@
             this.checkBoxUseExistingDefaultLayer.Name = "checkBoxUseExistingDefaultLayer";
             this.checkBoxUseExistingDefaultLayer.UseVisualStyleBackColor = true;
             // 
-            // groupBox3
+            // checkBoxAddWhiteVColors
             // 
-            this.groupBox3.Controls.Add(this.radioButtonWhiteVCol);
-            this.groupBox3.Controls.Add(this.radioButtonNoVCol);
-            this.groupBox3.Controls.Add(this.checkBoxUseMeshColors);
-            resources.ApplyResources(this.groupBox3, "groupBox3");
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.TabStop = false;
+            resources.ApplyResources(this.checkBoxAddWhiteVColors, "checkBoxAddWhiteVColors");
+            this.checkBoxAddWhiteVColors.Checked = true;
+            this.checkBoxAddWhiteVColors.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxAddWhiteVColors.Name = "checkBoxAddWhiteVColors";
+            this.checkBoxAddWhiteVColors.UseVisualStyleBackColor = true;
             // 
             // ImportModel
             // 
@@ -214,9 +183,12 @@
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.buttonCancel;
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.checkBoxFlipUVs);
+            this.Controls.Add(this.checkBoxAddWhiteVColors);
+            this.Controls.Add(this.checkBoxEnableVcolors);
+            this.Controls.Add(this.checkBoxOverwrite);
+            this.Controls.Add(this.checkBoxUseMeshColors);
             this.Controls.Add(this.grpSIMP);
-            this.Controls.Add(this.grpImportSettings);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.buttonCancel);
             this.Controls.Add(this.groupBox1);
@@ -229,19 +201,12 @@
             this.ShowIcon = false;
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
-            this.grpImportSettings.ResumeLayout(false);
-            this.grpImportSettings.PerformLayout();
             this.grpSIMP.ResumeLayout(false);
             this.grpSIMP.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
-
-        private System.Windows.Forms.GroupBox groupBox3;
-
-        private System.Windows.Forms.RadioButton radioButtonWhiteVCol;
-        private System.Windows.Forms.RadioButton radioButtonNoVCol;
 
         private System.Windows.Forms.CheckBox checkBoxUseExistingDefaultLayer;
 
@@ -261,7 +226,7 @@
         private System.Windows.Forms.CheckBox checkBoxUseMeshColors;
         private System.Windows.Forms.CheckBox checkBoxLedgeGrab;
         private System.Windows.Forms.CheckBox checkBoxSolidSimps;
-        private System.Windows.Forms.GroupBox grpImportSettings;
         private System.Windows.Forms.GroupBox grpSIMP;
+        private System.Windows.Forms.CheckBox checkBoxAddWhiteVColors;
     }
 }
