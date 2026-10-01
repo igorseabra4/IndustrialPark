@@ -42,6 +42,8 @@ namespace IndustrialPark
 
         public void ImportHip((HipFile, Game, Platform) hip, bool forceOverwrite)
         {
+            if (hip.Item2 == Game.Unknown)
+                hip.Item2 = game;
             if (hip.Item3 == Platform.Unknown)
                 hip.Item3 = platform;
 
