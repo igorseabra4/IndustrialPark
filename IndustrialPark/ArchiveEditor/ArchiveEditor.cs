@@ -1550,7 +1550,7 @@ namespace IndustrialPark
                 Path.GetFileName(currentFilepath) + "_IP_Report.txt");
 
 #if DEBUG
-            HipFile hip = HipFile.FromPath(currentFilepath).Item1;
+            HipFile hip = HipFile.FromPath(currentFilepath);
             if (!File.Exists(currentFilepath))
             {
                 MessageBox.Show($"HIP File \"{currentFilepath}\" not found");

@@ -158,12 +158,10 @@ namespace IndustrialPark
             currentlyOpenFilePath = fileName;
 
             HipFile hipFile;
-            Game game;
-            Platform platform;
 
             try
             {
-                (hipFile, game, platform) = HipFile.FromPath(fileName);
+                hipFile = HipFile.FromPath(fileName);
             }
             catch (Exception e)
             {
@@ -176,13 +174,13 @@ namespace IndustrialPark
             if (hipFile.HIPB.VersionMismatch)
                 MessageBox.Show($"Expected: {Section_HIPB.CurrentVersion}\nGot: {hipFile.HIPB.Version}\nAdditional data will be skipped", "Newer HIPB version detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            while (game == Game.Unknown)
-                game = ChooseGame.GetGame();
-            this.game = game;
+            while (hipFile.game == Game.Unknown)
+                hipFile.game = ChooseGame.GetGame();
+            game = hipFile.game;
 
-            while (platform == Platform.Unknown)
-                platform = ChoosePlatformDialog.GetPlatform();
-            this.platform = platform;
+            while (hipFile.platform == Platform.Unknown)
+                hipFile.platform = ChoosePlatformDialog.GetPlatform();
+            platform = hipFile.platform;
 
             List<AssetError> assetsWithError = new List<AssetError>();
 
@@ -307,7 +305,7 @@ namespace IndustrialPark
         {
             try
             {
-                File.WriteAllBytes(currentlyOpenFilePath, BuildHipFile().ToBytes(game, platform));
+                File.WriteAllBytes(currentlyOpenFilePath, BuildHipFile().ToBytes());
                 UnsavedChanges = false;
             }
             catch (Exception ex)
@@ -352,7 +350,7 @@ namespace IndustrialPark
 
             PACK.PMOD.modDate = (int)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds();
 
-            return new HipFile(new Section_HIPA(), PACK, DICT, new Section_STRM(), LegacySave ? null : HIPB);
+            return new HipFile(game, platform, new Section_HIPA(), PACK, DICT, new Section_STRM(), LegacySave ? null : HIPB);
         }
 
         private static int LayerTypeGenericToSpecific(LayerType layerType, Game game)
