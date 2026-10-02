@@ -6,12 +6,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Color = RenderWareFile.Color;
 
 namespace IndustrialPark.Models
 {
     public static class Assimp_IO
     {
+        public static Vertex3 ToVertex3(this System.Numerics.Vector3 v) => new Vertex3(v.X, v.Y, v.Z);
+        public static Vertex2 ToVertex2(this System.Numerics.Vector3 v) => new Vertex2(v.X, v.Y);
 
         public const int TRI_AND_VERTEX_LIMIT = 65535;
 
@@ -96,16 +97,16 @@ namespace IndustrialPark.Models
                         unusedFlags = 0,
                         color = useMeshColors ?
                         new RenderWareFile.Color(
-                            (byte)(m.ColorDiffuse.R * 255),
-                            (byte)(m.ColorDiffuse.G * 255),
-                            (byte)(m.ColorDiffuse.B * 255),
-                            (byte)(m.ColorDiffuse.A * 255)) : 
+                            (byte)(m.ColorDiffuse.X * 255),
+                            (byte)(m.ColorDiffuse.Y * 255),
+                            (byte)(m.ColorDiffuse.Z * 255),
+                            (byte)(m.ColorDiffuse.W * 255)) : 
                         new RenderWareFile.Color(255, 255, 255, 255),
                         unusedInt2 = 0x2DF53E84,
                         isTextured = m.HasTextureDiffuse ? 1 : 0,
-                        ambient = useMeshColors ? 1f : m.ColorAmbient.A,
-                        specular = useMeshColors ? 1f : m.ColorSpecular.A,
-                        diffuse = useMeshColors ? 1f : m.ColorDiffuse.A
+                        ambient = useMeshColors ? 1f : m.ColorAmbient.W,
+                        specular = useMeshColors ? 1f : m.ColorSpecular.W,
+                        diffuse = useMeshColors ? 1f : m.ColorDiffuse.W
                     },
                     texture = m.HasTextureDiffuse ? RWTextureFromAssimpMaterial(m.TextureDiffuse) : null,
                     materialExtension = new Extension_0003()
@@ -140,26 +141,26 @@ namespace IndustrialPark.Models
             {
                 int totalVertices = vertices.Count;
 
-                foreach (Vector3D v in m.Vertices)
-                    vertices.Add(new Vertex3(v.X, v.Y, v.Z));
+                foreach (var v in m.Vertices)
+                    vertices.Add(v.ToVertex3());
 
-                foreach (Vector3D v in m.Normals)
-                    normals.Add(new Vertex3(v.X, v.Y, v.Z));
+                foreach (var v in m.Normals)
+                    normals.Add(v.ToVertex3());
 
                 if (m.HasTextureCoords(0))
-                    foreach (Vector3D v in m.TextureCoordinateChannels[0])
-                        textCoords.Add(new Vertex2(v.X, v.Y));
+                    foreach (var v in m.TextureCoordinateChannels[0])
+                        textCoords.Add(v.ToVertex2());
                 else
                     for (int i = 0; i < m.VertexCount; i++)
-                        textCoords.Add(new Vertex2(0, 0));
+                        textCoords.Add(new Vertex2());
 
                 if (m.HasVertexColors(0))
-                    foreach (Color4D c in m.VertexColorChannels[0])
+                    foreach (var c in m.VertexColorChannels[0])
                         vertexColors.Add(new RenderWareFile.Color(
-                            (byte)(c.R * 255),
-                            (byte)(c.G * 255),
-                            (byte)(c.B * 255),
-                            (byte)(c.A * 255)));
+                            (byte)(c.X * 255),
+                            (byte)(c.Y * 255),
+                            (byte)(c.Z * 255),
+                            (byte)(c.W * 255)));
                 else if (addWhiteVertexColors)
                     for (int i = 0; i < m.VertexCount; i++)
                         vertexColors.Add(new RenderWareFile.Color(255, 255, 255, 255));
@@ -175,7 +176,7 @@ namespace IndustrialPark.Models
                         });
             }
 
-            BoundingSphere boundingSphere = BoundingSphere.FromPoints(vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray());
+            BoundingSphere boundingSphere = BoundingSphere.FromPoints(vertices.Select(v => new SharpDX.Vector3(v.X, v.Y, v.Z)).ToArray());
 
             var binMeshes = new List<BinMesh>(materials.Count);
 
@@ -372,23 +373,23 @@ namespace IndustrialPark.Models
 
             foreach (var m in scene.Meshes)
             {
-                foreach (Vector3D v in m.Vertices)
-                    vertices.Add(new Vertex3(v.X, v.Y, v.Z));
+                foreach (var v in m.Vertices)
+                    vertices.Add(v.ToVertex3());
 
                 if (m.HasTextureCoords(0))
-                    foreach (Vector3D v in m.TextureCoordinateChannels[0])
+                    foreach (var v in m.TextureCoordinateChannels[0])
                         textCoords.Add(new Vertex2(v.X, flipUVs ? -v.Y : v.Y));
                 else
                     for (int i = 0; i < m.VertexCount; i++)
                         textCoords.Add(new Vertex2());
 
                 if (m.HasVertexColors(0))
-                    foreach (Color4D c in m.VertexColorChannels[0])
+                    foreach (var c in m.VertexColorChannels[0])
                         vColors.Add(new RenderWareFile.Color(
-                            (byte)(c.R * 255),
-                            (byte)(c.G * 255),
-                            (byte)(c.B * 255),
-                            (byte)(c.A * 255)));
+                            (byte)(c.X * 255),
+                            (byte)(c.Y * 255),
+                            (byte)(c.Z * 255),
+                            (byte)(c.W * 255)));
                 else
                     for (int i = 0; i < m.VertexCount; i++)
                         vColors.Add(new RenderWareFile.Color(255, 255, 255, 255));
@@ -443,15 +444,15 @@ namespace IndustrialPark.Models
                         color = ignoreMeshColors ?
                        new RenderWareFile.Color(255, 255, 255, 255) :
                        new RenderWareFile.Color(
-                             (byte)(scene.Materials[i].ColorDiffuse.R / 255),
-                             (byte)(scene.Materials[i].ColorDiffuse.G / 255),
-                             (byte)(scene.Materials[i].ColorDiffuse.B / 255),
-                             (byte)(scene.Materials[i].ColorDiffuse.A / 255)),
+                             (byte)(scene.Materials[i].ColorDiffuse.X / 255),
+                             (byte)(scene.Materials[i].ColorDiffuse.Y / 255),
+                             (byte)(scene.Materials[i].ColorDiffuse.Z / 255),
+                             (byte)(scene.Materials[i].ColorDiffuse.W / 255)),
                         unusedInt2 = 0x2DF53E84,
                         isTextured = scene.Materials[i].HasTextureDiffuse ? 1 : 0,
-                        ambient = ignoreMeshColors ? 1f : scene.Materials[i].ColorAmbient.A,
-                        specular = ignoreMeshColors ? 1f : scene.Materials[i].ColorSpecular.A,
-                        diffuse = ignoreMeshColors ? 1f : scene.Materials[i].ColorDiffuse.A
+                        ambient = ignoreMeshColors ? 1f : scene.Materials[i].ColorAmbient.W,
+                        specular = ignoreMeshColors ? 1f : scene.Materials[i].ColorSpecular.W,
+                        diffuse = ignoreMeshColors ? 1f : scene.Materials[i].ColorDiffuse.W
                     },
                     texture = scene.Materials[i].HasTextureDiffuse ? RWTextureFromAssimpMaterial(scene.Materials[i].TextureDiffuse) : null,
                     materialExtension = new Extension_0003()
@@ -559,7 +560,6 @@ namespace IndustrialPark.Models
 
                 //latest = latest.Children[0];
             }
-
             new AssimpContext().ExportFile(scene, fileName, format.FormatId,
                 PostProcessSteps.Debone |
                 PostProcessSteps.FindInstances |
@@ -581,20 +581,30 @@ namespace IndustrialPark.Models
             {
                 var mat = world.materialList.materialList[i];
 
-                scene.Materials.Add(new Material()
+                var matdest = new Material()
                 {
-                    ColorDiffuse = new Color4D(
+                    ColorDiffuse = new System.Numerics.Vector4(
                         mat.materialStruct.color.R / 255f,
                         mat.materialStruct.color.G / 255f,
                         mat.materialStruct.color.B / 255f,
                         mat.materialStruct.color.A / 255f),
-                    TextureDiffuse = mat.materialStruct.isTextured != 0 ? new TextureSlot()
+                };
+
+                if (mat.materialStruct.isTextured != 0)
+                    matdest.TextureDiffuse = new TextureSlot()
                     {
                         FilePath = mat.texture.diffuseTextureName.stringString + textureExtension,
                         TextureType = TextureType.Diffuse
-                    } : default,
-                    Name = mat.materialStruct.isTextured != 0 ? "mat_" + mat.texture.diffuseTextureName.stringString : default,
-                });
+                    };
+
+                matdest.Name = "mat_";
+
+                if (mat.materialStruct.isTextured != 0)
+                    matdest.Name += mat.texture.diffuseTextureName.stringString;
+                else
+                    matdest.Name += i.ToString();
+
+                scene.Materials.Add(matdest);
 
                 scene.Meshes.Add(new Mesh(PrimitiveType.Triangle)
                 {
@@ -665,13 +675,13 @@ namespace IndustrialPark.Models
             foreach (Mesh mesh in scene.Meshes)
             {
                 foreach (Vertex3 v in atomic.atomicSectorStruct.vertexArray)
-                    mesh.Vertices.Add(new Vector3D(v.X, v.Y, v.Z));
+                    mesh.Vertices.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
 
                 foreach (Vertex2 v in atomic.atomicSectorStruct.uvArray)
-                    mesh.TextureCoordinateChannels[0].Add(new Vector3D(v.X, v.Y, 0f));
+                    mesh.TextureCoordinateChannels[0].Add(new System.Numerics.Vector3(v.X, v.Y, 0f));
 
                 foreach (RenderWareFile.Color c in atomic.atomicSectorStruct.colorArray)
-                    mesh.VertexColorChannels[0].Add(new Color4D(
+                    mesh.VertexColorChannels[0].Add(new System.Numerics.Vector4(
                         c.R / 255f,
                         c.G / 255f,
                         c.B / 255f,
@@ -734,18 +744,18 @@ namespace IndustrialPark.Models
                             if (n.declarations[j].declarationType == Declarations.Vertex)
                             {
                                 var v = vertexList_init[objectList[j]];
-                                mesh.Vertices.Add(new Vector3D(v.X, v.Y, v.Z));
+                                mesh.Vertices.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
                                 vcount++;
                             }
                             else if (n.declarations[j].declarationType == Declarations.Normal)
                             {
                                 var v = normalList_init[objectList[j]];
-                                mesh.Normals.Add(new Vector3D(v.X, v.Y, v.Z));
+                                mesh.Normals.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
                             }
                             else if (n.declarations[j].declarationType == Declarations.Color)
                             {
                                 var c = colorList_init[objectList[j]];
-                                mesh.VertexColorChannels[0].Add(new Color4D(
+                                mesh.VertexColorChannels[0].Add(new System.Numerics.Vector4(
                                         c.R / 255f,
                                         c.G / 255f,
                                         c.B / 255f,
@@ -754,7 +764,7 @@ namespace IndustrialPark.Models
                             else if (n.declarations[j].declarationType == Declarations.TextCoord)
                             {
                                 var v = textCoordList_init[objectList[j]];
-                                mesh.TextureCoordinateChannels[0].Add(new Vector3D(v.X, v.Y, 0f));
+                                mesh.TextureCoordinateChannels[0].Add(new System.Numerics.Vector3(v.X, v.Y, 0f));
                             }
                         }
                     }
@@ -804,11 +814,11 @@ namespace IndustrialPark.Models
 
                     Material material = new Material()
                     {
-                        ColorDiffuse = new Color4D(
-                                mat.materialStruct.color.R / 255f,
-                                mat.materialStruct.color.G / 255f,
-                                mat.materialStruct.color.B / 255f,
-                                mat.materialStruct.color.A / 255f),
+                        ColorDiffuse = new System.Numerics.Vector4(
+                            mat.materialStruct.color.R / 255f,
+                            mat.materialStruct.color.G / 255f,
+                            mat.materialStruct.color.B / 255f,
+                            mat.materialStruct.color.A / 255f),
                         Name = "default"
                     };
 
@@ -848,20 +858,20 @@ namespace IndustrialPark.Models
                         foreach (var v in geo.morphTargets[0].vertices)
                         {
                             var vt = Vector3.Transform((Vector3)Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix), worldTransform);
-                            mesh.Vertices.Add(new Vector3D(vt.X, vt.Y, vt.Z));
+                            mesh.Vertices.Add(new System.Numerics.Vector3(vt.X, vt.Y, vt.Z));
                         }
 
                         if ((geo.geometryFlags & GeometryFlags.hasNormals) != 0)
                             foreach (var v in geo.morphTargets[0].normals)
-                                mesh.Normals.Add(new Vector3D(v.X, v.Y, v.Z));
+                                mesh.Normals.Add(new System.Numerics.Vector3(v.X, v.Y, v.Z));
 
                         if ((geo.geometryFlags & GeometryFlags.hasTextCoords) != 0)
                             foreach (var v in geo.textCoords)
-                                mesh.TextureCoordinateChannels[0].Add(new Vector3D(v.X, v.Y, 0));
+                                mesh.TextureCoordinateChannels[0].Add(new System.Numerics.Vector3(v.X, v.Y, 0));
 
                         if ((geo.geometryFlags & GeometryFlags.hasVertexColors) != 0)
                             foreach (var color in geo.vertexColors)
-                                mesh.VertexColorChannels[0].Add(new Color4D(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
+                                mesh.VertexColorChannels[0].Add(new System.Numerics.Vector4(color.R / 255f, color.G / 255f, color.B / 255f, color.A / 255f));
 
                         foreach (var t in geo.triangles)
                             if (t.materialIndex == j)

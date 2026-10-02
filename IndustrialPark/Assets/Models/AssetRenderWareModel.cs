@@ -114,7 +114,7 @@ namespace IndustrialPark
 
         private int renderWareVersion;
 
-        protected RWSection[] ModelAsRWSections
+        public RWSection[] ModelAsRWSections
         {
             get
             {
@@ -429,9 +429,7 @@ namespace IndustrialPark
                     localBounds = BoundingSphere.FromPoints(points);
                     allVertices.AddRange(points);
                 }
-                geometryStruct.morphTargets[i].sphereCenter.X = localBounds.Center.X;
-                geometryStruct.morphTargets[i].sphereCenter.Y = localBounds.Center.Y;
-                geometryStruct.morphTargets[i].sphereCenter.Z = localBounds.Center.Z;
+                geometryStruct.morphTargets[i].sphereCenter = new Vertex3(localBounds.Center.X, localBounds.Center.Y, localBounds.Center.Z);
                 geometryStruct.morphTargets[i].radius = localBounds.Radius;
             }
         }
