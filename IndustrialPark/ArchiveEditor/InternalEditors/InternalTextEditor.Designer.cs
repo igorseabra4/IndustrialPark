@@ -98,6 +98,7 @@
             this.MaximizeBox = false;
             this.Name = "InternalTextEditor";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Asset Data Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalTextEditor_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);

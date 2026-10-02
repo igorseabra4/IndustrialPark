@@ -277,7 +277,7 @@
             this.MaximizeBox = false;
             this.Name = "AssetHeader";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Asset Header";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

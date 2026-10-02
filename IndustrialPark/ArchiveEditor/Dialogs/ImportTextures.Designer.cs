@@ -185,7 +185,7 @@
             this.MaximizeBox = false;
             this.Name = "ImportTextures";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Import Textures";
             this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);

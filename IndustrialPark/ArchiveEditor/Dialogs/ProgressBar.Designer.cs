@@ -49,13 +49,13 @@
             this.labelLoading.Location = new System.Drawing.Point(18, 58);
             this.labelLoading.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.labelLoading.Name = "labelLoading";
-            this.labelLoading.Size = new System.Drawing.Size(0, 20);
+            this.labelLoading.Size = new System.Drawing.Size(0, 13);
             this.labelLoading.TabIndex = 1;
             // 
             // ProgressBar
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-            this.ClientSize = new System.Drawing.Size(608, 78);
+            this.ClientSize = new System.Drawing.Size(604, 74);
             this.ControlBox = false;
             this.Controls.Add(this.labelLoading);
             this.Controls.Add(this.pBar);
@@ -67,7 +67,7 @@
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Opening Archive";
             this.ResumeLayout(false);
             this.PerformLayout();

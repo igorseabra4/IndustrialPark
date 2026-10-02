@@ -81,6 +81,7 @@
             this.MinimizeBox = false;
             this.Name = "ChoosePlatformDialog";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Choose Platform";
             this.ResumeLayout(false);
 

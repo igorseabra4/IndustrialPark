@@ -84,6 +84,7 @@
             this.MaximizeBox = false;
             this.Name = "InternalMultiAssetEditor";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Multi Asset Data Editor";
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

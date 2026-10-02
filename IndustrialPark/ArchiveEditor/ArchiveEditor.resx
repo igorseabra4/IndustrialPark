@@ -304,7 +304,7 @@
     <value>False</value>
   </data>
   <data name="importTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 22</value>
+    <value>189, 22</value>
   </data>
   <data name="importTexturesToolStripMenuItem.Text" xml:space="preserve">
     <value>Import</value>
@@ -313,19 +313,19 @@
     <value>False</value>
   </data>
   <data name="exportAllTexturesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 22</value>
+    <value>189, 22</value>
   </data>
   <data name="exportAllTexturesToolStripMenuItem.Text" xml:space="preserve">
     <value>Export All (PNG)</value>
   </data>
   <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 6</value>
+    <value>186, 6</value>
   </data>
   <data name="exportRW3ToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
   <data name="exportRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 22</value>
+    <value>189, 22</value>
   </data>
   <data name="exportRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Export TXD (RW3)</value>
@@ -334,7 +334,7 @@
     <value>False</value>
   </data>
   <data name="importRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 22</value>
+    <value>189, 22</value>
   </data>
   <data name="importRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Import TXD (RW3)</value>
@@ -343,7 +343,7 @@
     <value>False</value>
   </data>
   <data name="exportNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 22</value>
+    <value>189, 22</value>
   </data>
   <data name="exportNoRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Export TXD (No RW3)</value>
@@ -352,7 +352,7 @@
     <value>False</value>
   </data>
   <data name="importNoRW3ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>188, 22</value>
+    <value>189, 22</value>
   </data>
   <data name="importNoRW3ToolStripMenuItem.Text" xml:space="preserve">
     <value>Import TXD (No RW3)</value>
@@ -475,7 +475,7 @@
     <value>&amp;Generate Report</value>
   </data>
   <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>46, 22</value>
+    <value>47, 22</value>
   </data>
   <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Tools</value>
@@ -517,7 +517,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
@@ -565,7 +565,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>2</value>
   </data>
   <data name="groupBoxLayers.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Left, Right</value>
@@ -787,7 +787,7 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBoxLayers.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>1</value>
   </data>
   <data name="groupBoxAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
@@ -1310,7 +1310,7 @@ Focus</value>
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBoxAssets.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>0</value>
   </data>
   <metadata name="contextMenuStrip_ListBoxAssets.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
@@ -1424,7 +1424,7 @@ Focus</value>
     <value>Copy Asset Names</value>
   </data>
   <data name="contextMenuStrip_ListBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>223, 330</value>
+    <value>223, 308</value>
   </data>
   <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Name" xml:space="preserve">
     <value>contextMenuStrip_ListBoxAssets</value>

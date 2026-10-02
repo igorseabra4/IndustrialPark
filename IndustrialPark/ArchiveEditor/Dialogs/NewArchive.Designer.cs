@@ -141,13 +141,13 @@
             this.checkBoxDefaultAssets.Text = "Add Default Assets";
             this.checkBoxDefaultAssets.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // checkBoxNoLayers
             // 
             this.checkBoxNoLayers.AutoSize = true;
             this.checkBoxNoLayers.Checked = true;
             this.checkBoxNoLayers.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxNoLayers.Location = new System.Drawing.Point(140, 200);
-            this.checkBoxNoLayers.Name = "checkBox1";
+            this.checkBoxNoLayers.Name = "checkBoxNoLayers";
             this.checkBoxNoLayers.Size = new System.Drawing.Size(74, 17);
             this.checkBoxNoLayers.TabIndex = 17;
             this.checkBoxNoLayers.Text = "No Layers";
@@ -171,6 +171,7 @@
             this.MaximizeBox = false;
             this.Name = "NewArchive";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "PACK Settings";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

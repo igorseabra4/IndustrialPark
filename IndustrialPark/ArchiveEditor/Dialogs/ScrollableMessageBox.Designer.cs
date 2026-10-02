@@ -51,6 +51,7 @@
             this.Controls.Add(this.richTextBox1);
             this.Name = "ScrollableMessageBox";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.ResumeLayout(false);
 
         }

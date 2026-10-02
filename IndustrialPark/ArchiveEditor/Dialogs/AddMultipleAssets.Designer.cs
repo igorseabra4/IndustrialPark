@@ -153,7 +153,7 @@
             this.MaximizeBox = false;
             this.Name = "AddMultipleAssets";
             this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Add Multiple Assets";
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

@@ -30,7 +30,6 @@
         {
             this.propertyGridAsset = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.checkBoxMipmaps = new System.Windows.Forms.CheckBox();
             this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonExport = new System.Windows.Forms.Button();
             this.buttonImport = new System.Windows.Forms.Button();
@@ -39,6 +38,7 @@
             this.checkBoxFlipTextures = new System.Windows.Forms.CheckBox();
             this.checkBoxTransFix = new System.Windows.Forms.CheckBox();
             this.checkBoxCompress = new System.Windows.Forms.CheckBox();
+            this.checkBoxMipmaps = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -88,19 +88,6 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
             this.tableLayoutPanel1.TabIndex = 7;
-            // 
-            // checkBoxMipmaps
-            // 
-            this.checkBoxMipmaps.AutoSize = true;
-            this.checkBoxMipmaps.Checked = true;
-            this.checkBoxMipmaps.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxMipmaps.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.checkBoxMipmaps.Location = new System.Drawing.Point(3, 343);
-            this.checkBoxMipmaps.Name = "checkBoxMipmaps";
-            this.checkBoxMipmaps.Size = new System.Drawing.Size(166, 16);
-            this.checkBoxMipmaps.TabIndex = 15;
-            this.checkBoxMipmaps.Text = "Generate Mipmaps";
-            this.checkBoxMipmaps.UseVisualStyleBackColor = true;
             // 
             // buttonHelp
             // 
@@ -195,6 +182,19 @@
             this.checkBoxCompress.UseVisualStyleBackColor = true;
             this.checkBoxCompress.CheckedChanged += new System.EventHandler(this.checkBoxCompress_CheckedChanged);
             // 
+            // checkBoxMipmaps
+            // 
+            this.checkBoxMipmaps.AutoSize = true;
+            this.checkBoxMipmaps.Checked = true;
+            this.checkBoxMipmaps.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBoxMipmaps.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxMipmaps.Location = new System.Drawing.Point(3, 343);
+            this.checkBoxMipmaps.Name = "checkBoxMipmaps";
+            this.checkBoxMipmaps.Size = new System.Drawing.Size(166, 16);
+            this.checkBoxMipmaps.TabIndex = 15;
+            this.checkBoxMipmaps.Text = "Generate Mipmaps";
+            this.checkBoxMipmaps.UseVisualStyleBackColor = true;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -216,6 +216,7 @@
             this.MaximizeBox = false;
             this.Name = "InternalTextureEditor";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Asset Data Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalTextureEditor_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);

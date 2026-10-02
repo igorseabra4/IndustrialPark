@@ -30,6 +30,7 @@
         {
             this.propertyGridSpecific = new System.Windows.Forms.PropertyGrid();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            this.buttonHelp = new System.Windows.Forms.Button();
             this.buttonView = new System.Windows.Forms.Button();
             this.buttonFindCallers = new System.Windows.Forms.Button();
             this.buttonGetPos = new System.Windows.Forms.Button();
@@ -39,7 +40,6 @@
             this.buttonAdd = new System.Windows.Forms.Button();
             this.buttonPlay = new System.Windows.Forms.Button();
             this.labelFrame = new System.Windows.Forms.Label();
-            this.buttonHelp = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -85,6 +85,18 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
             this.tableLayoutPanel1.TabIndex = 8;
+            // 
+            // buttonHelp
+            // 
+            this.buttonHelp.AutoSize = true;
+            this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.buttonHelp.Location = new System.Drawing.Point(3, 396);
+            this.buttonHelp.Name = "buttonHelp";
+            this.buttonHelp.Size = new System.Drawing.Size(166, 22);
+            this.buttonHelp.TabIndex = 32;
+            this.buttonHelp.Text = "Open Wiki Page";
+            this.buttonHelp.UseVisualStyleBackColor = true;
+            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
             // 
             // buttonView
             // 
@@ -189,18 +201,6 @@
             this.labelFrame.TabIndex = 31;
             this.labelFrame.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // buttonHelp
-            // 
-            this.buttonHelp.AutoSize = true;
-            this.buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.buttonHelp.Location = new System.Drawing.Point(3, 396);
-            this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(166, 22);
-            this.buttonHelp.TabIndex = 32;
-            this.buttonHelp.Text = "Open Wiki Page";
-            this.buttonHelp.UseVisualStyleBackColor = true;
-            this.buttonHelp.Click += new System.EventHandler(this.buttonHelp_Click);
-            // 
             // InternalFlyEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -210,6 +210,7 @@
             this.MaximizeBox = false;
             this.Name = "InternalFlyEditor";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Asset Data Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalDynaEditor_FormClosing);
             this.tableLayoutPanel1.ResumeLayout(false);

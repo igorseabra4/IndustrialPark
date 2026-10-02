@@ -76,6 +76,7 @@
             this.MinimizeBox = false;
             this.Name = "RenameLayer";
             this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Rename Layer";
             this.ResumeLayout(false);
             this.PerformLayout();
