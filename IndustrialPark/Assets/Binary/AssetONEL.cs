@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -83,7 +84,7 @@ namespace IndustrialPark
     {
         public override string AssetInfo => $"{OneLiners.Length} entries";
 
-        [Category("One Liner")]
+        [Category("One Liner"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public OneLiner[] OneLiners { get; set; }
 
         private const int unkByteCount = 0x43;

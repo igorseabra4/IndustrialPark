@@ -295,22 +295,13 @@ namespace IndustrialPark
         }
         public int SubStateCount { get; set; }
 
-        private AnimationEffect[] _animationeffects;
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
-        public AnimationEffect[] AnimationEffects
-        {
-            get
-            {
-                DynamicTypeDescriptorCollectionEditor.game = game;
-                return _animationeffects;
-            }
-            set => _animationeffects = value;
-        }
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AnimationEffect[] AnimationEffects { get; set; }
 
         public AnimationState(Game game)
         {
             _game = game;
-            _animationeffects = new AnimationEffect[0];
+            AnimationEffects = new AnimationEffect[0];
         }
 
         public AnimationState(EndianBinaryReader reader, Game game) : this(game)
@@ -489,22 +480,12 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public AssetID ConstructFunc_Hash { get; set; }
-        [Category(categoryName), ValidReferenceRequired]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), ValidReferenceRequired]
         public AssetID[] Animations { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowCopy: false)]
         public AnimationFile[] AnimationFiles { get; set; }
-
-        private AnimationState[] _animationstate;
-        [Category(categoryName), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
-        public AnimationState[] AnimationStates
-        {
-            get
-            {
-                DynamicTypeDescriptorCollectionEditor.game = game;
-                return _animationstate;
-            }
-            set => _animationstate = value;
-        }
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowCopy: false)]
+        public AnimationState[] AnimationStates { get; set; }
 
         public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {

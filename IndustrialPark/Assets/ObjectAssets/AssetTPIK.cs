@@ -2,6 +2,7 @@
 using IndustrialPark.AssetEditorColors;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -90,7 +91,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Version { get; set; }
         private EntryTPIK[] _entries;
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public EntryTPIK[] Entries
         {
             get => _entries;

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -52,7 +53,7 @@ namespace IndustrialPark
     {
         public override string AssetInfo => $"{JAW_Entries.Length} entries";
 
-        [Category("Jaw Data")]
+        [Category("Jaw Data"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntryJAW[] JAW_Entries { get; set; }
 
         public AssetJAW(string assetName) : base(assetName, AssetType.JawDataTable)

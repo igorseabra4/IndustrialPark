@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -17,7 +18,7 @@ namespace IndustrialPark
         public AssetID Rumble_Hit { get; set; }
         public AssetID Rumble_Switch { get; set; }
         public FlagBitmask FxFlags { get; set; } = IntFlagsDescriptor();
-        [Category("xDestructibleAssetAttachedAnimList")]
+        [Description("xDestructibleAssetAttachedAnimList"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Animations { get; set; }
 
         public DestState()
@@ -100,7 +101,7 @@ namespace IndustrialPark
         public AssetSingle Respawn { get; set; }
         [Category(categoryName)]
         public byte TargetPriority { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public DestState[] States { get; set; }
 
         public AssetDEST(string assetName) : base(assetName, AssetType.Destructible)

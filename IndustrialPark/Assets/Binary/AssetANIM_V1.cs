@@ -1,7 +1,7 @@
-﻿using Assimp;
-using HipHopFile;
+﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -16,6 +16,8 @@ namespace IndustrialPark
         public short PositionX { get; set; }
         public short PositionY { get; set; }
         public short PositionZ { get; set; }
+
+        public AssetANIM_KeyFrame() { }
 
         public AssetANIM_KeyFrame(EndianBinaryReader reader)
         {
@@ -58,7 +60,7 @@ namespace IndustrialPark
         public AssetSingle ScaleY { get; set; }
         [Category(categoryName)]
         public AssetSingle ScaleZ { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetANIM_KeyFrame[] KeyFrames { get; set; }
         [Category(categoryName)]
         public AssetSingle[] Times { get; set; }

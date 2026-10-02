@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
 {
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class FSB3_File : GenericAssetDataContainer
     {
-        [TypeConverter(typeof(ExpandableObjectConverter))]
         public FSB3_Header Header { get; set; }
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public FSB3_SampleHeader[] SampleHeader { get; set; }
 
         public FSB3_File()

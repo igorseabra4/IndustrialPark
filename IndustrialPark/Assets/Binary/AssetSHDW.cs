@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -50,7 +51,7 @@ namespace IndustrialPark
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
-        [Category("Shadow Map")]
+        [Category("Shadow Map"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public EntrySHDW[] Entries { get; set; }
 
         public AssetSHDW(string assetName) : base(assetName, AssetType.ShadowTable)

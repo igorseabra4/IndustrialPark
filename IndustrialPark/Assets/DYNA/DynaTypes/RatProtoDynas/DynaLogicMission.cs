@@ -1,10 +1,8 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
@@ -22,7 +20,7 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         private AssetID[] _requiredMission { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowRemove: false, allowCopy: false)]
         public AssetID[] RequiredMission
         {
             get => _requiredMission;
@@ -45,7 +43,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public bool LoadInSlot { get; set; }
         private AssetID[] _task { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowRemove: false, allowCopy: false)]
         public AssetID[] Task
         {
             get => _task;

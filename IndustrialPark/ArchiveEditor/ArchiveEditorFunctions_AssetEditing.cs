@@ -994,7 +994,7 @@ namespace IndustrialPark
 
             foreach (uint u in assetIDs)
                 if (GetFromAssetID(u) is AssetMODL)
-                    entries.Add(new PipeInfo()
+                    entries.Add(new PipeInfo(game)
                     {
                         Model = u,
                         LightingMode = LightingMode.Prelight

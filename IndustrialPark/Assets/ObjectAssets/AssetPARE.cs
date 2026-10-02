@@ -92,7 +92,7 @@ namespace IndustrialPark
         public AssetSingle Interval { get; set; }
         [Category(categoryName), IgnoreVerification]
         public AssetID ParticleProperties { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public PareSpecific_Generic ParticleEmitterSettings { get; set; }
         [Category(categoryName)]
         public AssetID Emitter { get; set; }

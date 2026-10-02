@@ -271,7 +271,7 @@ namespace IndustrialPark
         private void buttonCreatePipeInfo_Click(object sender, EventArgs e)
         {
             var pipt = archive.GetPIPT(true);
-            var entry = new PipeInfo()
+            var entry = new PipeInfo(asset.game)
             {
                 Model = GetAssetID()
             };

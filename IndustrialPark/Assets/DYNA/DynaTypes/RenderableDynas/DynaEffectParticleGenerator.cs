@@ -160,7 +160,7 @@ namespace IndustrialPark
                 }
             }
         }
-        [Category(dynaCategoryNameParSystem), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(dynaCategoryNameParSystem)]
         public ParticleSystem_Generic ParticleSystem { get; set; }
 
         public DynaEffectParticleGenerator(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Effect__particle_generator, game, endianness)

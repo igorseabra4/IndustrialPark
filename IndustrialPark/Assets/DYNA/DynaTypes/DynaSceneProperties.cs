@@ -176,5 +176,24 @@ namespace IndustrialPark
 
             writer.BaseStream.Position = dynaDataEnd;
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (AssetVersion != EVersionIncrediblesOthers.Incredibles)
+            {
+                dt.RemoveProperty("WaterTileOffsetX");
+                dt.RemoveProperty("WaterTileOffsetY");
+                dt.RemoveProperty("NumCheckpoints");
+                dt.RemoveProperty("GrassDistFade");
+                dt.RemoveProperty("GrassDistCull");
+                dt.RemoveProperty("PiggyBank");
+                dt.RemoveProperty("MaxAnimationMem");
+                dt.RemoveProperty("MaxArtMem");
+                dt.RemoveProperty("MaxDesignMem");
+                dt.RemoveProperty("MaxProgrammingMem");
+            }
+
+            base.SetDynamicProperties(dt);
+        }
     }
 }

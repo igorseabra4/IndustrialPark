@@ -44,7 +44,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public VolumeSpecific_Generic VolumeShape { get; set; }
 
         [Category(categoryName)]

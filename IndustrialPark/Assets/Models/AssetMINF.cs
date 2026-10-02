@@ -3,6 +3,7 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using static IndustrialPark.ArchiveEditorFunctions;
 
@@ -29,7 +30,13 @@ namespace IndustrialPark
         public AssetSingle PosY { get; set; }
         public AssetSingle PosZ { get; set; }
 
-        public MinfReference() { }
+        public MinfReference()
+        {
+            RightX = 1f;
+            UpY = 1f;
+            AtZ = 1f;
+        }
+
         public MinfReference(EndianBinaryReader reader)
         {
             Model = reader.ReadUInt32();
@@ -69,6 +76,8 @@ namespace IndustrialPark
             writer.Write(PosY);
             writer.Write(PosZ);
         }
+
+        public override string ToString() => HexUIntTypeConverter.StringFromAssetID(Model);
     }
 
     public class MinfParam : GenericAssetDataContainer
@@ -82,9 +91,8 @@ namespace IndustrialPark
                 Type_Hex = (uint)value;
             }
         }
+        [Description("Value is a string (in this case, representing one or more numbers), but it's not an actual number - so be careful with the formatting! Anything you type will be accepted.")]
         public string Value { get; set; }
-
-        public string Value_Note => "Value is a string (in this case, representing one or more numbers), but it's not an actual number - so be careful with the formatting! Anything you type will be accepted";
 
         public MinfParam()
         {
@@ -164,11 +172,11 @@ namespace IndustrialPark
             set { BrainID = (uint)value; }
         }
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public MinfReference[] References { get; set; }
 
         private MinfParam[] _parameters;
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public MinfParam[] Parameters
         {
             get => _parameters;

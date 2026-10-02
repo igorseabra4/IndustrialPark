@@ -1,15 +1,8 @@
 ﻿using IndustrialPark.AssetEditorColors;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class ShrapnelLightInfo
+    public class ShrapnelLightInfo : GenericAssetDataContainer
     {
         public AssetSingle LightColorRed { get; set; }
         public AssetSingle LightColorGreen { get; set; }
@@ -47,7 +40,7 @@ namespace IndustrialPark
             Duration = reader.ReadSingle();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(LightColorRed);
             writer.Write(LightColorGreen);

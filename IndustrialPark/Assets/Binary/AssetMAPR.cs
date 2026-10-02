@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -33,7 +34,7 @@ namespace IndustrialPark
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
-        [Category("Surface Mapper")]
+        [Category("Surface Mapper"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public EntryMAPR[] Entries { get; set; }
 
         public AssetMAPR(string assetName) : base(assetName, AssetType.SurfaceMapper)

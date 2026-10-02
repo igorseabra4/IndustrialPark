@@ -398,7 +398,7 @@ namespace IndustrialPark
             return world;
         }
 
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Data")]
+        [Category(categoryName), DisplayName("Data")]
         public PlatSpecific_Generic PlatformSpecific { get; set; }
 
         private bool isSkyBox = false;

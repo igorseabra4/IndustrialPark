@@ -84,7 +84,6 @@ namespace IndustrialPark
 
         public AssetID AssetID { get; set; }
 
-        [TypeConverter(typeof(ExpandableObjectConverter))]
         public CutsceneDataData Data { get; set; }
 
         public CutsceneData(EndianBinaryReader reader, Game game, bool inTimeChunk = false)

@@ -1,11 +1,4 @@
-﻿using Assimp;
-using SharpDX;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SharpDX;
 
 namespace IndustrialPark
 {
@@ -17,12 +10,10 @@ namespace IndustrialPark
         Cylinder = 2
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class BoundType_Generic : GenericAssetDataContainer
     {
         public BoundType_Generic() { }
         public override void Serialize(EndianBinaryWriter writer) { }
-
     }
 
     public class xSphere : BoundType_Generic
@@ -180,8 +171,7 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class xBound
+    public class xBound : GenericAssetDataContainer
     {
         public sbyte xmin { get; set; }
         public sbyte ymin { get; set; }
@@ -281,7 +271,7 @@ namespace IndustrialPark
             reader.ReadInt32();
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(xmin);
             writer.Write(ymin);

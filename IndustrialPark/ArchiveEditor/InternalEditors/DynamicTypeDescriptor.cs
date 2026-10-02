@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IndustrialPark;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -6,6 +7,14 @@ using System.Drawing.Design;
 [TypeConverter(typeof(ExpandableObjectConverter))]
 public class DynamicTypeDescriptor : ICustomTypeDescriptor, INotifyPropertyChanged
 {
+    public static DynamicTypeDescriptor Create(object item)
+    {
+        DynamicTypeDescriptor dt = new DynamicTypeDescriptor(item.GetType());
+        if (item is GenericAssetDataContainer gadc)
+            gadc.SetDynamicProperties(dt);
+        return dt.FromComponent(item);
+    }
+
     private Type _type;
     private AttributeCollection _attributes;
     private TypeConverter _typeConverter;

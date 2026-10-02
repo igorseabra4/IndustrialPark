@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -50,7 +51,7 @@ namespace IndustrialPark
         public static Dictionary<uint, uint> pickEntries = new Dictionary<uint, uint>();
 
         private EntryPICK[] _entries;
-        [Category("Pickup Table")]
+        [Category("Pickup Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public EntryPICK[] Entries
         {
             get => _entries;

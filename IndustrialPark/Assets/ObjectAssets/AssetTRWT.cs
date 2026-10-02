@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -13,6 +14,7 @@ namespace IndustrialPark
         public AssetSingle DamageRadius { get; set; }
 
         public ThrowableEntry() { }
+
         public ThrowableEntry(EndianBinaryReader reader)
         {
             Model = reader.ReadUInt32();
@@ -24,13 +26,11 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
             writer.Write(Model);
             writer.Write(Type);
             writer.Write(Shrapnel);
             writer.Write(Damage);
             writer.Write(DamageRadius);
-
         }
 
         public override string ToString()
@@ -58,7 +58,7 @@ namespace IndustrialPark
 
         [Category(categoryName)]
         public int Version { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public ThrowableEntry[] Entries { get; set; }
 
         public AssetTRWT(string assetName) : base(assetName, AssetType.ThrowableTable, BaseAssetType.Unknown_Other)

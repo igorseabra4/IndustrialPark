@@ -12,7 +12,6 @@ namespace IndustrialPark
         Flicker
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class LaserBeam_Beam : GenericAssetDataContainer
     {
         public AssetID Texture { get; set; }
@@ -56,7 +55,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class LaserBeam_Ribbon : GenericAssetDataContainer
     {
         public AssetID Texture { get; set; }

@@ -19,9 +19,7 @@ namespace IndustrialPark
             this.archive = archive;
             this.updateListView = updateListView;
 
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
-            asset.SetDynamicProperties(dt);
-            propertyGridAsset.SelectedObject = dt.FromComponent(asset);
+            propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
 
             Text = $"[{asset.assetType}] {asset}";
 
@@ -263,7 +261,6 @@ namespace IndustrialPark
 
             tableLayoutPanel1.Controls.Add(listBox);
             tableLayoutPanel1.Controls.Add(buttonAdd);
-
         }
 
         private void SetupForUim(AssetUIM asset)
@@ -275,7 +272,7 @@ namespace IndustrialPark
 
             foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
             {
-                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add command: {uimct}", AutoSize = true };
+                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add: {uimct}", AutoSize = true };
                 buttonAdd.Click += (object sender, EventArgs e) =>
                 {
                     asset.AddEntry(uimct);

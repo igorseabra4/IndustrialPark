@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -95,13 +96,13 @@ namespace IndustrialPark
 
         private const string categoryName = "Sound Info: Xbox";
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntrySoundInfo_XBOX[] Entries_SND { get; set; }
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntrySoundInfo_XBOX[] Entries_SNDS { get; set; }
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntrySoundInfo_XBOX[] Entries_Sound_CIN { get; set; }
 
         public AssetSNDI_XBOX(string assetName) : base(assetName, AssetType.SoundInfo)

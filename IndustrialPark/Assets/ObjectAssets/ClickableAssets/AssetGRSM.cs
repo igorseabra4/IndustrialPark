@@ -3,6 +3,7 @@ using IndustrialPark.AssetEditorColors;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -62,9 +63,9 @@ namespace IndustrialPark
         public AssetSingle MaxY { get; set; }
         [Category(categoryName)]
         public AssetSingle MaxZ { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public GrassMeshVertex[] Vertices { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public DashTrackPortal[] Triangles { get; set; }
 
         [Browsable(false)]

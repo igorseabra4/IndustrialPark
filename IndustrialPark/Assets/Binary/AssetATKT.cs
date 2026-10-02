@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -8,6 +9,8 @@ namespace IndustrialPark
         public AssetID section { get; set; }
         public ushort start { get; set; }
         public ushort count { get; set; }
+
+        public AttackTableSection() { }
 
         public AttackTableSection(EndianBinaryReader reader)
         {
@@ -37,6 +40,8 @@ namespace IndustrialPark
         public byte input { get; set; }
         public byte power { get; set; }
         public AssetSingle startTime { get; set; }
+
+        public AttackTableEntry() { }
 
         public AttackTableEntry(EndianBinaryReader reader)
         {
@@ -81,6 +86,8 @@ namespace IndustrialPark
         public AssetSingle blendTime { get; set; }
         public uint flags { get; set; }
 
+        public AttackTableTransition() { }
+
         public AttackTableTransition(EndianBinaryReader reader)
         {
             sourceState = reader.ReadUInt32();
@@ -104,7 +111,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class AttackTableStateHitBoneInfo : GenericAssetDataContainer
     {
         public short bone { get; set; }
@@ -112,6 +118,8 @@ namespace IndustrialPark
         public AssetSingle boneOffsetY { get; set; }
         public AssetSingle boneOffsetZ { get; set; }
         public short atomic { get; set; }
+
+        public AttackTableStateHitBoneInfo() { }
 
         public AttackTableStateHitBoneInfo(EndianBinaryReader reader)
         {
@@ -136,11 +144,12 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class AttackTableStateEffectBone : GenericAssetDataContainer
     {
         public short bone { get; set; }
         public int position { get; set; }
+
+        public AttackTableStateEffectBone() { }
 
         public AttackTableStateEffectBone(EndianBinaryReader reader)
         {
@@ -211,6 +220,18 @@ namespace IndustrialPark
         public AssetSingle comboBonus { get; set; }
         public short comboType { get; set; }
         public short powerBonus { get; set; }
+
+        public AttackTableState()
+        {
+            hitBone1 = new AttackTableStateHitBoneInfo();
+            hitBone2 = new AttackTableStateHitBoneInfo();
+            hitBone3 = new AttackTableStateHitBoneInfo();
+            hitBone4 = new AttackTableStateHitBoneInfo();
+            effectBoneOutside1 = new AttackTableStateEffectBone();
+            effectBoneOutside2 = new AttackTableStateEffectBone();
+            effectBoneInside1 = new AttackTableStateEffectBone();
+            effectBoneInside2 = new AttackTableStateEffectBone();
+        }
 
         public AttackTableState(EndianBinaryReader reader)
         {
@@ -331,13 +352,13 @@ namespace IndustrialPark
     {
         private const string categoryName = "Attack Table";
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AttackTableSection[] Sections { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AttackTableEntry[] Entries { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AttackTableTransition[] Transitions { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AttackTableState[] States { get; set; }
 
         public AssetATKT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)

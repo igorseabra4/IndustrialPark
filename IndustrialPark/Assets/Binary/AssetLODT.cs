@@ -86,14 +86,10 @@ namespace IndustrialPark
         public static float MaxDistanceTo(uint _model) => maxDistances.ContainsKey(_model) ? maxDistances[_model] : SharpRenderer.DefaultLODTDistance;
 
         private EntryLODT[] _entries;
-        [Category("Level Of Detail Table"), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category("Level Of Detail Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public EntryLODT[] Entries
         {
-            get
-            {
-                DynamicTypeDescriptorCollectionEditor.game = game;
-                return _entries;
-            }
+            get => _entries;
             set
             {
                 _entries = value;

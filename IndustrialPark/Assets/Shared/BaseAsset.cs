@@ -22,12 +22,6 @@ namespace IndustrialPark
 
         [Category(categoryName), Browsable(false)]
         public ushort BaseFlags { get; set; }
-        //ShortFlagsDescriptor(
-        //        "Enabled On Start",
-        //        "State Is Persistent",
-        //        "Unknown Always True",
-        //        "Visible During Cutscenes",
-        //        "Receive Shadows");
 
         [Category(categoryName), DisplayName("Enabled On Start")]
         public bool EnabledOnStart

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -19,8 +20,7 @@ namespace IndustrialPark
         Step = 0x0B354BD4,
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
-    public class StructPARP
+    public class StructPARP : GenericAssetDataContainer
     {
         public AssetSingle Interp_0 { get; set; }
         public AssetSingle Interp_1 { get; set; }
@@ -45,7 +45,7 @@ namespace IndustrialPark
             this.index = index;
         }
 
-        public void Serialize(EndianBinaryWriter writer)
+        public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Interp_0);
             writer.Write(Interp_1);
@@ -104,7 +104,7 @@ namespace IndustrialPark
         public AssetID ParticleSystem { get; set; }
         [Category(categoryName)]
         private StructPARP[] _structs { get; set; }
-        [Category(categoryName), Description("Each of the 14 structs has a different function. Check wiki page for more info.")]
+        [Category(categoryName), Description("Each of the 14 structs has a different function. Check wiki page for more info."), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowRemove: false, allowCopy: false, allowReorder: false)]
         public StructPARP[] Structs
         {
             get => _structs;

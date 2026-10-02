@@ -15,7 +15,6 @@ namespace IndustrialPark
         Inner = 3,
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class CreditsTextBox : GenericAssetDataContainer
     {
         public FontEnum Font { get; set; }
@@ -56,7 +55,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class CreditsTexture : GenericAssetDataContainer
     {
         public AssetID TextureAssetID { get; set; }
@@ -286,7 +284,7 @@ namespace IndustrialPark
         public AssetSingle FadeOutBegin { get; set; }
         [Category(categoryName)]
         public AssetSingle FadeOutEnd { get; set; }
-        [Category("Preset"), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category("Preset"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false)]
         public CreditsPreset[] Presets { get; set; }
         [Category("Preset"), Editor(typeof(CrdtAddEditor), typeof(UITypeEditor))]
         public string AddTextbox
@@ -317,7 +315,7 @@ namespace IndustrialPark
                 }
             }
         }
-        [Category("Titles")]
+        [Category("Titles"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public CreditsHunk[] Titles { get; set; }
 
         public CreditsEntry()
@@ -399,7 +397,7 @@ namespace IndustrialPark
         public uint State { get; set; }
         [Category(categoryName)]
         public AssetSingle TotalTime { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public CreditsEntry[] Sections { get; set; }
 
         public AssetCRDT(string assetName, Game game) : base(assetName, AssetType.Credits)

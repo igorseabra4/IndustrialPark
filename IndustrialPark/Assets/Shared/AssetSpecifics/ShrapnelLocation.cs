@@ -14,7 +14,6 @@ namespace IndustrialPark
         LocTagUpdated,
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class ShrapnelLocation : GenericAssetDataContainer
     {
         private byte padB => (byte)((game >= Game.ROTU) ? 0x00 : 0xCD);

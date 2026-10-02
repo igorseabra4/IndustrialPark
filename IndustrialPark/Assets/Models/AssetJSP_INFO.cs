@@ -18,15 +18,15 @@ namespace IndustrialPark
         [Category(categoryName)]
         public Platform Platform { get; set; }
 
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public CollisionData_Section1_00BEEF01 Section1 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public CollisionData_Section2_00BEEF02 Section2 { get; set; }
         [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
         public GenericSection Section2_Data { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public CollisionData_Section3_00BEEF03 Section3 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public CollisionData_Section4_00BEEF04 Section4 { get; set; }
 
         public AssetJSP_INFO(Section_AHDR AHDR, Game game, Platform platform, AssetID[] jspAssetIds) : base(AHDR, game)

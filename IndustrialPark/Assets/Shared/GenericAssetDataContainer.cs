@@ -1,8 +1,6 @@
-﻿using DiscordRPC;
-using HipHopFile;
+﻿using HipHopFile;
 using Newtonsoft.Json;
 using SharpDX;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -10,6 +8,7 @@ using System.Reflection;
 
 namespace IndustrialPark
 {
+    [TypeConverter(typeof(ExpandableObjectConverter))]
     public abstract class GenericAssetDataContainer
     {
         [JsonProperty]

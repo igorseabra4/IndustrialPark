@@ -278,18 +278,15 @@ namespace IndustrialPark
         [Category(categoryName)]
         public ushort PipePad { get; set; }
 
-        public PipeInfo()
+        public PipeInfo(Game game)
         {
+            _game = game;
+
             Model = 0;
             SubObjectBits.FlagValueInt = 0xFFFFFFFF;
             UnknownFlagB = 9;
             UnknownFlagC = 4;
             UnknownFlagJ = 2;
-        }
-
-        public PipeInfo(Game game) : this()
-        {
-            _game = game;
         }
 
         public override string ToString()
@@ -355,14 +352,10 @@ namespace IndustrialPark
         public override string AssetInfo => $"{Entries.Length} entries";
 
         private PipeInfo[] _entries { get; set; }
-        [Category("Pipe Info Table"), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category("Pipe Info Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public PipeInfo[] Entries
         {
-            get
-            {
-                DynamicTypeDescriptorCollectionEditor.game = game;
-                return _entries;
-            }
+            get => _entries;
             set
             {
                 _entries = value;
@@ -453,7 +446,7 @@ namespace IndustrialPark
             var entries = Entries.ToList();
             foreach (var i in items)
                 if (!entries.Any(e => e.Model == i))
-                    entries.Add(new PipeInfo() { Model = i, PipeFlags_Preset = PiptPreset.AlphaBlend });
+                    entries.Add(new PipeInfo(game) { Model = i, PipeFlags_Preset = PiptPreset.AlphaBlend });
             Entries = entries.ToArray();
         }
 

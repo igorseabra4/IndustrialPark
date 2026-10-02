@@ -2,6 +2,7 @@
 using IndustrialPark.AssetEditorColors;
 using System;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -20,7 +21,11 @@ namespace IndustrialPark
         public AssetSingle rotation { get; set; }
         public byte Enabled { get; set; }
 
-        public UIBoxPart() { }
+        public UIBoxPart()
+        {
+            Color = new AssetColor();
+        }
+
         public UIBoxPart(EndianBinaryReader reader)
         {
             Texture = reader.ReadUInt32();
@@ -68,7 +73,7 @@ namespace IndustrialPark
         protected override short constVersion => 2;
 
         private UIBoxPart[] _parts { get; set; }
-        [Category(dynaCategoryName), Description("UI Box must have exactly 9 parts")]
+        [Category(dynaCategoryName), Description("UI Box must have exactly 9 parts"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowRemove: false, allowCopy: false)]
         public UIBoxPart[] parts
         {
             get => _parts;

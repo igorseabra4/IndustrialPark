@@ -62,7 +62,7 @@ namespace IndustrialPark
             return world;
         }
 
-        [Category("\tMotion"), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category("\tMotion")]
         public Motion Motion { get; set; }
     }
 }

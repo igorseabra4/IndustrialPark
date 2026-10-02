@@ -156,6 +156,12 @@
     <Compile Include="ArchiveEditor\Dialogs\ChooseGame.Designer.cs">
       <DependentUpon>ChooseGame.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\CollectionEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArchiveEditor\Dialogs\CollectionEditor.Designer.cs">
+      <DependentUpon>CollectionEditor.cs</DependentUpon>
+    </Compile>
     <Compile Include="ArchiveEditor\Dialogs\RWAnalyze.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -248,6 +254,7 @@
     <Compile Include="Assets\Shared\AssetSpecifics\ParticleSystem.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\ShrapnelLightInfo.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\xBound.cs" />
+    <Compile Include="Assets\Shared\Editors\AssetIdWrapper.cs" />
     <Compile Include="Assets\Shared\Editors\ByteArrayEditor.cs" />
     <Compile Include="Assets\Shared\AssetSpecifics\Cutscene.cs" />
     <Compile Include="Assets\Shared\Editors\CrdtAddEditor.cs" />
@@ -686,6 +693,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\ChooseGame.resx">
       <DependentUpon>ChooseGame.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArchiveEditor\Dialogs\CollectionEditor.resx">
+      <DependentUpon>CollectionEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ArchiveEditor\Dialogs\RWAnalyze.resx">
       <DependentUpon>RWAnalyze.cs</DependentUpon>

@@ -1,9 +1,6 @@
 ﻿using HipHopFile;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -51,15 +48,25 @@ namespace IndustrialPark
     }
     public class AssetCCRV : BaseAsset
     {
+        private const string categoryName = "Camera Curve";
+
         public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(mCurveID)}";
 
+        [Category(categoryName)]
         public AssetByte mVersion { get; set; }
+        [Category(categoryName)]
         public int mCameraType { get; set; }
+        [Category(categoryName)]
         public FlagBitmask mFlags { get; set; } = IntFlagsDescriptor();
+        [Category(categoryName)]
         public int mTransitionType { get; set; }
+        [Category(categoryName)]
         public AssetSingle mTransitionTime { get; set; }
+        [Category(categoryName)]
         public AssetID mCurveID { get; set; }
+        [Category(categoryName)]
         public AssetID mCurveID2 { get; set; }
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public CameraCurveBear[] CurveBeads { get; set; }
 
         public AssetCCRV(string assetName) : base(assetName, AssetType.CameraCurve, BaseAssetType.CameraCurve)

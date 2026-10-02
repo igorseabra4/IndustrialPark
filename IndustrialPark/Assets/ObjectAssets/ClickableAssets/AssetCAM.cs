@@ -121,7 +121,7 @@ namespace IndustrialPark
                 }
             }
         }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Data")]
+        [Category(categoryName), DisplayName("Data")]
         public CamSpecific_Generic CamSpecific { get; set; }
         [Category(categoryName)]
         public FlagBitmask ValidFlags { get; set; } = IntFlagsDescriptor();

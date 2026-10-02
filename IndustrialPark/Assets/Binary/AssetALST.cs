@@ -1,13 +1,16 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
 {
     public class AssetALST : Asset, IAssetAddSelected
     {
-        [Category("Animation List")]
+        private const string categoryName = "Animation List";
+
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Animations { get; set; }
 
         public AssetALST(string assetName) : base(assetName, AssetType.AnimationList)

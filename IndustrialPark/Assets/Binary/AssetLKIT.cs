@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
+using System.Drawing.Design;
 
 namespace IndustrialPark
 {
@@ -108,7 +109,7 @@ namespace IndustrialPark
         private const string categoryName = "Light Kit";
         [Category(categoryName)]
         public AssetID Group { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public LightKitLight[] Lights { get; set; }
         [Category(categoryName)]
         public int Blended { get; set; }

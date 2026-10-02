@@ -16,18 +16,7 @@ namespace IndustrialPark
             this.archive = archive;
             this.updateListView = updateListView;
 
-            var typeDescriptors = new List<DynamicTypeDescriptor>();
-
-            labelAssetName.Text = "";
-
-            foreach (var asset in assets)
-            {
-                DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
-                asset.SetDynamicProperties(dt);
-                typeDescriptors.Add(dt.FromComponent(asset));
-            }
-
-            propertyGridAsset.SelectedObjects = typeDescriptors.ToArray();
+            propertyGridAsset.SelectedObjects = assets.Select(a => DynamicTypeDescriptor.Create(a)).ToArray();
             labelAssetName.Text = string.Join(" | ", from Asset asset in assets select asset.assetName);
         }
 

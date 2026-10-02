@@ -3,7 +3,6 @@ using System.ComponentModel;
 
 namespace IndustrialPark
 {
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zSurfMatFX : GenericAssetDataContainer
     {
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
@@ -37,7 +36,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zSurfColorFX : GenericAssetDataContainer
     {
         public FlagBitmask Flags { get; set; } = ShortFlagsDescriptor();
@@ -60,7 +58,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zSurfTextureAnim : GenericAssetDataContainer
     {
         public short Padding { get; set; }
@@ -88,7 +85,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zSurfUVFX : GenericAssetDataContainer
     {
         public int Mode { get; set; }
@@ -202,7 +198,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zFootstepsData : GenericAssetDataContainer
     {
         public AssetID ParticleEmitter;
@@ -228,7 +223,6 @@ namespace IndustrialPark
         }
     }
 
-    [TypeConverter(typeof(ExpandableObjectConverter))]
     public class zHitDecalData : GenericAssetDataContainer
     {
         public AssetID Texture;

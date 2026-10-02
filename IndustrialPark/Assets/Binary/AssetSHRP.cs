@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.IO;
 using System.Linq;
 
 namespace IndustrialPark
@@ -14,7 +13,7 @@ namespace IndustrialPark
 
         private const string categoryName = "Shrapnel";
 
-        [Category(categoryName), Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false)]
         public Shrapnel[] Entries { get; set; }
         [Browsable(false)]
         public AssetID ThisAssetID { get; set; }

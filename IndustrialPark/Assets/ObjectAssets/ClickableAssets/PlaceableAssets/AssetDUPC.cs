@@ -37,7 +37,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int UnknownInt_30 { get; set; }
 
-        [Category(categoryName2), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName2)]
         public AssetVIL NPC { get; set; }
 
         public AssetDUPC(string assetName, Vector3 position) : base(assetName, AssetType.Duplicator, BaseAssetType.Duplicator)

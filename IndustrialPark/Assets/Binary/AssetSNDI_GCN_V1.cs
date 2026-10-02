@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -107,11 +108,11 @@ namespace IndustrialPark
 
         private const string categoryName = "Sound Info: GCN V1";
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntrySoundInfo_GCN_V1[] Entries_SND { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntrySoundInfo_GCN_V1[] Entries_SNDS { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntrySoundInfo_GCN_V1[] Entries_Sound_CIN { get; set; }
 
         public AssetSNDI_GCN_V1(string assetName) : base(assetName, AssetType.SoundInfo)

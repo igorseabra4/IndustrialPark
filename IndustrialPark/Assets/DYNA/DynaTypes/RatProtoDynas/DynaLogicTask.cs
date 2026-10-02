@@ -1,10 +1,8 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
@@ -27,7 +25,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public ezTaskAvailability InitialAvailability { get; set; }
         private AssetID[] _requiredTask;
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowRemove: false, allowCopy: false)]
         public AssetID[] RequiredTask
         {
             get => _requiredTask;

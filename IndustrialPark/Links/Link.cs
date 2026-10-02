@@ -13,6 +13,7 @@ namespace IndustrialPark
         Progress
     }
 
+    [JsonObject]
     public class Link : GenericAssetDataContainer
     {
         public static int sizeOfStruct => 32;

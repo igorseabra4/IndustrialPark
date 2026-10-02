@@ -1,10 +1,8 @@
 ﻿using HipHopFile;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
@@ -15,6 +13,8 @@ namespace IndustrialPark
         public short QuatX { get; set; }
         public short QuatY { get; set; }
         public short QuatZ { get; set; }
+
+        public AssetANIM_KeyFrame_V2() { }
 
         public AssetANIM_KeyFrame_V2(EndianBinaryReader reader)
         {
@@ -54,7 +54,7 @@ namespace IndustrialPark
         public AssetSingle ScaleY { get; set; }
         [Category(categoryName)]
         public AssetSingle ScaleZ { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetANIM_KeyFrame_V2[] KeyFrames { get; set; }
         [Category(categoryName)]
         public short[] Times { get; set; }
@@ -76,10 +76,9 @@ namespace IndustrialPark
                 ScaleY = reader.ReadSingle();
                 ScaleZ = reader.ReadSingle();
 
-                var keyframes = new List<AssetANIM_KeyFrame_V2>();
+                KeyFrames = new AssetANIM_KeyFrame_V2[KeyCount];
                 for (int i = 0; i < KeyCount; i++)
-                    keyframes.Add(new AssetANIM_KeyFrame_V2(reader));
-                KeyFrames = keyframes.ToArray();
+                    KeyFrames[i] = new AssetANIM_KeyFrame_V2(reader);
 
                 var times = new List<short>();
                 for (int i = 0; i < TimeCount; i++)

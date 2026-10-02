@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Drawing;
+using System.Drawing.Design;
 using System.Linq;
 using System.Runtime.Remoting.Channels;
 using System.Text;
@@ -80,9 +81,10 @@ namespace IndustrialPark
 
         private const string categoryName = "Sound Info: PS2";
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false) ]
         public EntrySoundInfo_PS2[] Entries_SND { get; set; }
-        [Category(categoryName)]
+
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
         public EntrySoundInfo_PS2[] Entries_SNDS { get; set; }
 
         [Category(categoryName)]
