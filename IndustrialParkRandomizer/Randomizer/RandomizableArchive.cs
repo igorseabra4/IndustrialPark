@@ -2953,7 +2953,7 @@ namespace IndustrialPark.Randomizer
         private void ProgUnimportHip(string folderName, string fileName)
         {
             string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
-            UnimportHip(HipFile.FromPath(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName)).Item1.DICT);
+            UnimportHip(HipFile.FromPath(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName)).DICT);
         }
 
         public void UnimportHip(Section_DICT dict)
