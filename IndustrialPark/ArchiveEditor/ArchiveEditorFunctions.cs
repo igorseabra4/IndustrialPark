@@ -462,9 +462,9 @@ namespace IndustrialPark
             + (string.IsNullOrWhiteSpace(Layers[index].LayerName) ? Layers[index].Type.ToString() : Layers[index].LayerName)
             + " [" + Layers[index].AssetIDs.Count() + "]";
 
-        public List<uint> GetAssetIDsOnLayer() => NoLayers ?
+        public List<uint> GetAssetIDsOnLayer(int layer = -1) => NoLayers ?
             (from Asset a in assetDictionary.Values select a.assetID).ToList() :
-            Layers[SelectedLayerIndex].AssetIDs;
+            Layers[layer == -1 ? SelectedLayerIndex : layer].AssetIDs;
 
         public int GetFirstActiveLayerIndex()
         {

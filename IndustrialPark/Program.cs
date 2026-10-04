@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IndustrialPark.SaveFile;
+using System;
 using System.IO;
 using System.Windows.Forms;
 
@@ -10,6 +11,7 @@ namespace IndustrialPark
         public static ViewConfig ViewConfig;
         public static AboutBox AboutBox;
         public static UserTemplateManager UserTemplateManager;
+        public static HansMainForm HansMainForm;
 
         public static EventSearch EventSearch;
         public static DynaSearch DynaSearch;
@@ -42,6 +44,7 @@ namespace IndustrialPark
             ViewConfig = new ViewConfig();
             AboutBox = new AboutBox();
             UserTemplateManager = new UserTemplateManager();
+            HansMainForm = new HansMainForm();
 
             Application.Run(MainForm);
         }

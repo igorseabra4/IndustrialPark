@@ -794,6 +794,39 @@
     <Compile Include="Research\EventSearch.Designer.cs">
       <DependentUpon>EventSearch.cs</DependentUpon>
     </Compile>
+    <Compile Include="SaveFile\AddSectionDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SaveFile\AddSectionDialog.Designer.cs">
+      <DependentUpon>AddSectionDialog.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SaveFile\BitReader.cs" />
+    <Compile Include="SaveFile\Sections\Block.cs" />
+    <Compile Include="SaveFile\Sections\Enums\SaveFileGame.cs" />
+    <Compile Include="SaveFile\Sections\Enums\Rumble.cs" />
+    <Compile Include="SaveFile\Sections\Enums\SaveFileSection.cs" />
+    <Compile Include="SaveFile\Sections\Enums\SoundMode.cs" />
+    <Compile Include="SaveFile\Sections\Enums\ThumbIcon.cs" />
+    <Compile Include="SaveFile\Sections\Section_CNTR.cs" />
+    <Compile Include="SaveFile\Sections\Section_GDAT.cs" />
+    <Compile Include="SaveFile\Sections\Section_LEDR.cs" />
+    <Compile Include="SaveFile\Sections\Section_PLYR.cs" />
+    <Compile Include="SaveFile\Sections\Section_PREF_BFBB.cs" />
+    <Compile Include="SaveFile\Sections\Section_PREF_Scoo.cs" />
+    <Compile Include="SaveFile\Sections\Section_PREF_TSSM.cs" />
+    <Compile Include="SaveFile\Sections\Section_ROOM.cs" />
+    <Compile Include="SaveFile\Sections\Section_Scene.cs" />
+    <Compile Include="SaveFile\Sections\Section_SFIL.cs" />
+    <Compile Include="SaveFile\Sections\Section_SVID.cs" />
+    <Compile Include="SaveFile\Extensions.cs" />
+    <Compile Include="SaveFile\HansMainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SaveFile\HansMainForm.Designer.cs">
+      <DependentUpon>HansMainForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SaveFile\SaveFileScene.cs" />
+    <Compile Include="SaveFile\SaveFileManager.cs" />
     <Compile Include="SharpDX\Camera\CameraVectors.cs" />
     <Compile Include="SharpDX\Camera\ProjectionMatrix.cs" />
     <Compile Include="SharpDX\Camera\ViewMatrix.cs" />
@@ -859,6 +892,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm\ViewConfig.resx">
       <DependentUpon>ViewConfig.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveFile\AddSectionDialog.resx">
+      <DependentUpon>AddSectionDialog.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SaveFile\HansMainForm.resx">
+      <DependentUpon>HansMainForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="release.cmd">
