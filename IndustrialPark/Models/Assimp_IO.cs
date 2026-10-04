@@ -369,13 +369,14 @@ namespace IndustrialPark.Models
             //Dictionary<System.Numerics.Vector3, ushort> uvIndices2 = new();
             //Dictionary<System.Numerics.Vector4, ushort> colorIndices = new();
 
-            Dictionary<int, Matrix> meshTransforms = new();
-            void CollectMeshTransforms(Node node, Matrix parentTransform)
+            Dictionary<int, SharpDX.Matrix> meshTransforms = new();
+            void CollectMeshTransforms(Node node, SharpDX.Matrix parentTransform)
             {
-                var nodeTransform = new Matrix((float)node.Transform.A1, (float)node.Transform.B1, (float)node.Transform.C1, (float)node.Transform.D1,
-                        (float)node.Transform.A2, (float)node.Transform.B2, (float)node.Transform.C2, (float)node.Transform.D2,
-                        (float)node.Transform.A3, (float)node.Transform.B3, (float)node.Transform.C3, (float)node.Transform.D3,
-                        (float)node.Transform.A4, (float)node.Transform.B4, (float)node.Transform.C4, (float)node.Transform.D4);
+                var nodeTransform = new SharpDX.Matrix(
+                    node.Transform.M11, node.Transform.M12, node.Transform.M13, node.Transform.M14,
+                    node.Transform.M21, node.Transform.M22, node.Transform.M23, node.Transform.M24,
+                    node.Transform.M31, node.Transform.M32, node.Transform.M33, node.Transform.M34,
+                    node.Transform.M41, node.Transform.M42, node.Transform.M43, node.Transform.M44);
                 var globalTransform = parentTransform * nodeTransform;
 
                 foreach (int meshIndex in node.MeshIndices)
@@ -388,7 +389,7 @@ namespace IndustrialPark.Models
                     CollectMeshTransforms(child, globalTransform);
                 }
             }
-            CollectMeshTransforms(scene.RootNode, Matrix.Identity);
+            CollectMeshTransforms(scene.RootNode, SharpDX.Matrix.Identity);
 
 
             int meshIndex = -1;
@@ -398,12 +399,12 @@ namespace IndustrialPark.Models
                 int materialIndex = multiAtomic ? 0 : m.MaterialIndex;
                 meshIndex++;
 
-                var transform = meshTransforms.ContainsKey(meshIndex) ? meshTransforms[meshIndex] : Matrix.Identity;
+                var transform = meshTransforms.ContainsKey(meshIndex) ? meshTransforms[meshIndex] : SharpDX.Matrix.Identity;
 
                 var transformedVertices = m.Vertices.Select(v =>
                 {
-                    var vec = new Vector3((float)v.X, (float)v.Y, (float)v.Z);
-                    return Vector3.Transform(vec, transform);
+                    var vec = new SharpDX.Vector3(v.X, v.Y, v.Z);
+                    return SharpDX.Vector3.Transform(vec, transform);
                 });
                 vertices.AddRange(transformedVertices.Select(v => new Vertex3(v.X, v.Y, v.Z)).ToList());
            
@@ -793,7 +794,7 @@ namespace IndustrialPark.Models
             return clump;
         }
 
-        public static void ExportAssimp(string fileName, RWSection[] bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension, Matrix worldTransform)
+        public static void ExportAssimp(string fileName, RWSection[] bspFile, bool flipUVs, ExportFormatDescription format, string textureExtension, SharpDX.Matrix worldTransform)
         {
             Scene scene = new Scene();
 
@@ -1107,7 +1108,7 @@ namespace IndustrialPark.Models
                     {
                         foreach (var v in geo.morphTargets[0].vertices)
                         {
-                            var vt = Vector3.Transform((Vector3)Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix), worldTransform);
+                            var vt = SharpDX.Vector3.Transform((SharpDX.Vector3)SharpDX.Vector3.Transform(new SharpDX.Vector3(v.X, v.Y, v.Z), transformMatrix), worldTransform);
                             mesh.Vertices.Add(new System.Numerics.Vector3(vt.X, vt.Y, vt.Z));
                         }
 

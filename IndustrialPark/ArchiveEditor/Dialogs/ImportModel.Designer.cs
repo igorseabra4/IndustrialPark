@@ -143,7 +143,7 @@
             checkBoxCreatePIPT.Name = "checkBoxCreatePIPT";
             checkBoxCreatePIPT.UseVisualStyleBackColor = true;
             // 
-            // checkBoxUseMeshColors
+            // checkBoxIgnoreMeshColors
             // 
             resources.ApplyResources(checkBoxIgnoreMeshColors, "checkBoxIgnoreMeshColors");
             checkBoxIgnoreMeshColors.Checked = true;
@@ -288,14 +288,6 @@
             checkBoxTexCoords.Name = "checkBoxTexCoords";
             checkBoxTexCoords.UseVisualStyleBackColor = true;
             // 
-            // checkBoxAddWhiteVColors
-            // 
-            resources.ApplyResources(this.checkBoxAddWhiteVColors, "checkBoxAddWhiteVColors");
-            this.checkBoxAddWhiteVColors.Checked = true;
-            this.checkBoxAddWhiteVColors.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBoxAddWhiteVColors.Name = "checkBoxAddWhiteVColors";
-            this.checkBoxAddWhiteVColors.UseVisualStyleBackColor = true;
-            // 
             // ImportModel
             // 
             AcceptButton = buttonOK;
@@ -345,6 +337,7 @@
         private System.Windows.Forms.CheckBox checkBoxIgnoreMeshColors;
         private System.Windows.Forms.CheckBox checkBoxLedgeGrab;
         private System.Windows.Forms.CheckBox checkBoxSolidSimps;
+        private System.Windows.Forms.GroupBox grpImportSettings;
         private System.Windows.Forms.GroupBox grpSIMP;
         private System.Windows.Forms.GroupBox groupBoxModelSettings;
         private System.Windows.Forms.CheckBox checkBoxCollTree;

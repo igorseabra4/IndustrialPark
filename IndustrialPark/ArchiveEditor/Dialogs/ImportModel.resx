@@ -310,7 +310,7 @@
     <value>7</value>
   </data>
   <data name="checkBoxFlipUVs.Text" xml:space="preserve">
-    <value>Flip UV coordinates</value>
+    <value>Flip UVs</value>
   </data>
   <data name="&gt;&gt;checkBoxFlipUVs.Name" xml:space="preserve">
     <value>checkBoxFlipUVs</value>
@@ -319,7 +319,7 @@
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxFlipUVs.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>grpImportSettings</value>
   </data>
   <data name="&gt;&gt;checkBoxFlipUVs.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -337,7 +337,7 @@
     <value>12</value>
   </data>
   <data name="checkBoxOverwrite.Text" xml:space="preserve">
-    <value>Overwrite asset if already exists</value>
+    <value>Overwrite</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.Name" xml:space="preserve">
     <value>checkBoxOverwrite</value>
@@ -346,7 +346,7 @@
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.Parent" xml:space="preserve">
-    <value>$this</value>
+    <value>grpImportSettings</value>
   </data>
   <data name="&gt;&gt;checkBoxOverwrite.ZOrder" xml:space="preserve">
     <value>4</value>
@@ -405,7 +405,7 @@
   <data name="&gt;&gt;checkBoxCreatePIPT.ZOrder" xml:space="preserve">
     <value>3</value>
   </data>
-  <data name="checkBoxUseMeshColors.AutoSize" type="System.Boolean, mscorlib">
+  <data name="checkBoxIgnoreMeshColors.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
   <data name="checkBoxIgnoreMeshColors.Location" type="System.Drawing.Point, System.Drawing">
@@ -414,14 +414,14 @@
   <data name="checkBoxIgnoreMeshColors.Size" type="System.Drawing.Size, System.Drawing">
     <value>129, 19</value>
   </data>
-  <data name="checkBoxUseMeshColors.TabIndex" type="System.Int32, mscorlib">
+  <data name="checkBoxIgnoreMeshColors.TabIndex" type="System.Int32, mscorlib">
     <value>15</value>
   </data>
-  <data name="checkBoxUseMeshColors.Text" xml:space="preserve">
-    <value>Use mesh colors</value>
+  <data name="checkBoxIgnoreMeshColors.Text" xml:space="preserve">
+    <value>Ignore Mesh Colors</value>
   </data>
-  <data name="&gt;&gt;checkBoxUseMeshColors.Name" xml:space="preserve">
-    <value>checkBoxUseMeshColors</value>
+  <data name="&gt;&gt;checkBoxIgnoreMeshColors.Name" xml:space="preserve">
+    <value>checkBoxIgnoreMeshColors</value>
   </data>
   <data name="&gt;&gt;checkBoxIgnoreMeshColors.Type" xml:space="preserve">
     <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -910,7 +910,7 @@
     <value>Segoe UI, 9pt</value>
   </data>
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
-    <value>CenterParent</value>
+    <value>CenterScreen</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Import Models</value>

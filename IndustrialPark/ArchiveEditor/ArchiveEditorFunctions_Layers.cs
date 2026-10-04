@@ -57,6 +57,16 @@ namespace IndustrialPark
             (from Asset a in assetDictionary.Values select a.assetID).ToList() :
             Layers[layer == -1 ? SelectedLayerIndex : layer].AssetIDs;
 
+        public int GetFirstActiveLayerIndex()
+        {
+            if (NoLayers || Layers.Count == 0)
+                return -1;
+            for (int i = 0; i < Layers.Count; i++)
+                if (Layers[i].AssetIDs.Count > 0)
+                    return i;
+            return 0;
+        }
+
         private static Layer LHDRToLayer(Section_LHDR LHDR, Game game, string layerName)
         {
             var layer = new Layer(LayerTypeSpecificToGeneric(LHDR.layerType, game), LHDR.assetIDlist.Count, layerName);

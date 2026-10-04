@@ -258,18 +258,18 @@ namespace IndustrialPark
                                             a.checkBoxBinMesh.Checked),
                                         GetModelRenderWareVersion(game));
                             }
-                            catch (ArgumentException e)
+                            catch (ArgumentException)
                             {
                                 MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed "
-                                    + TRI_AND_VERTEX_LIMIT + ".\n " + e.Message,
+                                    + TRI_AND_VERTEX_LIMIT + ".",
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);
                                 return (null, false, false, false, false, false, false, false);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                MessageBox.Show($"Model could not be imported.\n{e.Message}",
+                                MessageBox.Show("Model could not be imported.",
                                     "Error Importing Model",
                                     MessageBoxButtons.OK,
                                     MessageBoxIcon.Error);

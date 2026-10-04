@@ -782,7 +782,7 @@ namespace IndustrialPark
                 OnEditorUpdate();
                 AssetID jspInfoId = archive.CreateJSPInfoAndBSPLayers(AHDRs, overwrite);
                 PopulateLayerComboBox();
-                SetSelectedIndices([jspInfoId], true);
+                SetSelectedIndices([jspInfoId]);
                 SetMenuItemsEnabled();
             }
         }
@@ -1147,7 +1147,7 @@ namespace IndustrialPark
                     break;
                 }
 
-            int layerIndex = archive.NoLayers ? -1 : archive.GetLayerFromAssetID(firstOrDefault);
+            int layerIndex = archive.NoLayers ? -1 : archive.GetLayerFromAssetID(assets[0].assetID);
             bool layerChanged = !archive.NoLayers && layerIndex != archive.SelectedLayerIndex;
 
             if (!layerChanged && curType == assetType && SelectListedAssets(assetIDs))
