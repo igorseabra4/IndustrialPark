@@ -6,8 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using System;
 using System.Windows.Forms;
 using static HipHopFile.Functions;
 
@@ -55,7 +54,7 @@ namespace IndustrialPark
                     "compressionQuality=1.0\r\n" +
                     "palRuntimeType=PNGQUANT\r\n" +
                     "dxtRuntimeType=SQUISH\r\n" +
-                    "warningLevel=1\r\n" +
+                    "warningLevel=0\r\n" +
                     "ignoreSecureWarnings=true\r\n" +
                     "reconstructIMGArchives=false\r\n" +
                     "fixIncompatibleRasters=true\r\n" +
@@ -65,10 +64,8 @@ namespace IndustrialPark
 
                 File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
 
-                Task.Delay(5000).ContinueWith(i => { closeConverter(); });
-
                 txdgenProcess.Start();
-                txdgenProcess.WaitForExit();
+                txdgenProcess.WaitForExit(5000);
             }
         }
 
