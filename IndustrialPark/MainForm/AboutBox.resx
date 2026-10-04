@@ -1431,7 +1431,7 @@
 </value>
   </data>
   <data name="textBoxDescription.Text" xml:space="preserve">
-    <value>Industrial Park is made by igorseabra4 using C# and SharpDX.
+    <value>Industrial Park is a tool made by igorseabra4, Pepperpot, EnergyDrink, and friends and contributors from the Heavy Iron Modding community, using .NET and SharpDX.
 
 It is a HIP/HOP archive viewer and editor for the following games:
 - SpongeBob SquarePants: Battle For Bikini Bottom
@@ -1445,14 +1445,12 @@ by Heavy Iron Studios for GameCube, Xbox, PlayStation 2, PC.
 Additional credits go to:
 - actualchatterteeth
 - Dark
-- EnergyDrink
 - Joey
 - MinecraftFreak73
-- Pepperpot
 - Seil
 - Suprnova
 - TetraxZ
-and other members of the games' online communities for contributions on findings and code, including AR/Gecko codes used by the Randomizer.
+and other members of the games' online communities for contributions on code and discoveries, including AR/Gecko codes used by the Randomizer.
 
 External tools used:
 - TxdGen
