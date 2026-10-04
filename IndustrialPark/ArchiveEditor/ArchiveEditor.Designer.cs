@@ -836,6 +836,7 @@
             MaximizeBox = false;
             Name = "ArchiveEditor";
             ShowIcon = false;
+            Activated += ArchiveEditor_Activated;
             Deactivate += ArchiveEditor_Deactivate;
             KeyDown += ArchiveEditor_KeyDown;
             KeyUp += ArchiveEditor_KeyUp;

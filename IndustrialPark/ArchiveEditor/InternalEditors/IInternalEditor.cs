@@ -1,4 +1,7 @@
-﻿namespace IndustrialPark
+﻿using System;
+using System.Windows.Forms;
+
+namespace IndustrialPark
 {
     public interface IInternalEditor
     {
@@ -8,5 +11,12 @@
         void Show();
 
         void RefreshPropertyGrid();
+
+        double Opacity { get; set; }
+        Form[] OwnedForms { get; }
+        void BringToFront();
+
+        event EventHandler Activated;
+        event EventHandler Deactivate;
     }
 }

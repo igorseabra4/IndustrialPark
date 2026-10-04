@@ -53,36 +53,45 @@ namespace IndustrialPark
         {
             CloseInternalEditor(asset.assetID);
 
+            var editor = CreateInternalEditor(asset, updateListView);
+            editor.Activated += (sender, e) =>
+            {
+                editor.Opacity = 1f;
+                foreach (var child in editor.OwnedForms)
+                    child.SendToBack();
+                editor.BringToFront();
+            };
+            editor.Deactivate += (sender, e) =>
+            {
+                if (!editor.OwnedForms.Any() && Program.MainForm.TranslucentWhenOutOfFocus)
+                    editor.Opacity = 0.5f;
+            };
+            internalEditors.Add(editor);
+            editor.Show();
+        }
+
+        private IInternalEditor CreateInternalEditor(Asset asset, Action<Asset> updateListView)
+        {
             switch (asset.assetType)
             {
                 case AssetType.Model:
                 case AssetType.BSP:
                 case AssetType.JSP:
-                    internalEditors.Add(new InternalModelEditor((AssetRenderWareModel)asset, this, updateListView));
-                    break;
+                    return new InternalModelEditor((AssetRenderWareModel)asset, this, updateListView);
                 case AssetType.Flythrough:
-                    internalEditors.Add(new InternalFlyEditor((AssetFLY)asset, this, updateListView));
-                    break;
+                    return new InternalFlyEditor((AssetFLY)asset, this, updateListView);
                 case AssetType.Texture:
                 case AssetType.TextureStream:
                     if (asset is AssetRWTX rwtx)
-                        internalEditors.Add(new InternalTextureEditor(rwtx, this, updateListView));
-                    else
-                        internalEditors.Add(new InternalAssetEditor(asset, this, updateListView));
-                    break;
+                        return new InternalTextureEditor(rwtx, this, updateListView);
+                    return new InternalAssetEditor(asset, this, updateListView);
                 case AssetType.Sound:
                 case AssetType.SoundStream:
-                    internalEditors.Add(new InternalSoundEditor((AssetSound)asset, this, updateListView));
-                    break;
+                    return new InternalSoundEditor((AssetSound)asset, this, updateListView);
                 case AssetType.Text:
-                    internalEditors.Add(new InternalTextEditor((AssetTEXT)asset, this, updateListView));
-                    break;
-                default:
-                    internalEditors.Add(new InternalAssetEditor(asset, this, updateListView));
-                    break;
+                    return new InternalTextEditor((AssetTEXT)asset, this, updateListView);
             }
-
-            internalEditors.Last().Show();
+            return new InternalAssetEditor(asset, this, updateListView);
         }
 
         private readonly List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();

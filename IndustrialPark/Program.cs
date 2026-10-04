@@ -47,7 +47,6 @@ namespace IndustrialPark
             ViewConfig = new ViewConfig();
             AboutBox = new AboutBox();
             UserTemplateManager = new UserTemplateManager();
-            HansMainForm = new HansMainForm();
 
             Application.Run(MainForm);
         }

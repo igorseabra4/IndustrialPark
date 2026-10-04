@@ -1347,18 +1347,18 @@ namespace IndustrialPark
                     buttonEditAsset_Click(null, null);
             }
             else
-            if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
-            {
-                listViewAssets.BeginUpdate();
-                for (int i = 0; i < listViewAssets.Items.Count; i++)
-                    listViewAssets.Items[i].Selected = true;
-                listViewAssets.EndUpdate();
-            }
-            else if (e.KeyCode == Keys.Delete)
-            {
-                if (buttonRemoveAsset.Enabled)
-                    ButtonRemoveAsset_Click(null, null);
-            }
+                if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
+                {
+                    listViewAssets.BeginUpdate();
+                    for (int i = 0; i < listViewAssets.Items.Count; i++)
+                        listViewAssets.Items[i].Selected = true;
+                    listViewAssets.EndUpdate();
+                }
+                else if (e.KeyCode == Keys.Delete)
+                {
+                    if (buttonRemoveAsset.Enabled)
+                        ButtonRemoveAsset_Click(null, null);
+                }
         }
 
         private void checkedListBoxAssets_MouseDown(object sender, MouseEventArgs e)
@@ -1537,6 +1537,8 @@ namespace IndustrialPark
         private void ArchiveEditor_Deactivate(object sender, EventArgs e)
         {
             PressedKeys.Clear();
+            if (!OwnedForms.Any() && Program.MainForm.TranslucentWhenOutOfFocus)
+                Opacity = 0.5f;
         }
 
         /// <summary>
@@ -1872,7 +1874,7 @@ namespace IndustrialPark
                     MessageBoxButtons.YesNo,
                     MessageBoxIcon.Information) == DialogResult.Yes)
                 {
-                    Process.Start(new ProcessStartInfo { FileName = filepath, UseShellExecute = true});
+                    Process.Start(new ProcessStartInfo { FileName = filepath, UseShellExecute = true });
                 }
             }
             else
@@ -2084,7 +2086,7 @@ namespace IndustrialPark
 
             foreach (var modl in archive.GetAllAssets().OfType<AssetMODL>())
             {
-                try 
+                try
                 {
                     modl.BuildCollisionTree(collVer);
                 }
@@ -2114,6 +2116,14 @@ namespace IndustrialPark
         {
             var names = from uint assetId in CurrentlySelectedAssetIDs() select GetAssetNameFromID(assetId);
             Clipboard.SetText($"\"{string.Join("\", \"", names)}\"");
+        }
+
+        private void ArchiveEditor_Activated(object sender, EventArgs e)
+        {
+            Opacity = 1f;
+            foreach (var child in OwnedForms)
+                child.SendToBack();
+            BringToFront();
         }
     }
 }

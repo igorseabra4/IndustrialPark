@@ -27,6 +27,7 @@ namespace IndustrialPark
         public string pcsx2Path;
         public string[] recentBuildIsoGamePaths;
         public int flyModeCursor = 1;
+        public bool translucentEditor = true;
         public bool showEditorsWhenLoadingProject = true;
     }
 }

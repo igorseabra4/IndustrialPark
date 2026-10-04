@@ -180,6 +180,8 @@ namespace IndustrialPark
             showEditorsWhenLoadingProjectToolStripMenuItem.Checked = showEditorsWhenLoadingProject;
 
             setFlyCursor(settings.flyModeCursor);
+            TranslucentWhenOutOfFocus = settings.translucentEditor;
+            translucentToolStripMenuItem.Checked = TranslucentWhenOutOfFocus;
 
             if (settings.recentArchivePaths != null)
                 foreach (string filepath in settings.recentArchivePaths)
@@ -257,6 +259,7 @@ namespace IndustrialPark
                 recentBuildIsoGamePaths = BuildISO.recentGameDirPaths,
                 recentArchivePaths = openLastToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Text).ToArray(),
                 flyModeCursor = (int)flyModeCursor,
+                translucentEditor = TranslucentWhenOutOfFocus,
                 showEditorsWhenLoadingProject = showEditorsWhenLoadingProjectToolStripMenuItem.Checked
             };
 
@@ -550,6 +553,7 @@ namespace IndustrialPark
         private FlyModeCursor flyModeCursor = FlyModeCursor.Crosshair;
         private System.Drawing.Point MouseCenter;
         private MouseEventArgs oldMousePosition = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
+        public bool TranslucentWhenOutOfFocus;
 
         private void MouseMoveControl(object sender, MouseEventArgs e)
         {
@@ -1644,34 +1648,31 @@ namespace IndustrialPark
 
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Program.EventSearch == null)
-                Program.EventSearch = new EventSearch();
+            Program.EventSearch ??= new EventSearch();
             Program.EventSearch.Show();
         }
 
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Program.AssetIDGenerator == null)
-                Program.AssetIDGenerator = new AssetIDGenerator();
+            Program.AssetIDGenerator ??= new AssetIDGenerator();
             Program.AssetIDGenerator.Show();
         }
 
         private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Program.DynaSearch == null)
-                Program.DynaSearch = new DynaSearch();
+            Program.DynaSearch ??= new DynaSearch();
             Program.DynaSearch.Show();
         }
 
         private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Program.PickupSearch == null)
-                Program.PickupSearch = new PickupSearch();
+            Program.PickupSearch ??= new PickupSearch();
             Program.PickupSearch.Show();
         }
 
         private void hansToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            Program.HansMainForm ??= new IndustrialPark.SaveFile.HansMainForm();
             Program.HansMainForm.Show();
         }
 
@@ -1712,6 +1713,10 @@ namespace IndustrialPark
                 Program.DynaSearch.TopMost = value;
             if (Program.PickupSearch != null)
                 Program.PickupSearch.TopMost = value;
+            if (Program.BuildISO != null)
+                Program.BuildISO.TopMost = value;
+            if (Program.HansMainForm != null)
+                Program.HansMainForm.TopMost = value;
 
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.SetAllTopMost(value);
@@ -2053,6 +2058,18 @@ namespace IndustrialPark
         private void showEditorsWhenLoadingProjectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             showEditorsWhenLoadingProjectToolStripMenuItem.Checked = !showEditorsWhenLoadingProjectToolStripMenuItem.Checked;
+        }
+
+        private void translucentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            TranslucentWhenOutOfFocus = translucentToolStripMenuItem.Checked;
+
+            if (TranslucentWhenOutOfFocus)
+                archiveEditors.ForEach(editor => editor.Opacity = 1f);
+            else
+                foreach (ArchiveEditor ae in archiveEditors)
+                    if (!ae.Focused)
+                        ae.Opacity = 0.5f;
         }
     }
 }
