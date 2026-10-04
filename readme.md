@@ -23,7 +23,7 @@ The tool (whose namesake is one of the levels in Battle For Bikini Bottom) can c
 
 ## Installation
 > [!NOTE]
-> Industrial Park is compatible with **Windows** (Windows 7 SP1 or later), and requires [.NET Framework 4.8](https://dotnet.microsoft.com/en-us/download/dotnet-framework/net48) and Direct3D 11 support. It can be run on Linux using the Wine compatibility layer, [see here](https://www.heavyironmodding.org/wiki/Industrial_Park_(level_editor)#Instructions_for_Running_on_Linux_(Ubuntu)) for details, though not all features may work as expected.
+> Industrial Park is compatible with **Windows** only (Windows 10 Version 1607 or later), and requires [.NET Desktop Runtime 8.x](https://dotnet.microsoft.com/en-us/download/dotnet/8.0) and Direct3D 11 support. It can be run on Linux using the Wine compatibility layer, [see here](https://www.heavyironmodding.org/wiki/Industrial_Park_(level_editor)#Instructions_for_Running_on_Linux_(Ubuntu)) for details, though not all features may work as expected.
 
 1. Download the [latest version](https://github.com/igorseabra4/IndustrialPark/releases/latest) from releases.
 2. Extract the .zip somewhere and launch IndustrialPark.exe.
