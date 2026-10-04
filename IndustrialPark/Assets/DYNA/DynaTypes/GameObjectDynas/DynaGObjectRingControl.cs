@@ -53,8 +53,7 @@ namespace IndustrialPark
         public AssetID RingSoundGroup4 { get; set; }
         [Category(dynaCategoryName)]
         public int NumNextRingsToShow { get; set; }
-        [Category(dynaCategoryName), ValidReferenceRequired]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(dynaCategoryName), ValidReferenceRequired, Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Rings { get; set; }
 
         public DynaGObjectRingControl(string assetName) : base(assetName, DynaType.game_object__RingControl)

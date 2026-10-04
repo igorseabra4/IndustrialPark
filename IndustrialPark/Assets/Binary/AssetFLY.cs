@@ -75,8 +75,7 @@ namespace IndustrialPark
     {
         public override string AssetInfo => $"{Frames.Length} frames";
 
-        [Category("Flythrough")]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category("Flythrough"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public FlyFrame[] Frames { get; set; }
 
         public AssetFLY(string assetName) : base(assetName, AssetType.Flythrough)

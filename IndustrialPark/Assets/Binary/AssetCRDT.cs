@@ -16,7 +16,7 @@ namespace IndustrialPark
         Inner = 3,
     }
 
-    public class CreditsTextBox : GenericAssetDataContainer
+    public class CreditsTextBox_Texture : GenericAssetDataContainer
     {
         private uint _00h;
         private float _08h;
@@ -84,16 +84,12 @@ namespace IndustrialPark
             set => _18h = BitConverter.ToUInt32(BitConverter.GetBytes(value));
         }
 
-    public class CreditsTexture : GenericAssetDataContainer
-    {
-        public AssetID TextureAssetID { get; set; }
-        public AssetColor Color { get; set; }
-        public AssetSingle PositionX { get; set; }
-        public AssetSingle PositionY { get; set; }
-        public AssetSingle Width {  get; set; }
-        public AssetSingle Height { get; set; }
-        public uint Texture { get; set; }
-        public uint Pad { get; set; }
+        [Category("Texture")]
+        public uint Pad
+        {
+            get => BitConverter.ToUInt32(BitConverter.GetBytes(_1Ch));
+            set => _1Ch = BitConverter.ToUInt32(BitConverter.GetBytes(value));
+        }
 
         public CreditsTextBox_Texture()
         {
@@ -277,25 +273,9 @@ namespace IndustrialPark
         public AssetSingle FadeOutBegin { get; set; }
         [Category(categoryName)]
         public AssetSingle FadeOutEnd { get; set; }
-        [Category("Preset"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false)]
+        [Category("Preset"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public CreditsPreset[] Presets { get; set; }
 
-            }
-        }
-        [Category("Preset"), Editor(typeof(CrdtAddEditor), typeof(UITypeEditor))]
-        public string AddTexture
-        {
-            get => "Click here ->";
-            set
-            {
-                if (value == "add_textbox_texture")
-                {
-                    var presets = Presets.ToList();
-                    presets.Add(new CreditsPreset(4));
-                    Presets = presets.ToArray();
-                }
-            }
-        }
         [Category("Titles"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public CreditsHunk[] Titles { get; set; }
 

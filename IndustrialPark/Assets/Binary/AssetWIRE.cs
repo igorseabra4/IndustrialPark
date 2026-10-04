@@ -47,10 +47,10 @@ namespace IndustrialPark
         private const string categoryName = "Wireframe Model";
 
         [Category(categoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public WireVector[] Points { get; set; }
         [Category(categoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public Line[] Lines { get; set; }
         [Category(categoryName)]
         public AssetID hashID0 { get; set; }

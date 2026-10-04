@@ -54,8 +54,7 @@ namespace IndustrialPark
         public AssetID LaunchSoundGroup { get; set; }
         [Category(dynaCategoryName)]
         public AssetID LandSoundGroup { get; set; }
-        [Category(dynaCategoryName), ValidReferenceRequired]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(dynaCategoryName), ValidReferenceRequired, Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Models { get; set; }
 
         public DynaGObjectRubbleGenerator(string assetName, int version) : base(assetName, DynaType.game_object__RubbleGenerator, (short)version)

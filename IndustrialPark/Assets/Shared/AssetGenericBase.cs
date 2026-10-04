@@ -28,8 +28,7 @@ namespace IndustrialPark
             SerializeLinks(writer);
         }
 
-        [Category(categoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Data_AsHex
         {
             get
@@ -51,8 +50,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetSingle[] Data_AsFloat
         {
             get

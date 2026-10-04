@@ -13,17 +13,16 @@ namespace IndustrialPark
 
         public int renderWareVersion;
 
-        [Category(categoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] JSP_AssetIDs { get; set; }
 
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public HI_Tags_BEEF01 Section1 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public HI_Tags_BEEF02 Section2 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public HI_Tags_BEEF03 Section3 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
+        [Category(categoryName)]
         public HI_Tags_BEEF04 Section4 { get; set; }
 
         public AssetJSP_INFO(Section_AHDR AHDR, Game game, Endianness endianness, AssetJSP[] jspAssets) : base(AHDR, game)

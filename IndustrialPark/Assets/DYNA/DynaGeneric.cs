@@ -22,8 +22,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public byte[] Data { get; set; }
 
-        [Category(dynaCategoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(dynaCategoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] Data_AsHex
         {
             get
@@ -45,8 +44,7 @@ namespace IndustrialPark
             }
         }
 
-        [Category(dynaCategoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(dynaCategoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetSingle[] Data_AsFloat
         {
             get

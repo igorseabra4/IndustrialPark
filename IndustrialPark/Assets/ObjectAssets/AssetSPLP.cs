@@ -25,9 +25,9 @@ namespace IndustrialPark
         public AssetID SplineID { get; set; }
         public AssetID ForwardPath { get; set; }
         public AssetID BackwardsPath { get; set; }
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] ForwardIDs { get; set; }
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] BackwardsIDs { get; set; }
 
         public AssetSPLP(string assetName) : base(assetName, AssetType.SplinePath, BaseAssetType.SplinePath)

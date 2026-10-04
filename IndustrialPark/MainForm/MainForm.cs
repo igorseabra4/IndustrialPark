@@ -2090,11 +2090,6 @@ namespace IndustrialPark
                         ae.Opacity = 0.5f;
         }
 
-        private void showEditorsWhenLoadingProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showEditorsWhenLoadingProjectToolStripMenuItem.Checked = !showEditorsWhenLoadingProjectToolStripMenuItem.Checked;
-        }
-
         private void fogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AssetFOG.DontRender = !fogToolStripMenuItem.Checked;

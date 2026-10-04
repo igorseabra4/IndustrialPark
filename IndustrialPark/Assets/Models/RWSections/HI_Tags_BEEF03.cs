@@ -11,7 +11,7 @@ namespace IndustrialPark
     {
         public int RenderWareVersion;
 
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public Vertex3[] vertexList { get; set; }
 
         public HI_Tags_BEEF03(EndianBinaryReader reader)

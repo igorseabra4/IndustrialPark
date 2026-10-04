@@ -16,7 +16,7 @@ namespace IndustrialPark
 
     public class DiscoPattern
     {
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public DiscoTileState[] Pattern { get; set; }
         public DiscoPattern()
         {
@@ -62,7 +62,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public string TileName_FirstRed { get; set; }
         [Category(categoryName), Description(discoDesc)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public DiscoPattern[] Patterns { get; set; }
 
         public AssetDSCO(string assetName) : base(assetName, AssetType.DiscoFloor, BaseAssetType.DiscoFloor)

@@ -63,8 +63,7 @@ namespace IndustrialPark
             set { _arenaRadius = value; CreateTransformMatrix(); }
         }
 
-        [Category(categoryName), ValidReferenceRequired]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), ValidReferenceRequired, Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] NextMovePoints { get; set; }
 
         public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MovePoint, BaseAssetType.MovePoint)

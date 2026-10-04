@@ -146,9 +146,9 @@ namespace IndustrialPark
     {
         public int RenderWareVersion;
 
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public xClumpCollBSPBranchNode[] branchNodes { get; set; }
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public xClumpCollBSPTriangle[] triangles { get; set; }
 
         public HI_Tags_BEEF01()

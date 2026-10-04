@@ -70,7 +70,7 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Version { get; set; }
         [Category(categoryName)]
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public ReactiveAnimation[] ReactiveAnimations { get; set; }
 
         public AssetRANM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)

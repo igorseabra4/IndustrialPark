@@ -213,7 +213,7 @@ namespace IndustrialPark
         public FlagBitmask FileFlags { get; set; } = IntFlagsDescriptor();
         public AssetSingle Duration { get; set; }
         public AssetSingle TimeOffset { get; set; }
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public int[][] RawData { get; set; }
         public int Physics { get; set; }
         public int StartPose { get; set; }
@@ -378,7 +378,7 @@ namespace IndustrialPark
         public int EffectType_BFBB { get; set; }
         public AssetByte EffectType_TSSM { get; set; }
         public AssetByte Probability { get; set; }
-        [Editor(typeof(DynamicTypeDescriptorCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public byte[] UserDataBytes { get; set; }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
