@@ -180,6 +180,9 @@ namespace IndustrialPark
             discordRichPresenceToolStripMenuItem.Checked = settings.discordRichPresence;
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
 
+            ArchiveEditor.AlwaysListAllAssets = settings.AlwaysListAllAssets;
+            listAllAssetsToolStripMenuItem.Checked = settings.AlwaysListAllAssets;
+
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
 
@@ -479,8 +482,7 @@ namespace IndustrialPark
 
             TextureManager.ClearTextures();
 
-            List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
-            archiveEditors.AddRange(this.archiveEditors);
+            List<ArchiveEditor> archiveEditors = [.. this.archiveEditors];
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.CloseArchiveEditor();
 
@@ -2096,6 +2098,12 @@ namespace IndustrialPark
                 foreach (ArchiveEditor ae in archiveEditors)
                     if (!ae.Focused)
                         ae.Opacity = 0.5f;
+        }
+
+        private void alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            listAllAssetsToolStripMenuItem.Checked = !listAllAssetsToolStripMenuItem.Checked;
+            ArchiveEditor.AlwaysListAllAssets = listAllAssetsToolStripMenuItem.Checked;
         }
 
         private void fogToolStripMenuItem_Click(object sender, EventArgs e)
