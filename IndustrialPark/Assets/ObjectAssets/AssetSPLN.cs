@@ -52,7 +52,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSPLN : BaseAsset, IRenderableAsset
+    public class AssetSPLN : BaseAsset, IRenderableAsset, IDisposableAsset
     {
         private const string categoryName = "Spline";
 

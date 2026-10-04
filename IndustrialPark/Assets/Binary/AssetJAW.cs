@@ -1,9 +1,11 @@
-﻿using HipHopFile;
+﻿using DiscordRPC;
+using HipHopFile;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
+using static Assimp.Metadata;
 
 namespace IndustrialPark
 {
@@ -55,53 +57,53 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer) { }
     }
 
-    public class AssetJAW : Asset
+    public class AssetJAW : Asset, IControllerAsset
     {
         public override string AssetInfo => $"{JAW_Entries.Length} entries";
 
+        private List<EntryJAW> _entries;
         [Category("Jaw Data"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
-        public EntryJAW[] JAW_Entries { get; set; }
+        public EntryJAW[] JAW_Entries { get => [.. _entries]; set => _entries = [.. value]; }
 
         public AssetJAW(string assetName) : base(assetName, AssetType.JawDataTable)
         {
-            JAW_Entries = new EntryJAW[0];
+            _entries = [];
         }
 
         public AssetJAW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            var len = reader.ReadInt32();
+            _entries = [with(len)];
+
+            int startOfJawData = 4 + 12 * JAW_Entries.Length;
+
+            for (int i = 0; i < len; i++)
             {
-                JAW_Entries = new EntryJAW[reader.ReadInt32()];
+                reader.endianness = endianness;
+                uint soundAssetID = reader.ReadUInt32();
+                int offset = reader.ReadInt32();
+                reader.ReadInt32();
 
-                int startOfJawData = 4 + 12 * JAW_Entries.Length;
+                long returnPos = reader.BaseStream.Position;
 
-                for (int i = 0; i < JAW_Entries.Length; i++)
+                reader.BaseStream.Position = startOfJawData + offset;
+
+                if (game >= Game.ROTU)
                 {
-                    reader.endianness = endianness;
-                    uint soundAssetID = reader.ReadUInt32();
-                    int offset = reader.ReadInt32();
-                    reader.ReadInt32();
-
-                    long returnPos = reader.BaseStream.Position;
-
-                    reader.BaseStream.Position = startOfJawData + offset;
-
-                    if (game >= Game.ROTU)
-                    {
-                        int length = reader.ReadInt32();
-                        int flags = reader.ReadInt32();
-                        byte[] jawData = reader.ReadBytes(length);
-                        JAW_Entries[i] = new EntryJAW(soundAssetID, flags, jawData);
-                    }
-                    else
-                    {
-                        reader.endianness = Endianness.Little;
-                        int length = reader.ReadInt32();
-                        byte[] jawData = reader.ReadBytes(length);
-                        JAW_Entries[i] = new EntryJAW(soundAssetID, jawData);
-                    }
-                    reader.BaseStream.Position = returnPos;
+                    int length = reader.ReadInt32();
+                    int flags = reader.ReadInt32();
+                    byte[] jawData = reader.ReadBytes(length);
+                    _entries.Add(new EntryJAW(soundAssetID, flags, jawData));
                 }
+                else
+                {
+                    reader.endianness = Endianness.Little;
+                    int length = reader.ReadInt32();
+                    byte[] jawData = reader.ReadBytes(length);
+                    _entries.Add(new EntryJAW(soundAssetID, jawData));
+                }
+                reader.BaseStream.Position = returnPos;
             }
         }
 
@@ -138,30 +140,21 @@ namespace IndustrialPark
             writer.Write(newJawData.ToArray());
         }
 
-        public void AddEntry(byte[] jawData, uint assetID)
-        {
-            List<EntryJAW> entries = JAW_Entries.ToList();
-
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].Sound.Equals(assetID))
-                    entries.RemoveAt(i--);
-
-            entries.Add(new EntryJAW(assetID, jawData));
-
-            JAW_Entries = entries.ToArray();
-        }
-
         public void Merge(AssetJAW asset)
         {
-            var entries = JAW_Entries.ToList();
+            _entries.RemoveAll(e => asset._entries.Any(entry => e.Sound == entry.Sound));
+            _entries.AddRange(asset._entries);
+        }
 
-            foreach (var entry in asset.JAW_Entries)
-            {
-                entries.Remove(entry);
-                entries.Add(entry);
-            }
+        public void AddEntry(byte[] jawData, uint assetID)
+        {
+            RemoveEntry(assetID);
+            _entries.Add(new EntryJAW(assetID, jawData));
+        }
 
-            JAW_Entries = entries.ToArray();
+        public void RemoveEntry(uint assetID)
+        {
+            _entries.RemoveAll(e => e.Sound == assetID);
         }
     }
 }

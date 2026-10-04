@@ -446,8 +446,7 @@ namespace IndustrialPark
 
         public void Dispose(bool showProgress = true)
         {
-            List<uint> assetList = new List<uint>();
-            assetList.AddRange(assetDictionary.Keys);
+            List<uint> assetList = [.. assetDictionary.Keys];
 
             if (assetList.Count == 0)
                 return;
@@ -497,34 +496,33 @@ namespace IndustrialPark
                         Program.Renderer.renderableAssets.Remove(ra);
             }
 
-            if (asset is AssetRenderWareModel jsp)
-                jsp.GetRenderWareModelFile()?.Dispose();
-            else if (asset is AssetJSP_INFO jspinfo)
-                jspInfoNodeInfo.Remove(jspinfo.assetID);
-            else if (asset is AssetFOG fog)
-                RemoveFromRenderableFOGs(fog);
-            else if (asset is AssetLKIT lkit)
-                RemoveFromRenderableLightKits(lkit);
-            else if (asset is IAssetWithModel iawm)
-                iawm.RemoveFromDictionary();
-            else if (asset is AssetPICK pick)
-                pick.ClearDictionary();
-            else if (asset is AssetTPIK tpik)
-                tpik.ClearDictionary();
-            else if (asset is AssetLODT lodt)
-                lodt.ClearDictionary();
-            else if (asset is AssetPIPT pipt)
-                pipt.ClearDictionary();
-            else if (asset is AssetSPLN spln)
-                spln.Dispose();
-            else if (asset is AssetWIRE wire)
-                wire.Dispose();
-            else if (asset is AssetDTRK dtrk)
-                dtrk.Dispose();
-            else if (asset is AssetGRSM grsm)
-                grsm.Dispose();
-            else if (asset is AssetRWTX rwtx && !SkipTextureDisplay)
-                TextureManager.RemoveTexture(rwtx.Name, this, rwtx.assetID);
+            switch (asset)
+            {
+                case AssetRenderWareModel jsp:
+                    jsp.GetRenderWareModelFile()?.Dispose();
+                    break;
+                case AssetJSP_INFO jspinfo:
+                    jspInfoNodeInfo.Remove(jspinfo.assetID);
+                    break;
+                case AssetFOG fog:
+                    RemoveFromRenderableFOGs(fog);
+                    break;
+                case AssetLKIT lkit:
+                    RemoveFromRenderableLightKits(lkit);
+                    break;
+                case IAssetWithModel iawm:
+                    iawm.RemoveFromDictionary();
+                    break;
+                case IDictionaryAsset dictionaryAsset:
+                    dictionaryAsset.ClearDictionary();
+                    break;
+                case IDisposableAsset disposableAsset:
+                    disposableAsset.Dispose();
+                    break;
+                case AssetRWTX rwtx when !SkipTextureDisplay:
+                    TextureManager.RemoveTexture(rwtx.Name, this, rwtx.assetID);
+                    break;
+            }
         }
 
         public bool ContainsAsset(uint key) => assetDictionary.ContainsKey(key);
@@ -1319,7 +1317,12 @@ namespace IndustrialPark
                 var assetType = GetFromAssetID(assetID).assetType;
                 if (assetType == AssetType.Sound || assetType == AssetType.SoundStream)
                     RemoveSoundFromSNDI(assetID);
+                foreach (AssetJAW jaw in assetDictionary.Values.Where(a => a is AssetJAW jaw && jaw.HasReference(assetID)).Cast<AssetJAW>())
+                    jaw.RemoveEntry(assetID);
             }
+            if (assetDictionary[assetID] is AssetMODL modl)
+                foreach (IControllerAsset asset in assetDictionary.Values.Where(a => a is IControllerAsset asset))
+                    asset.RemoveEntry(assetID);
 
             assetDictionary.Remove(assetID);
         }

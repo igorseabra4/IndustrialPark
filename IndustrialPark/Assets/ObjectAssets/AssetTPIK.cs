@@ -82,7 +82,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetTPIK : BaseAsset
+    public class AssetTPIK : BaseAsset, IDictionaryAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 

@@ -77,7 +77,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetDTRK : BaseAsset, IRenderableAsset, IClickableAsset
+    public class AssetDTRK : BaseAsset, IRenderableAsset, IClickableAsset, IDisposableAsset
     {
         private const string categoryName = "Dash Track";
 

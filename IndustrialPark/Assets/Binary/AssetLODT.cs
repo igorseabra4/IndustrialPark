@@ -77,7 +77,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetLODT : Asset, IAssetAddSelected
+    public class AssetLODT : Asset, IAssetAddSelected, IDictionaryAsset, IControllerAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
@@ -85,34 +85,32 @@ namespace IndustrialPark
 
         public static float MaxDistanceTo(uint _model) => maxDistances.ContainsKey(_model) ? maxDistances[_model] : SharpRenderer.DefaultLODTDistance;
 
-        private EntryLODT[] _entries;
+        private List<EntryLODT> _entries;
         [Category("Level Of Detail Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public EntryLODT[] Entries
         {
-            get => _entries;
+            get => [.. _entries];
             set
             {
-                _entries = value;
+                _entries = [.. value];
                 UpdateDictionary();
             }
         }
 
         public AssetLODT(string assetName) : base(assetName, AssetType.LevelOfDetailTable)
         {
-            Entries = new EntryLODT[0];
+            _entries = [];
         }
 
         public AssetLODT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                _entries = new EntryLODT[reader.ReadInt32()];
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            var len = reader.ReadInt32();
+            _entries = [with(len)];
+            for (int i = 0; i < len; i++)
+                _entries.Add(new EntryLODT(reader, game));
 
-                for (int i = 0; i < _entries.Length; i++)
-                    _entries[i] = new EntryLODT(reader, game);
-
-                UpdateDictionary();
-            }
+            UpdateDictionary();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -137,15 +135,8 @@ namespace IndustrialPark
 
         public void Merge(AssetLODT asset)
         {
-            var entries = Entries.ToList();
-
-            foreach (var entry in asset.Entries)
-            {
-                entries.Remove(entry);
-                entries.Add(entry);
-            }
-
-            Entries = entries.ToArray();
+            _entries.RemoveAll(e => asset._entries.Any(entry => e.BaseModel == entry.BaseModel));
+            _entries.AddRange(asset._entries);
         }
 
         [Browsable(false)]
@@ -153,34 +144,19 @@ namespace IndustrialPark
 
         public void AddItems(List<uint> items)
         {
-            var entries = Entries.ToList();
             foreach (var i in items)
-                if (!entries.Any(e => e.BaseModel == i))
-                    entries.Add(new EntryLODT(game) { BaseModel = i, MaxDistance = 100f });
-            Entries = entries.ToArray();
+                AddEntry(new EntryLODT(game) { BaseModel = i, MaxDistance = 100f });
         }
 
         public void AddEntry(EntryLODT entry)
         {
-            var entries = Entries.ToList();
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].BaseModel == entry.BaseModel)
-                {
-                    entries[i] = entry;
-                    Entries = entries.ToArray();
-                    return;
-                }
-            entries.Add(entry);
-            Entries = entries.ToArray();
+            RemoveEntry(entry.BaseModel);
+            _entries.Add(entry);
         }
 
         public void RemoveEntry(uint assetID)
         {
-            var entries = Entries.ToList();
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].BaseModel == assetID)
-                    entries.RemoveAt(i--);
-            Entries = entries.ToArray();
+            _entries.RemoveAll(e => e.BaseModel == assetID);
         }
     }
 }

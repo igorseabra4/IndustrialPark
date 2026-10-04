@@ -44,7 +44,7 @@ namespace IndustrialPark
             $"[{HexUIntTypeConverter.StringFromAssetID(PickupHash)}] - [{HexUIntTypeConverter.StringFromAssetID(Model)}]";
     }
 
-    public class AssetPICK : Asset
+    public class AssetPICK : Asset, IDictionaryAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 

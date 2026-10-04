@@ -47,7 +47,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetGRSM : BaseAsset, IRenderableAsset, IClickableAsset
+    public class AssetGRSM : BaseAsset, IRenderableAsset, IClickableAsset, IDisposableAsset
     {
         private const string categoryName = "Grass Mesh";
 

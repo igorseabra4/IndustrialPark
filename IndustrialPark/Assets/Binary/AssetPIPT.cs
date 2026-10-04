@@ -402,38 +402,36 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetPIPT : Asset, IAssetAddSelected
+    public class AssetPIPT : Asset, IAssetAddSelected, IDictionaryAsset, IControllerAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
-        private PipeInfo[] _entries { get; set; }
+        private List<PipeInfo> _entries { get; set; }
         [Category("Pipe Info Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public PipeInfo[] Entries
         {
-            get => _entries;
+            get => [.. _entries];
             set
             {
-                _entries = value;
+                _entries = [.. value];
                 UpdateDictionary();
             }
         }
 
         public AssetPIPT(string assetName) : base(assetName, AssetType.PipeInfoTable)
         {
-            Entries = new PipeInfo[0];
+            _entries = [];
         }
 
         public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                _entries = new PipeInfo[reader.ReadInt32()];
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            var len = reader.ReadInt32();
+            _entries = [with(len)];
+            for (int i = 0; i < len; i++)
+                _entries.Add(new PipeInfo(reader, game));
 
-                for (int i = 0; i < _entries.Length; i++)
-                    _entries[i] = new PipeInfo(reader, game);
-
-                UpdateDictionary();
-            }
+            UpdateDictionary();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

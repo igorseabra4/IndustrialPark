@@ -6,7 +6,7 @@ using System.Drawing.Design;
 namespace IndustrialPark
 {
     [TypeConverter(typeof(HexUIntTypeConverter)), Editor(typeof(AssetIDEditor), typeof(UITypeEditor))]
-    public struct AssetID : IComparable<AssetID>
+    public struct AssetID : IComparable<AssetID>, IEquatable<AssetID>
     {
         [JsonConstructor]
         public AssetID(uint value = 0)
@@ -43,6 +43,10 @@ namespace IndustrialPark
                 return bv == value;
             return false;
         }
+
+        public bool Equals(AssetID other) => other.value == value;
+        public static bool operator ==(AssetID left, AssetID right) => left.Equals(right);
+        public static bool operator !=(AssetID left, AssetID right) => !left.Equals(right);
 
         public AssetID(string value)
         {

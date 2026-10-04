@@ -42,7 +42,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetWIRE : Asset, IRenderableAsset
+    public class AssetWIRE : Asset, IRenderableAsset, IDisposableAsset
     {
         private const string categoryName = "Wireframe Model";
 
