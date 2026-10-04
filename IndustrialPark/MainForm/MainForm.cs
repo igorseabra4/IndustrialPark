@@ -2090,14 +2090,24 @@ namespace IndustrialPark
 
         private void translucentToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            translucentToolStripMenuItem.Checked = !translucentToolStripMenuItem.Checked;
             TranslucentWhenOutOfFocus = translucentToolStripMenuItem.Checked;
 
             if (TranslucentWhenOutOfFocus)
-                archiveEditors.ForEach(editor => editor.Opacity = 1f);
+                archiveEditors.ForEach(ae =>
+                {
+                    ae.Opacity = 1f;
+                    ae.archive.SetAllOpacity(1f);
+                });
             else
-                foreach (ArchiveEditor ae in archiveEditors)
+                archiveEditors.ForEach(ae =>
+                {
                     if (!ae.Focused)
+                    {
                         ae.Opacity = 0.5f;
+                        ae.archive.SetAllOpacity(0.5f);
+        }
+                });
         }
 
         private void alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click(object sender, EventArgs e)

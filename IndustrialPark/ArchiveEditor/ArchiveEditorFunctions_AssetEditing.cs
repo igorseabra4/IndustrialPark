@@ -126,6 +126,12 @@ namespace IndustrialPark
                 ie.TopMost = value;
         }
 
+        public void SetAllOpacity(double value)
+        {
+            foreach (var ie in internalEditors)
+                ie.Opacity = value;
+        }
+
         public static void OpenWikiPage(Asset asset)
         {
             var code = asset.assetType.GetCode();
