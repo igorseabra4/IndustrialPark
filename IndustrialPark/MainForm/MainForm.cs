@@ -2106,7 +2106,7 @@ namespace IndustrialPark
                     {
                         ae.Opacity = 0.5f;
                         ae.archive.SetAllOpacity(0.5f);
-        }
+                    }
                 });
         }
 
@@ -2135,19 +2135,23 @@ namespace IndustrialPark
                 field = value;
                 systemDefaultToolStripMenuItem.Checked = value == SystemColorMode.System;
                 darkModeToolStripMenuItem.Checked = value == SystemColorMode.Dark;
+                lightModeToolStripMenuItem.Checked = value == SystemColorMode.Classic;
             }
         }
 
         private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            systemDefaultToolStripMenuItem.Checked = false;
-            SystemColorMode = darkModeToolStripMenuItem.Checked ? SystemColorMode.Dark : SystemColorMode.Classic;
+            SystemColorMode = SystemColorMode.Dark;
         }
 
         private void systemDefaultToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            darkModeToolStripMenuItem.Checked = false;
             SystemColorMode = SystemColorMode.System;
+        }
+
+        private void lightModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SystemColorMode = SystemColorMode.Classic;
         }
         #endregion
     }
