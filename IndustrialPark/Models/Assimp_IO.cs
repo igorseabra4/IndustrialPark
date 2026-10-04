@@ -836,8 +836,6 @@ namespace IndustrialPark.Models
 
                     if ((geo.geometryFlags & GeometryFlags.rpGEOMETRYNATIVE) != 0)
                     {
-                        NativeDataGC n = null;
-
                         foreach (RWSection rws in clump.geometryList.geometryList[i].geometryExtension.extensionSectionList)
                             if (rws is NativeDataPLG_0510 native)
                                 if (native.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
