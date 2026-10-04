@@ -1667,6 +1667,11 @@ namespace IndustrialPark
             Program.PickupSearch.Show();
         }
 
+        private void hansToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.HansMainForm.Show();
+        }
+
         private void MainForm_Resize(object sender, EventArgs e)
         {
             if (renderer == null)

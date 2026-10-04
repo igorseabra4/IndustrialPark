@@ -139,6 +139,7 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
+            this.hansToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.contextMenuStripMain.SuspendLayout();
@@ -723,6 +724,7 @@ namespace IndustrialPark
             // researchToolStripMenuItem
             // 
             this.researchToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.hansToolStripMenuItem,
             this.assetIDGeneratorToolStripMenuItem,
             this.dYNASearchToolStripMenuItem,
             this.eventSearchToolStripMenuItem,
@@ -907,6 +909,12 @@ namespace IndustrialPark
             resources.ApplyResources(this.toolStripComboBoxUserTemplate, "toolStripComboBoxUserTemplate");
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
             // 
+            // hansToolStripMenuItem
+            // 
+            this.hansToolStripMenuItem.Name = "hansToolStripMenuItem";
+            resources.ApplyResources(this.hansToolStripMenuItem, "hansToolStripMenuItem");
+            this.hansToolStripMenuItem.Click += new System.EventHandler(this.hansToolStripMenuItem_Click);
+            // 
             // MainForm
             // 
             this.AllowDrop = true;
@@ -1054,6 +1062,7 @@ namespace IndustrialPark
         private ToolStripMenuItem showVertexColorsToolStripMenuItem;
         private ToolStripMenuItem buildAndRunPS2ISOToolStripMenuItem;
         private ToolStripMenuItem openLastToolStripMenuItem;
+        private ToolStripMenuItem hansToolStripMenuItem;
     }
 }
 
