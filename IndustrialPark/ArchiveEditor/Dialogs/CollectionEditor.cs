@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Web.UI.WebControls;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -26,8 +25,8 @@ namespace IndustrialPark
             return null;
         }
 
-        private Game game;
-        private Type type;
+        private readonly Game game;
+        private readonly Type type;
 
         private CollectionEditor(Game game, Type type, object[] items, AssetPropertyCollectionOptionsAttribute options)
         {
@@ -217,10 +216,10 @@ namespace IndustrialPark
             //    return DynamicTypeDescriptor.Create(instance);
             //}
 
-            ConstructorInfo constructor = type.GetConstructor(new[] { typeof(Game) }) ?? type.GetConstructor(Type.EmptyTypes);
+            ConstructorInfo constructor = type.GetConstructor([typeof(Game)]) ?? type.GetConstructor(Type.EmptyTypes);
             if (constructor != null)
             {
-                object[] args = constructor.GetParameters().Length == 0 ? Array.Empty<object>() : new object[] { game };
+                object[] args = constructor.GetParameters().Length == 0 ? [] : [game];
                 var instance = constructor.Invoke(args);
                 return DynamicTypeDescriptor.Create(instance);
             }
@@ -234,15 +233,13 @@ namespace IndustrialPark
                 //if (type.Equals(typeof(EntryLODT)))
                 //    return new EntryLODT(reader, game);
 
-                object instance;
-
-                ConstructorInfo constructor = type.GetConstructor(new[] { typeof(EndianBinaryReader), typeof(Game) });
+                ConstructorInfo constructor = type.GetConstructor([typeof(EndianBinaryReader), typeof(Game)]);
                 if (constructor != null)
-                    return constructor.Invoke(new object[] { reader, game });
+                    return constructor.Invoke([reader, game]);
 
-                constructor = type.GetConstructor(new[] { typeof(EndianBinaryReader) });
+                constructor = type.GetConstructor([typeof(EndianBinaryReader)]);
                 if (constructor != null)
-                    return constructor.Invoke(new object[] { reader });
+                    return constructor.Invoke([reader]);
             }
             throw new InvalidOperationException("Unable to create pasted item of type.");
         }

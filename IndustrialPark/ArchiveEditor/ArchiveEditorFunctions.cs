@@ -163,10 +163,10 @@ namespace IndustrialPark
             {
                 hipFile = HipFile.FromPath(fileName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 progressBar.Close();
-                throw e;
+                throw;
             }
 
             progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);

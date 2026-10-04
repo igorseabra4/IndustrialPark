@@ -194,9 +194,9 @@
     <Folder Include="Resources\CountryFlagIcons\" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
-    <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
-    <PackageReference Include="DSoft.SharpDX.Desktop" Version="4.3.2406.51" />
+    <PackageReference Include="AssimpNetter" Version="6.0.5" />
+    <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
+    <PackageReference Include="DSoft.SharpDX.Desktop" Version="4.4.2504.231" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
     <PackageReference Include="Ps2IsoTools" Version="1.1.2" />
     <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
