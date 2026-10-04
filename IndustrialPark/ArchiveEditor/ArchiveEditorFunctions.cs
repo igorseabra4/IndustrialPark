@@ -665,9 +665,9 @@ namespace IndustrialPark
 
         public Asset GetFromAssetID(uint key)
         {
-            if (ContainsAsset(key))
-                return assetDictionary[key];
-            throw new KeyNotFoundException($"Asset [{key:X8}] not present in dictionary.");
+            if (!assetDictionary.TryGetValue(key, out var asset))
+                throw new KeyNotFoundException($"Asset [{key:X8}] not present in dictionary.");
+            return asset;
         }
 
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()

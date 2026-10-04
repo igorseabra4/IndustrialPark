@@ -1108,7 +1108,7 @@ namespace IndustrialPark
             if (add && assetID == null)
                 return;
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetSelectedIndex(assetID ?? 0, false, add);
+                ae.SetSelectedIndex(assetID ?? 0, add);
         }
 
         /// <summary>
