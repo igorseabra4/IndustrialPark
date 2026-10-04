@@ -513,6 +513,7 @@ namespace IndustrialPark
                 comboBoxAssetTypes.Items.Clear();
                 listViewAssets.Items.Clear();
             }
+            PopulateAssetList();
             SetMenuItemsEnabled();
             SetupAssetVisibilityButtons();
         }
