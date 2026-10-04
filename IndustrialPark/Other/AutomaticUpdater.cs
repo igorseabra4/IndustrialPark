@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Net;
 using System.Windows.Forms;
 using Application = System.Windows.Forms.Application;
@@ -17,7 +16,7 @@ namespace IndustrialPark
         public static bool UpdateIndustrialPark(out bool hasChecked, bool forceCheck = false)
         {
             hasChecked = false;
-            string owner = "energydrink02";
+            string owner = "igorseabra4";
             string repo = "IndustrialPark";
 
             try
@@ -35,7 +34,7 @@ namespace IndustrialPark
                         return false;
                     }
 
-                    string messageText = $"There is an update available: Industrial Park ({newRelease.Name}).\n\n{newRelease.Body}\n\nDo you wish to download it?";
+                    string messageText = $"There is an update available: Industrial Park ({newRelease.Name}).\n\n{TrimBody(newRelease.Body)}\n\nDo you wish to download it?";
                     DialogResult d = MessageBox.Show(messageText, "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
 
                     if (d == DialogResult.Yes)
@@ -104,6 +103,28 @@ namespace IndustrialPark
             }
 
             return false;
+        }
+
+        private static string TrimBody(string body)
+        {
+            const int MaxLines = 20;
+            body ??= string.Empty;
+
+            var lines = body.Split('\n');
+            if (lines.Length > MaxLines)
+            {
+                var sb = new System.Text.StringBuilder();
+                for (int i = 0; i < MaxLines; i++)
+                {
+                    if (i > 0)
+                        sb.Append('\n');
+                    sb.Append(lines[i].TrimEnd('\r'));
+                }
+                sb.Append("\n... (truncated)");
+                body = sb.ToString();
+            }
+
+            return body;
         }
 
         private static void CloneDirectory(string src, string dest)
