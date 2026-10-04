@@ -1719,7 +1719,7 @@ namespace IndustrialPark
             TryToRunGame();
         }
 
-        private void TryToRunGame()
+        private async void TryToRunGame()
         {
             string dolPath = null;
             string filesPath = null;
@@ -1763,7 +1763,8 @@ namespace IndustrialPark
             {
                 try
                 {
-                    RemoteControl.TryToRunGame(dolPath);
+                    if (!await RemoteControl.TryToRunGame(dolPath))
+                        MessageBox.Show("Dolphin didn't close in time, so the game wasn't launched.", "Error opening Dolphin", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 catch (Exception ex)
                 {

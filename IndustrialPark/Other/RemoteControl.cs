@@ -1,32 +1,25 @@
-﻿using System;
 using System.Diagnostics;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace IndustrialPark
 {
     public static class RemoteControl
     {
-        // This method attempts to close all open Dolphin instances, then launch the DOL of the game.
-        // The process is canceled if it takes more than 10 seconds.
-        public static void TryToRunGame(string dolPath)
+        private const int CloseTimeoutMilliseconds = 10000;
+
+        /// <summary>
+        /// Closes all open Dolphin instances, then launches the DOL of the game through its file association.
+        /// </summary>
+        /// <param name="dolPath">The path to the game's main.dol.</param>
+        /// <returns><c>false</c> if an open Dolphin instance didn't close in time, in which case the game isn't launched.</returns>
+        /// <exception cref="System.ComponentModel.Win32Exception">The DOL couldn't be opened, such as when no program is associated with .dol files.</exception>
+        public static async Task<bool> TryToRunGame(string dolPath)
         {
-            Thread t = new Thread(() =>
-            {
-                CloseDolphin();
-                // this might throw a win32exception if .dol is not associated with Dolphin
-                Process.Start(dolPath);
-            });
+            if (!await Task.Run(CloseDolphin))
+                return false;
 
-            ScheduleAction(t.Abort, 10000);
-
-            t.Start();
-        }
-
-        public static async void ScheduleAction(Action action, int ms)
-        {
-            await Task.Delay(ms);
-            action();
+            Process.Start(dolPath);
+            return true;
         }
 
         public static bool CloseDolphin()
@@ -35,7 +28,8 @@ namespace IndustrialPark
                 if (!p.HasExited)
                 {
                     p.CloseMainWindow();
-                    p.WaitForExit();
+                    if (!p.WaitForExit(CloseTimeoutMilliseconds))
+                        return false;
                 }
 
             return true;
