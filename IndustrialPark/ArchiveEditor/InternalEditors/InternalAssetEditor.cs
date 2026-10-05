@@ -82,11 +82,37 @@ namespace IndustrialPark
                 else
                     tableLayoutPanel1.RowStyles.Add(rs);
             }
+
+            SelectFirstProperty();
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             archive.CloseInternalEditor(this);
+        }
+
+        private void SelectFirstProperty()
+        {
+            var root = propertyGridAsset.SelectedGridItem;
+            while (root.Parent != null)
+                root = root.Parent;
+            FindFirstPropertyRecursive(root)?.Select();
+        }
+
+        private GridItem FindFirstPropertyRecursive(GridItem item)
+        {
+            foreach (GridItem child in item.GridItems)
+            {
+                if (child.GridItemType == GridItemType.Property)
+                    return child;
+                if (child.GridItemType == GridItemType.Category && child.GridItems.Count > 0)
+                {
+                    var nested = FindFirstPropertyRecursive(child);
+                    if (nested != null)
+                        return nested;
+                }
+            }
+            return null;
         }
 
         private readonly Asset asset;

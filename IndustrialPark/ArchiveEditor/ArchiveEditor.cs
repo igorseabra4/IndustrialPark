@@ -940,13 +940,13 @@ namespace IndustrialPark
         }
 
         public void OpenInternalEditors()
-        {
-            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false, UpdateCurrentListView);
+        {            
+            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false, MousePosition, UpdateCurrentListView);
         }
 
         public void OpenInternalEditors(List<uint> whoTargets, bool openAnyway)
         {
-            archive.OpenInternalEditor(whoTargets, openAnyway, UpdateCurrentListView);
+            archive.OpenInternalEditor(whoTargets, openAnyway, MousePosition, UpdateCurrentListView);
         }
 
         public void DeleteSelectedAssets()

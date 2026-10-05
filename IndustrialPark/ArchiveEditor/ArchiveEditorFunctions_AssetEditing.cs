@@ -35,21 +35,21 @@ namespace IndustrialPark
                     internalEditors[i].Close();
         }
 
-        public void OpenInternalEditor(IEnumerable<uint> list, bool openAnyway, Action<Asset> updateListView)
+        public void OpenInternalEditor(IEnumerable<uint> assets, bool openAnyway, System.Drawing.Point location, Action<Asset> updateListView)
         {
             bool willOpen = true;
-            if (list.Count() > 15 && !openAnyway)
+            if (assets.Count() > 15 && !openAnyway)
             {
-                willOpen = MessageBox.Show($"Warning: you're going to open {list.Count()} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
+                willOpen = MessageBox.Show($"Warning: you're going to open {assets.Count()} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
             }
 
             if (willOpen)
-                foreach (uint u in list)
+                foreach (uint u in assets)
                     if (assetDictionary.ContainsKey(u))
-                        OpenInternalEditor(assetDictionary[u], updateListView);
+                        OpenInternalEditor(assetDictionary[u], assets.Count() == 1 ? location : null, updateListView);
         }
 
-        private void OpenInternalEditor(Asset asset, Action<Asset> updateListView)
+        private void OpenInternalEditor(Asset asset, System.Drawing.Point? location, Action<Asset> updateListView)
         {
             CloseInternalEditor(asset.assetID);
 
@@ -67,6 +67,11 @@ namespace IndustrialPark
                     editor.Opacity = 0.5f;
             };
             internalEditors.Add(editor);
+            if (location.HasValue)
+            {
+                editor.StartPosition = FormStartPosition.Manual;
+                editor.Location = new System.Drawing.Point(Math.Max(0, location.Value.X - editor.Size.Width / 2), Math.Max(0, location.Value.Y - editor.Size.Height / 2));
+            }
             editor.Show();
         }
 

@@ -9,11 +9,15 @@ namespace IndustrialPark
         uint GetAssetID();
         void Close();
         void Show();
+        FormStartPosition StartPosition { get; set; }
+        System.Drawing.Point Location { get; set; }
 
         void RefreshPropertyGrid();
 
         double Opacity { get; set; }
         Form[] OwnedForms { get; }
+        System.Drawing.Size Size { get; set; }
+
         void BringToFront();
 
         event EventHandler Activated;
