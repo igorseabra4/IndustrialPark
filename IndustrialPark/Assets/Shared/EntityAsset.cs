@@ -102,20 +102,22 @@ namespace IndustrialPark
             set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
         }
 
+        private const string scaleDescription = "(X, Y, Z) scale must be uniform on all 3 axes for solid objects, otherwise risking collision glitches. To circumvent this, use the 'Bake Scale' function to create a copy of the model with a non-uniform scale applied.";
         protected Vector3 _scale;
-        [Category(categoryNamePlacement)]
+
+        [Category(categoryNamePlacement), Description(scaleDescription)]
         public virtual AssetSingle ScaleX
         {
             get => _scale.X;
             set { _scale.X = value; CreateTransformMatrix(); }
         }
-        [Category(categoryNamePlacement)]
+        [Category(categoryNamePlacement), Description(scaleDescription)]
         public virtual AssetSingle ScaleY
         {
             get => _scale.Y;
             set { _scale.Y = value; CreateTransformMatrix(); }
         }
-        [Category(categoryNamePlacement)]
+        [Category(categoryNamePlacement), Description(scaleDescription)]
         public virtual AssetSingle ScaleZ
         {
             get => _scale.Z;
@@ -143,7 +145,7 @@ namespace IndustrialPark
             get => _color.Z;
             set => _color.Z = value;
         }
-        [Category(categoryNameColor), DisplayName("Alpha (0 - 1)")]
+        [Category(categoryNameColor), DisplayName("Alpha (0 - 1)"), Description("Alpha is turned off after the first player death on all games except Scooby. Use the TranslucentOn event to fix this.")]
         public AssetSingle ColorAlpha
         {
             get => _color.W;

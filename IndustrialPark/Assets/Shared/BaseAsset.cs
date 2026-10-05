@@ -23,7 +23,7 @@ namespace IndustrialPark
         [Category(categoryName), Browsable(false)]
         public ushort BaseFlags { get; set; }
 
-        [Category(categoryName), DisplayName("Enabled On Start")]
+        [Category(categoryName), DisplayName("Enabled On Start"), Description("If true, asset is enabled on start. If false, it starts disabled. Enabled assets can send and receive events. Disabled assets cannot. Use the Enable and Disable events to control this at runtime.")]
         public bool EnabledOnStart
         {
             get => (BaseFlags & 1) != 0;
@@ -59,7 +59,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 4;
             }
         }
-        [Category(categoryName), DisplayName("Visible During Cutscenes")]
+        [Category(categoryName), DisplayName("Visible During Cutscenes"), Description("Applies to visible assets.")]
         public bool VisibleDuringCutscenes
         {
             get => (BaseFlags & 8) != 0;
@@ -71,7 +71,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 8;
             }
         }
-        [Category(categoryName), DisplayName("Receive Shadows")]
+        [Category(categoryName), DisplayName("Receive Shadows"), Description("Applies to visible assets.")]
         public bool ReceiveShadows
         {
             get => (BaseFlags & 16) != 0;
