@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -10,7 +11,7 @@ namespace IndustrialPark
 {
     public partial class CollectionEditor : Form
     {
-        public static Array Get(Game game, Type type, object[] items, AssetPropertyCollectionOptionsAttribute options)
+        public static Array Get(Game game, Type type, Array items, AssetPropertyCollectionOptionsAttribute options)
         {
             var editor = new CollectionEditor(game, type, items, options);
             editor.ShowDialog();
@@ -19,7 +20,7 @@ namespace IndustrialPark
             {
                 Array result = Array.CreateInstance(editor.type, editor.listBoxItems.Items.Count);
                 for (int i = 0; i < editor.listBoxItems.Items.Count; i++)
-                    result.SetValue(((DynamicTypeDescriptor)editor.listBoxItems.Items[i]).Component, i);
+                    result.SetValue(editor.isGenericAssetData ? ((DynamicTypeDescriptor)editor.listBoxItems.Items[i]).Component : editor.listBoxItems.Items[i], i);
                 return result;
             }
             return null;
@@ -27,14 +28,16 @@ namespace IndustrialPark
 
         private readonly Game game;
         private readonly Type type;
+        private readonly bool isGenericAssetData;
 
-        private CollectionEditor(Game game, Type type, object[] items, AssetPropertyCollectionOptionsAttribute options)
+        private CollectionEditor(Game game, Type type, Array items, AssetPropertyCollectionOptionsAttribute options)
         {
             InitializeComponent();
             TopMost = true;
 
             this.game = game;
             this.type = type;
+            isGenericAssetData = typeof(GenericAssetDataContainer).IsAssignableFrom(type);
 
             if (options != null)
             {
@@ -56,6 +59,8 @@ namespace IndustrialPark
             Text = GetFormTitle();
 
             listBoxItems.Items.Clear();
+            if (isGenericAssetData)
+                items = items.Cast<GenericAssetDataContainer>().Select(DynamicTypeDescriptor.Create).ToArray();
             foreach (var item in items)
                 listBoxItems.Items.Add(item);
         }
@@ -98,7 +103,9 @@ namespace IndustrialPark
 
         private void buttonCopy_Click(object sender, EventArgs e)
         {
-            var items = listBoxItems.SelectedItems.Cast<DynamicTypeDescriptor>().Select(x => ((GenericAssetDataContainer)x.Component).Serialize(Endianness.Little)).ToArray();
+            object[] items = isGenericAssetData ?
+                listBoxItems.SelectedItems.Cast<DynamicTypeDescriptor>().Select(x => ((GenericAssetDataContainer)x.Component).Serialize(Endianness.Little)).ToArray() :
+                listBoxItems.SelectedItems.Cast<object>().ToArray();
             Clipboard.SetText(JsonConvert.SerializeObject(items));
         }
 
@@ -106,13 +113,26 @@ namespace IndustrialPark
         {
             try
             {
-                var clipboard = JsonConvert.DeserializeObject<byte[][]>(Clipboard.GetText());
-                listBoxItems.SelectedIndices.Clear();
-                foreach (var item in clipboard)
+                if (isGenericAssetData)
                 {
-                    object instance = CreatePastedInstance(item);
-                    listBoxItems.Items.Add(DynamicTypeDescriptor.Create(instance));
-                    listBoxItems.SetSelected(listBoxItems.Items.Count - 1, true);
+                    var clipboard = JsonConvert.DeserializeObject<byte[][]>(Clipboard.GetText());
+                    listBoxItems.SelectedIndices.Clear();
+                    foreach (var item in clipboard)
+                    {
+                        object instance = CreatePastedInstance(item);
+                        listBoxItems.Items.Add(DynamicTypeDescriptor.Create(instance));
+                        listBoxItems.SetSelected(listBoxItems.Items.Count - 1, true);
+                    }
+                }
+                else
+                {
+                    var clipboard = (IEnumerable)JsonConvert.DeserializeObject(Clipboard.GetText(), typeof(IEnumerable<>).MakeGenericType(type));
+                    listBoxItems.SelectedIndices.Clear();
+                    foreach (var item in clipboard)
+                    {
+                        listBoxItems.Items.Add(item);
+                        listBoxItems.SetSelected(listBoxItems.Items.Count - 1, true);
+                    }
                 }
             }
             catch (Exception ex)
@@ -141,6 +161,7 @@ namespace IndustrialPark
         private void buttonArrowUp_Click(object sender, EventArgs e)
         {
             var selectedIndices = listBoxItems.SelectedIndices.Cast<int>().ToList();
+            programaticallyChangingSelection++;
             listBoxItems.ClearSelected();
             foreach (var i in selectedIndices)
             {
@@ -153,10 +174,11 @@ namespace IndustrialPark
                 listBoxItems.SelectedIndices.Add(Math.Max(i - 1, 0));
             }
         }
-        
+
         private void buttonArrowDown_Click(object sender, EventArgs e)
         {
             var selectedIndices = listBoxItems.SelectedIndices.Cast<int>().Reverse().ToList();
+            programaticallyChangingSelection++;
             listBoxItems.ClearSelected();
             foreach (var i in selectedIndices)
             {
@@ -210,13 +232,9 @@ namespace IndustrialPark
 
         private object CreateNewInstance()
         {
-            //if (type.Equals(typeof(EntryLODT)))
-            //{
-            //    var instance = new EntryLODT(game);
-            //    return DynamicTypeDescriptor.Create(instance);
-            //}
-
-            ConstructorInfo constructor = type.GetConstructor([typeof(Game)]) ?? type.GetConstructor(Type.EmptyTypes);
+            ConstructorInfo constructor = isGenericAssetData
+                ? type.GetConstructor([typeof(Game)]) ?? type.GetConstructor(Type.EmptyTypes)
+                : type.GetConstructor(Type.EmptyTypes);
             if (constructor != null)
             {
                 object[] args = constructor.GetParameters().Length == 0 ? [] : [game];
@@ -230,9 +248,6 @@ namespace IndustrialPark
         {
             using (var reader = new EndianBinaryReader(item, Endianness.Little))
             {
-                //if (type.Equals(typeof(EntryLODT)))
-                //    return new EntryLODT(reader, game);
-
                 ConstructorInfo constructor = type.GetConstructor([typeof(EndianBinaryReader), typeof(Game)]);
                 if (constructor != null)
                     return constructor.Invoke([reader, game]);

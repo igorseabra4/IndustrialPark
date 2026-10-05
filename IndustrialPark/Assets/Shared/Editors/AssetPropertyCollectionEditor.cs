@@ -43,11 +43,7 @@ namespace IndustrialPark
             if (array.GetType().GetElementType().Equals(typeof(AssetID)))
                 array = array.Cast<AssetID>().Select(x => new AssetIdWrapper(x)).ToArray();
 
-            var result = CollectionEditor.Get(
-                parent.game,
-                array.GetType().GetElementType(),
-                array.Cast<object>().Select(x => DynamicTypeDescriptor.Create(x)).ToArray(),
-                options);
+            var result = CollectionEditor.Get(parent.game, array.GetType().GetElementType(), array, options);
 
             // use wrapper for asset ids
             if (result != null && result is Array resultArray && resultArray.GetType().GetElementType().Equals(typeof(AssetIdWrapper)))

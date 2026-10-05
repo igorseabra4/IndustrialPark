@@ -1,20 +1,34 @@
 ﻿using System.ComponentModel;
+using Newtonsoft.Json;
 
 namespace IndustrialPark
 {
     [TypeConverter(typeof(AssetSingleTypeConverter))]
     public struct AssetSingle
     {
+        public AssetSingle()
+        {
+            this.value = 0;
+        }
+
         public AssetSingle(float value)
         {
             this.value = value;
         }
 
+        [JsonProperty]
         private float value;
+
+        [JsonIgnore]
+        public AssetSingle Value
+        {
+            get => value;
+            set => this.value = value;
+        }
 
         public override int GetHashCode() => value.GetHashCode();
 
-        public override string ToString() => value.ToString();
+        public override string ToString() => string.Format("{0:0.000000}", value);
 
         public static implicit operator float(AssetSingle value) => value.value;
 
