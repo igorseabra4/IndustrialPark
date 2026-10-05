@@ -436,7 +436,7 @@ namespace IndustrialPark
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write(_entries.Length);
+            writer.Write(_entries.Count);
 
             foreach (var l in _entries)
                 l.Serialize(writer);

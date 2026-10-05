@@ -1,11 +1,9 @@
-﻿using DiscordRPC;
-using HipHopFile;
+﻿using HipHopFile;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
-using static Assimp.Metadata;
 
 namespace IndustrialPark
 {
@@ -76,7 +74,7 @@ namespace IndustrialPark
             var len = reader.ReadInt32();
             _entries = [with(len)];
 
-            int startOfJawData = 4 + 12 * JAW_Entries.Length;
+            int startOfJawData = 4 + 12 * len;
 
             for (int i = 0; i < len; i++)
             {
