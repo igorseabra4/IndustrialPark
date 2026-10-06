@@ -161,6 +161,11 @@ namespace IndustrialPark
                     break;
 
                 case CurrentMovementAction.Going:
+                    if (ExtendTime == 0)
+                    {
+                        currentMovementAction = CurrentMovementAction.StartWait;
+                        break;
+                    }
                     translationMultiplier = (LocalFrameCounter - StartWaitRange) / (60 * ExtendTime);
                     if (LocalFrameCounter >= GoingRange)
                         currentMovementAction = CurrentMovementAction.EndWait;
@@ -173,6 +178,11 @@ namespace IndustrialPark
                     break;
 
                 case CurrentMovementAction.GoingBack:
+                    if (RetractTime == 0)
+                    {
+                        currentMovementAction = CurrentMovementAction.StartWait;
+                        break;
+                    }
                     translationMultiplier = 1 - ((LocalFrameCounter - EndWaitRange) / (60 * RetractTime));
                     if (LocalFrameCounter >= GoingBackRange)
                     {
