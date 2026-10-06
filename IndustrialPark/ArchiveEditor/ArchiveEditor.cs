@@ -398,11 +398,6 @@ namespace IndustrialPark
 
         private bool programIsChangingStuff = false;
 
-        public bool HasAsset(uint assetID)
-        {
-            return archive.ContainsAsset(assetID);
-        }
-
         public string GetAssetNameFromID(uint assetID)
         {
             return archive.GetFromAssetID(assetID).assetName;

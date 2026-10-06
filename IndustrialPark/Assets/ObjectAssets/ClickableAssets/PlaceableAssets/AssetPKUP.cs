@@ -329,9 +329,9 @@ namespace IndustrialPark
         public override void Draw(SharpRenderer renderer)
         {
             if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
-                if (renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]))
+                if (renderingDictionary.TryGetValue(AssetPICK.pickEntries[PickReferenceID], out IAssetWithModel value))
                 {
-                    renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
+                    value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
                     return;
                 }
 
@@ -340,7 +340,9 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public override bool SpecialBlendMode =>
-            !AssetPICK.pickEntries.ContainsKey(PickReferenceID) || !renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]) || renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].SpecialBlendMode;
+            !AssetPICK.pickEntries.TryGetValue(PickReferenceID, out uint modelID) ||
+            !renderingDictionary.TryGetValue(modelID, out IAssetWithModel value) ||
+            value.SpecialBlendMode;
 
         public override Matrix PlatLocalRotation()
         {

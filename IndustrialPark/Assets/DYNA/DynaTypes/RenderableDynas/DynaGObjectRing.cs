@@ -126,8 +126,7 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            world = (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID) ?
-                renderingDictionary[DynaGObjectRingControl.RingModelAssetID].TransformMatrix : Matrix.Identity)
+            world = (renderingDictionary.TryGetValue(DynaGObjectRingControl.RingModelAssetID, out IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
@@ -176,8 +175,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (renderingDictionary.ContainsKey(DynaGObjectRingControl.RingModelAssetID))
-                renderingDictionary[DynaGObjectRingControl.RingModelAssetID].Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
+            if (renderingDictionary.TryGetValue(DynaGObjectRingControl.RingModelAssetID, out IAssetWithModel value))
+                value.Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
             else
                 renderer.DrawCube(world, isSelected);
         }

@@ -154,98 +154,53 @@ namespace IndustrialPark
 
         public void LoadModels(bool tiny = false)
         {
-            cubeVertices = new List<Vector3>();
-            cubeTriangles = new List<Models.Triangle>();
+            cubeVertices = [];
+            cubeTriangles = [];
+            Cube = LoadMesh(tiny, "Box", ref cubeVertices, ref cubeTriangles);
 
-            cylinderVertices = new List<Vector3>();
-            cylinderTriangles = new List<Models.Triangle>();
+            cylinderVertices = [];
+            cylinderTriangles = [];
+            Cylinder = LoadMesh(tiny, "Cylinder", ref cylinderVertices, ref cylinderTriangles);
 
-            pyramidVertices = new List<Vector3>();
-            pyramidTriangles = new List<Models.Triangle>();
+            pyramidVertices = [];
+            pyramidTriangles = [];
+            Pyramid = LoadMesh(tiny, "Pyramid", ref pyramidVertices, ref pyramidTriangles);
 
-            sphereVertices = new List<Vector3>();
-            sphereTriangles = new List<Models.Triangle>();
+            sphereVertices = [];
+            sphereTriangles = [];
+            Sphere = LoadMesh(tiny, "Sphere", ref sphereVertices, ref sphereTriangles);
 
-            torusVertices = new List<Vector3>();
-            torusTriangles = new List<Models.Triangle>();
-
-            for (int i = 0; i < 5; i++)
-            {
-                Models.ModelConverterData objData;
-
-                if (i == 0)
-                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Box.obj", false);
-                else if (i == 1)
-                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Cylinder.obj", false);
-                else if (i == 2)
-                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Pyramid.obj", false);
-                else if (i == 3)
-                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Sphere.obj", false);
-                else
-                    objData = ReadOBJFile(Application.StartupPath + "/Resources/Models/Torus.obj", false);
-
-                List<Vertex> vertexList = new List<Vertex>();
-                foreach (Models.Vertex v in objData.VertexList)
-                {
-                    vertexList.Add(new Vertex(v.Position));
-                    if (i == 0)
-                        cubeVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 1)
-                        cylinderVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 2)
-                        pyramidVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 3)
-                        sphereVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                    else if (i == 4)
-                        torusVertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                }
-
-                List<int> indexList = new List<int>();
-                foreach (Models.Triangle t in objData.TriangleList)
-                {
-                    indexList.Add(t.vertex1);
-                    indexList.Add(t.vertex2);
-                    indexList.Add(t.vertex3);
-                    if (i == 0)
-                        cubeTriangles.Add(t);
-                    else if (i == 1)
-                        cylinderTriangles.Add(t);
-                    else if (i == 2)
-                        pyramidTriangles.Add(t);
-                    else if (i == 3)
-                        sphereTriangles.Add(t);
-                    else if (i == 4)
-                        torusTriangles.Add(t);
-                }
-
-                if (!tiny)
-                {
-                    SharpMesh mesh = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
-                    switch (i)
-                    {
-                        case 0:
-                            Cube = mesh;
-                            break;
-                        case 1:
-                            Cylinder = mesh;
-                            break;
-                        case 2:
-                            Pyramid = mesh;
-                            break;
-                        case 3:
-                            Sphere = mesh;
-                            break;
-                        case 4:
-                            Torus = mesh;
-                            break;
-                    }
-                }
-            }
+            torusVertices = [];
+            torusTriangles = [];
+            Torus = LoadMesh(tiny, "Torus", ref torusVertices, ref torusTriangles);
 
             CreatePlaneMesh(tiny);
 #if DEBUG
             CreateBoundingBoxMesh();
 #endif
+        }
+
+        private SharpMesh LoadMesh(bool tiny, string meshName, ref List<Vector3> vertices, ref List<Models.Triangle> triangles)
+        {
+            var objData = ReadOBJFile(Application.StartupPath + $"/Resources/Models/{meshName}.obj", false);
+            List<Vertex> vertexList = [];
+                foreach (Models.Vertex v in objData.VertexList)
+                {
+                    vertexList.Add(new Vertex(v.Position));
+                vertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+                }
+            List<int> indexList = [];
+                foreach (Models.Triangle t in objData.TriangleList)
+                {
+                    indexList.Add(t.vertex1);
+                    indexList.Add(t.vertex2);
+                    indexList.Add(t.vertex3);
+                triangles.Add(t);
+                }
+
+                if (!tiny)
+                return SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
+            return null;
         }
 
         public void CreatePlaneMesh(bool tiny)

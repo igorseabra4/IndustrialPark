@@ -1464,7 +1464,7 @@ namespace IndustrialPark
         public string GetAssetNameFromID(uint assetID)
         {
             foreach (ArchiveEditor archiveEditor in archiveEditors)
-                if (archiveEditor.HasAsset(assetID))
+                if (archiveEditor.archive.ContainsAsset(assetID))
                     return archiveEditor.GetAssetNameFromID(assetID);
 
             return ArchiveEditorFunctions.GetFromNameDictionary(assetID) ?? "0x" + assetID.ToString("X8");
@@ -1473,7 +1473,7 @@ namespace IndustrialPark
         public bool AssetExists(uint assetID)
         {
             foreach (ArchiveEditor archiveEditor in archiveEditors)
-                if (archiveEditor.HasAsset(assetID))
+                if (archiveEditor.archive.ContainsAsset(assetID))
                     return true;
 
             if (ArchiveEditorFunctions.GetFromNameDictionary(assetID) != null)

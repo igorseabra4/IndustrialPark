@@ -29,58 +29,27 @@ namespace IndustrialPark
                 else
                     TypeFlag = 0;
 
-                switch ((PlatType)(byte)TypeFlag)
+                PlatformSpecific = (PlatType)(byte)TypeFlag switch
                 {
-                    case PlatType.ConveyorBelt:
-                        PlatformSpecific = new PlatSpecific_ConveryorBelt(game);
-                        break;
-                    case PlatType.FallingPlatform:
-                        PlatformSpecific = new PlatSpecific_FallingPlatform(game);
-                        break;
-                    case PlatType.FR:
-                        PlatformSpecific = new PlatSpecific_FR(game);
-                        break;
-                    case PlatType.BreakawayPlatform:
-                        PlatformSpecific = new PlatSpecific_BreakawayPlatform(game);
-                        break;
-                    case PlatType.Springboard:
-                        PlatformSpecific = new PlatSpecific_Springboard(game);
-                        break;
-                    case PlatType.TeeterTotter:
-                        PlatformSpecific = new PlatSpecific_TeeterTotter(game);
-                        break;
-                    case PlatType.Paddle:
-                        PlatformSpecific = new PlatSpecific_Paddle(game);
-                        break;
-                    default:
-                        PlatformSpecific = new PlatSpecific_Generic(game);
-                        break;
-                }
-
-                switch (PlatformType)
+                    PlatType.ConveyorBelt => new PlatSpecific_ConveryorBelt(game),
+                    PlatType.FallingPlatform => new PlatSpecific_FallingPlatform(game),
+                    PlatType.FR => new PlatSpecific_FR(game),
+                    PlatType.BreakawayPlatform => new PlatSpecific_BreakawayPlatform(game),
+                    PlatType.Springboard => new PlatSpecific_Springboard(game),
+                    PlatType.TeeterTotter => new PlatSpecific_TeeterTotter(game),
+                    PlatType.Paddle => new PlatSpecific_Paddle(game),
+                    _ => new PlatSpecific_Generic(game),
+                };
+                Motion = PlatformType switch
                 {
-                    case PlatType.ExtendRetract:
-                        Motion = new Motion_ExtendRetract(game);
-                        break;
-                    case PlatType.Orbit:
-                        Motion = new Motion_Orbit(game);
-                        break;
-                    case PlatType.Spline:
-                        Motion = new Motion_Spline(game);
-                        break;
-                    case PlatType.Pendulum:
-                        Motion = new Motion_Pendulum(game);
-                        break;
-                    case PlatType.MovePoint:
-                        Motion = new Motion_MovePoint(game, _position);
-                        break;
-                    case PlatType.Mechanism:
-                        Motion = new Motion_Mechanism(game);
-                        break;
-                    default:
-                        Motion = new Motion(game, MotionType.Other);
-                        break;
-                }
+                    PlatType.ExtendRetract => new Motion_ExtendRetract(game),
+                    PlatType.Orbit => new Motion_Orbit(game),
+                    PlatType.Spline => new Motion_Spline(game),
+                    PlatType.Pendulum => new Motion_Pendulum(game),
+                    PlatType.MovePoint => new Motion_MovePoint(game, _position),
+                    PlatType.Mechanism => new Motion_Mechanism(game),
+                    _ => new Motion(game, MotionType.Other),
+                };
             }
         }
 
@@ -254,60 +223,29 @@ namespace IndustrialPark
 
                 PlatformFlags.FlagValueShort = reader.ReadUInt16();
 
-                switch ((PlatType)(byte)TypeFlag)
+                PlatformSpecific = (PlatType)(byte)TypeFlag switch
                 {
-                    case PlatType.ConveyorBelt:
-                        PlatformSpecific = new PlatSpecific_ConveryorBelt(reader, game);
-                        break;
-                    case PlatType.FallingPlatform:
-                        PlatformSpecific = new PlatSpecific_FallingPlatform(reader, game);
-                        break;
-                    case PlatType.FR:
-                        PlatformSpecific = new PlatSpecific_FR(reader, game);
-                        break;
-                    case PlatType.BreakawayPlatform:
-                        PlatformSpecific = new PlatSpecific_BreakawayPlatform(reader, game);
-                        break;
-                    case PlatType.Springboard:
-                        PlatformSpecific = new PlatSpecific_Springboard(reader, game);
-                        break;
-                    case PlatType.TeeterTotter:
-                        PlatformSpecific = new PlatSpecific_TeeterTotter(reader, game);
-                        break;
-                    case PlatType.Paddle:
-                        PlatformSpecific = new PlatSpecific_Paddle(reader, game);
-                        break;
-                    default:
-                        PlatformSpecific = new PlatSpecific_Generic(game);
-                        break;
-                }
-
+                    PlatType.ConveyorBelt => new PlatSpecific_ConveryorBelt(reader, game),
+                    PlatType.FallingPlatform => new PlatSpecific_FallingPlatform(reader, game),
+                    PlatType.FR => new PlatSpecific_FR(reader, game),
+                    PlatType.BreakawayPlatform => new PlatSpecific_BreakawayPlatform(reader, game),
+                    PlatType.Springboard => new PlatSpecific_Springboard(reader, game),
+                    PlatType.TeeterTotter => new PlatSpecific_TeeterTotter(reader, game),
+                    PlatType.Paddle => new PlatSpecific_Paddle(reader, game),
+                    _ => new PlatSpecific_Generic(game),
+                };
                 reader.BaseStream.Position = motionStart(game);
 
-                switch (PlatformType)
+                Motion = PlatformType switch
                 {
-                    case PlatType.ExtendRetract:
-                        Motion = new Motion_ExtendRetract(reader, game);
-                        break;
-                    case PlatType.Orbit:
-                        Motion = new Motion_Orbit(reader, game);
-                        break;
-                    case PlatType.Spline:
-                        Motion = new Motion_Spline(reader, game);
-                        break;
-                    case PlatType.Pendulum:
-                        Motion = new Motion_Pendulum(reader, game);
-                        break;
-                    case PlatType.MovePoint:
-                        Motion = new Motion_MovePoint(reader, game, _position);
-                        break;
-                    case PlatType.Mechanism:
-                        Motion = new Motion_Mechanism(reader, game);
-                        break;
-                    default:
-                        Motion = new Motion(reader, game);
-                        break;
-                }
+                    PlatType.ExtendRetract => new Motion_ExtendRetract(reader, game),
+                    PlatType.Orbit => new Motion_Orbit(reader, game),
+                    PlatType.Spline => new Motion_Spline(reader, game),
+                    PlatType.Pendulum => new Motion_Pendulum(reader, game),
+                    PlatType.MovePoint => new Motion_MovePoint(reader, game, _position),
+                    PlatType.Mechanism => new Motion_Mechanism(reader, game),
+                    _ => new Motion(reader, game),
+                };
             }
         }
 

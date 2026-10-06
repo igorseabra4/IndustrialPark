@@ -128,17 +128,14 @@ namespace IndustrialPark
         {
             bool found = false;
             foreach (var ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(Text) && ae.archive.GetFromAssetID(Text) is AssetTEXT assetText)
+                if (ae.archive.TryGetAsset(Text, out Asset asset) && asset is AssetTEXT assetText)
                 {
                     var newText = assetText.Text;
                     if (newText != text)
                     {
                         text = newText;
-                        if (image != null)
-                        {
-                            image.Dispose();
-                            image = null;
-                        }
+                        image?.Dispose();
+                        image = null;
                         image = TextureUtilities.CreateTextureFromBitmap(renderer.device.Device, DrawBitmapFromText());
                         found = true;
                     }

@@ -266,9 +266,9 @@ namespace IndustrialPark
             foreach (var reference in References)
             {
                 uint _model = reference.Model;
-                if (renderingDictionary.ContainsKey(_model))
+                if (renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
                 {
-                    renderingDictionary[_model].Draw(renderer, world, color, uvAnimOffset, isSelected);
+                    value.Draw(renderer, world, color, uvAnimOffset, isSelected);
                     noneDrawn = false;
                 }
                 if (drawOnlyFirst)
@@ -281,7 +281,7 @@ namespace IndustrialPark
         private uint _model => References.Length > 0 ? References[0].Model : 0;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].SpecialBlendMode : true;
+        public bool SpecialBlendMode => !renderingDictionary.TryGetValue(_model, out IAssetWithModel value) || value.SpecialBlendMode;
 
         public RenderWareModelFile GetRenderWareModelFile() => GetFromRenderingDictionary(_model);
 

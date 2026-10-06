@@ -570,19 +570,17 @@ namespace IndustrialPark.Randomizer
                     break;
                 case "gl01":
                     RemoveAssetsFrom(ref assets, "SHINY_YELLOW_004");
-                    if (ContainsAsset(new AssetID("GOLDENSPATULA_04")))
-                        ((AssetPKUP)GetFromAssetID(new AssetID("GOLDENSPATULA_04"))).PositionY += 2f;
+                    if (TryGetAsset(new AssetID("GOLDENSPATULA_04"), out Asset asset) && asset is AssetPKUP goldenSpatula04)
+                        goldenSpatula04.PositionY += 2f;
                     break;
                 case "gl03":
-                    if (ContainsAsset(0x0B48E8AC))
+                    if (TryGetAsset(new AssetID(0x0B48E8AC), out Asset dynaAsset) && dynaAsset is AssetDYNA dyna)
                     {
-                        AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
-                        dyna.Links = new Link[0];
-
-                        if (ContainsAsset(0xF70F6FEE))
+                        dyna.Links = [];
+                        if (TryGetAsset(new AssetID(0xF70F6FEE), out Asset targetAsset) && targetAsset is AssetPKUP targetPickup)
                         {
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlags = EPickupFlags.InitiallyVisible;
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).VisibilityFlags.FlagValueByte = 1;
+                            targetPickup.PickupFlags = EPickupFlags.InitiallyVisible;
+                            targetPickup.VisibilityFlags.FlagValueByte = 1;
                         }
                     }
                     break;

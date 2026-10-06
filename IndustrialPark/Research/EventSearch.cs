@@ -138,8 +138,8 @@ namespace IndustrialPark
                                 continue;
 
                             Asset targetAsset = null;
-                            if (archive.ContainsAsset(assetEvent.TargetAsset))
-                                targetAsset = archive.GetFromAssetID(assetEvent.TargetAsset);
+                            if (archive.TryGetAsset(assetEvent.TargetAsset, out Asset tempAsset))
+                                targetAsset = tempAsset;
 
                             if (recieverAssetType != AssetType.Null)
                             {
@@ -160,15 +160,15 @@ namespace IndustrialPark
 
                             if (assetEvent.ArgumentAsset != 0)
                             {
-                                if (archive.ContainsAsset(assetEvent.ArgumentAsset))
-                                    eventName += $", {archive.GetFromAssetID(assetEvent.ArgumentAsset).assetName}";
+                                if (archive.TryGetAsset(assetEvent.ArgumentAsset, out Asset argumentAsset))
+                                    eventName += $", {argumentAsset.assetName}";
                                 else
                                     eventName += $", 0x{assetEvent.ArgumentAsset.ToString("X8")}";
                             }
                             if (assetEvent.SourceCheckAsset != 0)
                             {
-                                if (archive.ContainsAsset(assetEvent.SourceCheckAsset))
-                                    eventName += $", {archive.GetFromAssetID(assetEvent.SourceCheckAsset).assetName}";
+                                if (archive.TryGetAsset(assetEvent.SourceCheckAsset, out Asset sourceCheckAsset))
+                                    eventName += $", {sourceCheckAsset.assetName}";
                                 else
                                     eventName += $", 0x{assetEvent.SourceCheckAsset.ToString("X8")}";
                             }

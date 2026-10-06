@@ -306,13 +306,13 @@ namespace IndustrialPark
                 AssetRWTX RWTX;
 
                 uint assetID = BKDRHash(t + ".RW3");
-                if (ContainsAsset(assetID))
-                    RWTX = (AssetRWTX)GetFromAssetID(assetID);
+                if (TryGetAsset(assetID, out Asset asset) && asset is AssetRWTX rWTX1)
+                    RWTX = rWTX1;
                 else
                 {
                     assetID = BKDRHash(t);
-                    if (ContainsAsset(assetID))
-                        RWTX = (AssetRWTX)GetFromAssetID(assetID);
+                    if (TryGetAsset(assetID, out asset) && asset is AssetRWTX rWTX2)
+                        RWTX = rWTX2;
                     else
                         continue;
                 }

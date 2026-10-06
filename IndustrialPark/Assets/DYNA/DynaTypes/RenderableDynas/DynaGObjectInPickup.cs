@@ -134,15 +134,15 @@ namespace IndustrialPark
             if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
             {
                 var tpikEntry = AssetTPIK.tpikEntries[PickupHash];
-                if (renderingDictionary.ContainsKey(tpikEntry.Model))
+                if (renderingDictionary.TryGetValue(tpikEntry.Model, out IAssetWithModel value))
                 {
-                    renderingDictionary[tpikEntry.Model].Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
+                    value.Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
                     drew = true;
                 }
-                if (renderingDictionary.ContainsKey(tpikEntry.PulseModel))
+                if (renderingDictionary.TryGetValue(tpikEntry.PulseModel, out IAssetWithModel pulseValue))
                 {
                     var color = new Vector4(tpikEntry.ColorRed, tpikEntry.ColorGreen, tpikEntry.ColorBlue, 1f);
-                    renderingDictionary[tpikEntry.PulseModel].Draw(renderer, world, color, Vector3.Zero, isSelected);
+                    pulseValue.Draw(renderer, world, color, Vector3.Zero, isSelected);
                     drew = true;
                 }
             }

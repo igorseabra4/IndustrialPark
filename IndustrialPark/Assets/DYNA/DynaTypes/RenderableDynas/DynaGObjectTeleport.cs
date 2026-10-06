@@ -161,8 +161,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                renderingDictionary[_modelAssetID].Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
+            if (renderingDictionary.TryGetValue(_modelAssetID, out IAssetWithModel value))
+                value.Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
             else
                 renderer.DrawPyramid(world, isSelected);
         }

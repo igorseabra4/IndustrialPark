@@ -87,7 +87,7 @@ namespace IndustrialPark
         public static RenderWareModelFile GetFromRenderingDictionary(uint assetID)
         {
             lock (renderingDictionary)
-                return renderingDictionary.ContainsKey(assetID) ? renderingDictionary[assetID].GetRenderWareModelFile() : null;
+                return renderingDictionary.TryGetValue(assetID, out IAssetWithModel value) ? value.GetRenderWareModelFile() : null;
         }
 
         private static readonly Dictionary<uint, string> nameDictionary = new Dictionary<uint, string>();
@@ -104,7 +104,7 @@ namespace IndustrialPark
         public static string GetFromNameDictionary(uint assetID)
         {
             lock (nameDictionary)
-                return nameDictionary.ContainsKey(assetID) ? nameDictionary[assetID] : null;
+                return nameDictionary.TryGetValue(assetID, out string value) ? value : null;
         }
         public static void ClearNameDictionary()
         {
@@ -550,6 +550,8 @@ namespace IndustrialPark
                 throw new KeyNotFoundException($"Asset [{key:X8}] not present in dictionary.");
             return asset;
         }
+
+        public bool TryGetAsset(uint key, out Asset asset) => assetDictionary.TryGetValue(key, out asset);
 
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
         {
@@ -1576,11 +1578,11 @@ namespace IndustrialPark
 
             foreach (uint assetID in assetIDs)
             {
-                if (!assetDictionary.ContainsKey(assetID))
+                if (!assetDictionary.TryGetValue(assetID, out Asset value))
                     continue;
 
-                assetDictionary[assetID].isSelected = true;
-                CurrentlySelectedAssets.Add(assetDictionary[assetID]);
+                value.isSelected = true;
+                CurrentlySelectedAssets.Add(value);
             }
         }
 
@@ -1617,9 +1619,8 @@ namespace IndustrialPark
         {
             if (blendModes != null)
                 foreach (var k in blendModes.Keys)
-                    if (renderingDictionary.ContainsKey(k) && renderingDictionary[k] is AssetMODL MODL)
+                    if (renderingDictionary.TryGetValue(k, out IAssetWithModel value) && value is AssetMODL MODL)
                         MODL.SetPipeline(blendModes[k]);
-
         }
 
         public void UpdateLightKit(AssetID lkitid)
@@ -1632,14 +1633,14 @@ namespace IndustrialPark
 
         public AssetMRKR GetMRKR(uint mrkr)
         {
-            if (ContainsAsset(mrkr) && GetFromAssetID(mrkr) is AssetMRKR MRKR)
+            if (TryGetAsset(mrkr, out Asset asset) && asset is AssetMRKR MRKR)
                 return MRKR;
             return null;
         }
 
         public AssetSGRP GetSGRP(uint sgrp)
         {
-            if (ContainsAsset(sgrp) && GetFromAssetID(sgrp) is AssetSGRP SGRP)
+            if (TryGetAsset(sgrp, out Asset asset) && asset is AssetSGRP SGRP)
                 return SGRP;
             return null;
         }

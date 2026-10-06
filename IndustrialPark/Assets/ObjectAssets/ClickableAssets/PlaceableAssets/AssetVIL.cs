@@ -251,8 +251,8 @@ namespace IndustrialPark
                     localFrameCounter = 0;
             }
 
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
-                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
+            if (ArchiveEditorFunctions.renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+                value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
@@ -277,12 +277,8 @@ namespace IndustrialPark
         private AssetMVPT FindMVPT(out bool found)
         {
             foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(MovePoint))
-                {
-                    Asset asset = ae.archive.GetFromAssetID(MovePoint);
-                    if (asset is AssetMVPT MVPT)
-                        return FindMVPTWithRadius(MVPT, out found, new List<uint>() { MovePoint });
-                }
+                if (ae.archive.TryGetAsset(MovePoint, out Asset asset) && asset is AssetMVPT MVPT)
+                    return FindMVPTWithRadius(MVPT, out found, [MovePoint]);
 
             found = false;
             return null;
@@ -299,9 +295,8 @@ namespace IndustrialPark
                 }
                 foreach (AssetID assetID in MVPT.NextMovePoints)
                     foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                        if (ae.archive.ContainsAsset(assetID))
+                        if (ae.archive.TryGetAsset(assetID, out Asset asset))
                         {
-                            Asset asset = ae.archive.GetFromAssetID(assetID);
                             if (asset is AssetMVPT MVPT2 && !list.Contains(assetID))
                             {
                                 list.Add(assetID);

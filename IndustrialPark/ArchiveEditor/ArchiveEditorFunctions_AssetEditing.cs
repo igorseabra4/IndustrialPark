@@ -1058,7 +1058,7 @@ namespace IndustrialPark
             int count = 0;
 
             foreach (var ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(modelAssetId) && ae.archive.GetFromAssetID(modelAssetId) is IAssetWithModel model)
+                if (ae.archive.TryGetAsset(modelAssetId, out Asset asset) && asset is IAssetWithModel model)
                 {
                     bsmc = (ae.archive, model);
                     count++;
@@ -1121,7 +1121,7 @@ namespace IndustrialPark
             int count = 0;
 
             foreach (var ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(modelAssetId) && ae.archive.GetFromAssetID(modelAssetId) is AssetMODL model)
+                if (ae.archive.TryGetAsset(modelAssetId, out Asset asset) && asset is AssetMODL model)
                 {
                     bsmc = (ae.archive, model);
                     count++;

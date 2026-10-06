@@ -64,8 +64,8 @@ namespace IndustrialPark
             Vector4 Color = _color;
             Color.W = Color.W == 0f ? 1f : Color.W;
 
-            if (renderingDictionary.ContainsKey(_model))
-                renderingDictionary[_model].Draw(renderer, LocalWorld(), Color, UvAnimOffset, isSelected);
+            if (renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+                value.Draw(renderer, LocalWorld(), Color, UvAnimOffset, isSelected);
             else
                 renderer.DrawPyramid(LocalWorld(), isSelected, 1f);
         }

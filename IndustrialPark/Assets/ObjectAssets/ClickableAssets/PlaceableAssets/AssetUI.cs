@@ -143,9 +143,9 @@ namespace IndustrialPark
 
         public override void CreateTransformMatrix()
         {
-            world = renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity;
+            world = renderingDictionary.TryGetValue(_model, out IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity;
 
-            if (!(this is AssetUIFT) && Texture == 0)
+            if (this is not AssetUIFT && Texture == 0)
             {
                 world *= Matrix.Scaling(_scale) * Matrix.Scaling(Width, Height, 1f)
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
@@ -173,7 +173,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (!(this is AssetUIFT) && Texture == 0)
+            if (this is not AssetUIFT && Texture == 0)
                 base.Draw(renderer);
             else
                 renderer.DrawPlane(world, isSelected, Texture, UvAnimOffset);

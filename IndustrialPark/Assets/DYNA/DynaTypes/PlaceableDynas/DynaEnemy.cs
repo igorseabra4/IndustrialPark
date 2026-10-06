@@ -252,7 +252,7 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            world = (renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity)
+            world = (renderingDictionary.TryGetValue(_model, out IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
@@ -304,13 +304,13 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => !renderingDictionary.ContainsKey(_model) || renderingDictionary[_model].SpecialBlendMode;
+        public bool SpecialBlendMode => !renderingDictionary.TryGetValue(_model, out IAssetWithModel value) || value.SpecialBlendMode;
 
         public void Draw(SharpRenderer renderer)
         {
             Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
-            if (renderingDictionary.ContainsKey(_model))
-                renderingDictionary[_model].Draw(renderer, world, Color, Vector3.Zero, isSelected);
+            if (renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+                value.Draw(renderer, world, Color, Vector3.Zero, isSelected);
             else
                 renderer.DrawCube(world, isSelected);
         }
