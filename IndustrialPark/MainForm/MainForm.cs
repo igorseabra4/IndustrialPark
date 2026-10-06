@@ -580,7 +580,7 @@ namespace IndustrialPark
         private void MouseMoveControl(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.None)
-                ArchiveEditorFunctions.ScreenUnclicked();
+                ScreenUnclicked();
 
             if (renderer.isDrawingUI)
             {
@@ -1124,11 +1124,17 @@ namespace IndustrialPark
                 Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
 
                 if (isMouseDown)
-                    ArchiveEditorFunctions.GizmoSelect(ray);
+                {
+                    foreach (var ae in archiveEditors)
+                        if (ae.archive.CurrentlySelectedAssets.Count > 0)
+                            ae.archive.GizmoSelect(ray);
+                }
                 else
+                {
                     SetSelectedIndex(renderer.isDrawingUI ?
                         ArchiveEditorFunctions.GetClickedAssetID2D(renderer, ray, renderer.Camera.FarPlane) :
                         ArchiveEditorFunctions.GetClickedAssetID(renderer, ray));
+                }
             }
         }
 
@@ -1138,12 +1144,18 @@ namespace IndustrialPark
 
         private void renderPanel_MouseUp(object sender, MouseEventArgs e)
         {
-            ArchiveEditorFunctions.ScreenUnclicked();
+            ScreenUnclicked();
         }
 
         private void renderPanel_MouseLeave(object sender, EventArgs e)
         {
-            ArchiveEditorFunctions.ScreenUnclicked();
+            ScreenUnclicked();
+        }
+
+        public void ScreenUnclicked()
+        {
+            foreach (var ae in Program.MainForm.archiveEditors)
+                ae.archive.ScreenUnclicked();
         }
 
         public void SetSelectedIndex(uint? assetID, bool add = false)

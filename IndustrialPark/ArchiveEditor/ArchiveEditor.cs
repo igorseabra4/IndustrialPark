@@ -1047,7 +1047,8 @@ namespace IndustrialPark
         public void MouseMoveGeneric(Matrix viewProjection, int deltaX, int deltaY, bool grid)
         {
             archive.MouseMoveForPosition(viewProjection, deltaX, deltaY, grid);
-            archive.MouseMoveForRotation(viewProjection, deltaX, grid);//, deltaY);
+            archive.MouseMoveForPositionTriggers(viewProjection, deltaX, deltaY, grid);
+            archive.MouseMoveForRotation(viewProjection, deltaX, grid);
             archive.MouseMoveForScale(viewProjection, deltaX, deltaY, grid);
             archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
         }
