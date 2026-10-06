@@ -268,7 +268,7 @@ namespace IndustrialPark
 
         public virtual void CreateTransformMatrix()
         {
-            world = (renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity)
+            world = (renderingDictionary.TryGetValue(_model, out IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
@@ -328,14 +328,14 @@ namespace IndustrialPark
             if (isSelected)
                 DrawDebug(renderer);
 #endif
-            if (renderingDictionary.ContainsKey(_model))
-                renderingDictionary[_model].Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
+            if (renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+                value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Browsable(false)]
-        public virtual bool SpecialBlendMode => !renderingDictionary.ContainsKey(_model) || renderingDictionary[_model].SpecialBlendMode;
+        public virtual bool SpecialBlendMode => !renderingDictionary.TryGetValue(_model, out IAssetWithModel value) || value.SpecialBlendMode;
 
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
@@ -455,33 +455,31 @@ namespace IndustrialPark
 
         public static bool movementPreview = false;
 
-        protected EntityAsset FindDrivenByAsset(out bool useRotation)
+        protected (EntityAsset driver, bool useRotation) FindDriverAsset()
         {
             foreach (var link in _links)
             {
                 uint PlatID = 0;
-
-                if ((EventBFBB)link.EventSendID == EventBFBB.Drivenby)
-                    PlatID = link.TargetAsset;
-                else if ((EventBFBB)link.EventSendID == EventBFBB.Mount)
-                    PlatID = link.ArgumentAsset;
-                else
-                    continue;
-
-                foreach (var ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(PlatID))
-                    {
-                        var asset = ae.archive.GetFromAssetID(PlatID);
-                        if (asset is EntityAsset entity)
+                switch ((EventBFBB)link.EventSendID)
+                {
+                    case EventBFBB.Drivenby:
+                        PlatID = link.TargetAsset;
+                        break;
+                    case EventBFBB.Mount when this is AssetPKUP:
+                        PlatID = link.ArgumentAsset;
+                        break;
+                    default:
+                        continue;
+                }
+                if (PlatID != 0)
+                    foreach (var ae in Program.MainForm.archiveEditors)
+                        if (ae.archive.TryGetAsset(PlatID, out Asset asset) && asset is EntityAsset entity)
                         {
-                            useRotation = link.FloatParameter1 != 0 || (EventBFBB)link.EventSendID == EventBFBB.Mount;
-                            return entity;
+                            var useRotation = link.FloatParameter1 != 0 || (EventBFBB)link.EventSendID == EventBFBB.Mount;
+                            return (entity, useRotation);
                         }
-                    }
             }
-
-            useRotation = false;
-            return null;
+            return (null, false);
         }
 
         public virtual Matrix PlatLocalRotation()
@@ -489,18 +487,19 @@ namespace IndustrialPark
             return Matrix.Identity;
         }
 
+        protected EntityAsset driver = null;
+        protected bool driverUseRotation;
+
         public virtual Matrix LocalWorld()
         {
             if (movementPreview)
             {
-                var driver = FindDrivenByAsset(out bool useRotation);
-
                 if (driver != null)
                 {
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(_position - driver._position)
-                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
+                        * (driverUseRotation ? driver.PlatLocalRotation() : Matrix.Identity)
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }
             }
@@ -512,6 +511,7 @@ namespace IndustrialPark
         {
             localFrameCounter = -1;
             FindSurf();
+            (driver, driverUseRotation) = FindDriverAsset();
         }
 
         protected Vector3 uvTransSpeed;
@@ -521,12 +521,11 @@ namespace IndustrialPark
         {
             if (Program.MainForm != null && Surface != 0)
                 foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(Surface))
-                        if (ae.archive.GetFromAssetID(Surface) is AssetSURF SURF)
-                        {
-                            uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
-                            return;
-                        }
+                    if (ae.archive.TryGetAsset(Surface, out Asset asset) && asset is AssetSURF SURF)
+                    {
+                        uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
+                        return;
+                    }
             uvTransSpeed = Vector3.Zero;
         }
 

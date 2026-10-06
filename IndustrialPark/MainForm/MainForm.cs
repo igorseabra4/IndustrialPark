@@ -1194,9 +1194,8 @@ namespace IndustrialPark
         public void ResetMovementPreview()
         {
             foreach (ArchiveEditor ae in archiveEditors)
-                foreach (Asset a in ae.archive.GetAllAssets())
-                    if (a is EntityAsset p)
-                        p.Reset();
+                foreach (EntityAsset p in ae.archive.GetAllAssets().OfType<EntityAsset>())
+                    p.Reset();
         }
 
         private void drawOnlyFirstMINFReferenceToolStripMenuItem_Click(object sender, EventArgs e)

@@ -60,7 +60,7 @@ namespace IndustrialPark
             LocalFrameCounter = -1;
         }
 
-        public void Increment()
+        public virtual void Update()
         {
             LocalFrameCounter++;
         }
@@ -304,12 +304,14 @@ namespace IndustrialPark
         private Vector3 initialPosition;
         private Vector3 oldPosition;
         private Vector3 targetPosition;
+        private int delay;
 
         public override void Reset()
         {
             currentMVPT = FindMVPT(MovePoint);
             if (currentMVPT != null)
             {
+                delay = (int)(currentMVPT.Delay * 60);
                 targetPosition = new Vector3(currentMVPT.PositionX, currentMVPT.PositionY, currentMVPT.PositionZ);
                 oldPosition = targetPosition;
             }
@@ -323,9 +325,8 @@ namespace IndustrialPark
         {
             if (Program.MainForm != null && assetID != 0)
                 foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(assetID))
+                    if (ae.archive.TryGetAsset(assetID, out Asset asset))
                     {
-                        Asset asset = ae.archive.GetFromAssetID(assetID);
                         if (asset is AssetMVPT MVPT)
                             return MVPT;
                     }
@@ -334,11 +335,16 @@ namespace IndustrialPark
 
         public override Matrix PlatLocalTranslation()
         {
-            if (currentMVPT != null)
+            if (delay > 0)
+            {
+                delay--;
+                LocalFrameCounter--;
+            }
+            else if (currentMVPT != null)
             {
                 Vector3 newPosition = Vector3.Lerp(oldPosition, targetPosition, Math.Min(1f, LocalFrameCounter / (Vector3.Distance(oldPosition, targetPosition) / (Math.Abs(Speed) / 60f))));
 
-                if (newPosition == targetPosition)
+                if (Vector3.Distance(newPosition, targetPosition) < 0.05f)
                 {
                     LocalFrameCounter = 0;
                     oldPosition = targetPosition;
@@ -347,6 +353,7 @@ namespace IndustrialPark
                     {
                         currentMVPT = FindMVPT(currentMVPT.NextMovePoints[0]);
                         targetPosition = new Vector3(currentMVPT.PositionX, currentMVPT.PositionY, currentMVPT.PositionZ);
+                        delay = (int)(currentMVPT.Delay * 60);
                     }
                     else
                         Reset();
@@ -476,189 +483,227 @@ namespace IndustrialPark
         }
 
         private CurrentMovementAction currentMovementAction;
-        private int amountOfMovementsPerformed = 0;
+        private int amountOfMovementsPerformed;
+        private float slideMovementMultiplier;
+        private float rotationMovementMultiplier;
 
         public override void Reset()
         {
             currentMovementAction = CurrentMovementAction.StartWait;
             amountOfMovementsPerformed = 0;
-
+            slideMovementMultiplier = 0;
+            rotationMovementMultiplier = 0;
             base.Reset();
         }
 
-        private float StartWaitRange => 60 * PostRetractDelay;
-        private float GoingRange => StartWaitRange + 60 * Math.Max(MovementType != 0 ? RotateTime : 0, MovementType != EMovementType.Rotate ? SlideTime : 0);
-        private float EndWaitRange => GoingRange + 60 * RetractDelay;
-        private float GoingBackRange => EndWaitRange + 60 * Math.Max(MovementType != 0 ? RotateTime : 0, MovementType != EMovementType.Rotate ? SlideTime : 0);
+        private bool HasSlide =>
+            MovementType == EMovementType.Slide ||
+            MovementType == EMovementType.SlideAndRotate ||
+            MovementType == EMovementType.SlideThenRotate ||
+            MovementType == EMovementType.RotateThenSlide;
+        private bool HasRotation =>
+            MovementType == EMovementType.Rotate ||
+            MovementType == EMovementType.SlideAndRotate ||
+            MovementType == EMovementType.SlideThenRotate ||
+            MovementType == EMovementType.RotateThenSlide;
+        private bool ReturnsToStart => ((int)MovementLoopMode & (int)EMechanismFlags.ReturnToStart) != 0;
+        private bool DontLoop => ((int)MovementLoopMode & (int)EMechanismFlags.DontLoop) != 0;
 
-        public override Matrix PlatLocalTranslation()
+        private float MovementDuration => MovementType switch
         {
-            Matrix localWorld = Matrix.Identity;
+            EMovementType.Slide => SlideTime,
+            EMovementType.Rotate => RotateTime,
+            EMovementType.SlideAndRotate => Math.Max(SlideTime, RotateTime),
+            EMovementType.SlideThenRotate => SlideTime + RotateTime,
+            EMovementType.RotateThenSlide => RotateTime + SlideTime,
+            _ => 0f,
+        };
 
-            if (MovementType != EMovementType.Rotate)
+        private float StartWaitRange => 60f * PostRetractDelay;
+        private float GoingRange => StartWaitRange + 60f * MovementDuration;
+        private float EndWaitRange => GoingRange + 60f * RetractDelay;
+        private float GoingBackRange => EndWaitRange + 60f * MovementDuration;
+
+        private static float CalculateMovementProgress(float time, float duration, float accelTime, float decelTime)
+        {
+            if (duration <= 0f)
+                return 1f;
+
+            time = Math.Max(0f, Math.Min(time, duration));
+
+            accelTime = Math.Max(0f, accelTime);
+            decelTime = Math.Max(0f, decelTime);
+
+            if (accelTime + decelTime > duration)
             {
-                float translationMultiplier = 0;
-
-                if (((int)MovementLoopMode & 1) == 0)
-                    switch (currentMovementAction)
-                    {
-                        case CurrentMovementAction.StartWait:
-                            translationMultiplier = amountOfMovementsPerformed;
-                            if (LocalFrameCounter >= StartWaitRange)
-                                currentMovementAction = CurrentMovementAction.Going;
-                            break;
-
-                        case CurrentMovementAction.Going:
-                            translationMultiplier = amountOfMovementsPerformed + Math.Min(1f, (LocalFrameCounter - StartWaitRange) / (60 * SlideTime));
-
-                            if (LocalFrameCounter >= GoingRange)
-                            {
-                                if (((int)MovementLoopMode & 2) == 0)
-                                    amountOfMovementsPerformed++;
-                                else
-                                    amountOfMovementsPerformed = 0;
-                                currentMovementAction = CurrentMovementAction.StartWait;
-                                LocalFrameCounter = 0;
-                            }
-                            break;
-                        default:
-                            Reset();
-                            break;
-                    }
-                else
-                    switch (currentMovementAction)
-                    {
-                        case CurrentMovementAction.StartWait:
-                            if (LocalFrameCounter >= StartWaitRange)
-                                currentMovementAction = CurrentMovementAction.Going;
-                            break;
-
-                        case CurrentMovementAction.Going:
-                            translationMultiplier = Math.Min(1, (LocalFrameCounter - StartWaitRange) / (60 * SlideTime));
-                            if (LocalFrameCounter >= GoingRange)
-                                currentMovementAction = CurrentMovementAction.EndWait;
-                            break;
-
-                        case CurrentMovementAction.EndWait:
-                            translationMultiplier = 1;
-                            if (LocalFrameCounter >= EndWaitRange)
-                                currentMovementAction = CurrentMovementAction.GoingBack;
-                            break;
-
-                        case CurrentMovementAction.GoingBack:
-                            translationMultiplier = 1 - Math.Min(1, (LocalFrameCounter - EndWaitRange) / (60 * SlideTime));
-                            if (LocalFrameCounter >= GoingBackRange)
-                            {
-                                currentMovementAction = CurrentMovementAction.StartWait;
-                                LocalFrameCounter = 0;
-                            }
-                            break;
-
-                        default:
-                            Reset();
-                            break;
-                    }
-
-                switch (SlideAxis)
+                float total = accelTime + decelTime;
+                if (total > 0f)
                 {
-                    case Axis.X:
-                        localWorld *= Matrix.Translation(translationMultiplier * SlideDistance, 0, 0);
-                        break;
-                    case Axis.Y:
-                        localWorld *= Matrix.Translation(0, translationMultiplier * SlideDistance, 0);
-                        break;
-                    case Axis.Z:
-                        localWorld *= Matrix.Translation(0, 0, translationMultiplier * SlideDistance);
-                        break;
+                    float scale = duration / total;
+                    accelTime *= scale;
+                    decelTime *= scale;
                 }
             }
 
-            return localWorld;
+            float cruiseTime = duration - accelTime - decelTime;
+
+            if (accelTime <= 0f && decelTime <= 0f)
+                return time / duration;
+
+            float denominator = cruiseTime + (accelTime + decelTime) * 0.5f;
+            if (denominator <= 0f)
+                return time / duration;
+
+            float peakVelocity = 1f / denominator;
+
+            if (accelTime > 0f && time < accelTime)
+            {
+                float acceleration = peakVelocity / accelTime;
+                return 0.5f * acceleration * time * time;
+            }
+
+            float accelerationDistance = 0.5f * peakVelocity * accelTime;
+
+            if (time < accelTime + cruiseTime)
+                return accelerationDistance + peakVelocity * (time - accelTime);
+
+            if (decelTime > 0f)
+            {
+                float decelerationTime = time - accelTime - cruiseTime;
+                float cruiseDistance = peakVelocity * cruiseTime;
+                float decelerationStartDistance = accelerationDistance + cruiseDistance;
+                float deceleration = peakVelocity / decelTime;
+                return Math.Min(1f, decelerationStartDistance + peakVelocity * decelerationTime - 0.5f * deceleration * decelerationTime * decelerationTime);
+            }
+            return Math.Min(1f, accelerationDistance + peakVelocity * cruiseTime);
+        }
+
+        private float GetSlideProgress(float time)
+        {
+            if (!HasSlide)
+                return 0f;
+            return MovementType switch
+            {
+                EMovementType.Slide or EMovementType.SlideAndRotate => CalculateMovementProgress(time, SlideTime, SlideAccelTime, SlideDecelTime),
+                EMovementType.SlideThenRotate => CalculateMovementProgress(time, SlideTime, SlideAccelTime, SlideDecelTime),
+                EMovementType.RotateThenSlide => CalculateMovementProgress(time - RotateTime, SlideTime, SlideAccelTime, SlideDecelTime),
+                _ => 0f,
+            };
+        }
+
+        private float GetRotationProgress(float time)
+        {
+            if (!HasRotation)
+                return 0f;
+            return MovementType switch
+            {
+                EMovementType.Rotate or EMovementType.SlideAndRotate => CalculateMovementProgress(time, RotateTime, RotateAccelTime, RotateDecelTime),
+                EMovementType.SlideThenRotate => CalculateMovementProgress(time - SlideTime, RotateTime, RotateAccelTime, RotateDecelTime),
+                EMovementType.RotateThenSlide => CalculateMovementProgress(time, RotateTime, RotateAccelTime, RotateDecelTime),
+                _ => 0f,
+            };
+        }
+
+        public override void Update()
+        {
+            base.Update();
+
+            switch (currentMovementAction)
+            {
+                case CurrentMovementAction.StartWait:
+                    slideMovementMultiplier = HasSlide ? amountOfMovementsPerformed : 0f;
+                    rotationMovementMultiplier = HasRotation ? amountOfMovementsPerformed : 0f;
+                    if (LocalFrameCounter >= StartWaitRange)
+                        currentMovementAction = CurrentMovementAction.Going;
+                    break;
+                case CurrentMovementAction.Going:
+                {
+                    float movementTime = Math.Max(0f, (LocalFrameCounter - StartWaitRange) / 60f);
+                    float slideProgress = GetSlideProgress(movementTime);
+                    float rotationProgress = GetRotationProgress(movementTime);
+                    float movementOffset = amountOfMovementsPerformed;
+                    if (ReturnsToStart)
+                    {
+                        slideMovementMultiplier = HasSlide ? slideProgress : 0f;
+                        rotationMovementMultiplier = HasRotation ? rotationProgress : 0f;
+                    }
+                    else
+                    {
+                        slideMovementMultiplier = HasSlide ? movementOffset + slideProgress : 0f;
+                        rotationMovementMultiplier = HasRotation ? movementOffset + rotationProgress : 0f;
+                    }
+                    if (LocalFrameCounter >= GoingRange)
+                    {
+                        if (ReturnsToStart)
+                        {
+                            slideMovementMultiplier = HasSlide ? 1f : 0f;
+                            rotationMovementMultiplier = HasRotation ? 1f : 0f;
+                            currentMovementAction = CurrentMovementAction.EndWait;
+                        }
+                        else
+                        {
+                            if (!DontLoop)
+                                amountOfMovementsPerformed++;
+                            slideMovementMultiplier = HasSlide ? amountOfMovementsPerformed : 0f;
+                            rotationMovementMultiplier = HasRotation ? amountOfMovementsPerformed : 0f;
+                            LocalFrameCounter = 0;
+                            currentMovementAction = CurrentMovementAction.StartWait;
+                        }
+                    }
+                    break;
+                }
+                case CurrentMovementAction.EndWait:
+                    slideMovementMultiplier = HasSlide ? 1f : 0f;
+                    rotationMovementMultiplier = HasRotation ? 1f : 0f;
+                    if (LocalFrameCounter >= EndWaitRange)
+                        currentMovementAction = CurrentMovementAction.GoingBack;
+                    break;
+                case CurrentMovementAction.GoingBack:
+                {
+                    float movementTime = Math.Max(0f, (LocalFrameCounter - EndWaitRange) / 60f);
+                    float slideProgress = GetSlideProgress(movementTime);
+                    float rotationProgress = GetRotationProgress(movementTime);
+                    slideMovementMultiplier = HasSlide ? 1f - slideProgress : 0f;
+                    rotationMovementMultiplier = HasRotation ? 1f - rotationProgress : 0f;
+                    if (LocalFrameCounter >= GoingBackRange)
+                    {
+                        slideMovementMultiplier = 0f;
+                        rotationMovementMultiplier = 0f;
+                        amountOfMovementsPerformed = 0;
+                        LocalFrameCounter = 0;
+                        currentMovementAction = CurrentMovementAction.StartWait;
+                    }
+                    break;
+                }
+            }
+        }
+
+        public override Matrix PlatLocalTranslation()
+        {
+            if (!HasSlide)
+                return Matrix.Identity;
+            float distance = slideMovementMultiplier * (float)SlideDistance;
+            return SlideAxis switch
+            {
+                Axis.X => Matrix.Translation(distance, 0f, 0f),
+                Axis.Y => Matrix.Translation(0f, distance, 0f),
+                Axis.Z => Matrix.Translation(0f, 0f, distance),
+                _ => Matrix.Identity,
+            };
         }
 
         public override Matrix PlatLocalRotation()
         {
-            Matrix localWorld = Matrix.Identity;
-
-            if (MovementType > 0)
+            if (!HasRotation)
+                return Matrix.Identity;
+            float angle = rotationMovementMultiplier * MathUtil.DegreesToRadians((float)RotateDistance);
+            return RotateAxis switch
             {
-                AssetSingle rotationMultiplier = 0;
-
-                if (((int)MovementLoopMode & 1) == 0)
-                    switch (currentMovementAction)
-                    {
-                        case CurrentMovementAction.StartWait:
-                            rotationMultiplier = amountOfMovementsPerformed;
-                            if (LocalFrameCounter >= StartWaitRange)
-                                currentMovementAction = CurrentMovementAction.Going;
-                            break;
-
-                        case CurrentMovementAction.Going:
-                            rotationMultiplier = amountOfMovementsPerformed + Math.Min(1f, (LocalFrameCounter - StartWaitRange) / (60 * RotateTime));
-
-                            if (LocalFrameCounter >= GoingRange)
-                            {
-                                if (((int)MovementLoopMode & 2) == 0)
-                                    amountOfMovementsPerformed++;
-                                else
-                                    amountOfMovementsPerformed = 0;
-                                currentMovementAction = CurrentMovementAction.StartWait;
-                                LocalFrameCounter = 0;
-                            }
-                            break;
-                        default:
-                            Reset();
-                            break;
-                    }
-                else
-                    switch (currentMovementAction)
-                    {
-                        case CurrentMovementAction.StartWait:
-                            if (LocalFrameCounter >= StartWaitRange)
-                                currentMovementAction = CurrentMovementAction.Going;
-                            break;
-
-                        case CurrentMovementAction.Going:
-                            rotationMultiplier = Math.Min(1, (LocalFrameCounter - StartWaitRange) / (60 * RotateTime));
-                            if (LocalFrameCounter >= GoingRange)
-                                currentMovementAction = CurrentMovementAction.EndWait;
-                            break;
-
-                        case CurrentMovementAction.EndWait:
-                            rotationMultiplier = 1;
-                            if (LocalFrameCounter >= EndWaitRange)
-                                currentMovementAction = CurrentMovementAction.GoingBack;
-                            break;
-
-                        case CurrentMovementAction.GoingBack:
-                            rotationMultiplier = 1 - Math.Min(1, (LocalFrameCounter - EndWaitRange) / (60 * RotateTime));
-                            if (LocalFrameCounter >= GoingBackRange)
-                            {
-                                currentMovementAction = CurrentMovementAction.StartWait;
-                                LocalFrameCounter = 0;
-                            }
-                            break;
-
-                        default:
-                            Reset();
-                            break;
-                    }
-
-                switch (RotateAxis)
-                {
-                    case Axis.X:
-                        localWorld = Matrix.RotationX(rotationMultiplier * MathUtil.DegreesToRadians(RotateDistance));
-                        break;
-                    case Axis.Y:
-                        localWorld = Matrix.RotationY(rotationMultiplier * MathUtil.DegreesToRadians(RotateDistance));
-                        break;
-                    case Axis.Z:
-                        localWorld = Matrix.RotationZ(rotationMultiplier * MathUtil.DegreesToRadians(RotateDistance));
-                        break;
-                }
-            }
-
-            return localWorld;
+                Axis.X => Matrix.RotationX(angle),
+                Axis.Y => Matrix.RotationY(angle),
+                Axis.Z => Matrix.RotationZ(angle),
+                _ => Matrix.Identity,
+            };
         }
     }
 

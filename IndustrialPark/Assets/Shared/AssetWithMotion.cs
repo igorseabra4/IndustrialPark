@@ -10,28 +10,10 @@ namespace IndustrialPark
 
         public AssetWithMotion(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
 
-        public override void Draw(SharpRenderer renderer)
-        {
-            if (movementPreview)
-                Motion.Increment();
-#if DEBUG
-            if (isSelected)
-                base.DrawDebug(renderer);
-#endif
-
-            Matrix localW = LocalWorld();
-
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
-                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, localW, _color, UvAnimOffset, isSelected);
-            else
-                renderer.DrawCube(localW, isSelected);
-        }
-
         public override void Reset()
         {
             base.Reset();
-            if (Motion != null)
-                Motion.Reset();
+            Motion?.Reset();
         }
 
         public Matrix PlatLocalTranslation() => Motion.PlatLocalTranslation();
@@ -42,23 +24,21 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
-                var driver = FindDrivenByAsset(out bool useRotation);
-
                 if (driver != null)
                 {
-                    return PlatLocalRotation() * PlatLocalTranslation()
-                        * Matrix.Scaling(_scale)
+                    return Matrix.Scaling(_scale)
+                        * PlatLocalRotation() * PlatLocalTranslation()
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
-                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
+                        * (driverUseRotation ? driver.PlatLocalRotation() : Matrix.Identity)
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }
 
                 if (Motion is Motion_ExtendRetract)
                     return Matrix.Scaling(_scale) * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * PlatLocalTranslation();
 
-                return PlatLocalRotation() * PlatLocalTranslation()
-                    * Matrix.Scaling(_scale)
+                return Matrix.Scaling(_scale)
+                    * PlatLocalRotation() * PlatLocalTranslation()
                     * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                     * Matrix.Translation(_position);
             }

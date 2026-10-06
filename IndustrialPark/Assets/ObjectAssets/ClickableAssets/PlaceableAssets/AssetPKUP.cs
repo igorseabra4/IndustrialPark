@@ -353,14 +353,12 @@ namespace IndustrialPark
         {
             if (movementPreview)
             {
-                var driver = FindDrivenByAsset(out bool useRotation);
-
                 if (driver != null)
                 {
                     return PlatLocalRotation() * Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
-                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
+                        * (driverUseRotation ? driver.PlatLocalRotation() : Matrix.Identity)
                         * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
                 }
 

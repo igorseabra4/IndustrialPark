@@ -184,21 +184,21 @@ namespace IndustrialPark
         {
             var objData = ReadOBJFile(Application.StartupPath + $"/Resources/Models/{meshName}.obj", false);
             List<Vertex> vertexList = [];
-                foreach (Models.Vertex v in objData.VertexList)
-                {
-                    vertexList.Add(new Vertex(v.Position));
+            foreach (Models.Vertex v in objData.VertexList)
+            {
+                vertexList.Add(new Vertex(v.Position));
                 vertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
-                }
+            }
             List<int> indexList = [];
-                foreach (Models.Triangle t in objData.TriangleList)
-                {
-                    indexList.Add(t.vertex1);
-                    indexList.Add(t.vertex2);
-                    indexList.Add(t.vertex3);
+            foreach (Models.Triangle t in objData.TriangleList)
+            {
+                indexList.Add(t.vertex1);
+                indexList.Add(t.vertex2);
+                indexList.Add(t.vertex3);
                 triangles.Add(t);
-                }
+            }
 
-                if (!tiny)
+            if (!tiny)
                 return SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
             return null;
         }
@@ -624,6 +624,8 @@ namespace IndustrialPark
                                     renderableAssets.Add(a);
                                 else
                                     renderableAssets.Remove(a);
+                                if (EntityAsset.movementPreview && a is AssetWithMotion entity)
+                                      entity.Motion.Update();
                             }
 
                         var renderableAssetsTrans = new HashSet<IRenderableAsset>();
