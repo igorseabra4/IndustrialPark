@@ -75,7 +75,7 @@ PS_IN VS(VS_IN input)
             for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
             {
                 DirectionalLight light = Lights[i];
-                lightColor += max(dot(input.normal, normalize(light.Direction.xyz)), 0.0) * light.Color.rgb;
+                lightColor += max(dot(output.normal, normalize(light.Direction.xyz)), 0.0) * light.Color.rgb;
             }
             lightColor = min(lightColor, float3(1, 1, 1));
             finalColor.rgb += lightColor * DiffuseMult;
