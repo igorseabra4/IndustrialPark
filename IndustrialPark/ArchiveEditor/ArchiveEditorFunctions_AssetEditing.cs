@@ -33,6 +33,12 @@ namespace IndustrialPark
             for (int i = 0; i < internalEditors.Count; i++)
                 if (internalEditors[i].GetAssetID() == assetID)
                     internalEditors[i].Close();
+            for (int i = 0; i < multiInternalEditors.Count; i++)
+                if (multiInternalEditors[i].AssetIDs.Contains(assetID))
+                {
+                    multiInternalEditors[i].Close();
+                    multiInternalEditors.RemoveAt(i--);
+                }
         }
 
         public void OpenInternalEditor(IEnumerable<uint> assets, bool openAnyway, System.Drawing.Point location, Action<Asset> updateListView)
@@ -104,25 +110,23 @@ namespace IndustrialPark
 
         private readonly List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();
 
-        public void OpenInternalEditorMulti(IEnumerable<uint> list, Action<Asset> updateListView)
+        public void OpenInternalEditorMulti(IEnumerable<uint> list, System.Drawing.Point? location, Action<Asset> updateListView)
         {
             var assets = new List<Asset>();
             foreach (var u in list)
-                if (assetDictionary.ContainsKey(u))
-                    assets.Add(assetDictionary[u]);
-
-            multiInternalEditors.Add(new InternalMultiAssetEditor(assets.ToArray(), this, updateListView));
-            multiInternalEditors.Last().Show();
-        }
-
-        public void CloseInternalEditorMulti(uint assetID)
-        {
-            for (int i = 0; i < multiInternalEditors.Count; i++)
-                if (multiInternalEditors[i].AssetIDs.Contains(assetID))
-                {
-                    multiInternalEditors[i].Close();
-                    multiInternalEditors.RemoveAt(i--);
-                }
+            {
+                CloseInternalEditor(u);
+                if (assetDictionary.TryGetValue(u, out Asset value))
+                    assets.Add(value);
+            }
+            var editor = new InternalMultiAssetEditor(assets.ToArray(), this, updateListView);
+            if (location.HasValue)
+            {
+                editor.StartPosition = FormStartPosition.Manual;
+                editor.Location = new System.Drawing.Point(Math.Max(0, location.Value.X - editor.Size.Width / 2), Math.Max(0, location.Value.Y - editor.Size.Height / 2));
+            }
+            multiInternalEditors.Add(editor);
+            editor.Show();
         }
 
         public void SetAllTopMost(bool value)
@@ -142,7 +146,7 @@ namespace IndustrialPark
             var code = asset.assetType.GetCode();
             if (asset.assetType.IsDyna())
                 code += $"/{asset.TypeString}";
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = AboutBox.WikiLink + code, UseShellExecute = true }) ;
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = AboutBox.WikiLink + code, UseShellExecute = true });
         }
 
         public void ClearModelTemplateFocus()

@@ -20,10 +20,11 @@ namespace IndustrialPark
         public static AssetIDGenerator AssetIDGenerator;
         public static PickupSearch PickupSearch;
 
+        public static UndoBuffer UndoBuffer;
         public static BuildISO BuildISO;
 
         public static SharpRenderer Renderer => MainForm != null && MainForm.renderer != null ? MainForm.renderer : null;
-
+        
         [STAThread]
         static void Main()
         {
@@ -46,6 +47,8 @@ namespace IndustrialPark
                 ipSettings = File.Exists(MainForm.pathToSettings) ? JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings)) : null;
             }
             catch { }
+
+            UndoBuffer = new UndoBuffer();
 
             Application.SetColorMode(ipSettings != null ? ipSettings.ColorMode : SystemColorMode.System);
 

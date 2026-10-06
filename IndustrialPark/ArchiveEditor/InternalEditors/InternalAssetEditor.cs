@@ -1,11 +1,7 @@
 ﻿using HipHopFile;
 using Microsoft.WindowsAPICodePack.Dialogs;
-using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -140,6 +136,7 @@ namespace IndustrialPark
         {
             archive.UnsavedChanges = true;
             RefreshPropertyGrid();
+            Program.UndoBuffer.AddAction(new AssetPropertyChangedAction(archive, asset, e.ChangedItem.PropertyDescriptor, e.OldValue, e.ChangedItem.Value));
         }
 
         private readonly List<int> RowSizes = new List<int>() { -1 };

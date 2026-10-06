@@ -680,6 +680,17 @@ namespace IndustrialPark
             if (!PressedKeys.Contains(e.KeyCode))
                 PressedKeys.Add(e.KeyCode);
 
+            if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
+            {
+                Program.UndoBuffer.Undo();
+                return;
+            }
+            else if (PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey))
+            {
+                Program.UndoBuffer.Redo();
+                return;
+            }
+            
             if (e.KeyCode == Keys.Z)
                 MouseModeToggle();
             else if (e.KeyCode == Keys.Q)

@@ -931,7 +931,7 @@ namespace IndustrialPark
 
         private void buttonMultiEdit_Click(object sender, EventArgs e)
         {
-            archive.OpenInternalEditorMulti(archive.GetCurrentlySelectedAssetIDs(), UpdateCurrentListView);
+            archive.OpenInternalEditorMulti(archive.GetCurrentlySelectedAssetIDs(), MousePosition, UpdateCurrentListView);
         }
 
         public void OpenInternalEditors()

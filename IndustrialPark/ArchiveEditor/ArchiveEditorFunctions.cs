@@ -481,7 +481,6 @@ namespace IndustrialPark
             var asset = assetDictionary[assetID];
             CurrentlySelectedAssets.Remove(asset);
             CloseInternalEditor(assetID);
-            CloseInternalEditorMulti(assetID);
 
             renderingDictionary.Remove(assetID);
 
