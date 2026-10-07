@@ -2156,6 +2156,21 @@ namespace IndustrialPark
             AssetLKIT.DontRender = !useLightKitsForRenderingToolStripMenuItem.Checked;
         }
 
+        private void MenuStrip_DropDownOpened(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem menuItem && menuItem.DropDown != null)
+            {
+                if (typeof(ToolStrip)
+                    .GetProperty("ToolTip", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
+                    .GetValue(menuItem.DropDown) is ToolTip dropDownToolTip)
+                {
+                    dropDownToolTip.AutoPopDelay = 20000;
+                    dropDownToolTip.InitialDelay = 200;
+                    dropDownToolTip.ReshowDelay = 100;
+                }
+            }
+        }
+
         #region Color Mode
         private SystemColorMode SystemColorMode
         {
