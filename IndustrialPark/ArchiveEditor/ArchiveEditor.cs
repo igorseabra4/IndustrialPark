@@ -1053,13 +1053,18 @@ namespace IndustrialPark
             archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
         }
 
-        public void SetSelectedIndex(uint? assetID, bool addToSelected = false)
+        public void SetSelectedIndex(uint? assetID, bool addToSelection = false, bool addOrRemove = false)
         {
             var assetIDs = new List<uint>();
-            if (assetID.HasValue)
-                assetIDs.Add(assetID.Value);
-            if (addToSelected)
+            if (addToSelection || addOrRemove)
                 assetIDs.AddRange(CurrentlySelectedAssetIDs());
+            if (assetID.HasValue)
+            {
+                if (addOrRemove && CurrentlySelectedAssetIDs().Contains(assetID.Value))
+                    assetIDs.Remove(assetID.Value);
+                else
+                    assetIDs.Add(assetID.Value);
+            }
             SetSelectedIndices(assetIDs);
         }
 

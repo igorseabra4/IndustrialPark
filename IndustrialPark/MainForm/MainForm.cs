@@ -1131,9 +1131,17 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    SetSelectedIndex(renderer.isDrawingUI ?
-                        ArchiveEditorFunctions.GetClickedAssetID2D(renderer, ray, renderer.Camera.FarPlane) :
-                        ArchiveEditorFunctions.GetClickedAssetID(renderer, ray));
+                    bool addToSelection = PressedKeys.Contains(Keys.Shift) || PressedKeys.Contains(Keys.ShiftKey);
+                    bool addOrRemove = PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control);
+
+                    var assetID = renderer.isDrawingUI ?
+                        ArchiveEditorFunctions.GetClickedAssetID2D(renderer, ray, renderer.Camera.FarPlane, addToSelection) :
+                        ArchiveEditorFunctions.GetClickedAssetID(renderer, ray, addToSelection);
+
+                    if (assetID == null && (addToSelection || addOrRemove))
+                        return;
+                    foreach (ArchiveEditor ae in archiveEditors)
+                        ae.SetSelectedIndex(assetID ?? 0, addToSelection, addOrRemove);
                 }
             }
         }
@@ -1156,15 +1164,6 @@ namespace IndustrialPark
         {
             foreach (var ae in Program.MainForm.archiveEditors)
                 ae.archive.ScreenUnclicked();
-        }
-
-        public void SetSelectedIndex(uint? assetID, bool add = false)
-        {
-            add |= PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control);
-            if (add && assetID == null)
-                return;
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetSelectedIndex(assetID ?? 0, add);
         }
 
         public void SetSelectedIndices(List<uint> assetIDs)

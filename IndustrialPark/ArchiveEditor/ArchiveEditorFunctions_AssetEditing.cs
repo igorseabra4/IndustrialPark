@@ -221,15 +221,18 @@ namespace IndustrialPark
             return ray.Position + Vector3.Normalize(ray.Direction) * (smallerDistance ?? 2f);
         }
 
-        public static uint? GetClickedAssetID(SharpRenderer renderer, Ray ray)
+        public static uint? GetClickedAssetID(SharpRenderer renderer, Ray ray, bool ignoreSelected)
         {
             float smallerDistance = 1000f;
             uint? assetID = null;
 
             foreach (Asset ra in renderableAssets.Cast<Asset>())
             {
-                if (!ra.isSelected && ra is IClickableAsset ica)
+                if (ra is IClickableAsset ica)
                 {
+                    if (ra.isSelected && ignoreSelected)
+                        continue;
+
                     float? distance = ica.GetIntersectionPosition(renderer, ray);
                     if (distance != null && distance < smallerDistance)
                     {
@@ -242,7 +245,7 @@ namespace IndustrialPark
             return assetID;
         }
 
-        public static uint? GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane)
+        public static uint? GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane, bool ignoreSelected)
         {
             float smallerDistance = 3 * farPlane;
             uint? assetID = null;
@@ -251,14 +254,14 @@ namespace IndustrialPark
                                   where asset is AssetUI || asset is AssetUIFT
                                   select asset).Cast<Asset>())
             {
-                if (!ra.isSelected)
+                if (ra.isSelected && ignoreSelected)
+                    continue;
+
+                float? distance = ((IClickableAsset)ra).GetIntersectionPosition(renderer, ray);
+                if (distance != null && distance < smallerDistance)
                 {
-                    float? distance = ((IClickableAsset)ra).GetIntersectionPosition(renderer, ray);
-                    if (distance != null && distance < smallerDistance)
-                    {
-                        smallerDistance = (float)distance;
-                        assetID = ra.assetID;
-                    }
+                    smallerDistance = (float)distance;
+                    assetID = ra.assetID;
                 }
             }
 

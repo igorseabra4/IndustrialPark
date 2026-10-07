@@ -226,8 +226,7 @@ namespace IndustrialPark
             {
                 var newAssets = archive.ConvertScriptToGroupOfTimers(asset);
                 archive.UnsavedChanges = true;
-                for (int i = 0; i < newAssets.Count; i++)
-                    Program.MainForm.SetSelectedIndex(newAssets[i], i != 0);
+                Program.MainForm.SetSelectedIndices(newAssets);
             };
             tableLayoutPanel1.Controls.Add(buttonConvert, 0, rowIndex);
             tableLayoutPanel1.SetColumnSpan(buttonConvert, 2);
