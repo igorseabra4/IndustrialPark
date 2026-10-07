@@ -25,7 +25,7 @@ namespace IndustrialPark
 
             try
             {
-                if (forceCheck || LastCheckedForUpdate == DateTime.MinValue || DateTime.Now.Subtract(LastCheckedForUpdate).TotalMinutes >= 10)
+                if (forceCheck || LastCheckedForUpdate == DateTime.MinValue || DateTime.Now.Subtract(LastCheckedForUpdate).TotalHours >= 21)
                 {
                     var client = new GitHubClient(new ProductHeaderValue("IP"));
                     Release newRelease = client.Repository.Release.GetLatest(owner, repo).GetAwaiter().GetResult();

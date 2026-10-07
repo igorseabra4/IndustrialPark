@@ -399,6 +399,8 @@ namespace IndustrialPark
             }
             else if (hasChecked)
                 MessageBox.Show("No update found.");
+            else
+                MessageBox.Show("Unable to check for updates.");
         }
 
         private void CheckForUpdatesOnEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
