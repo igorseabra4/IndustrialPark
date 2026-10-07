@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace IndustrialPark;
 
@@ -22,4 +23,6 @@ public class MultiAction : IReversibleAction
         for (int i = 0; i < actions.Count; i++)
             actions[i].Redo();
     }
+
+    public bool ContainsArchive(ArchiveEditorFunctions archive) => actions.Any(action => action.ContainsArchive(archive));
 }

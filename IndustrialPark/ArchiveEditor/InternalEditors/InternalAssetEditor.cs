@@ -136,25 +136,11 @@ namespace IndustrialPark
         {
             archive.UnsavedChanges = true;
             RefreshPropertyGrid();
-            Program.UndoBuffer.AddAction(new AssetPropertyChangedAction(archive, asset, GetPropertyPath(e.ChangedItem), e.OldValue, e.ChangedItem.Value));
-        }
-
-        private static string[] GetPropertyPath(GridItem item)
-        {
-            var path = new List<string>();
-            while (item != null)
-            {
-                if (item.GridItemType == GridItemType.Property)
-                    path.Add(item.Label);
-                item = item.Parent;
-            }
-            path.Reverse();
-            return path.ToArray();
+            Program.UndoBuffer.AddAction(new AssetPropertyChangedAction(archive, asset, IInternalEditor.GetPropertyPath(e.ChangedItem), e.OldValue, e.ChangedItem.Value));
         }
 
         private readonly List<int> RowSizes = new List<int>() { -1 };
         private const int ButtonSize = 28;
-        private const int CheckboxLabelSize = 22;
 
         private int AddRow(int size)
         {

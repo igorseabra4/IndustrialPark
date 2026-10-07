@@ -24,6 +24,8 @@ public class AssetAddedAction : IReversibleAction
 
     public void Redo()
     {
-        archive.AddAsset(AHDR, archive.game, archive.platform.Endianness(), true, layerIndex);
+        archive.AddAsset(AHDR, archive.game, archive.platform.Endianness(), layerIndex, true);
     }
+
+    public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;
 }

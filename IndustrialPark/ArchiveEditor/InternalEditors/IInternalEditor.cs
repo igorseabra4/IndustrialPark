@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -22,5 +23,18 @@ namespace IndustrialPark
 
         event EventHandler Activated;
         event EventHandler Deactivate;
+
+        public static string[] GetPropertyPath(GridItem item)
+        {
+            var path = new List<string>();
+            while (item != null)
+            {
+                if (item.GridItemType == GridItemType.Property)
+                    path.Add(item.Label);
+                item = item.Parent;
+            }
+            path.Reverse();
+            return path.ToArray();
+        }
     }
 }

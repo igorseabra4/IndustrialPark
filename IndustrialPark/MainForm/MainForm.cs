@@ -931,6 +931,7 @@ namespace IndustrialPark
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 5);
             archiveEditors.RemoveAt(index);
+            Program.UndoBuffer.RemoveActionsOfArchive(sender.archive);
         }
 
         public void SetCloseAllArchivesEnabled(bool enabled)

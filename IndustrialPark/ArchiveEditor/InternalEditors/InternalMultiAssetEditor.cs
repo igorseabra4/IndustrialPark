@@ -48,7 +48,8 @@ namespace IndustrialPark
                 var key = (asset, propertyName);
                 var oldValue = propertyValues[key];
                 var newValue = asset.GetType().GetProperty(propertyName).GetValue(asset);
-                actions.Add(new AssetPropertyChangedAction(archive, asset, propertyName, oldValue, newValue));
+
+                actions.Add(new AssetPropertyChangedAction(archive, asset, IInternalEditor.GetPropertyPath(e.ChangedItem), oldValue, newValue));
                 propertyValues[key] = newValue;
                 updateListView(asset);
             }

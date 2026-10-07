@@ -28,4 +28,18 @@ public class UndoBuffer
         if (currentIndex < actions.Count - 1)
             actions[++currentIndex].Redo();
     }
+
+    public void RemoveActionsOfArchive(ArchiveEditorFunctions archive)
+    {
+        for (int i = 0; i < actions.Count; i++)
+        {
+            if (actions[i].ContainsArchive(archive))
+            {
+                actions.RemoveAt(i);
+                if (i <= currentIndex)
+                    currentIndex--;
+                i--;
+            }
+        }
+    }
 }

@@ -1,21 +1,28 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
 
 namespace IndustrialPark;
 
-public class AssetPropertyChangedAction(
-    ArchiveEditorFunctions archive,
-    uint assetID,
-    string[] propertyPath,
-    object oldValue,
-    object newValue,
-    List<uint> selection = null)
-    : IReversibleAction
+public class AssetPropertyChangedAction : IReversibleAction
 {
+    private ArchiveEditorFunctions archive;
+    private uint assetID;
+    private string[] propertyPath;
+    private object oldValue;
+    private object newValue;
+    private List<uint> selection;
+
+    public AssetPropertyChangedAction(ArchiveEditorFunctions archive, uint assetID, string[] propertyPath, object oldValue, object newValue, List<uint> selection = null)
+    {
+        this.archive = archive;
+        this.assetID = assetID;
+        this.propertyPath = propertyPath;
+        this.oldValue = oldValue;
+        this.newValue = newValue;
+        this.selection = selection;
+    }
+
     public AssetPropertyChangedAction(ArchiveEditorFunctions archive, Asset asset, string propertyName, object oldValue, object newValue, List<uint> selection = null) :
         this(archive, asset.assetID, [propertyName], oldValue, newValue, selection)
     { }
@@ -37,7 +44,7 @@ public class AssetPropertyChangedAction(
                 : TypeDescriptor.GetProperties(current)[path].GetValue(current);
         }
         var property = TypeDescriptor.GetProperties(current)[propertyPath[^1]];
-        property.SetValue(current, ConvertValue(value, property.PropertyType));
+        property.SetValue(current, IReversibleAction.ConvertValue(value, property.PropertyType));
 
         // TODO: fix this for flags fields
 
@@ -57,28 +64,5 @@ public class AssetPropertyChangedAction(
         SetValue(newValue);
     }
 
-    private static object? ConvertValue(object? value, Type targetType)
-    {
-        if (value == null)
-            return null;
-
-        if (targetType.IsInstanceOfType(value))
-            return value;
-
-        Type sourceType = value.GetType();
-
-        // Look for implicit/explicit conversion on the target type.
-        MethodInfo? conversion = targetType.GetMethods(BindingFlags.Public | BindingFlags.Static)
-            .FirstOrDefault(m =>
-                (m.Name == "op_Implicit" || m.Name == "op_Explicit") &&
-                m.ReturnType == targetType &&
-                m.GetParameters().Length == 1 &&
-                m.GetParameters()[0].ParameterType == sourceType);
-
-        if (conversion != null)
-            return conversion.Invoke(null, [value]);
-
-        // Normal conversions for types such as int, float, string, etc.
-        return Convert.ChangeType(value, targetType);
-    }
+    public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;
 }

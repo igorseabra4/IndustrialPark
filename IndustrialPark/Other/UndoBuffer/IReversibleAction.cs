@@ -6,6 +6,8 @@ namespace IndustrialPark;
 
 public interface IReversibleAction
 {
+    virtual bool ContainsArchive(ArchiveEditorFunctions archive) => false;
+
     void Undo();
     void Redo();
 
