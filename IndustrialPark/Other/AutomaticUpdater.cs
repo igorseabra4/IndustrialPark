@@ -16,6 +16,10 @@ namespace IndustrialPark
         public static bool UpdateIndustrialPark(out bool hasChecked, bool forceCheck = false)
         {
             hasChecked = false;
+
+            if (new IPversion().version.Contains("beta"))
+                return false;
+
             string owner = "igorseabra4";
             string repo = "IndustrialPark";
 

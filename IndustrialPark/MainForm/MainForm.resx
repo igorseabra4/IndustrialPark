@@ -121,90 +121,6 @@
     <value>17, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="archiveEditorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>93, 19</value>
-  </data>
-  <data name="archiveEditorToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Archive Editor</value>
-  </data>
-  <data name="projectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 19</value>
-  </data>
-  <data name="projectToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Project</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 19</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Options</value>
-  </data>
-  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 19</value>
-  </data>
-  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Tools</value>
-  </data>
-  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 19</value>
-  </data>
-  <data name="displayToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Display</value>
-  </data>
-  <data name="hansToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
-  </data>
-  <data name="hansToolStripMenuItem.Text" xml:space="preserve">
-    <value>Hans (Save File Editor)</value>
-  </data>
-  <data name="assetIDGeneratorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 22</value>
-  </data>
-  <data name="assetIDGeneratorToolStripMenuItem.Text" xml:space="preserve">
-    <value>Asset ID Generator</value>
-  </data>
-  <data name="dYNASearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 22</value>
-  </data>
-  <data name="dYNASearchToolStripMenuItem.Text" xml:space="preserve">
-    <value>DYNA Search</value>
-  </data>
-  <data name="eventSearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 22</value>
-  </data>
-  <data name="eventSearchToolStripMenuItem.Text" xml:space="preserve">
-    <value>Event Search</value>
-  </data>
-  <data name="openFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 22</value>
-  </data>
-  <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open Folder</value>
-  </data>
-  <data name="dynaNameSearcherToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 22</value>
-  </data>
-  <data name="dynaNameSearcherToolStripMenuItem.Text" xml:space="preserve">
-    <value>Dyna Name Searcher</value>
-  </data>
-  <data name="pickupSearcherToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>184, 22</value>
-  </data>
-  <data name="pickupSearcherToolStripMenuItem.Text" xml:space="preserve">
-    <value>Pickup Searcher</value>
-  </data>
-  <data name="researchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 19</value>
-  </data>
-  <data name="researchToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Research/Advanced</value>
-  </data>
-  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 19</value>
-  </data>
-  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Help</value>
-  </data>
   <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
     <value>0, 0</value>
   </data>
@@ -233,6 +149,12 @@
   </data>
   <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
     <value>3</value>
+  </data>
+  <data name="archiveEditorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>93, 19</value>
+  </data>
+  <data name="archiveEditorToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Archive Editor</value>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
@@ -270,6 +192,12 @@
   </data>
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>182, 6</value>
+  </data>
+  <data name="projectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 19</value>
+  </data>
+  <data name="projectToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Project</value>
   </data>
   <data name="newToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>262, 22</value>
@@ -319,41 +247,17 @@
   <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Text" xml:space="preserve">
     <value>Show Editors When Loading Project</value>
   </data>
-  <data name="viewConfigToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F1</value>
+  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 19</value>
   </data>
-  <data name="viewConfigToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="viewConfigToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;View Config</value>
+  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Options</value>
   </data>
   <data name="viewControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="viewControlsToolStripMenuItem.Text" xml:space="preserve">
     <value>View &amp;Controls...</value>
-  </data>
-  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
-    <value>298, 6</value>
-  </data>
-  <data name="manageUserTemplatesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="manageUserTemplatesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Manage User &amp;Templates...</value>
-  </data>
-  <data name="templatesPersistentShiniesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="templatesPersistentShiniesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Templates: &amp;Persistent Shinies</value>
-  </data>
-  <data name="templatesChainPointMVPTsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="templatesChainPointMVPTsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Templates: Chain Point &amp;MVPTs</value>
   </data>
   <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
     <value>298, 6</value>
@@ -364,11 +268,21 @@
   <data name="updateReferencesOnCopyPasteToolStripMenuItem.Text" xml:space="preserve">
     <value>Update &amp;References on Rename/Copy/Paste</value>
   </data>
+  <data name="updateReferencesOnCopyPasteToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled: asset references will be updated to match the new name and asset ID when you rename an
+asset and when you copy and paste multiple assets together and they contain references to each other.</value>
+  </data>
   <data name="replaceAssetsOnPasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
   <data name="replaceAssetsOnPasteToolStripMenuItem.Text" xml:space="preserve">
     <value>Replace &amp;Assets on Paste</value>
+  </data>
+  <data name="replaceAssetsOnPasteToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, pasted assets will overwrite existing ones with the same IDs.
+If disabled, pasted assets will be given new names and IDs.
+This setting applies to copy/pasting on an Archive Editor.
+It does not apply to User Templates or the Paste Clipboard template - those never replace existing assets.</value>
   </data>
   <data name="useLegacyAssetIDFormatToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
@@ -388,11 +302,258 @@
   <data name="useLegacyAssetTypeFormatToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>If enabled, will use 4 letter codes instead of more descriptive asset names.</value>
   </data>
-  <data name="cursorInFlyModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>298, 6</value>
+  </data>
+  <data name="manageUserTemplatesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
+  </data>
+  <data name="manageUserTemplatesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Manage User &amp;Templates...</value>
+  </data>
+  <data name="templatesPersistentShiniesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="templatesPersistentShiniesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Templates: &amp;Persistent Shinies</value>
+  </data>
+  <data name="templatesPersistentShiniesToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, Shiny Object and Manliness Point templates will have Persistent set to True.</value>
+  </data>
+  <data name="templatesChainPointMVPTsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="templatesChainPointMVPTsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Templates: Chain Point &amp;MVPTs</value>
+  </data>
+  <data name="templatesChainPointMVPTsToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, when you place Point Move Point templates, starting from the second one,
+the previously placed one will earn a link to the new one in its Next Move Points.</value>
+  </data>
+  <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>298, 6</value>
+  </data>
+  <data name="checkForUpdatesOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="checkForUpdatesOnStartupToolStripMenuItem.Text" xml:space="preserve">
+    <value>Check for updates on startup</value>
+  </data>
+  <data name="listAllAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="listAllAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Always list all assets</value>
+  </data>
+  <data name="listAllAssetsToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, always lists all assets in the Archive Editor when selecting assets from the view. This can prevent stuttering by avoiding unnecessary list updates.</value>
+  </data>
+  <data name="translucentToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="translucentToolStripMenuItem.Text" xml:space="preserve">
+    <value>Translucent when out of focus</value>
+  </data>
+  <data name="translucentToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, Archive Editors and Asset Data Editors will become transparent when out of focus</value>
+  </data>
+  <data name="discordRichPresenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="discordRichPresenceToolStripMenuItem.Text" xml:space="preserve">
+    <value>Discord Rich Presence</value>
+  </data>
+  <data name="themeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="themeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="systemDefaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>153, 22</value>
+  </data>
+  <data name="systemDefaultToolStripMenuItem.Text" xml:space="preserve">
+    <value>System Default</value>
+  </data>
+  <data name="systemDefaultToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Apply the system default theme on restart</value>
+  </data>
+  <data name="lightModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>153, 22</value>
+  </data>
+  <data name="lightModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Light Mode</value>
+  </data>
+  <data name="lightModeToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Apply light mode on restart</value>
+  </data>
+  <data name="darkModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>153, 22</value>
+  </data>
+  <data name="darkModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Dark Mode</value>
+  </data>
+  <data name="darkModeToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Apply dark mode on restart</value>
+  </data>
+  <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="assetTypesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Asset Types</value>
+  </data>
+  <data name="viewConfigToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F1</value>
+  </data>
+  <data name="viewConfigToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="viewConfigToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;View Config</value>
+  </data>
+  <data name="uIModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="uIModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>UI Mode (U)</value>
+  </data>
+  <data name="uIModeAutoSizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="uIModeAutoSizeToolStripMenuItem.Text" xml:space="preserve">
+    <value>UI Mode AutoSize...</value>
+  </data>
+  <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
+    <value>238, 6</value>
+  </data>
+  <data name="cursorInFlyModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
   </data>
   <data name="cursorInFlyModeToolStripMenuItem.Text" xml:space="preserve">
     <value>Cursor in Fly Mode</value>
+  </data>
+  <data name="colorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="colorsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Colors</value>
+  </data>
+  <data name="noCullingCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="noCullingCToolStripMenuItem.Text" xml:space="preserve">
+    <value>Backface Culling (C)</value>
+  </data>
+  <data name="wireframeFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="wireframeFToolStripMenuItem.Text" xml:space="preserve">
+    <value>Wireframe (F)</value>
+  </data>
+  <data name="lowerQualityGraphicsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="lowerQualityGraphicsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Lower Quality Graphics</value>
+  </data>
+  <data name="vSyncToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="vSyncToolStripMenuItem.Text" xml:space="preserve">
+    <value>VSync</value>
+  </data>
+  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>238, 6</value>
+  </data>
+  <data name="showVertexColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="showVertexColorsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Vertex Colors (P)</value>
+  </data>
+  <data name="useLightKitsForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="useLightKitsForRenderingToolStripMenuItem.Text" xml:space="preserve">
+    <value>Light Kit (L)</value>
+  </data>
+  <data name="fogToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="fogToolStripMenuItem.Text" xml:space="preserve">
+    <value>Fog</value>
+  </data>
+  <data name="useLODTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="useLODTForRenderingToolStripMenuItem.Text" xml:space="preserve">
+    <value>Use LOD Table for rendering</value>
+  </data>
+  <data name="usePIPTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="usePIPTForRenderingToolStripMenuItem.Text" xml:space="preserve">
+    <value>Use Pipe Table for rendering</value>
+  </data>
+  <data name="movementPreviewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="movementPreviewToolStripMenuItem.Text" xml:space="preserve">
+    <value>Movement Preview (M)</value>
+  </data>
+  <data name="hideInvisibleMeshesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="hideInvisibleMeshesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Hide Invisible Meshes</value>
+  </data>
+  <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Text" xml:space="preserve">
+    <value>Draw Only First MINF Reference</value>
+  </data>
+  <data name="toolStripSeparator9.Size" type="System.Drawing.Size, System.Drawing">
+    <value>238, 6</value>
+  </data>
+  <data name="addTXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="addTXDArchiveToolStripMenuItem.Text" xml:space="preserve">
+    <value>Add TXD Archive...</value>
+  </data>
+  <data name="addTextureFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="addTextureFolderToolStripMenuItem.Text" xml:space="preserve">
+    <value>Add Texture Folder...</value>
+  </data>
+  <data name="refreshTexturesAndModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="refreshTexturesAndModelsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Refresh Textures and Models...</value>
+  </data>
+  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 19</value>
+  </data>
+  <data name="displayToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Display</value>
+  </data>
+  <data name="enableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 22</value>
+  </data>
+  <data name="enableAllToolStripMenuItem.Text" xml:space="preserve">
+    <value>Enable All</value>
+  </data>
+  <data name="disableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>129, 22</value>
+  </data>
+  <data name="disableAllToolStripMenuItem.Text" xml:space="preserve">
+    <value>Disable All</value>
+  </data>
+  <data name="toolStripSeparatorAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
+    <value>126, 6</value>
   </data>
   <data name="defaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>123, 22</value>
@@ -411,168 +572,6 @@
   </data>
   <data name="hiddenToolStripMenuItem.Text" xml:space="preserve">
     <value>Hidden</value>
-  </data>
-  <data name="translucentToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="translucentToolStripMenuItem.Text" xml:space="preserve">
-    <value>Translucent when out of focus</value>
-  </data>
-  <data name="translucentToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>If enabled, Archive Editors and Asset Data Editors will become transparent when out of focus</value>
-  </data>
-  <data name="listAllAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="listAllAssetsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Always list all assets</value>
-  </data>
-  <data name="listAllAssetsToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>If enabled, always lists all assets in the Archive Editor when selecting assets from the view. This can prevent stuttering by avoiding unnecessary list updates.</value>
-  </data>
-  <data name="saveAllOpenHIPsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+Shift+S</value>
-  </data>
-  <data name="saveAllOpenHIPsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="saveAllOpenHIPsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Save All Open HIPs</value>
-  </data>
-  <data name="runGameF5ToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F5</value>
-  </data>
-  <data name="runGameF5ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="runGameF5ToolStripMenuItem.Text" xml:space="preserve">
-    <value>Run Game in Dolphin</value>
-  </data>
-  <data name="buildAndRunPS2ISOToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F6</value>
-  </data>
-  <data name="buildAndRunPS2ISOToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="buildAndRunPS2ISOToolStripMenuItem.Text" xml:space="preserve">
-    <value>Build/Run PS2 ISO</value>
-  </data>
-  <data name="stopSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="stopSoundToolStripMenuItem.Text" xml:space="preserve">
-    <value>Stop Sound</value>
-  </data>
-  <data name="exportSceneToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="exportSceneToolStripMenuItem.Text" xml:space="preserve">
-    <value>Export Scene...</value>
-  </data>
-  <data name="createGameCubeBannerToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F7</value>
-  </data>
-  <data name="createGameCubeBannerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="createGameCubeBannerToolStripMenuItem.Text" xml:space="preserve">
-    <value>Create GameCube Banner...</value>
-  </data>
-  <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 6</value>
-  </data>
-  <data name="checkForUpdatesOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="checkForUpdatesOnStartupToolStripMenuItem.Text" xml:space="preserve">
-    <value>Check for Updates on Startup</value>
-  </data>
-  <data name="checkForUpdatesNowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="checkForUpdatesNowToolStripMenuItem.Text" xml:space="preserve">
-    <value>Check for Updates Now...</value>
-  </data>
-  <data name="downloadIndustrialParkEditorFilesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="downloadIndustrialParkEditorFilesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Download IndustrialPark-EditorFiles</value>
-  </data>
-  <data name="checkForUpdatesOnEditorFilesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="checkForUpdatesOnEditorFilesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Check For Updates on EditorFiles...</value>
-  </data>
-  <data name="downloadVgmstreamToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="downloadVgmstreamToolStripMenuItem.Text" xml:space="preserve">
-    <value>Download vgmstream</value>
-  </data>
-  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 6</value>
-  </data>
-  <data name="ensureAssociationsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="ensureAssociationsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Associate HIP/HOP/BNR Files</value>
-  </data>
-  <data name="discordRichPresenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="discordRichPresenceToolStripMenuItem.Text" xml:space="preserve">
-    <value>Discord Rich Presence</value>
-  </data>
-  <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
-  </data>
-  <data name="assetTypesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Asset Types</value>
-  </data>
-  <data name="enableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>129, 22</value>
-  </data>
-  <data name="enableAllToolStripMenuItem.Text" xml:space="preserve">
-    <value>Enable All</value>
-  </data>
-  <data name="disableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>129, 22</value>
-  </data>
-  <data name="disableAllToolStripMenuItem.Text" xml:space="preserve">
-    <value>Disable All</value>
-  </data>
-  <data name="toolStripSeparatorAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
-    <value>126, 6</value>
-  </data>
-  <data name="addTextureFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
-  </data>
-  <data name="addTextureFolderToolStripMenuItem.Text" xml:space="preserve">
-    <value>Add Texture Folder...</value>
-  </data>
-  <data name="addTXDArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
-  </data>
-  <data name="addTXDArchiveToolStripMenuItem.Text" xml:space="preserve">
-    <value>Add TXD Archive...</value>
-  </data>
-  <data name="refreshTexturesAndModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
-  </data>
-  <data name="refreshTexturesAndModelsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Refresh Textures and Models</value>
-  </data>
-  <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 6</value>
-  </data>
-  <data name="colorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
-  </data>
-  <data name="colorsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Colors</value>
   </data>
   <data name="resetColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
@@ -619,128 +618,149 @@
   <data name="sFXInColorToolStripMenuItem.Text" xml:space="preserve">
     <value>SFX/SDFX Color...</value>
   </data>
-  <data name="noCullingCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 19</value>
   </data>
-  <data name="noCullingCToolStripMenuItem.Text" xml:space="preserve">
-    <value>Backface Culling (C)</value>
+  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tools</value>
   </data>
-  <data name="fogToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="saveAllOpenHIPsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Shift+S</value>
   </data>
-  <data name="fogToolStripMenuItem.Text" xml:space="preserve">
-    <value>Fog</value>
+  <data name="saveAllOpenHIPsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="wireframeFToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="saveAllOpenHIPsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Save all open HIPs</value>
   </data>
-  <data name="wireframeFToolStripMenuItem.Text" xml:space="preserve">
-    <value>Wireframe (F)</value>
+  <data name="runGameF5ToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F5</value>
   </data>
-  <data name="vSyncToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="runGameF5ToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="vSyncToolStripMenuItem.Text" xml:space="preserve">
-    <value>VSync</value>
+  <data name="runGameF5ToolStripMenuItem.Text" xml:space="preserve">
+    <value>Run game in Dolphin</value>
   </data>
-  <data name="lowerQualityGraphicsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="buildAndRunPS2ISOToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F6</value>
   </data>
-  <data name="lowerQualityGraphicsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Lower Quality Graphics</value>
+  <data name="buildAndRunPS2ISOToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>271, 22</value>
   </data>
-  <data name="toolStripSeparator6.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 6</value>
+  <data name="buildAndRunPS2ISOToolStripMenuItem.Text" xml:space="preserve">
+    <value>Build/Run PS2 ISO</value>
   </data>
-  <data name="uIModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="stopSoundToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="uIModeToolStripMenuItem.Text" xml:space="preserve">
-    <value>UI Mode (U)</value>
+  <data name="stopSoundToolStripMenuItem.Text" xml:space="preserve">
+    <value>Stop sound</value>
   </data>
-  <data name="uIModeAutoSizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="exportSceneToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="uIModeAutoSizeToolStripMenuItem.Text" xml:space="preserve">
-    <value>UI Mode AutoSize</value>
+  <data name="exportSceneToolStripMenuItem.Text" xml:space="preserve">
+    <value>Export scene...</value>
   </data>
-  <data name="toolStripSeparator9.Size" type="System.Drawing.Size, System.Drawing">
-    <value>254, 6</value>
+  <data name="createGameCubeBannerToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F7</value>
   </data>
-  <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="createGameCubeBannerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Text" xml:space="preserve">
-    <value>Draw Only First MINF Reference</value>
+  <data name="createGameCubeBannerToolStripMenuItem.Text" xml:space="preserve">
+    <value>Create GameCube banner...</value>
   </data>
-  <data name="showVertexColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>268, 6</value>
   </data>
-  <data name="showVertexColorsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Use Vertex Colors for Rendering (P)</value>
+  <data name="checkForUpdatesNowToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="useLightKitsForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="checkForUpdatesNowToolStripMenuItem.Text" xml:space="preserve">
+    <value>Check for updates now...</value>
   </data>
-  <data name="useLightKitsForRenderingToolStripMenuItem.Text" xml:space="preserve">
-    <value>Use Light Kits for Rendering (L)</value>
+  <data name="downloadIndustrialParkEditorFilesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="useLODTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="downloadIndustrialParkEditorFilesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Download EditorFiles...</value>
   </data>
-  <data name="useLODTForRenderingToolStripMenuItem.Text" xml:space="preserve">
-    <value>Use LODT For Rendering</value>
+  <data name="checkForUpdatesOnEditorFilesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>253, 22</value>
   </data>
-  <data name="usePIPTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="checkForUpdatesOnEditorFilesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Check for updates on EditorFiles...</value>
   </data>
-  <data name="usePIPTForRenderingToolStripMenuItem.Text" xml:space="preserve">
-    <value>Use PIPT For Rendering</value>
+  <data name="downloadVgmstreamToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>271, 22</value>
   </data>
-  <data name="hideInvisibleMeshesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="downloadVgmstreamToolStripMenuItem.Text" xml:space="preserve">
+    <value>Download vgmstream...</value>
   </data>
-  <data name="hideInvisibleMeshesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Hide Invisible Meshes</value>
+  <data name="toolStripSeparator2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>268, 6</value>
   </data>
-  <data name="movementPreviewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="ensureAssociationsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>271, 22</value>
   </data>
-  <data name="movementPreviewToolStripMenuItem.Text" xml:space="preserve">
-    <value>Movement Preview</value>
+  <data name="ensureAssociationsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Associate HIP/HOP/BNR Files...</value>
   </data>
-  <data name="themeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>257, 22</value>
+  <data name="researchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 19</value>
   </data>
-  <data name="themeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Theme</value>
+  <data name="researchToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Research/Advanced</value>
   </data>
-  <data name="systemDefaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+  <data name="hansToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
   </data>
-  <data name="systemDefaultToolStripMenuItem.Text" xml:space="preserve">
-    <value>System Default</value>
+  <data name="hansToolStripMenuItem.Text" xml:space="preserve">
+    <value>Hans (Save File Editor)</value>
   </data>
-  <data name="systemDefaultToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>Apply the system default theme on restart</value>
+  <data name="assetIDGeneratorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
   </data>
-  <data name="lightModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+  <data name="assetIDGeneratorToolStripMenuItem.Text" xml:space="preserve">
+    <value>Asset ID Generator</value>
   </data>
-  <data name="lightModeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Light Mode</value>
+  <data name="dYNASearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
   </data>
-  <data name="lightModeToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>Apply light mode on restart</value>
+  <data name="dYNASearchToolStripMenuItem.Text" xml:space="preserve">
+    <value>DYNA Search</value>
   </data>
-  <data name="darkModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+  <data name="eventSearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
   </data>
-  <data name="darkModeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Dark Mode</value>
+  <data name="eventSearchToolStripMenuItem.Text" xml:space="preserve">
+    <value>Event Search</value>
   </data>
-  <data name="darkModeToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>Apply dark mode on restart</value>
+  <data name="openFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
+    <value>Open Folder</value>
+  </data>
+  <data name="dynaNameSearcherToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="dynaNameSearcherToolStripMenuItem.Text" xml:space="preserve">
+    <value>Dyna Name Searcher</value>
+  </data>
+  <data name="pickupSearcherToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="pickupSearcherToolStripMenuItem.Text" xml:space="preserve">
+    <value>Pickup Searcher</value>
+  </data>
+  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 19</value>
+  </data>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>185, 22</value>
@@ -2682,40 +2702,10 @@
   <data name="&gt;&gt;optionsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;viewConfigToolStripMenuItem.Name" xml:space="preserve">
-    <value>viewConfigToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;viewConfigToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;viewControlsToolStripMenuItem.Name" xml:space="preserve">
     <value>viewControlsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;viewControlsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
-    <value>toolStripSeparator4</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;manageUserTemplatesToolStripMenuItem.Name" xml:space="preserve">
-    <value>manageUserTemplatesToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;manageUserTemplatesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;templatesPersistentShiniesToolStripMenuItem.Name" xml:space="preserve">
-    <value>templatesPersistentShiniesToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;templatesPersistentShiniesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;templatesChainPointMVPTsToolStripMenuItem.Name" xml:space="preserve">
-    <value>templatesChainPointMVPTsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;templatesChainPointMVPTsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator7.Name" xml:space="preserve">
@@ -2748,88 +2738,34 @@
   <data name="&gt;&gt;useLegacyAssetTypeFormatToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;cursorInFlyModeToolStripMenuItem.Name" xml:space="preserve">
-    <value>cursorInFlyModeToolStripMenuItem</value>
+  <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
+    <value>toolStripSeparator4</value>
   </data>
-  <data name="&gt;&gt;cursorInFlyModeToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripSeparator4.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;manageUserTemplatesToolStripMenuItem.Name" xml:space="preserve">
+    <value>manageUserTemplatesToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;manageUserTemplatesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;defaultToolStripMenuItem.Name" xml:space="preserve">
-    <value>defaultToolStripMenuItem</value>
+  <data name="&gt;&gt;templatesPersistentShiniesToolStripMenuItem.Name" xml:space="preserve">
+    <value>templatesPersistentShiniesToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;defaultToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;templatesPersistentShiniesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;crosshairToolStripMenuItem.Name" xml:space="preserve">
-    <value>crosshairToolStripMenuItem</value>
+  <data name="&gt;&gt;templatesChainPointMVPTsToolStripMenuItem.Name" xml:space="preserve">
+    <value>templatesChainPointMVPTsToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;crosshairToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;templatesChainPointMVPTsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;hiddenToolStripMenuItem.Name" xml:space="preserve">
-    <value>hiddenToolStripMenuItem</value>
+  <data name="&gt;&gt;toolStripSeparator1.Name" xml:space="preserve">
+    <value>toolStripSeparator1</value>
   </data>
-  <data name="&gt;&gt;hiddenToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;translucentToolStripMenuItem.Name" xml:space="preserve">
-    <value>translucentToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;translucentToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;listAllAssetsToolStripMenuItem.Name" xml:space="preserve">
-    <value>listAllAssetsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;listAllAssetsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolsToolStripMenuItem.Name" xml:space="preserve">
-    <value>toolsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;toolsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;saveAllOpenHIPsToolStripMenuItem.Name" xml:space="preserve">
-    <value>saveAllOpenHIPsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;saveAllOpenHIPsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;runGameF5ToolStripMenuItem.Name" xml:space="preserve">
-    <value>runGameF5ToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;runGameF5ToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;buildAndRunPS2ISOToolStripMenuItem.Name" xml:space="preserve">
-    <value>buildAndRunPS2ISOToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;buildAndRunPS2ISOToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;stopSoundToolStripMenuItem.Name" xml:space="preserve">
-    <value>stopSoundToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;stopSoundToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;exportSceneToolStripMenuItem.Name" xml:space="preserve">
-    <value>exportSceneToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;exportSceneToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;createGameCubeBannerToolStripMenuItem.Name" xml:space="preserve">
-    <value>createGameCubeBannerToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;createGameCubeBannerToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator8.Name" xml:space="preserve">
-    <value>toolStripSeparator8</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator8.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;checkForUpdatesOnStartupToolStripMenuItem.Name" xml:space="preserve">
@@ -2838,46 +2774,46 @@
   <data name="&gt;&gt;checkForUpdatesOnStartupToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesNowToolStripMenuItem.Name" xml:space="preserve">
-    <value>checkForUpdatesNowToolStripMenuItem</value>
+  <data name="&gt;&gt;listAllAssetsToolStripMenuItem.Name" xml:space="preserve">
+    <value>listAllAssetsToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesNowToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;listAllAssetsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;downloadIndustrialParkEditorFilesToolStripMenuItem.Name" xml:space="preserve">
-    <value>downloadIndustrialParkEditorFilesToolStripMenuItem</value>
+  <data name="&gt;&gt;translucentToolStripMenuItem.Name" xml:space="preserve">
+    <value>translucentToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;downloadIndustrialParkEditorFilesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkForUpdatesOnEditorFilesToolStripMenuItem.Name" xml:space="preserve">
-    <value>checkForUpdatesOnEditorFilesToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;checkForUpdatesOnEditorFilesToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;downloadVgmstreamToolStripMenuItem.Name" xml:space="preserve">
-    <value>downloadVgmstreamToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;downloadVgmstreamToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
-    <value>toolStripSeparator2</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;ensureAssociationsToolStripMenuItem.Name" xml:space="preserve">
-    <value>ensureAssociationsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;ensureAssociationsToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;translucentToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;discordRichPresenceToolStripMenuItem.Name" xml:space="preserve">
     <value>discordRichPresenceToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;discordRichPresenceToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;themeToolStripMenuItem.Name" xml:space="preserve">
+    <value>themeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;themeToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;systemDefaultToolStripMenuItem.Name" xml:space="preserve">
+    <value>systemDefaultToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;systemDefaultToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;lightModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>lightModeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;lightModeToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;darkModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>darkModeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;darkModeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;displayToolStripMenuItem.Name" xml:space="preserve">
@@ -2910,22 +2846,22 @@
   <data name="&gt;&gt;toolStripSeparatorAssetTypes.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;addTextureFolderToolStripMenuItem.Name" xml:space="preserve">
-    <value>addTextureFolderToolStripMenuItem</value>
+  <data name="&gt;&gt;viewConfigToolStripMenuItem.Name" xml:space="preserve">
+    <value>viewConfigToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;addTextureFolderToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;viewConfigToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;addTXDArchiveToolStripMenuItem.Name" xml:space="preserve">
-    <value>addTXDArchiveToolStripMenuItem</value>
+  <data name="&gt;&gt;uIModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>uIModeToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;addTXDArchiveToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;uIModeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Name" xml:space="preserve">
-    <value>refreshTexturesAndModelsToolStripMenuItem</value>
+  <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Name" xml:space="preserve">
+    <value>uIModeAutoSizeToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator10.Name" xml:space="preserve">
@@ -2933,6 +2869,30 @@
   </data>
   <data name="&gt;&gt;toolStripSeparator10.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;cursorInFlyModeToolStripMenuItem.Name" xml:space="preserve">
+    <value>cursorInFlyModeToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;cursorInFlyModeToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;defaultToolStripMenuItem.Name" xml:space="preserve">
+    <value>defaultToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;defaultToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;crosshairToolStripMenuItem.Name" xml:space="preserve">
+    <value>crosshairToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;crosshairToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hiddenToolStripMenuItem.Name" xml:space="preserve">
+    <value>hiddenToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;hiddenToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;colorsToolStripMenuItem.Name" xml:space="preserve">
     <value>colorsToolStripMenuItem</value>
@@ -2994,22 +2954,10 @@
   <data name="&gt;&gt;noCullingCToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;fogToolStripMenuItem.Name" xml:space="preserve">
-    <value>fogToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;fogToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;wireframeFToolStripMenuItem.Name" xml:space="preserve">
     <value>wireframeFToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;wireframeFToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;vSyncToolStripMenuItem.Name" xml:space="preserve">
-    <value>vSyncToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;vSyncToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;lowerQualityGraphicsToolStripMenuItem.Name" xml:space="preserve">
@@ -3018,35 +2966,17 @@
   <data name="&gt;&gt;lowerQualityGraphicsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;vSyncToolStripMenuItem.Name" xml:space="preserve">
+    <value>vSyncToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;vSyncToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;toolStripSeparator6.Name" xml:space="preserve">
     <value>toolStripSeparator6</value>
   </data>
   <data name="&gt;&gt;toolStripSeparator6.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;uIModeToolStripMenuItem.Name" xml:space="preserve">
-    <value>uIModeToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;uIModeToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Name" xml:space="preserve">
-    <value>uIModeAutoSizeToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator9.Name" xml:space="preserve">
-    <value>toolStripSeparator9</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator9.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Name" xml:space="preserve">
-    <value>drawOnlyFirstMINFReferenceToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;showVertexColorsToolStripMenuItem.Name" xml:space="preserve">
     <value>showVertexColorsToolStripMenuItem</value>
@@ -3072,10 +3002,10 @@
   <data name="&gt;&gt;usePIPTForRenderingToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;hideInvisibleMeshesToolStripMenuItem.Name" xml:space="preserve">
-    <value>hideInvisibleMeshesToolStripMenuItem</value>
+  <data name="&gt;&gt;fogToolStripMenuItem.Name" xml:space="preserve">
+    <value>fogToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;hideInvisibleMeshesToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;fogToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;movementPreviewToolStripMenuItem.Name" xml:space="preserve">
@@ -3084,28 +3014,124 @@
   <data name="&gt;&gt;movementPreviewToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;themeToolStripMenuItem.Name" xml:space="preserve">
-    <value>themeToolStripMenuItem</value>
+  <data name="&gt;&gt;hideInvisibleMeshesToolStripMenuItem.Name" xml:space="preserve">
+    <value>hideInvisibleMeshesToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;themeToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;hideInvisibleMeshesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;systemDefaultToolStripMenuItem.Name" xml:space="preserve">
-    <value>systemDefaultToolStripMenuItem</value>
+  <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Name" xml:space="preserve">
+    <value>drawOnlyFirstMINFReferenceToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;systemDefaultToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;lightModeToolStripMenuItem.Name" xml:space="preserve">
-    <value>lightModeToolStripMenuItem</value>
+  <data name="&gt;&gt;toolStripSeparator9.Name" xml:space="preserve">
+    <value>toolStripSeparator9</value>
   </data>
-  <data name="&gt;&gt;lightModeToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripSeparator9.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;addTXDArchiveToolStripMenuItem.Name" xml:space="preserve">
+    <value>addTXDArchiveToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;addTXDArchiveToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;darkModeToolStripMenuItem.Name" xml:space="preserve">
-    <value>darkModeToolStripMenuItem</value>
+  <data name="&gt;&gt;addTextureFolderToolStripMenuItem.Name" xml:space="preserve">
+    <value>addTextureFolderToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;darkModeToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;addTextureFolderToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Name" xml:space="preserve">
+    <value>refreshTexturesAndModelsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolsToolStripMenuItem.Name" xml:space="preserve">
+    <value>toolsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;toolsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;saveAllOpenHIPsToolStripMenuItem.Name" xml:space="preserve">
+    <value>saveAllOpenHIPsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;saveAllOpenHIPsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;runGameF5ToolStripMenuItem.Name" xml:space="preserve">
+    <value>runGameF5ToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;runGameF5ToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buildAndRunPS2ISOToolStripMenuItem.Name" xml:space="preserve">
+    <value>buildAndRunPS2ISOToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;buildAndRunPS2ISOToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;stopSoundToolStripMenuItem.Name" xml:space="preserve">
+    <value>stopSoundToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;stopSoundToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;exportSceneToolStripMenuItem.Name" xml:space="preserve">
+    <value>exportSceneToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;exportSceneToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;createGameCubeBannerToolStripMenuItem.Name" xml:space="preserve">
+    <value>createGameCubeBannerToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;createGameCubeBannerToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator8.Name" xml:space="preserve">
+    <value>toolStripSeparator8</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator8.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesNowToolStripMenuItem.Name" xml:space="preserve">
+    <value>checkForUpdatesNowToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesNowToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadIndustrialParkEditorFilesToolStripMenuItem.Name" xml:space="preserve">
+    <value>downloadIndustrialParkEditorFilesToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;downloadIndustrialParkEditorFilesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesOnEditorFilesToolStripMenuItem.Name" xml:space="preserve">
+    <value>checkForUpdatesOnEditorFilesToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesOnEditorFilesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;downloadVgmstreamToolStripMenuItem.Name" xml:space="preserve">
+    <value>downloadVgmstreamToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;downloadVgmstreamToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Name" xml:space="preserve">
+    <value>toolStripSeparator2</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparator2.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;ensureAssociationsToolStripMenuItem.Name" xml:space="preserve">
+    <value>ensureAssociationsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;ensureAssociationsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;researchToolStripMenuItem.Name" xml:space="preserve">

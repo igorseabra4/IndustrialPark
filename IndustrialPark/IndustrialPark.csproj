@@ -30,7 +30,8 @@
   <PropertyGroup>
     <Company>Heavy Iron Modding</Company>
     <Copyright>Copyright ©  2026 Heavy Iron Modding</Copyright>
-	<AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
+    <InformationalVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</InformationalVersion>
+    <AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
 	<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
