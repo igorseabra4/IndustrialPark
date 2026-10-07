@@ -136,7 +136,20 @@ namespace IndustrialPark
         {
             archive.UnsavedChanges = true;
             RefreshPropertyGrid();
-            Program.UndoBuffer.AddAction(new AssetPropertyChangedAction(archive, asset, e.ChangedItem.PropertyDescriptor, e.OldValue, e.ChangedItem.Value));
+            Program.UndoBuffer.AddAction(new AssetPropertyChangedAction(archive, asset, GetPropertyPath(e.ChangedItem), e.OldValue, e.ChangedItem.Value));
+        }
+
+        private static string[] GetPropertyPath(GridItem item)
+        {
+            var path = new List<string>();
+            while (item != null)
+            {
+                if (item.GridItemType == GridItemType.Property)
+                    path.Add(item.Label);
+                item = item.Parent;
+            }
+            path.Reverse();
+            return path.ToArray();
         }
 
         private readonly List<int> RowSizes = new List<int>() { -1 };

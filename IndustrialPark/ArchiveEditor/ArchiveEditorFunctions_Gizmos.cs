@@ -391,6 +391,12 @@ namespace IndustrialPark
                         actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", originalPositions[((Asset)a).assetID].X, a.PositionX));
                         actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
                         actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                        if (a is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                        {
+                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumX", originalPositions[((Asset)a).assetID].X, a.PositionX));
+                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
+                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                        }
                     }
                     if (currentlyMoving.Count != 0)
                     {
@@ -412,27 +418,32 @@ namespace IndustrialPark
                         {
                             if (currentlyMovingBox is AssetTRIG trig)
                             {
-                                var box = trig;
-                                actions.Add(new AssetPropertyChangedAction(this, trig, property + "X", originalPositions[currentlyMovingBox.assetID].X, box.MaximumX));
-                                actions.Add(new AssetPropertyChangedAction(this, trig, property + "Y", originalPositions[currentlyMovingBox.assetID].Y, box.MaximumY));
-                                actions.Add(new AssetPropertyChangedAction(this, trig, property + "Z", originalPositions[currentlyMovingBox.assetID].Z, box.MaximumZ));
-                            }
-                            else if (currentlyMovingBox is AssetVOLU volume && volume.VolumeShape is VolumeBox newBox)
-                            {
-                                var prevBox = DeepCopy(newBox);
-                                if (property == "Maximum")
+                                if (triggerPositionGizmos.IndexOf(g) < 3)
                                 {
-                                    prevBox.MaximumX = originalPositions[volume.assetID].X;
-                                    prevBox.MaximumY = originalPositions[volume.assetID].Y;
-                                    prevBox.MaximumZ = originalPositions[volume.assetID].Z;
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, "VolumeShape", prevBox, newBox));
+                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumX", originalPositions[currentlyMovingBox.assetID].X, trig.MaximumX));
+                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumY", originalPositions[currentlyMovingBox.assetID].Y, trig.MaximumY));
+                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumZ", originalPositions[currentlyMovingBox.assetID].Z, trig.MaximumZ));
                                 }
                                 else
                                 {
-                                    prevBox.MinimumX = originalPositions[volume.assetID].X;
-                                    prevBox.MinimumY = originalPositions[volume.assetID].Y;
-                                    prevBox.MinimumZ = originalPositions[volume.assetID].Z;
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, "VolumeShape", prevBox, newBox));
+                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumX", originalPositions[currentlyMovingBox.assetID].X, trig.MinimumX));
+                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumY", originalPositions[currentlyMovingBox.assetID].Y, trig.MinimumY));
+                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumZ", originalPositions[currentlyMovingBox.assetID].Z, trig.MinimumZ));
+                                }
+                            }
+                            else if (currentlyMovingBox is AssetVOLU volume && volume.VolumeShape is VolumeBox box)
+                            {
+                                if (triggerPositionGizmos.IndexOf(g) < 3)
+                                {
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumX"], originalPositions[currentlyMovingBox.assetID].X, box.MaximumX));
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumY"], originalPositions[currentlyMovingBox.assetID].Y, box.MaximumY));
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumZ"], originalPositions[currentlyMovingBox.assetID].Z, box.MaximumZ));
+                                }
+                                else
+                                {
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumX"], originalPositions[currentlyMovingBox.assetID].X, box.MinimumX));
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumY"], originalPositions[currentlyMovingBox.assetID].Y, box.MinimumY));
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumZ"], originalPositions[currentlyMovingBox.assetID].Z, box.MinimumZ));
                                 }
                             }
                         }

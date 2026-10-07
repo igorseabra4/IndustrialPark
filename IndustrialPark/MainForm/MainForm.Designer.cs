@@ -97,9 +97,9 @@ namespace IndustrialPark
             toolStripSeparator6 = new ToolStripSeparator();
             showVertexColorsToolStripMenuItem = new ToolStripMenuItem();
             useLightKitsForRenderingToolStripMenuItem = new ToolStripMenuItem();
+            fogToolStripMenuItem = new ToolStripMenuItem();
             useLODTForRenderingToolStripMenuItem = new ToolStripMenuItem();
             usePIPTForRenderingToolStripMenuItem = new ToolStripMenuItem();
-            fogToolStripMenuItem = new ToolStripMenuItem();
             movementPreviewToolStripMenuItem = new ToolStripMenuItem();
             hideInvisibleMeshesToolStripMenuItem = new ToolStripMenuItem();
             drawOnlyFirstMINFReferenceToolStripMenuItem = new ToolStripMenuItem();
@@ -571,6 +571,15 @@ namespace IndustrialPark
             resources.ApplyResources(useLightKitsForRenderingToolStripMenuItem, "useLightKitsForRenderingToolStripMenuItem");
             useLightKitsForRenderingToolStripMenuItem.Click += useLightKitsForRenderingToolStripMenuItem_Click;
             // 
+            // fogToolStripMenuItem
+            // 
+            fogToolStripMenuItem.Checked = true;
+            fogToolStripMenuItem.CheckOnClick = true;
+            fogToolStripMenuItem.CheckState = CheckState.Checked;
+            fogToolStripMenuItem.Name = "fogToolStripMenuItem";
+            resources.ApplyResources(fogToolStripMenuItem, "fogToolStripMenuItem");
+            fogToolStripMenuItem.Click += fogToolStripMenuItem_Click;
+            // 
             // useLODTForRenderingToolStripMenuItem
             // 
             useLODTForRenderingToolStripMenuItem.Name = "useLODTForRenderingToolStripMenuItem";
@@ -584,15 +593,6 @@ namespace IndustrialPark
             usePIPTForRenderingToolStripMenuItem.Name = "usePIPTForRenderingToolStripMenuItem";
             resources.ApplyResources(usePIPTForRenderingToolStripMenuItem, "usePIPTForRenderingToolStripMenuItem");
             usePIPTForRenderingToolStripMenuItem.Click += UsePIPTForRenderingToolStripMenuItem_Click;
-            // 
-            // fogToolStripMenuItem
-            // 
-            fogToolStripMenuItem.Checked = true;
-            fogToolStripMenuItem.CheckOnClick = true;
-            fogToolStripMenuItem.CheckState = CheckState.Checked;
-            fogToolStripMenuItem.Name = "fogToolStripMenuItem";
-            resources.ApplyResources(fogToolStripMenuItem, "fogToolStripMenuItem");
-            fogToolStripMenuItem.Click += fogToolStripMenuItem_Click;
             // 
             // movementPreviewToolStripMenuItem
             // 
