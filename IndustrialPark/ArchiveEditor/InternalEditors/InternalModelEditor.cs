@@ -517,7 +517,7 @@ namespace IndustrialPark
                 ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.Model),
                 new Section_ADBG(0, collName, "", 0),
                 rwmodel.GetBytes(asset.RenderWareVersion));
-            Asset collModel = archive.AddAssetWithUniqueID(collmodelAhdr, archive.game, archive.platform.Endianness());
+            Asset collModel = archive.AddAssetWithUniqueID(collmodelAhdr, archive.game, archive.platform.Endianness(), archive.IndexOfLayerOfType(LayerType.MODEL));
 
             var coll = archive.GetCOLL();
             foreach (var item in coll.Entries)

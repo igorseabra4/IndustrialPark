@@ -439,7 +439,7 @@ namespace IndustrialPark.Randomizer
             if (dynaTeleportAssetIDs.Count == 0)
                 return false;
 
-            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate("IP_TELEBOX", AssetTemplate.Dispatcher);
+            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate(-1, "IP_TELEBOX", AssetTemplate.Dispatcher);
 
             var links = new List<Link>();
             foreach (uint u in dynaTeleportAssetIDs)
@@ -1114,7 +1114,7 @@ namespace IndustrialPark.Randomizer
 
         public bool RandomizePlayerOnSpawn()
         {
-            var group = (AssetGRUP)PlaceTemplate("IP_RANDO_PLAYER_GRUP", AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(-1, "IP_RANDO_PLAYER_GRUP", AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -1129,7 +1129,7 @@ namespace IndustrialPark.Randomizer
             var outAssetIDs = new List<uint>();
             for (int i = 0; i < 3; i++)
             {
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(-1, new Vector3(), ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 timer.Links = new Link[]
                 {
@@ -1368,7 +1368,7 @@ namespace IndustrialPark.Randomizer
                 var dogCount = 3;
                 for (int i = 0; i < dogCount; i++)
                 {
-                    var dog = PlaceTemplate(position, vil.assetName + "_DOG" + i.ToString(), AssetTemplate.ArfDog);
+                    var dog = PlaceTemplate(-1, position, vil.assetName + "_DOG" + i.ToString(), AssetTemplate.ArfDog);
                     links.Add(new Link(game)
                     {
                         TargetAsset = dog.assetID,
@@ -1393,7 +1393,7 @@ namespace IndustrialPark.Randomizer
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    var slave = PlaceTemplate(position, vil.assetName + "_SLAVE" + i.ToString(), AssetTemplate.TubeletSlave);
+                    var slave = PlaceTemplate(-1, position, vil.assetName + "_SLAVE" + i.ToString(), AssetTemplate.TubeletSlave);
                     links.Add(new Link(game)
                     {
                         TargetAsset = slave.assetID,
@@ -2708,7 +2708,7 @@ namespace IndustrialPark.Randomizer
         {
             if (LevelName == "hb01")
             {
-                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), "SPATULA_EXTRA_FIX", AssetTemplate.Spatula);
+                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(-1, new Vector3(8.774022f, 5.877692f, -23.492590f), "SPATULA_EXTRA_FIX", AssetTemplate.Spatula);
                 spatula.Links = new Link[]
                 {
                     new Link(game)
@@ -2736,7 +2736,7 @@ namespace IndustrialPark.Randomizer
                     if (ContainsAsset(dpat) && GetFromAssetID(dpat) is AssetDPAT dispatcher)
                     {
                         dispatcher.EnabledOnStart = false;
-                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(AssetTemplate.Timer);
+                        AssetTIMR timer = (AssetTIMR)PlaceTemplate(-1, AssetTemplate.Timer);
                         timer.Time = 1f;
                         uint boss = new AssetID("BOSS_NPC");
                         if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
@@ -3230,9 +3230,9 @@ namespace IndustrialPark.Randomizer
             if (ContainsAsset(new AssetID(MusicDispAssetName + "_01")) && ContainsAsset(new AssetID(MusicGroupAssetName + "_01")))
                 return false;
 
-            var dpat = PlaceTemplate(MusicDispAssetName, AssetTemplate.Dispatcher);
+            var dpat = PlaceTemplate(-1, MusicDispAssetName, AssetTemplate.Dispatcher);
 
-            var group = (AssetGRUP)PlaceTemplate(MusicGroupAssetName, AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(-1, MusicGroupAssetName, AssetTemplate.Group);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
@@ -3250,7 +3250,7 @@ namespace IndustrialPark.Randomizer
                 if (i == 7 || i == 14)
                     continue;
 
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(-1, new Vector3(), ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer);
                 timer.Time = 0.1f;
                 var links = new List<Link>()
                 {
@@ -3333,7 +3333,7 @@ namespace IndustrialPark.Randomizer
                             string serializedObject = JsonConvert.SerializeObject(plat.BuildAHDR(platform.Endianness()));
                             Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
 
-                            var plat2 = (AssetPLAT)AddAssetWithUniqueID(AHDR, game, platform.Endianness());
+                            var plat2 = (AssetPLAT)AddAssetWithUniqueID(AHDR, game, platform.Endianness(), -1);
 
                             plat2.PositionX = 87.692600f;
                             plat2.PositionZ = 8.692189f;

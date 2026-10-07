@@ -176,22 +176,13 @@ namespace IndustrialPark
                 if (!create)
                     return null;
 
-                var prevIndex = SelectedLayerIndex;
+                var layerType = assetTemplate == AssetTemplate.Sound_Info ? LayerType.SNDTOC : LayerType.DEFAULT;
+                int layerIndex = IndexOfLayerOfType(layerType);
 
-                var layerType = LayerType.DEFAULT;
-                if (assetTemplate == AssetTemplate.Sound_Info)
-                    layerType = LayerType.SNDTOC;
-
-                if (!NoLayers)
-                    SelectedLayerIndex = IndexOfLayerOfType(layerType);
-
-                PlaceTemplate(assetTemplate);
+                PlaceTemplate(layerIndex, assetTemplate);
                 if (!standalone)
                     foreach (var ae in Program.MainForm.archiveEditors)
                         ae.PopulateAssetListAndComboBox();
-
-                if (!NoLayers)
-                    SelectedLayerIndex = prevIndex;
             }
             return (from asset in assetDictionary.Values where asset.assetType == assetType select asset).FirstOrDefault();
         }
@@ -798,32 +789,7 @@ namespace IndustrialPark
 
         public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps, bool placeOnExistingDefaultLayer)
         {
-            if (!NoLayers)
-            {
-                bool defaultLayerExists = false;
-
-                if (placeOnExistingDefaultLayer)
-                {
-                    // Check every layer to see whether it is of type default
-                    for (int i = 0; i < Layers.Count; i++)
-                    {
-                        if (Layers[i].Type != LayerType.DEFAULT)
-                            continue;
-
-                        // If the layer is a default layer, select it.
-                        // Pick the first default layer found.
-                        defaultLayerExists = true;
-                        SelectedLayerIndex = i;
-                        break;
-                    }
-                }
-
-                if (!placeOnExistingDefaultLayer || !defaultLayerExists)
-                {
-                    AddLayer();
-                    SelectedLayerIndex = Layers.Count - 1;
-                }
-            }
+            int layerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
 
             List<uint> outAssetIDs = new List<uint>();
 
@@ -831,7 +797,7 @@ namespace IndustrialPark
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.assetName.Replace(".dff", "").ToUpper();
-                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(new Vector3(), ref outAssetIDs, simpName, AssetTemplate.Simple_Object);
+                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(layerIndex, new Vector3(), ref outAssetIDs, simpName, AssetTemplate.Simple_Object);
                     simp.Model = i;
                     if (!solid)
                     {
@@ -850,46 +816,25 @@ namespace IndustrialPark
         public int IndexOfLayerOfType(LayerType layerType)
         {
             int layerIndex = -1;
-
             if (!NoLayers)
             {
                 layerIndex = Layers.FindIndex(l => l.Type == layerType);
                 if (layerIndex == -1)
-                {
-                    AddLayer();
-                    Layers.Last().Type = layerType;
-                    layerIndex = LayerCount - 1;
-                }
+                    layerIndex = AddLayer(layerType);
             }
-
             return layerIndex;
         }
 
         public void MakePiptVcolors(List<uint> assetIDs)
         {
-            AssetPIPT pipt = null;
-
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPIPT PIPT)
-                {
-                    pipt = PIPT;
-                    break;
-                }
+            var pipt = assetDictionary.Values.OfType<AssetPIPT>().FirstOrDefault();
             if (pipt == null)
             {
-                var prevLayerType = SelectedLayerIndex;
-
-                if (!NoLayers)
-                    SelectedLayerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
-
-                pipt = (AssetPIPT)PlaceTemplate(template: AssetTemplate.Pipe_Info_Table);
-
-                if (!NoLayers)
-                    SelectedLayerIndex = prevLayerType;
+                var layerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
+                pipt = (AssetPIPT)PlaceTemplate(layerIndex, AssetTemplate.Pipe_Info_Table);
             }
 
             List<PipeInfo> entries = pipt.Entries.ToList();
-
             foreach (uint u in assetIDs)
                 if (GetFromAssetID(u) is AssetMODL)
                     entries.Add(new PipeInfo(game)
@@ -897,7 +842,6 @@ namespace IndustrialPark
                         Model = u,
                         LightingMode = LightingMode.Prelight
                     });
-
             pipt.Entries = entries.ToArray();
         }
 
@@ -963,15 +907,11 @@ namespace IndustrialPark
                 AHDR.ADBG.assetName = newAssetName;
                 AHDR.assetID = newAssetId;
 
-                var prevLayerType = SelectedLayerIndex;
-                if (!NoLayers)
-                    SelectedLayerIndex = GetLayerFromAssetID(model.assetID);
+                var layerIndex = GetLayerFromAssetID(model.assetID);
 
-                var newModel = (IAssetWithModel)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
-
-                if (!NoLayers)
-                    SelectedLayerIndex = prevLayerType;
+                var newModel = (IAssetWithModel)AddAsset(AHDR, game, platform.Endianness(), layerIndex, setTextureDisplay: false);
                 newModel.ApplyScale(scale);
+
                 UnsavedChanges = true;
             }
 
@@ -1026,15 +966,11 @@ namespace IndustrialPark
                 AHDR.ADBG.assetName = newAssetName;
                 AHDR.assetID = newAssetId;
 
-                var prevLayerType = SelectedLayerIndex;
-                if (!NoLayers)
-                    SelectedLayerIndex = GetLayerFromAssetID(model.assetID);
+                var layerIndex = GetLayerFromAssetID(model.assetID);
 
-                var newModel = (AssetMODL)AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
-
-                if (!NoLayers)
-                    SelectedLayerIndex = prevLayerType;
+                var newModel = (AssetMODL)AddAsset(AHDR, game, platform.Endianness(), layerIndex, setTextureDisplay: false);
                 newModel.ApplyRotation(yaw, pitch, roll);
+
                 UnsavedChanges = true;
             }
 
@@ -1128,14 +1064,13 @@ namespace IndustrialPark
 
         public List<uint> ConvertScriptToGroupOfTimers(AssetSCRP script)
         {
-            var previouslySelectedLayer = SelectedLayerIndex;
-            SelectedLayerIndex = GetLayerFromAssetID(script.assetID);
+            var layerIndex = GetLayerFromAssetID(script.assetID);
             var timerAssetIDs = new List<uint>();
             var assets = new List<Asset>();
             var num = 1;
             foreach (Link link in script.TimedLinks)
             {
-                var timer = (AssetTIMR)PlaceTemplate(customName: $"{script.assetName}_TIMER_{num:D2}", template: AssetTemplate.Timer, ignoreNumber: true);
+                var timer = (AssetTIMR)PlaceTemplate(layerIndex, customName: $"{script.assetName}_TIMER_{num:D2}", template: AssetTemplate.Timer, ignoreNumber: true);
                 timer.Time = link.Time;
                 timer.Links = new Link[] {
                     new Link(timer.game)
@@ -1154,10 +1089,9 @@ namespace IndustrialPark
                 timerAssetIDs.Add(timer.assetID);
                 num++;
             }
-            var group = (AssetGRUP)PlaceTemplate(customName: $"{script.assetName}_GROUP", template: AssetTemplate.Group, ignoreNumber: true);
+            var group = (AssetGRUP)PlaceTemplate(layerIndex, customName: $"{script.assetName}_GROUP", template: AssetTemplate.Group, ignoreNumber: true);
             group.Items = timerAssetIDs.Select(id => new AssetID(id)).ToArray();
             group.Links = script.Links;
-            SelectedLayerIndex = previouslySelectedLayer;
             timerAssetIDs.Insert(0, group.assetID);
             return timerAssetIDs;
         }

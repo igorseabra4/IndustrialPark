@@ -13,16 +13,10 @@ namespace IndustrialPark
         {
             if (!ContainsAssetWithType(AssetType.SoundInfo))
             {
-                var prevIndex = SelectedLayerIndex;
-
-                if (!NoLayers)
-                    SelectedLayerIndex = IndexOfLayerOfType(LayerType.SNDTOC);
+                var layerIndex = IndexOfLayerOfType(LayerType.SNDTOC);
 
                 var list = new List<uint>();
-                PlaceTemplate(new SharpDX.Vector3(), ref list, "sound_info", AssetTemplate.Sound_Info);
-
-                if (!NoLayers)
-                    SelectedLayerIndex = prevIndex;
+                PlaceTemplate(layerIndex, new SharpDX.Vector3(), ref list, "sound_info", AssetTemplate.Sound_Info);
             }
 
             foreach (Asset a in assetDictionary.Values)
@@ -181,7 +175,7 @@ namespace IndustrialPark
                 {
                     AddSoundToSNDI(data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
                     AHDR.data = soundData;
-                    AddAsset(AHDR, game, platform.Endianness(), false, sramLayer);
+                    AddAsset(AHDR, game, platform.Endianness(), sramLayer, false);
                     assetIDs.Add(AHDR.assetID);
                 }
                 catch (Exception ex)

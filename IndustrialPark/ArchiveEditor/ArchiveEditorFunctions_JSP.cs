@@ -45,20 +45,21 @@ namespace IndustrialPark
             if (lastJSPINFOIndex == -1)
                 lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.TEXTURE);
 
-            int newIndex = lastJSPINFOIndex != -1 ? lastJSPINFOIndex : Layers.Count - 1;
+            int layerIndex = lastJSPINFOIndex != -1 ? lastJSPINFOIndex : Layers.Count - 1;
+            layerIndex++;
 
-            AddLayer(LayerType.BSP, ++newIndex);
-            AddAsset(AHDRs[0], game, platform.Endianness(), true, newIndex);
+            layerIndex = AddLayer(LayerType.BSP);
+            AddAsset(AHDRs[0], game, platform.Endianness(), layerIndex, true);
 
-            AddLayer(LayerType.BSP, ++newIndex);
+            layerIndex = AddLayer(LayerType.BSP);
             if (AHDRs.Count > 1)
-                AddAsset(AHDRs[1], game, platform.Endianness(), true, newIndex);
+                AddAsset(AHDRs[1], game, platform.Endianness(), layerIndex, true);
 
-            AddLayer(LayerType.BSP, ++newIndex);
+            layerIndex = AddLayer(LayerType.BSP);
             if (AHDRs.Count > 2)
-                AddAsset(AHDRs[2], game, platform.Endianness(), true, newIndex);
+                AddAsset(AHDRs[2], game, platform.Endianness(), layerIndex, true);
 
-            AddLayer(LayerType.JSPINFO, ++newIndex);
+            layerIndex = AddLayer(LayerType.JSPINFO);
 
             AssetJSP_INFO info = new AssetJSP_INFO(AHDRs[0].ADBG.assetName[..^1], game, platform);
             info.JSP_AssetIDs = AHDRs.Select(a => (AssetID)a.assetID).ToArray();
@@ -67,7 +68,7 @@ namespace IndustrialPark
             if (overwrite && ContainsAsset(info.assetID))
                 RemoveAsset(info.assetID);
 
-            AddAsset(info, true);
+            AddAsset(info, layerIndex, true);
 
             return info.assetID;
         }

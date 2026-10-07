@@ -36,26 +36,22 @@ namespace IndustrialPark
                 }
                 _noLayers = value;
                 UnsavedChanges = true;
-                SelectedLayerIndex = -1;
             }
         }
 
-        public int SelectedLayerIndex = -1;
-
         public int LayerCount => Layers.Count;
-        public int GetLayerType() => LayerTypeGenericToSpecific(Layers[SelectedLayerIndex].Type, game);
+        public int GetLayerType(int index) => LayerTypeGenericToSpecific(Layers[index].Type, game);
+        public LayerType GetLayerTypeGeneric(int index) => Layers[index].Type;
 
-        public void SetLayerType(int type) => Layers[SelectedLayerIndex].Type = LayerTypeSpecificToGeneric(type, game);
-
-        public string LayerToString() => LayerToString(SelectedLayerIndex);
+        public void SetLayerType(int index, int type) => Layers[index].Type = LayerTypeSpecificToGeneric(type, game);
 
         public string LayerToString(int index) => "Layer " + index.ToString("D2") + ": "
             + (string.IsNullOrWhiteSpace(Layers[index].LayerName) ? Layers[index].Type.ToString() : Layers[index].LayerName)
             + " [" + Layers[index].AssetIDs.Count() + "]";
 
-        public List<uint> GetAssetIDsOnLayer(int layer = -1) => NoLayers ?
+        public List<uint> GetAssetIDsOnLayer(int layer) => NoLayers ?
             (from Asset a in assetDictionary.Values select a.assetID).ToList() :
-            Layers[layer == -1 ? SelectedLayerIndex : layer].AssetIDs;
+            Layers[layer].AssetIDs;
 
         public int GetFirstActiveLayerIndex()
         {
@@ -89,33 +85,29 @@ namespace IndustrialPark
             return (LayerType)(layerType + 1);
         }
 
-        public void AddLayer(LayerType layerType = LayerType.DEFAULT, int index = -1)
+        public int AddLayer(LayerType layerType = LayerType.DEFAULT, int index = -1)
         {
             if (NoLayers)
-                return;
+                return -1;
 
-            if (index >= Layers.Count)
+            if (index == -1 || index >= Layers.Count)
                 index = Layers.Count;
-            int newIndex = index != -1 ? index : Layers.Count;
 
-            Layers.Insert(newIndex, new Layer(layerType));
-
-            SelectedLayerIndex = newIndex;
+            Layers.Insert(index, new Layer(layerType));
 
             UnsavedChanges = true;
+            return index;
         }
 
-        public void RemoveLayer()
+        public void RemoveLayer(int index)
         {
             if (NoLayers)
                 return;
 
-            foreach (uint u in Layers[SelectedLayerIndex].AssetIDs.ToArray())
+            foreach (uint u in Layers[index].AssetIDs.ToArray())
                 RemoveAsset(u);
 
-            Layers.RemoveAt(SelectedLayerIndex);
-
-            SelectedLayerIndex--;
+            Layers.RemoveAt(index);
 
             UnsavedChanges = true;
         }
@@ -129,34 +121,29 @@ namespace IndustrialPark
                 RemoveAsset(u);
             Layers.RemoveAll(l => l.Type == type);
 
-            SelectedLayerIndex = Layers.Count - 1;
             UnsavedChanges = true;
         }
 
-        public void MoveLayerUp()
+        public void MoveLayerUp(int index)
         {
             if (NoLayers)
                 return;
 
-            if (SelectedLayerIndex > 0)
+            if (index > 0)
             {
-                var previous = Layers[SelectedLayerIndex - 1];
-                Layers[SelectedLayerIndex - 1] = Layers[SelectedLayerIndex];
-                Layers[SelectedLayerIndex] = previous;
+                (Layers[index], Layers[index - 1]) = (Layers[index - 1], Layers[index]);
                 UnsavedChanges = true;
             }
         }
 
-        public void MoveLayerDown()
+        public void MoveLayerDown(int index)
         {
             if (NoLayers)
                 return;
 
-            if (SelectedLayerIndex < Layers.Count - 1)
+            if (index < Layers.Count - 1)
             {
-                var post = Layers[SelectedLayerIndex + 1];
-                Layers[SelectedLayerIndex + 1] = Layers[SelectedLayerIndex];
-                Layers[SelectedLayerIndex] = post;
+                (Layers[index], Layers[index + 1]) = (Layers[index + 1], Layers[index]);
                 UnsavedChanges = true;
             }
         }
@@ -194,9 +181,9 @@ namespace IndustrialPark
             return false;
         }
 
-        public List<AssetType> AssetTypesOnLayer() => NoLayers ?
+        public List<AssetType> AssetTypesOnLayer(int index) => NoLayers ?
             (from Asset a in assetDictionary.Values select a.assetType).Distinct().ToList() :
-            (from uint a in Layers[SelectedLayerIndex].AssetIDs select assetDictionary[a].assetType).Distinct().ToList();
+            (from uint a in Layers[index].AssetIDs select assetDictionary[a].assetType).Distinct().ToList();
 
         public Dictionary<LayerType, HashSet<AssetType>> AssetTypesPerLayer()
         {

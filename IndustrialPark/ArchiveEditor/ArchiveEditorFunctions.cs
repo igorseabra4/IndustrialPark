@@ -470,7 +470,6 @@ namespace IndustrialPark
             assetDictionary.Clear();
 
             currentlyOpenFilePath = null;
-            SelectedLayerIndex = -1;
 
             if (showProgress)
                 progressBar.Close();
@@ -1190,7 +1189,7 @@ namespace IndustrialPark
             }
         }
 
-        public uint? CreateNewAsset()
+        public uint? CreateNewAsset(int layerIndex)
         {
             Section_AHDR AHDR = AssetHeader.GetAsset();
 
@@ -1204,7 +1203,7 @@ namespace IndustrialPark
                     MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
 
                 UnsavedChanges = true;
-                AddAsset(AHDR, game, platform.Endianness(), true);
+                AddAsset(AHDR, game, platform.Endianness(), layerIndex, true);
                 SetAssetPositionToView(AHDR.assetID);
 #if !DEBUG
                 }
@@ -1220,10 +1219,10 @@ namespace IndustrialPark
             return null;
         }
 
-        public Asset AddAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool setTextureDisplay, int forceLayerIndex = -1)
+        public Asset AddAsset(Section_AHDR AHDR, Game game, Endianness endianness, int layerIndex, bool setTextureDisplay)
         {
             if (!NoLayers)
-                Layers[forceLayerIndex != -1 ? forceLayerIndex : SelectedLayerIndex].AssetIDs.Add(AHDR.assetID);
+                Layers[layerIndex].AssetIDs.Add(AHDR.assetID);
             AddAssetToDictionary(AHDR, game, endianness, false, true);
 
             var asset = GetFromAssetID(AHDR.assetID);
@@ -1234,10 +1233,10 @@ namespace IndustrialPark
             return asset;
         }
 
-        public uint AddAsset(Asset asset, bool setTextureDisplay)
+        public uint AddAsset(Asset asset, int layerIndex, bool setTextureDisplay)
         {
             if (!NoLayers)
-                Layers[SelectedLayerIndex].AssetIDs.Add(asset.assetID);
+                Layers[layerIndex].AssetIDs.Add(asset.assetID);
             AddAssetToDictionary(asset, false);
 
             if (setTextureDisplay && asset is AssetRWTX rwtx)
@@ -1246,7 +1245,7 @@ namespace IndustrialPark
             return asset.assetID;
         }
 
-        public Asset AddAssetWithUniqueID(Section_AHDR AHDR, Game game, Endianness endianness, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
+        public Asset AddAssetWithUniqueID(Section_AHDR AHDR, Game game, Endianness endianness, int layerIndex, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
         {
             var assetName = GetUniqueAssetName(AHDR.ADBG.assetName, AHDR.assetID, giveIDregardless, ignoreNumber);
 
@@ -1256,7 +1255,7 @@ namespace IndustrialPark
                 AHDR.ADBG.assetName = assetName;
             }
 
-            return AddAsset(AHDR, game, endianness, setTextureDisplay);
+            return AddAsset(AHDR, game, endianness, layerIndex, setTextureDisplay);
         }
 
         private string GetUniqueAssetName(string assetName, uint assetID, bool giveIDregardless, bool ignoreNumber)
@@ -1343,7 +1342,7 @@ namespace IndustrialPark
 
                 var previousAssetID = AHDR.assetID;
 
-                AddAssetWithUniqueID(AHDR, asset.game, platform.Endianness());
+                AddAssetWithUniqueID(AHDR, asset.game, platform.Endianness(), GetLayerFromAssetID(previousAssetID));
 
                 referenceUpdate.Add(previousAssetID, AHDR.assetID);
 
@@ -1383,7 +1382,7 @@ namespace IndustrialPark
         public static bool updateReferencesOnCopy = true;
         public static bool replaceAssetsOnPaste = false;
 
-        internal bool PasteAssetsFromClipboard(out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
+        internal bool PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
         {
             finalIndices = new List<uint>();
 
@@ -1420,7 +1419,7 @@ namespace IndustrialPark
                 if (replaceAssetsOnPaste && !dontReplace && ContainsAsset(AHDR.assetID))
                     RemoveAsset(AHDR.assetID);
 
-                var asset = AddAssetWithUniqueID(AHDR, clipboard.games[i], clipboard.platforms[i].Endianness());
+                var asset = AddAssetWithUniqueID(AHDR, clipboard.games[i], clipboard.platforms[i].Endianness(), layerIndex);
 
                 asset.SetGame(game);
 
@@ -1508,7 +1507,7 @@ namespace IndustrialPark
         public void ReplaceReferences(uint oldAssetId, uint newAssetId) =>
             FindWhoTargets(oldAssetId).ForEach(assetId => GetFromAssetID(assetId).ReplaceReferences(oldAssetId, newAssetId));
 
-        public List<uint> ImportMultipleAssets(List<Section_AHDR> AHDRs, bool overwrite)
+        public List<uint> ImportMultipleAssets(List<Section_AHDR> AHDRs, int layerIndex, bool overwrite)
         {
             var assetIDs = new List<uint>();
             var actions = new List<IReversibleAction>();
@@ -1521,7 +1520,7 @@ namespace IndustrialPark
                     {
                         try
                         {
-                            actions.Add(new AssetAddedAction(this, DeepCopy(AHDR), SelectedLayerIndex));
+                            actions.Add(new AssetAddedAction(this, DeepCopy(AHDR), layerIndex));
                             AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
                             AHDR.data = soundData;
                         }
@@ -1538,12 +1537,12 @@ namespace IndustrialPark
                             actions.Add(GetAssetRemovedAction(AHDR.assetID));
                             RemoveAsset(AHDR.assetID);
                         }
-                        var asset = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+                        var asset = AddAsset(AHDR, game, platform.Endianness(), layerIndex, setTextureDisplay: false);
                         actions.Add(GetAssetAddedAction(asset));
                     }
                     else
                     {
-                        var asset = AddAssetWithUniqueID(AHDR, game, platform.Endianness(), setTextureDisplay: true);
+                        var asset = AddAssetWithUniqueID(AHDR, game, platform.Endianness(), layerIndex, setTextureDisplay: true);
                         actions.Add(GetAssetAddedAction(asset));
                     }
 

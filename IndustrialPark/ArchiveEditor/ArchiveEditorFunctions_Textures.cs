@@ -135,10 +135,10 @@ namespace IndustrialPark
             ReadFileMethods.treatStuffAsByteArray = false;
         }
 
-        public void ImportTextureDictionary(string fileName, bool RW3)
+        public void ImportTextureDictionary(string fileName, bool RW3, int layerIndex)
         {
             List<Section_AHDR> AHDRs = GetAssetsFromTextureDictionary(fileName, RW3);
-            ImportMultipleAssets(AHDRs, true);
+            ImportMultipleAssets(AHDRs, layerIndex, true);
         }
 
         public List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3)
