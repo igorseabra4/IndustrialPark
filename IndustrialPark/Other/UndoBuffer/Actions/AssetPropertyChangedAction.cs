@@ -1,48 +1,46 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
 namespace IndustrialPark;
 
-public class AssetPropertyChangedAction : IReversibleAction
+public class AssetPropertyChangedAction(
+    ArchiveEditorFunctions archive,
+    uint assetID,
+    PropertyDescriptor property,
+    object oldValue,
+    object newValue,
+    List<uint> selection = null)
+    : IReversibleAction
 {
-    private ArchiveEditorFunctions archive;
-    private GenericAssetDataContainer asset;
-    private PropertyDescriptor property;
-    private object oldValue;
-    private object newValue;
+    public AssetPropertyChangedAction(ArchiveEditorFunctions archive, Asset asset, PropertyDescriptor property, object oldValue, object newValue, List<uint> selection = null) :
+        this(archive, asset.assetID, property, oldValue, newValue, selection)
+    { }
 
-    public AssetPropertyChangedAction(ArchiveEditorFunctions archive, GenericAssetDataContainer asset, PropertyDescriptor property, object oldValue, object newValue)
-    {
-        this.archive = archive;
-        this.asset = asset;
-        this.property = property;
-        this.oldValue = oldValue;
-        this.newValue = newValue;
-    }
+    public AssetPropertyChangedAction(ArchiveEditorFunctions archive, Asset asset, string propertyName, object oldValue, object newValue, List<uint> selection = null) :
+        this(archive, asset.assetID, TypeDescriptor.GetProperties(asset)[propertyName], oldValue, newValue, selection)
+    { }
 
-    public AssetPropertyChangedAction(ArchiveEditorFunctions archive, GenericAssetDataContainer asset, string propertyName, object oldValue, object newValue)
-    {
-        this.archive = archive;
-        this.asset = asset;
-        this.property = TypeDescriptor.GetProperties(asset)[propertyName];
-        this.oldValue = oldValue;
-        this.newValue = newValue;
-    }
+    private Asset asset => archive.GetFromAssetID(assetID);
 
     public void Undo()
     {
-        this.property.SetValue(this.asset, ConvertValue(this.oldValue, this.property.PropertyType));
+        property.SetValue(this.asset, ConvertValue(oldValue, property.PropertyType));
         if (this.asset is Asset a)
-            this.archive.RefreshAssetEditor(a.assetID);
+            archive.RefreshAssetEditor(a.assetID);
+        if (selection != null)
+            Program.MainForm.SetSelectedIndices(selection);
     }
 
     public void Redo()
     {
-        this.property.SetValue(this.asset, ConvertValue(this.newValue, this.property.PropertyType));
+        property.SetValue(this.asset, ConvertValue(newValue, property.PropertyType));
         if (this.asset is Asset a)
-            this.archive.RefreshAssetEditor(a.assetID);
+            archive.RefreshAssetEditor(a.assetID);
+        if (selection != null)
+            Program.MainForm.SetSelectedIndices(selection);
     }
 
     private static object? ConvertValue(object? value, Type targetType)

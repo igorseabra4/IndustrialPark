@@ -1,6 +1,7 @@
 ﻿using Assimp;
 using HipHopFile;
 using IndustrialPark.Models;
+using Newtonsoft.Json;
 using RenderWareFile;
 using SharpDX;
 using System;
@@ -293,244 +294,111 @@ namespace IndustrialPark
             return whoTargets;
         }
 
+        public static T DeepCopy<T>(T data) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(data));
+
         public void MergeSimilar()
         {
             UnsavedChanges = true;
 
-            var COLLs = (from asset in assetDictionary.Values where asset.assetType == AssetType.CollisionTable select (AssetCOLL)asset).ToList();
-            for (int i = 1; i < COLLs.Count; i++)
-                RemoveAsset(COLLs[i].assetID);
-            for (int i = 1; i < COLLs.Count; i++)
-                MergeCOLL(COLLs[i]);
+            var actions = new List<IReversibleAction>();
 
-            var JAWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.JawDataTable select (AssetJAW)asset).ToList();
-            for (int i = 1; i < JAWs.Count; i++)
-                RemoveAsset(JAWs[i].assetID);
-            for (int i = 1; i < JAWs.Count; i++)
-                MergeJAW(JAWs[i]);
-
-            var LODTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.LevelOfDetailTable select (AssetLODT)asset).ToList();
-            for (int i = 1; i < LODTs.Count; i++)
-                RemoveAsset(LODTs[i].assetID);
-            for (int i = 1; i < LODTs.Count; i++)
-                MergeLODT(LODTs[i]);
-
-            var PIPTs = (from asset in assetDictionary.Values where asset.assetType == AssetType.PipeInfoTable select (AssetPIPT)asset).ToList();
-            for (int i = 1; i < PIPTs.Count; i++)
-                RemoveAsset(PIPTs[i].assetID);
-            for (int i = 1; i < PIPTs.Count; i++)
-                MergePIPT(PIPTs[i]);
-
-            var SHDWs = (from asset in assetDictionary.Values where asset.assetType == AssetType.ShadowTable select (AssetSHDW)asset).ToList();
-            for (int i = 1; i < SHDWs.Count; i++)
-                RemoveAsset(SHDWs[i].assetID);
-            for (int i = 1; i < SHDWs.Count; i++)
-                MergeSHDW(SHDWs[i]);
-
-
-            if (platform == Platform.GameCube)
+            void MergeTableAssets<T, U>(AssetType assetType) where T : Asset, ITableAsset<T, U>
             {
-                if (game >= Game.Incredibles)
+                var assets = assetDictionary.Values.Where(asset => asset.assetType == assetType).Cast<T>().ToList();
+                if (assets.Count == 0)
+                    return;
+                for (int i = 1; i < assets.Count; i++)
                 {
-                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_GCN_V2)asset).ToList();
-                    for (int i = 1; i < SNDIs.Count; i++)
-                        RemoveAsset(SNDIs[i].assetID);
-                    for (int i = 1; i < SNDIs.Count; i++)
-                        MergeSNDI(SNDIs[i]);
+                    actions.Add(GetAssetRemovedAction(assets[i]));
+                    RemoveAsset(assets[i].assetID);
                 }
-                else
-                {
-                    var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_GCN_V1)asset).ToList();
-                    for (int i = 1; i < SNDIs.Count; i++)
-                        RemoveAsset(SNDIs[i].assetID);
-                    for (int i = 1; i < SNDIs.Count; i++)
-                        MergeSNDI(SNDIs[i]);
-                }
+                for (int i = 1; i < assets.Count; i++)
+                    MergeTableAsset<T, U>(assets[i], actions);
             }
-            else if (platform == Platform.Xbox)
+
+            MergeTableAssets<AssetCOLL, EntryCOLL>(AssetType.CollisionTable);
+            MergeTableAssets<AssetLODT, EntryLODT>(AssetType.LevelOfDetailTable);
+            MergeTableAssets<AssetPIPT, PipeInfo>(AssetType.PipeInfoTable);
+            MergeTableAssets<AssetSHDW, EntrySHDW>(AssetType.ShadowTable);
+            MergeTableAssets<AssetJAW, EntryJAW>(AssetType.JawDataTable);
+
+            void MergeSoundInfoAssets<T>() where T : Asset, ISoundInfoAsset<T>
             {
-                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_XBOX)asset).ToList();
-                for (int i = 1; i < SNDIs.Count; i++)
-                    RemoveAsset(SNDIs[i].assetID);
-                for (int i = 1; i < SNDIs.Count; i++)
-                    MergeSNDI(SNDIs[i]);
+                var assets = assetDictionary.Values.Where(asset => asset.assetType == AssetType.SoundInfo).Cast<T>().ToList();
+                if (assets.Count == 0)
+                    return;
+                for (int i = 1; i < assets.Count; i++)
+                {
+                    actions.Add(GetAssetRemovedAction(assets[i]));
+                    RemoveAsset(assets[i].assetID);
+                }
+                for (int i = 1; i < assets.Count; i++)
+                    MergeSoundInfo<T>(assets[i], actions);
             }
-            else if (platform == Platform.PS2)
+
+            switch (platform)
             {
-                var SNDIs = (from asset in assetDictionary.Values where asset.assetType == AssetType.SoundInfo select (AssetSNDI_PS2)asset).ToList();
-                for (int i = 1; i < SNDIs.Count; i++)
-                    RemoveAsset(SNDIs[i].assetID);
-                for (int i = 1; i < SNDIs.Count; i++)
-                    MergeSNDI(SNDIs[i]);
+                case Platform.GameCube when game < Game.Incredibles:
+                    MergeSoundInfoAssets<AssetSNDI_GCN_V1>();
+                    break;
+                case Platform.GameCube:
+                    MergeSoundInfoAssets<AssetSNDI_GCN_V2>();
+                    break;
+                case Platform.Xbox:
+                    MergeSoundInfoAssets<AssetSNDI_XBOX>();
+                    break;
+                case Platform.PS2:
+                    MergeSoundInfoAssets<AssetSNDI_PS2>();
+                    break;
             }
+
+            Program.UndoBuffer.AddAction(new MultiAction(actions));
         }
 
-        private void MergeCOLL(AssetCOLL asset)
+        private void MergeTableAsset<T, U>(T asset, List<IReversibleAction> actions) where T : ITableAsset<T, U>
         {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetCOLL COLL)
-                {
-                    COLL.Merge(asset);
-                    return;
-                }
+            ITableAsset<T, U> current = assetDictionary.Values.OfType<ITableAsset<T, U>>().FirstOrDefault();
+            var before = DeepCopy(current.Entries);
+            current.Merge(asset);
+            actions.Add(new AssetPropertyChangedAction(this, (Asset)current, "Entries", before, DeepCopy(current.Entries)));
         }
 
-        private void MergeJAW(AssetJAW asset)
+        private void MergeSoundInfo<T>(T asset, List<IReversibleAction> actions) where T : ISoundInfoAsset<T>
         {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetJAW JAW)
-                {
-                    JAW.Merge(asset);
-                    return;
-                }
-        }
-
-        private void MergeLODT(AssetLODT asset)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetLODT LODT)
-                {
-                    LODT.Merge(asset);
-                    return;
-                }
-        }
-
-        private void MergePIPT(AssetPIPT asset)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPIPT PIPT)
-                {
-                    PIPT.Merge(asset);
-                    return;
-                }
-        }
-
-        private void MergeSHDW(AssetSHDW asset)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSHDW SHDW)
-                {
-                    SHDW.Merge(asset);
-                    return;
-                }
-        }
-
-        private void MergeSNDI(AssetSNDI_GCN_V1 asset)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_GCN_V1 SNDI)
-                {
-                    SNDI.Merge(asset);
-                    return;
-                }
-        }
-
-        private void MergeSNDI(AssetSNDI_GCN_V2 asset)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_GCN_V2 SNDI)
-                {
-                    SNDI.Merge(asset);
-                    return;
-                }
-        }
-
-        private void MergeSNDI(AssetSNDI_XBOX asset)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_XBOX SNDI)
-                {
-                    SNDI.Merge(asset);
-                    return;
-                }
-        }
-
-        private void MergeSNDI(AssetSNDI_PS2 asset)
-        {
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetSNDI_PS2 SNDI)
-                {
-                    SNDI.Merge(asset);
-                    return;
-                }
+            var SNDI = assetDictionary.Values.FirstOrDefault(a => a.assetType == AssetType.SoundInfo);
+            var action1 = GetAssetRemovedAction(SNDI);
+            ((ISoundInfoAsset<T>)SNDI).Merge(asset);
+            var action2 = GetAssetAddedAction(SNDI);
+            actions.Add(new MultiAction([action1, action2]));
         }
 
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)
         {
             if (assetType.IsDyna())
                 return AHDRFlags.SOURCE_VIRTUAL;
-            switch (assetType)
+            return assetType switch
             {
-                case AssetType.AnimationList:
-                case AssetType.Boulder:
-                case AssetType.Button:
-                case AssetType.Camera:
-                case AssetType.Counter:
-                case AssetType.CollisionTable:
-                case AssetType.Conditional:
-                case AssetType.CutsceneManager:
-                case AssetType.CutsceneTableOfContents:
-                case AssetType.Dispatcher:
-                case AssetType.DiscoFloor:
-                case AssetType.DestructibleObject:
-                case AssetType.ElectricArcGenerator:
-                case AssetType.Environment:
-                case AssetType.Fog:
-                case AssetType.Hangable:
-                case AssetType.Group:
-                case AssetType.JawDataTable:
-                case AssetType.LevelOfDetailTable:
-                case AssetType.SurfaceMapper:
-                case AssetType.ModelInfo:
-                case AssetType.Marker:
-                case AssetType.MovePoint:
-                case AssetType.ParticleEmitter:
-                case AssetType.ParticleProperties:
-                case AssetType.ParticleSystem:
-                case AssetType.Pendulum:
-                case AssetType.PickupTable:
-                case AssetType.PipeInfoTable:
-                case AssetType.Pickup:
-                case AssetType.Platform:
-                case AssetType.Player:
-                case AssetType.Portal:
-                case AssetType.SFX:
-                case AssetType.ShadowTable:
-                case AssetType.Shrapnel:
-                case AssetType.SimpleObject:
-                case AssetType.SoundInfo:
-                case AssetType.Surface:
-                case AssetType.Text:
-                case AssetType.Timer:
-                case AssetType.Trigger:
-                case AssetType.UserInterface:
-                case AssetType.UserInterfaceFont:
-                case AssetType.NPC:
-                case AssetType.NPCProperties:
-                    return AHDRFlags.SOURCE_VIRTUAL;
-                case AssetType.Cutscene:
-                case AssetType.Flythrough:
-                case AssetType.RawImage:
-                    return AHDRFlags.SOURCE_FILE;
-                case AssetType.Animation:
-                case AssetType.Credits:
-                case AssetType.Sound:
-                case AssetType.SoundStream:
-                    return AHDRFlags.SOURCE_FILE | AHDRFlags.WRITE_TRANSFORM;
-                case AssetType.BSP:
-                case AssetType.Model:
-                    return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM;
-                case AssetType.AnimationTable:
-                case AssetType.JSP:
-                case AssetType.JSPInfo:
-                case AssetType.Texture:
-                case AssetType.TextureStream:
-                    return AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM;
-                case AssetType.LightKit:
-                    return AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM | AHDRFlags.WRITE_TRANSFORM;
-                default:
-                    return 0;
-            }
+                AssetType.AnimationList or AssetType.Boulder or AssetType.Button or AssetType.Camera or AssetType.Counter or AssetType.CollisionTable or
+                AssetType.Conditional or AssetType.CutsceneManager or AssetType.CutsceneTableOfContents or AssetType.Dispatcher or AssetType.DiscoFloor or
+                AssetType.DestructibleObject or AssetType.ElectricArcGenerator or AssetType.Environment or AssetType.Fog or AssetType.Hangable or
+                AssetType.Group or AssetType.JawDataTable or AssetType.LevelOfDetailTable or AssetType.SurfaceMapper or AssetType.ModelInfo or
+                AssetType.Marker or AssetType.MovePoint or AssetType.ParticleEmitter or AssetType.ParticleProperties or AssetType.ParticleSystem or
+                AssetType.Pendulum or AssetType.PickupTable or AssetType.PipeInfoTable or AssetType.Pickup or AssetType.Platform or AssetType.Player or
+                AssetType.Portal or AssetType.SFX or AssetType.ShadowTable or AssetType.Shrapnel or AssetType.SimpleObject or AssetType.SoundInfo or
+                AssetType.Surface or AssetType.Text or AssetType.Timer or AssetType.Trigger or AssetType.UserInterface or AssetType.UserInterfaceFont or
+                AssetType.NPC or AssetType.NPCProperties => AHDRFlags.SOURCE_VIRTUAL,
+
+                AssetType.Cutscene or AssetType.Flythrough or AssetType.RawImage => AHDRFlags.SOURCE_FILE,
+
+                AssetType.Animation or AssetType.Credits or AssetType.Sound or AssetType.SoundStream => AHDRFlags.SOURCE_FILE | AHDRFlags.WRITE_TRANSFORM,
+
+                AssetType.BSP or AssetType.Model => AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM,
+
+                AssetType.AnimationTable or AssetType.JSP or AssetType.JSPInfo or AssetType.Texture or AssetType.TextureStream => AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM,
+
+                AssetType.LightKit => AHDRFlags.SOURCE_FILE | AHDRFlags.READ_TRANSFORM | AHDRFlags.WRITE_TRANSFORM,
+                _ => 0,
+            };
         }
 
         public bool OrganizeLayers(bool legacy)

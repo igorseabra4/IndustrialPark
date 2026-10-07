@@ -1,6 +1,7 @@
 ﻿using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -12,6 +13,7 @@ namespace IndustrialPark
         private static RotationGizmo[] rotationGizmos;
         private static ScaleGizmo[] scaleGizmos;
         private static PositionLocalGizmo[] positionLocalGizmos;
+        private static GizmoBase[] allGizmos;
 
         public static void SetUpGizmos()
         {
@@ -43,6 +45,8 @@ namespace IndustrialPark
                 new PositionLocalGizmo(GizmoType.X),
                 new PositionLocalGizmo(GizmoType.Y),
                 new PositionLocalGizmo(GizmoType.Z)};
+
+            allGizmos = [.. positionGizmos, .. triggerPositionGizmos, ..rotationGizmos, ..scaleGizmos, ..positionLocalGizmos];
 
             if (Grid.X < 0.001f)
                 Grid.X = 1f;
@@ -369,15 +373,18 @@ namespace IndustrialPark
 
         public void ScreenUnclicked()
         {
+            if (!allGizmos.Any(g => g.isSelected))
+                return;
             if (!CurrentlySelectedAssets.Any())
                 return;
+
+            var actions = new List<IReversibleAction>();
 
             foreach (PositionGizmo g in positionGizmos)
             {
                 if (g.isSelected)
                 {
                     g.isSelected = false;
-                    var actions = new List<IReversibleAction>();
                     foreach (var a in currentlyMoving)
                     {
                         RefreshAssetEditor(((Asset)a).assetID);
@@ -389,7 +396,6 @@ namespace IndustrialPark
                     {
                         currentlyMoving.Clear();
                         originalPositions.Clear();
-                        Program.UndoBuffer.AddAction(new MultiAction(actions));
                     }
                 }
             }
@@ -399,27 +405,40 @@ namespace IndustrialPark
                 if (g.isSelected)
                 {
                     g.isSelected = false;
-                    var actions = new List<IReversibleAction>();
                     if (currentlyMovingBox != null)
                     {
                         RefreshAssetEditor(currentlyMovingBox.assetID);
-                        var box = currentlyMovingBox is AssetTRIG trig ? trig : (IVolumeAsset)((AssetVOLU)currentlyMovingBox).VolumeShape;
-                        if (triggerPositionGizmos.IndexOf(g) < 3)
+                        string property = triggerPositionGizmos.IndexOf(g) < 3 ? "Maximum" : "Minimum";
                         {
-                            actions.Add(new AssetPropertyChangedAction(this, (GenericAssetDataContainer)box, "MaximumX", originalPositions[currentlyMovingBox.assetID].X, box.MaximumX));
-                            actions.Add(new AssetPropertyChangedAction(this, (GenericAssetDataContainer)box, "MaximumY", originalPositions[currentlyMovingBox.assetID].Y, box.MaximumY));
-                            actions.Add(new AssetPropertyChangedAction(this, (GenericAssetDataContainer)box, "MaximumZ", originalPositions[currentlyMovingBox.assetID].Z, box.MaximumZ));
-                        }
-                        else
-                        {
-                            actions.Add(new AssetPropertyChangedAction(this, (GenericAssetDataContainer)box, "MinimumX", originalPositions[currentlyMovingBox.assetID].X, box.MinimumX));
-                            actions.Add(new AssetPropertyChangedAction(this, (GenericAssetDataContainer)box, "MinimumY", originalPositions[currentlyMovingBox.assetID].Y, box.MinimumY));
-                            actions.Add(new AssetPropertyChangedAction(this, (GenericAssetDataContainer)box, "MinimumZ", originalPositions[currentlyMovingBox.assetID].Z, box.MinimumZ));
+                            if (currentlyMovingBox is AssetTRIG trig)
+                            {
+                                var box = trig;
+                                actions.Add(new AssetPropertyChangedAction(this, trig, property + "X", originalPositions[currentlyMovingBox.assetID].X, box.MaximumX));
+                                actions.Add(new AssetPropertyChangedAction(this, trig, property + "Y", originalPositions[currentlyMovingBox.assetID].Y, box.MaximumY));
+                                actions.Add(new AssetPropertyChangedAction(this, trig, property + "Z", originalPositions[currentlyMovingBox.assetID].Z, box.MaximumZ));
+                            }
+                            else if (currentlyMovingBox is AssetVOLU volume && volume.VolumeShape is VolumeBox newBox)
+                            {
+                                var prevBox = DeepCopy(newBox);
+                                if (property == "Maximum")
+                                {
+                                    prevBox.MaximumX = originalPositions[volume.assetID].X;
+                                    prevBox.MaximumY = originalPositions[volume.assetID].Y;
+                                    prevBox.MaximumZ = originalPositions[volume.assetID].Z;
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, "VolumeShape", prevBox, newBox));
+                                }
+                                else
+                                {
+                                    prevBox.MinimumX = originalPositions[volume.assetID].X;
+                                    prevBox.MinimumY = originalPositions[volume.assetID].Y;
+                                    prevBox.MinimumZ = originalPositions[volume.assetID].Z;
+                                    actions.Add(new AssetPropertyChangedAction(this, volume, "VolumeShape", prevBox, newBox));
+                                }
+                            }
                         }
                     }
                     currentlyMoving.Clear();
                     originalPositions.Clear();
-                    Program.UndoBuffer.AddAction(new MultiAction(actions));
                 }
             }
 
@@ -428,7 +447,6 @@ namespace IndustrialPark
                 if (g.isSelected)
                 {
                     g.isSelected = false;
-                    var actions = new List<IReversibleAction>();
                     foreach (var a in currentlyRotating)
                     {
                         RefreshAssetEditor(((Asset)a).assetID);
@@ -440,7 +458,6 @@ namespace IndustrialPark
                     {
                         currentlyRotating.Clear();
                         originalPositions.Clear();
-                        Program.UndoBuffer.AddAction(new MultiAction(actions));
                     }
                 }
             }
@@ -450,7 +467,6 @@ namespace IndustrialPark
                 if (g.isSelected)
                 {
                     g.isSelected = false;
-                    var actions = new List<IReversibleAction>();
                     foreach (var a in currentlyScaling)
                     {
                         RefreshAssetEditor(((Asset)a).assetID);
@@ -462,16 +478,15 @@ namespace IndustrialPark
                     {
                         currentlyScaling.Clear();
                         originalPositions.Clear();
-                        Program.UndoBuffer.AddAction(new MultiAction(actions));
                     }
                 }
             }
+
             foreach (PositionLocalGizmo g in positionLocalGizmos)
             {
                 if (g.isSelected)
                 {
                     g.isSelected = false;
-                    var actions = new List<IReversibleAction>();
                     foreach (var a in currentlyMoving)
                     {
                         RefreshAssetEditor(((Asset)a).assetID);
@@ -483,10 +498,12 @@ namespace IndustrialPark
                     {
                         currentlyMoving.Clear();
                         originalPositions.Clear();
-                        Program.UndoBuffer.AddAction(new MultiAction(actions));
                     }
                 }
             }
+
+            actions.Add(new SelectionAction(CurrentlySelectedAssets.Select(asset => asset.assetID).ToList()));
+            Program.UndoBuffer.AddAction(new MultiAction(actions));
         }
 
         public void RefreshAssetEditor(uint assetID)

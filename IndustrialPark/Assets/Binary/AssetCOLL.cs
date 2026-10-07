@@ -48,7 +48,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetCOLL : Asset, IAssetAddSelected, IControllerAsset
+    public class AssetCOLL : Asset, IAssetAddSelected, ITableAsset<AssetCOLL, EntryCOLL>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 

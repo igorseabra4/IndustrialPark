@@ -45,79 +45,65 @@ namespace IndustrialPark
             if (hip.platform == Platform.Unknown)
                 hip.platform = platform;
 
+            void RemoveAssetFromImportedLayers(uint assetID)
+            {
+                foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
+                    LHDR.assetIDlist.Remove(assetID);
+            }
+
             UnsavedChanges = true;
+            var actions = new List<IReversibleAction>();
 
             foreach (Section_AHDR AHDR in hip.DICT.ATOC.AHDRList)
             {
                 defaultJspAssetIds = null;
 
-                if (AHDR.assetType == AssetType.CollisionTable && ContainsAssetWithType(AssetType.CollisionTable))
+                switch (AHDR.assetType)
                 {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
-                        LHDR.assetIDlist.Remove(AHDR.assetID);
-
-                    MergeCOLL(new AssetCOLL(AHDR, hip.game, hip.platform.Endianness()));
-                    continue;
-                }
-                else if (AHDR.assetType == AssetType.JawDataTable && ContainsAssetWithType(AssetType.JawDataTable))
-                {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
-                        LHDR.assetIDlist.Remove(AHDR.assetID);
-
-                    MergeJAW(new AssetJAW(AHDR, hip.game, hip.platform.Endianness()));
-                    continue;
-                }
-                else if (AHDR.assetType == AssetType.LevelOfDetailTable && ContainsAssetWithType(AssetType.LevelOfDetailTable))
-                {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
-                        LHDR.assetIDlist.Remove(AHDR.assetID);
-
-                    MergeLODT(new AssetLODT(AHDR, hip.game, hip.platform.Endianness()));
-                    continue;
-                }
-                else if (AHDR.assetType == AssetType.PipeInfoTable && ContainsAssetWithType(AssetType.PipeInfoTable))
-                {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
-                        LHDR.assetIDlist.Remove(AHDR.assetID);
-
-                    MergePIPT(new AssetPIPT(AHDR, hip.game, hip.platform.Endianness()));
-                    continue;
-                }
-                else if (AHDR.assetType == AssetType.ShadowTable && ContainsAssetWithType(AssetType.ShadowTable))
-                {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
-                        LHDR.assetIDlist.Remove(AHDR.assetID);
-
-                    MergeSHDW(new AssetSHDW(AHDR, hip.game, hip.platform.Endianness()));
-                    continue;
-                }
-                else if (AHDR.assetType == AssetType.SoundInfo && ContainsAssetWithType(AssetType.SoundInfo))
-                {
-                    foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
-                        LHDR.assetIDlist.Remove(AHDR.assetID);
-
-                    if (hip.platform == Platform.GameCube)
-                    {
-                        if (hip.game >= Game.Incredibles)
-                            MergeSNDI(new AssetSNDI_GCN_V2(AHDR, hip.game));
-                        else
-                            MergeSNDI(new AssetSNDI_GCN_V1(AHDR, hip.game, hip.platform.Endianness()));
-                    }
-                    else if (hip.platform == Platform.Xbox)
-                        MergeSNDI(new AssetSNDI_XBOX(AHDR, hip.game, hip.platform.Endianness()));
-                    else if (hip.platform == Platform.PS2)
-                        MergeSNDI(new AssetSNDI_PS2(AHDR, hip.game, hip.platform.Endianness()));
-
-                    continue;
-                }
-                else if (AHDR.assetType == AssetType.JSPInfo)
-                {
-                    for (int i = 0; i < hip.DICT.LTOC.LHDRList.Count; i++)
-                        if (hip.DICT.LTOC.LHDRList[i].assetIDlist.Contains(AHDR.assetID))
+                    case AssetType.CollisionTable when ContainsAssetWithType(AssetType.CollisionTable):
+                        RemoveAssetFromImportedLayers(AHDR.assetID);
+                        MergeTableAsset<AssetCOLL, EntryCOLL>(new AssetCOLL(AHDR, hip.game, hip.platform.Endianness()), actions);
+                        continue;
+                    case AssetType.JawDataTable when ContainsAssetWithType(AssetType.JawDataTable):
+                        RemoveAssetFromImportedLayers(AHDR.assetID);
+                        MergeTableAsset<AssetJAW, EntryJAW>(new AssetJAW(AHDR, hip.game, hip.platform.Endianness()), actions);
+                        continue;
+                    case AssetType.LevelOfDetailTable when ContainsAssetWithType(AssetType.LevelOfDetailTable):
+                        RemoveAssetFromImportedLayers(AHDR.assetID);
+                        MergeTableAsset<AssetLODT, EntryLODT>(new AssetLODT(AHDR, hip.game, hip.platform.Endianness()), actions);
+                        continue;
+                    case AssetType.PipeInfoTable when ContainsAssetWithType(AssetType.PipeInfoTable):
+                        RemoveAssetFromImportedLayers(AHDR.assetID);
+                        MergeTableAsset<AssetPIPT, PipeInfo>(new AssetPIPT(AHDR, hip.game, hip.platform.Endianness()), actions);
+                        continue;
+                    case AssetType.ShadowTable when ContainsAssetWithType(AssetType.ShadowTable):
+                        RemoveAssetFromImportedLayers(AHDR.assetID);
+                        MergeTableAsset<AssetSHDW, EntrySHDW>(new AssetSHDW(AHDR, hip.game, hip.platform.Endianness()), actions);
+                        continue;
+                    case AssetType.SoundInfo when ContainsAssetWithType(AssetType.SoundInfo):
+                        RemoveAssetFromImportedLayers(AHDR.assetID);
+                        if (hip.platform == Platform.GameCube)
                         {
-                            setDefaultJspAssetIds(hip.DICT, i);
-                            break;
+                            if (hip.game >= Game.Incredibles)
+                                MergeSoundInfo(new AssetSNDI_GCN_V2(AHDR, hip.game), actions);
+                            else
+                                MergeSoundInfo(new AssetSNDI_GCN_V1(AHDR, hip.game, hip.platform.Endianness()), actions);
                         }
+                        else if (hip.platform == Platform.Xbox)
+                            MergeSoundInfo(new AssetSNDI_XBOX(AHDR, hip.game, hip.platform.Endianness()), actions);
+                        else if (hip.platform == Platform.PS2)
+                            MergeSoundInfo(new AssetSNDI_PS2(AHDR, hip.game, hip.platform.Endianness()), actions);
+                        continue;
+                    case AssetType.JSPInfo:
+                    {
+                        for (int i = 0; i < hip.DICT.LTOC.LHDRList.Count; i++)
+                            if (hip.DICT.LTOC.LHDRList[i].assetIDlist.Contains(AHDR.assetID))
+                            {
+                                setDefaultJspAssetIds(hip.DICT, i);
+                                break;
+                            }
+                        break;
+                    }
                 }
 
                 if (ContainsAsset(AHDR.assetID))

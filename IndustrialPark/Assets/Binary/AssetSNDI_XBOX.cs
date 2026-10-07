@@ -90,7 +90,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSNDI_XBOX : Asset
+    public class AssetSNDI_XBOX : Asset, ISoundInfoAsset<AssetSNDI_XBOX>
     {
         public override string AssetInfo => $"Xbox, {Entries_SND.Length + Entries_SNDS.Length + Entries_Sound_CIN.Length} entries";
 

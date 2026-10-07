@@ -55,13 +55,13 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer) { }
     }
 
-    public class AssetJAW : Asset, IControllerAsset
+    public class AssetJAW : Asset, ITableAsset<AssetJAW, EntryJAW>
     {
-        public override string AssetInfo => $"{JAW_Entries.Length} entries";
+        public override string AssetInfo => $"{Entries.Length} entries";
 
         private List<EntryJAW> _entries;
         [Category("Jaw Data"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowCopy: false)]
-        public EntryJAW[] JAW_Entries { get => [.. _entries]; set => _entries = [.. value]; }
+        public EntryJAW[] Entries { get => [.. _entries]; set => _entries = [.. value]; }
 
         public AssetJAW(string assetName) : base(assetName, AssetType.JawDataTable)
         {
@@ -109,9 +109,9 @@ namespace IndustrialPark
         {
             List<byte> newJawData = new List<byte>();
 
-            writer.Write(JAW_Entries.Length);
+            writer.Write(Entries.Length);
 
-            foreach (var i in JAW_Entries)
+            foreach (var i in Entries)
             {
                 writer.Write(i.Sound);
                 writer.Write(newJawData.Count);

@@ -144,7 +144,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSNDI_PS2 : Asset
+    public class AssetSNDI_PS2 : Asset, ISoundInfoAsset<AssetSNDI_PS2>
     {
         public override string AssetInfo => $"PS2, {Entries_SND.Length + Entries_SNDS.Length} entries";
 

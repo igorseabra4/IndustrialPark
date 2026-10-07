@@ -77,7 +77,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetLODT : Asset, IAssetAddSelected, IDictionaryAsset, IControllerAsset
+    public class AssetLODT : Asset, IAssetAddSelected, IDictionaryAsset, ITableAsset<AssetLODT, EntryLODT>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 

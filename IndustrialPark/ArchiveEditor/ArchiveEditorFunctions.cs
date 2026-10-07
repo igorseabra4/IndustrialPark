@@ -1322,7 +1322,7 @@ namespace IndustrialPark
                     jaw.RemoveEntry(assetID);
             }
             if (assetDictionary[assetID] is AssetMODL modl)
-                foreach (IControllerAsset asset in assetDictionary.Values.Where(a => a is IControllerAsset asset))
+                foreach (ITableAsset asset in assetDictionary.Values.Where(a => a is ITableAsset asset))
                     asset.RemoveEntry(assetID);
 
             assetDictionary.Remove(assetID);
@@ -1511,6 +1511,7 @@ namespace IndustrialPark
         public List<uint> ImportMultipleAssets(List<Section_AHDR> AHDRs, bool overwrite)
         {
             var assetIDs = new List<uint>();
+            var actions = new List<IReversibleAction>();
 
             foreach (Section_AHDR AHDR in AHDRs)
             {
@@ -1520,6 +1521,7 @@ namespace IndustrialPark
                     {
                         try
                         {
+                            actions.Add(new AssetAddedAction(this, DeepCopy(AHDR), SelectedLayerIndex));
                             AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
                             AHDR.data = soundData;
                         }
@@ -1532,11 +1534,18 @@ namespace IndustrialPark
                     if (overwrite)
                     {
                         if (ContainsAsset(AHDR.assetID))
+                        {
+                            actions.Add(GetAssetRemovedAction(AHDR.assetID));
                             RemoveAsset(AHDR.assetID);
-                        AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+                        }
+                        var asset = AddAsset(AHDR, game, platform.Endianness(), setTextureDisplay: false);
+                        actions.Add(GetAssetAddedAction(asset));
                     }
                     else
-                        AddAssetWithUniqueID(AHDR, game, platform.Endianness(), setTextureDisplay: true);
+                    {
+                        var asset = AddAssetWithUniqueID(AHDR, game, platform.Endianness(), setTextureDisplay: true);
+                        actions.Add(GetAssetAddedAction(asset));
+                    }
 
                     UnsavedChanges = true;
                     assetIDs.Add(AHDR.assetID);
@@ -1547,6 +1556,8 @@ namespace IndustrialPark
                 }
             }
 
+            actions.Add(new SelectionAction(assetIDs));
+            Program.UndoBuffer.AddAction(new MultiAction(actions));
             return assetIDs;
         }
 

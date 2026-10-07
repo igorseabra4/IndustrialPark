@@ -47,7 +47,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSHDW : Asset, IAssetAddSelected, IControllerAsset
+    public class AssetSHDW : Asset, IAssetAddSelected, ITableAsset<AssetSHDW, EntrySHDW>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 

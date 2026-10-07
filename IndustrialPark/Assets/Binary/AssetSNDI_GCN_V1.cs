@@ -104,7 +104,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSNDI_GCN_V1 : Asset
+    public class AssetSNDI_GCN_V1 : Asset, ISoundInfoAsset<AssetSNDI_GCN_V1>
     {
         public override string AssetInfo => $"GameCube {game}, {Entries_SND.Length + Entries_SNDS.Length + Entries_Sound_CIN.Length} entries";
 

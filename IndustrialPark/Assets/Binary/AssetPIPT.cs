@@ -402,7 +402,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetPIPT : Asset, IAssetAddSelected, IDictionaryAsset, IControllerAsset
+    public class AssetPIPT : Asset, IAssetAddSelected, IDictionaryAsset, ITableAsset<AssetPIPT, PipeInfo>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 

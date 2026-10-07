@@ -76,6 +76,7 @@
             overwriteOnImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            importJSPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             buildCollisionTreeForAllModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -135,7 +136,6 @@
             toolStripMenuItem_EditHeader = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
-            importJSPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             copyAssetNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             menuStrip1.SuspendLayout();
@@ -419,6 +419,12 @@
             resources.ApplyResources(importMultipleAssetsToolStripMenuItem, "importMultipleAssetsToolStripMenuItem");
             importMultipleAssetsToolStripMenuItem.Name = "importMultipleAssetsToolStripMenuItem";
             importMultipleAssetsToolStripMenuItem.Click += importMultipleAssetsToolStripMenuItem_Click;
+            // 
+            // importJSPToolStripMenuItem
+            // 
+            importJSPToolStripMenuItem.Name = "importJSPToolStripMenuItem";
+            resources.ApplyResources(importJSPToolStripMenuItem, "importJSPToolStripMenuItem");
+            importJSPToolStripMenuItem.Click += importJSPToolStripMenuItem_Click;
             // 
             // toolsToolStripMenuItem
             // 
@@ -812,12 +818,6 @@
             toolStripMenuItem_MultiEdit.Name = "toolStripMenuItem_MultiEdit";
             resources.ApplyResources(toolStripMenuItem_MultiEdit, "toolStripMenuItem_MultiEdit");
             toolStripMenuItem_MultiEdit.Click += buttonMultiEdit_Click;
-            // 
-            // importJSPToolStripMenuItem
-            // 
-            importJSPToolStripMenuItem.Name = "importJSPToolStripMenuItem";
-            resources.ApplyResources(importJSPToolStripMenuItem, "importJSPToolStripMenuItem");
-            importJSPToolStripMenuItem.Click += importJSPToolStripMenuItem_Click;
             // 
             // toolStripSeparator8
             // 

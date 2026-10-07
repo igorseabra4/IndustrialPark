@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public class AssetSNDI_GCN_V2 : Asset
+    public class AssetSNDI_GCN_V2 : Asset, ISoundInfoAsset<AssetSNDI_GCN_V2>
     {
         public override string AssetInfo => $"GameCube {game}, {(Entry_Sounds == null ? 0 : Entry_Sounds.SampleHeader.Length) + Entries_StreamingSounds.Length} entries";
 
@@ -234,10 +234,15 @@ namespace IndustrialPark
                     Entry_Sounds.Merge(assetSNDI.Entry_Sounds.SampleHeader);
             }
 
-            List<FSB3_File> newEntries = Entries_StreamingSounds.ToList();
+            var newEntries = Entries_StreamingSounds.ToList();
             newEntries.RemoveAll(entry => assetSNDI.Entries_StreamingSounds.Select(es => es.SampleHeader[0].Sound).Contains(entry.SampleHeader[0].Sound));
             newEntries.AddRange(assetSNDI.Entries_StreamingSounds);
             Entries_StreamingSounds = newEntries.ToArray();
+
+            var newEntriesCin = Entries_Sound_CIN.ToList();
+            newEntriesCin.RemoveAll(entry => assetSNDI.Entries_Sound_CIN.Select(es => es.Sound).Contains(entry.Sound));
+            newEntriesCin.AddRange(assetSNDI.Entries_Sound_CIN);
+            Entries_Sound_CIN = newEntriesCin.ToArray();
         }
 
         public void RemoveEntry(uint assetID)

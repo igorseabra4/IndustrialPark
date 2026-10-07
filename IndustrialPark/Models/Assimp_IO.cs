@@ -58,11 +58,13 @@ namespace IndustrialPark.Models
             };
 
         // use wrap as default
-        public static TextureAddressMode RWTextureAddressModeFromAssimp(TextureWrapMode mode) =>
-            mode == TextureWrapMode.Clamp ? TextureAddressMode.TEXTUREADDRESSCLAMP :
-            mode == TextureWrapMode.Decal ? TextureAddressMode.TEXTUREADDRESSBORDER :
-            mode == TextureWrapMode.Mirror ? TextureAddressMode.TEXTUREADDRESSMIRROR :
-            TextureAddressMode.TEXTUREADDRESSWRAP;
+        public static TextureAddressMode RWTextureAddressModeFromAssimp(TextureWrapMode mode) => mode switch
+        {
+            TextureWrapMode.Clamp => TextureAddressMode.TEXTUREADDRESSCLAMP,
+            TextureWrapMode.Decal => TextureAddressMode.TEXTUREADDRESSBORDER,
+            TextureWrapMode.Mirror => TextureAddressMode.TEXTUREADDRESSMIRROR,
+            _ => TextureAddressMode.TEXTUREADDRESSWRAP,
+        };
 
         /// <summary>
         /// Creates a bare minimum model used for collision only
@@ -313,44 +315,44 @@ namespace IndustrialPark.Models
 
             bool atomicNeedsMaterialEffects = false;
 
-                foreach (var m in scene.Materials)
+            foreach (var m in scene.Materials)
+            {
+                materials.Add(new Material_0007()
                 {
-                    materials.Add(new Material_0007()
+                    materialStruct = new MaterialStruct_0001()
                     {
-                        materialStruct = new MaterialStruct_0001()
+                        unusedFlags = 0,
+                        color = ignoreMeshColors ?
+                        new RenderWareFile.Color(255, 255, 255, 255) :
+                        new RenderWareFile.Color(m.ColorDiffuse.X, m.ColorDiffuse.Y, m.ColorDiffuse.Z, m.ColorDiffuse.W),
+                        unusedInt2 = 0,
+                        isTextured = m.HasTextureDiffuse ? 1 : 0,
+                        ambient = ignoreMeshColors ? 1f : m.ColorAmbient.W,
+                        specular = ignoreMeshColors ? 1f : m.ColorSpecular.W,
+                        diffuse = ignoreMeshColors ? 1f : m.ColorDiffuse.W
+                    },
+                    texture = m.HasTextureDiffuse ? RWTextureFromAssimpMaterial(m.TextureDiffuse) : null,
+                    materialExtension = new Extension_0003()
+                    {
+                        extensionSectionList = m.HasTextureReflection ? new List<RWSection>()
                         {
-                            unusedFlags = 0,
-                            color = ignoreMeshColors ?
-                            new RenderWareFile.Color(255, 255, 255, 255) :
-                            new RenderWareFile.Color(m.ColorDiffuse.X, m.ColorDiffuse.Y, m.ColorDiffuse.Z, m.ColorDiffuse.W),
-                            unusedInt2 = 0,
-                            isTextured = m.HasTextureDiffuse ? 1 : 0,
-                            ambient = ignoreMeshColors ? 1f : m.ColorAmbient.W,
-                            specular = ignoreMeshColors ? 1f : m.ColorSpecular.W,
-                            diffuse = ignoreMeshColors ? 1f : m.ColorDiffuse.W
-                        },
-                        texture = m.HasTextureDiffuse ? RWTextureFromAssimpMaterial(m.TextureDiffuse) : null,
-                        materialExtension = new Extension_0003()
-                        {
-                            extensionSectionList = m.HasTextureReflection ? new List<RWSection>()
+                            new MaterialEffectsPLG_0120()
                             {
-                                new MaterialEffectsPLG_0120()
+                                isAtomicExtension = false,
+                                value = MaterialEffectType.EnvironmentMap,
+                                materialEffect1 = new MaterialEffectEnvironmentMap()
                                 {
-                                    isAtomicExtension = false,
-                                    value = MaterialEffectType.EnvironmentMap,
-                                    materialEffect1 = new MaterialEffectEnvironmentMap()
-                                    {   
-                                        EnvironmentMapTexture = RWTextureFromAssimpMaterial(m.TextureReflection),
-                                        ReflectionCoefficient = m.Reflectivity,
-                                        UseFrameBufferAlphaChannel = false
-                                    }
+                                    EnvironmentMapTexture = RWTextureFromAssimpMaterial(m.TextureReflection),
+                                    ReflectionCoefficient = m.Reflectivity,
+                                    UseFrameBufferAlphaChannel = false
                                 }
-                            } : new List<RWSection>()
-                        },
-                    });
+                            }
+                        } : new List<RWSection>()
+                    },
+                });
 
-                    atomicNeedsMaterialEffects |= m.HasTextureReflection;
-                }
+                atomicNeedsMaterialEffects |= m.HasTextureReflection;
+            }
 
             List<Geometry_000F> geometries = new List<Geometry_000F>();
 
@@ -399,15 +401,11 @@ namespace IndustrialPark.Models
                 int materialIndex = multiAtomic ? 0 : m.MaterialIndex;
                 meshIndex++;
 
-                var transform = meshTransforms.ContainsKey(meshIndex) ? meshTransforms[meshIndex] : SharpDX.Matrix.Identity;
+                var transform = meshTransforms.TryGetValue(meshIndex, out SharpDX.Matrix value) ? value : SharpDX.Matrix.Identity;
 
-                var transformedVertices = m.Vertices.Select(v =>
-                {
-                    var vec = new SharpDX.Vector3(v.X, v.Y, v.Z);
-                    return SharpDX.Vector3.Transform(vec, transform);
-                });
+                var transformedVertices = m.Vertices.Select(v => SharpDX.Vector3.Transform(new SharpDX.Vector3(v.X, v.Y, v.Z), transform));
                 vertices.AddRange(transformedVertices.Select(v => new Vertex3(v.X, v.Y, v.Z)).ToList());
-           
+
                 //if (nativeData)
                 //{
                 //    for (int i = 0; i < m.VertexCount; i++)

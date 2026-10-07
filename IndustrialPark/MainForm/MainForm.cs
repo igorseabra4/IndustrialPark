@@ -1167,6 +1167,12 @@ namespace IndustrialPark
                 ae.SetSelectedIndex(assetID ?? 0, add);
         }
 
+        public void SetSelectedIndices(List<uint> assetIDs)
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                ae.SetSelectedIndices(assetIDs);
+        }
+
         /// <summary>
         /// Gets the number of currently selected assets across all archive Editors.
         /// </summary>

@@ -13,13 +13,13 @@ public class MultiAction : IReversibleAction
 
     public void Undo()
     {
-        foreach (var action in this.actions)
-            action.Undo();
+        for (int i = actions.Count - 1; i >= 0; i--)
+            actions[i].Undo();
     }
 
     public void Redo()
     {
-        foreach (var action in this.actions)
-            action.Redo();
+        for (int i = 0; i < actions.Count; i++)
+            actions[i].Redo();
     }
 }
