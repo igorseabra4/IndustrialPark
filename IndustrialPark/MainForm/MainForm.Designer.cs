@@ -76,6 +76,8 @@ namespace IndustrialPark
             viewConfigToolStripMenuItem = new ToolStripMenuItem();
             uIModeToolStripMenuItem = new ToolStripMenuItem();
             uIModeAutoSizeToolStripMenuItem = new ToolStripMenuItem();
+            toolStripMenuItem116 = new ToolStripMenuItem();
+            toolStripMenuItem169 = new ToolStripMenuItem();
             toolStripSeparator10 = new ToolStripSeparator();
             cursorInFlyModeToolStripMenuItem = new ToolStripMenuItem();
             defaultToolStripMenuItem = new ToolStripMenuItem();
@@ -129,6 +131,7 @@ namespace IndustrialPark
             openFolderToolStripMenuItem = new ToolStripMenuItem();
             dynaNameSearcherToolStripMenuItem = new ToolStripMenuItem();
             pickupSearcherToolStripMenuItem = new ToolStripMenuItem();
+            viewUndoBufferToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
@@ -150,6 +153,7 @@ namespace IndustrialPark
             userTemplateToolStripMenuItem = new ToolStripMenuItem();
             toolStripComboBoxUserTemplate = new ToolStripComboBox();
             toolTip1 = new ToolTip(components);
+            toolStripMenuItem43 = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             contextMenuStripMain.SuspendLayout();
@@ -436,9 +440,21 @@ namespace IndustrialPark
             // 
             // uIModeAutoSizeToolStripMenuItem
             // 
+            uIModeAutoSizeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem116, toolStripMenuItem43, toolStripMenuItem169 });
             uIModeAutoSizeToolStripMenuItem.Name = "uIModeAutoSizeToolStripMenuItem";
             resources.ApplyResources(uIModeAutoSizeToolStripMenuItem, "uIModeAutoSizeToolStripMenuItem");
-            uIModeAutoSizeToolStripMenuItem.Click += uIModeAutoSizeToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItem116
+            // 
+            toolStripMenuItem116.Name = "toolStripMenuItem116";
+            resources.ApplyResources(toolStripMenuItem116, "toolStripMenuItem116");
+            toolStripMenuItem116.Click += toolStripMenuItem116_Click;
+            // 
+            // toolStripMenuItem169
+            // 
+            toolStripMenuItem169.Name = "toolStripMenuItem169";
+            resources.ApplyResources(toolStripMenuItem169, "toolStripMenuItem169");
+            toolStripMenuItem169.Click += toolStripMenuItem169_Click;
             // 
             // toolStripSeparator10
             // 
@@ -603,7 +619,7 @@ namespace IndustrialPark
             // 
             movementPreviewToolStripMenuItem.Name = "movementPreviewToolStripMenuItem";
             resources.ApplyResources(movementPreviewToolStripMenuItem, "movementPreviewToolStripMenuItem");
-            movementPreviewToolStripMenuItem.Click += pLATPreviewToolStripMenuItem_Click;
+            movementPreviewToolStripMenuItem.Click += movementPreviewToolStripMenuItem_Click;
             // 
             // hideInvisibleMeshesToolStripMenuItem
             // 
@@ -725,7 +741,7 @@ namespace IndustrialPark
             // 
             // researchToolStripMenuItem
             // 
-            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { hansToolStripMenuItem, assetIDGeneratorToolStripMenuItem, dYNASearchToolStripMenuItem, eventSearchToolStripMenuItem, openFolderToolStripMenuItem, dynaNameSearcherToolStripMenuItem, pickupSearcherToolStripMenuItem });
+            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { hansToolStripMenuItem, assetIDGeneratorToolStripMenuItem, dYNASearchToolStripMenuItem, eventSearchToolStripMenuItem, openFolderToolStripMenuItem, dynaNameSearcherToolStripMenuItem, pickupSearcherToolStripMenuItem, viewUndoBufferToolStripMenuItem });
             researchToolStripMenuItem.Name = "researchToolStripMenuItem";
             resources.ApplyResources(researchToolStripMenuItem, "researchToolStripMenuItem");
             researchToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
@@ -771,6 +787,12 @@ namespace IndustrialPark
             pickupSearcherToolStripMenuItem.Name = "pickupSearcherToolStripMenuItem";
             resources.ApplyResources(pickupSearcherToolStripMenuItem, "pickupSearcherToolStripMenuItem");
             pickupSearcherToolStripMenuItem.Click += pickupSearcherToolStripMenuItem_Click;
+            // 
+            // viewUndoBufferToolStripMenuItem
+            // 
+            viewUndoBufferToolStripMenuItem.Name = "viewUndoBufferToolStripMenuItem";
+            resources.ApplyResources(viewUndoBufferToolStripMenuItem, "viewUndoBufferToolStripMenuItem");
+            viewUndoBufferToolStripMenuItem.Click += viewUndoBufferToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -902,6 +924,12 @@ namespace IndustrialPark
             toolTip1.InitialDelay = 250;
             toolTip1.ReshowDelay = 100;
             toolTip1.ToolTipIcon = ToolTipIcon.Info;
+            // 
+            // toolStripMenuItem43
+            // 
+            toolStripMenuItem43.Name = "toolStripMenuItem43";
+            resources.ApplyResources(toolStripMenuItem43, "toolStripMenuItem43");
+            toolStripMenuItem43.Click += toolStripMenuItem43_Click;
             // 
             // MainForm
             // 
@@ -1061,6 +1089,10 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
         private ToolTip toolTip1;
+        private ToolStripMenuItem viewUndoBufferToolStripMenuItem;
+        private ToolStripMenuItem toolStripMenuItem116;
+        private ToolStripMenuItem toolStripMenuItem169;
+        private ToolStripMenuItem toolStripMenuItem43;
     }
 }
 

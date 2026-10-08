@@ -692,7 +692,7 @@ namespace IndustrialPark
                 Program.UndoBuffer.Redo();
                 return;
             }
-            
+
             if (e.KeyCode == Keys.Z)
                 MouseModeToggle();
             else if (e.KeyCode == Keys.Q)
@@ -722,7 +722,9 @@ namespace IndustrialPark
             else if (e.KeyCode == Keys.Delete)
                 DeleteSelectedAssets();
             else if (e.KeyCode == Keys.U)
-                uIModeToolStripMenuItem_Click(null, null);
+                uIModeToolStripMenuItem_Click(sender, e);
+            else if (e.KeyCode == Keys.M)
+                movementPreviewToolStripMenuItem_Click(sender, e);
             else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.B)
                 SelectPreviousTemplate();
             else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.N)
@@ -1044,15 +1046,16 @@ namespace IndustrialPark
                 "W, A, S, D: move view forward, left, backward, right\n" +
                 "Shift + (W, S): move view up, down\n" +
                 "Ctrl + (W, A, S, D): rotate view up, left, down, right\n" +
-                "Q, E: decrease interval, increase interval (view move speed)\n" +
-                "1, 3: decrease rotation interval, increase rotation interval (view rotation speed)\n" +
+                "Q, E: decrease, increase view move speed\n" +
+                "1, 3: decrease, increase view rotation speed\n" +
                 "B and N: select previous/next template\n" +
                 "C: toggles backface culling\n" +
                 "Ctrl + F: toggles wireframe mode\n" +
-                "F: Toogle fog\n" +
+                "F: Toggle fog\n" +
                 "G: open Asset Data Editor for selected assets\n" +
                 "H: drop selected assets\n" +
                 "L: use light kits for rendering\n" +
+                "M: movement preview\n" +
                 "P: Toggle vertex color display\n" +
                 "R: reset view\n" +
                 "T: snap gizmos to grid\n" +
@@ -1069,7 +1072,8 @@ namespace IndustrialPark
                 "\n" +
                 "Mouse controls:\n" +
                 "Left click on an asset to select it\n" +
-                "Ctrl + Left click to select multiple\n" +
+                "Shift + Left click to select multiple, always adds to selection\n" +
+                "Ctrl + Left click to select multiple or deselect\n" +
                 "Middle click and drag to rotate view\n" +
                 "Mouse wheel to move forward/backward\n" +
                 "Right click on screen to choose a gizmo or template\n" +
@@ -1214,7 +1218,7 @@ namespace IndustrialPark
 
         }
 
-        private void pLATPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        private void movementPreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             movementPreviewToolStripMenuItem.Checked = !movementPreviewToolStripMenuItem.Checked;
             EntityAsset.movementPreview = movementPreviewToolStripMenuItem.Checked;
@@ -1546,9 +1550,24 @@ namespace IndustrialPark
                 archiveEditor.archive.ClearModelTemplateFocus();
         }
 
-        private void uIModeAutoSizeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SetViewAspect(float aspect)
         {
-            Width = (int)(Height * 656f / 565f);
+            ClientSize = new Size((int)(renderPanel.Height * aspect), ClientSize.Height);
+        }
+
+        private void toolStripMenuItem116_Click(object sender, EventArgs e)
+        {
+            SetViewAspect(656f / 565f);
+        }
+
+        private void toolStripMenuItem43_Click(object sender, EventArgs e)
+        {
+            SetViewAspect(4f / 3f);
+        }
+
+        private void toolStripMenuItem169_Click(object sender, EventArgs e)
+        {
+            SetViewAspect(16f / 9f);
         }
 
         private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2199,5 +2218,10 @@ namespace IndustrialPark
             SystemColorMode = SystemColorMode.Classic;
         }
         #endregion
+
+        private void viewUndoBufferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ScrollableMessageBox("Undo Buffer", Program.UndoBuffer.ToString()).Show();
+        }
     }
 }
