@@ -753,7 +753,7 @@ namespace IndustrialPark
         private Asset PlaceUserTemplate(int layerIndex, Vector3 position, ref List<uint> assetIDs, AssetTemplate template)
         {
             if (template == AssetTemplate.Paste_Clipboard)
-                PasteAssetsFromClipboard(layerIndex, out assetIDs, dontReplace: true);
+                PasteAssetsFromClipboard(layerIndex, out assetIDs, forceRefUpdate: true, dontReplace: true);
             else
             {
                 try

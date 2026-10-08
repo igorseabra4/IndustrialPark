@@ -1351,7 +1351,8 @@ namespace IndustrialPark
             }
 
             if (updateReferencesOnCopy)
-                UpdateReferencesOnCopy(referenceUpdate, newAHDRs);
+                foreach (var u in finalIndices)
+                    ReplaceReferencesOn(GetFromAssetID(u), referenceUpdate);
         }
 
         public void CopyAssetsToClipboard()
@@ -1423,7 +1424,7 @@ namespace IndustrialPark
 
                 asset.SetGame(game);
 
-                if (previousAssetID != 0)
+                if (previousAssetID != 0 && previousAssetID != asset.assetID)
                     referenceUpdate.Add(previousAssetID, asset.assetID);
 
                 if (asset is AssetSound sound)
@@ -1466,42 +1467,16 @@ namespace IndustrialPark
             }
 
             if (updateReferencesOnCopy || forceRefUpdate)
-                UpdateReferencesOnCopy(referenceUpdate, clipboard.assets.Select(a => a.ToAHDR()).ToList());
+                foreach (var u in finalIndices)
+                    ReplaceReferencesOn(GetFromAssetID(u), referenceUpdate);
 
             return true;
         }
 
-        public void UpdateReferencesOnCopy(Dictionary<uint, uint> referenceUpdate, List<Section_AHDR> assets)
+        public void ReplaceReferencesOn(Asset asset, Dictionary<uint, uint> references)
         {
-            AssetType[] dontUpdate = new AssetType[] {
-                    AssetType.BSP,
-                    AssetType.JSP,
-                    AssetType.Model,
-                    AssetType.Texture,
-                    AssetType.Sound,
-                    AssetType.SoundInfo,
-                    AssetType.SoundStream,
-                    AssetType.Text
-                };
-
-            Dictionary<uint, uint> newReferenceUpdate;
-
-            if (platform.Endianness() == Endianness.Big)
-            {
-                newReferenceUpdate = new Dictionary<uint, uint>();
-                foreach (var key in referenceUpdate.Keys)
-                {
-                    newReferenceUpdate.Add(
-                        BitConverter.ToUInt32(BitConverter.GetBytes(key).Reverse().ToArray(), 0),
-                        BitConverter.ToUInt32(BitConverter.GetBytes(referenceUpdate[key]).Reverse().ToArray(), 0));
-                }
-            }
-            else
-                newReferenceUpdate = referenceUpdate;
-
-            foreach (Section_AHDR section in assets)
-                if (!dontUpdate.Contains(section.assetType))
-                    section.data = ReplaceReferences(section.data, newReferenceUpdate);
+            foreach ((uint oldAssetId, uint newAssetId) in references)
+                asset.ReplaceReferences(oldAssetId, newAssetId);
         }
 
         public void ReplaceReferences(uint oldAssetId, uint newAssetId) =>
