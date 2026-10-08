@@ -844,7 +844,7 @@ namespace IndustrialPark
             foreach (var u in finalIndices)
                 actions.Add(archive.GetAssetAddedAction(u));
             actions.Add(new SelectionAction(finalIndices));
-            Program.UndoBuffer.AddAction(new MultiAction(actions));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
@@ -868,7 +868,7 @@ namespace IndustrialPark
             foreach (var u in finalIndices)
                 actions.Add(archive.GetAssetAddedAction(u));
             actions.Add(new SelectionAction(finalIndices));
-            Program.UndoBuffer.AddAction(new MultiAction(actions));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void ButtonRemoveAsset_Click(object sender, EventArgs e)
@@ -883,7 +883,7 @@ namespace IndustrialPark
             foreach (var u in selected)
                 actions.Add(archive.GetAssetRemovedAction(u));
             actions.Add(new SelectionAction(selected));
-            Program.UndoBuffer.AddAction(new MultiAction(actions));
+            Program.UndoBuffer.AddAction(actions);
 
             archive.RemoveAsset(selected);
 
@@ -960,7 +960,7 @@ namespace IndustrialPark
 
                     actions.Add(archive.GetAssetAddedAction(AHDR.assetID));
                     actions.Add(new SelectionAction(AHDR.assetID));
-                    Program.UndoBuffer.AddAction(new MultiAction(actions));
+                    Program.UndoBuffer.AddAction(actions);
                 }
             }
             catch (Exception ex)

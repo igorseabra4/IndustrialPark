@@ -1531,7 +1531,7 @@ namespace IndustrialPark
             }
 
             actions.Add(new SelectionAction(assetIDs));
-            Program.UndoBuffer.AddAction(new MultiAction(actions));
+            Program.UndoBuffer.AddAction(actions);
             return assetIDs;
         }
 

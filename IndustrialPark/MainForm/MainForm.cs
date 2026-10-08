@@ -682,14 +682,15 @@ namespace IndustrialPark
             if (!PressedKeys.Contains(e.KeyCode))
                 PressedKeys.Add(e.KeyCode);
 
-            if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
-            {
-                Program.UndoBuffer.Undo();
-                return;
-            }
-            else if (PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey))
+            if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
+                (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
             {
                 Program.UndoBuffer.Redo();
+                return;
+            }
+            else if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
+            {
+                Program.UndoBuffer.Undo();
                 return;
             }
 

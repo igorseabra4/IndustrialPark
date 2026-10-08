@@ -261,21 +261,36 @@ namespace IndustrialPark
 
         public void DropSelectedAssets(SharpRenderer renderer)
         {
+            var actions = new List<IReversibleAction>();
+            actions.Add(new SelectionAction(CurrentlySelectedAssets.Select(a => a.assetID)));
             foreach (var a in from Asset a in CurrentlySelectedAssets where a is IClickableAsset select (IClickableAsset)a)
             {
-                if ((a is AssetTRIG trig && trig.Shape == TriggerShape.Box) || (a is AssetVOLU volu && volu.Shape == VolumeType.Box))
+                if ((a is AssetTRIG trig) || (a is AssetVOLU volu && volu.Shape == VolumeType.Box))
                     continue;
 
                 var position = GetRayIntersectionPosition(renderer,
                     new Ray(new Vector3(a.PositionX, a.PositionY, a.PositionZ), new Vector3(0f, -1f, 0f)),
                     ((Asset)a).assetID);
 
-                a.PositionX = position.X;
-                a.PositionY = position.Y;
-                a.PositionZ = position.Z;
+                if (a.PositionX != position.X)
+                {
+                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", a.PositionX, position.X));
+                    a.PositionX = position.X;
+                }
+                if (a.PositionY != position.Y)
+                {
+                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", a.PositionY, position.Y));
+                    a.PositionY = position.Y;
+                }
+                if (a.PositionZ != position.Z)
+                {
+                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", a.PositionZ, position.Z));
+                    a.PositionZ = position.Z;
+                }
 
                 UnsavedChanges = true;
             }
+            Program.UndoBuffer.AddAction(actions);
         }
 
         public List<uint> FindWhoTargets(uint assetID)
@@ -346,7 +361,7 @@ namespace IndustrialPark
                     break;
             }
 
-            Program.UndoBuffer.AddAction(new MultiAction(actions));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void MergeTableAsset<T, U>(T asset, List<IReversibleAction> actions) where T : ITableAsset<T, U>
@@ -363,7 +378,8 @@ namespace IndustrialPark
             var action1 = GetAssetRemovedAction(SNDI);
             ((ISoundInfoAsset<T>)SNDI).Merge(asset);
             var action2 = GetAssetAddedAction(SNDI);
-            actions.Add(new MultiAction([action1, action2]));
+            actions.Add(action1);
+            actions.Add(action2);
         }
 
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)

@@ -562,7 +562,7 @@ namespace IndustrialPark
             }
 
             actions.Add(new SelectionAction(CurrentlySelectedAssets.Select(asset => asset.assetID).ToList()));
-            Program.UndoBuffer.AddAction(new MultiAction(actions));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         public void RefreshAssetEditor(uint assetID)

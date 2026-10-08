@@ -11,9 +11,9 @@ public class SelectionAction : IReversibleAction
         selection = null;
     }
 
-    public SelectionAction(List<uint> selection)
+    public SelectionAction(IEnumerable<uint> selection)
     {
-        this.selection = selection;
+        this.selection = [..selection];
     }
 
     public SelectionAction(uint assetID)

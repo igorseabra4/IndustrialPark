@@ -54,7 +54,7 @@ namespace IndustrialPark
                 updateListView(asset);
             }
             propertyGridAsset.Refresh();
-            Program.UndoBuffer.AddAction(new MultiAction(actions));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         public void RefreshPropertyGrid()
