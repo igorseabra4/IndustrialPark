@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.IO;
 
 namespace IndustrialPark
 {
@@ -26,5 +27,10 @@ namespace IndustrialPark
         }
 
         public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;
+
+        public override string ToString()
+        {
+            return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] Layer {type} removed at {index}";
+        }
     }
 }

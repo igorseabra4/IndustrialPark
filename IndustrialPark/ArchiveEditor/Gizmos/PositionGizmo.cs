@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         public void SetPosition(Vector3 Position, float Radius)
         {
-            switch (type)
+            switch (Type)
             {
                 case GizmoType.X:
                     Position.X += Radius;

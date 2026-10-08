@@ -388,14 +388,32 @@ namespace IndustrialPark
                     foreach (var a in currentlyMoving)
                     {
                         RefreshAssetEditor(((Asset)a).assetID);
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", originalPositions[((Asset)a).assetID].X, a.PositionX));
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                        switch (g.Type)
+                        {
+                            case GizmoType.X:
+                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", originalPositions[((Asset)a).assetID].X, a.PositionX));
+                                break;
+                            case GizmoType.Y:
+                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
+                                break;
+                            case GizmoType.Z:
+                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                                break;
+                        }
                         if (a is AssetTRIG trig && trig.Shape != TriggerShape.Box)
                         {
-                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumX", originalPositions[((Asset)a).assetID].X, a.PositionX));
-                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
-                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                            switch (g.Type)
+                            {
+                                case GizmoType.X:
+                                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumX", originalPositions[((Asset)a).assetID].X, a.PositionX));
+                                    break;
+                                case GizmoType.Y:
+                                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
+                                    break;
+                                case GizmoType.Z:
+                                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                                    break;
+                            }
                         }
                     }
                     if (currentlyMoving.Count != 0)
@@ -418,32 +436,50 @@ namespace IndustrialPark
                         {
                             if (currentlyMovingBox is AssetTRIG trig)
                             {
-                                if (triggerPositionGizmos.IndexOf(g) < 3)
+                                switch (g.Type)
                                 {
-                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumX", originalPositions[currentlyMovingBox.assetID].X, trig.MaximumX));
-                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumY", originalPositions[currentlyMovingBox.assetID].Y, trig.MaximumY));
-                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumZ", originalPositions[currentlyMovingBox.assetID].Z, trig.MaximumZ));
-                                }
-                                else
-                                {
-                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumX", originalPositions[currentlyMovingBox.assetID].X, trig.MinimumX));
-                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumY", originalPositions[currentlyMovingBox.assetID].Y, trig.MinimumY));
-                                    actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumZ", originalPositions[currentlyMovingBox.assetID].Z, trig.MinimumZ));
+                                    case GizmoType.X:
+                                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumX", originalPositions[currentlyMovingBox.assetID].X, trig.MaximumX));
+                                        break;
+                                    case GizmoType.Y:
+                                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumY", originalPositions[currentlyMovingBox.assetID].Y, trig.MaximumY));
+                                        break;
+                                    case GizmoType.Z:
+                                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumZ", originalPositions[currentlyMovingBox.assetID].Z, trig.MaximumZ));
+                                        break;
+                                    case GizmoType.TrigX1:
+                                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumX", originalPositions[currentlyMovingBox.assetID].X, trig.MinimumX));
+                                        break;
+                                    case GizmoType.TrigY1:
+                                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumY", originalPositions[currentlyMovingBox.assetID].Y, trig.MinimumY));
+                                        break;
+                                    case GizmoType.TrigZ1:
+                                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumZ", originalPositions[currentlyMovingBox.assetID].Z, trig.MinimumZ));
+                                        break;
                                 }
                             }
                             else if (currentlyMovingBox is AssetVOLU volume && volume.VolumeShape is VolumeBox box)
                             {
-                                if (triggerPositionGizmos.IndexOf(g) < 3)
+                                switch (g.Type)
                                 {
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumX"], originalPositions[currentlyMovingBox.assetID].X, box.MaximumX));
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumY"], originalPositions[currentlyMovingBox.assetID].Y, box.MaximumY));
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumZ"], originalPositions[currentlyMovingBox.assetID].Z, box.MaximumZ));
-                                }
-                                else
-                                {
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumX"], originalPositions[currentlyMovingBox.assetID].X, box.MinimumX));
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumY"], originalPositions[currentlyMovingBox.assetID].Y, box.MinimumY));
-                                    actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumZ"], originalPositions[currentlyMovingBox.assetID].Z, box.MinimumZ));
+                                    case GizmoType.X:
+                                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumX"], originalPositions[currentlyMovingBox.assetID].X, box.MaximumX));
+                                        break;
+                                    case GizmoType.Y:
+                                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumY"], originalPositions[currentlyMovingBox.assetID].Y, box.MaximumY));
+                                        break;
+                                    case GizmoType.Z:
+                                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumZ"], originalPositions[currentlyMovingBox.assetID].Z, box.MaximumZ));
+                                        break;
+                                    case GizmoType.TrigX1:
+                                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumX"], originalPositions[currentlyMovingBox.assetID].X, box.MinimumX));
+                                        break;
+                                    case GizmoType.TrigY1:
+                                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumY"], originalPositions[currentlyMovingBox.assetID].Y, box.MinimumY));
+                                        break;
+                                    case GizmoType.TrigZ1:
+                                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumZ"], originalPositions[currentlyMovingBox.assetID].Z, box.MinimumZ));
+                                        break;
                                 }
                             }
                         }
@@ -461,9 +497,18 @@ namespace IndustrialPark
                     foreach (var a in currentlyRotating)
                     {
                         RefreshAssetEditor(((Asset)a).assetID);
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Yaw", originalPositions[((Asset)a).assetID].X, a.Yaw));
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Pitch", originalPositions[((Asset)a).assetID].Y, a.Pitch));
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Roll", originalPositions[((Asset)a).assetID].Z, a.Roll));
+                        switch (g.Type)
+                        {
+                            case GizmoType.Yaw:
+                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Yaw", originalPositions[((Asset)a).assetID].X, a.Yaw));
+                                break;
+                            case GizmoType.Pitch:
+                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Pitch", originalPositions[((Asset)a).assetID].Y, a.Pitch));
+                                break;
+                            case GizmoType.Roll:
+                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Roll", originalPositions[((Asset)a).assetID].Z, a.Roll));
+                                break;
+                        }
                     }
                     if (currentlyRotating.Count != 0)
                     {
@@ -481,9 +526,12 @@ namespace IndustrialPark
                     foreach (var a in currentlyScaling)
                     {
                         RefreshAssetEditor(((Asset)a).assetID);
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleX", originalPositions[((Asset)a).assetID].X, a.ScaleX));
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleY", originalPositions[((Asset)a).assetID].Y, a.ScaleY));
-                        actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleZ", originalPositions[((Asset)a).assetID].Z, a.ScaleZ));
+                        if (g.Type == GizmoType.ScaleX || g.Type == GizmoType.ScaleAll)
+                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleX", originalPositions[((Asset)a).assetID].X, a.ScaleX));
+                        if (g.Type == GizmoType.ScaleY || g.Type == GizmoType.ScaleAll)
+                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleY", originalPositions[((Asset)a).assetID].Y, a.ScaleY));
+                        if (g.Type == GizmoType.ScaleZ || g.Type == GizmoType.ScaleAll)
+                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleZ", originalPositions[((Asset)a).assetID].Z, a.ScaleZ));
                     }
                     if (currentlyScaling.Count != 0)
                     {

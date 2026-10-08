@@ -13,7 +13,7 @@ namespace IndustrialPark
 
         public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
         {
-            switch (type)
+            switch (Type)
             {
                 case GizmoType.ScaleX:
                     transformMatrix = Matrix.Scaling(Math.Max(Math.Abs(Radius) / 6f, 1f)) * Matrix.Translation(Math.Abs(Radius) + 1f, 0f, 0f) * Rotation * Matrix.Translation(Position);

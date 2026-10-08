@@ -32,13 +32,13 @@ namespace IndustrialPark
 
     public abstract class GizmoBase
     {
-        protected GizmoType type;
+        public GizmoType Type { get; protected set; }
         public bool isSelected;
         protected Matrix transformMatrix = Matrix.Identity;
 
         public GizmoBase(GizmoType type)
         {
-            this.type = type;
+            this.Type = type;
 
             switch (type)
             {

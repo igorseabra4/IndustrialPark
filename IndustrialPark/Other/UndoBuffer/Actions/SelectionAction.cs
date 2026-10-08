@@ -2,8 +2,25 @@
 
 namespace IndustrialPark;
 
-public class SelectionAction(List<uint> selection) : IReversibleAction
+public class SelectionAction : IReversibleAction
 {
+    private List<uint> selection;
+
+    public SelectionAction()
+    {
+        selection = null;
+    }
+
+    public SelectionAction(List<uint> selection)
+    {
+        this.selection = selection;
+    }
+
+    public SelectionAction(uint assetID)
+    {
+        this.selection = [assetID];
+    }
+
     public void Undo()
     {
         if (selection.Count != 0)
@@ -14,4 +31,11 @@ public class SelectionAction(List<uint> selection) : IReversibleAction
     {
         Undo();
     }
+
+    public override string ToString()
+    {
+        return "";
+    }
+
+    public bool ContainsArchive(ArchiveEditorFunctions archive) => false;
 }

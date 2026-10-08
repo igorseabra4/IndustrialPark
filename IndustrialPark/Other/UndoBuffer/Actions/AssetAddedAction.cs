@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System.IO;
 
 namespace IndustrialPark;
 
@@ -28,4 +29,9 @@ public class AssetAddedAction : IReversibleAction
     }
 
     public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;
+
+    public override string ToString()
+    {
+        return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] {AHDR.ADBG.assetName} created";
+    }
 }

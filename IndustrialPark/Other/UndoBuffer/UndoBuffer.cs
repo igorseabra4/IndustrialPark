@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 
 namespace IndustrialPark;
 
@@ -15,6 +16,11 @@ public class UndoBuffer
 
         actions.Add(action);
         currentIndex++;
+    }
+
+    public void AddAction(IEnumerable<IReversibleAction> actions)
+    {
+        AddAction(new MultiAction(actions));
     }
 
     public void Undo()
@@ -41,5 +47,20 @@ public class UndoBuffer
                 i--;
             }
         }
+    }
+
+    public override string ToString()
+    {
+        var result = new StringBuilder();
+        if (currentIndex == -1)
+            result.AppendLine("[Current State]");
+        for (int i = 0; i < actions.Count; i++)
+        {
+            result.AppendLine(actions[i].ToString());
+            if (currentIndex == i)
+                result.AppendLine("[Current State]");
+        }
+        result.AppendLine("This text does not update in real time, close and reopen for a new one.");
+        return result.ToString();
     }
 }

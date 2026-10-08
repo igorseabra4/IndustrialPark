@@ -1,6 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 
 namespace IndustrialPark;
 
@@ -12,6 +14,7 @@ public class AssetPropertyChangedAction : IReversibleAction
     private object oldValue;
     private object newValue;
     private List<uint> selection;
+    private string assetName;
 
     public AssetPropertyChangedAction(ArchiveEditorFunctions archive, uint assetID, string[] propertyPath, object oldValue, object newValue, List<uint> selection = null)
     {
@@ -21,6 +24,7 @@ public class AssetPropertyChangedAction : IReversibleAction
         this.oldValue = oldValue;
         this.newValue = newValue;
         this.selection = selection;
+        assetName = archive.GetFromAssetID(assetID).assetName;
     }
 
     public AssetPropertyChangedAction(ArchiveEditorFunctions archive, Asset asset, string propertyName, object oldValue, object newValue, List<uint> selection = null) :
@@ -65,4 +69,9 @@ public class AssetPropertyChangedAction : IReversibleAction
     }
 
     public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;
+
+    public override string ToString()
+    {
+        return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] {assetName} changed {string.Join("->", propertyPath)} from {oldValue} to {newValue}";
+    }
 }

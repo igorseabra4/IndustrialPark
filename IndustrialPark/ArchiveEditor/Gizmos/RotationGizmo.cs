@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
         {
-            switch (type)
+            switch (Type)
             {
                 case GizmoType.Yaw:
                     transformMatrix = Matrix.Scaling(Radius / 2f) * Rotation * Matrix.Translation(Position);
