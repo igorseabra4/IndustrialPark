@@ -26,11 +26,13 @@ namespace IndustrialPark
             get => (TriggerShape)(byte)TypeFlag;
             set => TypeFlag = (byte)value;
         }
+        [Category(categoryName)]
+        public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
 
         private Vector3 _minimum;
         private Vector3 _maximum;
 
-        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        [Category(categoryName), DisplayName("Minimum / Center X")]
         public AssetSingle MinimumX
         {
             get => _minimum.X;
@@ -40,7 +42,7 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        [Category(categoryName), DisplayName("Minimum / Center Y")]
         public AssetSingle MinimumY
         {
             get => _minimum.Y;
@@ -50,7 +52,7 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        [Category(categoryName), DisplayName("Minimum / Center Z")]
         public AssetSingle MinimumZ
         {
             get => _minimum.Z;
@@ -125,8 +127,6 @@ namespace IndustrialPark
         public AssetSingle DirectionY { get; set; }
         [Category(categoryName)]
         public AssetSingle DirectionZ { get; set; }
-        [Category(categoryName)]
-        public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
 
         public AssetTRIG(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Trigger, BaseAssetType.Trigger, position)
         {
