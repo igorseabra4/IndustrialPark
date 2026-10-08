@@ -2150,5 +2150,24 @@ namespace IndustrialPark
                 child.SendToBack();
             BringToFront();
         }
+
+        public void HideSelectedAssets()
+        {
+            foreach (ListViewItem item in listViewAssets.SelectedItems)
+                if (item.Checked)
+                {
+                    item.Checked = false;
+                    item.Selected = false;
+                }
+        }
+
+        public void UnhideAllAssets()
+        {
+            foreach (var asset in archive.GetAllAssets())
+                asset.isInvisible = false;
+            foreach (ListViewItem item in listViewAssets.Items)
+                if (!item.Checked)
+                    item.Checked = true;
+        }
     }
 }

@@ -712,6 +712,10 @@ namespace IndustrialPark
                 fogToolStripMenuItem.PerformClick();
             else if (e.KeyCode == Keys.H)
                 DropSelectedAssets();
+            else if (PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.J)
+                UnhideAllAssets();
+            else if (e.KeyCode == Keys.J)
+                HideSelectedAssets();
             else if (e.KeyCode == Keys.G)
                 OpenInternalEditors();
             else if (e.KeyCode == Keys.L)
@@ -2087,6 +2091,18 @@ namespace IndustrialPark
         {
             foreach (var ae in archiveEditors)
                 ae.archive.DropSelectedAssets(renderer);
+        }
+
+        private void HideSelectedAssets()
+        {
+            foreach (var ae in archiveEditors)
+                ae.HideSelectedAssets();
+        }
+
+        private void UnhideAllAssets()
+        {
+            foreach (var ae in archiveEditors)
+                ae.UnhideAllAssets();
         }
 
         private void showVertexColorsToolStripMenuItem_Click(object sender, EventArgs e)
