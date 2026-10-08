@@ -44,6 +44,7 @@ namespace IndustrialPark
         public LayerType GetLayerTypeGeneric(int index) => Layers[index].Type;
 
         public void SetLayerType(int index, int type) => Layers[index].Type = LayerTypeSpecificToGeneric(type, game);
+        public void SetLayerTypeGeneric(int index, LayerType type) => Layers[index].Type = type;
 
         public string LayerToString(int index) => "Layer " + index.ToString("D2") + ": "
             + (string.IsNullOrWhiteSpace(Layers[index].LayerName) ? Layers[index].Type.ToString() : Layers[index].LayerName)
@@ -112,40 +113,48 @@ namespace IndustrialPark
             UnsavedChanges = true;
         }
 
-        public void RemoveLayerOfType(LayerType type)
+        public void RemoveLayerOfType(LayerType type, List<IReversibleAction> actions)
         {
             if (NoLayers)
                 return;
 
-            foreach (uint u in Layers.Where(l => l.Type == type).SelectMany(l => l.AssetIDs).ToArray())
-                RemoveAsset(u);
-            Layers.RemoveAll(l => l.Type == type);
+            for (int i = 0; i < Layers.Count; i++)
+                if (Layers[i].Type == type)
+                {
+                    foreach (uint u in Layers[i].AssetIDs)
+                    {
+                        actions.Add(GetAssetRemovedAction(u));
+                        RemoveAsset(u);
+                    }
+
+                    actions.Add(new LayerRemovedAction(this, type, i));
+                    Layers.RemoveAt(i);
+                    i--;
+                }
 
             UnsavedChanges = true;
         }
 
-        public void MoveLayerUp(int index)
+        public bool MoveLayerUp(int index)
         {
-            if (NoLayers)
-                return;
-
-            if (index > 0)
+            if (!NoLayers && index > 0)
             {
                 (Layers[index], Layers[index - 1]) = (Layers[index - 1], Layers[index]);
                 UnsavedChanges = true;
+                return true;
             }
+            return false;
         }
 
-        public void MoveLayerDown(int index)
+        public bool MoveLayerDown(int index)
         {
-            if (NoLayers)
-                return;
-
-            if (index < Layers.Count - 1)
+            if (!NoLayers && index < Layers.Count - 1)
             {
                 (Layers[index], Layers[index + 1]) = (Layers[index + 1], Layers[index]);
                 UnsavedChanges = true;
+                return true;
             }
+            return false;
         }
 
         public int GetLayerFromAssetID(uint assetID)

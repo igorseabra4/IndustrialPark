@@ -464,9 +464,11 @@ namespace IndustrialPark
             if (programIsChangingStuff || SelectedLayerIndex == -1)
                 return;
 
+            var prev = archive.GetLayerTypeGeneric(SelectedLayerIndex);
             archive.SetLayerType(SelectedLayerIndex, (int)comboBoxLayerTypes.SelectedItem);
             comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
             archive.UnsavedChanges = true;
+            Program.UndoBuffer.AddAction(new LayerTypeChangedAction(archive, SelectedLayerIndex, prev, archive.GetLayerTypeGeneric(SelectedLayerIndex)));
         }
 
         private void buttonAddLayer_Click(object sender, EventArgs e)
@@ -498,7 +500,7 @@ namespace IndustrialPark
             var actions = new List<IReversibleAction>();
 
             foreach (uint u in archive.GetAssetIDsOnLayer(SelectedLayerIndex))
-                actions.Add(new AssetRemovedAction(archive, archive.GetFromAssetID(u).BuildAHDR(archive.platform.Endianness()), SelectedLayerIndex));
+                actions.Add(archive.GetAssetRemovedAction(u));
             actions.Add(new LayerRemovedAction(archive, archive.GetLayerTypeGeneric(SelectedLayerIndex), SelectedLayerIndex));
 
             archive.RemoveLayer(SelectedLayerIndex);
@@ -523,19 +525,25 @@ namespace IndustrialPark
         private void buttonArrowUp_Click(object sender, EventArgs e)
         {
             int previndex = SelectedLayerIndex;
-            archive.MoveLayerUp(SelectedLayerIndex);
-            PopulateLayerComboBox();
-            comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
-            SetMenuItemsEnabled();
+            if (archive.MoveLayerUp(SelectedLayerIndex))
+            {
+                PopulateLayerComboBox();
+                comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
+                Program.UndoBuffer.AddAction(new LayerMovedAction(archive, SelectedLayerIndex, false));
+                SetMenuItemsEnabled();
+            }
         }
 
         private void buttonArrowDown_Click(object sender, EventArgs e)
         {
             int previndex = SelectedLayerIndex;
-            archive.MoveLayerDown(SelectedLayerIndex);
-            PopulateLayerComboBox();
-            comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
-            SetMenuItemsEnabled();
+            if (archive.MoveLayerDown(SelectedLayerIndex))
+            {
+                PopulateLayerComboBox();
+                comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
+                Program.UndoBuffer.AddAction(new LayerMovedAction(archive, SelectedLayerIndex, true));
+                SetMenuItemsEnabled();
+            }
         }
 
         public void PopulateAssetListAndComboBox()
@@ -720,6 +728,7 @@ namespace IndustrialPark
                 SetSelectedIndex(assetID.Value);
                 SetupAssetVisibilityButtons();
                 SetMenuItemsEnabled();
+                Program.UndoBuffer.AddAction([archive.GetAssetAddedAction(assetID.Value), new SelectionAction(assetID.Value)]);
             }
         }
 
@@ -769,13 +778,14 @@ namespace IndustrialPark
 
             if (AHDRs != null)
             {
+                var actions = new List<IReversibleAction>();
                 if (archive.game == Game.BFBB)
                 {
-                    archive.RemoveLayerOfType(LayerType.BSP);
-                    archive.RemoveLayerOfType(LayerType.JSPINFO);
+                    archive.RemoveLayerOfType(LayerType.BSP, actions);
+                    archive.RemoveLayerOfType(LayerType.JSPINFO, actions);
                 }
                 OnEditorUpdate();
-                AssetID jspInfoId = archive.CreateJSPInfoAndBSPLayers(AHDRs, overwrite);
+                AssetID jspInfoId = archive.CreateJSPInfoAndBSPLayers(AHDRs, overwrite, actions);
                 PopulateLayerComboBox();
                 SetSelectedIndices([jspInfoId]);
                 SetMenuItemsEnabled();
@@ -829,6 +839,12 @@ namespace IndustrialPark
             AddToAssetList(finalIndices);
             SetSelectedIndices(finalIndices);
             SetMenuItemsEnabled();
+
+            var actions = new List<IReversibleAction>();
+            foreach (var u in finalIndices)
+                actions.Add(archive.GetAssetAddedAction(u));
+            actions.Add(new SelectionAction(finalIndices));
+            Program.UndoBuffer.AddAction(new MultiAction(actions));
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
@@ -847,6 +863,12 @@ namespace IndustrialPark
             AddToAssetList(finalIndices);
             SetSelectedIndices(finalIndices);
             SetupAssetVisibilityButtons();
+
+            var actions = new List<IReversibleAction>();
+            foreach (var u in finalIndices)
+                actions.Add(archive.GetAssetAddedAction(u));
+            actions.Add(new SelectionAction(finalIndices));
+            Program.UndoBuffer.AddAction(new MultiAction(actions));
         }
 
         private void ButtonRemoveAsset_Click(object sender, EventArgs e)
@@ -856,7 +878,14 @@ namespace IndustrialPark
 
             programIsChangingStuff = true;
 
-            archive.RemoveAsset(CurrentlySelectedAssetIDs());
+            var actions = new List<IReversibleAction>();
+            var selected = CurrentlySelectedAssetIDs();
+            foreach (var u in selected)
+                actions.Add(archive.GetAssetRemovedAction(u));
+            actions.Add(new SelectionAction(selected));
+            Program.UndoBuffer.AddAction(new MultiAction(actions));
+
+            archive.RemoveAsset(selected);
 
             if (!archive.NoLayers)
                 comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
@@ -903,6 +932,12 @@ namespace IndustrialPark
                 {
                     archive.UnsavedChanges = true;
 
+                    var actions = new List<IReversibleAction>
+                    {
+                        archive.GetAssetRemovedAction(oldAssetID),
+                        new SelectionAction(oldAssetID)
+                    };
+
                     archive.RemoveAsset(oldAssetID, false);
 
                     while (archive.ContainsAsset(AHDR.assetID))
@@ -922,6 +957,10 @@ namespace IndustrialPark
                     listViewAssets.Items.RemoveAt(listViewAssets.SelectedIndices[0]);
                     AddToAssetList(AHDR.assetID);
                     SetSelectedIndex(AHDR.assetID);
+
+                    actions.Add(archive.GetAssetAddedAction(AHDR.assetID));
+                    actions.Add(new SelectionAction(AHDR.assetID));
+                    Program.UndoBuffer.AddAction(new MultiAction(actions));
                 }
             }
             catch (Exception ex)
