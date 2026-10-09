@@ -115,5 +115,12 @@ namespace IndustrialPark
 
             return smallestDistance;
         }
+
+        protected Vector3 position;
+
+        public float GetDistance(Vector3 position)
+        {
+            return Vector3.Distance(this.position, position);
+        }
     }
 }

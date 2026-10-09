@@ -31,6 +31,7 @@ namespace IndustrialPark
             for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);
+            position = (Vector3)Vector3.Transform(Vector3.Zero, transformMatrix);
         }
 
         public override SharpMesh Mesh => SharpRenderer.Pyramid;

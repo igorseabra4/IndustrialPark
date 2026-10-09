@@ -399,13 +399,6 @@ namespace IndustrialPark
         ReturnToStartAndDontLoop = 3
     }
 
-    public enum Axis : byte
-    {
-        X = 0,
-        Y = 1,
-        Z = 2
-    }
-
     public class Motion_Mechanism : Motion
     {
         public EMovementType MovementType { get; set; }

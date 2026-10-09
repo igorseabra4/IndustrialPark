@@ -183,6 +183,9 @@ namespace IndustrialPark
             ArchiveEditor.AlwaysListAllAssets = settings.AlwaysListAllAssets;
             listAllAssetsToolStripMenuItem.Checked = settings.AlwaysListAllAssets;
 
+            ArchiveEditor.RotationGizmoLocalAxis = settings.RotationGizmoLocalAxis;
+            rotationGizmoLocalAxisToolStripMenuItem.Checked = settings.RotationGizmoLocalAxis;
+
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
 
@@ -1129,8 +1132,8 @@ namespace IndustrialPark
 
         public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
         {
-            if (ArchiveEditorFunctions.FinishedMovingGizmo && !isMouseDown)
-                ArchiveEditorFunctions.FinishedMovingGizmo = false;
+            if (ArchiveEditorFunctions.IsMovingGizmo && !isMouseDown)
+                ArchiveEditorFunctions.IsMovingGizmo = false;
             else
             {
                 Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
@@ -2180,6 +2183,12 @@ namespace IndustrialPark
         {
             listAllAssetsToolStripMenuItem.Checked = !listAllAssetsToolStripMenuItem.Checked;
             ArchiveEditor.AlwaysListAllAssets = listAllAssetsToolStripMenuItem.Checked;
+        }
+
+        private void rotationGizmoOnSingleAxisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotationGizmoLocalAxisToolStripMenuItem.Checked = !rotationGizmoLocalAxisToolStripMenuItem.Checked;
+            ArchiveEditor.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
         }
 
         private void fogToolStripMenuItem_Click(object sender, EventArgs e)

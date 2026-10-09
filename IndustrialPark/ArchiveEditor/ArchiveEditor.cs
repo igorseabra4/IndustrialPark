@@ -1089,11 +1089,19 @@ namespace IndustrialPark
             SetMenuItemsEnabled();
         }
 
+        public static bool RotationGizmoLocalAxis = true;
+
         public void MouseMoveGeneric(Matrix viewProjection, int deltaX, int deltaY, bool grid)
         {
+            if (!archive.CurrentlySelectedAssets.Any())
+                return;
+
             archive.MouseMoveForPosition(viewProjection, deltaX, deltaY, grid);
             archive.MouseMoveForPositionTriggers(viewProjection, deltaX, deltaY, grid);
-            archive.MouseMoveForRotation(viewProjection, deltaX, grid);
+            if (RotationGizmoLocalAxis)
+                archive.MouseMoveForRotationLocalAxis(deltaX, grid);
+            else
+                archive.MouseMoveForRotationSingleAxis(deltaX, grid);
             archive.MouseMoveForScale(viewProjection, deltaX, deltaY, grid);
             archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
         }

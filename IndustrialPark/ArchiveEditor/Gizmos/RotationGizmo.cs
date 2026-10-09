@@ -28,6 +28,7 @@ namespace IndustrialPark
             for (int i = 0; i < SharpRenderer.torusVertices.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.torusVertices[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);
+            position = (Vector3)Vector3.Transform(Vector3.Zero, transformMatrix);
         }
 
         public override SharpMesh Mesh => SharpRenderer.Torus;
