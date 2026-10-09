@@ -16,29 +16,6 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditor : Form
     {
-        public static ArchiveEditor Standalone
-        {
-            get
-            {
-                SharpRenderer.cubeVertices = new List<Vector3>();
-                SharpRenderer.cylinderVertices = new List<Vector3>();
-                SharpRenderer.pyramidVertices = new List<Vector3>();
-                SharpRenderer.sphereVertices = new List<Vector3>();
-                SharpRenderer.planeVertices = new List<Vector3>();
-                SharpRenderer.torusVertices = new List<Vector3>();
-                SharpRenderer.cubeTriangles = new List<Models.Triangle>();
-                SharpRenderer.cylinderTriangles = new List<Models.Triangle>();
-                SharpRenderer.pyramidTriangles = new List<Models.Triangle>();
-                SharpRenderer.sphereTriangles = new List<Models.Triangle>();
-                SharpRenderer.planeTriangles = new List<Models.Triangle>();
-                SharpRenderer.torusTriangles = new List<Models.Triangle>();
-                HexUIntTypeConverter.Legacy = true;
-                var ae = new ArchiveEditor(true);
-                ae.Begin(null, Platform.Unknown);
-                return ae;
-            }
-        }
-
         public ArchiveEditorFunctions archive;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -48,26 +25,19 @@ namespace IndustrialPark
             set => comboBoxLayers.SelectedIndex = value;
         }
 
-        public ArchiveEditor(bool standalone = false)
+        public ArchiveEditor()
         {
             InitializeComponent();
             TopMost = true;
 
-            this.standalone = standalone;
-
             defaultColor = textBoxFindAsset.BackColor;
-            if (standalone)
-                checkBoxTemplateFocus.Enabled = false;
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
         }
 
         public void Begin(string filePath, Platform scoobyPlatform)
         {
-            archive = new ArchiveEditorFunctions
-            {
-                standalone = standalone
-            };
+            archive = new ArchiveEditorFunctions();
 
             textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             archive.SetTextboxForAutocomplete(textBoxFindAsset);
@@ -78,20 +48,15 @@ namespace IndustrialPark
             _updateFilesizeStatusBarItem();
         }
 
-        private readonly bool standalone = false;
-
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (!standalone)
-            {
-                if (e.CloseReason == CloseReason.WindowsShutDown)
-                    return;
-                if (e.CloseReason == CloseReason.FormOwnerClosing)
-                    return;
+            if (e.CloseReason == CloseReason.WindowsShutDown)
+                return;
+            if (e.CloseReason == CloseReason.FormOwnerClosing)
+                return;
 
-                e.Cancel = true;
-                Hide();
-            }
+            e.Cancel = true;
+            Hide();
         }
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
@@ -136,23 +101,20 @@ namespace IndustrialPark
             {
                 bool shouldOpenFile = true;
 
-                if (!standalone)
+                foreach (var archiveEditor in Program.MainForm.archiveEditors)
                 {
-                    foreach (var archiveEditor in Program.MainForm.archiveEditors)
+                    if (Path.GetFileName(archiveEditor.GetCurrentlyOpenFileName()) ==
+                        Path.GetFileName(openFile.FileName))
                     {
-                        if (Path.GetFileName(archiveEditor.GetCurrentlyOpenFileName()) ==
-                            Path.GetFileName(openFile.FileName))
-                        {
-                            var result = MessageBox.Show(
-                                            $"A file named {Path.GetFileName(openFile.FileName)} is already open. Would you still like to open it?",
-                                            "Duplicate file detected",
-                                            MessageBoxButtons.YesNo,
-                                            MessageBoxIcon.Warning);
+                        var result = MessageBox.Show(
+                                        $"A file named {Path.GetFileName(openFile.FileName)} is already open. Would you still like to open it?",
+                                        "Duplicate file detected",
+                                        MessageBoxButtons.YesNo,
+                                        MessageBoxIcon.Warning);
 
-                            if (result != DialogResult.Yes)
-                            {
-                                shouldOpenFile = false;
-                            }
+                        if (result != DialogResult.Yes)
+                        {
+                            shouldOpenFile = false;
                         }
                     }
                 }
@@ -194,11 +156,8 @@ namespace IndustrialPark
 
             SetupAssetVisibilityButtons();
 
-            if (!standalone)
-            {
-                Program.MainForm.SetToolStripItemName(this, Text);
-                Program.MainForm.SetRecentOpenedArchives(fileName);
-            }
+            Program.MainForm.SetToolStripItemName(this, Text);
+            Program.MainForm.SetRecentOpenedArchives(fileName);
 
             if (!archive.NoLayers && comboBoxLayers.SelectedIndex == -1)
             {
@@ -208,8 +167,7 @@ namespace IndustrialPark
 
         private void SetupAssetVisibilityButtons()
         {
-            if (!standalone)
-                Program.MainForm.SetupAssetVisibilityButtons();
+            Program.MainForm.SetupAssetVisibilityButtons();
         }
 
         private void SetMenuItemsEnabled()
@@ -352,11 +310,8 @@ namespace IndustrialPark
                 archive.Save(saveFileDialog.FileName);
 
                 Text = Path.GetFileName(saveFileDialog.FileName);
-                if (!standalone)
-                {
-                    Program.MainForm.SetToolStripItemName(this, Text);
-                    Program.MainForm.SetRecentOpenedArchives(saveFileDialog.FileName);
-                }
+                Program.MainForm.SetToolStripItemName(this, Text);
+                Program.MainForm.SetRecentOpenedArchives(saveFileDialog.FileName);
                 toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
                 archive.UnsavedChanges = false;
             }
@@ -395,11 +350,8 @@ namespace IndustrialPark
             archive.autoCompleteSource.Clear();
             archive.Dispose();
 
-            if (!standalone)
-            {
-                Program.MainForm.CloseArchiveEditor(this);
-                Program.MainForm.UpdateTitleBar();
-            }
+            Program.MainForm.CloseArchiveEditor(this);
+            Program.MainForm.UpdateTitleBar();
             Close();
             OnEditorUpdate();
         }
@@ -960,13 +912,8 @@ namespace IndustrialPark
                     archive.AddAsset(AHDR, asset.game, archive.platform.Endianness(), oldLayer, true);
 
                     if (ArchiveEditorFunctions.updateReferencesOnCopy)
-                    {
-                        if (standalone)
-                            archive.ReplaceReferences(oldAssetID, AHDR.assetID);
-                        else
-                            foreach (var ae in Program.MainForm.archiveEditors)
-                                ae.archive.ReplaceReferences(oldAssetID, AHDR.assetID);
-                    }
+                        foreach (var ae in Program.MainForm.archiveEditors)
+                            ae.archive.ReplaceReferences(oldAssetID, AHDR.assetID);
 
                     listViewAssets.Items.RemoveAt(listViewAssets.SelectedIndices[0]);
                     AddToAssetList(AHDR.assetID);
@@ -1421,7 +1368,7 @@ namespace IndustrialPark
         private void TemplateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var template = (AssetTemplate)((ToolStripItem)sender).Tag;
-            Vector3 Position = standalone ? new Vector3() : (Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward);
+            Vector3 Position = Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward;
             PlaceTemplate(Position, template);
             SetupAssetVisibilityButtons();
         }
@@ -1474,8 +1421,7 @@ namespace IndustrialPark
 
         private void checkBoxTemplateFocus_Click(object sender, EventArgs e)
         {
-            if (!standalone)
-                Program.MainForm.ClearTemplateFocus();
+            Program.MainForm.ClearTemplateFocus();
             checkBoxTemplateFocus.Checked = true;
         }
 

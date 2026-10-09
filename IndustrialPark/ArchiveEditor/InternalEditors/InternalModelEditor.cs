@@ -462,8 +462,7 @@ namespace IndustrialPark
 
         private void checkBoxUseTemplates_Click(object sender, EventArgs e)
         {
-            if (!archive.standalone)
-                Program.MainForm.ClearModelTemplateFocus();
+            Program.MainForm.ClearModelTemplateFocus();
             checkBoxUseTemplates.Checked = true;
         }
 

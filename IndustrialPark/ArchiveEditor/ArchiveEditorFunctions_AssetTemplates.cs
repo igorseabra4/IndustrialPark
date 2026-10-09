@@ -1270,7 +1270,7 @@ namespace IndustrialPark
                 //case AssetTemplate.Empty_Streaming_Sound:
                 //    return new AssetSound(assetName, template == AssetTemplate.Empty_Sound ? AssetType.Sound : AssetType.SoundStream, game, platform, new byte[0]);
                 case AssetTemplate.Empty_BSP:
-                    return new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), standalone ? null : Program.MainForm.renderer);
+                    return new AssetJSP(assetName, AssetType.BSP, GenerateBlankBSP(), Program.MainForm.renderer);
                 case AssetTemplate.Shiny_Red:
                 case AssetTemplate.Shiny_Yellow:
                 case AssetTemplate.Shiny_Green:

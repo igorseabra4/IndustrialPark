@@ -148,8 +148,6 @@ namespace IndustrialPark
         public Game game;
         public Platform platform;
 
-        public bool standalone;
-
         public bool New()
         {
             var getNewArchive = NewArchive.GetNewArchive();

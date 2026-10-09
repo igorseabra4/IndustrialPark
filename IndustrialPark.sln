@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.13.35919.96 d17.13
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12224.181 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IndustrialPark", "IndustrialPark\IndustrialPark.csproj", "{62F1A222-225B-463F-85A7-70F56C34C324}"
 EndProject
@@ -15,8 +14,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RenderWareFile", "RenderWareFile\RenderWareFile\RenderWareFile.csproj", "{005F2D00-06DE-4EF9-BFEE-80EFAC49E114}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Randomizer", "IndustrialParkRandomizer\Randomizer.csproj", "{6E4742AD-4125-486F-882D-82C703265887}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ArchiveEditor", "ArchiveEditor\ArchiveEditor.csproj", "{2B20165D-B6D3-4FA5-93B4-64EC117BA732}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IndustrialParkTest", "IndustrialParkTest\IndustrialParkTest.csproj", "{BD22CB98-D975-4E37-8707-9FA07C067806}"
 EndProject
@@ -46,10 +43,6 @@ Global
 		{6E4742AD-4125-486F-882D-82C703265887}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E4742AD-4125-486F-882D-82C703265887}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E4742AD-4125-486F-882D-82C703265887}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2B20165D-B6D3-4FA5-93B4-64EC117BA732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2B20165D-B6D3-4FA5-93B4-64EC117BA732}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2B20165D-B6D3-4FA5-93B4-64EC117BA732}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2B20165D-B6D3-4FA5-93B4-64EC117BA732}.Release|Any CPU.Build.0 = Release|Any CPU
 		{BD22CB98-D975-4E37-8707-9FA07C067806}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{BD22CB98-D975-4E37-8707-9FA07C067806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD22CB98-D975-4E37-8707-9FA07C067806}.Release|Any CPU.ActiveCfg = Release|Any CPU

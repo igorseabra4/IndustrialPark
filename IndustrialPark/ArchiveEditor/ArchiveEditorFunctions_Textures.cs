@@ -18,7 +18,7 @@ namespace IndustrialPark
 
         public void SetupTextureDisplay()
         {
-            if (standalone || SkipTextureDisplay || !ContainsAssetWithType(AssetType.Texture))
+            if (SkipTextureDisplay || !ContainsAssetWithType(AssetType.Texture))
                 return;
 
             lock (locker)

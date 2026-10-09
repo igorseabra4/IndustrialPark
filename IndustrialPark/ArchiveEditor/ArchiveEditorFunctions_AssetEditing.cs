@@ -180,9 +180,8 @@ namespace IndustrialPark
                 int layerIndex = IndexOfLayerOfType(layerType);
 
                 PlaceTemplate(layerIndex, assetTemplate);
-                if (!standalone)
-                    foreach (var ae in Program.MainForm.archiveEditors)
-                        ae.PopulateAssetListAndComboBox();
+                foreach (var ae in Program.MainForm.archiveEditors)
+                    ae.PopulateAssetListAndComboBox();
             }
             return (from asset in assetDictionary.Values where asset.assetType == assetType select asset).FirstOrDefault();
         }
