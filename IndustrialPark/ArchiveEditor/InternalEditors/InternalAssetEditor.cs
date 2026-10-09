@@ -6,411 +6,386 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark;
+
+public partial class InternalAssetEditor : Form, IInternalEditor
 {
-    public partial class InternalAssetEditor : Form, IInternalEditor
+    public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
     {
-        public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+        InitializeComponent();
+        TopMost = true;
+
+        this.asset = asset;
+        this.archive = archive;
+        this.updateListView = updateListView;
+
+        propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
+
+        Text = $"[{asset.assetType}] {asset}";
+
+        if (asset is IAssetCopyPasteTransformation iacpt)
+            SetupForCopyPasteTransformation(iacpt);
+
+        if (asset is AssetCAM cam)
+            SetupForCam(cam);
+        else if (asset is AssetCSN csn)
+            SetupForCsn(csn);
+        else if (asset is IAssetAddSelected aas)
+            SetupForAddSelected(aas);
+        else if (asset is AssetPARS pars)
+            SetupForPars(pars);
+        else if (asset is AssetSHRP shrp)
+            SetupForShrp(shrp);
+        else if (asset is AssetSCRP scrp)
+            SetupForScrp(scrp);
+        else if (asset is AssetUIM uim)
+            SetupForUim(uim);
+        else if (asset is AssetWIRE wire)
+            SetupForWire(wire);
+        else if (asset is AssetFOG fog)
+            SetupForFog(fog);
+        else if (asset is AssetJSP_INFO info)
+            SetupForJSPInfo(info);
+
+        if (asset is EntityAsset entity && !new AssetType[] {
+            AssetType.Trigger,
+            AssetType.Pickup,
+            AssetType.Player,
+            AssetType.UserInterface,
+            AssetType.UserInterfaceFont
+        }.Contains(asset.assetType))
+            SetupForBakeScaleRot(entity);
+
+        AddRow(ButtonSize);
+
+        Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
+        buttonHelp.Click += (object sender, EventArgs e) =>
         {
-            InitializeComponent();
-            TopMost = true;
+            ArchiveEditorFunctions.OpenWikiPage(asset);
+        };
+        tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
 
-            this.asset = asset;
-            this.archive = archive;
-            this.updateListView = updateListView;
+        Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
+        buttonFindCallers.Click += (object sender, EventArgs e) =>
+            Program.MainForm.FindWhoTargets(GetAssetID());
+        tableLayoutPanel1.Controls.Add(buttonFindCallers, 1, tableLayoutPanel1.RowCount - 1);
 
-            propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
+        for (int i = 1; i < tableLayoutPanel1.RowCount; i++)
+        {
+            var rs = new RowStyle(SizeType.Absolute, RowSizes[i]);
+            if (i < tableLayoutPanel1.RowStyles.Count)
+                tableLayoutPanel1.RowStyles[i] = rs;
+            else
+                tableLayoutPanel1.RowStyles.Add(rs);
+        }
 
-            Text = $"[{asset.assetType}] {asset}";
+        IInternalEditor.SelectFirstProperty(propertyGridAsset.SelectedGridItem);
+    }
 
-            if (asset is IAssetCopyPasteTransformation iacpt)
-                SetupForCopyPasteTransformation(iacpt);
+    private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
+    {
+        archive.CloseInternalEditor(this);
+    }
 
-            if (asset is AssetCAM cam)
-                SetupForCam(cam);
-            else if (asset is AssetCSN csn)
-                SetupForCsn(csn);
-            else if (asset is IAssetAddSelected aas)
-                SetupForAddSelected(aas);
-            else if (asset is AssetPARS pars)
-                SetupForPars(pars);
-            else if (asset is AssetSHRP shrp)
-                SetupForShrp(shrp);
-            else if (asset is AssetSCRP scrp)
-                SetupForScrp(scrp);
-            else if (asset is AssetUIM uim)
-                SetupForUim(uim);
-            else if (asset is AssetWIRE wire)
-                SetupForWire(wire);
-            else if (asset is AssetFOG fog)
-                SetupForFog(fog);
-            else if (asset is AssetJSP_INFO info)
-                SetupForJSPInfo(info);
+    private readonly Asset asset;
+    private readonly ArchiveEditorFunctions archive;
+    private readonly Action<Asset> updateListView;
 
-            if (asset is EntityAsset entity && !new AssetType[] {
-                AssetType.Trigger,
-                AssetType.Pickup,
-                AssetType.Player,
-                AssetType.UserInterface,
-                AssetType.UserInterfaceFont
-            }.Contains(asset.assetType))
-                SetupForBakeScaleRot(entity);
+    public uint GetAssetID()
+    {
+        return asset.assetID;
+    }
 
+    public void RefreshPropertyGrid()
+    {
+        Task.Run(() =>
+        {
+            Invoke((Action)(() =>
+            {
+                propertyGridAsset.Refresh();
+                updateListView(asset);
+            }));
+        });
+    }
+
+    private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+    {
+        archive.UnsavedChanges = true;
+        RefreshPropertyGrid();
+        Program.UndoBuffer.AddAction(IInternalEditor.GetPropertyChangedAction(archive, asset, e.OldValue, e.ChangedItem.Value, e.ChangedItem));
+    }
+
+    private readonly List<int> RowSizes = new List<int>() { -1 };
+    private const int ButtonSize = 28;
+
+    private int AddRow(int size)
+    {
+        tableLayoutPanel1.RowCount += 1;
+        RowSizes.Add(size);
+        return tableLayoutPanel1.RowCount - 1;
+    }
+
+    private void SetupForJSPInfo(AssetJSP_INFO asset)
+    {
+        var rowIndex = AddRow(ButtonSize);
+
+        Button buttonGenerate = new Button() { Dock = DockStyle.Fill, Text = "Generate JSPINFO", AutoSize = true };
+        buttonGenerate.Click += (s, e) =>
+        {
+            archive.GenerateJSPInfo(asset);
+            RefreshPropertyGrid();
+            archive.UnsavedChanges = true;
+        };
+        tableLayoutPanel1.Controls.Add(buttonGenerate, 0, rowIndex);
+    }
+
+    private void SetupForCam(AssetCAM asset)
+    {
+        var rowIndex = AddRow(ButtonSize);
+
+        Button buttonGetPos = new Button() { Dock = DockStyle.Fill, Text = "Get View Position", AutoSize = true };
+        buttonGetPos.Click += (object sender, EventArgs e) =>
+        {
+            asset.SetPosition(Program.MainForm.renderer.Camera.Position);
+
+            RefreshPropertyGrid();
+            archive.UnsavedChanges = true;
+        };
+        tableLayoutPanel1.Controls.Add(buttonGetPos, 0, rowIndex);
+
+        Button buttonGetDir = new Button() { Dock = DockStyle.Fill, Text = "Get View Direction", AutoSize = true };
+        buttonGetDir.Click += (object sender, EventArgs e) =>
+        {
+            asset.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
+            asset.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
+            asset.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
+
+            RefreshPropertyGrid();
+            archive.UnsavedChanges = true;
+        };
+        tableLayoutPanel1.Controls.Add(buttonGetDir, 1, rowIndex);
+    }
+
+    private void SetupForAddSelected(IAssetAddSelected asset)
+    {
+        var rowIndex = AddRow(ButtonSize);
+
+        Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add selected to " + asset.GetItemsText, AutoSize = true };
+        buttonAddSelected.Click += (object sender, EventArgs e) =>
+        {
+            asset.AddItems(archive.GetCurrentlySelectedAssetIDs().ToList());
+            RefreshPropertyGrid();
+            archive.UnsavedChanges = true;
+        };
+        tableLayoutPanel1.Controls.Add(buttonAddSelected, 0, rowIndex);
+        tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
+    }
+    private void SetupForFog(AssetFOG asset)
+    {
+        AddRow(ButtonSize);
+
+        Button buttonPreviewFog = new Button() { Dock = DockStyle.Fill, Text = "Preview Fog", AutoSize = true };
+        buttonPreviewFog.Click += (object sender, EventArgs e) =>
+        {
+            SharpRenderer.Fog = asset;
+        };
+        tableLayoutPanel1.Controls.Add(buttonPreviewFog);
+    }
+
+    private void SetupForScrp(AssetSCRP asset)
+    {
+        var rowIndex = AddRow(ButtonSize);
+
+        Button buttonConvert = new Button() { Dock = DockStyle.Fill, Text = "Convert to group of timers", AutoSize = true };
+        buttonConvert.Click += (object sender, EventArgs e) =>
+        {
+            var newAssets = archive.ConvertScriptToGroupOfTimers(asset);
+            archive.UnsavedChanges = true;
+            Program.MainForm.SetSelectedIndices(newAssets);
+        };
+        tableLayoutPanel1.Controls.Add(buttonConvert, 0, rowIndex);
+        tableLayoutPanel1.SetColumnSpan(buttonConvert, 2);
+    }
+
+    private void SetupForCsn(AssetCSN asset)
+    {
+        AddRow(ButtonSize);
+
+        Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All", AutoSize = true };
+        buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
+        {
+            using (CommonOpenFileDialog openFolder = new CommonOpenFileDialog() { IsFolderPicker = true })
+                if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
+                    asset.ExtractToFolder(openFolder.FileName, archive.platform.Endianness());
+        };
+        tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
+        tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
+    }
+
+    private void SetupForShrp(AssetSHRP asset)
+    {
+        AddRow(ButtonSize);
+        AddRow(ButtonSize);
+
+        var validTypes = new List<IShrapnelType>()
+        {
+            IShrapnelType.Particle,
+            IShrapnelType.Projectile,
+            IShrapnelType.Lightning,
+            IShrapnelType.Sound
+        };
+
+        if (asset.game >= Game.Incredibles)
+        {
+            AddRow(ButtonSize);
             AddRow(ButtonSize);
 
-            Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
-            buttonHelp.Click += (object sender, EventArgs e) =>
-            {
-                ArchiveEditorFunctions.OpenWikiPage(asset);
-            };
-            tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
-
-            Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
-            buttonFindCallers.Click += (object sender, EventArgs e) =>
-                Program.MainForm.FindWhoTargets(GetAssetID());
-            tableLayoutPanel1.Controls.Add(buttonFindCallers, 1, tableLayoutPanel1.RowCount - 1);
-
-            for (int i = 1; i < tableLayoutPanel1.RowCount; i++)
-            {
-                var rs = new RowStyle(SizeType.Absolute, RowSizes[i]);
-                if (i < tableLayoutPanel1.RowStyles.Count)
-                    tableLayoutPanel1.RowStyles[i] = rs;
-                else
-                    tableLayoutPanel1.RowStyles.Add(rs);
-            }
-
-            SelectFirstProperty();
-        }
-
-        private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            archive.CloseInternalEditor(this);
-        }
-
-        private void SelectFirstProperty()
-        {
-            var root = propertyGridAsset.SelectedGridItem;
-            while (root.Parent != null)
-                root = root.Parent;
-            FindFirstPropertyRecursive(root)?.Select();
-        }
-
-        private GridItem FindFirstPropertyRecursive(GridItem item)
-        {
-            foreach (GridItem child in item.GridItems)
-            {
-                if (child.GridItemType == GridItemType.Property)
-                    return child;
-                if (child.GridItemType == GridItemType.Category && child.GridItems.Count > 0)
-                {
-                    var nested = FindFirstPropertyRecursive(child);
-                    if (nested != null)
-                        return nested;
-                }
-            }
-            return null;
-        }
-
-        private readonly Asset asset;
-        private readonly ArchiveEditorFunctions archive;
-        private readonly Action<Asset> updateListView;
-
-        public uint GetAssetID()
-        {
-            return asset.assetID;
-        }
-
-        public void RefreshPropertyGrid()
-        {
-            Task.Run(() =>
-            {
-                Invoke((Action)(() =>
-                {
-                    propertyGridAsset.Refresh();
-                    updateListView(asset);
-                }));
+            validTypes.AddRange(new IShrapnelType[] {
+                 IShrapnelType.Shockwave,
+                 IShrapnelType.Explosion,
+                 IShrapnelType.Distortion,
+                 IShrapnelType.Fire,
             });
         }
 
-        private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
-        {
-            archive.UnsavedChanges = true;
-            RefreshPropertyGrid();
-            Program.UndoBuffer.AddAction(new AssetPropertyChangedAction(archive, asset, IInternalEditor.GetPropertyPath(e.ChangedItem), e.OldValue, e.ChangedItem.Value));
-        }
-
-        private readonly List<int> RowSizes = new List<int>() { -1 };
-        private const int ButtonSize = 28;
-
-        private int AddRow(int size)
-        {
-            tableLayoutPanel1.RowCount += 1;
-            RowSizes.Add(size);
-            return tableLayoutPanel1.RowCount - 1;
-        }
-
-        private void SetupForJSPInfo(AssetJSP_INFO asset)
-        {
-            var rowIndex = AddRow(ButtonSize);
-
-            Button buttonGenerate = new Button() { Dock = DockStyle.Fill, Text = "Generate JSPINFO", AutoSize = true };
-            buttonGenerate.Click += (s, e) =>
-            {
-                archive.GenerateJSPInfo(asset);
-                RefreshPropertyGrid();
-                archive.UnsavedChanges = true;
-            };
-            tableLayoutPanel1.Controls.Add(buttonGenerate, 0, rowIndex);
-        }
-
-        private void SetupForCam(AssetCAM asset)
-        {
-            var rowIndex = AddRow(ButtonSize);
-
-            Button buttonGetPos = new Button() { Dock = DockStyle.Fill, Text = "Get View Position", AutoSize = true };
-            buttonGetPos.Click += (object sender, EventArgs e) =>
-            {
-                asset.SetPosition(Program.MainForm.renderer.Camera.Position);
-
-                RefreshPropertyGrid();
-                archive.UnsavedChanges = true;
-            };
-            tableLayoutPanel1.Controls.Add(buttonGetPos, 0, rowIndex);
-
-            Button buttonGetDir = new Button() { Dock = DockStyle.Fill, Text = "Get View Direction", AutoSize = true };
-            buttonGetDir.Click += (object sender, EventArgs e) =>
-            {
-                asset.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
-                asset.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
-                asset.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
-
-                RefreshPropertyGrid();
-                archive.UnsavedChanges = true;
-            };
-            tableLayoutPanel1.Controls.Add(buttonGetDir, 1, rowIndex);
-        }
-
-        private void SetupForAddSelected(IAssetAddSelected asset)
-        {
-            var rowIndex = AddRow(ButtonSize);
-
-            Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add selected to " + asset.GetItemsText, AutoSize = true };
-            buttonAddSelected.Click += (object sender, EventArgs e) =>
-            {
-                asset.AddItems(archive.GetCurrentlySelectedAssetIDs().ToList());
-                RefreshPropertyGrid();
-                archive.UnsavedChanges = true;
-            };
-            tableLayoutPanel1.Controls.Add(buttonAddSelected, 0, rowIndex);
-            tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
-        }
-        private void SetupForFog(AssetFOG asset)
-        {
-            AddRow(ButtonSize);
-
-            Button buttonPreviewFog = new Button() { Dock = DockStyle.Fill, Text = "Preview Fog", AutoSize = true };
-            buttonPreviewFog.Click += (object sender, EventArgs e) =>
-            {
-                SharpRenderer.Fog = asset;
-            };
-            tableLayoutPanel1.Controls.Add(buttonPreviewFog);
-        }
-
-        private void SetupForScrp(AssetSCRP asset)
-        {
-            var rowIndex = AddRow(ButtonSize);
-
-            Button buttonConvert = new Button() { Dock = DockStyle.Fill, Text = "Convert to group of timers", AutoSize = true };
-            buttonConvert.Click += (object sender, EventArgs e) =>
-            {
-                var newAssets = archive.ConvertScriptToGroupOfTimers(asset);
-                archive.UnsavedChanges = true;
-                Program.MainForm.SetSelectedIndices(newAssets);
-            };
-            tableLayoutPanel1.Controls.Add(buttonConvert, 0, rowIndex);
-            tableLayoutPanel1.SetColumnSpan(buttonConvert, 2);
-        }
-
-        private void SetupForCsn(AssetCSN asset)
-        {
-            AddRow(ButtonSize);
-
-            Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All", AutoSize = true };
-            buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
-            {
-                using (CommonOpenFileDialog openFolder = new CommonOpenFileDialog() { IsFolderPicker = true })
-                    if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
-                        asset.ExtractToFolder(openFolder.FileName, archive.platform.Endianness());
-            };
-            tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
-            tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
-        }
-
-        private void SetupForShrp(AssetSHRP asset)
+        if (asset.game >= Game.ROTU)
         {
             AddRow(ButtonSize);
             AddRow(ButtonSize);
 
-            var validTypes = new List<IShrapnelType>()
+            validTypes.AddRange(new IShrapnelType[]
             {
-                IShrapnelType.Particle,
-                IShrapnelType.Projectile,
-                IShrapnelType.Lightning,
-                IShrapnelType.Sound
-            };
-
-            if (asset.game >= Game.Incredibles)
-            {
-                AddRow(ButtonSize);
-                AddRow(ButtonSize);
-
-                validTypes.AddRange(new IShrapnelType[] {
-                     IShrapnelType.Shockwave,
-                     IShrapnelType.Explosion,
-                     IShrapnelType.Distortion,
-                     IShrapnelType.Fire,
-                });
-            }
-
-            if (asset.game >= Game.ROTU)
-            {
-                AddRow(ButtonSize);
-                AddRow(ButtonSize);
-
-                validTypes.AddRange(new IShrapnelType[]
-                {
-                    IShrapnelType.Light,
-                    IShrapnelType.Smoke,
-                    IShrapnelType.Goo
-                });
-            }
-
-            foreach (var i in validTypes)
-            {
-                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add {i}", AutoSize = true };
-                buttonAdd.Click += (object sender, EventArgs e) =>
-                {
-                    asset.AddEntry(i);
-                    RefreshPropertyGrid();
-                    archive.UnsavedChanges = true;
-                };
-                tableLayoutPanel1.Controls.Add(buttonAdd);
-            }
+                IShrapnelType.Light,
+                IShrapnelType.Smoke,
+                IShrapnelType.Goo
+            });
         }
 
-        private void SetupForPars(AssetPARS asset)
+        foreach (var i in validTypes)
         {
-            AddRow(ButtonSize);
-
-            ComboBox listBox = new ComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
-            foreach (var o in Enum.GetValues(typeof(ParticleCommandType)))
-                listBox.Items.Add(o);
-            listBox.SelectedIndex = 0;
-
-            Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = "Add Command", AutoSize = true };
+            Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add {i}", AutoSize = true };
             buttonAdd.Click += (object sender, EventArgs e) =>
             {
-                asset.AddEntry((ParticleCommandType)listBox.Items[listBox.SelectedIndex]);
+                asset.AddEntry(i);
+                RefreshPropertyGrid();
+                archive.UnsavedChanges = true;
             };
-
-            tableLayoutPanel1.Controls.Add(listBox);
             tableLayoutPanel1.Controls.Add(buttonAdd);
         }
+    }
 
-        private void SetupForUim(AssetUIM asset)
+    private void SetupForPars(AssetPARS asset)
+    {
+        AddRow(ButtonSize);
+
+        ComboBox listBox = new ComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
+        foreach (var o in Enum.GetValues(typeof(ParticleCommandType)))
+            listBox.Items.Add(o);
+        listBox.SelectedIndex = 0;
+
+        Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = "Add Command", AutoSize = true };
+        buttonAdd.Click += (object sender, EventArgs e) =>
         {
-            AddRow(ButtonSize);
-            AddRow(ButtonSize);
-            AddRow(ButtonSize);
-            AddRow(ButtonSize);
+            asset.AddEntry((ParticleCommandType)listBox.Items[listBox.SelectedIndex]);
+        };
 
-            foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
+        tableLayoutPanel1.Controls.Add(listBox);
+        tableLayoutPanel1.Controls.Add(buttonAdd);
+    }
+
+    private void SetupForUim(AssetUIM asset)
+    {
+        AddRow(ButtonSize);
+        AddRow(ButtonSize);
+        AddRow(ButtonSize);
+        AddRow(ButtonSize);
+
+        foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
+        {
+            Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add: {uimct}", AutoSize = true };
+            buttonAdd.Click += (object sender, EventArgs e) =>
             {
-                Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add: {uimct}", AutoSize = true };
-                buttonAdd.Click += (object sender, EventArgs e) =>
-                {
-                    asset.AddEntry(uimct);
-                    RefreshPropertyGrid();
-                    archive.UnsavedChanges = true;
-                };
-                tableLayoutPanel1.Controls.Add(buttonAdd);
+                asset.AddEntry(uimct);
+                RefreshPropertyGrid();
+                archive.UnsavedChanges = true;
+            };
+            tableLayoutPanel1.Controls.Add(buttonAdd);
+        }
+    }
+
+    private void SetupForWire(AssetWIRE asset)
+    {
+        var rowIndex = AddRow(ButtonSize);
+
+        Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
+        buttonImport.Click += (object sender, EventArgs e) =>
+        {
+            OpenFileDialog openFile = new OpenFileDialog
+            {
+                Filter = "OBJ Files|*.obj|All files|*.*",
+            };
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                asset.FromObj(openFile.FileName);
+                archive.UnsavedChanges = true;
             }
-        }
+        };
+        tableLayoutPanel1.Controls.Add(buttonImport, 0, rowIndex);
 
-        private void SetupForWire(AssetWIRE asset)
+        Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
+        buttonExport.Click += (object sender, EventArgs e) =>
         {
-            var rowIndex = AddRow(ButtonSize);
-
-            Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
-            buttonImport.Click += (object sender, EventArgs e) =>
+            SaveFileDialog saveFile = new SaveFileDialog()
             {
-                OpenFileDialog openFile = new OpenFileDialog
-                {
-                    Filter = "OBJ Files|*.obj|All files|*.*",
-                };
-
-                if (openFile.ShowDialog() == DialogResult.OK)
-                {
-                    asset.FromObj(openFile.FileName);
-                    archive.UnsavedChanges = true;
-                }
+                Filter = "OBJ Files|*.obj|All files|*.*",
+                FileName = asset.assetName
             };
-            tableLayoutPanel1.Controls.Add(buttonImport, 0, rowIndex);
 
-            Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
-            buttonExport.Click += (object sender, EventArgs e) =>
-            {
-                SaveFileDialog saveFile = new SaveFileDialog()
-                {
-                    Filter = "OBJ Files|*.obj|All files|*.*",
-                    FileName = asset.assetName
-                };
+            if (saveFile.ShowDialog() == DialogResult.OK)
+                asset.ToObj(saveFile.FileName);
+        };
+        tableLayoutPanel1.Controls.Add(buttonExport, 1, rowIndex);
+    }
 
-                if (saveFile.ShowDialog() == DialogResult.OK)
-                    asset.ToObj(saveFile.FileName);
-            };
-            tableLayoutPanel1.Controls.Add(buttonExport, 1, rowIndex);
-        }
+    private void SetupForCopyPasteTransformation(IAssetCopyPasteTransformation asset)
+    {
+        var rowIndex = AddRow(ButtonSize);
 
-        private void SetupForCopyPasteTransformation(IAssetCopyPasteTransformation asset)
+        Button buttonCopyTrans = new Button() { Dock = DockStyle.Fill, Text = "Copy Transformation", AutoSize = true };
+        buttonCopyTrans.Click += (object sender, EventArgs e) =>
         {
-            var rowIndex = AddRow(ButtonSize);
+            asset.CopyTransformation();
+        };
+        tableLayoutPanel1.Controls.Add(buttonCopyTrans, 0, rowIndex);
 
-            Button buttonCopyTrans = new Button() { Dock = DockStyle.Fill, Text = "Copy Transformation", AutoSize = true };
-            buttonCopyTrans.Click += (object sender, EventArgs e) =>
-            {
-                asset.CopyTransformation();
-            };
-            tableLayoutPanel1.Controls.Add(buttonCopyTrans, 0, rowIndex);
-
-            Button buttonPasteTransformation = new Button() { Dock = DockStyle.Fill, Text = "Paste Transformation", AutoSize = true };
-            buttonPasteTransformation.Click += (object sender, EventArgs e) =>
-            {
-                asset.PasteTransformation();
-                propertyGridAsset.Refresh();
-            };
-            tableLayoutPanel1.Controls.Add(buttonPasteTransformation, 1, rowIndex);
-        }
-
-        private void SetupForBakeScaleRot(EntityAsset asset)
+        Button buttonPasteTransformation = new Button() { Dock = DockStyle.Fill, Text = "Paste Transformation", AutoSize = true };
+        buttonPasteTransformation.Click += (object sender, EventArgs e) =>
         {
-            var rowIndex = AddRow(ButtonSize);
+            asset.PasteTransformation();
+            propertyGridAsset.Refresh();
+        };
+        tableLayoutPanel1.Controls.Add(buttonPasteTransformation, 1, rowIndex);
+    }
 
-            Button buttonBakeRotation = new Button() { Dock = DockStyle.Fill, Text = "Bake Rotation", AutoSize = true };
-            buttonBakeRotation.Click += (object sender, EventArgs e) =>
-            {
-                asset.ApplyBakeRotation();
-                propertyGridAsset.Refresh();
-            };
-            tableLayoutPanel1.Controls.Add(buttonBakeRotation, 0, rowIndex);
+    private void SetupForBakeScaleRot(EntityAsset asset)
+    {
+        var rowIndex = AddRow(ButtonSize);
 
-            Button buttonBakeScale = new Button() { Dock = DockStyle.Fill, Text = "Bake Scale", AutoSize = true };
-            buttonBakeScale.Click += (object sender, EventArgs e) =>
-            {
-                asset.ApplyBakeScale();
-                propertyGridAsset.Refresh();
-            };
-            tableLayoutPanel1.Controls.Add(buttonBakeScale, 1, rowIndex);
-        }
+        Button buttonBakeRotation = new Button() { Dock = DockStyle.Fill, Text = "Bake Rotation", AutoSize = true };
+        buttonBakeRotation.Click += (object sender, EventArgs e) =>
+        {
+            asset.ApplyBakeRotation();
+            propertyGridAsset.Refresh();
+        };
+        tableLayoutPanel1.Controls.Add(buttonBakeRotation, 0, rowIndex);
+
+        Button buttonBakeScale = new Button() { Dock = DockStyle.Fill, Text = "Bake Scale", AutoSize = true };
+        buttonBakeScale.Click += (object sender, EventArgs e) =>
+        {
+            asset.ApplyBakeScale();
+            propertyGridAsset.Refresh();
+        };
+        tableLayoutPanel1.Controls.Add(buttonBakeScale, 1, rowIndex);
     }
 }

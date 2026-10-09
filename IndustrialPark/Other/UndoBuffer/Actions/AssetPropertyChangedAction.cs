@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 
 namespace IndustrialPark;
 
@@ -49,8 +48,6 @@ public class AssetPropertyChangedAction : IReversibleAction
         }
         var property = TypeDescriptor.GetProperties(current)[propertyPath[^1]];
         property.SetValue(current, IReversibleAction.ConvertValue(value, property.PropertyType));
-
-        // TODO: fix this for flags fields
 
         if (this.asset is Asset a)
             archive.RefreshAssetEditor(a.assetID);
