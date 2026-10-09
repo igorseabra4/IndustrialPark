@@ -21,11 +21,13 @@ public class AssetRemovedAction : IReversibleAction
     public void Undo()
     {
         archive.AddAsset(AHDR, archive.game, archive.platform.Endianness(), layerIndex, true);
+        Program.MainForm.RefreshAssetList(archive);
     }
 
     public void Redo()
     {
         archive.RemoveAsset(AHDR.assetID);
+        Program.MainForm.RefreshAssetList(archive);
     }
 
     public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;

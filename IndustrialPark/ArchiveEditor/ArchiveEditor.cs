@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -40,6 +41,13 @@ namespace IndustrialPark
 
         public ArchiveEditorFunctions archive;
         public int SelectedLayerIndex => comboBoxLayers.SelectedIndex;
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public int SelectedLayerIndex
+        {
+            get => comboBoxLayers.SelectedIndex;
+            set => comboBoxLayers.SelectedIndex = value;
+        }
 
         public ArchiveEditor(bool standalone = false)
         {
@@ -411,7 +419,7 @@ namespace IndustrialPark
             return archive.currentlyOpenFilePath;
         }
 
-        private void PopulateLayerComboBox()
+        public void PopulateLayerComboBox()
         {
             if (archive.NoLayers)
                 return;
@@ -520,6 +528,8 @@ namespace IndustrialPark
             PopulateAssetList();
             SetMenuItemsEnabled();
             SetupAssetVisibilityButtons();
+
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void buttonArrowUp_Click(object sender, EventArgs e)
@@ -834,7 +844,11 @@ namespace IndustrialPark
             archive.DuplicateSelectedAssets(out List<uint> finalIndices);
 
             if (!archive.NoLayers)
+            {
+                programIsChangingStuff = true;
                 comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+                programIsChangingStuff = false;
+            }
 
             AddToAssetList(finalIndices);
             SetSelectedIndices(finalIndices);
@@ -855,6 +869,13 @@ namespace IndustrialPark
         {
             if (!archive.PasteAssetsFromClipboard(SelectedLayerIndex, out List<uint> finalIndices))
                 return;
+
+            if (!archive.NoLayers)
+            {
+                programIsChangingStuff = true;
+                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+                programIsChangingStuff = false;
+            }
 
             AddToAssetList(finalIndices);
             SetSelectedIndices(finalIndices);
@@ -1415,8 +1436,10 @@ namespace IndustrialPark
             if (assetIDs.Count != 0)
             {
                 archive.UnsavedChanges = true;
+                programIsChangingStuff = true;
                 if (!archive.NoLayers)
                     comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+                programIsChangingStuff = false;
                 AddToAssetList(assetIDs);
                 SetSelectedIndices(assetIDs);
                 Program.UndoBuffer.AddAction([.. assetIDs.Select(archive.GetAssetAddedAction), new SelectionAction(assetIDs)]);

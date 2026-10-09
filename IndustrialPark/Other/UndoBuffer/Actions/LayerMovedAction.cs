@@ -18,9 +18,15 @@ namespace IndustrialPark
         public void Undo()
         {
             if (isDown)
+            {
                 archive.MoveLayerUp(index);
+                Program.MainForm.RefreshLayerList(archive, index - 1);
+            }
             else
+            {
                 archive.MoveLayerDown(index);
+                Program.MainForm.RefreshLayerList(archive, index + 1);
+            }
         }
 
         public void Redo()
@@ -29,6 +35,7 @@ namespace IndustrialPark
                 archive.MoveLayerDown(index - 1);
             else
                 archive.MoveLayerUp(index + 1);
+            Program.MainForm.RefreshLayerList(archive, index);
         }
 
         public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;

@@ -21,6 +21,7 @@ public class AssetAddedAction : IReversibleAction
     public void Undo()
     {
         archive.RemoveAsset(AHDR.assetID);
+        Program.MainForm.RefreshAssetList(archive);
     }
 
     public void Redo()
@@ -31,6 +32,7 @@ public class AssetAddedAction : IReversibleAction
             AHDR.data = soundData;
         }
         archive.AddAsset(AHDR, archive.game, archive.platform.Endianness(), layerIndex, true);
+        Program.MainForm.RefreshAssetList(archive);
     }
 
     public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;

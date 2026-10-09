@@ -21,11 +21,13 @@ namespace IndustrialPark
         public void Undo()
         {
             archive.SetLayerTypeGeneric(index, oldValue);
+            Program.MainForm.RefreshLayerList(archive, index);
         }
 
         public void Redo()
         {
             archive.SetLayerTypeGeneric(index, newValue);
+            Program.MainForm.RefreshLayerList(archive, index);
         }
 
         public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;

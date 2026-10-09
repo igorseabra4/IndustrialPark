@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 namespace IndustrialPark;
 
@@ -13,17 +14,17 @@ public class SelectionAction : IReversibleAction
 
     public SelectionAction(IEnumerable<uint> selection)
     {
-        this.selection = [..selection];
+        this.selection = selection.Any() ? [..selection] : null;
     }
 
     public SelectionAction(uint assetID)
     {
-        this.selection = [assetID];
+        selection = [assetID];
     }
 
     public void Undo()
     {
-        if (selection.Count != 0)
+        if (selection != null && selection.Count > 0)
             Program.MainForm.SetSelectedIndices(selection);
     }
 

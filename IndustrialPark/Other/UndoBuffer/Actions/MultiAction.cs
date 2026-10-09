@@ -43,4 +43,6 @@ public class MultiAction : IReversibleAction
         }
         return result.ToString();
     }
+
+    public bool IsEmpty => !actions.Any(a => a is not SelectionAction);
 }

@@ -2249,5 +2249,27 @@ namespace IndustrialPark
         {
             new ScrollableMessageBox("Undo Buffer", Program.UndoBuffer.ToString()).Show();
         }
+
+        public void RefreshAssetList(ArchiveEditorFunctions archive)
+        {
+            foreach (var ae in archiveEditors)
+                if (ae.archive == archive)
+                {
+                    var layerIndex = ae.archive.NoLayers ? -1 : ae.SelectedLayerIndex;
+                    ae.PopulateLayerComboBox();
+                    ae.SelectedLayerIndex = layerIndex;
+                }
+        }
+
+        internal void RefreshLayerList(ArchiveEditorFunctions archive, int index = -1)
+        {
+            foreach (var ae in archiveEditors)
+                if (ae.archive == archive && !ae.archive.NoLayers)
+                {
+                    ae.PopulateLayerComboBox();
+                    if (index >= 0 && index < ae.archive.LayerCount)
+                        ae.SelectedLayerIndex = index;
+                }
+        }
     }
 }

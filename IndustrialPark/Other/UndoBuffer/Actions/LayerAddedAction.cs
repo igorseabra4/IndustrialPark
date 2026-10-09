@@ -19,11 +19,13 @@ namespace IndustrialPark
         public void Undo()
         {
             archive.RemoveLayer(index);
+            Program.MainForm.RefreshLayerList(archive);
         }
 
         public void Redo()
         {
             archive.AddLayer(type, index);
+            Program.MainForm.RefreshLayerList(archive, index);
         }
 
         public bool ContainsArchive(ArchiveEditorFunctions archive) => this.archive == archive;

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace IndustrialPark;
@@ -10,6 +11,9 @@ public class UndoBuffer
 
     public void AddAction(IReversibleAction action)
     {
+        if (action is MultiAction multi && multi.IsEmpty)
+            return;
+
         int redoCount = actions.Count - currentIndex - 1;
         if (redoCount > 0)
             actions.RemoveRange(currentIndex + 1, redoCount);
@@ -20,7 +24,8 @@ public class UndoBuffer
 
     public void AddAction(IEnumerable<IReversibleAction> actions)
     {
-        AddAction(new MultiAction(actions));
+        if (actions.Any(a => a is not SelectionAction))
+            AddAction(new MultiAction(actions));
     }
 
     public void Undo()
