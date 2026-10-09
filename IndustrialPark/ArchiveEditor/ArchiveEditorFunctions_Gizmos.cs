@@ -1,7 +1,6 @@
 ﻿using SharpDX;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Design;
 using System.Linq;
 
 namespace IndustrialPark
@@ -813,9 +812,10 @@ namespace IndustrialPark
 
         public void MouseMoveForRotationLocalAxis(int distanceX, bool grid)
         {
-            Axis axis = (Axis)Array.FindIndex(rotationGizmos, g => g.isSelected);
-            if (axis < 0)
+            var index = Array.FindIndex(rotationGizmos, g => g.isSelected);
+            if (index < 0)
                 return;
+            var axis = (Axis)index;
 
             switch (axis)
             {
