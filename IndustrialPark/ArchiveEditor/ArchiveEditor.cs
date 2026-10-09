@@ -1766,10 +1766,8 @@ namespace IndustrialPark
 
                 for (int i = 0; i < archive.LayerCount; i++)
                 {
-                    archive.SelectedLayerIndex = i;
-
-                    assetTypesOnLayer = archive.AssetTypesOnLayer();
-                    output.WriteLine($"{archive.LayerToString()}");
+                    assetTypesOnLayer = archive.AssetTypesOnLayer(i);
+                    output.WriteLine($"{archive.LayerToString(i)}");
                     output.Write($"{assetTypesOnLayer.Count} asset type(s) [");
                     foreach (var assetType in assetTypesOnLayer)
                     {
@@ -1777,7 +1775,7 @@ namespace IndustrialPark
                     }
                     output.WriteLine("]");
 
-                    assetIDsOnLayer = archive.GetAssetIDsOnLayer();
+                    assetIDsOnLayer = archive.GetAssetIDsOnLayer(i);
 
                     for (int j = 0; j < assetIDsOnLayer.Count(); j++)
                     {
