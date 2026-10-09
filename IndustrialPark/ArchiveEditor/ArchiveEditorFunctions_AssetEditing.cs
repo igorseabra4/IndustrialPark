@@ -375,11 +375,9 @@ namespace IndustrialPark
         private void MergeSoundInfo<T>(T asset, List<IReversibleAction> actions) where T : ISoundInfoAsset<T>
         {
             var SNDI = assetDictionary.Values.FirstOrDefault(a => a.assetType == AssetType.SoundInfo);
-            var action1 = GetAssetRemovedAction(SNDI);
+            actions.Add(GetAssetRemovedAction(SNDI));
             ((ISoundInfoAsset<T>)SNDI).Merge(asset);
-            var action2 = GetAssetAddedAction(SNDI);
-            actions.Add(action1);
-            actions.Add(action2);
+            actions.Add(GetAssetAddedAction(SNDI));
         }
 
         public static AHDRFlags AHDRFlagsFromAssetType(AssetType assetType)

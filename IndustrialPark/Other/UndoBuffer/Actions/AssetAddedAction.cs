@@ -25,6 +25,11 @@ public class AssetAddedAction : IReversibleAction
 
     public void Redo()
     {
+        if (AHDR.assetType == AssetType.Sound || AHDR.assetType == AssetType.SoundStream)
+        {
+            archive.AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
+            AHDR.data = soundData;
+        }
         archive.AddAsset(AHDR, archive.game, archive.platform.Endianness(), layerIndex, true);
     }
 

@@ -1881,7 +1881,7 @@ namespace IndustrialPark
             }
         }
 
-        private static readonly AssetTemplate[] noModelTemplates =
+        private static readonly HashSet<AssetTemplate> noModelTemplates =
         [
             AssetTemplate.Boulder,
             AssetTemplate.Button,

@@ -30,6 +30,9 @@ public class MultiAction : IReversibleAction
 
     public override string ToString()
     {
+        if (actions.Count(a => a is not SelectionAction) == 1)
+            return actions.FirstOrDefault(a => a is not SelectionAction).ToString();
+
         var result = new StringBuilder();
         result.AppendLine("[Action]");
         foreach (var action in actions)

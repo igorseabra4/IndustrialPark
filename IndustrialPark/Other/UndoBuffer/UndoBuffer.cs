@@ -56,7 +56,7 @@ public class UndoBuffer
             result.AppendLine("[Current State]");
         for (int i = 0; i < actions.Count; i++)
         {
-            result.AppendLine(actions[i].ToString());
+            result.AppendLine(actions[i].ToString().TrimEnd('\r', '\n'));
             if (currentIndex == i)
                 result.AppendLine("[Current State]");
         }

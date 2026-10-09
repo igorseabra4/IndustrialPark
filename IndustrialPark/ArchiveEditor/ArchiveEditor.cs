@@ -840,11 +840,7 @@ namespace IndustrialPark
             SetSelectedIndices(finalIndices);
             SetMenuItemsEnabled();
 
-            var actions = new List<IReversibleAction>();
-            foreach (var u in finalIndices)
-                actions.Add(archive.GetAssetAddedAction(u));
-            actions.Add(new SelectionAction(finalIndices));
-            Program.UndoBuffer.AddAction(actions);
+            Program.UndoBuffer.AddAction([.. finalIndices.Select(archive.GetAssetAddedAction), new SelectionAction(finalIndices)]);
         }
 
         private void buttonCopy_Click(object sender, EventArgs e)
@@ -864,11 +860,7 @@ namespace IndustrialPark
             SetSelectedIndices(finalIndices);
             SetupAssetVisibilityButtons();
 
-            var actions = new List<IReversibleAction>();
-            foreach (var u in finalIndices)
-                actions.Add(archive.GetAssetAddedAction(u));
-            actions.Add(new SelectionAction(finalIndices));
-            Program.UndoBuffer.AddAction(actions);
+            Program.UndoBuffer.AddAction([.. finalIndices.Select(archive.GetAssetAddedAction), new SelectionAction(finalIndices)]);
         }
 
         private void ButtonRemoveAsset_Click(object sender, EventArgs e)
@@ -878,12 +870,8 @@ namespace IndustrialPark
 
             programIsChangingStuff = true;
 
-            var actions = new List<IReversibleAction>();
             var selected = CurrentlySelectedAssetIDs();
-            foreach (var u in selected)
-                actions.Add(archive.GetAssetRemovedAction(u));
-            actions.Add(new SelectionAction(selected));
-            Program.UndoBuffer.AddAction(actions);
+            Program.UndoBuffer.AddAction([.. selected.Select(archive.GetAssetRemovedAction), new SelectionAction(selected)]);
 
             archive.RemoveAsset(selected);
 
@@ -1431,6 +1419,7 @@ namespace IndustrialPark
                     comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
                 AddToAssetList(assetIDs);
                 SetSelectedIndices(assetIDs);
+                Program.UndoBuffer.AddAction([.. assetIDs.Select(archive.GetAssetAddedAction), new SelectionAction(assetIDs)]);
             }
 
             return assetIDs;
