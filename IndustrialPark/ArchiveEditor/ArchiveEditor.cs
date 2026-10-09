@@ -40,7 +40,6 @@ namespace IndustrialPark
         }
 
         public ArchiveEditorFunctions archive;
-        public int SelectedLayerIndex => comboBoxLayers.SelectedIndex;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public int SelectedLayerIndex
@@ -267,10 +266,10 @@ namespace IndustrialPark
             toolStripMenuItem_EditData.Enabled = buttonEditDataAsset.Enabled = canEditAsset;
             toolStripMenuItem_MultiEdit.Enabled = buttonMultiEditAsset.Enabled = canEditAsset;
             toolStripMenuItem_CreateGroup.Enabled = canEditAsset;
+            toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && CurrentlySelectedAssetIDs().Any(u => archive.GetFromAssetID(u) is IClickableAsset);
 
             var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
             toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
-            toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditSingleAsset && archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset;
 
             buildCollisionTreeForAllModelsToolStripMenuItem.Enabled = archive.ContainsAssetWithType(AssetType.Model);
             coll36toolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
@@ -915,15 +914,21 @@ namespace IndustrialPark
                 SetMenuItemsEnabled();
         }
 
+        private int currentView = -1;
+
         private void buttonView_Click(object sender, EventArgs e)
         {
-            if (listViewAssets.SelectedItems.Count == 0 || standalone)
+            var assets = CurrentlySelectedAssetIDs().Select(archive.GetFromAssetID).OfType<IClickableAsset>().ToArray();
+            if (assets.Length == 0)
                 return;
-
-            if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is AssetCAM cam)
+            currentView++;
+            if (currentView >= assets.Length)
+                currentView = 0;
+            var asset = assets[currentView];
+            if (asset is AssetCAM cam)
                 Program.Renderer.Camera.SetPositionCamera(cam);
-            else if (archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]) is IClickableAsset a)
-                Program.Renderer.Camera.SetPosition(a.GetBoundingBox().Center - (10 + a.GetBoundingBox().Size) * Program.MainForm.renderer.Camera.Forward);
+            else
+                Program.Renderer.Camera.SetPosition(asset.GetBoundingBox().Center - (10 + asset.GetBoundingBox().Size) * Program.MainForm.renderer.Camera.Forward);
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)
