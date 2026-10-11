@@ -34,6 +34,6 @@ public class AssetRemovedAction : IReversibleAction
 
     public override string ToString()
     {
-        return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] {AHDR.ADBG.assetName} removed";
+        return $"[{archive.LevelName.ToUpper()}] {AHDR.ADBG.assetName} removed";
     }
 }

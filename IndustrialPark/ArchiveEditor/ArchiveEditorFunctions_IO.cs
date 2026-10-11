@@ -56,8 +56,6 @@ namespace IndustrialPark
 
             foreach (Section_AHDR AHDR in hip.DICT.ATOC.AHDRList)
             {
-                defaultJspAssetIds = null;
-
                 switch (AHDR.assetType)
                 {
                     case AssetType.CollisionTable when ContainsAssetWithType(AssetType.CollisionTable):
@@ -94,18 +92,9 @@ namespace IndustrialPark
                         else if (hip.platform == Platform.PS2)
                             MergeSoundInfo(new AssetSNDI_PS2(AHDR, hip.game, hip.platform.Endianness()), actions);
                         continue;
-                    case AssetType.JSPInfo:
-                    {
-                        for (int i = 0; i < hip.DICT.LTOC.LHDRList.Count; i++)
-                            if (hip.DICT.LTOC.LHDRList[i].assetIDlist.Contains(AHDR.assetID))
-                            {
-                                setDefaultJspAssetIds(hip.DICT, i);
-                                break;
-                            }
-                        break;
-                    }
                 }
 
+                bool added = false;
                 if (ContainsAsset(AHDR.assetID))
                 {
                     DialogResult result = forceOverwrite ? DialogResult.Yes :
@@ -113,6 +102,7 @@ namespace IndustrialPark
 
                     if (result == DialogResult.Yes)
                     {
+                        added = true;
                         RemoveAsset(AHDR.assetID, false);
                         AddAssetToDictionary(AHDR, hip.game, hip.platform.Endianness(), forceOverwrite, true);
                     }
@@ -122,49 +112,43 @@ namespace IndustrialPark
                 }
                 else
                 {
+                    added = true;
                     AddAssetToDictionary(AHDR, hip.game, hip.platform.Endianness(), forceOverwrite, true);
                 }
-            }
 
-            defaultJspAssetIds = null;
+                if (added && GetFromAssetID(AHDR.assetID) is AssetJSP_INFO jspInfo)
+                    jspInfo.JSP_AssetIDs = GetDefaultJspAssetIds(hip.DICT, hip.DICT.LTOC.LHDRList.FindIndex(layer => layer.assetIDlist.Contains(AHDR.assetID)), hip.game);
+            }
 
             if (!NoLayers)
             {
                 for (int i = 0; i < hip.DICT.LTOC.LHDRList.Count; i++)
                     if (hip.DICT.LTOC.LHDRList[i].assetIDlist.Count != 0)
                         Layers.Add(LHDRToLayer(hip.DICT.LTOC.LHDRList[i], hip.game, hip.HIPB.GetLayerName(i)));
-                Layers = Layers.OrderBy(f => (int)f.Type, new LayerComparer(game)).ToList();
+                Layers = Layers.OrderBy(f => LayerTypeGenericToSpecific(f.Type, game), new LayerComparer(game)).ToList();
             }
 
-            if (!forceOverwrite)
-                RecalculateAllMatrices();
+            RecalculateAllMatrices();
         }
 
-        private void setDefaultJspAssetIds(Section_DICT DICT, int jspInfoLayerIndex)
+        private AssetID[] GetDefaultJspAssetIds(Section_DICT DICT, int jspInfoLayerIndex, Game game)
         {
             var result = new List<AssetID>();
             for (int j = jspInfoLayerIndex - 3; j < jspInfoLayerIndex; j++)
-                if (j > 0 && j < DICT.LTOC.LHDRList.Count)
+                if (j >= 0 && j < DICT.LTOC.LHDRList.Count)
                 {
-                    LayerType layerType;
-                    if (game >= Game.Incredibles || DICT.LTOC.LHDRList[j].layerType < 2)
-                        layerType = (LayerType)DICT.LTOC.LHDRList[j].layerType;
-                    else
-                        layerType = (LayerType)(DICT.LTOC.LHDRList[j].layerType + 1);
-
+                    var layerType = LayerTypeSpecificToGeneric(DICT.LTOC.LHDRList[j].layerType, game);
                     if (layerType == LayerType.BSP)
                     {
                         foreach (var u in DICT.LTOC.LHDRList[j].assetIDlist)
-                        {
                             foreach (var asset in DICT.ATOC.AHDRList.Where(a => a.assetID == u))
                                 if (asset.assetType == AssetType.JSP)
                                     result.Add(u);
-                        }
                     }
-                    else if (layerType == LayerType.JSPINFO)
+                    else
                         result.Clear();
                 }
-            defaultJspAssetIds = result.ToArray();
+            return [.. result];
         }
     }
 }

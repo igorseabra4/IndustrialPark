@@ -181,7 +181,8 @@ namespace IndustrialPark
 
                 PlaceTemplate(layerIndex, assetTemplate);
                 foreach (var ae in Program.MainForm.archiveEditors)
-                    ae.PopulateAssetListAndComboBox();
+                    if (ae.archive == this)
+                        ae.PopulateAssetListAndComboBox();
             }
             return (from asset in assetDictionary.Values where asset.assetType == assetType select asset).FirstOrDefault();
         }
@@ -302,8 +303,6 @@ namespace IndustrialPark
             return whoTargets;
         }
 
-        public static T DeepCopy<T>(T data) => JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(data));
-
         public void MergeSimilar()
         {
             UnsavedChanges = true;
@@ -366,9 +365,9 @@ namespace IndustrialPark
         private void MergeTableAsset<T, U>(T asset, List<IReversibleAction> actions) where T : ITableAsset<T, U>
         {
             ITableAsset<T, U> current = assetDictionary.Values.OfType<ITableAsset<T, U>>().FirstOrDefault();
-            var before = DeepCopy(current.Entries);
+            actions.Add(GetAssetRemovedAction((Asset)current));
             current.Merge(asset);
-            actions.Add(new AssetPropertyChangedAction(this, (Asset)current, "Entries", before, DeepCopy(current.Entries)));
+            actions.Add(GetAssetAddedAction((Asset)current));
         }
 
         private void MergeSoundInfo<T>(T asset, List<IReversibleAction> actions) where T : ISoundInfoAsset<T>
@@ -508,12 +507,14 @@ namespace IndustrialPark
                             modelIndex = (modelIndex + 1) % 3;
                         break;
                     }
+                    case AssetType.Animation when game == Game.BFBB:
+                    {
+                        animationLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
                     case AssetType.Animation:
                     {
-                        if (game == Game.BFBB)
-                            animationLayer.AssetIDs.Add(a.assetID);
-                        else
-                            defaultLayer.AssetIDs.Add(a.assetID);
+                        defaultLayer.AssetIDs.Add(a.assetID);
                         break;
                     }
                     case AssetType.Cutscene:
@@ -533,12 +534,14 @@ namespace IndustrialPark
                         sndtocLayer.AssetIDs.Add(a.assetID);
                         break;
                     }
+                    case AssetType.CutsceneTableOfContents when game >= Game.Incredibles:
+                    {
+                        cutscenetocLayer.AssetIDs.Add(a.assetID);
+                        break;
+                    }
                     case AssetType.CutsceneTableOfContents:
                     {
-                        if (game >= Game.Incredibles)
-                            cutscenetocLayer.AssetIDs.Add(a.assetID);
-                        else
-                            sndtocLayer.AssetIDs.Add(a.assetID);
+                        sndtocLayer.AssetIDs.Add(a.assetID);
                         break;
                     }
                     default:
@@ -810,7 +813,7 @@ namespace IndustrialPark
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.assetName.Replace(".dff", "").ToUpper();
-                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(layerIndex, new Vector3(), ref outAssetIDs, simpName, AssetTemplate.Simple_Object);
+                    AssetSIMP simp = (AssetSIMP)PlaceTemplate(layerIndex, new Vector3(), ref outAssetIDs, simpName, AssetTemplate.Simple_Object, true);
                     simp.Model = i;
                     if (!solid)
                     {

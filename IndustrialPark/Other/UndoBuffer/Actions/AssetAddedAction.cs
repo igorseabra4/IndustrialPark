@@ -39,6 +39,6 @@ public class AssetAddedAction : IReversibleAction
 
     public override string ToString()
     {
-        return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] {AHDR.ADBG.assetName} created";
+        return $"[{archive.LevelName.ToUpper()}] {AHDR.ADBG.assetName} created";
     }
 }

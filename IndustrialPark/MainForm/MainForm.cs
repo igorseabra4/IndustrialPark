@@ -1216,16 +1216,6 @@ namespace IndustrialPark
                 ae.DeleteSelectedAssets();
         }
 
-        private void addTextureFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void addTXDArchiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void movementPreviewToolStripMenuItem_Click(object sender, EventArgs e)
         {
             movementPreviewToolStripMenuItem.Checked = !movementPreviewToolStripMenuItem.Checked;
@@ -1330,8 +1320,8 @@ namespace IndustrialPark
 
             var assetTypes = new HashSet<AssetType>();
             foreach (var ae in archiveEditors)
-                foreach (var assetType in ae.archive.AssetTypesOnArchive())
-                    assetTypes.Add(assetType);
+                foreach (var asset in ae.archive.GetAllAssets())
+                    assetTypes.Add(asset.assetType);
 
             SetAssetViewToolStripMenuItems(assetTypes);
             assetTypesToolStripMenuItem.DropDownItems.AddRange(assetViewToolStripMenuItems);
@@ -1440,16 +1430,16 @@ namespace IndustrialPark
                 names.Add(assetType, text);
             }
 
-            foreach (var entry in names.OrderBy(f => f.Value))
+            foreach ((var key, var value) in names.OrderBy(f => f.Value))
             {
-                var field = assetViewTypes[entry.Key].GetField("dontRender");
+                var field = assetViewTypes[key].GetField("dontRender");
                 var dontRender = (bool)field.GetValue(null);
 
-                ToolStripMenuItem item = new ToolStripMenuItem(entry.Value)
+                ToolStripMenuItem item = new ToolStripMenuItem(value)
                 {
                     Checked = !dontRender,
                     CheckState = dontRender ? CheckState.Unchecked : CheckState.Checked,
-                    Tag = entry.Key
+                    Tag = key
                 };
                 item.Click += (object sender, EventArgs e) =>
                 {

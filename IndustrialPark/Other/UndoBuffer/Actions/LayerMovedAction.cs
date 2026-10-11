@@ -42,7 +42,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] Layer {index} moved {(isDown ? "down" : "up")}";
+            return $"[{archive.LevelName.ToUpper()}] Layer {index} moved {(isDown ? "down" : "up")}";
         }
     }
 }

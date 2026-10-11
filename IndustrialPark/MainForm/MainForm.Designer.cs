@@ -107,9 +107,6 @@ namespace IndustrialPark
             movementPreviewToolStripMenuItem = new ToolStripMenuItem();
             hideInvisibleMeshesToolStripMenuItem = new ToolStripMenuItem();
             drawOnlyFirstMINFReferenceToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator9 = new ToolStripSeparator();
-            addTXDArchiveToolStripMenuItem = new ToolStripMenuItem();
-            addTextureFolderToolStripMenuItem = new ToolStripMenuItem();
             refreshTexturesAndModelsToolStripMenuItem = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             saveAllOpenHIPsToolStripMenuItem = new ToolStripMenuItem();
@@ -407,7 +404,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, fogToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, toolStripSeparator9, addTXDArchiveToolStripMenuItem, addTextureFolderToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem });
+            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, fogToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             resources.ApplyResources(displayToolStripMenuItem, "displayToolStripMenuItem");
             displayToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
@@ -647,23 +644,6 @@ namespace IndustrialPark
             drawOnlyFirstMINFReferenceToolStripMenuItem.Name = "drawOnlyFirstMINFReferenceToolStripMenuItem";
             resources.ApplyResources(drawOnlyFirstMINFReferenceToolStripMenuItem, "drawOnlyFirstMINFReferenceToolStripMenuItem");
             drawOnlyFirstMINFReferenceToolStripMenuItem.Click += drawOnlyFirstMINFReferenceToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator9
-            // 
-            toolStripSeparator9.Name = "toolStripSeparator9";
-            resources.ApplyResources(toolStripSeparator9, "toolStripSeparator9");
-            // 
-            // addTXDArchiveToolStripMenuItem
-            // 
-            addTXDArchiveToolStripMenuItem.Name = "addTXDArchiveToolStripMenuItem";
-            resources.ApplyResources(addTXDArchiveToolStripMenuItem, "addTXDArchiveToolStripMenuItem");
-            addTXDArchiveToolStripMenuItem.Click += addTXDArchiveToolStripMenuItem_Click;
-            // 
-            // addTextureFolderToolStripMenuItem
-            // 
-            addTextureFolderToolStripMenuItem.Name = "addTextureFolderToolStripMenuItem";
-            resources.ApplyResources(addTextureFolderToolStripMenuItem, "addTextureFolderToolStripMenuItem");
-            addTextureFolderToolStripMenuItem.Click += addTextureFolderToolStripMenuItem_Click;
             // 
             // refreshTexturesAndModelsToolStripMenuItem
             // 
@@ -1063,7 +1043,6 @@ namespace IndustrialPark
         private ToolStripMenuItem assetTypesToolStripMenuItem;
         private ToolStripMenuItem movementPreviewToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator6;
-        private ToolStripSeparator toolStripSeparator9;
         private ToolStripSeparator toolStripSeparator7;
         private System.Windows.Forms.ToolStripMenuItem viewControlsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator11;
@@ -1079,8 +1058,6 @@ namespace IndustrialPark
         private System.Windows.Forms.ToolStripMenuItem useLegacyAssetTypeFormatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateReferencesOnCopyPasteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
-        private ToolStripMenuItem addTextureFolderToolStripMenuItem;
-        private ToolStripMenuItem addTXDArchiveToolStripMenuItem;
         private ToolStripMenuItem refreshTexturesAndModelsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator10;
         private ToolStripMenuItem showVertexColorsToolStripMenuItem;

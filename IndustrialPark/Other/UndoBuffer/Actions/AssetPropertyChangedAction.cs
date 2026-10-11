@@ -69,6 +69,6 @@ public class AssetPropertyChangedAction : IReversibleAction
 
     public override string ToString()
     {
-        return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] {assetName} changed {string.Join("->", propertyPath)} from {oldValue} to {newValue}";
+        return $"[{archive.LevelName.ToUpper()}] {assetName} changed {string.Join("->", propertyPath)} from {oldValue} to {newValue}";
     }
 }

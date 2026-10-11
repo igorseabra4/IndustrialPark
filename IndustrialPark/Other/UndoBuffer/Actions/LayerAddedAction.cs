@@ -32,7 +32,7 @@ namespace IndustrialPark
 
         public override string ToString()
         {
-            return $"[{Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath)}] Layer {type} added at {index}";
+            return $"[{archive.LevelName.ToUpper()}] Layer {type} added at {index}";
         }
     }
 }

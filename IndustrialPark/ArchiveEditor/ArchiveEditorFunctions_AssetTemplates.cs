@@ -756,7 +756,9 @@ namespace IndustrialPark
         private Asset PlaceUserTemplate(int layerIndex, Vector3 position, ref List<uint> assetIDs, AssetTemplate template)
         {
             if (template == AssetTemplate.Paste_Clipboard)
+            {
                 PasteAssetsFromClipboard(layerIndex, out assetIDs, forceRefUpdate: true, dontReplace: true);
+            }
             else
             {
                 try
@@ -764,8 +766,9 @@ namespace IndustrialPark
                     var clipboard = JsonConvert.DeserializeObject<AssetClipboard>(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
                     PasteAssetsFromClipboard(layerIndex, out assetIDs, clipboard, forceRefUpdate: true, dontReplace: true);
                 }
-                catch
+                catch (Exception ex)
                 {
+                    MessageBox.Show($"There was an error placing your user template: {ex.Message}");
                     return null;
                 }
             }
@@ -842,12 +845,7 @@ namespace IndustrialPark
                 template = CurrentAssetTemplate;
             if (template == AssetTemplate.User_Template || template == AssetTemplate.Paste_Clipboard)
                 return PlaceUserTemplate(layerIndex, position, ref assetIDs, template);
-
-            if (assetName == null)
-                assetName = template.ToString().ToUpper() + "_01";
-
-            bool giveIdRegardless = false;
-
+            
             switch (template)
             {
                 case AssetTemplate.DefaultGlowSceneProp:
@@ -870,21 +868,20 @@ namespace IndustrialPark
                     break;
                 case AssetTemplate.Player:
                     assetName = playerName;
-                    giveIdRegardless = true;
+                    ignoreNumber = true;
                     break;
                 case AssetTemplate.Checkpoint_Set:
-                    assetName = "CHECKPOINT_TRIG_01";
-                    giveIdRegardless = true;
-                    break;
-                default:
-                    giveIdRegardless = true;
+                    assetName = "CHECKPOINT_TRIG";
+                    ignoreNumber = false;
                     break;
             }
+
+            assetName ??= template.ToString().ToUpper() + "_01";
 
             if (ContainsAsset(new AssetID(assetName)))
                 ignoreNumber = false;
 
-            assetName = GetUniqueAssetName(assetName, BKDRHash(assetName), giveIdRegardless, ignoreNumber);
+            assetName = GetUniqueAssetName(assetName, BKDRHash(assetName), !ignoreNumber, ignoreNumber);
 
             Asset asset = CreateFromTemplate(layerIndex, template, assetName, position, ref assetIDs);
 
@@ -933,13 +930,14 @@ namespace IndustrialPark
                     return new AssetTIMR(assetName);
                 case AssetTemplate.Checkpoint_Timer:
                 {
-                    var timer = new AssetTIMR(assetName);
-
-                    timer.Time = 0.5f;
+                    var timer = new AssetTIMR(assetName)
+                    {
+                        Time = 0.5f
+                    };
                     var checkpointSimp = PlaceTemplate(layerIndex, new Vector3(position.X + 2f, position.Y, position.Z), ref assetIDs, "CHECKPOINT_SIMP", AssetTemplate.Checkpoint_SIMP);
-                    var checkpointTalkbox = BKDRHash("CHECKPOINT_TALKBOX_00");
+                    var checkpointTalkbox = BKDRHash("CHECKPOINT_TALKBOX");
                     if (!ContainsAsset(checkpointTalkbox))
-                        checkpointTalkbox = PlaceTemplate(layerIndex, position, ref assetIDs, "CHECKPOINT_TALKBOX", AssetTemplate.Checkpoint_Talkbox).assetID;
+                        checkpointTalkbox = PlaceTemplate(layerIndex, position, ref assetIDs, "CHECKPOINT_TALKBOX", AssetTemplate.Checkpoint_Talkbox, true).assetID;
 
                     timer.Links = new Link[] {
                             new Link(game)
@@ -993,9 +991,9 @@ namespace IndustrialPark
                 case AssetTemplate.Checkpoint_Invisible:
                 {
                     var trigger = new AssetTRIG(assetName, position, template);
-                    AssetID checkpointDisp = "CHECKPOINT_DISP_01";
+                    AssetID checkpointDisp = "CHECKPOINT_DISP";
                     if (!ContainsAsset(checkpointDisp))
-                        checkpointDisp = PlaceTemplate(layerIndex, position, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher).assetID;
+                        checkpointDisp = PlaceTemplate(layerIndex, position, ref assetIDs, "CHECKPOINT_DISP", AssetTemplate.Dispatcher, true).assetID;
 
                     var links = new List<Link>
                     {
@@ -1088,15 +1086,15 @@ namespace IndustrialPark
                 {
                     var button = new AssetBUTN(assetName, position, template);
                     if (template == AssetTemplate.Pressure_Plate)
-                        PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Pressure_Plate_Base);
+                        PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Pressure_Plate_Base, true);
                     else if (template == AssetTemplate.Red_Button)
-                        PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Red_Button_Base);
+                        PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Red_Button_Base, true);
                     else if (template == AssetTemplate.Red_Button_Smash)
-                        PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Red_Button_Smash_Base);
+                        PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Red_Button_Smash_Base, true);
                     else if (template == AssetTemplate.Floor_Button)
-                        PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Floor_Button_Base);
+                        PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Floor_Button_Base, true);
                     else if (template == AssetTemplate.Floor_Button_Smash)
-                        PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Floor_Button_Smash_Base);
+                        PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Floor_Button_Smash_Base, true);
                     return button;
                 }
                 case AssetTemplate.Destructible_Object:
@@ -1176,22 +1174,22 @@ namespace IndustrialPark
                             PlaceTemplate(layerIndex, position, ref assetIDs, template: AssetTemplate.Bus_Stop_DYNA);
                             break;
                         case AssetTemplate.Throw_Fruit:
-                            PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Throw_Fruit_Base);
+                            PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Throw_Fruit_Base, true);
                             break;
                         case AssetTemplate.Freezy_Fruit:
-                            PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_BASE", AssetTemplate.Throw_Fruit_Base);
+                            PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Throw_Fruit_Base, true);
                             break;
                         case AssetTemplate.Cauldron:
-                            var sfx = (AssetSFX)PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_SFX", AssetTemplate.Cauldron_Sfx);
+                            var sfx = (AssetSFX)PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_SFX", AssetTemplate.Cauldron_Sfx, true);
                             sfx.Attach = simp.assetID;
-                            var lite = (AssetLITE)PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_LIGHT", AssetTemplate.Cauldron_Light);
+                            var lite = (AssetLITE)PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_LIGHT", AssetTemplate.Cauldron_Light, true);
                             lite.Attach = simp.assetID;
                             position.Y += 1f;
-                            PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_EMITTER", AssetTemplate.Cauldron_Emitter);
+                            PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_EMITTER", AssetTemplate.Cauldron_Emitter, true);
                             break;
                         case AssetTemplate.Flower:
                             position.X += 4f;
-                            var dig = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_DIG", AssetTemplate.Flower_Dig);
+                            var dig = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_DIG", AssetTemplate.Flower_Dig, true);
                             simp.Links = new Link[]
                             {
                                 new Link(game)
@@ -1234,7 +1232,7 @@ namespace IndustrialPark
                 case AssetTemplate.Flythrough:
                 {
                     var fly = new AssetFLY(assetName);
-                    var flyWidget = (DynaGObjectFlythrough)PlaceTemplate(layerIndex, position, ref assetIDs, fly.assetName + "_WIDGET", AssetTemplate.Flythrough_Widget);
+                    var flyWidget = (DynaGObjectFlythrough)PlaceTemplate(layerIndex, position, ref assetIDs, fly.assetName + "_WIDGET", AssetTemplate.Flythrough_Widget, true);
                     flyWidget.Flythrough = fly.assetID;
                     return fly;
                 }
@@ -1344,7 +1342,7 @@ namespace IndustrialPark
                         vil.Links = new Link[] {
                                 new Link(game)
                                 {
-                                    TargetAsset = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group).assetID,
+                                    TargetAsset = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_GROUP", AssetTemplate.Group, true).assetID,
                                     EventReceiveID = (ushort)EventBFBB.ScenePrepare,
                                     EventSendID = (ushort)EventBFBB.Connect_IOwnYou
                                 }
@@ -1372,7 +1370,7 @@ namespace IndustrialPark
                 case AssetTemplate.Jellyfish_Pink:
                 case AssetTemplate.Jellyfish_Blue:
                 {
-                    var movePoint = (AssetMVPT)PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint_Area);
+                    var movePoint = (AssetMVPT)PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint_Arena, true);
                     var vil = new AssetVIL(assetName, position, template, movePoint.assetID);
                     if (template == AssetTemplate.Chuck_Trigger || template == AssetTemplate.Monsoon_Trigger || template == AssetTemplate.Slick_Trigger)
                     {
@@ -1385,7 +1383,7 @@ namespace IndustrialPark
                             }
                         };
 
-                        var trigger = (AssetTRIG)PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.Sphere_Trigger);
+                        var trigger = (AssetTRIG)PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_TRIG", AssetTemplate.Sphere_Trigger, true);
                         trigger.Radius = 15f;
                         trigger.Links = new Link[] {
                             new Link(game)
@@ -1411,7 +1409,7 @@ namespace IndustrialPark
                         var links = new List<Link>();
                         foreach (string i in new string[] { "A", "B", "C" })
                         {
-                            var dog = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_DOG_" + i, AssetTemplate.ArfDog);
+                            var dog = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_DOG_" + i, AssetTemplate.ArfDog, true);
                             links.Add(new Link(game)
                             {
                                 TargetAsset = dog.assetID,
@@ -1426,7 +1424,7 @@ namespace IndustrialPark
                         var links = new List<Link>();
                         foreach (string i in new string[] { "A", "B" })
                         {
-                            var slave = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_SLAVE_" + i, AssetTemplate.TubeletSlave);
+                            var slave = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_SLAVE_" + i, AssetTemplate.TubeletSlave, true);
                             links.Add(new Link(game)
                             {
                                 TargetAsset = slave.assetID,
@@ -1447,7 +1445,7 @@ namespace IndustrialPark
                 case AssetTemplate.Jellyfish:
                 case AssetTemplate.Jellyfish_Bucket:
                 {
-                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_MP", AssetTemplate.MovePoint, true);
                     return new DynaEnemyCritter(assetName, template, position, mvpt.assetID);
                 }
                 case AssetTemplate.Fogger_GoofyGoober:
@@ -1473,9 +1471,9 @@ namespace IndustrialPark
                 case AssetTemplate.Popper_Trench:
                 case AssetTemplate.Popper_Planktopolis:
                 {
-                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_MP",
+                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_MP",
                         (template.ToString().Contains("Flinger") || template.ToString().Contains("Popper")) ?
-                        AssetTemplate.MovePoint : AssetTemplate.MovePoint_Area);
+                        AssetTemplate.MovePoint : AssetTemplate.MovePoint_Arena, true);
                     return new DynaEnemyStandard(assetName, template, position, mvpt.assetID);
                 }
                 case AssetTemplate.Turret_v1:
@@ -1489,12 +1487,12 @@ namespace IndustrialPark
                 case AssetTemplate.Spawner_TR:
                 case AssetTemplate.Spawner_PT:
                 {
-                    var group = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_GROUP", AssetTemplate.Group);
+                    var group = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_GROUP", AssetTemplate.Group, true);
                     return new DynaEnemyBucketOTron(assetName, template, position, group.assetID);
                 }
                 case AssetTemplate.Teleport_Box:
                 {
-                    var mrkr = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_MRKR", AssetTemplate.Marker);
+                    var mrkr = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_MARKER", AssetTemplate.Marker, true);
                     return new DynaGObjectTeleport(assetName, mrkr.assetID, GetMRKR);
                 }
                 case AssetTemplate.Bungee_Hook:
@@ -1504,14 +1502,14 @@ namespace IndustrialPark
                 }
                 case AssetTemplate.Bungee_Drop:
                 {
-                    var mrkr = PlaceTemplate(layerIndex, position, ref assetIDs, "BUNGEE_MRKR", AssetTemplate.Marker);
+                    var mrkr = PlaceTemplate(layerIndex, position, ref assetIDs, "BUNGEE_MARKER", AssetTemplate.Marker);
                     return new DynaGObjectBungeeDrop(assetName, mrkr.assetID);
                 }
                 case AssetTemplate.Bus_Stop_DYNA:
                 {
-                    var mrkr = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "MRKR"), AssetTemplate.Marker);
-                    var cam = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "CAM"), AssetTemplate.Bus_Stop_Camera);
-                    var simp = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper().Replace("DYNA", "SIMP"), AssetTemplate.Bus_Stop_BusSimp);
+                    var mrkr = PlaceTemplate(layerIndex, position, ref assetIDs, assetName.Replace("DYNA", "MARKER"), AssetTemplate.Marker, true);
+                    var cam = PlaceTemplate(layerIndex, position, ref assetIDs, assetName.Replace("DYNA", "CAM"), AssetTemplate.Bus_Stop_Camera, true);
+                    var simp = PlaceTemplate(layerIndex, position, ref assetIDs, assetName.Replace("DYNA", "SIMP"), AssetTemplate.Bus_Stop_BusSimp, true);
 
                     return new DynaGObjectBusStop(assetName, mrkr.assetID, cam.assetID, simp.assetID);
                 }
@@ -1615,7 +1613,7 @@ namespace IndustrialPark
                         AssetTemplate.Trampoline_Block_Spiked_Driven
                     }.Contains(template))
                     {
-                        var spikes = (AssetSIMP)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_SPIKES", AssetTemplate.Block_Spikes);
+                        var spikes = (AssetSIMP)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_SPIKES", AssetTemplate.Block_Spikes, true);
                         spikes.Links = new Link[]
                         {
                             new Link(game)
@@ -1635,7 +1633,7 @@ namespace IndustrialPark
                         AssetTemplate.Trampoline_Block_Spiked_Driven
                     }.Contains(template))
                     {
-                        var driver = (AssetPLAT)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_DRIVER", AssetTemplate.Block_Driver);
+                        var driver = (AssetPLAT)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_DRIVER", AssetTemplate.Block_Driver, true);
                         block.Links = new Link[]
                         {
                             new Link(game)
@@ -1654,12 +1652,12 @@ namespace IndustrialPark
                         AssetTemplate.Scale_Block_Spiked_Driven
                     }.Contains(template))
                     {
-                        var sdfx = (AssetSDFX)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_SDFX", AssetTemplate.Scale_Block_Sdfx);
+                        var sdfx = (AssetSDFX)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_SDFX", AssetTemplate.Scale_Block_Sdfx, true);
                         sdfx.SoundGroup = "SHRINK_SGRP";
                         sdfx.Emitter = block.assetID;
                         sdfx.SDFXFlags.FlagValueInt = 4;
 
-                        var script = (AssetSCRP)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_SCRIPT", AssetTemplate.Scale_Block_Script);
+                        var script = (AssetSCRP)PlaceTemplate(layerIndex, position, ref assetIDs, block.assetName + "_SCRIPT", AssetTemplate.Scale_Block_Script, true);
                         script.TimedLinks = new Link[]
                         {
                             new Link(game)
@@ -1701,12 +1699,12 @@ namespace IndustrialPark
                     return new DynaEnemyRATSSwarmOwl(assetName, position);
                 case AssetTemplate.Thief:
                 {
-                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_MP", AssetTemplate.MovePoint, true);
                     return new DynaEnemyRATSThief(assetName, position, mvpt.assetID);
                 }
                 case AssetTemplate.Waiter:
                 {
-                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, template.ToString().ToUpper() + "_MP", AssetTemplate.MovePoint);
+                    var mvpt = PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_MP", AssetTemplate.MovePoint, true);
                     return new DynaEnemyRATSWaiter(assetName, position, mvpt.assetID);
                 }
                 case AssetTemplate.Carryable_Property_Attract:

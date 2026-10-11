@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -61,7 +59,7 @@ namespace IndustrialPark
             for (int i = 0; i < Layers.Count; i++)
                 if (Layers[i].AssetIDs.Count > 0)
                     return i;
-            return 0;
+            return -1;
         }
 
         private static Layer LHDRToLayer(Section_LHDR LHDR, Game game, string layerName)

@@ -139,6 +139,7 @@ namespace IndustrialPark
         }
 
         public string currentlyOpenFilePath { get; private set; }
+        public string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
 
         protected Section_PACK PACK;
 
@@ -523,9 +524,6 @@ namespace IndustrialPark
 
         public bool ContainsAsset(uint key) => assetDictionary.ContainsKey(key);
 
-        public IEnumerable<AssetType> AssetTypesOnArchive() =>
-            (from Asset asset in assetDictionary.Values select asset.assetType).Distinct();
-
         public IEnumerable<AssetType> ScalableAssetTypesOnArchive() =>
             (from Asset asset in assetDictionary.Values
              where
@@ -537,8 +535,9 @@ namespace IndustrialPark
              select asset.assetType).Distinct();
 
 
-        public bool ContainsAssetWithType(AssetType assetType) =>
-            assetDictionary.Values.Any(a => a.assetType.Equals(assetType));
+        public bool ContainsAssetWithType(AssetType assetType) => assetDictionary.Values.Any(a => a.assetType.Equals(assetType));
+
+        public int AmountOfAssetWithType(AssetType assetType) => assetDictionary.Values.Count(a => a.assetType.Equals(assetType));
 
         public Asset GetFromAssetID(uint key)
         {
@@ -1243,9 +1242,9 @@ namespace IndustrialPark
             return asset.assetID;
         }
 
-        public Asset AddAssetWithUniqueID(Section_AHDR AHDR, Game game, Endianness endianness, int layerIndex, bool giveIDregardless = false, bool setTextureDisplay = false, bool ignoreNumber = false)
+        public Asset AddAssetWithUniqueID(Section_AHDR AHDR, Game game, Endianness endianness, int layerIndex, bool setTextureDisplay = false)
         {
-            var assetName = GetUniqueAssetName(AHDR.ADBG.assetName, AHDR.assetID, giveIDregardless, ignoreNumber);
+            var assetName = GetUniqueAssetName(AHDR.ADBG.assetName, AHDR.assetID, false, false);
 
             if (assetName != AHDR.ADBG.assetName || AHDR.assetID == 0 || string.IsNullOrEmpty(AHDR.ADBG.assetName))
             {
@@ -1256,45 +1255,35 @@ namespace IndustrialPark
             return AddAsset(AHDR, game, endianness, layerIndex, setTextureDisplay);
         }
 
-        private string GetUniqueAssetName(string assetName, uint assetID, bool giveIDregardless, bool ignoreNumber)
+        private string GetUniqueAssetName(string assetName, uint assetID, bool forceNumber, bool ignoreNumber)
         {
-            int numCopies = 0;
-            char stringToAdd = '_';
+            int candidateNumber = 0;
+            char separator = '_';
 
-            while (ContainsAsset(assetID) || giveIDregardless)
+            while (ContainsAsset(assetID) || forceNumber)
             {
-                if (numCopies > 10000)
+                if (candidateNumber > 10000)
                 {
-                    MessageBox.Show("There was a problem naming the placed template. It will be given a generic name (ASSET_XX)");
-                    numCopies = 0;
+                    candidateNumber = 0;
                     ignoreNumber = false;
                     assetName = "ASSET_01";
                 }
 
-                giveIDregardless = false;
-                numCopies++;
+                forceNumber = false;
+                candidateNumber++;
 
                 if (!ignoreNumber)
-                    assetName = FindNewAssetName(assetName, stringToAdd, numCopies);
+                {
+                    int lastIndex = assetName.LastIndexOf(separator);
+                    if (lastIndex >= 0 && int.TryParse(assetName.AsSpan(lastIndex + 1), out _))
+                        assetName = assetName[..lastIndex];
+                    assetName += $"{separator}{candidateNumber:D2}";
+                }
 
                 assetID = BKDRHash(assetName);
             }
 
             return assetName;
-        }
-
-        private string FindNewAssetName(string previousName, char stringToAdd, int numCopies)
-        {
-            if (previousName.Contains(stringToAdd))
-                try
-                {
-                    int a = Convert.ToInt32(previousName.Split(stringToAdd).Last());
-                    previousName = previousName.Substring(0, previousName.LastIndexOf(stringToAdd));
-                }
-                catch { }
-
-            previousName += stringToAdd + numCopies.ToString("D2");
-            return previousName;
         }
 
         public void RemoveAsset(IEnumerable<uint> assetIDs)
@@ -1387,13 +1376,11 @@ namespace IndustrialPark
 
             try
             {
-                if (clipboard == null)
-                    clipboard = JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
-                clipboard.GetType();
+                clipboard ??= JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error pasting assets from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
+                MessageBox.Show($"Error pasting assets from clipboard: {ex.Message}. Are you sure you have assets copied?");
                 return false;
             }
 
@@ -1470,6 +1457,23 @@ namespace IndustrialPark
 
             return true;
         }
+        
+        public bool ContainsNewlyAddedAssetType(List<uint> assetIDs)
+        {
+            var countPerType = new Dictionary<AssetType, int>(assetIDs.Count);
+            foreach (var u in assetIDs)
+            {
+                var type = GetFromAssetID(u).assetType;
+                if (countPerType.TryGetValue(type, out var c))
+                    countPerType[type] = c + 1;
+                else
+                    countPerType[type] = 1;
+            }
+            foreach (var kvp in countPerType)
+                if (AmountOfAssetWithType(kvp.Key) == kvp.Value)
+                    return true;
+            return false;
+        }
 
         public void ReplaceReferencesOn(Asset asset, Dictionary<uint, uint> references)
         {
@@ -1493,7 +1497,7 @@ namespace IndustrialPark
                     {
                         try
                         {
-                            actions.Add(new AssetAddedAction(this, DeepCopy(AHDR), layerIndex));
+                            actions.Add(new AssetAddedAction(this, new Section_AHDR(AHDR.assetID, AHDR.assetType, AHDR.flags, new Section_ADBG(AHDR.ADBG.alignment, AHDR.ADBG.assetName, AHDR.ADBG.assetFileName, AHDR.ADBG.checksum), AHDR.data), layerIndex));
                             AddSoundToSNDI(AHDR.data, AHDR.assetID, AHDR.assetType, out byte[] soundData);
                             AHDR.data = soundData;
                         }
@@ -1658,8 +1662,6 @@ namespace IndustrialPark
             }
             return null;
         }
-
-        protected AssetID[] defaultJspAssetIds = null;
 
         private AssetJSP[] GetJspAssets(uint jspInfo)
         {

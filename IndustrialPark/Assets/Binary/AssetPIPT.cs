@@ -322,7 +322,7 @@ namespace IndustrialPark
         public override bool Equals(object obj)
         {
             if (obj != null && obj is PipeInfo entry)
-                return Model.Equals(entry.Model);
+                return Model.Equals(entry.Model) && SubObjectBits.FlagValueInt.Equals(entry.SubObjectBits.FlagValueInt);
             return false;
         }
 
@@ -482,7 +482,7 @@ namespace IndustrialPark
 
             foreach (var entry in asset.Entries)
             {
-                entries.Remove(entry);
+                entries.RemoveAll(e => e.Model == entry.Model && e.SubObjectBits.FlagValueInt == entry.SubObjectBits.FlagValueInt);
                 entries.Add(entry);
             }
 
