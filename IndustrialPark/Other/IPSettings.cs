@@ -26,6 +26,7 @@ namespace IndustrialPark
         public bool LegacyAssetTypeFormat = false;
         public bool AlwaysListAllAssets = true;
         public bool RotationGizmoLocalAxis = true;
+        public bool EnableAssetToolButtons = false;
 
         public string pcsx2Path;
         public string[] recentBuildIsoGamePaths;

@@ -100,6 +100,7 @@
             buttonAddLayer = new System.Windows.Forms.Button();
             comboBoxLayers = new System.Windows.Forms.ComboBox();
             groupBoxAssets = new System.Windows.Forms.GroupBox();
+            textBoxFindAsset = new System.Windows.Forms.TextBox();
             buttonMultiEditAsset = new System.Windows.Forms.Button();
             checkBoxTemplateFocus = new System.Windows.Forms.CheckBox();
             listViewAssets = new System.Windows.Forms.ListView();
@@ -110,8 +111,6 @@
             AssetLinksCol = new System.Windows.Forms.ColumnHeader();
             buttonCopyAsset = new System.Windows.Forms.Button();
             buttonPasteAssets = new System.Windows.Forms.Button();
-            textBoxFindAsset = new System.Windows.Forms.TextBox();
-            label3 = new System.Windows.Forms.Label();
             buttonEditDataAsset = new System.Windows.Forms.Button();
             buttonView = new System.Windows.Forms.Button();
             buttonExportRawAsset = new System.Windows.Forms.Button();
@@ -572,13 +571,12 @@
             // groupBoxAssets
             // 
             resources.ApplyResources(groupBoxAssets, "groupBoxAssets");
+            groupBoxAssets.Controls.Add(textBoxFindAsset);
             groupBoxAssets.Controls.Add(buttonMultiEditAsset);
             groupBoxAssets.Controls.Add(checkBoxTemplateFocus);
             groupBoxAssets.Controls.Add(listViewAssets);
             groupBoxAssets.Controls.Add(buttonCopyAsset);
             groupBoxAssets.Controls.Add(buttonPasteAssets);
-            groupBoxAssets.Controls.Add(textBoxFindAsset);
-            groupBoxAssets.Controls.Add(label3);
             groupBoxAssets.Controls.Add(buttonEditDataAsset);
             groupBoxAssets.Controls.Add(buttonView);
             groupBoxAssets.Controls.Add(buttonExportRawAsset);
@@ -590,6 +588,13 @@
             groupBoxAssets.Controls.Add(label2);
             groupBoxAssets.Name = "groupBoxAssets";
             groupBoxAssets.TabStop = false;
+            // 
+            // textBoxFindAsset
+            // 
+            resources.ApplyResources(textBoxFindAsset, "textBoxFindAsset");
+            textBoxFindAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBoxFindAsset.Name = "textBoxFindAsset";
+            textBoxFindAsset.TextChanged += textBoxFindAsset_TextChanged;
             // 
             // buttonMultiEditAsset
             // 
@@ -656,19 +661,6 @@
             buttonPasteAssets.Name = "buttonPasteAssets";
             buttonPasteAssets.UseVisualStyleBackColor = true;
             buttonPasteAssets.Click += buttonPaste_Click;
-            // 
-            // textBoxFindAsset
-            // 
-            resources.ApplyResources(textBoxFindAsset, "textBoxFindAsset");
-            textBoxFindAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            textBoxFindAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            textBoxFindAsset.Name = "textBoxFindAsset";
-            textBoxFindAsset.TextChanged += textBoxFindAsset_TextChanged;
-            // 
-            // label3
-            // 
-            resources.ApplyResources(label3, "label3");
-            label3.Name = "label3";
             // 
             // buttonEditDataAsset
             // 
@@ -887,8 +879,6 @@
         private System.Windows.Forms.Button buttonExportRawAsset;
         private System.Windows.Forms.Button buttonView;
         private System.Windows.Forms.Button buttonEditDataAsset;
-        private System.Windows.Forms.TextBox textBoxFindAsset;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button buttonCopyAsset;
         private System.Windows.Forms.Button buttonPasteAssets;
         private System.Windows.Forms.Button buttonArrowDown;
@@ -971,5 +961,6 @@
         private System.Windows.Forms.ToolStripMenuItem coll36toolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem coll36sortTrianglesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importJSPToolStripMenuItem;
+        private System.Windows.Forms.TextBox textBoxFindAsset;
     }
 }

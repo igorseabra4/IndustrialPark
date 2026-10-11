@@ -5,25 +5,17 @@ using System.Windows.Forms;
 
 namespace IndustrialPark;
 
-public interface IInternalEditor
+public abstract class InternalEditor : Form
 {
-    bool TopMost { get; set; }
-    uint GetAssetID();
-    void Close();
-    void Show();
-    FormStartPosition StartPosition { get; set; }
-    System.Drawing.Point Location { get; set; }
+    protected ArchiveEditorFunctions archive;
 
-    void RefreshPropertyGrid();
+    protected Action<Asset> updateListView;
 
-    double Opacity { get; set; }
-    Form[] OwnedForms { get; }
-    System.Drawing.Size Size { get; set; }
+    public abstract uint GetAssetID();
 
-    void BringToFront();
+    public abstract void RefreshPropertyGrid();
 
-    event EventHandler Activated;
-    event EventHandler Deactivate;
+    public static bool EnableAssetToolButtons = false;
 
     public static string[] GetPropertyPath(GridItem item)
     {

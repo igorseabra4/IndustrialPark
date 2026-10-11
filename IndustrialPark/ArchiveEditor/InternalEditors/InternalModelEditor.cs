@@ -14,7 +14,7 @@ using static IndustrialPark.Models.BSP_IO;
 
 namespace IndustrialPark
 {
-    public partial class InternalModelEditor : Form, IInternalEditor
+    public partial class InternalModelEditor : InternalEditor
     {
         public InternalModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
@@ -49,7 +49,7 @@ namespace IndustrialPark
                 buttonExport.Enabled = false;
         }
 
-        public void RefreshPropertyGrid()
+        public override void RefreshPropertyGrid()
         {
             propertyGridCollision.Refresh();
             propertyGridPipeInfo.Refresh();
@@ -63,10 +63,8 @@ namespace IndustrialPark
         }
 
         private readonly AssetRenderWareModel asset;
-        private readonly ArchiveEditorFunctions archive;
-        private readonly Action<Asset> updateListView;
 
-        public uint GetAssetID()
+        public override uint GetAssetID()
         {
             return asset.assetID;
         }

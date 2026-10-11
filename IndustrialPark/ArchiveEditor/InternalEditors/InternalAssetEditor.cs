@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace IndustrialPark;
 
-public partial class InternalAssetEditor : Form, IInternalEditor
+public partial class InternalAssetEditor : InternalEditor
 {
     public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
     {
@@ -22,30 +22,45 @@ public partial class InternalAssetEditor : Form, IInternalEditor
         propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
 
         Text = $"[{asset.assetType}] {asset}";
+        
+        viewToolStripMenuItem.Visible = asset is IClickableAsset;
+
+        switch (asset)
+        {
+            case AssetCAM cam:
+                SetupForCam(cam);
+                break;
+            case AssetCSN csn:
+                SetupForCsn(csn);
+                break;
+            case IAssetAddSelected aas:
+                SetupForAddSelected(aas);
+                break;
+            case AssetPARS pars:
+                SetupForPars(pars);
+                break;
+            case AssetSHRP shrp:
+                SetupForShrp(shrp);
+                break;
+            case AssetSCRP scrp:
+                SetupForScrp(scrp);
+                break;
+            case AssetUIM uim:
+                SetupForUim(uim);
+                break;
+            case AssetWIRE wire:
+                SetupForWire(wire);
+                break;
+            case AssetFOG fog:
+                SetupForFog(fog);
+                break;
+            case AssetJSP_INFO info:
+                SetupForJSPInfo(info);
+                break;
+        }
 
         if (asset is IAssetCopyPasteTransformation iacpt)
             SetupForCopyPasteTransformation(iacpt);
-
-        if (asset is AssetCAM cam)
-            SetupForCam(cam);
-        else if (asset is AssetCSN csn)
-            SetupForCsn(csn);
-        else if (asset is IAssetAddSelected aas)
-            SetupForAddSelected(aas);
-        else if (asset is AssetPARS pars)
-            SetupForPars(pars);
-        else if (asset is AssetSHRP shrp)
-            SetupForShrp(shrp);
-        else if (asset is AssetSCRP scrp)
-            SetupForScrp(scrp);
-        else if (asset is AssetUIM uim)
-            SetupForUim(uim);
-        else if (asset is AssetWIRE wire)
-            SetupForWire(wire);
-        else if (asset is AssetFOG fog)
-            SetupForFog(fog);
-        else if (asset is AssetJSP_INFO info)
-            SetupForJSPInfo(info);
 
         if (asset is EntityAsset entity && !new AssetType[] {
             AssetType.Trigger,
@@ -56,19 +71,14 @@ public partial class InternalAssetEditor : Form, IInternalEditor
         }.Contains(asset.assetType))
             SetupForBakeScaleRot(entity);
 
-        AddRow(ButtonSize);
+        AddRow();
 
-        Button buttonHelp = new Button() { Dock = DockStyle.Fill, Text = "Open Wiki Page", AutoSize = true };
-        buttonHelp.Click += (object sender, EventArgs e) =>
+        AddTool("Find who targets me", (object sender, EventArgs e) => Program.MainForm.FindWhoTargets(GetAssetID()));
+
+        AddTool("Open wiki page", (object sender, EventArgs e) =>
         {
             ArchiveEditorFunctions.OpenWikiPage(asset);
-        };
-        tableLayoutPanel1.Controls.Add(buttonHelp, 0, tableLayoutPanel1.RowCount - 1);
-
-        Button buttonFindCallers = new Button() { Dock = DockStyle.Fill, Text = "Find Who Targets Me", AutoSize = true };
-        buttonFindCallers.Click += (object sender, EventArgs e) =>
-            Program.MainForm.FindWhoTargets(GetAssetID());
-        tableLayoutPanel1.Controls.Add(buttonFindCallers, 1, tableLayoutPanel1.RowCount - 1);
+        });
 
         for (int i = 1; i < tableLayoutPanel1.RowCount; i++)
         {
@@ -79,7 +89,7 @@ public partial class InternalAssetEditor : Form, IInternalEditor
                 tableLayoutPanel1.RowStyles.Add(rs);
         }
 
-        IInternalEditor.SelectFirstProperty(propertyGridAsset.SelectedGridItem);
+        SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
     private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -88,73 +98,113 @@ public partial class InternalAssetEditor : Form, IInternalEditor
     }
 
     private readonly Asset asset;
-    private readonly ArchiveEditorFunctions archive;
-    private readonly Action<Asset> updateListView;
 
-    public uint GetAssetID()
+    public override uint GetAssetID()
     {
         return asset.assetID;
     }
 
-    public void RefreshPropertyGrid()
+    public override void RefreshPropertyGrid()
     {
         Task.Run(() =>
         {
-            Invoke((Action)(() =>
+            Invoke(() =>
             {
                 propertyGridAsset.Refresh();
                 updateListView(asset);
-            }));
+            });
         });
     }
-
+    
     private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
     {
         archive.UnsavedChanges = true;
         RefreshPropertyGrid();
-        Program.UndoBuffer.AddAction(IInternalEditor.GetPropertyChangedAction(archive, asset, e.OldValue, e.ChangedItem.Value, e.ChangedItem));
+        Program.UndoBuffer.AddAction(GetPropertyChangedAction(archive, asset, e.OldValue, e.ChangedItem.Value, e.ChangedItem));
+    }
+
+    private void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        foreach (var ae in Program.MainForm.archiveEditors)
+            if (ae.archive == archive)
+                if (ae.EditHeader(asset.assetID, out uint newAssetID))
+                    ae.OpenInternalEditor(newAssetID);
+    }
+
+    private void viewToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (asset is IClickableAsset ica)
+            Program.Renderer.Camera.ShowAssetOnViewport(ica);
+    }
+
+    private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        archive.CopyAssetsToClipboard(asset.assetID);
+    }
+
+    private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var result = MessageBox.Show($"Are you sure you want to delete asset [{asset.assetID:X8}] {asset.assetName} ({AssetTypeContainer.AssetTypeToString(asset.assetType)})?", "Confirm asset removal", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        if (result == DialogResult.Yes)
+            foreach (var ae in Program.MainForm.archiveEditors)
+                if (ae.archive == archive)
+                    ae.RemoveAssets([asset.assetID]);
     }
 
     private readonly List<int> RowSizes = new List<int>() { -1 };
     private const int ButtonSize = 28;
 
-    private int AddRow(int size)
+    private int AddRow()
     {
+        if (!EnableAssetToolButtons)
+            return -1;
         tableLayoutPanel1.RowCount += 1;
-        RowSizes.Add(size);
+        RowSizes.Add(ButtonSize);
         return tableLayoutPanel1.RowCount - 1;
+    }
+
+    private (Button button, ToolStripMenuItem menuItem) AddTool(string text, EventHandler click, bool doubleSpan = false)
+    {
+        Button button = null;
+        if (EnableAssetToolButtons)
+        {
+            button = new Button() { Dock = DockStyle.Fill, Text = text, AutoSize = true };
+            button.Click += click;
+            tableLayoutPanel1.Controls.Add(button);
+            if (doubleSpan)
+                tableLayoutPanel1.SetColumnSpan(button, 2);
+        }
+
+        var menuItem = new ToolStripMenuItem(text);
+        menuItem.Click += click;
+        this.toolsToolStripMenuItem.DropDownItems.Add(menuItem);
+
+        return (button, menuItem);
     }
 
     private void SetupForJSPInfo(AssetJSP_INFO asset)
     {
-        var rowIndex = AddRow(ButtonSize);
-
-        Button buttonGenerate = new Button() { Dock = DockStyle.Fill, Text = "Generate JSPINFO", AutoSize = true };
-        buttonGenerate.Click += (s, e) =>
+        AddRow();
+        AddTool("Generate JSPINFO", (s, e) =>
         {
             archive.GenerateJSPInfo(asset);
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
-        };
-        tableLayoutPanel1.Controls.Add(buttonGenerate, 0, rowIndex);
+        });
     }
 
     private void SetupForCam(AssetCAM asset)
     {
-        var rowIndex = AddRow(ButtonSize);
+        AddRow();
 
-        Button buttonGetPos = new Button() { Dock = DockStyle.Fill, Text = "Get View Position", AutoSize = true };
-        buttonGetPos.Click += (object sender, EventArgs e) =>
+        AddTool("Get View Position", (object sender, EventArgs e) =>
         {
             asset.SetPosition(Program.MainForm.renderer.Camera.Position);
-
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
-        };
-        tableLayoutPanel1.Controls.Add(buttonGetPos, 0, rowIndex);
+        });
 
-        Button buttonGetDir = new Button() { Dock = DockStyle.Fill, Text = "Get View Direction", AutoSize = true };
-        buttonGetDir.Click += (object sender, EventArgs e) =>
+        AddTool("Get View Direction", (object sender, EventArgs e) =>
         {
             asset.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
             asset.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
@@ -162,70 +212,55 @@ public partial class InternalAssetEditor : Form, IInternalEditor
 
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
-        };
-        tableLayoutPanel1.Controls.Add(buttonGetDir, 1, rowIndex);
+        });
     }
 
     private void SetupForAddSelected(IAssetAddSelected asset)
     {
-        var rowIndex = AddRow(ButtonSize);
-
-        Button buttonAddSelected = new Button() { Dock = DockStyle.Fill, Text = "Add selected to " + asset.GetItemsText, AutoSize = true };
-        buttonAddSelected.Click += (object sender, EventArgs e) =>
+        AddRow();
+        AddTool("Add selected to " + asset.GetItemsText, (object sender, EventArgs e) =>
         {
             asset.AddItems(archive.GetCurrentlySelectedAssetIDs().ToList());
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
-        };
-        tableLayoutPanel1.Controls.Add(buttonAddSelected, 0, rowIndex);
-        tableLayoutPanel1.SetColumnSpan(buttonAddSelected, 2);
+        }, true);
     }
+
     private void SetupForFog(AssetFOG asset)
     {
-        AddRow(ButtonSize);
-
-        Button buttonPreviewFog = new Button() { Dock = DockStyle.Fill, Text = "Preview Fog", AutoSize = true };
-        buttonPreviewFog.Click += (object sender, EventArgs e) =>
+        AddRow();
+        AddTool("Preview Fog", (object sender, EventArgs e) =>
         {
             SharpRenderer.Fog = asset;
-        };
-        tableLayoutPanel1.Controls.Add(buttonPreviewFog);
+        }, true);
     }
 
     private void SetupForScrp(AssetSCRP asset)
     {
-        var rowIndex = AddRow(ButtonSize);
-
-        Button buttonConvert = new Button() { Dock = DockStyle.Fill, Text = "Convert to group of timers", AutoSize = true };
-        buttonConvert.Click += (object sender, EventArgs e) =>
+        AddRow();
+        AddTool("Convert to group of timers", (object sender, EventArgs e) =>
         {
             var newAssets = archive.ConvertScriptToGroupOfTimers(asset);
             archive.UnsavedChanges = true;
             Program.MainForm.SetSelectedIndices(newAssets);
-        };
-        tableLayoutPanel1.Controls.Add(buttonConvert, 0, rowIndex);
-        tableLayoutPanel1.SetColumnSpan(buttonConvert, 2);
+        }, true);
     }
 
     private void SetupForCsn(AssetCSN asset)
     {
-        AddRow(ButtonSize);
-
-        Button buttonExportModlsAnims = new Button() { Dock = DockStyle.Fill, Text = "Export All", AutoSize = true };
-        buttonExportModlsAnims.Click += (object sender, EventArgs e) =>
+        AddRow();
+        AddTool("Export All", (object sender, EventArgs e) =>
         {
-            using (CommonOpenFileDialog openFolder = new CommonOpenFileDialog() { IsFolderPicker = true })
-                if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
-                    asset.ExtractToFolder(openFolder.FileName, archive.platform.Endianness());
-        };
-        tableLayoutPanel1.Controls.Add(buttonExportModlsAnims);
-        tableLayoutPanel1.SetColumnSpan(buttonExportModlsAnims, 2);
+            using var openFolder = new CommonOpenFileDialog() { IsFolderPicker = true };
+            if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
+                asset.ExtractToFolder(openFolder.FileName, archive.platform.Endianness());
+        }, true);
     }
 
     private void SetupForShrp(AssetSHRP asset)
     {
-        AddRow(ButtonSize);
-        AddRow(ButtonSize);
+        AddRow();
+        AddRow();
 
         var validTypes = new List<IShrapnelType>()
         {
@@ -237,8 +272,8 @@ public partial class InternalAssetEditor : Form, IInternalEditor
 
         if (asset.game >= Game.Incredibles)
         {
-            AddRow(ButtonSize);
-            AddRow(ButtonSize);
+            AddRow();
+            AddRow();
 
             validTypes.AddRange(new IShrapnelType[] {
                  IShrapnelType.Shockwave,
@@ -250,8 +285,8 @@ public partial class InternalAssetEditor : Form, IInternalEditor
 
         if (asset.game >= Game.ROTU)
         {
-            AddRow(ButtonSize);
-            AddRow(ButtonSize);
+            AddRow();
+            AddRow();
 
             validTypes.AddRange(new IShrapnelType[]
             {
@@ -263,62 +298,74 @@ public partial class InternalAssetEditor : Form, IInternalEditor
 
         foreach (var i in validTypes)
         {
-            Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add {i}", AutoSize = true };
-            buttonAdd.Click += (object sender, EventArgs e) =>
+            AddTool($"Add {i}", (object sender, EventArgs e) =>
             {
                 asset.AddEntry(i);
                 RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
-            };
-            tableLayoutPanel1.Controls.Add(buttonAdd);
+            });
         }
     }
 
     private void SetupForPars(AssetPARS asset)
     {
-        AddRow(ButtonSize);
-
-        ComboBox listBox = new ComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
-        foreach (var o in Enum.GetValues(typeof(ParticleCommandType)))
-            listBox.Items.Add(o);
-        listBox.SelectedIndex = 0;
-
-        Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = "Add Command", AutoSize = true };
-        buttonAdd.Click += (object sender, EventArgs e) =>
+        if (EnableAssetToolButtons)
         {
-            asset.AddEntry((ParticleCommandType)listBox.Items[listBox.SelectedIndex]);
+            AddRow();
+
+            ComboBox comboBoxOptions = new ComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
+            foreach (var o in Enum.GetValues<ParticleCommandType>())
+                comboBoxOptions.Items.Add(o);
+            comboBoxOptions.SelectedIndex = 0;
+
+            var button = new Button() { Dock = DockStyle.Fill, Text = "Add Command", AutoSize = true };
+            button.Click += (object sender, EventArgs e) =>
+            {
+                asset.AddEntry((ParticleCommandType)comboBoxOptions.Items[comboBoxOptions.SelectedIndex]);
+            };
+
+            tableLayoutPanel1.Controls.Add(comboBoxOptions);
+            tableLayoutPanel1.Controls.Add(button);
+        }
+
+        ToolStripComboBox toolComboBox = new ToolStripComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
+        foreach (var o in Enum.GetValues<ParticleCommandType>())
+            toolComboBox.Items.Add(o);
+        toolComboBox.SelectedIndex = 0;
+        
+        var menuItem = new ToolStripMenuItem("Add Command");
+        menuItem.Click += (object sender, EventArgs e) =>
+        {
+            asset.AddEntry((ParticleCommandType)toolComboBox.SelectedItem);
         };
 
-        tableLayoutPanel1.Controls.Add(listBox);
-        tableLayoutPanel1.Controls.Add(buttonAdd);
+        assetToolStripMenuItem.DropDownItems.Add(toolComboBox);
+        assetToolStripMenuItem.DropDownItems.Add(menuItem);
     }
 
     private void SetupForUim(AssetUIM asset)
     {
-        AddRow(ButtonSize);
-        AddRow(ButtonSize);
-        AddRow(ButtonSize);
-        AddRow(ButtonSize);
+        AddRow();
+        AddRow();
+        AddRow();
+        AddRow();
 
         foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
         {
-            Button buttonAdd = new Button() { Dock = DockStyle.Fill, Text = $"Add: {uimct}", AutoSize = true };
-            buttonAdd.Click += (object sender, EventArgs e) =>
+            AddTool($"Add: {uimct}", (object sender, EventArgs e) =>
             {
                 asset.AddEntry(uimct);
                 RefreshPropertyGrid();
                 archive.UnsavedChanges = true;
-            };
-            tableLayoutPanel1.Controls.Add(buttonAdd);
+            });
         }
     }
 
     private void SetupForWire(AssetWIRE asset)
     {
-        var rowIndex = AddRow(ButtonSize);
+        AddRow();
 
-        Button buttonImport = new Button() { Dock = DockStyle.Fill, Text = "Import", AutoSize = true };
-        buttonImport.Click += (object sender, EventArgs e) =>
+        AddTool("Import", (object sender, EventArgs e) =>
         {
             OpenFileDialog openFile = new OpenFileDialog
             {
@@ -330,11 +377,9 @@ public partial class InternalAssetEditor : Form, IInternalEditor
                 asset.FromObj(openFile.FileName);
                 archive.UnsavedChanges = true;
             }
-        };
-        tableLayoutPanel1.Controls.Add(buttonImport, 0, rowIndex);
+        });
 
-        Button buttonExport = new Button() { Dock = DockStyle.Fill, Text = "Export", AutoSize = true };
-        buttonExport.Click += (object sender, EventArgs e) =>
+        AddTool("Export", (object sender, EventArgs e) =>
         {
             SaveFileDialog saveFile = new SaveFileDialog()
             {
@@ -344,48 +389,38 @@ public partial class InternalAssetEditor : Form, IInternalEditor
 
             if (saveFile.ShowDialog() == DialogResult.OK)
                 asset.ToObj(saveFile.FileName);
-        };
-        tableLayoutPanel1.Controls.Add(buttonExport, 1, rowIndex);
+        });
     }
 
     private void SetupForCopyPasteTransformation(IAssetCopyPasteTransformation asset)
     {
-        var rowIndex = AddRow(ButtonSize);
+        AddRow();
 
-        Button buttonCopyTrans = new Button() { Dock = DockStyle.Fill, Text = "Copy Transformation", AutoSize = true };
-        buttonCopyTrans.Click += (object sender, EventArgs e) =>
+        AddTool("Copy Transformation", (object sender, EventArgs e) =>
         {
             asset.CopyTransformation();
-        };
-        tableLayoutPanel1.Controls.Add(buttonCopyTrans, 0, rowIndex);
+        });
 
-        Button buttonPasteTransformation = new Button() { Dock = DockStyle.Fill, Text = "Paste Transformation", AutoSize = true };
-        buttonPasteTransformation.Click += (object sender, EventArgs e) =>
+        AddTool("Paste Transformation", (object sender, EventArgs e) =>
         {
             asset.PasteTransformation();
             propertyGridAsset.Refresh();
-        };
-        tableLayoutPanel1.Controls.Add(buttonPasteTransformation, 1, rowIndex);
+        });
     }
 
     private void SetupForBakeScaleRot(EntityAsset asset)
     {
-        var rowIndex = AddRow(ButtonSize);
+        AddRow();
 
-        Button buttonBakeRotation = new Button() { Dock = DockStyle.Fill, Text = "Bake Rotation", AutoSize = true };
-        buttonBakeRotation.Click += (object sender, EventArgs e) =>
+        AddTool("Bake Rotation", (object sender, EventArgs e) =>
         {
             asset.ApplyBakeRotation();
             propertyGridAsset.Refresh();
-        };
-        tableLayoutPanel1.Controls.Add(buttonBakeRotation, 0, rowIndex);
-
-        Button buttonBakeScale = new Button() { Dock = DockStyle.Fill, Text = "Bake Scale", AutoSize = true };
-        buttonBakeScale.Click += (object sender, EventArgs e) =>
+        });
+        AddTool("Bake Scale", (object sender, EventArgs e) =>
         {
             asset.ApplyBakeScale();
             propertyGridAsset.Refresh();
-        };
-        tableLayoutPanel1.Controls.Add(buttonBakeScale, 1, rowIndex);
+        });
     }
 }

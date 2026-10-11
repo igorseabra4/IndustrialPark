@@ -126,7 +126,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="newToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;New</value>
@@ -135,7 +135,7 @@
     <value>Ctrl+O</value>
   </data>
   <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="openToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Open</value>
@@ -148,7 +148,7 @@
     <value>Ctrl+S</value>
   </data>
   <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="saveToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Save</value>
@@ -157,19 +157,19 @@
     <value>False</value>
   </data>
   <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
     <value>Save &amp;As...</value>
   </data>
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>177, 6</value>
+    <value>145, 6</value>
   </data>
   <data name="closeToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+W</value>
   </data>
   <data name="closeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>180, 22</value>
+    <value>148, 22</value>
   </data>
   <data name="closeToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Close</value>
@@ -836,6 +836,33 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="groupBoxAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
+  <data name="textBoxFindAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Top, Left, Right</value>
+  </data>
+  <data name="textBoxFindAsset.Location" type="System.Drawing.Point, System.Drawing">
+    <value>256, 14</value>
+  </data>
+  <data name="textBoxFindAsset.PlaceholderText" xml:space="preserve">
+    <value>Search for an asset...</value>
+  </data>
+  <data name="textBoxFindAsset.Size" type="System.Drawing.Size, System.Drawing">
+    <value>260, 20</value>
+  </data>
+  <data name="textBoxFindAsset.TabIndex" type="System.Int32, mscorlib">
+    <value>23</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Name" xml:space="preserve">
+    <value>textBoxFindAsset</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Type" xml:space="preserve">
+    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.Parent" xml:space="preserve">
+    <value>groupBoxAssets</value>
+  </data>
+  <data name="&gt;&gt;textBoxFindAsset.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
   <data name="buttonMultiEditAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
@@ -864,7 +891,7 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonMultiEditAsset.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <data name="checkBoxTemplateFocus.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -901,7 +928,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;checkBoxTemplateFocus.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="listViewAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
@@ -961,7 +988,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;listViewAssets.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="buttonCopyAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -991,7 +1018,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonCopyAsset.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="buttonPasteAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1021,58 +1048,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonPasteAssets.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="textBoxFindAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Top, Left, Right</value>
-  </data>
-  <data name="textBoxFindAsset.Location" type="System.Drawing.Point, System.Drawing">
-    <value>296, 13</value>
-  </data>
-  <data name="textBoxFindAsset.Size" type="System.Drawing.Size, System.Drawing">
-    <value>217, 20</value>
-  </data>
-  <data name="textBoxFindAsset.TabIndex" type="System.Int32, mscorlib">
-    <value>10</value>
-  </data>
-  <data name="&gt;&gt;textBoxFindAsset.Name" xml:space="preserve">
-    <value>textBoxFindAsset</value>
-  </data>
-  <data name="&gt;&gt;textBoxFindAsset.Type" xml:space="preserve">
-    <value>System.Windows.Forms.TextBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;textBoxFindAsset.Parent" xml:space="preserve">
-    <value>groupBoxAssets</value>
-  </data>
-  <data name="&gt;&gt;textBoxFindAsset.ZOrder" xml:space="preserve">
     <value>5</value>
-  </data>
-  <data name="label3.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label3.Location" type="System.Drawing.Point, System.Drawing">
-    <value>260, 16</value>
-  </data>
-  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>30, 13</value>
-  </data>
-  <data name="label3.TabIndex" type="System.Int32, mscorlib">
-    <value>16</value>
-  </data>
-  <data name="label3.Text" xml:space="preserve">
-    <value>Find:</value>
-  </data>
-  <data name="&gt;&gt;label3.Name" xml:space="preserve">
-    <value>label3</value>
-  </data>
-  <data name="&gt;&gt;label3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label3.Parent" xml:space="preserve">
-    <value>groupBoxAssets</value>
-  </data>
-  <data name="&gt;&gt;label3.ZOrder" xml:space="preserve">
-    <value>6</value>
   </data>
   <data name="buttonEditDataAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1102,7 +1078,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonEditDataAsset.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>6</value>
   </data>
   <data name="buttonView.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1132,7 +1108,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonView.ZOrder" xml:space="preserve">
-    <value>8</value>
+    <value>7</value>
   </data>
   <data name="buttonExportRawAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1162,7 +1138,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonExportRawAsset.ZOrder" xml:space="preserve">
-    <value>9</value>
+    <value>8</value>
   </data>
   <data name="buttonEditAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1192,7 +1168,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonEditAsset.ZOrder" xml:space="preserve">
-    <value>10</value>
+    <value>9</value>
   </data>
   <data name="buttonDuplicateAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1222,7 +1198,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonDuplicateAsset.ZOrder" xml:space="preserve">
-    <value>11</value>
+    <value>10</value>
   </data>
   <data name="buttonRemoveAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1252,7 +1228,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonRemoveAsset.ZOrder" xml:space="preserve">
-    <value>12</value>
+    <value>11</value>
   </data>
   <data name="buttonImportAsset.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
@@ -1282,7 +1258,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;buttonImportAsset.ZOrder" xml:space="preserve">
-    <value>13</value>
+    <value>12</value>
   </data>
   <data name="comboBoxAssetTypes.Location" type="System.Drawing.Point, System.Drawing">
     <value>46, 13</value>
@@ -1303,7 +1279,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;comboBoxAssetTypes.ZOrder" xml:space="preserve">
-    <value>14</value>
+    <value>13</value>
   </data>
   <data name="label2.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1330,7 +1306,7 @@ Focus</value>
     <value>groupBoxAssets</value>
   </data>
   <data name="&gt;&gt;label2.ZOrder" xml:space="preserve">
-    <value>15</value>
+    <value>14</value>
   </data>
   <data name="groupBoxAssets.Location" type="System.Drawing.Point, System.Drawing">
     <value>12, 80</value>

@@ -28,60 +28,130 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.propertyGridAsset = new System.Windows.Forms.PropertyGrid();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel1.SuspendLayout();
-            this.SuspendLayout();
+            propertyGridAsset = new System.Windows.Forms.PropertyGrid();
+            tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
+            menuStrip1 = new System.Windows.Forms.MenuStrip();
+            assetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            editHeaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            tableLayoutPanel1.SuspendLayout();
+            menuStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // propertyGridAsset
             // 
-            this.tableLayoutPanel1.SetColumnSpan(this.propertyGridAsset, 2);
-            this.propertyGridAsset.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.propertyGridAsset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.propertyGridAsset.Location = new System.Drawing.Point(3, 3);
-            this.propertyGridAsset.Name = "propertyGridAsset";
-            this.propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridAsset.Size = new System.Drawing.Size(338, 435);
-            this.propertyGridAsset.TabIndex = 5;
-            this.propertyGridAsset.PropertyValueChanged += new System.Windows.Forms.PropertyValueChangedEventHandler(this.propertyGridAsset_PropertyValueChanged);
+            propertyGridAsset.BackColor = System.Drawing.SystemColors.Control;
+            tableLayoutPanel1.SetColumnSpan(propertyGridAsset, 2);
+            propertyGridAsset.Dock = System.Windows.Forms.DockStyle.Fill;
+            propertyGridAsset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
+            propertyGridAsset.Location = new System.Drawing.Point(3, 3);
+            propertyGridAsset.Name = "propertyGridAsset";
+            propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            propertyGridAsset.Size = new System.Drawing.Size(338, 411);
+            propertyGridAsset.TabIndex = 5;
+            propertyGridAsset.PropertyValueChanged += propertyGridAsset_PropertyValueChanged;
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.AutoSize = true;
-            this.tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.tableLayoutPanel1.ColumnCount = 2;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Controls.Add(this.propertyGridAsset, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(344, 441);
-            this.tableLayoutPanel1.TabIndex = 7;
+            tableLayoutPanel1.AutoSize = true;
+            tableLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            tableLayoutPanel1.ColumnCount = 2;
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            tableLayoutPanel1.Controls.Add(propertyGridAsset, 0, 0);
+            tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 1;
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
+            tableLayoutPanel1.Size = new System.Drawing.Size(344, 417);
+            tableLayoutPanel1.TabIndex = 7;
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { assetToolStripMenuItem, toolsToolStripMenuItem });
+            menuStrip1.Location = new System.Drawing.Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new System.Drawing.Size(344, 24);
+            menuStrip1.TabIndex = 8;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // assetToolStripMenuItem
+            // 
+            assetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { editHeaderToolStripMenuItem, viewToolStripMenuItem, copyToolStripMenuItem, removeToolStripMenuItem });
+            assetToolStripMenuItem.Name = "assetToolStripMenuItem";
+            assetToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            assetToolStripMenuItem.Text = "Edit";
+            // 
+            // editHeaderToolStripMenuItem
+            // 
+            editHeaderToolStripMenuItem.Name = "editHeaderToolStripMenuItem";
+            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            editHeaderToolStripMenuItem.Text = "Edit Header";
+            editHeaderToolStripMenuItem.Click += editHeaderToolStripMenuItem_Click;
+            // 
+            // viewToolStripMenuItem
+            // 
+            viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+            viewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            viewToolStripMenuItem.Text = "View Asset";
+            viewToolStripMenuItem.Click += viewToolStripMenuItem_Click;
+            // 
+            // copyToolStripMenuItem
+            // 
+            copyToolStripMenuItem.Name = "copyToolStripMenuItem";
+            copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            copyToolStripMenuItem.Text = "Copy Asset";
+            copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
+            // 
+            // removeToolStripMenuItem
+            // 
+            removeToolStripMenuItem.Name = "removeToolStripMenuItem";
+            removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            removeToolStripMenuItem.Text = "Delete Asset";
+            removeToolStripMenuItem.Click += removeToolStripMenuItem_Click;
+            // 
+            // toolsToolStripMenuItem
+            // 
+            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            toolsToolStripMenuItem.Text = "Tools";
             // 
             // InternalAssetEditor
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(344, 441);
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.MaximizeBox = false;
-            this.Name = "InternalAssetEditor";
-            this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Asset Data Editor";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.InternalAssetEditor_FormClosing);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(344, 441);
+            Controls.Add(tableLayoutPanel1);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
+            MaximizeBox = false;
+            Name = "InternalAssetEditor";
+            ShowIcon = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
+            Text = "Asset Data Editor";
+            FormClosing += InternalAssetEditor_FormClosing;
+            tableLayoutPanel1.ResumeLayout(false);
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.PropertyGrid propertyGridAsset;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem assetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editHeaderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
     }
 }

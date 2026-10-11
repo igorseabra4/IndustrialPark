@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class InternalTextEditor : Form, IInternalEditor
+    public partial class InternalTextEditor : InternalEditor
     {
         public InternalTextEditor(AssetTEXT asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
@@ -18,7 +18,7 @@ namespace IndustrialPark
             richTextBoxAssetText.Text = this.asset.Text;
         }
 
-        public void RefreshPropertyGrid()
+        public override void RefreshPropertyGrid()
         {
             richTextBoxAssetText.Refresh();
         }
@@ -29,8 +29,6 @@ namespace IndustrialPark
         }
 
         private AssetTEXT asset;
-        private ArchiveEditorFunctions archive;
-        private readonly Action<Asset> updateListView;
 
         private void richTextBoxAssetText_TextChanged(object sender, EventArgs e)
         {
@@ -39,7 +37,7 @@ namespace IndustrialPark
             updateListView(asset);
         }
 
-        public uint GetAssetID()
+        public override uint GetAssetID()
         {
             return asset.assetID;
         }

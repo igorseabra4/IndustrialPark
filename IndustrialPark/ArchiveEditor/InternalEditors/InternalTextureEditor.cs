@@ -10,7 +10,7 @@ using static IndustrialPark.TextureIOHelper;
 
 namespace IndustrialPark
 {
-    public partial class InternalTextureEditor : Form, IInternalEditor
+    public partial class InternalTextureEditor : InternalEditor
     {
         public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
@@ -29,7 +29,7 @@ namespace IndustrialPark
             RefreshPropertyGrid();
         }
 
-        public void RefreshPropertyGrid()
+        public override void RefreshPropertyGrid()
         {
             if (b != null)
                 b.Dispose();
@@ -50,11 +50,9 @@ namespace IndustrialPark
         }
 
         private readonly AssetRWTX asset;
-        private readonly ArchiveEditorFunctions archive;
         private Bitmap b;
-        private readonly Action<Asset> updateListView;
 
-        public uint GetAssetID()
+        public override uint GetAssetID()
         {
             return asset.assetID;
         }

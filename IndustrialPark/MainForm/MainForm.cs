@@ -186,6 +186,9 @@ namespace IndustrialPark
             ArchiveEditor.RotationGizmoLocalAxis = settings.RotationGizmoLocalAxis;
             rotationGizmoLocalAxisToolStripMenuItem.Checked = settings.RotationGizmoLocalAxis;
 
+            enableAssetToolButtonsToolStripMenuItem.Checked = settings.EnableAssetToolButtons;
+            IInternalEditor.EnableAssetToolButtons = settings.EnableAssetToolButtons;
+
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
 

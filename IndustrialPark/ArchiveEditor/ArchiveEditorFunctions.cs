@@ -139,7 +139,7 @@ namespace IndustrialPark
         }
 
         public string currentlyOpenFilePath { get; private set; }
-        public string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
+        public string LevelName => string.IsNullOrEmpty(currentlyOpenFilePath) ? "" : Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
 
         protected Section_PACK PACK;
 
@@ -1342,11 +1342,12 @@ namespace IndustrialPark
                     ReplaceReferencesOn(GetFromAssetID(u), referenceUpdate);
         }
 
-        public void CopyAssetsToClipboard()
+        public void CopyAssetsToClipboard(uint? assetID = null)
         {
             var clipboard = new AssetClipboard();
 
-            foreach (Asset asset in CurrentlySelectedAssets)
+            var assets = assetID.HasValue && ContainsAsset(assetID.Value) ? [GetFromAssetID(assetID.Value)] : CurrentlySelectedAssets;
+            foreach (Asset asset in assets)
             {
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.BuildAHDR(platform.Endianness())));
 

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class InternalFlyEditor : Form, IInternalEditor
+    public partial class InternalFlyEditor : InternalEditor
     {
         public InternalFlyEditor(AssetFLY asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
@@ -19,15 +19,13 @@ namespace IndustrialPark
             UpdateListbox();
         }
 
-        public void RefreshPropertyGrid()
+        public override void RefreshPropertyGrid()
         {
             listBoxFlyEntries.Refresh();
             propertyGridSpecific.Refresh();
         }
 
         private readonly AssetFLY asset;
-        private readonly ArchiveEditorFunctions archive;
-        private readonly Action<Asset> updateListView;
 
         private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -42,7 +40,7 @@ namespace IndustrialPark
             }
         }
 
-        public uint GetAssetID()
+        public override uint GetAssetID()
         {
             return asset.assetID;
         }

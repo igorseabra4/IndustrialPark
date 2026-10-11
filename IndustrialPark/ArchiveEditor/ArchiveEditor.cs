@@ -33,6 +33,9 @@ namespace IndustrialPark
             defaultColor = textBoxFindAsset.BackColor;
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
+
+            textBoxFindAsset.Location = new System.Drawing.Point(256, 14);
+            textBoxFindAsset.Size = new Size(260, 21);
         }
 
         public void Begin(string filePath, Platform scoobyPlatform)
@@ -853,13 +856,16 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0)
                 return;
 
+            RemoveAssets(CurrentlySelectedAssetIDs());
+        }
+
+        public void RemoveAssets(List<uint> assetIDs)
+        {
             programIsChangingStuff = true;
+            var types = assetIDs.Select(u => archive.GetFromAssetID(u).assetType).ToHashSet();
+            Program.UndoBuffer.AddAction([.. assetIDs.Select(archive.GetAssetRemovedAction), new SelectionAction(assetIDs)]);
 
-            var selected = CurrentlySelectedAssetIDs();
-            var types = selected.Select(u => archive.GetFromAssetID(u).assetType).ToHashSet();
-            Program.UndoBuffer.AddAction([.. selected.Select(archive.GetAssetRemovedAction), new SelectionAction(selected)]);
-
-            archive.RemoveAsset(selected);
+            archive.RemoveAsset(assetIDs);
 
             if (!archive.NoLayers)
                 comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
@@ -891,25 +897,37 @@ namespace IndustrialPark
             if (currentView >= assets.Length)
                 currentView = 0;
             var asset = assets[currentView];
-            if (asset is AssetCAM cam)
-                Program.Renderer.Camera.SetPositionCamera(cam);
-            else
-                Program.Renderer.Camera.SetPosition(asset.GetBoundingBox().Center - (10 + asset.GetBoundingBox().Size) * Program.MainForm.renderer.Camera.Forward);
+            Program.Renderer.Camera.ShowAssetOnViewport(asset);
         }
 
         private void buttonEditAsset_Click(object sender, EventArgs e)
         {
+            var assetIDs = CurrentlySelectedAssetIDs();
+            if (assetIDs.Count == 1)
+                EditHeader(assetIDs[0], out _);
+        }
+
+        public bool EditHeader(uint oldAssetID, out uint newAssetID)
+        {
+            newAssetID = 0;
             try
             {
-                uint oldAssetID = CurrentlySelectedAssetIDs()[0];
+                archive.TryGetAsset(oldAssetID, out Asset asset);
+                if (asset == null)
+                    return false;
 
-                var asset = archive.GetFromAssetID(oldAssetID);
                 var oldLayer = archive.GetLayerFromAssetID(oldAssetID);
 
                 Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR(archive.platform.Endianness()));
 
                 if (AHDR != null)
                 {
+                    if (AHDR.assetID != oldAssetID && archive.ContainsAsset(AHDR.assetID))
+                    {
+                        MessageBox.Show($"Archive {archive.LevelName} already contains asset with ID [{AHDR.assetID:X8}] {AHDR.ADBG.assetName}. Please choose a new name/ID.", "Unable to create asset", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return false;
+                    }
+
                     archive.UnsavedChanges = true;
 
                     var actions = new List<IReversibleAction>
@@ -919,9 +937,6 @@ namespace IndustrialPark
                     };
 
                     archive.RemoveAsset(oldAssetID, false);
-
-                    while (archive.ContainsAsset(AHDR.assetID))
-                        MessageBox.Show($"Archive already contains asset id [{AHDR.assetID:X8}]. Will change it to [{++AHDR.assetID:X8}].");
 
                     archive.AddAsset(AHDR, asset.game, archive.platform.Endianness(), oldLayer, true);
 
@@ -936,12 +951,17 @@ namespace IndustrialPark
                     actions.Add(archive.GetAssetAddedAction(AHDR.assetID));
                     actions.Add(new SelectionAction(AHDR.assetID));
                     Program.UndoBuffer.AddAction(actions);
+
+                    newAssetID = AHDR.assetID;
+                    return true;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show("Unable to edit asset: " + ex.Message);
             }
+
+            return false;
         }
 
         private void buttonInternalEdit_Click(object sender, EventArgs e)
@@ -955,13 +975,19 @@ namespace IndustrialPark
         }
 
         public void OpenInternalEditors()
-        {            
+        {
             archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false, MousePosition, UpdateCurrentListView);
         }
 
         public void OpenInternalEditors(List<uint> whoTargets, bool openAnyway)
         {
             archive.OpenInternalEditor(whoTargets, openAnyway, MousePosition, UpdateCurrentListView);
+        }
+
+        public void OpenInternalEditor(uint assetID)
+        {
+            if (archive.ContainsAsset(assetID))
+                archive.OpenInternalEditor([assetID], true, MousePosition, UpdateCurrentListView);
         }
 
         public void DeleteSelectedAssets()
@@ -1081,18 +1107,29 @@ namespace IndustrialPark
             archive.MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
         }
 
-        public void SetSelectedIndex(uint? assetID, bool addToSelection = false, bool addOrRemove = false)
+        public void SetSelectedIndex(uint? assetID, bool addToSelection = false, bool toggleSelection = false)
         {
-            var assetIDs = new List<uint>();
-            if (addToSelection || addOrRemove)
-                assetIDs.AddRange(CurrentlySelectedAssetIDs());
+            var selected = new List<uint>();
+            if (addToSelection || toggleSelection)
+                selected.AddRange(CurrentlySelectedAssetIDs());
             if (assetID.HasValue)
             {
-                if (addOrRemove && CurrentlySelectedAssetIDs().Contains(assetID.Value))
-                    assetIDs.Remove(assetID.Value);
+                if (toggleSelection && selected.Contains(assetID.Value))
+                    selected.Remove(assetID.Value);
                 else
-                    assetIDs.Add(assetID.Value);
+                    selected.Add(assetID.Value);
             }
+            SetSelectedIndices(selected);
+        }
+
+        public void RemoveFromSelection(uint? assetID)
+        {
+            if (!assetID.HasValue || !archive.ContainsAsset(assetID.Value))
+                return;
+            var assetIDs = CurrentlySelectedAssetIDs();
+            if (!assetIDs.Contains(assetID.Value))
+                return;
+            assetIDs.Remove(assetID.Value);
             SetSelectedIndices(assetIDs);
         }
 
@@ -1542,6 +1579,12 @@ namespace IndustrialPark
         {
             if (!PressedKeys.Contains(e.KeyCode))
                 PressedKeys.Add(e.KeyCode);
+
+            if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
+                (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
+                Program.UndoBuffer.Redo();
+            else if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
+                Program.UndoBuffer.Undo();
 
             if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.S))
                 Save();
@@ -2164,13 +2207,19 @@ namespace IndustrialPark
                 }
         }
 
-        public void UnhideAllAssets()
+        public bool UnhideAllAssets()
         {
+            bool unhid = false;
             foreach (var asset in archive.GetAllAssets())
-                asset.isInvisible = false;
+                if (asset.isInvisible)
+                {
+                    asset.isInvisible = false;
+                    unhid = true;
+                }
             foreach (ListViewItem item in listViewAssets.Items)
                 if (!item.Checked)
                     item.Checked = true;
+            return unhid;
         }
     }
 }

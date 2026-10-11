@@ -1,23 +1,15 @@
 ﻿using Assimp;
-using HipHopFile;
 using IndustrialPark.Models;
 using RenderWareFile;
 using SharpDX;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
 
 namespace IndustrialPark
 {
-    public partial class InternalCollModelEditor : Form, IInternalEditor
+    public partial class InternalCollModelEditor : InternalEditor
     {
         public InternalCollModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
@@ -31,15 +23,13 @@ namespace IndustrialPark
         }
 
         private readonly AssetRenderWareModel asset;
-        private readonly ArchiveEditorFunctions archive;
-        private readonly Action<Asset> updateListView;
 
-        public uint GetAssetID()
+        public override uint GetAssetID()
         {
             return asset.assetID;
         }
 
-        public void RefreshPropertyGrid()
+        public override void RefreshPropertyGrid()
         {
         }
 

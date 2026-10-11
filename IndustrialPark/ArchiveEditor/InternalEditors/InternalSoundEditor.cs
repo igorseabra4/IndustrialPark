@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class InternalSoundEditor : Form, IInternalEditor
+    public partial class InternalSoundEditor : InternalEditor
     {
         public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
@@ -28,7 +28,7 @@ namespace IndustrialPark
                 forceMonoCheckBox.Enabled = true;
         }
 
-        public void RefreshPropertyGrid()
+        public override void RefreshPropertyGrid()
         {
             try
             {
@@ -116,10 +116,8 @@ namespace IndustrialPark
         }
 
         private readonly AssetSound asset;
-        private readonly ArchiveEditorFunctions archive;
-        private readonly Action<Asset> updateListView;
 
-        public uint GetAssetID()
+        public override uint GetAssetID()
         {
             return asset.assetID;
         }

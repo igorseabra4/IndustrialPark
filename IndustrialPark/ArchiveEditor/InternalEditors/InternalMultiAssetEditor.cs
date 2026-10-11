@@ -24,7 +24,7 @@ public partial class InternalMultiAssetEditor : Form
 
         labelAssetName.Text = string.Join(" | ", from Asset asset in assets select asset.assetName);
 
-        IInternalEditor.SelectFirstProperty(propertyGridAsset.SelectedGridItem);
+        InternalEditor.SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
     private ArchiveEditorFunctions archive;
