@@ -16,7 +16,7 @@ namespace IndustrialPark
             set
             {
                 _yaw = value;
-                UpdateCamera();
+                Update();
                 RaiseCameraChangedEvent();
             }
         }
@@ -27,7 +27,18 @@ namespace IndustrialPark
             set
             {
                 _pitch = value;
-                UpdateCamera();
+                Update();
+                RaiseCameraChangedEvent();
+            }
+        }
+        private float _roll = 0;
+        public float Roll
+        {
+            get => _roll;
+            set
+            {
+                _roll = value;
+                Update();
                 RaiseCameraChangedEvent();
             }
         }
@@ -49,31 +60,36 @@ namespace IndustrialPark
         internal void AddPositionForward(float factor)
         {
             Position += Forward * Speed * factor;
-            UpdateCamera();
         }
 
         internal void AddPositionSideways(float factor)
         {
             Position -= Right * Speed * factor;
-            UpdateCamera();
         }
 
         internal void AddPositionUp(float factor)
         {
             Position += Up * Speed * factor;
-            UpdateCamera();
         }
 
         internal void AddYaw(float factor)
         {
             _yaw -= SpeedRot * factor;
-            UpdateCamera();
         }
 
         internal void AddPitch(float factor)
         {
             _pitch -= SpeedRot * factor;
-            UpdateCamera();
+        }
+
+        internal void AddRoll(float factor)
+        {
+            _roll -= SpeedRot * factor;
+        }
+
+        internal void ResetRoll()
+        {
+            _roll = 0;
         }
 
         internal void IncreaseCameraSpeed(float v)
@@ -90,15 +106,20 @@ namespace IndustrialPark
                 SpeedRot = 1f;
         }
 
-        private void UpdateCamera()
+        public void Update()
         {
-            _pitch = _pitch % 360;
-            _yaw = _yaw % 360;
+            _pitch %= 360;
+            _yaw %= 360;
+            _roll %= 360;
 
-            Forward = (Vector3)Vector3.Transform(Vector3.ForwardRH, Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), 0));
-            Right = Vector3.Normalize(Vector3.Cross(Forward, Vector3.Up));
-            Up = Vector3.Normalize(Vector3.Cross(Right, Forward));
-            RaiseCameraChangedEvent();
+            Matrix rotation = Matrix.RotationYawPitchRoll(
+                MathUtil.DegreesToRadians(Yaw),
+                MathUtil.DegreesToRadians(Pitch),
+                MathUtil.DegreesToRadians(Roll));
+
+            Forward = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.ForwardRH, rotation));
+            Right = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.Right, rotation));
+            Up = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.Up, rotation));
         }
 
         public float DefaultFarPlane = 10000F;
@@ -112,20 +133,19 @@ namespace IndustrialPark
             Up = Vector3.Up;
             _yaw = 0;
             _pitch = 0;
-            Speed = 5f;
-            SpeedRot = 5f;
+            _roll = 0;
 
             FieldOfView = MathUtil.Pi / 3f;
             NearPlane = DefaultNearPlane;
             FarPlane = DefaultFarPlane;
 
-            UpdateCamera();
+            Update();
         }
 
         public void SetPosition(Vector3 Position)
         {
             this.Position = Position;
-            UpdateCamera();
+            Update();
         }
 
         public Matrix ViewMatrix => Matrix.LookAtRH(Position, Position + Forward, Up);
@@ -134,8 +154,25 @@ namespace IndustrialPark
 
         public Matrix BiggerFovProjectionMatrix => Matrix.PerspectiveFovRH(1.3f * FieldOfView, AspectRatio, NearPlane, FarPlane);
 
-        public override string ToString() => string.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}]",
-                Position.X, Position.Y, Position.Z, Yaw, Pitch);
+        public override string ToString() => string.Format("Position: [{0:0.0000}, {1:0.0000}, {2:0.0000}] Rotation: [{3:0.0000}, {4:0.0000}, {5:0.0000}]",
+                Position.X, Position.Y, Position.Z, Yaw, Pitch, Roll);
+
+        private void SetCameraRotationFromVectors()
+        {
+            _pitch = MathUtil.RadiansToDegrees((float)Math.Asin(Math.Clamp(Forward.Y, -1f, 1f)));
+            _yaw = 270f - MathUtil.RadiansToDegrees((float)Math.Atan2(Forward.Z, Forward.X));
+            _yaw %= 360f;
+            Matrix yawPitch = Matrix.RotationYawPitchRoll(
+                MathUtil.DegreesToRadians(_yaw),
+                MathUtil.DegreesToRadians(_pitch),
+                0f);
+            Vector3 expectedUp = (Vector3)Vector3.Transform(Vector3.Up, yawPitch);
+            _roll = MathUtil.RadiansToDegrees(
+                (float)Math.Atan2(
+                    Vector3.Dot(Forward, Vector3.Cross(expectedUp, Up)),
+                    Vector3.Dot(expectedUp, Up)));
+            _roll %= 360f;
+        }
 
         public void SetPositionCamera(AssetCAM cam)
         {
@@ -143,10 +180,7 @@ namespace IndustrialPark
             Forward = new Vector3(cam.NormalizedForwardX, cam.NormalizedForwardY, cam.NormalizedForwardZ);
             Up = new Vector3(cam.NormalizedUpX, cam.NormalizedUpY, cam.NormalizedUpZ);
             Right = Vector3.Normalize(Vector3.Cross(Forward, Up));
-            _pitch = MathUtil.RadiansToDegrees((float)Math.Asin(Forward.Y));
-            _yaw = 270f - MathUtil.RadiansToDegrees((float)Math.Atan2(Forward.Z, Forward.X));
-            _yaw = _yaw % 360f;
-
+            SetCameraRotationFromVectors();
             RaiseCameraChangedEvent();
         }
 
@@ -156,11 +190,16 @@ namespace IndustrialPark
             Forward = -cam.CameraNormalizedBackward;
             Up = cam.CameraNormalizedUp;
             Right = -cam.CameraNormalizedRight;
-            _pitch = MathUtil.RadiansToDegrees((float)Math.Asin(Forward.Y));
-            _yaw = 270f - MathUtil.RadiansToDegrees((float)Math.Atan2(Forward.Z, Forward.X));
-            _yaw = _yaw % 360f;
-
+            SetCameraRotationFromVectors();
             RaiseCameraChangedEvent();
+        }
+
+        public void ShowAssetOnViewport(IClickableAsset asset)
+        {
+            if (asset is AssetCAM cam)
+                SetPositionCamera(cam);
+            else
+                SetPosition(asset.GetBoundingBox().Center - (10 + asset.GetBoundingBox().Size) * Forward);
         }
     }
 }

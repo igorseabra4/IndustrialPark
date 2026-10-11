@@ -144,7 +144,7 @@ namespace IndustrialPark
                     smallImageText = "";
                 }
 
-                client.SetPresence(new RichPresence()
+                client?.SetPresence(new RichPresence()
                 {
                     Details = details,
                     State = state,

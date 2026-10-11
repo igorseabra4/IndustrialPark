@@ -7,10 +7,11 @@ using IndustrialPark.SaveFile;
 
 namespace IndustrialPark
 {
-    static class Program
+    public static class Program
     {
         public static MainForm MainForm;
         public static ViewConfig ViewConfig;
+        public static ViewControls ViewControls;
         public static AboutBox AboutBox;
         public static UserTemplateManager UserTemplateManager;
         public static HansMainForm HansMainForm;
@@ -58,6 +59,7 @@ namespace IndustrialPark
                 Directory.CreateDirectory(MainForm.userTemplatesFolder);
 
             ViewConfig = new ViewConfig();
+            ViewControls = new ViewControls();
             AboutBox = new AboutBox();
             UserTemplateManager = new UserTemplateManager();
 

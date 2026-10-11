@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    partial class AboutBox : Form
+    public partial class AboutBox : Form
     {
         public AboutBox()
         {

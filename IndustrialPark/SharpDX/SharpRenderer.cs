@@ -47,6 +47,7 @@ namespace IndustrialPark
 
         public SharpRenderer()
         {
+            device = new SharpDevice(new Control(), false);
             LoadModels(true);
         }
 
@@ -560,6 +561,7 @@ namespace IndustrialPark
             TransformScaleFactor = elapsedSeconds / TARGET_FRAME_TIME;
 
             Program.MainForm.KeyboardController();
+            Camera.Update();
 
             sharpFPS.Update();
 
@@ -604,7 +606,7 @@ namespace IndustrialPark
                         else if (playingFly)
                             flyToPlay.Play();
 
-                        Program.MainForm.SetToolStripStatusLabel(Camera.ToString() + " FPS: " + $"{sharpFPS.FPS:0.0000}");
+                        Program.MainForm.SetToolStripStatusLabel($"{Camera} | FPS: {sharpFPS.FPS:0.0000}");
 
                         Matrix view = Camera.ViewMatrix;
                         viewProjection = view * Camera.ProjectionMatrix;

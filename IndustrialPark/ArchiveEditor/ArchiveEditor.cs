@@ -1607,7 +1607,7 @@ namespace IndustrialPark
         private void ArchiveEditor_Deactivate(object sender, EventArgs e)
         {
             PressedKeys.Clear();
-            if (!OwnedForms.Any() && Program.MainForm.TranslucentWhenOutOfFocus)
+            if (Program.MainForm.TranslucentWhenOutOfFocus && CanFocus && !OwnedForms.Any())
                 Opacity = 0.5f;
         }
 

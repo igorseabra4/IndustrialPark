@@ -120,98 +120,12 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+N</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 22</value>
-  </data>
-  <data name="newToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;New Editor</value>
-  </data>
-  <data name="importLevelToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>Ctrl+O</value>
-  </data>
-  <data name="importLevelToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 22</value>
-  </data>
-  <data name="importLevelToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Open Level...</value>
-  </data>
-  <data name="openLastToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 22</value>
-  </data>
-  <data name="openLastToolStripMenuItem.Text" xml:space="preserve">
-    <value>Recent Archives</value>
-  </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="closeAllEditorsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
-  <data name="closeAllEditorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 22</value>
-  </data>
-  <data name="closeAllEditorsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Close All Editors</value>
-  </data>
-  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
-    <value>182, 6</value>
-  </data>
   <data name="archiveEditorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>93, 19</value>
   </data>
   <data name="archiveEditorToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Archive Editor</value>
-  </data>
-  <data name="newToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="newToolStripMenuItem1.Text" xml:space="preserve">
-    <value>&amp;New</value>
-  </data>
-  <data name="newToolStripMenuItem1.ToolTipText" xml:space="preserve">
-    <value>Closes all open editors and resets the current project.</value>
-  </data>
-  <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="openToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Open</value>
-  </data>
-  <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="saveToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Save</value>
-  </data>
-  <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Save &amp;As...</value>
-  </data>
-  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
-    <value>259, 6</value>
-  </data>
-  <data name="autoSaveOnClosingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="autoSaveOnClosingToolStripMenuItem.Text" xml:space="preserve">
-    <value>Auto-Save On Closing</value>
-  </data>
-  <data name="autoLoadOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="autoLoadOnStartupToolStripMenuItem.Text" xml:space="preserve">
-    <value>Auto-Load On Startup</value>
-  </data>
-  <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>262, 22</value>
-  </data>
-  <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Text" xml:space="preserve">
-    <value>Show Editors When Loading Project</value>
   </data>
   <data name="projectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>56, 19</value>
@@ -219,20 +133,17 @@
   <data name="projectToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Project</value>
   </data>
-  <data name="viewControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
+  <data name="editToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 19</value>
   </data>
-  <data name="viewControlsToolStripMenuItem.Text" xml:space="preserve">
-    <value>View &amp;Controls...</value>
-  </data>
-  <data name="toolStripSeparator7.Size" type="System.Drawing.Size, System.Drawing">
-    <value>298, 6</value>
+  <data name="editToolStripMenuItem.Text" xml:space="preserve">
+    <value>Edit</value>
   </data>
   <data name="updateReferencesOnCopyPasteToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
+    <value>279, 22</value>
   </data>
   <data name="updateReferencesOnCopyPasteToolStripMenuItem.Text" xml:space="preserve">
-    <value>Update &amp;References on Rename/Copy/Paste</value>
+    <value>Update &amp;References on Rename/Paste</value>
   </data>
   <data name="updateReferencesOnCopyPasteToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>If enabled, asset references will be updated to match the new asset name and ID when renaming an asset.
@@ -299,34 +210,6 @@ added to the previous template's Next Move Points, starting with the second temp
   <data name="toolStripSeparator1.Size" type="System.Drawing.Size, System.Drawing">
     <value>298, 6</value>
   </data>
-  <data name="checkForUpdatesOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="checkForUpdatesOnStartupToolStripMenuItem.Text" xml:space="preserve">
-    <value>Check for updates on startup</value>
-  </data>
-  <data name="checkForUpdatesOnStartupToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>If enabled, the application will check for updates once per day when starting.</value>
-  </data>
-  <data name="translucentToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="translucentToolStripMenuItem.Text" xml:space="preserve">
-    <value>Translucent when out of focus</value>
-  </data>
-  <data name="translucentToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>If enabled, Archive Editors and Asset Data Editors will become transparent when they lose focus.</value>
-  </data>
-  <data name="listAllAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
-  </data>
-  <data name="listAllAssetsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Always list all assets</value>
-  </data>
-  <data name="listAllAssetsToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>If enabled, the Archive Editor will always list all assets when selecting assets from the view.
-This can prevent stuttering by avoiding unnecessary list updates.</value>
-  </data>
   <data name="rotationGizmoLocalAxisToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
@@ -343,6 +226,44 @@ As a result, dragging a ring may rotate the asset in a direction that feels unpr
 If you're not sure which behavior you prefer, try both and see which feels more intuitive.
 This option only makes a difference when the asset is rotated on more than one axis.</value>
   </data>
+  <data name="listAllAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="listAllAssetsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Default to 'All' assets on editor list view</value>
+  </data>
+  <data name="listAllAssetsToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, the Archive Editor will always list all assets when selecting assets from the view.
+This can prevent stuttering by avoiding unnecessary list updates.</value>
+  </data>
+  <data name="enableAssetToolButtonsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>279, 22</value>
+  </data>
+  <data name="enableAssetToolButtonsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Enable asset tool buttons</value>
+  </data>
+  <data name="enableAssetToolButtonsToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, buttons will appear on Asset Data Editor windows with functions (such as find who targets me and open wiki page).
+You can always access the tools under their Edit tool strip menu regardless of this setting.</value>
+  </data>
+  <data name="translucentToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="translucentToolStripMenuItem.Text" xml:space="preserve">
+    <value>Translucent when out of focus</value>
+  </data>
+  <data name="translucentToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, Archive Editors and Asset Data Editors will become transparent when they lose focus.</value>
+  </data>
+  <data name="checkForUpdatesOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="checkForUpdatesOnStartupToolStripMenuItem.Text" xml:space="preserve">
+    <value>Check for updates on startup</value>
+  </data>
+  <data name="checkForUpdatesOnStartupToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>If enabled, the application will check for updates once per day when starting.</value>
+  </data>
   <data name="discordRichPresenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>301, 22</value>
   </data>
@@ -351,6 +272,177 @@ This option only makes a difference when the asset is rotated on more than one a
   </data>
   <data name="discordRichPresenceToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>If enabled, your current activity will be displayed on your Discord profile.</value>
+  </data>
+  <data name="themeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="themeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="themeToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>The new theme will be applied after restart.</value>
+  </data>
+  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 19</value>
+  </data>
+  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Options</value>
+  </data>
+  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 19</value>
+  </data>
+  <data name="displayToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Display</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 19</value>
+  </data>
+  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tools</value>
+  </data>
+  <data name="researchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 19</value>
+  </data>
+  <data name="researchToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Research/Advanced</value>
+  </data>
+  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 19</value>
+  </data>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 1, 0, 1</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1264, 21</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+N</value>
+  </data>
+  <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>185, 22</value>
+  </data>
+  <data name="newToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;New Editor</value>
+  </data>
+  <data name="importLevelToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+O</value>
+  </data>
+  <data name="importLevelToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>185, 22</value>
+  </data>
+  <data name="importLevelToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Open Level...</value>
+  </data>
+  <data name="openLastToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>185, 22</value>
+  </data>
+  <data name="openLastToolStripMenuItem.Text" xml:space="preserve">
+    <value>Recent Archives</value>
+  </data>
+  <data name="closeAllEditorsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
+    <value>False</value>
+  </data>
+  <data name="closeAllEditorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>185, 22</value>
+  </data>
+  <data name="closeAllEditorsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Close All Editors</value>
+  </data>
+  <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>182, 6</value>
+  </data>
+  <data name="newToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="newToolStripMenuItem1.Text" xml:space="preserve">
+    <value>&amp;New</value>
+  </data>
+  <data name="newToolStripMenuItem1.ToolTipText" xml:space="preserve">
+    <value>Closes all open editors and resets the current project.</value>
+  </data>
+  <data name="openToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="openToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Open</value>
+  </data>
+  <data name="saveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="saveToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Save</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="saveAsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Save &amp;As...</value>
+  </data>
+  <data name="toolStripSeparator5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>259, 6</value>
+  </data>
+  <data name="autoSaveOnClosingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="autoSaveOnClosingToolStripMenuItem.Text" xml:space="preserve">
+    <value>Auto-Save On Closing</value>
+  </data>
+  <data name="autoLoadOnStartupToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="autoLoadOnStartupToolStripMenuItem.Text" xml:space="preserve">
+    <value>Auto-Load On Startup</value>
+  </data>
+  <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>262, 22</value>
+  </data>
+  <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Text" xml:space="preserve">
+    <value>Show Editors When Loading Project</value>
+  </data>
+  <data name="undoToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Z</value>
+  </data>
+  <data name="undoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="undoToolStripMenuItem.Text" xml:space="preserve">
+    <value>Undo</value>
+  </data>
+  <data name="redoToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>Ctrl+Y</value>
+  </data>
+  <data name="redoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>144, 22</value>
+  </data>
+  <data name="redoToolStripMenuItem.Text" xml:space="preserve">
+    <value>Redo</value>
   </data>
   <data name="systemDefaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>153, 22</value>
@@ -370,20 +462,11 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="darkModeToolStripMenuItem.Text" xml:space="preserve">
     <value>Dark Mode</value>
   </data>
-  <data name="themeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
+  <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
   </data>
-  <data name="themeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Theme</value>
-  </data>
-  <data name="themeToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>The new theme will be applied after restart.</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 19</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Options</value>
+  <data name="assetTypesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Asset Types</value>
   </data>
   <data name="enableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>129, 22</value>
@@ -400,14 +483,8 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="toolStripSeparatorAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
     <value>126, 6</value>
   </data>
-  <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
-  </data>
-  <data name="assetTypesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Asset Types</value>
-  </data>
   <data name="viewConfigToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
-    <value>F1</value>
+    <value>F2</value>
   </data>
   <data name="viewConfigToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
@@ -427,6 +504,15 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="uIModeToolStripMenuItem.Text" xml:space="preserve">
     <value>UI Mode (U)</value>
   </data>
+  <data name="uIModeAutoSizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="uIModeAutoSizeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Set viewport aspect</value>
+  </data>
+  <data name="uIModeAutoSizeToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>The window must not be maximized.</value>
+  </data>
   <data name="toolStripMenuItem116.Size" type="System.Drawing.Size, System.Drawing">
     <value>110, 22</value>
   </data>
@@ -445,17 +531,14 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="toolStripMenuItem169.Text" xml:space="preserve">
     <value>16 : 9</value>
   </data>
-  <data name="uIModeAutoSizeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
-  </data>
-  <data name="uIModeAutoSizeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Set viewport aspect</value>
-  </data>
-  <data name="uIModeAutoSizeToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>The window must not be maximized.</value>
-  </data>
   <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
     <value>238, 6</value>
+  </data>
+  <data name="cursorInFlyModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="cursorInFlyModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Cursor in Fly Mode</value>
   </data>
   <data name="defaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>123, 22</value>
@@ -475,11 +558,11 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="hiddenToolStripMenuItem.Text" xml:space="preserve">
     <value>Hidden</value>
   </data>
-  <data name="cursorInFlyModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="colorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
   </data>
-  <data name="cursorInFlyModeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Cursor in Fly Mode</value>
+  <data name="colorsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Colors</value>
   </data>
   <data name="resetColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
@@ -526,12 +609,6 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="sFXInColorToolStripMenuItem.Text" xml:space="preserve">
     <value>SFX/SDFX Color...</value>
   </data>
-  <data name="colorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
-  </data>
-  <data name="colorsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Colors</value>
-  </data>
   <data name="noCullingCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
   </data>
@@ -542,7 +619,7 @@ This option only makes a difference when the asset is rotated on more than one a
     <value>241, 22</value>
   </data>
   <data name="wireframeFToolStripMenuItem.Text" xml:space="preserve">
-    <value>Wireframe (F)</value>
+    <value>Wireframe (Y)</value>
   </data>
   <data name="lowerQualityGraphicsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
@@ -575,7 +652,19 @@ This option only makes a difference when the asset is rotated on more than one a
     <value>241, 22</value>
   </data>
   <data name="fogToolStripMenuItem.Text" xml:space="preserve">
-    <value>Fog</value>
+    <value>Fog (F)</value>
+  </data>
+  <data name="movementPreviewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="movementPreviewToolStripMenuItem.Text" xml:space="preserve">
+    <value>Movement Preview (M)</value>
+  </data>
+  <data name="hideInvisibleMeshesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="hideInvisibleMeshesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Hide Invisible Geometry (H)</value>
   </data>
   <data name="useLODTForRenderingToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
@@ -589,29 +678,11 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="usePIPTForRenderingToolStripMenuItem.Text" xml:space="preserve">
     <value>Use Pipe Table for rendering</value>
   </data>
-  <data name="movementPreviewToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
-  </data>
-  <data name="movementPreviewToolStripMenuItem.Text" xml:space="preserve">
-    <value>Movement Preview (M)</value>
-  </data>
-  <data name="hideInvisibleMeshesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
-  </data>
-  <data name="hideInvisibleMeshesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Hide Invisible Meshes</value>
-  </data>
   <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
   </data>
   <data name="drawOnlyFirstMINFReferenceToolStripMenuItem.Text" xml:space="preserve">
     <value>Draw Only First MINF Reference</value>
-  </data>
-  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 19</value>
-  </data>
-  <data name="displayToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Display</value>
   </data>
   <data name="saveAllOpenHIPsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+Shift+S</value>
@@ -697,17 +768,11 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="ensureAssociationsToolStripMenuItem.Text" xml:space="preserve">
     <value>Associate HIP/HOP/BNR Files...</value>
   </data>
-  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 19</value>
-  </data>
-  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Tools</value>
-  </data>
-  <data name="hansToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="viewUndoBufferToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
   </data>
-  <data name="hansToolStripMenuItem.Text" xml:space="preserve">
-    <value>Hans (Save File Editor)</value>
+  <data name="viewUndoBufferToolStripMenuItem.Text" xml:space="preserve">
+    <value>Log Undo Buffer</value>
   </data>
   <data name="assetIDGeneratorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
@@ -715,11 +780,17 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="assetIDGeneratorToolStripMenuItem.Text" xml:space="preserve">
     <value>Asset ID Generator</value>
   </data>
-  <data name="dYNASearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="hansToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
   </data>
-  <data name="dYNASearchToolStripMenuItem.Text" xml:space="preserve">
-    <value>DYNA Search</value>
+  <data name="hansToolStripMenuItem.Text" xml:space="preserve">
+    <value>Hans (Save File Editor)</value>
+  </data>
+  <data name="openFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>191, 22</value>
+  </data>
+  <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
+    <value>Open Folder</value>
   </data>
   <data name="eventSearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
@@ -727,11 +798,11 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="eventSearchToolStripMenuItem.Text" xml:space="preserve">
     <value>Event Search</value>
   </data>
-  <data name="openFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="dYNASearchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
   </data>
-  <data name="openFolderToolStripMenuItem.Text" xml:space="preserve">
-    <value>Open Folder</value>
+  <data name="dYNASearchToolStripMenuItem.Text" xml:space="preserve">
+    <value>DYNA Search</value>
   </data>
   <data name="dynaNameSearcherToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>191, 22</value>
@@ -745,62 +816,52 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="pickupSearcherToolStripMenuItem.Text" xml:space="preserve">
     <value>Pickup Searcher</value>
   </data>
-  <data name="viewUndoBufferToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>191, 22</value>
+  <data name="viewControlsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F1</value>
   </data>
-  <data name="viewUndoBufferToolStripMenuItem.Text" xml:space="preserve">
-    <value>View Undo Buffer</value>
+  <data name="viewControlsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>204, 22</value>
   </data>
-  <data name="researchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 19</value>
+  <data name="viewControlsToolStripMenuItem.Text" xml:space="preserve">
+    <value>View Controls</value>
   </data>
-  <data name="researchToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Research/Advanced</value>
+  <data name="aboutToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
+    <value>F3</value>
   </data>
   <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>185, 22</value>
+    <value>204, 22</value>
   </data>
   <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
     <value>About Industrial Park</value>
   </data>
-  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 19</value>
-  </data>
-  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Help</value>
-  </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 1, 0, 1</value>
-  </data>
-  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1264, 21</value>
-  </data>
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
-  <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
+  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 659</value>
+  </data>
+  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1264, 22</value>
+  </data>
+  <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="statusStrip1.Text" xml:space="preserve">
+    <value>statusStrip1</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Name" xml:space="preserve">
+    <value>statusStrip1</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.StatusStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="toolStripStatusLabelMain.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 17</value>
   </data>
   <data name="toolStripStatusLabel2.Size" type="System.Drawing.Size, System.Drawing">
@@ -833,30 +894,6 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="toolStripStatusLabelNumSelected.Text" xml:space="preserve">
     <value>0 selected</value>
   </data>
-  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 659</value>
-  </data>
-  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1264, 22</value>
-  </data>
-  <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="statusStrip1.Text" xml:space="preserve">
-    <value>statusStrip1</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.Name" xml:space="preserve">
-    <value>statusStrip1</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.StatusStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <data name="renderPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
   </data>
@@ -884,6 +921,21 @@ This option only makes a difference when the asset is rotated on more than one a
   <metadata name="contextMenuStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
   </metadata>
+  <data name="contextMenuStripMain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 70</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripMain.Name" xml:space="preserve">
+    <value>contextMenuStripMain</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripMain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="gizmoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="gizmoToolStripMenuItem.Text" xml:space="preserve">
+    <value>Gizmo (V)</value>
+  </data>
   <data name="positionToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 22</value>
   </data>
@@ -908,20 +960,11 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="positionLocalToolStripMenuItem.Text" xml:space="preserve">
     <value>Position (Local)</value>
   </data>
-  <data name="gizmoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="gizmoToolStripMenuItem.Text" xml:space="preserve">
-    <value>Gizmo (V)</value>
-  </data>
   <data name="toolStripMenuItem_Templates.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 22</value>
   </data>
   <data name="toolStripMenuItem_Templates.Text" xml:space="preserve">
     <value>Template (B/N)</value>
-  </data>
-  <data name="toolStripComboBoxUserTemplate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 23</value>
   </data>
   <data name="userTemplateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 22</value>
@@ -929,18 +972,9 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="userTemplateToolStripMenuItem.Text" xml:space="preserve">
     <value>User Template</value>
   </data>
-  <data name="contextMenuStripMain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 70</value>
+  <data name="toolStripComboBoxUserTemplate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 23</value>
   </data>
-  <data name="&gt;&gt;contextMenuStripMain.Name" xml:space="preserve">
-    <value>contextMenuStripMain</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStripMain.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <metadata name="toolTip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>423, 17</value>
-  </metadata>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -2728,23 +2762,29 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;showEditorsWhenLoadingProjectToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Name" xml:space="preserve">
+    <value>editToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;undoToolStripMenuItem.Name" xml:space="preserve">
+    <value>undoToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;undoToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;redoToolStripMenuItem.Name" xml:space="preserve">
+    <value>redoToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;redoToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;optionsToolStripMenuItem.Name" xml:space="preserve">
     <value>optionsToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;optionsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;viewControlsToolStripMenuItem.Name" xml:space="preserve">
-    <value>viewControlsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;viewControlsToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator7.Name" xml:space="preserve">
-    <value>toolStripSeparator7</value>
-  </data>
-  <data name="&gt;&gt;toolStripSeparator7.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;updateReferencesOnCopyPasteToolStripMenuItem.Name" xml:space="preserve">
     <value>updateReferencesOnCopyPasteToolStripMenuItem</value>
@@ -2800,16 +2840,10 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;toolStripSeparator1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesOnStartupToolStripMenuItem.Name" xml:space="preserve">
-    <value>checkForUpdatesOnStartupToolStripMenuItem</value>
+  <data name="&gt;&gt;rotationGizmoLocalAxisToolStripMenuItem.Name" xml:space="preserve">
+    <value>rotationGizmoLocalAxisToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;checkForUpdatesOnStartupToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;translucentToolStripMenuItem.Name" xml:space="preserve">
-    <value>translucentToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;translucentToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;rotationGizmoLocalAxisToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;listAllAssetsToolStripMenuItem.Name" xml:space="preserve">
@@ -2818,10 +2852,22 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;listAllAssetsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;rotationGizmoLocalAxisToolStripMenuItem.Name" xml:space="preserve">
-    <value>rotationGizmoLocalAxisToolStripMenuItem</value>
+  <data name="&gt;&gt;enableAssetToolButtonsToolStripMenuItem.Name" xml:space="preserve">
+    <value>enableAssetToolButtonsToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;rotationGizmoLocalAxisToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;enableAssetToolButtonsToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;translucentToolStripMenuItem.Name" xml:space="preserve">
+    <value>translucentToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;translucentToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesOnStartupToolStripMenuItem.Name" xml:space="preserve">
+    <value>checkForUpdatesOnStartupToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;checkForUpdatesOnStartupToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;discordRichPresenceToolStripMenuItem.Name" xml:space="preserve">
@@ -2888,6 +2934,12 @@ This option only makes a difference when the asset is rotated on more than one a
     <value>viewConfigToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;viewConfigToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Name" xml:space="preserve">
+    <value>refreshTexturesAndModelsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;uIModeToolStripMenuItem.Name" xml:space="preserve">
@@ -3052,18 +3104,6 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;fogToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;useLODTForRenderingToolStripMenuItem.Name" xml:space="preserve">
-    <value>useLODTForRenderingToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;useLODTForRenderingToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;usePIPTForRenderingToolStripMenuItem.Name" xml:space="preserve">
-    <value>usePIPTForRenderingToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;usePIPTForRenderingToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;movementPreviewToolStripMenuItem.Name" xml:space="preserve">
     <value>movementPreviewToolStripMenuItem</value>
   </data>
@@ -3076,16 +3116,22 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;hideInvisibleMeshesToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;useLODTForRenderingToolStripMenuItem.Name" xml:space="preserve">
+    <value>useLODTForRenderingToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;useLODTForRenderingToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;usePIPTForRenderingToolStripMenuItem.Name" xml:space="preserve">
+    <value>usePIPTForRenderingToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;usePIPTForRenderingToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Name" xml:space="preserve">
     <value>drawOnlyFirstMINFReferenceToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;drawOnlyFirstMINFReferenceToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Name" xml:space="preserve">
-    <value>refreshTexturesAndModelsToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;refreshTexturesAndModelsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolsToolStripMenuItem.Name" xml:space="preserve">
@@ -3178,10 +3224,10 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;researchToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;hansToolStripMenuItem.Name" xml:space="preserve">
-    <value>hansToolStripMenuItem</value>
+  <data name="&gt;&gt;viewUndoBufferToolStripMenuItem.Name" xml:space="preserve">
+    <value>viewUndoBufferToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;hansToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;viewUndoBufferToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;assetIDGeneratorToolStripMenuItem.Name" xml:space="preserve">
@@ -3190,10 +3236,16 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;assetIDGeneratorToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;dYNASearchToolStripMenuItem.Name" xml:space="preserve">
-    <value>dYNASearchToolStripMenuItem</value>
+  <data name="&gt;&gt;hansToolStripMenuItem.Name" xml:space="preserve">
+    <value>hansToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;dYNASearchToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;hansToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;openFolderToolStripMenuItem.Name" xml:space="preserve">
+    <value>openFolderToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;openFolderToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;eventSearchToolStripMenuItem.Name" xml:space="preserve">
@@ -3202,10 +3254,10 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;eventSearchToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;openFolderToolStripMenuItem.Name" xml:space="preserve">
-    <value>openFolderToolStripMenuItem</value>
+  <data name="&gt;&gt;dYNASearchToolStripMenuItem.Name" xml:space="preserve">
+    <value>dYNASearchToolStripMenuItem</value>
   </data>
-  <data name="&gt;&gt;openFolderToolStripMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;dYNASearchToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;dynaNameSearcherToolStripMenuItem.Name" xml:space="preserve">
@@ -3220,16 +3272,16 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;pickupSearcherToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;viewUndoBufferToolStripMenuItem.Name" xml:space="preserve">
-    <value>viewUndoBufferToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;viewUndoBufferToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;helpToolStripMenuItem.Name" xml:space="preserve">
     <value>helpToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;helpToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;viewControlsToolStripMenuItem.Name" xml:space="preserve">
+    <value>viewControlsToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;viewControlsToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;aboutToolStripMenuItem.Name" xml:space="preserve">
@@ -3238,10 +3290,10 @@ This option only makes a difference when the asset is rotated on more than one a
   <data name="&gt;&gt;aboutToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripStatusLabel1.Name" xml:space="preserve">
-    <value>toolStripStatusLabel1</value>
+  <data name="&gt;&gt;toolStripStatusLabelMain.Name" xml:space="preserve">
+    <value>toolStripStatusLabelMain</value>
   </data>
-  <data name="&gt;&gt;toolStripStatusLabel1.Type" xml:space="preserve">
+  <data name="&gt;&gt;toolStripStatusLabelMain.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolStripStatusLabel2.Name" xml:space="preserve">
@@ -3327,12 +3379,6 @@ This option only makes a difference when the asset is rotated on more than one a
   </data>
   <data name="&gt;&gt;toolStripComboBoxUserTemplate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
-    <value>toolTip1</value>
-  </data>
-  <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainForm</value>

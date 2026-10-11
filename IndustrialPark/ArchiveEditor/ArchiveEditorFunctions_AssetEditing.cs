@@ -22,9 +22,9 @@ namespace IndustrialPark
             return (from asset in assetDictionary.Values where asset.isInvisible select asset.assetID).ToList();
         }
 
-        private readonly List<IInternalEditor> internalEditors = new List<IInternalEditor>();
+        private readonly List<InternalEditor> internalEditors = new List<InternalEditor>();
 
-        public void CloseInternalEditor(IInternalEditor i)
+        public void CloseInternalEditor(InternalEditor i)
         {
             internalEditors.Remove(i);
         }
@@ -70,7 +70,9 @@ namespace IndustrialPark
             };
             editor.Deactivate += (sender, e) =>
             {
-                if (!editor.OwnedForms.Any() && Program.MainForm.TranslucentWhenOutOfFocus)
+                if (editor.IsDisposed || editor.Disposing)
+                    return;
+                if (Program.MainForm.TranslucentWhenOutOfFocus && editor.CanFocus && !editor.OwnedForms.Any())
                     editor.Opacity = 0.5f;
             };
             internalEditors.Add(editor);
@@ -82,7 +84,7 @@ namespace IndustrialPark
             editor.Show();
         }
 
-        private IInternalEditor CreateInternalEditor(Asset asset, Action<Asset> updateListView)
+        private InternalEditor CreateInternalEditor(Asset asset, Action<Asset> updateListView)
         {
             switch (asset.assetType)
             {
@@ -136,10 +138,10 @@ namespace IndustrialPark
                 ie.TopMost = value;
         }
 
-        public void SetAllOpacity(double value)
+        public void SetAllOpacity()
         {
             foreach (var ie in internalEditors)
-                ie.Opacity = value;
+                ie.Opacity = (Program.MainForm.TranslucentWhenOutOfFocus && !ie.OwnedForms.Any() && !ie.Focused) ? 0.5f : 1.0f;
         }
 
         public static void OpenWikiPage(Asset asset)
@@ -212,47 +214,47 @@ namespace IndustrialPark
             return ray.Position + Vector3.Normalize(ray.Direction) * (smallerDistance ?? 2f);
         }
 
-        public static uint? GetClickedAssetID(SharpRenderer renderer, Ray ray, bool ignoreSelected)
+        public static uint? GetClickedAssetID(SharpRenderer renderer, Ray ray, bool? selectionFilter)
         {
             float smallerDistance = 1000f;
             uint? assetID = null;
 
-            foreach (Asset ra in renderableAssets.Cast<Asset>())
-            {
-                if (ra is IClickableAsset ica)
-                {
-                    if (ra.isSelected && ignoreSelected)
-                        continue;
+            var assets = renderableAssets.OfType<IClickableAsset>();
+            if (selectionFilter.HasValue)
+                assets = assets.Where(a => selectionFilter.Value == ((Asset)a).isSelected);
 
-                    float? distance = ica.GetIntersectionPosition(renderer, ray);
-                    if (distance != null && distance < smallerDistance)
-                    {
-                        smallerDistance = (float)distance;
-                        assetID = ra.assetID;
-                    }
+            foreach (var asset in assets)
+            {
+                float? distance = asset.GetIntersectionPosition(renderer, ray);
+                if (distance != null && distance < smallerDistance)
+                {
+                    smallerDistance = (float)distance;
+                    assetID = asset.assetID;
                 }
             }
 
             return assetID;
         }
 
-        public static uint? GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane, bool ignoreSelected)
+        public static uint? GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane, bool? selectionFilter)
         {
             float smallerDistance = 3 * farPlane;
             uint? assetID = null;
 
-            foreach (Asset ra in (from IRenderableAsset asset in renderableAssets
-                                  where asset is AssetUI || asset is AssetUIFT
-                                  select asset).Cast<Asset>())
-            {
-                if (ra.isSelected && ignoreSelected)
-                    continue;
+            var assets = renderableAssets.Where(a => {
+                var asset = (Asset)a;
+                return asset.assetType == AssetType.UserInterface || asset.assetType == AssetType.UserInterfaceFont;
+            }).Cast<IClickableAsset>();
+            if (selectionFilter.HasValue)
+                assets = assets.Where(a => !selectionFilter.HasValue || selectionFilter.Value == ((Asset)a).isSelected);
 
-                float? distance = ((IClickableAsset)ra).GetIntersectionPosition(renderer, ray);
+            foreach (IClickableAsset asset in assets)
+            {
+                float? distance = asset.GetIntersectionPosition(renderer, ray);
                 if (distance != null && distance < smallerDistance)
                 {
                     smallerDistance = (float)distance;
-                    assetID = ra.assetID;
+                    assetID = asset.assetID;
                 }
             }
 

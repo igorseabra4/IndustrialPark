@@ -196,5 +196,15 @@ namespace IndustrialPark
             ProgramIsUpdatingValues = false;
             _invalidCameraValues = false;
         }
+
+        private void buttonViewControls_Click(object sender, EventArgs e)
+        {
+            Program.ViewControls.Show();
+        }
+
+        private void buttonAbout_Click(object sender, EventArgs e)
+        {
+            Program.AboutBox.Show();
+        }
     }
 }

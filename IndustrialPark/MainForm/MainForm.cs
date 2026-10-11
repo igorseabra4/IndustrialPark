@@ -187,7 +187,7 @@ namespace IndustrialPark
             rotationGizmoLocalAxisToolStripMenuItem.Checked = settings.RotationGizmoLocalAxis;
 
             enableAssetToolButtonsToolStripMenuItem.Checked = settings.EnableAssetToolButtons;
-            IInternalEditor.EnableAssetToolButtons = settings.EnableAssetToolButtons;
+            InternalEditor.EnableAssetToolButtons = settings.EnableAssetToolButtons;
 
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
@@ -568,7 +568,7 @@ namespace IndustrialPark
 
         public void SetToolStripStatusLabel(string Text)
         {
-            toolStripStatusLabel1.Text = Text;
+            toolStripStatusLabelMain.Text = Text;
         }
 
         private void SetProjectToolStripStatusLabel()
@@ -641,8 +641,14 @@ namespace IndustrialPark
 
                     if (e.Button == MouseButtons.Middle)
                     {
-                        renderer.Camera.AddYaw(MathUtil.DegreesToRadians(e.X - oldMousePosition.X));
-                        renderer.Camera.AddPitch(MathUtil.DegreesToRadians(e.Y - oldMousePosition.Y));
+                        float deltaX = e.X - oldMousePosition.X;
+                        float deltaY = e.Y - oldMousePosition.Y;
+                        float rollRadians = MathUtil.DegreesToRadians(renderer.Camera.Roll);
+                        float adjustedDeltaX = deltaX * (float)Math.Cos(rollRadians) - deltaY * (float)Math.Sin(rollRadians);
+                        float adjustedDeltaY = deltaX * (float)Math.Sin(rollRadians) + deltaY * (float)Math.Cos(rollRadians);
+                        renderer.Camera.AddYaw(MathUtil.DegreesToRadians(adjustedDeltaX));
+                        renderer.Camera.AddPitch(MathUtil.DegreesToRadians(adjustedDeltaY));
+
                         // Clamp camera pitch so it doesn't loop around
                         float pitchPadding = 0.01f;
                         renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
@@ -685,8 +691,7 @@ namespace IndustrialPark
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!PressedKeys.Contains(e.KeyCode))
-                PressedKeys.Add(e.KeyCode);
+            PressedKeys.Add(e.KeyCode);
 
             if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
                 (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
@@ -700,96 +705,108 @@ namespace IndustrialPark
                 return;
             }
 
-            if (e.KeyCode == Keys.Z)
-                MouseModeToggle();
-            else if (e.KeyCode == Keys.Q)
-                renderer.Camera.IncreaseCameraSpeed(-1);
-            else if (e.KeyCode == Keys.E)
-                renderer.Camera.IncreaseCameraSpeed(1);
-            else if (e.KeyCode == Keys.D1)
-                renderer.Camera.IncreaseCameraRotationSpeed(-1);
-            else if (e.KeyCode == Keys.D3)
-                renderer.Camera.IncreaseCameraRotationSpeed(1);
-            else if (e.KeyCode == Keys.C)
-                ToggleBackfaceCulling();
-            else if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.F))
-                ToggleWireFrame();
-            else if (e.KeyCode == Keys.F)
-                fogToolStripMenuItem.PerformClick();
-            else if (e.KeyCode == Keys.H)
-                DropSelectedAssets();
-            else if (PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.J)
-                UnhideAllAssets();
-            else if (e.KeyCode == Keys.J)
-                HideSelectedAssets();
-            else if (e.KeyCode == Keys.G)
-                OpenInternalEditors();
-            else if (e.KeyCode == Keys.L)
-                useLightKitsForRenderingToolStripMenuItem.PerformClick();
-            else if (e.KeyCode == Keys.V)
-                ToggleGizmoType();
-            else if (e.KeyCode == Keys.P)
-                showVertexColorsToolStripMenuItem.PerformClick();
-            else if (e.KeyCode == Keys.Delete)
-                DeleteSelectedAssets();
-            else if (e.KeyCode == Keys.U)
-                uIModeToolStripMenuItem_Click(sender, e);
-            else if (e.KeyCode == Keys.M)
-                movementPreviewToolStripMenuItem_Click(sender, e);
-            else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.B)
-                SelectPreviousTemplate();
-            else if (!PressedKeys.Contains(Keys.ControlKey) && e.KeyCode == Keys.N)
-                SelectNextTemplate();
-
-            if (e.KeyCode == Keys.F1)
-                Program.ViewConfig.Show();
-            else if (e.KeyCode == Keys.F4)
-                saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
-            else if (e.KeyCode == Keys.F5)
-                TryToRunGame();
-            else if (e.KeyCode == Keys.F6)
-                buildAndRunPS2ISOToolStripMenuItem_Click(sender, e);
-            else if (e.KeyCode == Keys.F7)
-                createGameCubeBannerToolStripMenuItem_Click(sender, e);
-
-
-            if (PressedKeys.Contains(Keys.S)
-                && PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.ShiftKey))
+            switch (e.KeyCode)
             {
-                saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
+                case Keys.B:
+                    SelectPreviousTemplate();
+                    break;
+                case Keys.C:
+                    noCullingCToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.F:
+                    fogToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.G when PressedKeys.Contains(Keys.ControlKey):
+                    OpenSelectedAssetArchiveEditor();
+                    break;
+                case Keys.G:
+                    OpenInternalEditors();
+                    break;
+                case Keys.H when PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey):
+                    CloseMostForms();
+                    break;
+                case Keys.H when PressedKeys.Contains(Keys.ControlKey):
+                    DropSelectedAssets();
+                    break;
+                case Keys.H:
+                    hideInvisibleMeshesToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.J when PressedKeys.Contains(Keys.ControlKey):
+                    UnhideAllAssets();
+                    break;
+                case Keys.J:
+                    HideSelectedAssets();
+                    break;
+                case Keys.L:
+                    useLightKitsForRenderingToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.M:
+                    movementPreviewToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.N when PressedKeys.Contains(Keys.ControlKey):
+                    newToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.N:
+                    SelectNextTemplate();
+                    break;
+                case Keys.O when PressedKeys.Contains(Keys.ControlKey):
+                    importLevelToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.P:
+                    showVertexColorsToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.R when PressedKeys.Contains(Keys.ControlKey):
+                    renderer.Camera.ResetRoll();
+                    break;
+                case Keys.R:
+                    renderer.Camera.Reset();
+                    break;
+                case Keys.U:
+                    uIModeToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.V:
+                    ToggleGizmoType();
+                    break;
+                case Keys.Y:
+                    wireframeFToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.Z:
+                    MouseModeToggle();
+                    break;
+                case Keys.Delete:
+                    DeleteSelectedAssets();
+                    break;
+                case Keys.F1:
+                    viewControlsToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.F2:
+                    viewConfigToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.F3:
+                    aboutToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.F4:
+                case Keys.S when PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey):
+                    saveAllOpenHIPsToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.F5:
+                    runGameF5ToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.F6:
+                    buildAndRunPS2ISOToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.F7:
+                    createGameCubeBannerToolStripMenuItem.PerformClick();
+                    break;
             }
-
-            // Close all forms that are not Main Form/Archive Editors
-            if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.ShiftKey)
-                && PressedKeys.Contains(Keys.H))
-            {
-                var openForms = Application.OpenForms;
-                var formsToClose = new List<Form>();
-
-                for (int i = 0; i < openForms.Count; i++)
-                {
-                    if (openForms[i].GetType() != typeof(MainForm)
-                        && openForms[i].GetType() != typeof(ArchiveEditor))
-                    {
-                        formsToClose.Add(openForms[i]);
-                    }
-                }
-
-                foreach (Form form in formsToClose)
-                {
-                    form.Close();
-                }
-            }
-
-            // in enum, Keys.D1 through Keys.D9 are numbers 49 to 57.
-            int numberKeyOffset = 49;
-            var editorsToShow = new List<Form>();
 
             // Open archive editors with ctrl and 1-9
             if (PressedKeys.Contains(Keys.ControlKey))
             {
+                // in enum, Keys.D1 through Keys.D9 are numbers 49 to 57.
+                int numberKeyOffset = 49;
+                var editorsToShow = new List<ArchiveEditor>();
+
                 foreach (var item in PressedKeys)
                 {
                     if ((int)item >= numberKeyOffset
@@ -801,21 +818,7 @@ namespace IndustrialPark
                 }
 
                 foreach (var form in editorsToShow)
-                {
-                    form.Show();
-                }
-            }
-
-            if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.N))
-            {
-                newToolStripMenuItem_Click(sender, e);
-            }
-
-            if (PressedKeys.Contains(Keys.ControlKey)
-                && PressedKeys.Contains(Keys.O))
-            {
-                openLevelToolStripMenuItem_Click(sender, e);
+                    ShowArchiveEditor(form);
             }
         }
 
@@ -831,6 +834,8 @@ namespace IndustrialPark
 
         public void KeyboardController()
         {
+            ArchiveEditorFunctions.SkipGizmos = PressedKeys.Contains(Keys.ShiftKey) || PressedKeys.Contains(Keys.ControlKey);
+
             if (renderer.isDrawingUI)
                 return;
 
@@ -838,8 +843,7 @@ namespace IndustrialPark
                 renderer.Camera.AddYaw(-0.05f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.A))
                 renderer.Camera.AddPositionSideways(0.25f * renderer.TransformScaleFactor);
-
-            if (PressedKeys.Contains(Keys.D) & PressedKeys.Contains(Keys.ControlKey))
+            else if (PressedKeys.Contains(Keys.D) & PressedKeys.Contains(Keys.ControlKey))
                 renderer.Camera.AddYaw(0.05f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.D))
                 renderer.Camera.AddPositionSideways(-0.25f * renderer.TransformScaleFactor);
@@ -850,17 +854,30 @@ namespace IndustrialPark
                 renderer.Camera.AddPositionUp(0.25f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.W))
                 renderer.Camera.AddPositionForward(0.25f * renderer.TransformScaleFactor);
-
-            // Added extra conditions to stop camera moving when saving all archive editors
-            if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey) & !PressedKeys.Contains(Keys.ShiftKey))
+            else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey) & !PressedKeys.Contains(Keys.ShiftKey))
                 renderer.Camera.AddPitch(0.05f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
                 renderer.Camera.AddPositionUp(-0.25f * renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.S) & !PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
                 renderer.Camera.AddPositionForward(-0.25f * renderer.TransformScaleFactor);
 
-            if (PressedKeys.Contains(Keys.R))
-                renderer.Camera.Reset();
+            if (PressedKeys.Contains(Keys.Q) & PressedKeys.Contains(Keys.ControlKey))
+                renderer.Camera.AddRoll(0.05f * renderer.TransformScaleFactor);
+            else if (PressedKeys.Contains(Keys.Q))
+                renderer.Camera.AddPositionUp(-0.25f * renderer.TransformScaleFactor);
+            else if (PressedKeys.Contains(Keys.E) & PressedKeys.Contains(Keys.ControlKey))
+                renderer.Camera.AddRoll(-0.05f * renderer.TransformScaleFactor);
+            else if (PressedKeys.Contains(Keys.E))
+                renderer.Camera.AddPositionUp(0.25f * renderer.TransformScaleFactor);
+
+            if (PressedKeys.Contains(Keys.D1))
+                renderer.Camera.IncreaseCameraSpeed(-1);
+            else if (PressedKeys.Contains(Keys.D2))
+                renderer.Camera.IncreaseCameraSpeed(1);
+            else if (PressedKeys.Contains(Keys.D3))
+                renderer.Camera.IncreaseCameraRotationSpeed(-1);
+            else if (PressedKeys.Contains(Keys.D4))
+                renderer.Camera.IncreaseCameraRotationSpeed(1);
 
             float pitchPadding = 0.01f;
             renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
@@ -968,23 +985,27 @@ namespace IndustrialPark
                     ae.Save();
         }
 
-        private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)
+        // Close all forms that are not Archive Editors
+        private static void CloseMostForms()
         {
-            ToggleBackfaceCulling();
+            var openForms = Application.OpenForms;
+            var formsToClose = new List<Form>();
+
+            for (int i = 0; i < openForms.Count; i++)
+                if (openForms[i].GetType() != typeof(MainForm) && openForms[i].GetType() != typeof(ArchiveEditor))
+                    formsToClose.Add(openForms[i]);
+
+            foreach (Form form in formsToClose)
+                form.Close();
         }
 
-        public void ToggleBackfaceCulling()
+        private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)
         {
             noCullingCToolStripMenuItem.Checked = !noCullingCToolStripMenuItem.Checked;
             renderer.device.SetNormalCullMode(noCullingCToolStripMenuItem.Checked ? CullMode.None : CullMode.Back);
         }
 
         private void wireframeFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ToggleWireFrame();
-        }
-
-        public void ToggleWireFrame()
         {
             wireframeFToolStripMenuItem.Checked = !wireframeFToolStripMenuItem.Checked;
             renderer.device.SetNormalFillMode(wireframeFToolStripMenuItem.Checked ? FillMode.Wireframe : FillMode.Solid);
@@ -1042,57 +1063,16 @@ namespace IndustrialPark
 
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
-            Program.ViewConfig.Show();
+            viewConfigToolStripMenuItem.PerformClick();
         }
 
         private void viewConfigToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.ViewConfig.Show();
-        }
+            if (Program.ViewConfig.WindowState == FormWindowState.Minimized)
+                Program.ViewConfig.WindowState = FormWindowState.Normal;
 
-        private void viewControlsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show(
-                "Keyboard controls:\n" +
-                "W, A, S, D: move view forward, left, backward, right\n" +
-                "Shift + (W, S): move view up, down\n" +
-                "Ctrl + (W, A, S, D): rotate view up, left, down, right\n" +
-                "Q, E: decrease, increase view move speed\n" +
-                "1, 3: decrease, increase view rotation speed\n" +
-                "B and N: select previous/next template\n" +
-                "C: toggles backface culling\n" +
-                "Ctrl + F: toggles wireframe mode\n" +
-                "F: Toggle fog\n" +
-                "G: open Asset Data Editor for selected assets\n" +
-                "H: drop selected assets\n" +
-                "L: use light kits for rendering\n" +
-                "M: movement preview\n" +
-                "P: Toggle vertex color display\n" +
-                "R: reset view\n" +
-                "T: snap gizmos to grid\n" +
-                "U: toggle UI Mode\n" +
-                "V: cycle between gizmos\n" +
-                "Z: toggle mouse mode: similar to a first person camera. The view rotates automatically as you move the mouse. Use the keyboard to move around\n" +
-                "F1: displays the View Config box\n" +
-                "Ctrl + Shift + S or F4: save all open Archive Editors\n" +
-                "F5: attempt to run game\n" +
-                "F6: open Build/Run PS2 ISO\n" +
-                "Delete: delete selected assets\n" +
-                "Ctrl + Shift + H: closes all windows which are not Archive Editors\n" +
-                "Ctrl + 1 to 9: Open the corresponding Archive Editor window\n" +
-                "\n" +
-                "Mouse controls:\n" +
-                "Left click on an asset to select it\n" +
-                "Shift + Left click to select multiple, always adds to selection\n" +
-                "Ctrl + Left click to select multiple or deselect\n" +
-                "Middle click and drag to rotate view\n" +
-                "Mouse wheel to move forward/backward\n" +
-                "Right click on screen to choose a gizmo or template\n" +
-                "Shift + Right click to place a template\n" +
-                "Ctrl + Right click and drag to pan (move view up, left, down, right)\n" +
-                "\n" +
-                "Please consult the Industrial Park user guide on Heavy Iron Modding for more information"
-                );
+            Program.ViewConfig.Show();
+            Program.ViewConfig.Activate();
         }
 
         private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
@@ -1135,31 +1115,43 @@ namespace IndustrialPark
 
         public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
         {
-            if (ArchiveEditorFunctions.IsMovingGizmo && !isMouseDown)
-                ArchiveEditorFunctions.IsMovingGizmo = false;
+            if (ArchiveEditorFunctions.IsMovingGizmo)
+            {
+                if (!isMouseDown)
+                    ArchiveEditorFunctions.IsMovingGizmo = false;
+            }
             else
             {
+                bool addToSelection = PressedKeys.Contains(Keys.ShiftKey);
+                bool toggleSelection = PressedKeys.Contains(Keys.ControlKey);
+
                 Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
 
                 if (isMouseDown)
                 {
-                    foreach (var ae in archiveEditors)
-                        if (ae.archive.CurrentlySelectedAssets.Count > 0)
-                            ae.archive.GizmoSelect(ray);
+                    if (!addToSelection && !toggleSelection)
+                        foreach (var ae in archiveEditors)
+                            if (ae.archive.CurrentlySelectedAssets.Count > 0)
+                                ae.archive.GizmoSelect(ray);
                 }
                 else
                 {
-                    bool addToSelection = PressedKeys.Contains(Keys.Shift) || PressedKeys.Contains(Keys.ShiftKey);
-                    bool addOrRemove = PressedKeys.Contains(Keys.ControlKey) || PressedKeys.Contains(Keys.Control);
+                    var removeFromSelection = addToSelection && toggleSelection;
+
+                    bool? alreadySelectedFilter = removeFromSelection ? true : addToSelection ? false : null; // asset previous selection state must be equal to this
 
                     var assetID = renderer.isDrawingUI ?
-                        ArchiveEditorFunctions.GetClickedAssetID2D(renderer, ray, renderer.Camera.FarPlane, addToSelection) :
-                        ArchiveEditorFunctions.GetClickedAssetID(renderer, ray, addToSelection);
+                        ArchiveEditorFunctions.GetClickedAssetID2D(renderer, ray, renderer.Camera.FarPlane, alreadySelectedFilter) :
+                        ArchiveEditorFunctions.GetClickedAssetID(renderer, ray, alreadySelectedFilter);
 
-                    if (assetID == null && (addToSelection || addOrRemove))
+                    if (assetID == null && (addToSelection || toggleSelection))
                         return;
+
                     foreach (ArchiveEditor ae in archiveEditors)
-                        ae.SetSelectedIndex(assetID ?? 0, addToSelection, addOrRemove);
+                        if (removeFromSelection)
+                            ae.RemoveFromSelection(assetID ?? 0);
+                        else
+                            ae.SetSelectedIndex(assetID ?? 0, addToSelection, toggleSelection);
                 }
             }
         }
@@ -1211,6 +1203,22 @@ namespace IndustrialPark
         {
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.OpenInternalEditors();
+        }
+
+        private void OpenSelectedAssetArchiveEditor()
+        {
+            foreach (ArchiveEditor ae in archiveEditors)
+                if (ae.archive.CurrentlySelectedAssets.Count > 0)
+                    ShowArchiveEditor(ae);
+        }
+
+        private void ShowArchiveEditor(ArchiveEditor ae)
+        {
+            if (ae.WindowState == FormWindowState.Minimized)
+                ae.WindowState = FormWindowState.Normal;
+
+            ae.Show();
+            ae.Activate();
         }
 
         private void DeleteSelectedAssets()
@@ -1803,11 +1811,6 @@ namespace IndustrialPark
 
         private void runGameF5ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            TryToRunGame();
-        }
-
-        private void TryToRunGame()
-        {
             string dolPath = null;
             string filesPath = null;
             string hipName = null;
@@ -2097,8 +2100,14 @@ namespace IndustrialPark
 
         private void UnhideAllAssets()
         {
+            bool unhid = false;
             foreach (var ae in archiveEditors)
-                ae.UnhideAllAssets();
+                unhid |= ae.UnhideAllAssets();
+            if (!unhid)
+            {
+                enableAllToolStripMenuItem_Click(null, null);
+                displayToolStripMenuItem.HideDropDown();
+            }
         }
 
         private void showVertexColorsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2155,21 +2164,11 @@ namespace IndustrialPark
             translucentToolStripMenuItem.Checked = !translucentToolStripMenuItem.Checked;
             TranslucentWhenOutOfFocus = translucentToolStripMenuItem.Checked;
 
-            if (TranslucentWhenOutOfFocus)
-                archiveEditors.ForEach(ae =>
-                {
-                    ae.Opacity = 1f;
-                    ae.archive.SetAllOpacity(1f);
-                });
-            else
-                archiveEditors.ForEach(ae =>
-                {
-                    if (!ae.Focused)
-                    {
-                        ae.Opacity = 0.5f;
-                        ae.archive.SetAllOpacity(0.5f);
-                    }
-                });
+            foreach (var ae in archiveEditors)
+            {
+                ae.Opacity = (TranslucentWhenOutOfFocus && !ae.OwnedForms.Any() && !ae.Focused) ? 0.5f : 1f;
+                ae.archive.SetAllOpacity();
+            }
         }
 
         private void alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2182,6 +2181,12 @@ namespace IndustrialPark
         {
             rotationGizmoLocalAxisToolStripMenuItem.Checked = !rotationGizmoLocalAxisToolStripMenuItem.Checked;
             ArchiveEditor.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
+        }
+
+        private void enableAssetToolButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            enableAssetToolButtonsToolStripMenuItem.Checked = !enableAssetToolButtonsToolStripMenuItem.Checked;
+            InternalEditor.EnableAssetToolButtons = enableAssetToolButtonsToolStripMenuItem.Checked;
         }
 
         private void fogToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2263,6 +2268,25 @@ namespace IndustrialPark
                     if (index >= 0 && index < ae.archive.LayerCount)
                         ae.SelectedLayerIndex = index;
                 }
+        }
+
+        private void viewControlsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.ViewControls.WindowState == FormWindowState.Minimized)
+                Program.ViewControls.WindowState = FormWindowState.Normal;
+
+            Program.ViewControls.Show();
+            Program.ViewControls.Activate();
+        }
+
+        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.UndoBuffer.Undo();
+        }
+
+        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.UndoBuffer.Redo();
         }
     }
 }

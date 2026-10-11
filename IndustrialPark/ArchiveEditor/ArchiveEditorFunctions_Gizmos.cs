@@ -58,10 +58,14 @@ namespace IndustrialPark
         public static GizmoMode CurrentGizmoMode { get; private set; } = GizmoMode.Position;
         public static bool IsMovingGizmo = false;
         public static bool TriggerGizmo = false;
+        public static bool SkipGizmos = false;
 
         public static void RenderGizmos(SharpRenderer renderer)
         {
             // calculate which gizmos should show up and where and render them
+
+            if (SkipGizmos && !IsMovingGizmo)
+                return;
 
             switch (CurrentGizmoMode)
             {

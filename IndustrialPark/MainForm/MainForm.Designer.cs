@@ -48,9 +48,10 @@ namespace IndustrialPark
             autoSaveOnClosingToolStripMenuItem = new ToolStripMenuItem();
             autoLoadOnStartupToolStripMenuItem = new ToolStripMenuItem();
             showEditorsWhenLoadingProjectToolStripMenuItem = new ToolStripMenuItem();
+            editToolStripMenuItem = new ToolStripMenuItem();
+            undoToolStripMenuItem = new ToolStripMenuItem();
+            redoToolStripMenuItem = new ToolStripMenuItem();
             optionsToolStripMenuItem = new ToolStripMenuItem();
-            viewControlsToolStripMenuItem = new ToolStripMenuItem();
-            toolStripSeparator7 = new ToolStripSeparator();
             updateReferencesOnCopyPasteToolStripMenuItem = new ToolStripMenuItem();
             replaceAssetsOnPasteToolStripMenuItem = new ToolStripMenuItem();
             useLegacyAssetIDFormatToolStripMenuItem = new ToolStripMenuItem();
@@ -60,10 +61,11 @@ namespace IndustrialPark
             templatesPersistentShiniesToolStripMenuItem = new ToolStripMenuItem();
             templatesChainPointMVPTsToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
-            checkForUpdatesOnStartupToolStripMenuItem = new ToolStripMenuItem();
-            translucentToolStripMenuItem = new ToolStripMenuItem();
-            listAllAssetsToolStripMenuItem = new ToolStripMenuItem();
             rotationGizmoLocalAxisToolStripMenuItem = new ToolStripMenuItem();
+            listAllAssetsToolStripMenuItem = new ToolStripMenuItem();
+            enableAssetToolButtonsToolStripMenuItem = new ToolStripMenuItem();
+            translucentToolStripMenuItem = new ToolStripMenuItem();
+            checkForUpdatesOnStartupToolStripMenuItem = new ToolStripMenuItem();
             discordRichPresenceToolStripMenuItem = new ToolStripMenuItem();
             themeToolStripMenuItem = new ToolStripMenuItem();
             systemDefaultToolStripMenuItem = new ToolStripMenuItem();
@@ -75,6 +77,7 @@ namespace IndustrialPark
             disableAllToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparatorAssetTypes = new ToolStripSeparator();
             viewConfigToolStripMenuItem = new ToolStripMenuItem();
+            refreshTexturesAndModelsToolStripMenuItem = new ToolStripMenuItem();
             uIModeToolStripMenuItem = new ToolStripMenuItem();
             uIModeAutoSizeToolStripMenuItem = new ToolStripMenuItem();
             toolStripMenuItem116 = new ToolStripMenuItem();
@@ -102,12 +105,11 @@ namespace IndustrialPark
             showVertexColorsToolStripMenuItem = new ToolStripMenuItem();
             useLightKitsForRenderingToolStripMenuItem = new ToolStripMenuItem();
             fogToolStripMenuItem = new ToolStripMenuItem();
-            useLODTForRenderingToolStripMenuItem = new ToolStripMenuItem();
-            usePIPTForRenderingToolStripMenuItem = new ToolStripMenuItem();
             movementPreviewToolStripMenuItem = new ToolStripMenuItem();
             hideInvisibleMeshesToolStripMenuItem = new ToolStripMenuItem();
+            useLODTForRenderingToolStripMenuItem = new ToolStripMenuItem();
+            usePIPTForRenderingToolStripMenuItem = new ToolStripMenuItem();
             drawOnlyFirstMINFReferenceToolStripMenuItem = new ToolStripMenuItem();
-            refreshTexturesAndModelsToolStripMenuItem = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             saveAllOpenHIPsToolStripMenuItem = new ToolStripMenuItem();
             runGameF5ToolStripMenuItem = new ToolStripMenuItem();
@@ -123,18 +125,19 @@ namespace IndustrialPark
             toolStripSeparator2 = new ToolStripSeparator();
             ensureAssociationsToolStripMenuItem = new ToolStripMenuItem();
             researchToolStripMenuItem = new ToolStripMenuItem();
-            hansToolStripMenuItem = new ToolStripMenuItem();
+            viewUndoBufferToolStripMenuItem = new ToolStripMenuItem();
             assetIDGeneratorToolStripMenuItem = new ToolStripMenuItem();
-            dYNASearchToolStripMenuItem = new ToolStripMenuItem();
-            eventSearchToolStripMenuItem = new ToolStripMenuItem();
+            hansToolStripMenuItem = new ToolStripMenuItem();
             openFolderToolStripMenuItem = new ToolStripMenuItem();
+            eventSearchToolStripMenuItem = new ToolStripMenuItem();
+            dYNASearchToolStripMenuItem = new ToolStripMenuItem();
             dynaNameSearcherToolStripMenuItem = new ToolStripMenuItem();
             pickupSearcherToolStripMenuItem = new ToolStripMenuItem();
-            viewUndoBufferToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
+            viewControlsToolStripMenuItem = new ToolStripMenuItem();
             aboutToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            toolStripStatusLabelMain = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
             toolStripStatusLabelProject = new ToolStripStatusLabel();
             toolStripStatusLabel3 = new ToolStripStatusLabel();
@@ -151,7 +154,6 @@ namespace IndustrialPark
             toolStripMenuItem_Templates = new ToolStripMenuItem();
             userTemplateToolStripMenuItem = new ToolStripMenuItem();
             toolStripComboBoxUserTemplate = new ToolStripComboBox();
-            toolTip1 = new ToolTip(components);
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             contextMenuStripMain.SuspendLayout();
@@ -160,7 +162,7 @@ namespace IndustrialPark
             // menuStrip1
             // 
             menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { archiveEditorToolStripMenuItem, projectToolStripMenuItem, optionsToolStripMenuItem, displayToolStripMenuItem, toolsToolStripMenuItem, researchToolStripMenuItem, helpToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { archiveEditorToolStripMenuItem, projectToolStripMenuItem, editToolStripMenuItem, optionsToolStripMenuItem, displayToolStripMenuItem, toolsToolStripMenuItem, researchToolStripMenuItem, helpToolStripMenuItem });
             menuStrip1.LayoutStyle = ToolStripLayoutStyle.Flow;
             resources.ApplyResources(menuStrip1, "menuStrip1");
             menuStrip1.Name = "menuStrip1";
@@ -260,23 +262,30 @@ namespace IndustrialPark
             resources.ApplyResources(showEditorsWhenLoadingProjectToolStripMenuItem, "showEditorsWhenLoadingProjectToolStripMenuItem");
             showEditorsWhenLoadingProjectToolStripMenuItem.Click += showEditorsWhenLoadingProjectToolStripMenuItem_Click;
             // 
+            // editToolStripMenuItem
+            // 
+            editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem });
+            editToolStripMenuItem.Name = "editToolStripMenuItem";
+            resources.ApplyResources(editToolStripMenuItem, "editToolStripMenuItem");
+            // 
+            // undoToolStripMenuItem
+            // 
+            undoToolStripMenuItem.Name = "undoToolStripMenuItem";
+            resources.ApplyResources(undoToolStripMenuItem, "undoToolStripMenuItem");
+            undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
+            // 
+            // redoToolStripMenuItem
+            // 
+            redoToolStripMenuItem.Name = "redoToolStripMenuItem";
+            resources.ApplyResources(redoToolStripMenuItem, "redoToolStripMenuItem");
+            redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
+            // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewControlsToolStripMenuItem, toolStripSeparator7, updateReferencesOnCopyPasteToolStripMenuItem, replaceAssetsOnPasteToolStripMenuItem, useLegacyAssetIDFormatToolStripMenuItem, useLegacyAssetTypeFormatToolStripMenuItem, toolStripSeparator4, manageUserTemplatesToolStripMenuItem, templatesPersistentShiniesToolStripMenuItem, templatesChainPointMVPTsToolStripMenuItem, toolStripSeparator1, checkForUpdatesOnStartupToolStripMenuItem, translucentToolStripMenuItem, listAllAssetsToolStripMenuItem, rotationGizmoLocalAxisToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { updateReferencesOnCopyPasteToolStripMenuItem, replaceAssetsOnPasteToolStripMenuItem, useLegacyAssetIDFormatToolStripMenuItem, useLegacyAssetTypeFormatToolStripMenuItem, toolStripSeparator4, manageUserTemplatesToolStripMenuItem, templatesPersistentShiniesToolStripMenuItem, templatesChainPointMVPTsToolStripMenuItem, toolStripSeparator1, rotationGizmoLocalAxisToolStripMenuItem, listAllAssetsToolStripMenuItem, enableAssetToolButtonsToolStripMenuItem, translucentToolStripMenuItem, checkForUpdatesOnStartupToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             resources.ApplyResources(optionsToolStripMenuItem, "optionsToolStripMenuItem");
             optionsToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
-            // 
-            // viewControlsToolStripMenuItem
-            // 
-            viewControlsToolStripMenuItem.Name = "viewControlsToolStripMenuItem";
-            resources.ApplyResources(viewControlsToolStripMenuItem, "viewControlsToolStripMenuItem");
-            viewControlsToolStripMenuItem.Click += viewControlsToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator7
-            // 
-            toolStripSeparator7.Name = "toolStripSeparator7";
-            resources.ApplyResources(toolStripSeparator7, "toolStripSeparator7");
             // 
             // updateReferencesOnCopyPasteToolStripMenuItem
             // 
@@ -334,21 +343,13 @@ namespace IndustrialPark
             toolStripSeparator1.Name = "toolStripSeparator1";
             resources.ApplyResources(toolStripSeparator1, "toolStripSeparator1");
             // 
-            // checkForUpdatesOnStartupToolStripMenuItem
+            // rotationGizmoLocalAxisToolStripMenuItem
             // 
-            checkForUpdatesOnStartupToolStripMenuItem.Checked = true;
-            checkForUpdatesOnStartupToolStripMenuItem.CheckState = CheckState.Checked;
-            checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
-            resources.ApplyResources(checkForUpdatesOnStartupToolStripMenuItem, "checkForUpdatesOnStartupToolStripMenuItem");
-            checkForUpdatesOnStartupToolStripMenuItem.Click += CheckForUpdatesOnStartupToolStripMenuItem_Click;
-            // 
-            // translucentToolStripMenuItem
-            // 
-            translucentToolStripMenuItem.Checked = true;
-            translucentToolStripMenuItem.CheckState = CheckState.Checked;
-            translucentToolStripMenuItem.Name = "translucentToolStripMenuItem";
-            resources.ApplyResources(translucentToolStripMenuItem, "translucentToolStripMenuItem");
-            translucentToolStripMenuItem.Click += translucentToolStripMenuItem_Click;
+            rotationGizmoLocalAxisToolStripMenuItem.Checked = true;
+            rotationGizmoLocalAxisToolStripMenuItem.CheckState = CheckState.Checked;
+            rotationGizmoLocalAxisToolStripMenuItem.Name = "rotationGizmoLocalAxisToolStripMenuItem";
+            resources.ApplyResources(rotationGizmoLocalAxisToolStripMenuItem, "rotationGizmoLocalAxisToolStripMenuItem");
+            rotationGizmoLocalAxisToolStripMenuItem.Click += rotationGizmoOnSingleAxisToolStripMenuItem_Click;
             // 
             // listAllAssetsToolStripMenuItem
             // 
@@ -358,13 +359,29 @@ namespace IndustrialPark
             resources.ApplyResources(listAllAssetsToolStripMenuItem, "listAllAssetsToolStripMenuItem");
             listAllAssetsToolStripMenuItem.Click += alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click;
             // 
-            // rotationGizmoLocalAxisToolStripMenuItem
+            // enableAssetToolButtonsToolStripMenuItem
             // 
-            rotationGizmoLocalAxisToolStripMenuItem.Checked = true;
-            rotationGizmoLocalAxisToolStripMenuItem.CheckState = CheckState.Checked;
-            rotationGizmoLocalAxisToolStripMenuItem.Name = "rotationGizmoLocalAxisToolStripMenuItem";
-            resources.ApplyResources(rotationGizmoLocalAxisToolStripMenuItem, "rotationGizmoLocalAxisToolStripMenuItem");
-            rotationGizmoLocalAxisToolStripMenuItem.Click += rotationGizmoOnSingleAxisToolStripMenuItem_Click;
+            enableAssetToolButtonsToolStripMenuItem.Checked = true;
+            enableAssetToolButtonsToolStripMenuItem.CheckState = CheckState.Checked;
+            enableAssetToolButtonsToolStripMenuItem.Name = "enableAssetToolButtonsToolStripMenuItem";
+            resources.ApplyResources(enableAssetToolButtonsToolStripMenuItem, "enableAssetToolButtonsToolStripMenuItem");
+            enableAssetToolButtonsToolStripMenuItem.Click += enableAssetToolButtonsToolStripMenuItem_Click;
+            // 
+            // translucentToolStripMenuItem
+            // 
+            translucentToolStripMenuItem.Checked = true;
+            translucentToolStripMenuItem.CheckState = CheckState.Checked;
+            translucentToolStripMenuItem.Name = "translucentToolStripMenuItem";
+            resources.ApplyResources(translucentToolStripMenuItem, "translucentToolStripMenuItem");
+            translucentToolStripMenuItem.Click += translucentToolStripMenuItem_Click;
+            // 
+            // checkForUpdatesOnStartupToolStripMenuItem
+            // 
+            checkForUpdatesOnStartupToolStripMenuItem.Checked = true;
+            checkForUpdatesOnStartupToolStripMenuItem.CheckState = CheckState.Checked;
+            checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
+            resources.ApplyResources(checkForUpdatesOnStartupToolStripMenuItem, "checkForUpdatesOnStartupToolStripMenuItem");
+            checkForUpdatesOnStartupToolStripMenuItem.Click += CheckForUpdatesOnStartupToolStripMenuItem_Click;
             // 
             // discordRichPresenceToolStripMenuItem
             // 
@@ -404,7 +421,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, fogToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem });
+            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             resources.ApplyResources(displayToolStripMenuItem, "displayToolStripMenuItem");
             displayToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
@@ -437,6 +454,12 @@ namespace IndustrialPark
             viewConfigToolStripMenuItem.Name = "viewConfigToolStripMenuItem";
             resources.ApplyResources(viewConfigToolStripMenuItem, "viewConfigToolStripMenuItem");
             viewConfigToolStripMenuItem.Click += viewConfigToolStripMenuItem_Click;
+            // 
+            // refreshTexturesAndModelsToolStripMenuItem
+            // 
+            refreshTexturesAndModelsToolStripMenuItem.Name = "refreshTexturesAndModelsToolStripMenuItem";
+            resources.ApplyResources(refreshTexturesAndModelsToolStripMenuItem, "refreshTexturesAndModelsToolStripMenuItem");
+            refreshTexturesAndModelsToolStripMenuItem.Click += refreshTexturesToolStripMenuItem_Click;
             // 
             // uIModeToolStripMenuItem
             // 
@@ -613,6 +636,18 @@ namespace IndustrialPark
             resources.ApplyResources(fogToolStripMenuItem, "fogToolStripMenuItem");
             fogToolStripMenuItem.Click += fogToolStripMenuItem_Click;
             // 
+            // movementPreviewToolStripMenuItem
+            // 
+            movementPreviewToolStripMenuItem.Name = "movementPreviewToolStripMenuItem";
+            resources.ApplyResources(movementPreviewToolStripMenuItem, "movementPreviewToolStripMenuItem");
+            movementPreviewToolStripMenuItem.Click += movementPreviewToolStripMenuItem_Click;
+            // 
+            // hideInvisibleMeshesToolStripMenuItem
+            // 
+            hideInvisibleMeshesToolStripMenuItem.Name = "hideInvisibleMeshesToolStripMenuItem";
+            resources.ApplyResources(hideInvisibleMeshesToolStripMenuItem, "hideInvisibleMeshesToolStripMenuItem");
+            hideInvisibleMeshesToolStripMenuItem.Click += hideInvisibleMeshesToolStripMenuItem_Click;
+            // 
             // useLODTForRenderingToolStripMenuItem
             // 
             useLODTForRenderingToolStripMenuItem.Name = "useLODTForRenderingToolStripMenuItem";
@@ -627,29 +662,11 @@ namespace IndustrialPark
             resources.ApplyResources(usePIPTForRenderingToolStripMenuItem, "usePIPTForRenderingToolStripMenuItem");
             usePIPTForRenderingToolStripMenuItem.Click += UsePIPTForRenderingToolStripMenuItem_Click;
             // 
-            // movementPreviewToolStripMenuItem
-            // 
-            movementPreviewToolStripMenuItem.Name = "movementPreviewToolStripMenuItem";
-            resources.ApplyResources(movementPreviewToolStripMenuItem, "movementPreviewToolStripMenuItem");
-            movementPreviewToolStripMenuItem.Click += movementPreviewToolStripMenuItem_Click;
-            // 
-            // hideInvisibleMeshesToolStripMenuItem
-            // 
-            hideInvisibleMeshesToolStripMenuItem.Name = "hideInvisibleMeshesToolStripMenuItem";
-            resources.ApplyResources(hideInvisibleMeshesToolStripMenuItem, "hideInvisibleMeshesToolStripMenuItem");
-            hideInvisibleMeshesToolStripMenuItem.Click += hideInvisibleMeshesToolStripMenuItem_Click;
-            // 
             // drawOnlyFirstMINFReferenceToolStripMenuItem
             // 
             drawOnlyFirstMINFReferenceToolStripMenuItem.Name = "drawOnlyFirstMINFReferenceToolStripMenuItem";
             resources.ApplyResources(drawOnlyFirstMINFReferenceToolStripMenuItem, "drawOnlyFirstMINFReferenceToolStripMenuItem");
             drawOnlyFirstMINFReferenceToolStripMenuItem.Click += drawOnlyFirstMINFReferenceToolStripMenuItem_Click;
-            // 
-            // refreshTexturesAndModelsToolStripMenuItem
-            // 
-            refreshTexturesAndModelsToolStripMenuItem.Name = "refreshTexturesAndModelsToolStripMenuItem";
-            resources.ApplyResources(refreshTexturesAndModelsToolStripMenuItem, "refreshTexturesAndModelsToolStripMenuItem");
-            refreshTexturesAndModelsToolStripMenuItem.Click += refreshTexturesToolStripMenuItem_Click;
             // 
             // toolsToolStripMenuItem
             // 
@@ -736,16 +753,16 @@ namespace IndustrialPark
             // 
             // researchToolStripMenuItem
             // 
-            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { hansToolStripMenuItem, assetIDGeneratorToolStripMenuItem, dYNASearchToolStripMenuItem, eventSearchToolStripMenuItem, openFolderToolStripMenuItem, dynaNameSearcherToolStripMenuItem, pickupSearcherToolStripMenuItem, viewUndoBufferToolStripMenuItem });
+            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem, openFolderToolStripMenuItem, eventSearchToolStripMenuItem, dYNASearchToolStripMenuItem, dynaNameSearcherToolStripMenuItem, pickupSearcherToolStripMenuItem });
             researchToolStripMenuItem.Name = "researchToolStripMenuItem";
             resources.ApplyResources(researchToolStripMenuItem, "researchToolStripMenuItem");
             researchToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
-            // hansToolStripMenuItem
+            // viewUndoBufferToolStripMenuItem
             // 
-            hansToolStripMenuItem.Name = "hansToolStripMenuItem";
-            resources.ApplyResources(hansToolStripMenuItem, "hansToolStripMenuItem");
-            hansToolStripMenuItem.Click += hansToolStripMenuItem_Click;
+            viewUndoBufferToolStripMenuItem.Name = "viewUndoBufferToolStripMenuItem";
+            resources.ApplyResources(viewUndoBufferToolStripMenuItem, "viewUndoBufferToolStripMenuItem");
+            viewUndoBufferToolStripMenuItem.Click += viewUndoBufferToolStripMenuItem_Click;
             // 
             // assetIDGeneratorToolStripMenuItem
             // 
@@ -753,11 +770,17 @@ namespace IndustrialPark
             resources.ApplyResources(assetIDGeneratorToolStripMenuItem, "assetIDGeneratorToolStripMenuItem");
             assetIDGeneratorToolStripMenuItem.Click += assetIDGeneratorToolStripMenuItem_Click;
             // 
-            // dYNASearchToolStripMenuItem
+            // hansToolStripMenuItem
             // 
-            dYNASearchToolStripMenuItem.Name = "dYNASearchToolStripMenuItem";
-            resources.ApplyResources(dYNASearchToolStripMenuItem, "dYNASearchToolStripMenuItem");
-            dYNASearchToolStripMenuItem.Click += dYNASearchToolStripMenuItem_Click;
+            hansToolStripMenuItem.Name = "hansToolStripMenuItem";
+            resources.ApplyResources(hansToolStripMenuItem, "hansToolStripMenuItem");
+            hansToolStripMenuItem.Click += hansToolStripMenuItem_Click;
+            // 
+            // openFolderToolStripMenuItem
+            // 
+            openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
+            resources.ApplyResources(openFolderToolStripMenuItem, "openFolderToolStripMenuItem");
+            openFolderToolStripMenuItem.Click += openFolderToolStripMenuItem_Click;
             // 
             // eventSearchToolStripMenuItem
             // 
@@ -765,11 +788,11 @@ namespace IndustrialPark
             resources.ApplyResources(eventSearchToolStripMenuItem, "eventSearchToolStripMenuItem");
             eventSearchToolStripMenuItem.Click += eventSearchToolStripMenuItem_Click;
             // 
-            // openFolderToolStripMenuItem
+            // dYNASearchToolStripMenuItem
             // 
-            openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            resources.ApplyResources(openFolderToolStripMenuItem, "openFolderToolStripMenuItem");
-            openFolderToolStripMenuItem.Click += openFolderToolStripMenuItem_Click;
+            dYNASearchToolStripMenuItem.Name = "dYNASearchToolStripMenuItem";
+            resources.ApplyResources(dYNASearchToolStripMenuItem, "dYNASearchToolStripMenuItem");
+            dYNASearchToolStripMenuItem.Click += dYNASearchToolStripMenuItem_Click;
             // 
             // dynaNameSearcherToolStripMenuItem
             // 
@@ -783,18 +806,18 @@ namespace IndustrialPark
             resources.ApplyResources(pickupSearcherToolStripMenuItem, "pickupSearcherToolStripMenuItem");
             pickupSearcherToolStripMenuItem.Click += pickupSearcherToolStripMenuItem_Click;
             // 
-            // viewUndoBufferToolStripMenuItem
-            // 
-            viewUndoBufferToolStripMenuItem.Name = "viewUndoBufferToolStripMenuItem";
-            resources.ApplyResources(viewUndoBufferToolStripMenuItem, "viewUndoBufferToolStripMenuItem");
-            viewUndoBufferToolStripMenuItem.Click += viewUndoBufferToolStripMenuItem_Click;
-            // 
             // helpToolStripMenuItem
             // 
-            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { aboutToolStripMenuItem });
+            helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewControlsToolStripMenuItem, aboutToolStripMenuItem });
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             resources.ApplyResources(helpToolStripMenuItem, "helpToolStripMenuItem");
             helpToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
+            // 
+            // viewControlsToolStripMenuItem
+            // 
+            viewControlsToolStripMenuItem.Name = "viewControlsToolStripMenuItem";
+            resources.ApplyResources(viewControlsToolStripMenuItem, "viewControlsToolStripMenuItem");
+            viewControlsToolStripMenuItem.Click += viewControlsToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem
             // 
@@ -805,15 +828,15 @@ namespace IndustrialPark
             // statusStrip1
             // 
             statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1, toolStripStatusLabel2, toolStripStatusLabelProject, toolStripStatusLabel3, toolStripStatusLabelTemplate, toolStripStatusLabel4, toolStripStatusLabelNumSelected });
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelMain, toolStripStatusLabel2, toolStripStatusLabelProject, toolStripStatusLabel3, toolStripStatusLabelTemplate, toolStripStatusLabel4, toolStripStatusLabelNumSelected });
             resources.ApplyResources(statusStrip1, "statusStrip1");
             statusStrip1.Name = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // toolStripStatusLabelMain
             // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            resources.ApplyResources(toolStripStatusLabel1, "toolStripStatusLabel1");
-            toolStripStatusLabel1.Click += toolStripStatusLabel1_Click;
+            toolStripStatusLabelMain.Name = "toolStripStatusLabelMain";
+            resources.ApplyResources(toolStripStatusLabelMain, "toolStripStatusLabelMain");
+            toolStripStatusLabelMain.Click += toolStripStatusLabel1_Click;
             // 
             // toolStripStatusLabel2
             // 
@@ -913,13 +936,6 @@ namespace IndustrialPark
             resources.ApplyResources(toolStripComboBoxUserTemplate, "toolStripComboBoxUserTemplate");
             toolStripComboBoxUserTemplate.SelectedIndexChanged += toolStripComboBoxUserTemplate_SelectedIndexChanged;
             // 
-            // toolTip1
-            // 
-            toolTip1.AutoPopDelay = 20000;
-            toolTip1.InitialDelay = 250;
-            toolTip1.ReshowDelay = 100;
-            toolTip1.ToolTipIcon = ToolTipIcon.Info;
-            // 
             // MainForm
             // 
             AllowDrop = true;
@@ -971,7 +987,7 @@ namespace IndustrialPark
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.Panel renderPanel;
-        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel toolStripStatusLabelMain;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem noCullingCToolStripMenuItem;
         private ToolStripMenuItem wireframeFToolStripMenuItem;
@@ -1043,8 +1059,6 @@ namespace IndustrialPark
         private ToolStripMenuItem assetTypesToolStripMenuItem;
         private ToolStripMenuItem movementPreviewToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator6;
-        private ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripMenuItem viewControlsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator11;
         private ToolStripMenuItem openFolderToolStripMenuItem;
         private ToolStripMenuItem dynaNameSearcherToolStripMenuItem;
@@ -1074,12 +1088,16 @@ namespace IndustrialPark
         private ToolStripMenuItem listAllAssetsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
         private ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
-        private ToolTip toolTip1;
         private ToolStripMenuItem viewUndoBufferToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem116;
         private ToolStripMenuItem toolStripMenuItem169;
         private ToolStripMenuItem toolStripMenuItem43;
         private ToolStripMenuItem rotationGizmoLocalAxisToolStripMenuItem;
+        private ToolStripMenuItem enableAssetToolButtonsToolStripMenuItem;
+        private ToolStripMenuItem editToolStripMenuItem;
+        private ToolStripMenuItem undoToolStripMenuItem;
+        private ToolStripMenuItem redoToolStripMenuItem;
+        private ToolStripMenuItem viewControlsToolStripMenuItem;
     }
 }
 
