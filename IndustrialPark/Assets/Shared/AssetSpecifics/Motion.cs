@@ -28,7 +28,8 @@ namespace IndustrialPark
     {
         [Browsable(false)]
         public MotionType Type { get; set; }
-        public byte UseBanking { get; set; }
+        [Description("Allows the entity to tilt as it follows a curve")]
+        public bool UseBanking { get; set; }
         public FlagBitmask MotionFlags { get; set; } = ShortFlagsDescriptor(
             "Face movement direction",
             null,
@@ -42,14 +43,14 @@ namespace IndustrialPark
 
         public Motion(EndianBinaryReader reader, Game game) : this(game, (MotionType)reader.ReadByte())
         {
-            UseBanking = reader.ReadByte();
+            UseBanking = reader.ReadByte() != 0;
             MotionFlags.FlagValueShort = reader.ReadUInt16();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write((byte)Type);
-            writer.Write(UseBanking);
+            writer.Write((byte)(UseBanking ? 1 : 0));
             writer.Write(MotionFlags.FlagValueShort);
         }
 
@@ -281,7 +282,8 @@ namespace IndustrialPark
 
     public class Motion_MovePoint : Motion
     {
-        public FlagBitmask MovePointFlags { get; set; } = IntFlagsDescriptor();
+        public FlagBitmask MovePointFlags { get; set; } = IntFlagsDescriptor(
+            "Stop on arrival");
         [ValidReferenceRequired]
         public AssetID MovePoint { get; set; }
         public AssetSingle Speed { get; set; }

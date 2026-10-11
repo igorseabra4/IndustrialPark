@@ -21,6 +21,7 @@
         Cam_Tweak,
         Disco_Floor,
         Duplicatotron_Settings,
+        NPC_Settings_Object,
 
         // Placeable
         Camera,
@@ -29,7 +30,7 @@
         Sphere_Trigger,
         Cylinder_Trigger,
         MovePoint,
-        MovePoint_Area,
+        MovePoint_Arena,
         Pointer,
         Player,
         Boulder,

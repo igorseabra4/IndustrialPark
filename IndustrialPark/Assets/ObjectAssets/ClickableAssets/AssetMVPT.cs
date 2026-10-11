@@ -13,7 +13,6 @@ namespace IndustrialPark
     public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetAddSelected, IAssetCopyPasteTransformation
     {
         private const string categoryName = "Move Point";
-        public override string AssetInfo => IsZone == 0 ? "Arena" : "Zone";
 
         private Vector3 _position;
         [Category(categoryName)]
@@ -35,20 +34,16 @@ namespace IndustrialPark
             set { _position.Z = value; CreateTransformMatrix(); }
         }
 
-        [Category(categoryName), TypeConverter(typeof(HexUShortTypeConverter)), Description("Usually 0x2710")]
-        public ushort Wt { get; set; }
-        [Category(categoryName), Description("0x00 for arena (can see you), 0x01 for zone")]
-        public AssetByte IsZone { get; set; }
-        [Category(categoryName), Description("Usually 0x00")]
-        public AssetByte BezIndex { get; set; }
+        [Category(categoryName), Description("If enabled, the object follows a curved path through this point, calculated using the previous and next points.")]
+        public bool UseBezier { get; set; }
         [Category(categoryName)]
         public AssetByte Flg_Props { get; set; }
 
-        [Category(categoryName), Description("Movement Angle - Enemy will rotate around the point this amount, -1 means disabled")]
+        [Category(categoryName), Description("How long the object waits at this point before continuing. NPCs may wander around the point during this time if 'ZoneRadius' is enabled.")]
         public AssetSingle Delay { get; set; }
 
         private float _zoneRadius;
-        [Category(categoryName), Description("Enemy will circle around the point in this distance, -1 means disabled")]
+        [Category(categoryName), Description("Applies only to NPCs. While waiting at this point, the NPC wanders randomly within this distance of the point. Set to -1 to disable. Delay must be greater than 0 for wandering to occur.")]
         public AssetSingle ZoneRadius
         {
             get => _zoneRadius;
@@ -56,33 +51,39 @@ namespace IndustrialPark
         }
 
         private float _arenaRadius;
-        [Category(categoryName), Description("Enemy will be able to see you from this radius (as in a sphere trigger), -1 means disabled")]
+        [Category(categoryName), Description("Applies only to NPCs. Sets the radius within which the NPC can detect the player. Set to -1 to disable. NPCs can use this value even when the move point is off.")]
         public AssetSingle ArenaRadius
         {
             get => _arenaRadius;
             set { _arenaRadius = value; CreateTransformMatrix(); }
         }
 
-        [Category(categoryName), ValidReferenceRequired, Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), ValidReferenceRequired, Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)),
+            Description("The points the object can move to after reaching this point and completing its Delay. The next destination is chosen randomly from points that are currently on.")]
         public AssetID[] NextMovePoints { get; set; }
+
+        [Category(categoryName), Description("Determines whether the point starts in the on or off state. When off, the point cannot be selected as a next destination. Use the On and Off events to change its state, or Reset to restore its initial state. An NPC can still start at a point that is off if it is directly referenced in the NPC asset.")]
+        public bool On { get; set; }
+        [Category(categoryName), Description("Determines how likely this point is to be selected as the next destination from a connected point. Higher values increase the chance of selection. Default: 10000.")]
+        public ushort Weight { get; set; }
 
         public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MovePoint, BaseAssetType.MovePoint)
         {
             _position = position;
-            Wt = 0x2710;
-            BezIndex = 0x00;
-            NextMovePoints = new AssetID[0];
+            Weight = 10000;
+            UseBezier = false;
+            NextMovePoints = [];
 
             switch (template)
             {
-                case AssetTemplate.MovePoint_Area:
-                    IsZone = 0x00;
+                case AssetTemplate.MovePoint_Arena:
+                    On = false;
                     Delay = 360;
                     ZoneRadius = 4;
                     ArenaRadius = 8;
                     break;
                 case AssetTemplate.MovePoint:
-                    IsZone = 0x01;
+                    On = true;
                     Delay = game >= Game.Incredibles ? 2 : 0;
                     ZoneRadius = -1;
                     ArenaRadius = -1;
@@ -100,9 +101,9 @@ namespace IndustrialPark
                 reader.BaseStream.Position = baseHeaderEndPosition;
 
                 _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                Wt = reader.ReadUInt16();
-                IsZone = reader.ReadByte();
-                BezIndex = reader.ReadByte();
+                Weight = reader.ReadUInt16();
+                On = reader.ReadByte() != 0;
+                UseBezier = reader.ReadByte() != 0;
                 Flg_Props = reader.ReadByte();
                 reader.ReadByte(); // pad
                 ushort pointCount = reader.ReadUInt16();
@@ -129,9 +130,9 @@ namespace IndustrialPark
             writer.Write(_position.X);
             writer.Write(_position.Y);
             writer.Write(_position.Z);
-            writer.Write(Wt);
-            writer.Write(IsZone);
-            writer.Write(BezIndex);
+            writer.Write(Weight);
+            writer.Write((byte)(On ? 1 : 0));
+            writer.Write((byte)(UseBezier ? 1 : 0));
             writer.Write(Flg_Props);
             writer.Write((byte)0);
             writer.Write((ushort)NextMovePoints.Length);
@@ -156,7 +157,7 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            if (IsZone == 1 || _arenaRadius == -1f)
+            if (_arenaRadius <= 0f)
                 world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
             else
                 world = Matrix.Scaling(_arenaRadius * 2f) * Matrix.Translation(_position);
@@ -168,7 +169,7 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            if (IsZone == 1 || _arenaRadius == -1f)
+            if (_arenaRadius <= 0f)
             {
                 var vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
 
@@ -190,7 +191,7 @@ namespace IndustrialPark
             if (ShouldDraw(renderer))
                 if (ray.Intersects(ref boundingSphere))
                 {
-                    if (IsZone == 1 || _arenaRadius == -1f)
+                    if (_arenaRadius <= 0f)
                         return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
                     return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
                 }
@@ -213,7 +214,7 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (IsZone == 1 || _arenaRadius == -1f)
+            if (_arenaRadius <= 0f)
                 renderer.DrawPyramid(world, isSelected, 1f);
             else
                 renderer.DrawSphere(world, isSelected, renderer.mvptColor);
@@ -254,7 +255,7 @@ namespace IndustrialPark
 
         private float GetScale()
         {
-            if (IsZone == 0x00 && _arenaRadius != -1f)
+            if (_arenaRadius <= 0f)
                 return _arenaRadius;
 
             return 1f;
@@ -262,7 +263,7 @@ namespace IndustrialPark
 
         private void SetScale(float scale)
         {
-            if (IsZone == 0x00)
+            if (_arenaRadius <= 0f)
                 ArenaRadius = scale;
         }
 

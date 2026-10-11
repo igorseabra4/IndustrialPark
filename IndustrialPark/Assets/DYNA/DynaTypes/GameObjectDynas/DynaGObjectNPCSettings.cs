@@ -27,17 +27,17 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName)]
         public NpcSettingsBasisType BasisType { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Description("Whether the NPC can detect the player. Can be set at runtime by events WanderOn, WanderOff, DetectPlayerOn, DetectPlayerOff.")]
         public bool AllowDetect { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Description("Patrol lets NPCs follow a move point path precisely from point to point. Can be set at runtime by events PatrolOn and PatrolOff.")]
         public bool AllowPatrol { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Description("Wander lets NPCs and enemies walk randomly within their move point's zone radius. For an enemy to wander, they must reach a move point with a zone bigger than 0, and the delay must also be bigger than 0 for the enemy to remain around this point.")]
         public bool AllowWander { get; set; }
         [Category(dynaCategoryName)]
         public bool ReduceCollide { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Description("Allows NPCs to follow navigation splines, which are enabled when the move points have UseBezier = True, when patrolling. Can be set at runtime by events NPCPatrolSplineOn and NPCPatrolSplineOff.")]
         public bool UseNavSplines { get; set; }
-        [Category(dynaCategoryName)]
+        [Category(dynaCategoryName), Description("Can be set at runtime by events ChasePlayerOn and ChasePlayerOff. The chase behavior varies depending on the enemy type, but is usually related to when the enemy runs towards the player, circling you to avoid attacks.")]
         public bool AllowChase { get; set; }
         [Category(dynaCategoryName)]
         public bool AllowAttack { get; set; }
@@ -52,16 +52,33 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int DuploSpawnLifeMax { get; set; }
 
-        public DynaGObjectNPCSettings(string assetName) : base(assetName, DynaType.game_object__NPCSettings)
+        public DynaGObjectNPCSettings(string assetName, AssetTemplate template) : base(assetName, DynaType.game_object__NPCSettings)
         {
+            BasisType = NpcSettingsBasisType.NPCP_BASIS_NONE;
             AllowDetect = true;
-            ReduceCollide = true;
             UseNavSplines = true;
-            AllowAttack = true;
-            AssumeLOS = true;
-            AssumeFOV = true;
-            DuploSpawnDelay = 1f;
+            DuploWaveMode = En_dupowavmod.NPCP_DUPOWAVE_CONTINUOUS;
             DuploSpawnLifeMax = -1;
+
+            if (template == AssetTemplate.Duplicatotron_Settings)
+            {
+                ReduceCollide = true;
+                AllowAttack = true;
+                AssumeLOS = true;
+                AssumeFOV = true;
+                DuploSpawnDelay = 1f;
+            }
+            else if (template == AssetTemplate.NPC_Settings_Object)
+            {
+                AllowWander = true;
+                AllowPatrol = true;
+                ReduceCollide = false;
+                AllowChase = true;
+                AllowAttack = true;
+                AssumeLOS = false;
+                AssumeFOV = false;
+                DuploSpawnDelay = 5f;
+            }
         }
 
         public DynaGObjectNPCSettings(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__NPCSettings, game, endianness)

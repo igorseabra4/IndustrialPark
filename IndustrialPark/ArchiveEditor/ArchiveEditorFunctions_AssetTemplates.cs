@@ -53,7 +53,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Camera, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Marker, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.MovePoint, eventHandler),
-                GetTemplateMenuItem(AssetTemplate.MovePoint_Area, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.MovePoint_Arena, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Light, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Player, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Pointer, eventHandler),
@@ -237,6 +237,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Jellyfish_Blue, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Duplicatotron, eventHandler),
                 new ToolStripSeparator(),
+                GetTemplateMenuItem(AssetTemplate.NPC_Settings_Object, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Duplicatotron_Settings, eventHandler),
             });
 
@@ -539,8 +540,10 @@ namespace IndustrialPark
                     return "NPC (BFBB/Incredibles)";
                 case AssetTemplate.Villain:
                     return "Villain (Scooby)";
-                case AssetTemplate.MovePoint_Area:
-                    return "MovePoint (Area)";
+                case AssetTemplate.MovePoint:
+                    return "Move Point";
+                case AssetTemplate.MovePoint_Arena:
+                    return "Move Point (arena, off)";
                 case AssetTemplate.SFX_OnEvent:
                     return "SFX (on event)";
                 case AssetTemplate.SFX_OnRadius:
@@ -972,7 +975,8 @@ namespace IndustrialPark
                 case AssetTemplate.Cam_Tweak:
                     return new DynaGObjectCamTweak(assetName, (game >= Game.ROTU) ? 2 : 1);
                 case AssetTemplate.Duplicatotron_Settings:
-                    return new DynaGObjectNPCSettings(assetName);
+                case AssetTemplate.NPC_Settings_Object:
+                    return new DynaGObjectNPCSettings(assetName, template);
                 case AssetTemplate.Disco_Floor:
                     return new AssetDSCO(assetName);
                 case AssetTemplate.Camera:
@@ -1054,7 +1058,7 @@ namespace IndustrialPark
                         };
                     return trigger;
                 }
-                case AssetTemplate.MovePoint_Area:
+                case AssetTemplate.MovePoint_Arena:
                 case AssetTemplate.MovePoint:
                 {
                     var mvpt = new AssetMVPT(assetName, position, game, template);
