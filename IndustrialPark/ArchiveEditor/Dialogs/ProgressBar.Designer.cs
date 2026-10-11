@@ -28,49 +28,47 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.pBar = new System.Windows.Forms.ProgressBar();
-            this.labelLoading = new System.Windows.Forms.Label();
-            this.SuspendLayout();
+            pBar = new System.Windows.Forms.ProgressBar();
+            labelLoading = new System.Windows.Forms.Label();
+            SuspendLayout();
             // 
             // pBar
             // 
-            this.pBar.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.pBar.Location = new System.Drawing.Point(13, 18);
-            this.pBar.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.pBar.Name = "pBar";
-            this.pBar.Size = new System.Drawing.Size(586, 35);
-            this.pBar.TabIndex = 0;
+            pBar.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            pBar.Location = new System.Drawing.Point(12, 12);
+            pBar.Name = "pBar";
+            pBar.Size = new System.Drawing.Size(360, 26);
+            pBar.TabIndex = 0;
             // 
             // labelLoading
             // 
-            this.labelLoading.AutoSize = true;
-            this.labelLoading.Location = new System.Drawing.Point(18, 58);
-            this.labelLoading.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.labelLoading.Name = "labelLoading";
-            this.labelLoading.Size = new System.Drawing.Size(0, 13);
-            this.labelLoading.TabIndex = 1;
+            labelLoading.AutoSize = true;
+            labelLoading.Location = new System.Drawing.Point(13, 41);
+            labelLoading.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            labelLoading.Name = "labelLoading";
+            labelLoading.Size = new System.Drawing.Size(45, 13);
+            labelLoading.TabIndex = 1;
+            labelLoading.Text = "Loading";
             // 
             // ProgressBar
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
-            this.ClientSize = new System.Drawing.Size(604, 74);
-            this.ControlBox = false;
-            this.Controls.Add(this.labelLoading);
-            this.Controls.Add(this.pBar);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
-            this.Name = "ProgressBar";
-            this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "Opening Archive";
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+            ClientSize = new System.Drawing.Size(384, 61);
+            ControlBox = false;
+            Controls.Add(labelLoading);
+            Controls.Add(pBar);
+            FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            MaximizeBox = false;
+            MinimizeBox = false;
+            Name = "ProgressBar";
+            ShowIcon = false;
+            ShowInTaskbar = false;
+            SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Opening Archive";
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 

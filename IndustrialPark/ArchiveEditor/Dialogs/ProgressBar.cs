@@ -35,8 +35,8 @@ namespace IndustrialPark
                 labelLoading.Text = $"Progress: {100 * pBar.Value / pBar.Maximum}% {label}";
                 if (pBar.Value >= pBar.Maximum)
                     Close();
+                Update();
             }
-            Update();
         }
     }
 }
