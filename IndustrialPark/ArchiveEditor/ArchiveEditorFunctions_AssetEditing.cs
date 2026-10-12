@@ -75,6 +75,14 @@ namespace IndustrialPark
                 if (Program.MainForm.TranslucentWhenOutOfFocus && editor.CanFocus && !editor.OwnedForms.Any())
                     editor.Opacity = 0.5f;
             };
+            editor.KeyPreview = true;
+            editor.KeyDown += (sender, e) =>
+            {
+                if ((e.KeyCode == Keys.Y && e.Modifiers == Keys.Control) || (e.KeyCode == Keys.Z && e.Modifiers == (Keys.Control | Keys.Shift)))
+                    Program.UndoBuffer.Redo();
+                else if (e.KeyCode == Keys.Z && e.Modifiers == Keys.Control)
+                    Program.UndoBuffer.Undo();
+            };
             internalEditors.Add(editor);
             if (location.HasValue)
             {
