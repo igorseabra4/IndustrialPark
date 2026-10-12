@@ -21,6 +21,8 @@ namespace IndustrialPark
             comboBoxMatEffects.Items.Add(MaterialEffectType.BumpMap);
             comboBoxMatEffects.Items.Add(MaterialEffectType.EnvironmentMap);
             comboBoxMatEffects.Items.Add(MaterialEffectType.DualTextures);
+
+            toolTip = new ToolTip();
         }
 
         private bool OK = false;
@@ -182,6 +184,23 @@ namespace IndustrialPark
                 currentMaterials[0].materialStruct.isTextured = 1;
                 propertyGridTextureInfo_PropertyValueChanged(sender, null);
             }
+        }
+
+        private void buttonSelectSimilar_Click(object sender, EventArgs e)
+        {
+            var names = new HashSet<string>();
+            foreach (var m in currentMaterials)
+                names.Add(m.ToString());
+            for (int i = 0; i < listBoxMaterials.Items.Count; i++)
+                if (names.Contains(listBoxMaterials.Items[i].ToString()))
+                    listBoxMaterials.SetSelected(i, true);
+        }
+
+        ToolTip toolTip;
+
+        private void buttonSelectSimilar_MouseHover(object sender, EventArgs e)
+        {
+            toolTip.Show("Select all materials which have the same name as the currently selected materials", buttonSelectSimilar);
         }
     }
 }

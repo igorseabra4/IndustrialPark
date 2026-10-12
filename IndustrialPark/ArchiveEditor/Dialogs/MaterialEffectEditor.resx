@@ -1,17 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
-  <!-- 
-    Microsoft ResX Schema 
-    
+  <!--
+    Microsoft ResX Schema
+
     Version 2.0
-    
-    The primary goals of this format is to allow a simple XML format 
-    that is mostly human readable. The generation and parsing of the 
-    various data types are done through the TypeConverter classes 
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
     associated with the data types.
-    
+
     Example:
-    
+
     ... ado.net/XML headers & schema ...
     <resheader name="resmimetype">text/microsoft-resx</resheader>
     <resheader name="version">2.0</resheader>
@@ -26,36 +26,36 @@
         <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
         <comment>This is a comment</comment>
     </data>
-                
-    There are any number of "resheader" rows that contain simple 
+
+    There are any number of "resheader" rows that contain simple
     name/value pairs.
-    
-    Each data row contains a name, and value. The row also contains a 
-    type or mimetype. Type corresponds to a .NET class that support 
-    text/value conversion through the TypeConverter architecture. 
-    Classes that don't support this are serialized and stored with the 
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
     mimetype set.
-    
-    The mimetype is used for serialized objects, and tells the 
-    ResXResourceReader how to depersist the object. This is currently not 
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
     extensible. For a given mimetype the value must be set accordingly:
-    
-    Note - application/x-microsoft.net.object.binary.base64 is the format 
-    that the ResXResourceWriter will generate, however the reader can 
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
     read any of the formats listed below.
-    
+
     mimetype: application/x-microsoft.net.object.binary.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
             : and then encoded with base64 encoding.
-    
+
     mimetype: application/x-microsoft.net.object.soap.base64
-    value   : The object must be serialized with 
+    value   : The object must be serialized with
             : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
             : and then encoded with base64 encoding.
 
     mimetype: application/x-microsoft.net.object.bytearray.base64
-    value   : The object must be serialized into a byte array 
+    value   : The object must be serialized into a byte array
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
@@ -132,7 +132,7 @@
     <value>listBoxMaterials</value>
   </data>
   <data name="&gt;&gt;listBoxMaterials.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ListBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;listBoxMaterials.Parent" xml:space="preserve">
     <value>groupBox1</value>
@@ -156,13 +156,13 @@
     <value>groupBox1</value>
   </data>
   <data name="&gt;&gt;groupBox1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;groupBox1.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBox1.ZOrder" xml:space="preserve">
-    <value>7</value>
+    <value>8</value>
   </data>
   <data name="buttonOK.Location" type="System.Drawing.Point, System.Drawing">
     <value>318, 401</value>
@@ -180,13 +180,13 @@
     <value>buttonOK</value>
   </data>
   <data name="&gt;&gt;buttonOK.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonOK.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonOK.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>5</value>
   </data>
   <data name="buttonCancel.Location" type="System.Drawing.Point, System.Drawing">
     <value>415, 401</value>
@@ -204,13 +204,13 @@
     <value>buttonCancel</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonCancel.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonCancel.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>6</value>
   </data>
   <data name="groupBox4.Location" type="System.Drawing.Point, System.Drawing">
     <value>188, 65</value>
@@ -228,13 +228,13 @@
     <value>groupBox4</value>
   </data>
   <data name="&gt;&gt;groupBox4.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;groupBox4.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBox4.ZOrder" xml:space="preserve">
-    <value>6</value>
+    <value>7</value>
   </data>
   <data name="panelColor.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 19</value>
@@ -249,7 +249,7 @@
     <value>panelColor</value>
   </data>
   <data name="&gt;&gt;panelColor.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Panel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Panel, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;panelColor.Parent" xml:space="preserve">
     <value>groupBox2</value>
@@ -273,13 +273,13 @@
     <value>groupBox2</value>
   </data>
   <data name="&gt;&gt;groupBox2.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;groupBox2.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBox2.ZOrder" xml:space="preserve">
-    <value>3</value>
+    <value>4</value>
   </data>
   <data name="propertyGridTextureInfo.HelpVisible" type="System.Boolean, mscorlib">
     <value>False</value>
@@ -297,13 +297,13 @@
     <value>propertyGridTextureInfo</value>
   </data>
   <data name="&gt;&gt;propertyGridTextureInfo.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PropertyGrid, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.PropertyGrid, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;propertyGridTextureInfo.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;propertyGridTextureInfo.ZOrder" xml:space="preserve">
-    <value>2</value>
+    <value>3</value>
   </data>
   <data name="comboBoxMatEffects.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 19</value>
@@ -318,7 +318,7 @@
     <value>comboBoxMatEffects</value>
   </data>
   <data name="&gt;&gt;comboBoxMatEffects.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;comboBoxMatEffects.Parent" xml:space="preserve">
     <value>groupBox3</value>
@@ -342,7 +342,7 @@
     <value>propertyGridMatEffects</value>
   </data>
   <data name="&gt;&gt;propertyGridMatEffects.Type" xml:space="preserve">
-    <value>System.Windows.Forms.PropertyGrid, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.PropertyGrid, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;propertyGridMatEffects.Parent" xml:space="preserve">
     <value>groupBox3</value>
@@ -366,29 +366,26 @@
     <value>groupBox3</value>
   </data>
   <data name="&gt;&gt;groupBox3.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;groupBox3.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;groupBox3.ZOrder" xml:space="preserve">
-    <value>1</value>
+    <value>2</value>
   </data>
   <data name="buttonAddTexture.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="buttonAddTexture.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
-    <value>NoControl</value>
-  </data>
   <data name="buttonAddTexture.Location" type="System.Drawing.Point, System.Drawing">
-    <value>18, 400</value>
+    <value>107, 401</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="buttonAddTexture.Margin" type="System.Windows.Forms.Padding, System.Windows.Forms">
     <value>2, 2, 2, 2</value>
   </data>
   <data name="buttonAddTexture.Size" type="System.Drawing.Size, System.Drawing">
-    <value>158, 23</value>
+    <value>90, 23</value>
   </data>
   <data name="buttonAddTexture.TabIndex" type="System.Int32, mscorlib">
     <value>25</value>
@@ -400,12 +397,36 @@
     <value>buttonAddTexture</value>
   </data>
   <data name="&gt;&gt;buttonAddTexture.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;buttonAddTexture.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
   <data name="&gt;&gt;buttonAddTexture.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="buttonSelectSimilar.Location" type="System.Drawing.Point, System.Drawing">
+    <value>12, 401</value>
+  </data>
+  <data name="buttonSelectSimilar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>90, 23</value>
+  </data>
+  <data name="buttonSelectSimilar.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="buttonSelectSimilar.Text" xml:space="preserve">
+    <value>Select Similar</value>
+  </data>
+  <data name="&gt;&gt;buttonSelectSimilar.Name" xml:space="preserve">
+    <value>buttonSelectSimilar</value>
+  </data>
+  <data name="&gt;&gt;buttonSelectSimilar.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;buttonSelectSimilar.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;buttonSelectSimilar.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -417,6 +438,7 @@
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
     <value>520, 432</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="$this.StartPosition" type="System.Windows.Forms.FormStartPosition, System.Windows.Forms">
     <value>CenterParent</value>
   </data>
@@ -427,6 +449,6 @@
     <value>MaterialEffectEditor</value>
   </data>
   <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>
