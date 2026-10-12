@@ -647,22 +647,29 @@ namespace IndustrialPark
                     {
                         float deltaX = e.X - oldMousePosition.X;
                         float deltaY = e.Y - oldMousePosition.Y;
-                        float rollRadians = MathUtil.DegreesToRadians(renderer.Camera.Roll);
-                        float adjustedDeltaX = deltaX * (float)Math.Cos(rollRadians) - deltaY * (float)Math.Sin(rollRadians);
-                        float adjustedDeltaY = deltaX * (float)Math.Sin(rollRadians) + deltaY * (float)Math.Cos(rollRadians);
-                        renderer.Camera.AddYaw(MathUtil.DegreesToRadians(adjustedDeltaX));
-                        renderer.Camera.AddPitch(MathUtil.DegreesToRadians(adjustedDeltaY));
+                        if (PressedKeys.Contains(Keys.ControlKey))
+                        {
+                            renderer.Camera.AddPositionForward(-deltaY / 24f);
+                        }
+                        else if (PressedKeys.Contains(Keys.ShiftKey) && !PressedKeys.Contains(Keys.W) && !PressedKeys.Contains(Keys.A) && !PressedKeys.Contains(Keys.S) && !PressedKeys.Contains(Keys.D))
+                        {
+                            renderer.Camera.AddPositionSideways(deltaX / 24f);
+                            renderer.Camera.AddPositionUp(deltaY / 24f);
+                        }
+                        else
+                        {
+                            float rollRadians = MathUtil.DegreesToRadians(renderer.Camera.Roll);
+                            float adjustedDeltaX = deltaX * (float)Math.Cos(rollRadians) - deltaY * (float)Math.Sin(rollRadians);
+                            float adjustedDeltaY = deltaX * (float)Math.Sin(rollRadians) + deltaY * (float)Math.Cos(rollRadians);
+                            renderer.Camera.AddYaw(MathUtil.DegreesToRadians(adjustedDeltaX));
+                            renderer.Camera.AddPitch(MathUtil.DegreesToRadians(adjustedDeltaY));
 
-                        // Clamp camera pitch so it doesn't loop around
-                        float pitchPadding = 0.01f;
-                        renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
-                            -90 + pitchPadding,
-                            90 - pitchPadding);
-                    }
-                    if (e.Button == MouseButtons.Right && PressedKeys.Contains(Keys.ControlKey))
-                    {
-                        renderer.Camera.AddPositionSideways(e.X - oldMousePosition.X);
-                        renderer.Camera.AddPositionUp(e.Y - oldMousePosition.Y);
+                            // Clamp camera pitch so it doesn't loop around
+                            float pitchPadding = 0.01f;
+                            renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
+                                -90 + pitchPadding,
+                                90 - pitchPadding);
+                        }
                     }
                 }
 
@@ -730,16 +737,16 @@ namespace IndustrialPark
                     CloseMostForms();
                     break;
                 case Keys.H when PressedKeys.Contains(Keys.ControlKey):
-                    DropSelectedAssets();
-                    break;
-                case Keys.H:
-                    hideInvisibleMeshesToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.J when PressedKeys.Contains(Keys.ControlKey):
                     UnhideAllAssets();
                     break;
-                case Keys.J:
+                case Keys.H:
                     HideSelectedAssets();
+                    break;
+                case Keys.J when PressedKeys.Contains(Keys.ControlKey):
+                    DropSelectedAssets();
+                    break;
+                case Keys.J:
+                    hideInvisibleMeshesToolStripMenuItem.PerformClick();
                     break;
                 case Keys.L:
                     useLightKitsForRenderingToolStripMenuItem.PerformClick();

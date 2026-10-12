@@ -76,18 +76,19 @@ namespace IndustrialPark
         {
             new("W / A / S / D", "Move camera forward / left / backward / right", "Camera"),
             new("E / Q", "Move camera up / down", "Camera"),
-            new("Shift + W / S", "Move camera up / down", "Camera"),
-            new("Ctrl + W / A / S / D", "Rotate camera (pitch and yaw)", "Camera"),
+            new("Shift + W / A / S  D", "Move camera up / left / down / right", "Camera"),
+            new("Ctrl + W / A / S / D", "Rotate camera up / left / down / right (pitch and yaw)", "Camera"),
             new("Ctrl + E / Q", "Rotate camera sideways (roll)", "Camera"),
             new("Ctrl + R", "Reset camera roll", "Camera"),
+            new("Middle mouse + drag", "Rotate camera", "Camera"),
+            new("Shift + Middle mouse + drag", "Move camera up / left / down / right", "Camera"),
+            new("Ctrl + Middle mouse + drag", "Move camera forward / backward", "Camera"),
+            new("Mouse wheel", "Move camera forward / backward", "Camera"),
             new("1 / 2", "Decrease / increase camera movement speed", "Camera"),
             new("3 / 4", "Decrease / increase camera rotation speed", "Camera"),
             new("R", "Reset camera view to origin", "Camera"),
             new("Z", "Toggle fly mode; rotate with the mouse and move with the keyboard", "Camera"),
-            new("Middle mouse + drag", "Rotate camera", "Camera"),
-            new("Mouse wheel", "Move camera forward / backward", "Camera"),
-            new("Ctrl + Right mouse + drag", "Pan camera up / left / down / right", "Camera"),
-            
+
             new("Left mouse", "Select an asset", "Selection"),
             new("Ctrl + Left mouse", "Toggle asset selection", "Selection"),
             new("Shift + Left mouse", "Add asset to selection", "Selection"),
@@ -98,10 +99,10 @@ namespace IndustrialPark
             new("B / N", "Select previous / next template", "Selection"),
             new("G", "Open Asset Data Editor for selected assets", "Tools"),
             new("Ctrl + G", "Open Archive Editor containing selected assets", "Tools"),
-            new("Ctrl + H", "Drop selected assets to floor below", "Editing"),
-            new("J", "Hide selected assets", "View"),
-            new("Ctrl + J", "Unhide all individually hidden assets", "View"),
-            new("Ctrl + J (twice)", "Unhide all asset types", "View"),
+            new("H", "Hide selected assets", "View"),
+            new("Ctrl + H", "Unhide all individually hidden assets", "View"),
+            new("Ctrl + H (twice)", "Unhide all asset types", "View"),
+            new("Ctrl + J", "Drop selected assets to floor below", "Editing"),
             new("T", "Hold while transforming assets with gizmos to snap to grid", "Editing"),
             new("V", "Cycle through gizmos", "Selection"),
             new("Delete", "Delete selected assets", "Editing"),
@@ -112,7 +113,7 @@ namespace IndustrialPark
 
             new("C", "Toggle backface culling", "View"),
             new("F", "Toggle fog", "View"),
-            new("H", "Toggle invisible geometry display", "View"),
+            new("J", "Toggle invisible geometry display", "View"),
             new("L", "Toggle light kit view", "View"),
             new("M", "Toggle movement preview", "View"),
             new("P", "Toggle vertex color display", "View"),
@@ -125,6 +126,7 @@ namespace IndustrialPark
             new("Ctrl + Shift + S / F4", "Save all open Archive Editors", "Tools"),
             new("F5", "Launch game", "Tools"),
             new("F6", "Open PS2 ISO Build/Run tool", "Tools"),
+            new("F7", "Open GameCube banner tool", "Tools"),
             new("Ctrl + Shift + H", "Close all forms except Archive Editors", "Tools")
         };
     }
