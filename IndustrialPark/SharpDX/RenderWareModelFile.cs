@@ -37,6 +37,7 @@ namespace IndustrialPark
 
         public FogLightRenderData renderData;
         public JspRenderData jspRenderData;
+        public int highlightAtomic = -1;
 
         public RenderWareModelFile(SharpDevice device, RWSection[] rwSectionArray)
         {
@@ -547,7 +548,6 @@ namespace IndustrialPark
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.world = world;
             renderData.ColorMultiplier = color;
-            renderData.SelectedObjectColor = isSelected ? renderer.selectedObjectColor : Vector4.Zero;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
             renderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
             renderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
@@ -598,6 +598,8 @@ namespace IndustrialPark
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
+                renderData.SelectedObjectColor = (isSelected || highlightAtomic == i) ? renderer.selectedObjectColor : Vector4.Zero;
+
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                 {
@@ -629,7 +631,6 @@ namespace IndustrialPark
             jspRenderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
             jspRenderData.FogEnd = SharpRenderer.Fog?.EndDistance ?? 0f;
             jspRenderData.FogEnable = SharpRenderer.Fog != null && !AssetFOG.DontRender;
-            jspRenderData.SelectedObjectColor = isSelected ? renderer.selectedObjectColor : Vector4.Zero;
 
             renderer.device.SetBlendStateAlphaBlend();
 
@@ -644,6 +645,8 @@ namespace IndustrialPark
             {
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
+
+                jspRenderData.SelectedObjectColor = (isSelected || highlightAtomic == i) ? renderer.selectedObjectColor : Vector4.Zero;
 
                 renderer.device.SetDefaultDepthState();
                 renderer.device.SetCullModeDefault();
@@ -681,7 +684,6 @@ namespace IndustrialPark
             renderData.worldViewProjection = world * renderer.viewProjection;
             renderData.world = world;
             renderData.ColorMultiplier = color;
-            renderData.SelectedObjectColor = isSelected ? renderer.selectedColor : Vector4.Zero;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
             renderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
             renderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
@@ -721,6 +723,8 @@ namespace IndustrialPark
             {
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
+
+                renderData.SelectedObjectColor = (isSelected || highlightAtomic == i) ? renderer.selectedColor : Vector4.Zero;
 
                 renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
                 renderer.device.DeviceContext.PixelShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);

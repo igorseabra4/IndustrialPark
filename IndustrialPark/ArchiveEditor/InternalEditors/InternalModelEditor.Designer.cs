@@ -64,6 +64,8 @@
             checkBoxUseTemplates = new System.Windows.Forms.CheckBox();
             buildCollTreeButton = new System.Windows.Forms.Button();
             removeCollPlgButton = new System.Windows.Forms.Button();
+            numericHighlightAtomic = new System.Windows.Forms.NumericUpDown();
+            label1 = new System.Windows.Forms.Label();
             groupBoxImport.SuspendLayout();
             groupBoxExport.SuspendLayout();
             groupBoxTextures.SuspendLayout();
@@ -73,6 +75,7 @@
             groupBoxLevelOfDetail.SuspendLayout();
             groupBoxShadow.SuspendLayout();
             groupBoxCollisionModel.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericHighlightAtomic).BeginInit();
             SuspendLayout();
             // 
             // buttonHelp
@@ -215,7 +218,7 @@
             groupBoxAtomics.Controls.Add(tableLayoutPanelAtomics);
             groupBoxAtomics.Location = new System.Drawing.Point(201, 376);
             groupBoxAtomics.Name = "groupBoxAtomics";
-            groupBoxAtomics.Size = new System.Drawing.Size(189, 172);
+            groupBoxAtomics.Size = new System.Drawing.Size(189, 141);
             groupBoxAtomics.TabIndex = 37;
             groupBoxAtomics.TabStop = false;
             groupBoxAtomics.Text = "Atomics";
@@ -232,7 +235,7 @@
             tableLayoutPanelAtomics.Name = "tableLayoutPanelAtomics";
             tableLayoutPanelAtomics.RowCount = 1;
             tableLayoutPanelAtomics.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            tableLayoutPanelAtomics.Size = new System.Drawing.Size(183, 153);
+            tableLayoutPanelAtomics.Size = new System.Drawing.Size(183, 122);
             tableLayoutPanelAtomics.TabIndex = 42;
             // 
             // buttonEditAtomics
@@ -310,6 +313,7 @@
             // propertyGridPipeInfo
             // 
             propertyGridPipeInfo.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridPipeInfo.BackColor = System.Drawing.SystemColors.Control;
             propertyGridPipeInfo.Enabled = false;
             propertyGridPipeInfo.HelpVisible = false;
             propertyGridPipeInfo.Location = new System.Drawing.Point(6, 44);
@@ -345,6 +349,7 @@
             // propertyGridLevelOfDetail
             // 
             propertyGridLevelOfDetail.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridLevelOfDetail.BackColor = System.Drawing.SystemColors.Control;
             propertyGridLevelOfDetail.Enabled = false;
             propertyGridLevelOfDetail.HelpVisible = false;
             propertyGridLevelOfDetail.Location = new System.Drawing.Point(6, 45);
@@ -379,6 +384,7 @@
             // propertyGridShadow
             // 
             propertyGridShadow.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridShadow.BackColor = System.Drawing.SystemColors.Control;
             propertyGridShadow.Enabled = false;
             propertyGridShadow.HelpVisible = false;
             propertyGridShadow.Location = new System.Drawing.Point(6, 41);
@@ -425,6 +431,7 @@
             // propertyGridCollision
             // 
             propertyGridCollision.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridCollision.BackColor = System.Drawing.SystemColors.Control;
             propertyGridCollision.Enabled = false;
             propertyGridCollision.HelpVisible = false;
             propertyGridCollision.Location = new System.Drawing.Point(6, 41);
@@ -477,11 +484,33 @@
             removeCollPlgButton.UseVisualStyleBackColor = true;
             removeCollPlgButton.Click += removeCollPlgButton_Click;
             // 
+            // numericHighlightAtomic
+            // 
+            numericHighlightAtomic.Location = new System.Drawing.Point(292, 523);
+            numericHighlightAtomic.Maximum = new decimal(new int[] { 100000000, 0, 0, 0 });
+            numericHighlightAtomic.Minimum = new decimal(new int[] { 1, 0, 0, int.MinValue });
+            numericHighlightAtomic.Name = "numericHighlightAtomic";
+            numericHighlightAtomic.Size = new System.Drawing.Size(92, 20);
+            numericHighlightAtomic.TabIndex = 49;
+            numericHighlightAtomic.Value = new decimal(new int[] { 1, 0, 0, int.MinValue });
+            numericHighlightAtomic.ValueChanged += numericHighlightAtomic_ValueChanged;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(201, 525);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(85, 13);
+            label1.TabIndex = 50;
+            label1.Text = "Highlight atomic:";
+            // 
             // InternalModelEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(527, 633);
+            Controls.Add(label1);
+            Controls.Add(numericHighlightAtomic);
             Controls.Add(removeCollPlgButton);
             Controls.Add(buildCollTreeButton);
             Controls.Add(checkBoxUseTemplates);
@@ -515,6 +544,7 @@
             groupBoxLevelOfDetail.ResumeLayout(false);
             groupBoxShadow.ResumeLayout(false);
             groupBoxCollisionModel.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)numericHighlightAtomic).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -556,5 +586,7 @@
         private System.Windows.Forms.Button buildCollTreeButton;
         private System.Windows.Forms.Button removeCollPlgButton;
         private System.Windows.Forms.Button buttonImportColl;
+        private System.Windows.Forms.NumericUpDown numericHighlightAtomic;
+        private System.Windows.Forms.Label label1;
     }
 }

@@ -59,6 +59,7 @@ namespace IndustrialPark
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
+            asset.GetRenderWareModelFile()?.highlightAtomic = -1;
             archive.CloseInternalEditor(this);
         }
 
@@ -532,6 +533,11 @@ namespace IndustrialPark
                 {
                     ae.PopulateAssetListAndComboBox();
                 }
+        }
+
+        private void numericHighlightAtomic_ValueChanged(object sender, EventArgs e)
+        {
+            asset.GetRenderWareModelFile()?.highlightAtomic = (int)numericHighlightAtomic.Value;
         }
     }
 }
