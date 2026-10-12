@@ -19,6 +19,7 @@ namespace IndustrialPark
         public bool renderBasedOnPipt = true;
         public bool discordRichPresence = true;
         public bool dontDrawInvisible = false;
+        public bool drawMvptsAsPoints = false;
 
         public bool persistentShinies = true;
 

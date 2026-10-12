@@ -1570,7 +1570,6 @@ namespace IndustrialPark
         {
             archive.SetupTextureDisplay();
             archive.ResetModels(renderer);
-            archive.RecalculateAllMatrices();
         }
 
         private HashSet<Keys> PressedKeys = new HashSet<Keys>();

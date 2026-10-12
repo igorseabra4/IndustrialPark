@@ -165,6 +165,9 @@ namespace IndustrialPark
             usePIPTForRenderingToolStripMenuItem.Checked = settings.renderBasedOnPipt;
             AssetMODL.renderBasedOnPipt = settings.renderBasedOnPipt;
 
+            allMovePointsArePointsToolStripMenuItem.Checked = settings.drawMvptsAsPoints;
+            AssetMVPT.DrawAllAsPoints = settings.drawMvptsAsPoints;
+
             hideInvisibleMeshesToolStripMenuItem.Checked = settings.dontDrawInvisible;
             RenderWareModelFile.dontDrawInvisible = settings.dontDrawInvisible;
 
@@ -266,6 +269,7 @@ namespace IndustrialPark
                 drawOnlyFirstMinf = AssetMINF.drawOnlyFirst,
                 renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
+                drawMvptsAsPoints = AssetMVPT.DrawAllAsPoints,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
                 persistentShinies = ArchiveEditorFunctions.persistentShinies,
@@ -1897,6 +1901,7 @@ namespace IndustrialPark
             TextureManager.ClearTextures();
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.RefreshHop(renderer);
+            ArchiveEditorFunctions.RecalculateAllMatrices();
         }
 
         private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2197,6 +2202,13 @@ namespace IndustrialPark
         private void useLightKitsForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AssetLKIT.DontRender = !useLightKitsForRenderingToolStripMenuItem.Checked;
+        }
+
+        private void allMovePointsArePointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            allMovePointsArePointsToolStripMenuItem.Checked = !allMovePointsArePointsToolStripMenuItem.Checked;
+            AssetMVPT.DrawAllAsPoints = allMovePointsArePointsToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.RecalculateAllMatrices();
         }
 
         private void MenuStrip_DropDownOpened(object sender, EventArgs e)

@@ -1592,7 +1592,7 @@ namespace IndustrialPark
                     model.Setup(renderer);
         }
 
-        public void RecalculateAllMatrices()
+        public static void RecalculateAllMatrices()
         {
             lock (renderableAssets)
                 foreach (IRenderableAsset a in renderableAssets)

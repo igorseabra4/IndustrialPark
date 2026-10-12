@@ -175,7 +175,7 @@ namespace IndustrialPark
                 asset.Setup(Program.MainForm.renderer);
                 if (createPipt && propertyGridPipeInfo.SelectedObject == null)
                     buttonCreatePipeInfo.PerformClick();
-                archive.RecalculateAllMatrices();
+                ArchiveEditorFunctions.RecalculateAllMatrices();
                 archive.UnsavedChanges = true;
                 updateListView(asset);
                 SetupTexturesBox();

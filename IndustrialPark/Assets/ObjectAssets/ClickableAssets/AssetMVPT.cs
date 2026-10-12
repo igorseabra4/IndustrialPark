@@ -147,6 +147,7 @@ namespace IndustrialPark
             SerializeLinks(writer);
         }
 
+        public static bool DrawAllAsPoints = false;
         private Matrix world;
         private BoundingBox boundingBox;
 
@@ -154,10 +155,11 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public bool SpecialBlendMode => true;
+        private bool DrawAsPoint => DrawAllAsPoints || _arenaRadius <= 0f;
 
         public void CreateTransformMatrix()
         {
-            if (_arenaRadius <= 0f)
+            if (DrawAsPoint)
                 world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
             else
                 world = Matrix.Scaling(_arenaRadius * 2f) * Matrix.Translation(_position);
@@ -169,7 +171,7 @@ namespace IndustrialPark
 
         protected void CreateBoundingBox()
         {
-            if (_arenaRadius <= 0f)
+            if (DrawAsPoint)
             {
                 var vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
 
@@ -191,7 +193,7 @@ namespace IndustrialPark
             if (ShouldDraw(renderer))
                 if (ray.Intersects(ref boundingSphere))
                 {
-                    if (_arenaRadius <= 0f)
+                    if (DrawAsPoint)
                         return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
                     return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
                 }
@@ -214,7 +216,7 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (_arenaRadius <= 0f)
+            if (DrawAsPoint)
                 renderer.DrawPyramid(world, isSelected, 1f);
             else
                 renderer.DrawSphere(world, isSelected, renderer.mvptColor);
@@ -222,7 +224,7 @@ namespace IndustrialPark
 
         public BoundingBox GetBoundingBox() => boundingBox;
 
-        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - (_arenaRadius == -1f ? 0 : _arenaRadius);
+        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - Math.Max(0f, _arenaRadius);
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
@@ -255,7 +257,7 @@ namespace IndustrialPark
 
         private float GetScale()
         {
-            if (_arenaRadius <= 0f)
+            if (DrawAsPoint)
                 return _arenaRadius;
 
             return 1f;
@@ -263,7 +265,7 @@ namespace IndustrialPark
 
         private void SetScale(float scale)
         {
-            if (_arenaRadius <= 0f)
+            if (DrawAsPoint)
                 ArenaRadius = scale;
         }
 
