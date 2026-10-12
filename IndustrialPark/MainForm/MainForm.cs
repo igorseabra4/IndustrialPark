@@ -1318,10 +1318,11 @@ namespace IndustrialPark
         private void ShowDropDowns()
         {
             if (autoShowDropDowns)
-            {
-                displayToolStripMenuItem.ShowDropDown();
-                assetTypesToolStripMenuItem.ShowDropDown();
-            }
+                BeginInvoke(() =>
+                {
+                    displayToolStripMenuItem.ShowDropDown();
+                    assetTypesToolStripMenuItem.ShowDropDown();
+                });
         }
 
         public void SetupAssetVisibilityButtons()
@@ -1338,11 +1339,12 @@ namespace IndustrialPark
                 foreach (var asset in ae.archive.GetAllAssets())
                     assetTypes.Add(asset.assetType);
 
-            SetAssetViewToolStripMenuItems(assetTypes);
+
+            assetViewToolStripMenuItems = GetAssetViewToolStripMenuItems(assetTypes);
             assetTypesToolStripMenuItem.DropDownItems.AddRange(assetViewToolStripMenuItems);
         }
 
-        private Dictionary<AssetType, Type> assetViewTypes = new Dictionary<AssetType, Type>
+        private static Dictionary<AssetType, Type> assetViewTypes = new Dictionary<AssetType, Type>
         {
             { AssetType.JSP, typeof(AssetJSP) },
             { AssetType.BSP, typeof(AssetJSP) },
@@ -1428,7 +1430,7 @@ namespace IndustrialPark
 
         private ToolStripMenuItem[] assetViewToolStripMenuItems;
 
-        private void SetAssetViewToolStripMenuItems(IEnumerable<AssetType> assetTypes)
+        private ToolStripMenuItem[] GetAssetViewToolStripMenuItems(IEnumerable<AssetType> assetTypes)
         {
             var items = new List<ToolStripMenuItem>();
             var names = new Dictionary<AssetType, string>();
@@ -1465,7 +1467,7 @@ namespace IndustrialPark
                 items.Add(item);
             }
 
-            assetViewToolStripMenuItems = items.ToArray();
+            return items.ToArray();
         }
 
         private void SetAllAssetTypesVisible()
@@ -1794,20 +1796,15 @@ namespace IndustrialPark
         {
             Program.AboutBox.TopMost = value;
             Program.ViewConfig.TopMost = value;
+            Program.ViewControls.TopMost = value;
             Program.UserTemplateManager.TopMost = value;
 
-            if (Program.EventSearch != null)
-                Program.EventSearch.TopMost = value;
-            if (Program.AssetIDGenerator != null)
-                Program.AssetIDGenerator.TopMost = value;
-            if (Program.DynaSearch != null)
-                Program.DynaSearch.TopMost = value;
-            if (Program.PickupSearch != null)
-                Program.PickupSearch.TopMost = value;
-            if (Program.BuildISO != null)
-                Program.BuildISO.TopMost = value;
-            if (Program.HansMainForm != null)
-                Program.HansMainForm.TopMost = value;
+            Program.EventSearch?.TopMost = value;
+            Program.AssetIDGenerator?.TopMost = value;
+            Program.DynaSearch?.TopMost = value;
+            Program.PickupSearch?.TopMost = value;
+            Program.BuildISO?.TopMost = value;
+            Program.HansMainForm?.TopMost = value;
 
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.SetAllTopMost(value);

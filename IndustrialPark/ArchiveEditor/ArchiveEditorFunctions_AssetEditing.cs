@@ -135,7 +135,11 @@ namespace IndustrialPark
         public void SetAllTopMost(bool value)
         {
             foreach (var ie in internalEditors)
+            {
                 ie.TopMost = value;
+                foreach (var form in ie.OwnedForms)
+                    form.TopMost = value;
+            }
         }
 
         public void SetAllOpacity()
