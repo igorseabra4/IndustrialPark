@@ -9,12 +9,9 @@ namespace IndustrialPark
         [ValidReferenceRequired]
         public AssetID Surface { get; set; }
 
-        private uint _meshIndex;
-        [DisplayName("MeshIndex")]
-        public AssetID MeshIndex_TSSM { get => _meshIndex; set => _meshIndex = value; }
+        public AssetID MeshAsset { get => MeshIndex; set => MeshIndex = value; }
 
-        [DisplayName("MeshIndex")]
-        public uint MeshIndex_BFBB { get => _meshIndex; set => _meshIndex = value; }
+        public uint MeshIndex { get; set; }
 
         public EntryMAPR() { }
 
@@ -26,28 +23,28 @@ namespace IndustrialPark
         public EntryMAPR(EndianBinaryReader reader, Game game) : this(game)
         {
             Surface = reader.ReadUInt32();
-            _meshIndex = reader.ReadUInt32();
+            MeshIndex = reader.ReadUInt32();
         }
 
         public override string ToString()
         {
             if (game == Game.BFBB)
-                return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {MeshIndex_BFBB}]";
-            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {HexUIntTypeConverter.StringFromAssetID(MeshIndex_TSSM)}]";
+                return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {MeshIndex}";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {HexUIntTypeConverter.StringFromAssetID(MeshAsset)}";
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Surface);
-            writer.Write(_meshIndex);
+            writer.Write(MeshIndex);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
             if (game == Game.BFBB)
-                dt.RemoveProperty("MeshIndex_TSSM");
+                dt.RemoveProperty("MeshAsset");
             else
-                dt.RemoveProperty("MeshIndex_BFBB");
+                dt.RemoveProperty("MeshIndex");
         }
     }
 
