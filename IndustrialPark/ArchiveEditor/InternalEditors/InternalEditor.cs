@@ -13,12 +13,19 @@ public class InternalEditor : Form
 
     public virtual uint GetAssetID()
     {
-        return 0;
+        throw new NotImplementedException();
     }
 
     public virtual void RefreshPropertyGrid()
     {
+        throw new NotImplementedException();
+    }
 
+    private UndoRedoMessageFilter _undoRedoFilter;
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        _undoRedoFilter = new UndoRedoMessageFilter(this);
     }
 
     public static bool EnableAssetToolButtons = false;
