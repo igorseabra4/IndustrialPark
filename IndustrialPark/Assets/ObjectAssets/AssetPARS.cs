@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -30,7 +29,7 @@ namespace IndustrialPark
         public byte RenderSourceBlendMode { get; set; }
         [Category(categoryName)]
         public byte RenderDestBlendMode { get; set; }
-        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public ParticleCommand[] Commands { get; set; }
         [Category(categoryName)]
         public FlagBitmask ParFlags { get; set; } = IntFlagsDescriptor();
@@ -210,119 +209,46 @@ namespace IndustrialPark
             }
         }
 
-        public void AddEntry(ParticleCommandType type)
+        public static ParticleCommand CreateEntry(ParticleCommandType type)
         {
-            ParticleCommand parCmd;
-            switch (type)
+            return type switch
             {
-                case ParticleCommandType.Move:
-                    parCmd = new ParticleCommand_Move();
-                    break;
-                case ParticleCommandType.MoveRandom:
-                    parCmd = new ParticleCommand_MoveRandom();
-                    break;
-                case ParticleCommandType.MoveRandomPar:
-                    parCmd = new ParticleCommand_MoveRandomPar();
-                    break;
-                case ParticleCommandType.Accelerate:
-                    parCmd = new ParticleCommand_Accelerate();
-                    break;
-                case ParticleCommandType.VelocityApply:
-                    parCmd = new ParticleCommand_VelocityApply();
-                    break;
-                case ParticleCommandType.Jet:
-                    parCmd = new ParticleCommand_Jet();
-                    break;
-                case ParticleCommandType.KillSlow:
-                    parCmd = new ParticleCommand_KillSlow();
-                    break;
-                case ParticleCommandType.Follow:
-                    parCmd = new ParticleCommand_Follow();
-                    break;
-                case ParticleCommandType.OrbitPoint:
-                    parCmd = new ParticleCommand_OrbitPoint();
-                    break;
-                case ParticleCommandType.OrbitLine:
-                    parCmd = new ParticleCommand_OrbitLine();
-                    break;
-                case ParticleCommandType.Scale3rdPolyReg:
-                    parCmd = new ParticleCommand_Scale3rdPolyReg();
-                    break;
-                case ParticleCommandType.Alpha3rdPolyReg:
-                    parCmd = new ParticleCommand_Alpha3rdPolyReg();
-                    break;
-                case ParticleCommandType.Tex:
-                    parCmd = new ParticleCommand_Tex();
-                    break;
-                case ParticleCommandType.TexAnim:
-                    parCmd = new ParticleCommand_TexAnim();
-                    break;
-                case ParticleCommandType.PlayerCollision:
-                    parCmd = new ParticleCommand_PlayerCollision();
-                    break;
-                case ParticleCommandType.RotPar:
-                    parCmd = new ParticleCommand_RotPar();
-                    break;
-                case ParticleCommandType.RandomVelocityPar:
-                    parCmd = new ParticleCommand_RandomVelocityPar();
-                    break;
-                case ParticleCommandType.Custom:
-                    parCmd = new ParticleCommand_Custom();
-                    break;
-                case ParticleCommandType.KillDistance:
-                    parCmd = new ParticleCommand_KillDistance();
-                    break;
-                case ParticleCommandType.Age:
-                    parCmd = new ParticleCommand_Age();
-                    break;
-                case ParticleCommandType.ApplyWind:
-                    parCmd = new ParticleCommand_ApplyWind();
-                    break;
-                case ParticleCommandType.ApplyCamMat:
-                    parCmd = new ParticleCommand_ApplyCamMat();
-                    break;
-                case ParticleCommandType.RotateAround:
-                    parCmd = new ParticleCommand_RotateAround();
-                    break;
-                case ParticleCommandType.SmokeAlpha:
-                    parCmd = new ParticleCommand_SmokeAlpha();
-                    break;
-                case ParticleCommandType.Scale:
-                    parCmd = new ParticleCommand_Scale();
-                    break;
-                case ParticleCommandType.ClipVolumes:
-                    parCmd = new ParticleCommand_ClipVolumes();
-                    break;
-                case ParticleCommandType.AnimalMagentism:
-                    parCmd = new ParticleCommand_AnimalMagentism();
-                    break;
-                case ParticleCommandType.DamagePlayer:
-                    parCmd = new ParticleCommand_DamagePlayer();
-                    break;
-                case ParticleCommandType.CollideFall:
-                    parCmd = new ParticleCommand_CollideFall();
-                    break;
-                case ParticleCommandType.FallSticky:
-                    parCmd = new ParticleCommand_CollideFallSticky();
-                    break;
-                case ParticleCommandType.Shaper:
-                    parCmd = new ParticleCommand_Shaper();
-                    break;
-                case ParticleCommandType.AlphaInOut:
-                    parCmd = new ParticleCommand_AlphaInOut();
-                    break;
-                case ParticleCommandType.SizeInOut:
-                    parCmd = new ParticleCommand_SizeInOut();
-                    break;
-                case ParticleCommandType.DampenSpeed:
-                    parCmd = new ParticleCommand_DampenData();
-                    break;
-                default:
-                    throw new Exception($"Unsupported Particle command: {type}");
-            }
-            var commands = Commands.ToList();
-            commands.Add(parCmd);
-            Commands = commands.ToArray();
+                ParticleCommandType.Move => new ParticleCommand_Move(),
+                ParticleCommandType.MoveRandom => new ParticleCommand_MoveRandom(),
+                ParticleCommandType.MoveRandomPar => new ParticleCommand_MoveRandomPar(),
+                ParticleCommandType.Accelerate => new ParticleCommand_Accelerate(),
+                ParticleCommandType.VelocityApply => new ParticleCommand_VelocityApply(),
+                ParticleCommandType.Jet => new ParticleCommand_Jet(),
+                ParticleCommandType.KillSlow => new ParticleCommand_KillSlow(),
+                ParticleCommandType.Follow => new ParticleCommand_Follow(),
+                ParticleCommandType.OrbitPoint => new ParticleCommand_OrbitPoint(),
+                ParticleCommandType.OrbitLine => new ParticleCommand_OrbitLine(),
+                ParticleCommandType.Scale3rdPolyReg => new ParticleCommand_Scale3rdPolyReg(),
+                ParticleCommandType.Alpha3rdPolyReg => new ParticleCommand_Alpha3rdPolyReg(),
+                ParticleCommandType.Tex => new ParticleCommand_Tex(),
+                ParticleCommandType.TexAnim => new ParticleCommand_TexAnim(),
+                ParticleCommandType.PlayerCollision => new ParticleCommand_PlayerCollision(),
+                ParticleCommandType.RotPar => new ParticleCommand_RotPar(),
+                ParticleCommandType.RandomVelocityPar => new ParticleCommand_RandomVelocityPar(),
+                ParticleCommandType.Custom => new ParticleCommand_Custom(),
+                ParticleCommandType.KillDistance => new ParticleCommand_KillDistance(),
+                ParticleCommandType.Age => new ParticleCommand_Age(),
+                ParticleCommandType.ApplyWind => new ParticleCommand_ApplyWind(),
+                ParticleCommandType.ApplyCamMat => new ParticleCommand_ApplyCamMat(),
+                ParticleCommandType.RotateAround => new ParticleCommand_RotateAround(),
+                ParticleCommandType.SmokeAlpha => new ParticleCommand_SmokeAlpha(),
+                ParticleCommandType.Scale => new ParticleCommand_Scale(),
+                ParticleCommandType.ClipVolumes => new ParticleCommand_ClipVolumes(),
+                ParticleCommandType.AnimalMagentism => new ParticleCommand_AnimalMagentism(),
+                ParticleCommandType.DamagePlayer => new ParticleCommand_DamagePlayer(),
+                ParticleCommandType.CollideFall => new ParticleCommand_CollideFall(),
+                ParticleCommandType.FallSticky => new ParticleCommand_CollideFallSticky(),
+                ParticleCommandType.Shaper => new ParticleCommand_Shaper(),
+                ParticleCommandType.AlphaInOut => new ParticleCommand_AlphaInOut(),
+                ParticleCommandType.SizeInOut => new ParticleCommand_SizeInOut(),
+                ParticleCommandType.DampenSpeed => new ParticleCommand_DampenData(),
+                _ => throw new Exception($"Unsupported Particle command: {type}"),
+            };
         }
     }
 }

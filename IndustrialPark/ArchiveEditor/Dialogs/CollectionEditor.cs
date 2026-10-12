@@ -56,6 +56,26 @@ namespace IndustrialPark
                     buttonPaste.Visible = false;
                 }
             }
+
+            CreateNewInstance = type.Name switch
+            {
+                "ParticleCommand" => () =>
+                {
+                    (var type, bool ok) = ChooseGeneric<ParticleCommandType>.Get();
+                    return ok ? AssetPARS.CreateEntry(type) : null;
+                }
+                ,
+                "Shrapnel" => () => {
+                    (var type, bool ok) = ChooseGeneric<IShrapnelType>.Get(AssetSHRP.GetValidShrpTypes(game));
+                    return ok ? AssetSHRP.CreateEntry(type, game) : null;
+                },
+                "UIMCommand" => () => {
+                    (var type, bool ok) = ChooseGeneric<UIMCommandType>.Get();
+                    return ok ? AssetUIM.CreateEntry(type) : null;
+                },
+                _ => CreateNewInstanceDefault,
+            };
+
             Text = GetFormTitle();
 
             listBoxItems.Items.Clear();
@@ -68,11 +88,17 @@ namespace IndustrialPark
         private int programaticallyChangingSelection = 0;
         private bool OK = false;
 
+        private Func<object> CreateNewInstance;
+
         private void buttonAdd_Click(object sender, EventArgs e)
         {
-            listBoxItems.Items.Add(CreateNewInstance());
-            listBoxItems.SelectedIndices.Clear();
-            listBoxItems.SelectedIndex = listBoxItems.Items.Count - 1;
+            var newItem = CreateNewInstance();
+            if (newItem != null)
+            {
+                listBoxItems.Items.Add(DynamicTypeDescriptor.Create(newItem));
+                listBoxItems.SelectedIndices.Clear();
+                listBoxItems.SelectedIndex = listBoxItems.Items.Count - 1;
+            }
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
@@ -230,7 +256,7 @@ namespace IndustrialPark
             return result + " Collection Editor";
         }
 
-        private object CreateNewInstance()
+        private object CreateNewInstanceDefault()
         {
             ConstructorInfo constructor = isGenericAssetData
                 ? type.GetConstructor([typeof(Game)]) ?? type.GetConstructor(Type.EmptyTypes)
@@ -239,7 +265,7 @@ namespace IndustrialPark
             {
                 object[] args = constructor.GetParameters().Length == 0 ? [] : [game];
                 var instance = constructor.Invoke(args);
-                return DynamicTypeDescriptor.Create(instance);
+                return instance;
             }
             throw new ArgumentException("Unable to create new item of type.");
         }

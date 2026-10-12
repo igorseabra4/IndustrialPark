@@ -36,17 +36,8 @@ public partial class InternalAssetEditor : InternalEditor
             case IAssetAddSelected aas:
                 SetupForAddSelected(aas);
                 break;
-            case AssetPARS pars:
-                SetupForPars(pars);
-                break;
-            case AssetSHRP shrp:
-                SetupForShrp(shrp);
-                break;
             case AssetSCRP scrp:
                 SetupForScrp(scrp);
-                break;
-            case AssetUIM uim:
-                SetupForUim(uim);
                 break;
             case AssetWIRE wire:
                 SetupForWire(wire);
@@ -255,110 +246,6 @@ public partial class InternalAssetEditor : InternalEditor
             if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
                 asset.ExtractToFolder(openFolder.FileName, archive.platform.Endianness());
         }, true);
-    }
-
-    private void SetupForShrp(AssetSHRP asset)
-    {
-        AddRow();
-        AddRow();
-
-        var validTypes = new List<IShrapnelType>()
-        {
-            IShrapnelType.Particle,
-            IShrapnelType.Projectile,
-            IShrapnelType.Lightning,
-            IShrapnelType.Sound
-        };
-
-        if (asset.game >= Game.Incredibles)
-        {
-            AddRow();
-            AddRow();
-
-            validTypes.AddRange(new IShrapnelType[] {
-                 IShrapnelType.Shockwave,
-                 IShrapnelType.Explosion,
-                 IShrapnelType.Distortion,
-                 IShrapnelType.Fire,
-            });
-        }
-
-        if (asset.game >= Game.ROTU)
-        {
-            AddRow();
-            AddRow();
-
-            validTypes.AddRange(new IShrapnelType[]
-            {
-                IShrapnelType.Light,
-                IShrapnelType.Smoke,
-                IShrapnelType.Goo
-            });
-        }
-
-        foreach (var i in validTypes)
-        {
-            AddTool($"Add {i}", (object sender, EventArgs e) =>
-            {
-                asset.AddEntry(i);
-                RefreshPropertyGrid();
-                archive.UnsavedChanges = true;
-            });
-        }
-    }
-
-    private void SetupForPars(AssetPARS asset)
-    {
-        if (EnableAssetToolButtons)
-        {
-            AddRow();
-
-            ComboBox comboBoxOptions = new ComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
-            foreach (var o in Enum.GetValues<ParticleCommandType>())
-                comboBoxOptions.Items.Add(o);
-            comboBoxOptions.SelectedIndex = 0;
-
-            var button = new Button() { Dock = DockStyle.Fill, Text = "Add Command", AutoSize = true };
-            button.Click += (object sender, EventArgs e) =>
-            {
-                asset.AddEntry((ParticleCommandType)comboBoxOptions.Items[comboBoxOptions.SelectedIndex]);
-            };
-
-            tableLayoutPanel1.Controls.Add(comboBoxOptions);
-            tableLayoutPanel1.Controls.Add(button);
-        }
-
-        ToolStripComboBox toolComboBox = new ToolStripComboBox() { Dock = DockStyle.Fill, Text = "Test", AutoSize = true };
-        foreach (var o in Enum.GetValues<ParticleCommandType>())
-            toolComboBox.Items.Add(o);
-        toolComboBox.SelectedIndex = 0;
-        
-        var menuItem = new ToolStripMenuItem("Add Command");
-        menuItem.Click += (object sender, EventArgs e) =>
-        {
-            asset.AddEntry((ParticleCommandType)toolComboBox.SelectedItem);
-        };
-
-        assetToolStripMenuItem.DropDownItems.Add(toolComboBox);
-        assetToolStripMenuItem.DropDownItems.Add(menuItem);
-    }
-
-    private void SetupForUim(AssetUIM asset)
-    {
-        AddRow();
-        AddRow();
-        AddRow();
-        AddRow();
-
-        foreach (UIMCommandType uimct in Enum.GetValues(typeof(UIMCommandType)))
-        {
-            AddTool($"Add: {uimct}", (object sender, EventArgs e) =>
-            {
-                asset.AddEntry(uimct);
-                RefreshPropertyGrid();
-                archive.UnsavedChanges = true;
-            });
-        }
     }
 
     private void SetupForWire(AssetWIRE asset)
