@@ -5,15 +5,21 @@ using System.Windows.Forms;
 
 namespace IndustrialPark;
 
-public abstract class InternalEditor : Form
+public class InternalEditor : Form
 {
     protected ArchiveEditorFunctions archive;
 
     protected Action<Asset> updateListView;
 
-    public abstract uint GetAssetID();
+    public virtual uint GetAssetID()
+    {
+        return 0;
+    }
 
-    public abstract void RefreshPropertyGrid();
+    public virtual void RefreshPropertyGrid()
+    {
+
+    }
 
     public static bool EnableAssetToolButtons = false;
 
