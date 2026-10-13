@@ -44,9 +44,9 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName)]
+        [Category(categoryName), Description("Optional settings object that defines NPC behavior. If left empty, the default settings are used, which are the same as those in the NPC Settings Object template.")]
         public AssetID NPCSettingsObject { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Description("The move point where the NPC starts, even if the point is off. For enemy spawners, this field can be left empty, in which case the spawner selects a move point from its group. If a move point is assigned, the spawner will attempt to spawn the enemy at that point if it is available.")]
         public AssetID MovePoint { get; set; }
         [Category(categoryName)]
         public AssetID TaskBox1 { get; set; }
