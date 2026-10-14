@@ -582,6 +582,15 @@
   <data name="uIModeAutoSizeToolStripMenuItem.Text" xml:space="preserve">
     <value>UI Mode AutoSize</value>
   </data>
+  <data name="toolStripSeparatorToolbar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>238, 6</value>
+  </data>
+  <data name="showToolbarToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="showToolbarToolStripMenuItem.Text" xml:space="preserve">
+    <value>Show Toolbar</value>
+  </data>
   <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>57, 19</value>
   </data>
@@ -734,6 +743,210 @@
   </data>
   <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
     <value>1</value>
+  </data>
+  <metadata name="toolStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>423, 17</value>
+  </metadata>
+  <data name="toolStripButtonSaveAll.Size" type="System.Drawing.Size, System.Drawing">
+    <value>68, 22</value>
+  </data>
+  <data name="toolStripButtonSaveAll.Text" xml:space="preserve">
+    <value>Save All</value>
+  </data>
+  <data name="toolStripButtonSaveAll.ToolTipText" xml:space="preserve">
+    <value>Save all archives with unsaved changes (F4)</value>
+  </data>
+  <data name="toolStripButtonSaveAllAndRun.Size" type="System.Drawing.Size, System.Drawing">
+    <value>105, 22</value>
+  </data>
+  <data name="toolStripButtonSaveAllAndRun.Text" xml:space="preserve">
+    <value>Save All &amp;&amp; Run</value>
+  </data>
+  <data name="toolStripButtonSaveAllAndRun.ToolTipText" xml:space="preserve">
+    <value>Save all archives with unsaved changes, then run the game</value>
+  </data>
+  <data name="toolStripButtonRunGame.Size" type="System.Drawing.Size, System.Drawing">
+    <value>23, 22</value>
+  </data>
+  <data name="toolStripButtonRunGame.Text" xml:space="preserve">
+    <value>Run Game</value>
+  </data>
+  <data name="toolStripButtonRunGame.ToolTipText" xml:space="preserve">
+    <value>Run the game (F5)</value>
+  </data>
+  <data name="toolStripSeparatorRun.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 25</value>
+  </data>
+  <data name="toolStripLabelArchive.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 22</value>
+  </data>
+  <data name="toolStripLabelArchive.Text" xml:space="preserve">
+    <value>Archive:</value>
+  </data>
+  <data name="toolStripComboBoxArchive.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Standard</value>
+  </data>
+  <data name="toolStripComboBoxArchive.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 25</value>
+  </data>
+  <data name="toolStripComboBoxArchive.ToolTipText" xml:space="preserve">
+    <value>Active archive (Template Focus): templates are placed here</value>
+  </data>
+  <data name="toolStripLabelLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>38, 22</value>
+  </data>
+  <data name="toolStripLabelLayer.Text" xml:space="preserve">
+    <value>Layer:</value>
+  </data>
+  <data name="toolStripComboBoxLayer.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Standard</value>
+  </data>
+  <data name="toolStripComboBoxLayer.Size" type="System.Drawing.Size, System.Drawing">
+    <value>200, 25</value>
+  </data>
+  <data name="toolStripComboBoxLayer.ToolTipText" xml:space="preserve">
+    <value>Active layer of the active archive: templates are placed here</value>
+  </data>
+  <data name="toolStripSeparatorGizmos.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 25</value>
+  </data>
+  <data name="toolStripButtonGizmoPosition.Size" type="System.Drawing.Size, System.Drawing">
+    <value>41, 22</value>
+  </data>
+  <data name="toolStripButtonGizmoPosition.Text" xml:space="preserve">
+    <value>Move</value>
+  </data>
+  <data name="toolStripButtonGizmoPosition.ToolTipText" xml:space="preserve">
+    <value>Position gizmo (V to cycle)</value>
+  </data>
+  <data name="toolStripButtonGizmoRotation.Size" type="System.Drawing.Size, System.Drawing">
+    <value>45, 22</value>
+  </data>
+  <data name="toolStripButtonGizmoRotation.Text" xml:space="preserve">
+    <value>Rotate</value>
+  </data>
+  <data name="toolStripButtonGizmoRotation.ToolTipText" xml:space="preserve">
+    <value>Rotation gizmo (V to cycle)</value>
+  </data>
+  <data name="toolStripButtonGizmoScale.Size" type="System.Drawing.Size, System.Drawing">
+    <value>38, 22</value>
+  </data>
+  <data name="toolStripButtonGizmoScale.Text" xml:space="preserve">
+    <value>Scale</value>
+  </data>
+  <data name="toolStripButtonGizmoScale.ToolTipText" xml:space="preserve">
+    <value>Scale gizmo (V to cycle)</value>
+  </data>
+  <data name="toolStripButtonGizmoPositionLocal.Size" type="System.Drawing.Size, System.Drawing">
+    <value>72, 22</value>
+  </data>
+  <data name="toolStripButtonGizmoPositionLocal.Text" xml:space="preserve">
+    <value>Local Move</value>
+  </data>
+  <data name="toolStripButtonGizmoPositionLocal.ToolTipText" xml:space="preserve">
+    <value>Position gizmo in the asset's local space (V to cycle)</value>
+  </data>
+  <data name="toolStripSeparatorVisibility.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 25</value>
+  </data>
+  <data name="toolStripLabelShow.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 22</value>
+  </data>
+  <data name="toolStripLabelShow.Text" xml:space="preserve">
+    <value>Show:</value>
+  </data>
+  <data name="toolStripButtonShowTrigger.Size" type="System.Drawing.Size, System.Drawing">
+    <value>36, 22</value>
+  </data>
+  <data name="toolStripButtonShowTrigger.Text" xml:space="preserve">
+    <value>TRIG</value>
+  </data>
+  <data name="toolStripButtonShowTrigger.ToolTipText" xml:space="preserve">
+    <value>Show/hide TRIG</value>
+  </data>
+  <data name="toolStripButtonShowVolume.Size" type="System.Drawing.Size, System.Drawing">
+    <value>41, 22</value>
+  </data>
+  <data name="toolStripButtonShowVolume.Text" xml:space="preserve">
+    <value>VOLU</value>
+  </data>
+  <data name="toolStripButtonShowVolume.ToolTipText" xml:space="preserve">
+    <value>Show/hide VOLU</value>
+  </data>
+  <data name="toolStripButtonShowMovePoint.Size" type="System.Drawing.Size, System.Drawing">
+    <value>43, 22</value>
+  </data>
+  <data name="toolStripButtonShowMovePoint.Text" xml:space="preserve">
+    <value>MVPT</value>
+  </data>
+  <data name="toolStripButtonShowMovePoint.ToolTipText" xml:space="preserve">
+    <value>Show/hide MVPT</value>
+  </data>
+  <data name="toolStripButtonShowSFX.Size" type="System.Drawing.Size, System.Drawing">
+    <value>30, 22</value>
+  </data>
+  <data name="toolStripButtonShowSFX.Text" xml:space="preserve">
+    <value>SFX</value>
+  </data>
+  <data name="toolStripButtonShowSFX.ToolTipText" xml:space="preserve">
+    <value>Show/hide SFX</value>
+  </data>
+  <data name="toolStripButtonShowSDFX.Size" type="System.Drawing.Size, System.Drawing">
+    <value>38, 22</value>
+  </data>
+  <data name="toolStripButtonShowSDFX.Text" xml:space="preserve">
+    <value>SDFX</value>
+  </data>
+  <data name="toolStripButtonShowSDFX.ToolTipText" xml:space="preserve">
+    <value>Show/hide SDFX</value>
+  </data>
+  <data name="toolStripSeparatorEditing.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 25</value>
+  </data>
+  <data name="toolStripButtonDropToGround.Size" type="System.Drawing.Size, System.Drawing">
+    <value>110, 22</value>
+  </data>
+  <data name="toolStripButtonDropToGround.Text" xml:space="preserve">
+    <value>Drop to Ground</value>
+  </data>
+  <data name="toolStripButtonDropToGround.ToolTipText" xml:space="preserve">
+    <value>Drop the selected assets onto the surface below them (H)</value>
+  </data>
+  <data name="toolStripSeparatorView.Size" type="System.Drawing.Size, System.Drawing">
+    <value>6, 25</value>
+  </data>
+  <data name="toolStripButtonWireframe.Size" type="System.Drawing.Size, System.Drawing">
+    <value>82, 20</value>
+  </data>
+  <data name="toolStripButtonWireframe.Text" xml:space="preserve">
+    <value>Wireframe</value>
+  </data>
+  <data name="toolStripButtonWireframe.ToolTipText" xml:space="preserve">
+    <value>Toggle wireframe rendering (F)</value>
+  </data>
+  <data name="toolStripMain.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
+  <data name="toolStripMain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1264, 25</value>
+  </data>
+  <data name="toolStripMain.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="toolStripMain.Text" xml:space="preserve">
+    <value>toolStrip1</value>
+  </data>
+  <data name="&gt;&gt;toolStripMain.Name" xml:space="preserve">
+    <value>toolStripMain</value>
+  </data>
+  <data name="&gt;&gt;toolStripMain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMain.Parent" xml:space="preserve">
+    <value>renderPanel</value>
+  </data>
+  <data name="&gt;&gt;toolStripMain.ZOrder" xml:space="preserve">
+    <value>0</value>
   </data>
   <data name="renderPanel.Dock" type="System.Windows.Forms.DockStyle, System.Windows.Forms">
     <value>Fill</value>
@@ -2987,10 +3200,28 @@
   <data name="&gt;&gt;uIModeAutoSizeToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripSeparatorToolbar.Name" xml:space="preserve">
+    <value>toolStripSeparatorToolbar</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorToolbar.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;showToolbarToolStripMenuItem.Name" xml:space="preserve">
+    <value>showToolbarToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;showToolbarToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;researchToolStripMenuItem.Name" xml:space="preserve">
     <value>researchToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;researchToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;hansToolStripMenuItem.Name" xml:space="preserve">
+    <value>hansToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;hansToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;assetIDGeneratorToolStripMenuItem.Name" xml:space="preserve">
@@ -3083,6 +3314,150 @@
   <data name="&gt;&gt;toolStripStatusLabelNumSelected.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;toolStripButtonSaveAll.Name" xml:space="preserve">
+    <value>toolStripButtonSaveAll</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonSaveAll.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonSaveAllAndRun.Name" xml:space="preserve">
+    <value>toolStripButtonSaveAllAndRun</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonSaveAllAndRun.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonRunGame.Name" xml:space="preserve">
+    <value>toolStripButtonRunGame</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonRunGame.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorRun.Name" xml:space="preserve">
+    <value>toolStripSeparatorRun</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorRun.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelArchive.Name" xml:space="preserve">
+    <value>toolStripLabelArchive</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelArchive.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripComboBoxArchive.Name" xml:space="preserve">
+    <value>toolStripComboBoxArchive</value>
+  </data>
+  <data name="&gt;&gt;toolStripComboBoxArchive.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelLayer.Name" xml:space="preserve">
+    <value>toolStripLabelLayer</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripComboBoxLayer.Name" xml:space="preserve">
+    <value>toolStripComboBoxLayer</value>
+  </data>
+  <data name="&gt;&gt;toolStripComboBoxLayer.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorGizmos.Name" xml:space="preserve">
+    <value>toolStripSeparatorGizmos</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorGizmos.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoPosition.Name" xml:space="preserve">
+    <value>toolStripButtonGizmoPosition</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoPosition.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoRotation.Name" xml:space="preserve">
+    <value>toolStripButtonGizmoRotation</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoRotation.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoScale.Name" xml:space="preserve">
+    <value>toolStripButtonGizmoScale</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoScale.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoPositionLocal.Name" xml:space="preserve">
+    <value>toolStripButtonGizmoPositionLocal</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonGizmoPositionLocal.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorVisibility.Name" xml:space="preserve">
+    <value>toolStripSeparatorVisibility</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorVisibility.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelShow.Name" xml:space="preserve">
+    <value>toolStripLabelShow</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelShow.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowTrigger.Name" xml:space="preserve">
+    <value>toolStripButtonShowTrigger</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowTrigger.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowVolume.Name" xml:space="preserve">
+    <value>toolStripButtonShowVolume</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowVolume.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowMovePoint.Name" xml:space="preserve">
+    <value>toolStripButtonShowMovePoint</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowMovePoint.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowSFX.Name" xml:space="preserve">
+    <value>toolStripButtonShowSFX</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowSFX.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowSDFX.Name" xml:space="preserve">
+    <value>toolStripButtonShowSDFX</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonShowSDFX.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorEditing.Name" xml:space="preserve">
+    <value>toolStripSeparatorEditing</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorEditing.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonDropToGround.Name" xml:space="preserve">
+    <value>toolStripButtonDropToGround</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonDropToGround.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorView.Name" xml:space="preserve">
+    <value>toolStripSeparatorView</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorView.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonWireframe.Name" xml:space="preserve">
+    <value>toolStripButtonWireframe</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonWireframe.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;gizmoToolStripMenuItem.Name" xml:space="preserve">
     <value>gizmoToolStripMenuItem</value>
   </data>
@@ -3130,12 +3505,6 @@
   </data>
   <data name="&gt;&gt;toolStripComboBoxUserTemplate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;hansToolStripMenuItem.Name" xml:space="preserve">
-    <value>hansToolStripMenuItem</value>
-  </data>
-  <data name="&gt;&gt;hansToolStripMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainForm</value>

@@ -41,6 +41,8 @@ namespace IndustrialPark
             templateButtons = ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
             renderer = new SharpRenderer(renderPanel);
+
+            SetupToolbar();
         }
 
         public void UpdateTitleBar()
@@ -159,6 +161,8 @@ namespace IndustrialPark
             hideInvisibleMeshesToolStripMenuItem.Checked = settings.dontDrawInvisible;
             RenderWareModelFile.dontDrawInvisible = settings.dontDrawInvisible;
 
+            SetToolbarVisible(settings.showToolbar);
+
             templatesPersistentShiniesToolStripMenuItem.Checked = settings.persistentShinies;
             ArchiveEditorFunctions.persistentShinies = settings.persistentShinies;
 
@@ -247,6 +251,7 @@ namespace IndustrialPark
                 renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
+                showToolbar = showToolbarToolStripMenuItem.Checked,
                 persistentShinies = ArchiveEditorFunctions.persistentShinies,
                 LegacyAssetIDFormat = HexUIntTypeConverter.Legacy,
                 LegacyAssetTypeFormat = AssetTypeContainer.LegacyAssetNameFormat,
@@ -505,6 +510,7 @@ namespace IndustrialPark
                 renderer.device.SetNormalCullMode(CullMode.Back);
 
             wireframeFToolStripMenuItem.Checked = ipSettings.Wireframe;
+            toolStripButtonWireframe.Checked = ipSettings.Wireframe;
             if (wireframeFToolStripMenuItem.Checked)
                 renderer.device.SetNormalFillMode(FillMode.Wireframe);
             else
@@ -528,6 +534,8 @@ namespace IndustrialPark
                     assetViewToolStripMenuItems[i].Checked = !value;
                     assetViewTypes[type].GetField("dontRender").SetValue(null, value);
                 }
+
+            UpdateToolbarVisibilityButtons();
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -834,9 +842,11 @@ namespace IndustrialPark
             ae.archive.ChangesMade += UpdateTitleBar;
             ae.archive.CurrentlySelectedAssets.CollectionChanged += UpdateSelectedAssetStatusBarItem;
             ae.EditorUpdate += EditorUpdate;
+            ae.ToolbarStateChanged += ArchiveEditor_ToolbarStateChanged;
             UpdateTitleBar();
             SetupAssetVisibilityButtons();
             closeAllEditorsToolStripMenuItem.Enabled = true;
+            UpdateToolbarArchives();
 
             ae.Show();
 
@@ -855,6 +865,7 @@ namespace IndustrialPark
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
         {
             archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 5].Text = newName;
+            UpdateToolbarArchives();
         }
 
         public void SetRecentOpenedArchives(string filepath)
@@ -884,6 +895,7 @@ namespace IndustrialPark
             int index = archiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 5);
             archiveEditors.RemoveAt(index);
+            UpdateToolbarArchives();
         }
 
         public void SetCloseAllArchivesEnabled(bool enabled)
@@ -927,6 +939,7 @@ namespace IndustrialPark
         {
             wireframeFToolStripMenuItem.Checked = !wireframeFToolStripMenuItem.Checked;
             renderer.device.SetNormalFillMode(wireframeFToolStripMenuItem.Checked ? FillMode.Wireframe : FillMode.Solid);
+            toolStripButtonWireframe.Checked = wireframeFToolStripMenuItem.Checked;
         }
 
         private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -1234,6 +1247,8 @@ namespace IndustrialPark
 
         private void ShowDropDowns()
         {
+            UpdateToolbarVisibilityButtons();
+
             if (autoShowDropDowns)
             {
                 displayToolStripMenuItem.ShowDropDown();
@@ -1617,6 +1632,7 @@ namespace IndustrialPark
             rotationToolStripMenuItem.Checked = outMode == GizmoMode.Rotation;
             scaleToolStripMenuItem.Checked = outMode == GizmoMode.Scale;
             positionLocalToolStripMenuItem.Checked = outMode == GizmoMode.PositionLocal;
+            UpdateToolbarGizmoButtons(outMode);
         }
 
         private void positionToolStripMenuItem_Click(object sender, EventArgs e)

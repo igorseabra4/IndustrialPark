@@ -14,6 +14,7 @@
         public bool renderBasedOnPipt = true;
         public bool discordRichPresence = true;
         public bool dontDrawInvisible = false;
+        public bool showToolbar = true;
 
         public bool persistentShinies = true;
 
