@@ -18,6 +18,9 @@ namespace IndustrialPark
         private RenderTargetView _backbufferView;
         private DepthStencilView _zbufferView;
 
+        private RenderTargetView _selectionMaskView;
+        private ShaderResourceView _selectionMaskResourceView;
+
         private RasterizerState _rasterState;
         private BlendState _blendState;
         private DepthStencilState _depthState;
@@ -57,6 +60,11 @@ namespace IndustrialPark
         /// View to Depth Buffer
         /// </summary>
         public DepthStencilView ZBufferView => _zbufferView;
+
+        /// <summary>
+        /// Offscreen mask that selected assets are drawn into for the selection outline
+        /// </summary>
+        public ShaderResourceView SelectionMaskResourceView => _selectionMaskResourceView;
 
         SampleDescription multisampleDesc = new SampleDescription(1, 0);
 
@@ -137,6 +145,8 @@ namespace IndustrialPark
             // Dispose all previous allocated resources
             Utilities.Dispose(ref _backbufferView);
             Utilities.Dispose(ref _zbufferView);
+            Utilities.Dispose(ref _selectionMaskView);
+            Utilities.Dispose(ref _selectionMaskResourceView);
 
             if (Control.Width == 0 || Control.Height == 0)
                 return;
@@ -181,6 +191,22 @@ namespace IndustrialPark
                     Dimension = currentMode ? DepthStencilViewDimension.Texture2DMultisampled : DepthStencilViewDimension.Texture2D
                 });
 
+            // Selection mask
+            using (var selectionMaskTexture = new Texture2D(Device, new Texture2DDescription
+            {
+                Format = Format.R8G8B8A8_UNorm,
+                ArraySize = 1,
+                MipLevels = 1,
+                Width = Control.Width,
+                Height = Control.Height,
+                SampleDescription = new SampleDescription(1, 0),
+                BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource
+            }))
+            {
+                _selectionMaskView = new RenderTargetView(Device, selectionMaskTexture);
+                _selectionMaskResourceView = new ShaderResourceView(Device, selectionMaskTexture);
+            }
+
             SetDefaultTargers();
 
             // End resize
@@ -198,6 +224,16 @@ namespace IndustrialPark
         }
 
         /// <summary>
+        /// Clear the selection mask and set it as the only render target (no depth buffer)
+        /// </summary>
+        public void SetSelectionMaskTarget()
+        {
+            DeviceContext.PixelShader.SetShaderResource(0, null);
+            DeviceContext.OutputMerger.SetTargets((DepthStencilView)null, _selectionMaskView);
+            DeviceContext.ClearRenderTargetView(_selectionMaskView, new Color4(0, 0, 0, 0));
+        }
+
+        /// <summary>
         /// Dispose element
         /// </summary>
         public void Dispose()
@@ -212,6 +248,8 @@ namespace IndustrialPark
 
             _backbufferView.Dispose();
             _zbufferView.Dispose();
+            _selectionMaskView?.Dispose();
+            _selectionMaskResourceView?.Dispose();
             _swapchain.Dispose();
             _deviceContext.Dispose();
             _device.Dispose();
