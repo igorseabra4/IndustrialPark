@@ -679,6 +679,11 @@
     <Compile Include="MainForm\MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainForm\MainForm_Toolbar.cs">
+      <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainForm\SmoothImageToolStripRenderer.cs" />
     <Compile Include="Other\Endianness.cs" />
     <Compile Include="Models\ModelConverterData.cs" />
     <Compile Include="Models\Triangle.cs" />
@@ -1010,6 +1015,12 @@
     <Content Include="Resources\ArrowDefault.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\icon_save.png" />
+    <None Include="Resources\icon_play_2.png" />
+    <None Include="Resources\icon_play.png" />
+    <None Include="Resources\icon_drop.png" />
+    <None Include="Resources\icon_wireframe.png" />
+    <None Include="Resources\icon_gizmo.png" />
     <Content Include="Resources\PlaceholderBanner1.png" />
     <Content Include="Resources\Scripts\readme.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
