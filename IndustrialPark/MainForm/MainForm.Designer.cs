@@ -134,9 +134,6 @@ namespace IndustrialPark
             this.toolStripStatusLabelNumSelected = new System.Windows.Forms.ToolStripStatusLabel();
             this.renderPanel = new System.Windows.Forms.Panel();
             this.toolStripMain = new System.Windows.Forms.ToolStrip();
-            this.toolStripButtonSaveAll = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonSaveAllAndRun = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButtonRunGame = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparatorRun = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripLabelArchive = new System.Windows.Forms.ToolStripLabel();
             this.toolStripComboBoxArchive = new System.Windows.Forms.ToolStripComboBox();
@@ -155,9 +152,7 @@ namespace IndustrialPark
             this.toolStripButtonShowSFX = new System.Windows.Forms.ToolStripButton();
             this.toolStripButtonShowSDFX = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparatorEditing = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonDropToGround = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparatorView = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripButtonWireframe = new System.Windows.Forms.ToolStripButton();
             this.contextMenuStripMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.gizmoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.positionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -167,6 +162,12 @@ namespace IndustrialPark
             this.toolStripMenuItem_Templates = new System.Windows.Forms.ToolStripMenuItem();
             this.userTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripComboBoxUserTemplate = new System.Windows.Forms.ToolStripComboBox();
+            this.toolStripButtonSaveAll = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonSaveAllAndRun = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonRunGame = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabelGizmo = new System.Windows.Forms.ToolStripLabel();
+            this.toolStripButtonDropToGround = new System.Windows.Forms.ToolStripButton();
+            this.toolStripButtonWireframe = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.renderPanel.SuspendLayout();
@@ -907,6 +908,7 @@ namespace IndustrialPark
             this.toolStripLabelLayer,
             this.toolStripComboBoxLayer,
             this.toolStripSeparatorGizmos,
+            this.toolStripLabelGizmo,
             this.toolStripButtonGizmoPosition,
             this.toolStripButtonGizmoRotation,
             this.toolStripButtonGizmoScale,
@@ -924,28 +926,6 @@ namespace IndustrialPark
             this.toolStripButtonWireframe});
             resources.ApplyResources(this.toolStripMain, "toolStripMain");
             this.toolStripMain.Name = "toolStripMain";
-            // 
-            // toolStripButtonSaveAll
-            // 
-            this.toolStripButtonSaveAll.Image = global::IndustrialPark.Properties.Resources.icon_save;
-            this.toolStripButtonSaveAll.Name = "toolStripButtonSaveAll";
-            resources.ApplyResources(this.toolStripButtonSaveAll, "toolStripButtonSaveAll");
-            this.toolStripButtonSaveAll.Click += new System.EventHandler(this.toolStripButtonSaveAll_Click);
-            // 
-            // toolStripButtonSaveAllAndRun
-            // 
-            this.toolStripButtonSaveAllAndRun.Image = global::IndustrialPark.Properties.Resources.icon_play_2;
-            this.toolStripButtonSaveAllAndRun.Name = "toolStripButtonSaveAllAndRun";
-            resources.ApplyResources(this.toolStripButtonSaveAllAndRun, "toolStripButtonSaveAllAndRun");
-            this.toolStripButtonSaveAllAndRun.Click += new System.EventHandler(this.toolStripButtonSaveAllAndRun_Click);
-            // 
-            // toolStripButtonRunGame
-            // 
-            this.toolStripButtonRunGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButtonRunGame.Image = global::IndustrialPark.Properties.Resources.icon_play;
-            this.toolStripButtonRunGame.Name = "toolStripButtonRunGame";
-            resources.ApplyResources(this.toolStripButtonRunGame, "toolStripButtonRunGame");
-            this.toolStripButtonRunGame.Click += new System.EventHandler(this.toolStripButtonRunGame_Click);
             // 
             // toolStripSeparatorRun
             // 
@@ -1062,24 +1042,10 @@ namespace IndustrialPark
             this.toolStripSeparatorEditing.Name = "toolStripSeparatorEditing";
             resources.ApplyResources(this.toolStripSeparatorEditing, "toolStripSeparatorEditing");
             // 
-            // toolStripButtonDropToGround
-            // 
-            this.toolStripButtonDropToGround.Image = global::IndustrialPark.Properties.Resources.icon_drop;
-            this.toolStripButtonDropToGround.Name = "toolStripButtonDropToGround";
-            resources.ApplyResources(this.toolStripButtonDropToGround, "toolStripButtonDropToGround");
-            this.toolStripButtonDropToGround.Click += new System.EventHandler(this.toolStripButtonDropToGround_Click);
-            // 
             // toolStripSeparatorView
             // 
             this.toolStripSeparatorView.Name = "toolStripSeparatorView";
             resources.ApplyResources(this.toolStripSeparatorView, "toolStripSeparatorView");
-            // 
-            // toolStripButtonWireframe
-            // 
-            this.toolStripButtonWireframe.Image = global::IndustrialPark.Properties.Resources.icon_wireframe;
-            this.toolStripButtonWireframe.Name = "toolStripButtonWireframe";
-            resources.ApplyResources(this.toolStripButtonWireframe, "toolStripButtonWireframe");
-            this.toolStripButtonWireframe.Click += new System.EventHandler(this.toolStripButtonWireframe_Click);
             // 
             // contextMenuStripMain
             // 
@@ -1145,6 +1111,48 @@ namespace IndustrialPark
             this.toolStripComboBoxUserTemplate.Name = "toolStripComboBoxUserTemplate";
             resources.ApplyResources(this.toolStripComboBoxUserTemplate, "toolStripComboBoxUserTemplate");
             this.toolStripComboBoxUserTemplate.SelectedIndexChanged += new System.EventHandler(this.toolStripComboBoxUserTemplate_SelectedIndexChanged);
+            // 
+            // toolStripButtonSaveAll
+            // 
+            this.toolStripButtonSaveAll.Image = global::IndustrialPark.Properties.Resources.icon_save;
+            this.toolStripButtonSaveAll.Name = "toolStripButtonSaveAll";
+            resources.ApplyResources(this.toolStripButtonSaveAll, "toolStripButtonSaveAll");
+            this.toolStripButtonSaveAll.Click += new System.EventHandler(this.toolStripButtonSaveAll_Click);
+            // 
+            // toolStripButtonSaveAllAndRun
+            // 
+            this.toolStripButtonSaveAllAndRun.Image = global::IndustrialPark.Properties.Resources.icon_play_2;
+            this.toolStripButtonSaveAllAndRun.Name = "toolStripButtonSaveAllAndRun";
+            resources.ApplyResources(this.toolStripButtonSaveAllAndRun, "toolStripButtonSaveAllAndRun");
+            this.toolStripButtonSaveAllAndRun.Click += new System.EventHandler(this.toolStripButtonSaveAllAndRun_Click);
+            // 
+            // toolStripButtonRunGame
+            // 
+            this.toolStripButtonRunGame.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.toolStripButtonRunGame.Image = global::IndustrialPark.Properties.Resources.icon_play;
+            this.toolStripButtonRunGame.Name = "toolStripButtonRunGame";
+            resources.ApplyResources(this.toolStripButtonRunGame, "toolStripButtonRunGame");
+            this.toolStripButtonRunGame.Click += new System.EventHandler(this.toolStripButtonRunGame_Click);
+            // 
+            // toolStripLabelGizmo
+            // 
+            this.toolStripLabelGizmo.Image = global::IndustrialPark.Properties.Resources.icon_gizmo;
+            this.toolStripLabelGizmo.Name = "toolStripLabelGizmo";
+            resources.ApplyResources(this.toolStripLabelGizmo, "toolStripLabelGizmo");
+            // 
+            // toolStripButtonDropToGround
+            // 
+            this.toolStripButtonDropToGround.Image = global::IndustrialPark.Properties.Resources.icon_drop;
+            this.toolStripButtonDropToGround.Name = "toolStripButtonDropToGround";
+            resources.ApplyResources(this.toolStripButtonDropToGround, "toolStripButtonDropToGround");
+            this.toolStripButtonDropToGround.Click += new System.EventHandler(this.toolStripButtonDropToGround_Click);
+            // 
+            // toolStripButtonWireframe
+            // 
+            this.toolStripButtonWireframe.Image = global::IndustrialPark.Properties.Resources.icon_wireframe;
+            this.toolStripButtonWireframe.Name = "toolStripButtonWireframe";
+            resources.ApplyResources(this.toolStripButtonWireframe, "toolStripButtonWireframe");
+            this.toolStripButtonWireframe.Click += new System.EventHandler(this.toolStripButtonWireframe_Click);
             // 
             // MainForm
             // 
@@ -1325,6 +1333,7 @@ namespace IndustrialPark
         private ToolStripButton toolStripButtonSaveAll;
         private ToolStripButton toolStripButtonRunGame;
         private ToolStripButton toolStripButtonSaveAllAndRun;
+        private ToolStripLabel toolStripLabelGizmo;
     }
 }
 

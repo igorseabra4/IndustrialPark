@@ -73,6 +73,16 @@ namespace IndustrialPark.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap icon_gizmo {
+            get {
+                object obj = ResourceManager.GetObject("icon_gizmo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap icon_play {
             get {
                 object obj = ResourceManager.GetObject("icon_play", resourceCulture);

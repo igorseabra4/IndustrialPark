@@ -120,11 +120,45 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 0</value>
+  </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>4, 1, 0, 1</value>
+  </data>
+  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1264, 21</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="menuStrip1.Text" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
+    <value>menuStrip1</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="archiveEditorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>93, 19</value>
+  </data>
+  <data name="archiveEditorToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Archive Editor</value>
+  </data>
   <data name="newToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+N</value>
   </data>
-  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="newToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>185, 22</value>
   </data>
@@ -146,7 +180,6 @@
   <data name="openLastToolStripMenuItem.Text" xml:space="preserve">
     <value>Recent Archives</value>
   </data>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="closeAllEditorsToolStripMenuItem.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
@@ -159,11 +192,11 @@
   <data name="toolStripSeparator3.Size" type="System.Drawing.Size, System.Drawing">
     <value>182, 6</value>
   </data>
-  <data name="archiveEditorToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>93, 19</value>
+  <data name="projectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 19</value>
   </data>
-  <data name="archiveEditorToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Archive Editor</value>
+  <data name="projectToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Project</value>
   </data>
   <data name="newToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
     <value>262, 22</value>
@@ -210,11 +243,11 @@
   <data name="showEditorsWhenLoadingProjectToolStripMenuItem.Text" xml:space="preserve">
     <value>Show Editors When Loading Project</value>
   </data>
-  <data name="projectToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>56, 19</value>
+  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>61, 19</value>
   </data>
-  <data name="projectToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Project</value>
+  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Options</value>
   </data>
   <data name="viewConfigToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>F1</value>
@@ -279,6 +312,12 @@
   <data name="useLegacyAssetTypeFormatToolStripMenuItem.Text" xml:space="preserve">
     <value>Use Legacy Asset Type &amp;Format</value>
   </data>
+  <data name="cursorInFlyModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>301, 22</value>
+  </data>
+  <data name="cursorInFlyModeToolStripMenuItem.Text" xml:space="preserve">
+    <value>Cursor in Fly Mode</value>
+  </data>
   <data name="defaultToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>123, 22</value>
   </data>
@@ -297,17 +336,11 @@
   <data name="hiddenToolStripMenuItem.Text" xml:space="preserve">
     <value>Hidden</value>
   </data>
-  <data name="cursorInFlyModeToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>301, 22</value>
+  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>47, 19</value>
   </data>
-  <data name="cursorInFlyModeToolStripMenuItem.Text" xml:space="preserve">
-    <value>Cursor in Fly Mode</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>61, 19</value>
-  </data>
-  <data name="optionsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Options</value>
+  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Tools</value>
   </data>
   <data name="saveAllOpenHIPsToolStripMenuItem.ShortcutKeys" type="System.Windows.Forms.Keys, System.Windows.Forms">
     <value>Ctrl+Shift+S</value>
@@ -405,11 +438,17 @@
   <data name="discordRichPresenceToolStripMenuItem.Text" xml:space="preserve">
     <value>Discord Rich Presence</value>
   </data>
-  <data name="toolsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>47, 19</value>
+  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>57, 19</value>
   </data>
-  <data name="toolsToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Tools</value>
+  <data name="displayToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Display</value>
+  </data>
+  <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="assetTypesToolStripMenuItem.Text" xml:space="preserve">
+    <value>Asset Types</value>
   </data>
   <data name="enableAllToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>129, 22</value>
@@ -425,12 +464,6 @@
   </data>
   <data name="toolStripSeparatorAssetTypes.Size" type="System.Drawing.Size, System.Drawing">
     <value>126, 6</value>
-  </data>
-  <data name="assetTypesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
-  </data>
-  <data name="assetTypesToolStripMenuItem.Text" xml:space="preserve">
-    <value>Asset Types</value>
   </data>
   <data name="addTextureFolderToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
@@ -452,6 +485,12 @@
   </data>
   <data name="toolStripSeparator10.Size" type="System.Drawing.Size, System.Drawing">
     <value>238, 6</value>
+  </data>
+  <data name="colorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>241, 22</value>
+  </data>
+  <data name="colorsToolStripMenuItem.Text" xml:space="preserve">
+    <value>Colors</value>
   </data>
   <data name="resetColorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
@@ -497,12 +536,6 @@
   </data>
   <data name="sFXInColorToolStripMenuItem.Text" xml:space="preserve">
     <value>SFX/SDFX Color...</value>
-  </data>
-  <data name="colorsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>241, 22</value>
-  </data>
-  <data name="colorsToolStripMenuItem.Text" xml:space="preserve">
-    <value>Colors</value>
   </data>
   <data name="noCullingCToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>241, 22</value>
@@ -591,11 +624,11 @@
   <data name="showToolbarToolStripMenuItem.Text" xml:space="preserve">
     <value>Show Toolbar</value>
   </data>
-  <data name="displayToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 19</value>
+  <data name="researchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 19</value>
   </data>
-  <data name="displayToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Display</value>
+  <data name="researchToolStripMenuItem.Text" xml:space="preserve">
+    <value>&amp;Research/Advanced</value>
   </data>
   <data name="hansToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>184, 22</value>
@@ -639,11 +672,11 @@
   <data name="pickupSearcherToolStripMenuItem.Text" xml:space="preserve">
     <value>Pickup Searcher</value>
   </data>
-  <data name="researchToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>124, 19</value>
+  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 19</value>
   </data>
-  <data name="researchToolStripMenuItem.Text" xml:space="preserve">
-    <value>&amp;Research/Advanced</value>
+  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Help</value>
   </data>
   <data name="aboutToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>185, 22</value>
@@ -651,42 +684,33 @@
   <data name="aboutToolStripMenuItem.Text" xml:space="preserve">
     <value>About Industrial Park</value>
   </data>
-  <data name="helpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>44, 19</value>
-  </data>
-  <data name="helpToolStripMenuItem.Text" xml:space="preserve">
-    <value>Help</value>
-  </data>
-  <data name="menuStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 0</value>
-  </data>
-  <data name="menuStrip1.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>4, 1, 0, 1</value>
-  </data>
-  <data name="menuStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1264, 21</value>
-  </data>
-  <data name="menuStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="menuStrip1.Text" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Name" xml:space="preserve">
-    <value>menuStrip1</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;menuStrip1.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
   <metadata name="statusStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>132, 17</value>
   </metadata>
+  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>0, 659</value>
+  </data>
+  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>1264, 22</value>
+  </data>
+  <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="statusStrip1.Text" xml:space="preserve">
+    <value>statusStrip1</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Name" xml:space="preserve">
+    <value>statusStrip1</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.StatusStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
   <data name="toolStripStatusLabel1.Size" type="System.Drawing.Size, System.Drawing">
     <value>0, 17</value>
   </data>
@@ -719,30 +743,6 @@
   </data>
   <data name="toolStripStatusLabelNumSelected.Text" xml:space="preserve">
     <value>0 selected</value>
-  </data>
-  <data name="statusStrip1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>0, 659</value>
-  </data>
-  <data name="statusStrip1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>1264, 22</value>
-  </data>
-  <data name="statusStrip1.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="statusStrip1.Text" xml:space="preserve">
-    <value>statusStrip1</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.Name" xml:space="preserve">
-    <value>statusStrip1</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.StatusStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;statusStrip1.ZOrder" xml:space="preserve">
-    <value>1</value>
   </data>
   <metadata name="toolStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>423, 17</value>
@@ -809,6 +809,9 @@
   </data>
   <data name="toolStripSeparatorGizmos.Size" type="System.Drawing.Size, System.Drawing">
     <value>6, 25</value>
+  </data>
+  <data name="toolStripLabelGizmo.Size" type="System.Drawing.Size, System.Drawing">
+    <value>16, 22</value>
   </data>
   <data name="toolStripButtonGizmoPosition.Size" type="System.Drawing.Size, System.Drawing">
     <value>41, 22</value>
@@ -904,7 +907,7 @@
     <value>6, 25</value>
   </data>
   <data name="toolStripButtonDropToGround.Size" type="System.Drawing.Size, System.Drawing">
-    <value>110, 22</value>
+    <value>110, 20</value>
   </data>
   <data name="toolStripButtonDropToGround.Text" xml:space="preserve">
     <value>Drop to Ground</value>
@@ -970,11 +973,26 @@
     <value>$this</value>
   </data>
   <data name="&gt;&gt;renderPanel.ZOrder" xml:space="preserve">
-    <value>0</value>
+    <value>1</value>
   </data>
   <metadata name="contextMenuStripMain.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>248, 17</value>
   </metadata>
+  <data name="contextMenuStripMain.Size" type="System.Drawing.Size, System.Drawing">
+    <value>156, 70</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripMain.Name" xml:space="preserve">
+    <value>contextMenuStripMain</value>
+  </data>
+  <data name="&gt;&gt;contextMenuStripMain.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="gizmoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>155, 22</value>
+  </data>
+  <data name="gizmoToolStripMenuItem.Text" xml:space="preserve">
+    <value>Gizmo (V)</value>
+  </data>
   <data name="positionToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>156, 22</value>
   </data>
@@ -999,20 +1017,11 @@
   <data name="positionLocalToolStripMenuItem.Text" xml:space="preserve">
     <value>Position (Local)</value>
   </data>
-  <data name="gizmoToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>155, 22</value>
-  </data>
-  <data name="gizmoToolStripMenuItem.Text" xml:space="preserve">
-    <value>Gizmo (V)</value>
-  </data>
   <data name="toolStripMenuItem_Templates.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 22</value>
   </data>
   <data name="toolStripMenuItem_Templates.Text" xml:space="preserve">
     <value>Template (B/N)</value>
-  </data>
-  <data name="toolStripComboBoxUserTemplate.Size" type="System.Drawing.Size, System.Drawing">
-    <value>160, 23</value>
   </data>
   <data name="userTemplateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>155, 22</value>
@@ -1020,14 +1029,8 @@
   <data name="userTemplateToolStripMenuItem.Text" xml:space="preserve">
     <value>User Template</value>
   </data>
-  <data name="contextMenuStripMain.Size" type="System.Drawing.Size, System.Drawing">
-    <value>156, 70</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStripMain.Name" xml:space="preserve">
-    <value>contextMenuStripMain</value>
-  </data>
-  <data name="&gt;&gt;contextMenuStripMain.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ContextMenuStrip, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="toolStripComboBoxUserTemplate.Size" type="System.Drawing.Size, System.Drawing">
+    <value>160, 23</value>
   </data>
   <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
@@ -2723,6 +2726,9 @@
         /+cAAA==
 </value>
   </data>
+  <data name="$this.ImeMode" type="System.Windows.Forms.ImeMode, System.Windows.Forms">
+    <value>NoControl</value>
+  </data>
   <data name="$this.Text" xml:space="preserve">
     <value>Industrial Park</value>
   </data>
@@ -3314,24 +3320,6 @@
   <data name="&gt;&gt;toolStripStatusLabelNumSelected.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripStatusLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripButtonSaveAll.Name" xml:space="preserve">
-    <value>toolStripButtonSaveAll</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonSaveAll.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonSaveAllAndRun.Name" xml:space="preserve">
-    <value>toolStripButtonSaveAllAndRun</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonSaveAllAndRun.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonRunGame.Name" xml:space="preserve">
-    <value>toolStripButtonRunGame</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonRunGame.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparatorRun.Name" xml:space="preserve">
     <value>toolStripSeparatorRun</value>
   </data>
@@ -3440,23 +3428,11 @@
   <data name="&gt;&gt;toolStripSeparatorEditing.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripButtonDropToGround.Name" xml:space="preserve">
-    <value>toolStripButtonDropToGround</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonDropToGround.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparatorView.Name" xml:space="preserve">
     <value>toolStripSeparatorView</value>
   </data>
   <data name="&gt;&gt;toolStripSeparatorView.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonWireframe.Name" xml:space="preserve">
-    <value>toolStripButtonWireframe</value>
-  </data>
-  <data name="&gt;&gt;toolStripButtonWireframe.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;gizmoToolStripMenuItem.Name" xml:space="preserve">
     <value>gizmoToolStripMenuItem</value>
@@ -3505,6 +3481,42 @@
   </data>
   <data name="&gt;&gt;toolStripComboBoxUserTemplate.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonSaveAll.Name" xml:space="preserve">
+    <value>toolStripButtonSaveAll</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonSaveAll.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonSaveAllAndRun.Name" xml:space="preserve">
+    <value>toolStripButtonSaveAllAndRun</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonSaveAllAndRun.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonRunGame.Name" xml:space="preserve">
+    <value>toolStripButtonRunGame</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonRunGame.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelGizmo.Name" xml:space="preserve">
+    <value>toolStripLabelGizmo</value>
+  </data>
+  <data name="&gt;&gt;toolStripLabelGizmo.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripLabel, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonDropToGround.Name" xml:space="preserve">
+    <value>toolStripButtonDropToGround</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonDropToGround.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonWireframe.Name" xml:space="preserve">
+    <value>toolStripButtonWireframe</value>
+  </data>
+  <data name="&gt;&gt;toolStripButtonWireframe.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripButton, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>MainForm</value>
