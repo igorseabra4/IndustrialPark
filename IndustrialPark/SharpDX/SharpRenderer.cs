@@ -63,6 +63,17 @@ namespace IndustrialPark
         public SharpShader fogLightShader;
         public ConstantBuffer<FogLightRenderData> fogLightBuffer;
 
+        public VertexShader outlineVertexShader;
+        public PixelShader outlinePixelShader;
+        public ConstantBuffer<OutlineRenderData> outlineBuffer;
+
+        public bool showSelectionOutline = true;
+        /// <summary>
+        /// True while selected assets are being drawn into the selection mask, so they can skip drawing extras (e.g. debug bounding boxes) that shouldn't be outlined
+        /// </summary>
+        public bool isDrawingSelectionMask { get; private set; }
+        public int selectionOutlineThickness = 2;
+
         public SharpShader jspShader;
         public ConstantBuffer<JspRenderData> jspBuffer;
 
@@ -116,7 +127,84 @@ namespace IndustrialPark
                 });
             jspBuffer = new ConstantBuffer<JspRenderData>(device.Device);
 
+            // The outline is a fullscreen pass with no vertex input, so it doesn't use SharpShader (which needs an input layout)
+            string outlinePath = Application.StartupPath + "/Resources/SharpDX/Shader_Outline.hlsl";
+            using (var vsByteCode = SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(outlinePath, "VS", "vs_5_0"))
+                outlineVertexShader = new VertexShader(device.Device, vsByteCode);
+            using (var psByteCode = SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(outlinePath, "PS", "ps_5_0"))
+                outlinePixelShader = new PixelShader(device.Device, psByteCode);
+            outlineBuffer = new ConstantBuffer<OutlineRenderData>(device.Device);
         }
+
+        /// <summary>
+        /// Draws the selected assets into an offscreen mask, then draws an outline around the mask onto the back buffer.
+        /// </summary>
+        private void DrawSelectionOutline()
+        {
+            var selectedAssets = new List<IRenderableAsset>();
+
+            lock (ArchiveEditorFunctions.renderableJSPs)
+                foreach (var jsp in ArchiveEditorFunctions.renderableJSPs)
+                    if (jsp.isSelected && jsp.ShouldDraw(this))
+                        selectedAssets.Add(jsp);
+
+            foreach (IRenderableAsset a in renderableAssets)
+                if (a is Asset asset && asset.isSelected)
+                    selectedAssets.Add(a);
+
+            if (selectedAssets.Count == 0)
+                return;
+
+            device.SetSelectionMaskTarget();
+            device.SelectionMaskMode = true;
+
+            device.SetFillModeSolid();
+            device.SetCullModeDefault();
+            device.ApplyRasterState();
+            device.SetDefaultDepthState();
+            device.SetBlendStateAlphaBlend();
+            device.UpdateAllStates();
+
+            isDrawingSelectionMask = true;
+            foreach (IRenderableAsset a in selectedAssets)
+                a.Draw(this);
+            isDrawingSelectionMask = false;
+            device.SelectionMaskMode = false;
+
+            device.SetDefaultTargers();
+
+            device.SetCullModeNone();
+            device.SetFillModeDefault();
+            device.ApplyRasterState();
+            device.SetDepthStateNone();
+            device.SetBlendStateAlphaBlend();
+            device.UpdateAllStates();
+
+            outlineBuffer.UpdateValue(new OutlineRenderData()
+            {
+                Color = new Vector4(selectedColor.X, selectedColor.Y, selectedColor.Z, 1f),
+                Settings = new Vector4(selectionOutlineThickness, 0, 0, 0)
+            });
+
+            var context = device.DeviceContext;
+            context.InputAssembler.InputLayout = null;
+            context.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+            context.VertexShader.Set(outlineVertexShader);
+            context.PixelShader.Set(outlinePixelShader);
+            context.GeometryShader.Set(null);
+            context.DomainShader.Set(null);
+            context.HullShader.Set(null);
+            context.PixelShader.SetConstantBuffer(0, outlineBuffer.Buffer);
+            context.PixelShader.SetShaderResource(0, device.SelectionMaskResourceView);
+
+            context.Draw(3, 0);
+
+            // unbind the mask so it can be used as a render target again
+            context.PixelShader.SetShaderResource(0, null);
+            device.SetDefaultDepthState();
+            device.UpdateAllStates();
+        }
+
 
         public static ShaderResourceView whiteDefault;
         public static ShaderResourceView arrowDefault;
@@ -640,6 +728,9 @@ namespace IndustrialPark
 
                         foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
                             a.Draw(this);
+
+                        if (showSelectionOutline)
+                            DrawSelectionOutline();
                     }
 #if DEBUG
             device.Font.Begin();
@@ -696,6 +787,10 @@ namespace IndustrialPark
 
             jspBuffer.Dispose();
             jspShader.Dispose();
+
+            outlineBuffer.Dispose();
+            outlineVertexShader.Dispose();
+            outlinePixelShader.Dispose();
 
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 if (mesh != null)

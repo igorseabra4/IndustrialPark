@@ -18,6 +18,9 @@ namespace IndustrialPark
         private RenderTargetView _backbufferView;
         private DepthStencilView _zbufferView;
 
+        private RenderTargetView _selectionMaskView;
+        private ShaderResourceView _selectionMaskResourceView;
+
         private RasterizerState _rasterState;
         private BlendState _blendState;
         private DepthStencilState _depthState;
@@ -57,6 +60,11 @@ namespace IndustrialPark
         /// View to Depth Buffer
         /// </summary>
         public DepthStencilView ZBufferView => _zbufferView;
+
+        /// <summary>
+        /// Offscreen mask that selected assets are drawn into for the selection outline
+        /// </summary>
+        public ShaderResourceView SelectionMaskResourceView => _selectionMaskResourceView;
 
         SampleDescription multisampleDesc = new SampleDescription(1, 0);
 
@@ -137,6 +145,8 @@ namespace IndustrialPark
             // Dispose all previous allocated resources
             Utilities.Dispose(ref _backbufferView);
             Utilities.Dispose(ref _zbufferView);
+            Utilities.Dispose(ref _selectionMaskView);
+            Utilities.Dispose(ref _selectionMaskResourceView);
 
             if (Control.Width == 0 || Control.Height == 0)
                 return;
@@ -181,6 +191,22 @@ namespace IndustrialPark
                     Dimension = currentMode ? DepthStencilViewDimension.Texture2DMultisampled : DepthStencilViewDimension.Texture2D
                 });
 
+            // Selection mask
+            using (var selectionMaskTexture = new Texture2D(Device, new Texture2DDescription
+            {
+                Format = Format.R8G8B8A8_UNorm,
+                ArraySize = 1,
+                MipLevels = 1,
+                Width = Control.Width,
+                Height = Control.Height,
+                SampleDescription = new SampleDescription(1, 0),
+                BindFlags = BindFlags.RenderTarget | BindFlags.ShaderResource
+            }))
+            {
+                _selectionMaskView = new RenderTargetView(Device, selectionMaskTexture);
+                _selectionMaskResourceView = new ShaderResourceView(Device, selectionMaskTexture);
+            }
+
             SetDefaultTargers();
 
             // End resize
@@ -198,6 +224,16 @@ namespace IndustrialPark
         }
 
         /// <summary>
+        /// Clear the selection mask and set it as the only render target (no depth buffer)
+        /// </summary>
+        public void SetSelectionMaskTarget()
+        {
+            DeviceContext.PixelShader.SetShaderResource(0, null);
+            DeviceContext.OutputMerger.SetTargets((DepthStencilView)null, _selectionMaskView);
+            DeviceContext.ClearRenderTargetView(_selectionMaskView, new Color4(0, 0, 0, 0));
+        }
+
+        /// <summary>
         /// Dispose element
         /// </summary>
         public void Dispose()
@@ -212,6 +248,8 @@ namespace IndustrialPark
 
             _backbufferView.Dispose();
             _zbufferView.Dispose();
+            _selectionMaskView?.Dispose();
+            _selectionMaskResourceView?.Dispose();
             _swapchain.Dispose();
             _deviceContext.Dispose();
             _device.Dispose();
@@ -317,12 +355,43 @@ namespace IndustrialPark
         /// <summary>
         /// Set current blending state to default
         /// </summary>
+        /// <summary>
+        /// While true, blend states are converted so every visible pixel of the selection mask has a non-zero channel. See <see cref="CreateBlendState"/>.
+        /// </summary>
+        public bool SelectionMaskMode { get; set; }
+
+        private BlendState CreateBlendState(BlendStateDescription description)
+        {
+            if (SelectionMaskMode)
+            {
+                // A mask pixel counts as selected if any channel is non-zero, and it must mean "this pixel is visible", which depends on the blend mode:
+                // an opaque or additive blend shows the pixel even if its texture alpha is 0 (some models use alpha for other data).
+                // Shaders discard pixels where all channels are zero, so accumulating the raw output marks every drawn pixel,
+                // while alpha-driven blends only add colour weighted by alpha, so fully transparent texels stay out of the mask.
+                var target = description.RenderTarget[0];
+                var source = target.IsBlendEnabled ? target.SourceBlend : BlendOption.One;
+                bool usesSourceAlpha = source == BlendOption.SourceAlpha || source == BlendOption.SourceAlphaSaturate;
+
+                target.IsBlendEnabled = true;
+                target.BlendOperation = BlendOperation.Add;
+                target.AlphaBlendOperation = BlendOperation.Add;
+                target.SourceBlend = source == BlendOption.Zero ? BlendOption.Zero : usesSourceAlpha ? BlendOption.SourceAlpha : BlendOption.One;
+                target.SourceAlphaBlend = source == BlendOption.Zero ? BlendOption.Zero : BlendOption.One;
+                target.DestinationBlend = BlendOption.One;
+                target.DestinationAlphaBlend = BlendOption.One;
+                target.RenderTargetWriteMask = ColorWriteMaskFlags.All;
+                description.RenderTarget[0] = target;
+            }
+
+            return new BlendState(Device, description);
+        }
+
         public void SetDefaultBlendState()
         {
             Utilities.Dispose(ref _blendState);
             BlendStateDescription description = BlendStateDescription.Default();
 
-            _blendState = new BlendState(Device, description);
+            _blendState = CreateBlendState(description);
         }
 
         /// <summary>
@@ -341,7 +410,7 @@ namespace IndustrialPark
             description.RenderTarget[0].DestinationBlend = destination;
             description.RenderTarget[0].IsBlendEnabled = true;
 
-            _blendState = new BlendState(Device, description);
+            _blendState = CreateBlendState(description);
         }
 
         public void SetBlendStateAlphaBlend()
@@ -356,7 +425,7 @@ namespace IndustrialPark
             description.RenderTarget[0].DestinationBlend = BlendOption.InverseSourceAlpha;
             description.RenderTarget[0].DestinationAlphaBlend = BlendOption.InverseSourceAlpha;
 
-            _blendState = new BlendState(Device, description);
+            _blendState = CreateBlendState(description);
         }
 
         public void SetBlendStateAdditive()
@@ -371,7 +440,7 @@ namespace IndustrialPark
             description.RenderTarget[0].DestinationBlend = BlendOption.One;
             description.RenderTarget[0].DestinationAlphaBlend = BlendOption.One;
 
-            _blendState = new BlendState(Device, description);
+            _blendState = CreateBlendState(description);
         }
 
         /// <summary>

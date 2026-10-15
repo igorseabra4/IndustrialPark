@@ -325,7 +325,7 @@ namespace IndustrialPark
         public virtual void Draw(SharpRenderer renderer)
         {
 #if DEBUG
-            if (isSelected)
+            if (isSelected && !renderer.isDrawingSelectionMask)
                 DrawDebug(renderer);
 #endif
             if (renderingDictionary.TryGetValue(_model, out IAssetWithModel value))

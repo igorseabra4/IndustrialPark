@@ -33,8 +33,6 @@ namespace IndustrialPark
             InitializeComponent();
 
 #if !DEBUG
-            addTextureFolderToolStripMenuItem.Visible = false;
-            addTXDArchiveToolStripMenuItem.Visible = false;
             openFolderToolStripMenuItem.Visible = false;
             dynaNameSearcherToolStripMenuItem.Visible = false;
 #endif
