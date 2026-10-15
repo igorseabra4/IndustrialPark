@@ -110,7 +110,7 @@ namespace IndustrialPark
             jspInfo.Section1.SetGame(game);
 
             jspInfo.Section2 = new HI_Tags_BEEF02(game, platform);
-            jspInfo.Section2.jspNodeList = Enumerable.Range(0, clumps.Sum(c => c.atomicList.Count)).Select(_ => new xJSPNodeInfo() { nodeFlags = 1, originalMatIndex = -1 }).ToArray();
+            jspInfo.Section2.jspNodeList = Enumerable.Range(0, clumps.Sum(c => c.atomicList.Length)).Select(_ => new xJSPNodeInfo() { nodeFlags = 1, originalMatIndex = -1 }).ToArray();
             if (jspInfo.Section2.Version == 5)
             {
                 jspInfo.Section2.xJSPNodeTreeBuild(clumps);
@@ -133,7 +133,7 @@ namespace IndustrialPark
             Clump_0010[] clumps = jspInfo.JSP_AssetIDs.Select(i => ((AssetJSP)GetFromAssetID(i)).GetClump()).ToArray();
 
             int clumpVertOffset = 0;
-            int atomicOffset = clumps.Sum(c => c.atomicList.Count) - 1;
+            int atomicOffset = clumps.Sum(c => c.atomicList.Length) - 1;
             foreach (var clump in clumps.Reverse())
             {
                 Geometry_000F[] geometries = clump.geometryList.geometryList.ToArray();

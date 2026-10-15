@@ -342,7 +342,7 @@ namespace IndustrialPark
         {
             try
             {
-                File.WriteAllBytes(currentlyOpenFilePath, BuildHipFile().ToBytes());
+                BuildHipFile().ToFile(currentlyOpenFilePath);
                 UnsavedChanges = false;
             }
             catch (Exception ex)
@@ -1288,7 +1288,7 @@ namespace IndustrialPark
 
         public void RemoveAsset(IEnumerable<uint> assetIDs)
         {
-            foreach (uint u in assetIDs)
+            foreach (uint u in assetIDs.ToList())
                 RemoveAsset(u);
         }
 

@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Security.Cryptography;
+using System.Windows.Forms;
 
 namespace IndustrialPark
 {
@@ -159,10 +159,9 @@ namespace IndustrialPark
             {
                 try
                 {
-                    ReadFileMethods.treatStuffAsByteArray = true;
+                    ReadFileMethods.treatStuffAsByteArray = false;
                     RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
                     renderWareVersion = sections[0].renderWareVersion;
-                    ReadFileMethods.treatStuffAsByteArray = false;
                     return sections;
                 }
                 catch
@@ -172,9 +171,8 @@ namespace IndustrialPark
             }
             set
             {
-                ReadFileMethods.treatStuffAsByteArray = true;
-                Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
                 ReadFileMethods.treatStuffAsByteArray = false;
+                Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
 
                 model.Dispose();
                 Setup(Program.MainForm.renderer);
@@ -210,7 +208,7 @@ namespace IndustrialPark
                 foreach (RWSection rws in sections)
                     if (rws is Clump_0010 clump)
                     {
-                        for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+                        for (int i = 0; i < clump.geometryList.geometryList.Length; i++)
                         {
                             bool hasMaterialEffects = false;
                             for (int j = 0; j < clump.geometryList.geometryList[i].materialList.materialList.Length; j++)
@@ -232,7 +230,7 @@ namespace IndustrialPark
                                 var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
 
                                 bool newMatEffsFound = false;
-                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)
+                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Length; j++)
                                     if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120)
                                     {
                                         clump.atomicList[i].atomicExtension.extensionSectionList[j] = plg;
@@ -241,13 +239,11 @@ namespace IndustrialPark
                                     }
 
                                 if (!newMatEffsFound)
-                                    clump.atomicList[i].atomicExtension.extensionSectionList.Add(plg);
+                                    clump.atomicList[i].atomicExtension.Add(plg);
                             }
                             else
                             {
-                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)
-                                    if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120 plg)
-                                        clump.atomicList[i].atomicExtension.extensionSectionList.RemoveAt(j--);
+                                clump.atomicList[i].atomicExtension.RemoveAll(s => s is MaterialEffectsPLG_0120 plg);
                             }
                         }
                     }
@@ -319,7 +315,7 @@ namespace IndustrialPark
 
             foreach (RWSection rws in sections)
                 if (rws is Clump_0010 clump)
-                    for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+                    for (int i = 0; i < clump.geometryList.geometryList.Length; i++)
                         if (clump.geometryList.geometryList[i].geometryStruct.vertexColors != null)
                             ApplyVertexColors(clump.geometryList.geometryList[i], getColor);
                         else
@@ -343,7 +339,7 @@ namespace IndustrialPark
             foreach (RWSection rws in sections)
                 if (rws is Clump_0010 clump)
                     foreach (Geometry_000F geom in clump.geometryList.geometryList)
-                        geom.geometryExtension.extensionSectionList.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+                        geom.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
         }
 
@@ -370,15 +366,15 @@ namespace IndustrialPark
                 if (rws is Clump_0010 clump)
                     foreach (Geometry_000F geom in clump.geometryList.geometryList)
                     {
-                        geom.geometryExtension.extensionSectionList.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+                        geom.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
 
                         if (geom.geometryStruct.triangles.Length == 0)
                             continue;
 
                         if (ver == CollTreeVersion.COLLTREE_31)
-                            geom.geometryExtension.extensionSectionList.Add(new Collis_31().RpCollisionGeometryBuildData(geom));
+                            geom.geometryExtension.Add(new Collis_31().RpCollisionGeometryBuildData(geom));
                         else
-                            geom.geometryExtension.extensionSectionList.Add(new Collis_36().RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
+                            geom.geometryExtension.Add(new Collis_36().RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
                     }
 
 
@@ -480,14 +476,10 @@ namespace IndustrialPark
 
         private void StripClump(Clump_0010 clump)
         {
-            foreach (var extension in clump.frameList.extensionList)
-                for (int i = 0; i < extension.extensionSectionList.Count; i++)
-                    if (extension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.HAnimPLG)
-                        extension.extensionSectionList.RemoveAt(i--);
+            foreach (var extension in clump.frameList.extensions)
+                extension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.HAnimPLG);
             foreach (var geo in clump.geometryList.geometryList)
-                for (int i = 0; i < geo.geometryExtension.extensionSectionList.Count; i++)
-                    if (geo.geometryExtension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.MorphPLG || geo.geometryExtension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.CollisionPLG)
-                        geo.geometryExtension.extensionSectionList.RemoveAt(i--);
+                geo.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.MorphPLG || ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
         }
 
         private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, Geometry_000F geo)

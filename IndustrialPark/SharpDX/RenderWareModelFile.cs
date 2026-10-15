@@ -77,7 +77,7 @@ namespace IndustrialPark
                 }
                 else if (rwSection is Clump_0010 c)
                 {
-                    for (int g = 0; g < c.geometryList.geometryList.Count; g++)
+                    for (int g = 0; g < c.geometryList.geometryList.Length; g++)
                     {
                         AddGeometry(device, c.geometryList.geometryList[g], CreateMatrix(c.frameList, c.atomicList[g].atomicStruct.frameIndex));
                     }
@@ -89,7 +89,7 @@ namespace IndustrialPark
         {
             Matrix transform = Matrix.Identity;
 
-            for (int f = 0; f < frameList.frameListStruct.frames.Count; f++)
+            for (int f = 0; f < frameList.frameListStruct.frames.Length; f++)
             {
                 if (frameIndex == f)
                 {

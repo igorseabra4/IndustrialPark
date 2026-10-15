@@ -1,5 +1,4 @@
-﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+﻿using IndustrialPark.AssetEditorColors;
 using System;
 using System.IO;
 using System.Linq;
@@ -12,12 +11,6 @@ namespace IndustrialPark
         Little,
         Big,
         Unknown
-    }
-
-    public static class Extensions
-    {
-        public static Endianness Endianness(this Platform platform) =>
-            platform == Platform.GameCube ? IndustrialPark.Endianness.Big : IndustrialPark.Endianness.Little;
     }
 
     public class EndianBinaryReader : BinaryReader

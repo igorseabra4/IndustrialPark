@@ -4,7 +4,6 @@ using RenderWareFile;
 using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -428,7 +427,7 @@ namespace IndustrialPark
 
             if (ReadFileMethods.ReadRenderWareFile(dff)[0] is Clump_0010 clump)
             {
-                if (clump.geometryList.geometryList.Count < 3)
+                if (clump.geometryList.geometryList.Length < 3)
                     throw new Exception("Clump needs to have at least 3 geometries for splitting");
 
                 List<Frame> frames = new();
@@ -438,7 +437,7 @@ namespace IndustrialPark
                 int start = 0;
                 for (int i = 0; i < 3; i++)
                 {
-                    int step = (clump.atomicList.Count - start + (3 - i - 1)) / (3 - i);
+                    int step = (clump.atomicList.Length - start + (3 - i - 1)) / (3 - i);
                     int newIndex = 0;
                     for (int atomIndex = start; atomIndex < start + step; atomIndex++)
                     {
@@ -451,31 +450,15 @@ namespace IndustrialPark
                         atomics.Add(atomic);
                     }
 
-                    clumps.Add(new Clump_0010()
-                    {
-                        clumpStruct = new ClumpStruct_0001()
-                        {
-                            atomicCount = atomics.Count,
-                        },
-                        frameList = new FrameList_000E()
-                        {
-                            frameListStruct = new FrameListStruct_0001()
-                            {
-                                frames = frames.GetRange(0, frames.Count),
-                            },
-                            extensionList = Enumerable.Range(0, frames.Count).Select(_ => new Extension_0003()).ToList()
-                        },
-                        geometryList = new GeometryList_001A()
-                        {
-                            geometryListStruct = new GeometryListStruct_0001()
-                            {
-                                numberOfGeometries = geometries.Count,
-                            },
-                            geometryList = geometries.GetRange(0, geometries.Count),
-                        },
-                        atomicList = atomics.GetRange(0, atomics.Count),
-                        clumpExtension = new Extension_0003()
-                    });
+                    clumps.Add(new Clump_0010(
+                        frameList: new FrameList_000E(
+                            [.. frames],
+                            [.. Enumerable.Range(0, frames.Count).Select(_ => new Extension_0003())]
+                        ),
+                        geometryList: new GeometryList_001A([.. geometries]),
+                        atomicList: [.. atomics],
+                        clumpExtension: new Extension_0003()
+                    ));
                     frames.Clear();
                     geometries.Clear();
                     atomics.Clear();

@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using RenderWareFile;
 using SharpDX;
 using System.ComponentModel;
 using System.Drawing.Design;

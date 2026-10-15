@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
 
 namespace IndustrialPark
 {
@@ -206,7 +205,7 @@ namespace IndustrialPark
 
             if (text1 != 0)
             {
-                Text = Functions.ReadString(reader);
+                Text = Extensions.ReadNullTerminatedString(reader);
                 while (reader.BaseStream.Position % 4 != 0)
                     reader.BaseStream.Position++;
             }

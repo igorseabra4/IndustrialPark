@@ -126,131 +126,66 @@ namespace IndustrialPark.Models
 
             SharpDX.BoundingSphere boundingSphere = SharpDX.BoundingSphere.FromPoints(Vertices.Select(v => new SharpDX.Vector3(v.X, v.Y, v.Z)).ToArray());
 
-            Clump_0010 clump = new Clump_0010()
-            {
-                clumpStruct = new ClumpStruct_0001()
-                {
-                    atomicCount = 1
-                },
-                frameList = new FrameList_000E()
-                {
-                    frameListStruct = new FrameListStruct_0001()
-                    {
-                        frames = new List<Frame>()
-                        {
-                            new Frame()
-                            {
-                                position = new Vertex3(),
-                                rotationMatrix = RenderWareFile.Sections.Matrix3x3.Identity,
-                                parentFrame = -1,
-                                unknown = 0
-                            }
-                        }
-                    },
-                    extensionList = new List<Extension_0003>()
-                    {
-                        new Extension_0003()
-                    }
-                },
-                geometryList = new GeometryList_001A()
-                {
-                    geometryListStruct = new GeometryListStruct_0001()
-                    {
-                        numberOfGeometries = 1
-                    },
-                    geometryList = new List<Geometry_000F>()
-                    {
-                        new Geometry_000F()
-                        {
-                            materialList = new MaterialList_0008()
-                            {
-                                materialListStruct = new MaterialListStruct_0001()
+            Clump_0010 clump = new Clump_0010(
+                frameList: new FrameList_000E([new Frame()], [new Extension_0003()]),
+                geometryList: new GeometryList_001A([
+                    new Geometry_000F(
+                        materialList: new MaterialList_0008([
+                            new Material_0007(
+                                materialStruct: new MaterialStruct_0001()
                                 {
-                                    materialCount = 1
+                                    unusedFlags = 0,
+                                    color = new RenderWareFile.Color(255, 255, 255, 255),
+                                    unusedInt2 = 0,
+                                    isTextured = 0,
+                                    ambient = 1f,
+                                    specular = 1f,
+                                    diffuse = 1f
                                 },
-                                materialList = new Material_0007[]
-                                {
-                                    new Material_0007()
-                                    {
-                                        materialStruct = new MaterialStruct_0001()
-                                        {
-                                            unusedFlags = 0,
-                                            color = new RenderWareFile.Color(255, 255, 255, 255),
-                                            unusedInt2 = 0,
-                                            isTextured = 0,
-                                            ambient = 1f,
-                                            specular = 1f,
-                                            diffuse = 1f
-                                        },
-                                        texture = null,
-                                        materialExtension = new Extension_0003()
-                                        {
-                                            extensionSectionList = new List<RWSection>()
-                                        }
-                                    }
-                                }
-                            },
-                            geometryStruct = new GeometryStruct_0001()
+                                texture: null,
+                                materialExtension: new Extension_0003())
+                            ]),
+                        geometryStruct: new GeometryStruct_0001()
+                        {
+                            geometryFlags = GeometryFlags.rpGEOMETRYPOSITIONS,
+                            numTriangles = Faces.Count,
+                            numVertices = Vertices.Count,
+                            numMorphTargets = 1,
+                            ambient = 1f,
+                            specular = 1f,
+                            diffuse = 1f,
+                            vertexColors = null,
+                            textCoords = null,
+                            triangles = Faces.ToArray(),
+                            morphTargets = new MorphTarget[]
                             {
-                                geometryFlags = GeometryFlags.rpGEOMETRYPOSITIONS,
-                                numTriangles = Faces.Count,
-                                numVertices = Vertices.Count,
-                                numMorphTargets = 1,
-                                ambient = 1f,
-                                specular = 1f,
-                                diffuse = 1f,
-                                vertexColors = null,
-                                textCoords = null,
-                                triangles = Faces.ToArray(),
-                                morphTargets = new MorphTarget[]
+                                new MorphTarget()
                                 {
-                                    new MorphTarget()
-                                    {
-                                        hasNormals = 0,
-                                        hasVertices = 1,
-                                        sphereCenter = new Vertex3(
-                                            boundingSphere.Center.X,
-                                            boundingSphere.Center.Y,
-                                            boundingSphere.Center.Z),
-                                        radius = boundingSphere.Radius,
-                                        vertices = Vertices.ToArray(),
-                                        normals = null,
-                                    }
+                                    hasNormals = 0,
+                                    hasVertices = 1,
+                                    sphereCenter = new Vertex3(
+                                        boundingSphere.Center.X,
+                                        boundingSphere.Center.Y,
+                                        boundingSphere.Center.Z),
+                                    radius = boundingSphere.Radius,
+                                    vertices = Vertices.ToArray(),
+                                    normals = null,
                                 }
-                            },
-                            geometryExtension = new Extension_0003()
-                            {
-                                extensionSectionList = new List<RWSection>()
                             }
-                        }
-                    }
-                },
-                atomicList = new List<Atomic_0014>() { new Atomic_0014()
+                        },
+                        geometryExtension: new Extension_0003()
+                    )]),
+                atomicList: [new Atomic_0014()
                 {
-                    atomicStruct = new AtomicStruct_0001()
-                    {
-                        frameIndex = 0,
-                        geometryIndex = 0,
-                        flags = AtomicFlags.CollisionTest,
-                        unused = 0
-                    },
+                    atomicStruct = new AtomicStruct_0001(0, 0, AtomicFlags.CollisionTest, 0),
                     atomicExtension = new Extension_0003()
-                    {
-                        extensionSectionList = new List<RWSection>() 
-                    }
-                }
-                },
+                }],
+                clumpExtension: new Extension_0003([
+                    new String_0002("COLL") // Custom implementation used to check if model asset is a collision model
+                ])
+            );
 
-                clumpExtension = new Extension_0003()
-                {
-                    extensionSectionList = new List<RWSection>()
-                    {
-                        new String_0002("COLL") // Custom implementation used to check if model asset is a collision model
-                    }
-                }
-            };
-
-            clump.geometryList.geometryList[0].geometryExtension.extensionSectionList.Add(new Collis_31().RpCollisionGeometryBuildData(clump.geometryList.geometryList[0]));
+            clump.geometryList.geometryList[0].geometryExtension.Add(new Collis_31().RpCollisionGeometryBuildData(clump.geometryList.geometryList[0]));
 
             return clump;
 
@@ -317,9 +252,8 @@ namespace IndustrialPark.Models
 
             foreach (var m in scene.Materials)
             {
-                materials.Add(new Material_0007()
-                {
-                    materialStruct = new MaterialStruct_0001()
+                materials.Add(new Material_0007(
+                    materialStruct: new MaterialStruct_0001()
                     {
                         unusedFlags = 0,
                         color = ignoreMeshColors ?
@@ -331,25 +265,22 @@ namespace IndustrialPark.Models
                         specular = ignoreMeshColors ? 1f : m.ColorSpecular.W,
                         diffuse = ignoreMeshColors ? 1f : m.ColorDiffuse.W
                     },
-                    texture = m.HasTextureDiffuse ? RWTextureFromAssimpMaterial(m.TextureDiffuse) : null,
-                    materialExtension = new Extension_0003()
-                    {
-                        extensionSectionList = m.HasTextureReflection ? new List<RWSection>()
+                    texture: m.HasTextureDiffuse ? RWTextureFromAssimpMaterial(m.TextureDiffuse) : null,
+                    materialExtension: new Extension_0003(m.HasTextureReflection ?
+                    [
+                        new MaterialEffectsPLG_0120()
                         {
-                            new MaterialEffectsPLG_0120()
+                            isAtomicExtension = false,
+                            value = MaterialEffectType.EnvironmentMap,
+                            materialEffect1 = new MaterialEffectEnvironmentMap()
                             {
-                                isAtomicExtension = false,
-                                value = MaterialEffectType.EnvironmentMap,
-                                materialEffect1 = new MaterialEffectEnvironmentMap()
-                                {
-                                    EnvironmentMapTexture = RWTextureFromAssimpMaterial(m.TextureReflection),
-                                    ReflectionCoefficient = m.Reflectivity,
-                                    UseFrameBufferAlphaChannel = false
-                                }
+                                EnvironmentMapTexture = RWTextureFromAssimpMaterial(m.TextureReflection),
+                                ReflectionCoefficient = m.Reflectivity,
+                                UseFrameBufferAlphaChannel = false
                             }
-                        } : new List<RWSection>()
-                    },
-                });
+                        }
+                    ] : [])
+                ));
 
                 atomicNeedsMaterialEffects |= m.HasTextureReflection;
             }
@@ -530,7 +461,7 @@ namespace IndustrialPark.Models
                         triangles.ToArray(), binMeshes.ToArray(), tristrip, ignoreMeshColors, collTree);
 
                     if (geoTriangles && collTree)
-                        geometry.geometryExtension.extensionSectionList.Add(new Collis_31().RpCollisionGeometryBuildData(geometry));
+                        geometry.geometryExtension.Add(new Collis_31().RpCollisionGeometryBuildData(geometry));
                     geometries.Add(geometry);
                 //}
 
@@ -668,17 +599,9 @@ namespace IndustrialPark.Models
         {
             SharpDX.BoundingSphere boundingSphere = SharpDX.BoundingSphere.FromPoints(vertices.Select(v => new SharpDX.Vector3(v.X, v.Y, v.Z)).ToArray());
 
-            return new Geometry_000F()
-            {
-                materialList = new MaterialList_0008()
-                {
-                    materialListStruct = new MaterialListStruct_0001()
-                    {
-                        materialCount = materials.Length
-                    },
-                    materialList = materials
-                },
-                geometryStruct = new GeometryStruct_0001()
+            return new Geometry_000F(            
+                materialList: new MaterialList_0008(materials),
+                geometryStruct: new GeometryStruct_0001()
                 {
                     geometryFlags =
                                 GeometryFlags.rpGEOMETRYLIGHTS |
@@ -714,80 +637,38 @@ namespace IndustrialPark.Models
                         }
                     }
                 },
-                geometryExtension = new Extension_0003()
-                {
-                    extensionSectionList = binMeshes.Any() ? new()
+                geometryExtension: new Extension_0003(binMeshes.Any() ? [
+                    new BinMeshPLG_050E()
                     {
-                        new BinMeshPLG_050E()
-                        {
-                             binMeshHeaderFlags = isTristrip ? BinMeshHeaderFlags.TriangleStrip : BinMeshHeaderFlags.TriangleList,
-                             numMeshes = binMeshes.Length,
-                             totalIndexCount = binMeshes.Sum(b => b.indexCount),
-                             binMeshList = binMeshes
-                        }
-                    } : new()
-                }
-            };
+                            binMeshHeaderFlags = isTristrip ? BinMeshHeaderFlags.TriangleStrip : BinMeshHeaderFlags.TriangleList,
+                            numMeshes = binMeshes.Length,
+                            totalIndexCount = binMeshes.Sum(b => b.indexCount),
+                            binMeshList = binMeshes
+                    }] : [])
+                );
         }
 
         private static RWSection ToClump(List<Geometry_000F> geometries, bool atomicNeedsMaterialEffects)
         {
-            Clump_0010 clump = new Clump_0010()
-            {
-                clumpStruct = new ClumpStruct_0001()
+            Clump_0010 clump = new Clump_0010(
+                frameList: new FrameList_000E([new Frame()], [..Enumerable.Range(0, 1).Select(_ => new Extension_0003())]),
+                geometryList: new GeometryList_001A(geometries.ToArray()),
+                atomicList: [.. Enumerable.Range(0, geometries.Count).Select(i => new Atomic_0014()
                 {
-                    atomicCount = geometries.Count
-                },
-                frameList = new FrameList_000E()
-                {
-                    frameListStruct = new FrameListStruct_0001()
-                    {
-                        frames = new List<Frame>()
-                        {
-                            new Frame()
-                            {
-                                position = new Vertex3(),
-                                rotationMatrix = RenderWareFile.Sections.Matrix3x3.Identity,
-                                parentFrame = -1,
-                                unknown = 0
-                            }
-                        }
-                    },
-                    extensionList = Enumerable.Range(0, 1).Select(_ => new Extension_0003()).ToList()
-                },
-                geometryList = new GeometryList_001A()
-                {
-                    geometryListStruct = new GeometryListStruct_0001()
-                    {
-                        numberOfGeometries = geometries.Count
-                    },
-                    geometryList = geometries
-                },
-                atomicList = Enumerable.Range(0, geometries.Count).Select(i => new Atomic_0014()
-                {
-                    atomicStruct = new AtomicStruct_0001()
-                    {
-                        frameIndex = 0,
-                        geometryIndex = i,
-                        flags = AtomicFlags.CollisionTestAndRender,
-                        unused = 0
-                    },
-                    atomicExtension = new Extension_0003()
-                    {
-                        extensionSectionList = atomicNeedsMaterialEffects ? new List<RWSection>()
-                        {
+                    atomicStruct = new AtomicStruct_0001(0, i, AtomicFlags.CollisionTestAndRender),
+                    atomicExtension = new Extension_0003(atomicNeedsMaterialEffects ?
+                        new MaterialEffectsPLG_0120[] {
                             new MaterialEffectsPLG_0120()
                             {
                                 isAtomicExtension = true,
                                 value = (MaterialEffectType)1
                             }
                         }
-                        : new List<RWSection>()
-                    }
-                }).ToList(),
-
-                clumpExtension = new Extension_0003()
-            };
+                        : new MaterialEffectsPLG_0120[0]
+                    )
+                })],
+                clumpExtension: new Extension_0003()
+            );
 
             return clump;
         }
@@ -1055,7 +936,7 @@ namespace IndustrialPark.Models
         {
             int totalMaterials = 0;
 
-            for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+            for (int i = 0; i < clump.geometryList.geometryList.Length; i++)
             {
                 SharpDX.Matrix transformMatrix = RenderWareModelFile.CreateMatrix(clump.frameList, clump.atomicList[i].atomicStruct.frameIndex);
 

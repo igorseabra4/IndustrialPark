@@ -131,12 +131,8 @@ namespace IndustrialPark
 
                 if (Path.GetExtension(i).ToLower().Equals(".rwtex"))
                 {
-                    asset.Data = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-                    {
-                        textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
-                        textureNativeList = new List<TextureNative_0015>() { new TextureNative_0015().FromBytes(File.ReadAllBytes(i)) },
-                        textureDictionaryExtension = new Extension_0003()
-                    }, currentTextureVersion(archive.game, archive.platform));
+                    asset.Data = ReadFileMethods.ExportRenderWareFile(
+                        new TextureDictionary_0016(new TextureNative_0015(File.ReadAllBytes(i))), currentTextureVersion(archive.game, archive.platform));
                 }
                 else
                 {

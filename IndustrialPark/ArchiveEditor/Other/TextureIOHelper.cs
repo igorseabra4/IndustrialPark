@@ -140,19 +140,7 @@ namespace IndustrialPark
                         textNativeList.Add(tn);
                     }
 
-            TextureDictionary_0016 rws = new TextureDictionary_0016()
-            {
-                textureDictionaryStruct = new TextureDictionaryStruct_0001()
-                {
-                    textureCount = (short)textNativeList.Count(),
-                    unknown = 0
-                },
-                textureNativeList = textNativeList,
-                textureDictionaryExtension = new Extension_0003()
-                {
-                    extensionSectionList = new List<RWSection>()
-                }
-            };
+            TextureDictionary_0016 rws = new TextureDictionary_0016(textNativeList);
 
             rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
 
@@ -229,12 +217,8 @@ namespace IndustrialPark
                 if (!Directory.Exists(tempGcTxdsDir))
                     Directory.CreateDirectory(tempGcTxdsDir);
 
-                File.WriteAllBytes(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-                {
-                    textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textureNativeList.Count, unknown = 0 },
-                    textureNativeList = textureNativeList,
-                    textureDictionaryExtension = new Extension_0003()
-                }, currentTextureVersion(game, platform)));
+                File.WriteAllBytes(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(
+                    new TextureDictionary_0016(textureNativeList), currentTextureVersion(game, platform)));
 
                 PerformTXDConversionExternal(platform, false, compress, mipmaps);
 
@@ -248,12 +232,7 @@ namespace IndustrialPark
                     string sanitizedTexture = game == Game.Scooby && appendRW3 ? texture.textureNativeStruct.textureName + ".RW3" : texture.textureNativeStruct.textureName;
                     AHDRs.Add(new Section_AHDR(BKDRHash(sanitizedTexture), AssetType.Texture, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.Texture),
                         new Section_ADBG(0, sanitizedTexture, "", 0),
-                        ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-                        {
-                            textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
-                            textureNativeList = new List<TextureNative_0015>() { texture },
-                            textureDictionaryExtension = new Extension_0003()
-                        }, currentTextureVersion(game, platform))));
+                        ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(texture), currentTextureVersion(game, platform))));
                 }
 
                 // fix for apparent transparency issue

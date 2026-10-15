@@ -531,7 +531,7 @@ namespace IndustrialPark
         public void xJSPNodeTreeBuild(params Clump_0010[] clumps)
         {
             currSplitIndex = 0;
-            xJSPNodeTreeLeaf[] tleaf = new xJSPNodeTreeLeaf[clumps.Sum(c => c.atomicList.Count)];
+            xJSPNodeTreeLeaf[] tleaf = new xJSPNodeTreeLeaf[clumps.Sum(c => c.atomicList.Length)];
             tempSplits = Enumerable.Range(0, tleaf.Length).Select(_ => new TempSplit()).ToArray();
 
             int atomCount = 0;

@@ -114,19 +114,7 @@ namespace IndustrialPark
                         MessageBox.Show($"Unable to add RWTX asset {GetFromAssetID(asset.assetID)} to TXD archive: {ex.Message}");
                     }
 
-            TextureDictionary_0016 rws = new TextureDictionary_0016()
-            {
-                textureDictionaryStruct = new TextureDictionaryStruct_0001()
-                {
-                    textureCount = (short)textNativeList.Count(),
-                    unknown = 0
-                },
-                textureNativeList = textNativeList,
-                textureDictionaryExtension = new Extension_0003()
-                {
-                    extensionSectionList = new List<RWSection>()
-                }
-            };
+            TextureDictionary_0016 rws = new TextureDictionary_0016(textNativeList);
 
             rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
 
@@ -159,12 +147,7 @@ namespace IndustrialPark
                             textureName += ".RW3";
 
                         // Create a new dictionary that has only that texture.
-                        byte[] data = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-                        {
-                            textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = 1, unknown = 0 },
-                            textureDictionaryExtension = new Extension_0003(),
-                            textureNativeList = new List<TextureNative_0015>() { tn }
-                        }, tn.renderWareVersion);
+                        byte[] data = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(tn), tn.renderWareVersion);
 
                         if (game == Game.Scooby)
                             FixTextureForScooby(ref data);
@@ -324,12 +307,8 @@ namespace IndustrialPark
                 }
             }
 
-            return ExportTXDToBitmap(ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-            {
-                textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textures.Count, unknown = 0 },
-                textureNativeList = textures,
-                textureDictionaryExtension = new Extension_0003()
-            }, currentTextureVersion(game, platform)));
+            return ExportTXDToBitmap(ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(textures),
+                currentTextureVersion(game, platform)));
         }
 
         public List<(string, Bitmap)> GetAllTexturesAsBitmaps()
@@ -357,12 +336,8 @@ namespace IndustrialPark
                 }
             }
 
-            return ExportTXDToBitmap(ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016()
-            {
-                textureDictionaryStruct = new TextureDictionaryStruct_0001() { textureCount = (short)textures.Count, unknown = 0 },
-                textureNativeList = textures,
-                textureDictionaryExtension = new Extension_0003()
-            }, currentTextureVersion(game, platform))).Select(b => (b.Key, b.Value)).ToList();
+            return ExportTXDToBitmap(ReadFileMethods.ExportRenderWareFile(
+                new TextureDictionary_0016(textures), currentTextureVersion(game, platform))).Select(b => (b.Key, b.Value)).ToList();
         }
     }
 }

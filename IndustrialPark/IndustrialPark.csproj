@@ -205,7 +205,6 @@
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="ArchiveEditor\Dialogs\ApplyVertexColors.en-GB.resx" />
     <EmbeddedResource Remove="MainForm\OpenLevel.en-GB.resx" />
   </ItemGroup>
   <ItemGroup>

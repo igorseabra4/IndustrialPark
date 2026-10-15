@@ -117,11 +117,11 @@ namespace IndustrialPark.Models.CollisionTree
             tri.flags = ClumpCollBSPTriangleFlags.kCLUMPCOLL_HASNEXT;
 
             int stripVecOffset = 0;
-            int atomicOffset = clumps.Sum(c => c.atomicList.Count) -1;
+            int atomicOffset = clumps.Sum(c => c.atomicList.Length) -1;
             int clumpVertOffset = 0;
             foreach (var clump in clumps.ToArray().Reverse())
             {
-                for (int atomIndex = clump.atomicList.Count - 1; atomIndex >= 0; atomIndex--)
+                for (int atomIndex = clump.atomicList.Length - 1; atomIndex >= 0; atomIndex--)
                 {
                     Atomic_0014 atomic = clump.atomicList[atomIndex];
                     Geometry_000F geometry = clump.geometryList.geometryList[atomic.atomicStruct.geometryIndex];

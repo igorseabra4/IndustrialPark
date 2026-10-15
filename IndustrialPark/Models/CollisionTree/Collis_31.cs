@@ -41,12 +41,7 @@ namespace IndustrialPark.Models.CollisionTree
             for (int iTri = 0; iTri < geometry.geometryStruct.triangles.Length; iTri++)
                 triangleMap[iTri] = (ushort)Array.IndexOf(geometry.geometryStruct.triangles, data.polygons[iTri].poly);
 
-            return new CollisionPLG_011D_Pre36001()
-            {
-                branchNodes = branchNodes,
-                leafNodes = leafNodes,
-                triangleMap = triangleMap.Select(t => (int)t).ToArray()
-            };
+            return new CollisionPLG_011D_Pre36001(branchNodes, leafNodes, [.. triangleMap.Select(t => (int)t)]);
         }
 
         private ushort ConvertNode(BuildSector sector, ref int iBranch, ref int iLeaf, ref int numTotalPolygons)

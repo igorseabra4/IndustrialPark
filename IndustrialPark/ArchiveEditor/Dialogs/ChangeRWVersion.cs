@@ -57,8 +57,8 @@ namespace IndustrialPark.Dialogs
             RWSection[] rws = ReadFileMethods.ReadRenderWareFile(file);
 
             if (rws[0] is Clump_0010 clump)
-                clump.geometryList.geometryList.ForEach(g => g.geometryExtension.extensionSectionList
-                .RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG));
+                foreach (var gl in clump.geometryList.geometryList)
+                    gl.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
 
             byte[] data = ReadFileMethods.ExportRenderWareFile(rws, version.Value);
             ReadFileMethods.treatStuffAsByteArray = false;
