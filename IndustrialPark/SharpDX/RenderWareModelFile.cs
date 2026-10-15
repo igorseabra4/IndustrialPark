@@ -1,13 +1,10 @@
 ﻿using IndustrialPark.RenderData;
-using Assimp;
-using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using IndustrialPark.AssetEditorColors;
 
@@ -598,11 +595,11 @@ namespace IndustrialPark
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
-                renderData.SelectedObjectColor = (isSelected || highlightAtomic == i) ? renderer.selectedObjectColor : Vector4.Zero;
-
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                 {
+                    renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
+
                     renderData.LightingEnable = !AssetLKIT.DontRender && meshList[i].SubSets[j].EnableLights;
                     renderData.DiffuseMult = meshList[i].SubSets[j].DiffuseMult;
                     renderData.AmbientMult = meshList[i].SubSets[j].AmbientMult;
@@ -646,8 +643,6 @@ namespace IndustrialPark
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
-                jspRenderData.SelectedObjectColor = (isSelected || highlightAtomic == i) ? renderer.selectedObjectColor : Vector4.Zero;
-
                 renderer.device.SetDefaultDepthState();
                 renderer.device.SetCullModeDefault();
 
@@ -664,6 +659,7 @@ namespace IndustrialPark
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                 {
+                    jspRenderData.SelectedObjectColor = (isSelected || highlightAtomic == i || TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
                     jspRenderData.VertexColorEnable = SharpRenderer.RenderVertexColors && meshList[i].SubSets[j].EnablePrelight;
                     jspRenderData.MaterialColor = meshList[i].SubSets[j].DiffuseColor;
 
@@ -724,8 +720,6 @@ namespace IndustrialPark
                 if (meshList[i] == null || (dontDrawInvisible && atomicFlags[i]))
                     continue;
 
-                renderData.SelectedObjectColor = (isSelected || highlightAtomic == i) ? renderer.selectedColor : Vector4.Zero;
-
                 renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
                 renderer.device.DeviceContext.PixelShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
 
@@ -768,6 +762,7 @@ namespace IndustrialPark
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                 {
+                    renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
                     renderData.VertexColorEnable = SharpRenderer.RenderVertexColors &&
                         meshList[i].SubSets[j].EnablePrelight &&
                         ((pipe?.LightingMode == LightingMode.Prelight || pipe?.LightingMode == LightingMode.Both) |

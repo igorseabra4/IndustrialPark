@@ -2,6 +2,7 @@
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX.Direct3D11;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -158,5 +159,9 @@ namespace IndustrialPark
             DisposeTextures();
             Textures.Clear();
         }
+
+        public static HashSet<string> SelectedTextures = new HashSet<string>();
+
+        public static bool IsSelected(string texture) => SelectedTextures.Contains(texture);
     }
 }
