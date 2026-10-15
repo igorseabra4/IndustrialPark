@@ -85,6 +85,7 @@
             NumericCameraRoll.Maximum = new decimal(new int[] { -1, -1, -1, 0 });
             NumericCameraRoll.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
             NumericCameraRoll.Name = "NumericCameraRoll";
+            NumericCameraRoll.ValueChanged += NumericCameraRot_ValueChanged;
             // 
             // NumericCameraPitch
             // 

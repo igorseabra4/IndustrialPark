@@ -42,8 +42,23 @@ namespace IndustrialPark
                 RaiseCameraChangedEvent();
             }
         }
-        public float Speed = 5f;
-        public float SpeedRot = 5f;
+
+        public float Speed
+        {
+            get;
+            set
+            {
+                field = Math.Max(0.0001f, value);
+            }
+        } = 5f;
+        public float SpeedRot
+        {
+            get;
+            set
+            {
+                field = Math.Max(0.0001f, value);
+            }
+        } = 5f;
 
         public float FieldOfView;
         public float AspectRatio;

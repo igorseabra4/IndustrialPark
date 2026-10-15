@@ -97,6 +97,7 @@ namespace IndustrialPark
             {
                 Program.MainForm.renderer.Camera.Pitch = (float)NumericCameraPitch.Value;
                 Program.MainForm.renderer.Camera.Yaw = (float)NumericCameraYaw.Value;
+                Program.MainForm.renderer.Camera.Roll = (float)NumericCameraRoll.Value;
             }
         }
 
@@ -169,29 +170,11 @@ namespace IndustrialPark
 
             NumericCameraYaw.Value = (decimal)Program.MainForm.renderer.Camera.Yaw;
             NumericCameraPitch.Value = (decimal)Program.MainForm.renderer.Camera.Pitch;
+            NumericCameraRoll.Value = (decimal)Program.MainForm.renderer.Camera.Roll;
 
             numericGridX.Value = (decimal)ArchiveEditorFunctions.Grid.X;
             numericGridY.Value = (decimal)ArchiveEditorFunctions.Grid.Y;
             numericGridZ.Value = (decimal)ArchiveEditorFunctions.Grid.Z;
-
-            ProgramIsUpdatingValues = false;
-            _invalidCameraValues = false;
-        }
-
-        public void SetValues(Vector3 position, float yaw, float pitch, float speed, float speedrot)
-        {
-            if (!Visible)
-                return;
-
-            ProgramIsUpdatingValues = true;
-
-            NumericCameraX.Value = (decimal)position.X;
-            NumericCameraY.Value = (decimal)position.Y;
-            NumericCameraZ.Value = (decimal)position.Z;
-            NumericInterval.Value = (decimal)speed;
-            NumericIntervalRotation.Value = (decimal)speedrot;
-            NumericCameraPitch.Value = (decimal)pitch;
-            NumericCameraYaw.Value = (decimal)yaw;
 
             ProgramIsUpdatingValues = false;
             _invalidCameraValues = false;
