@@ -523,8 +523,9 @@ namespace IndustrialPark
             renderer.Camera.SetPosition(ipSettings.CamPos);
             renderer.Camera.Yaw = ipSettings.Yaw;
             renderer.Camera.Pitch = ipSettings.Pitch;
-            renderer.Camera.Speed = ipSettings.Speed;
-            renderer.Camera.SpeedRot = ipSettings.SpeedRot;
+            // prevent zero/negative camera speeds
+            renderer.Camera.Speed = ipSettings.Speed > 0 ? ipSettings.Speed : 5f;
+            renderer.Camera.SpeedRot = ipSettings.SpeedRot > 0 ? ipSettings.SpeedRot : 5f;
             renderer.Camera.FieldOfView = ipSettings.FieldOfView;
             renderer.Camera.DefaultFarPlane = ipSettings.FarPlane;
             renderer.Camera.FarPlane = ipSettings.FarPlane;
