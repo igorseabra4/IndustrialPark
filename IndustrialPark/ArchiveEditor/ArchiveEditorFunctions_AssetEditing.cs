@@ -228,7 +228,7 @@ namespace IndustrialPark
 
         public static uint? GetClickedAssetID(SharpRenderer renderer, Ray ray, bool? selectionFilter)
         {
-            float smallerDistance = 1000f;
+            float smallerDistance = 10000f;
             uint? assetID = null;
 
             var assets = renderableAssets.OfType<IClickableAsset>();
