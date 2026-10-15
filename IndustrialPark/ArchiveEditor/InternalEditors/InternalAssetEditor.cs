@@ -211,7 +211,7 @@ public partial class InternalAssetEditor : InternalEditor
         AddRow();
         AddTool("Add selected to " + asset.GetItemsText, (object sender, EventArgs e) =>
         {
-            asset.AddItems(archive.GetCurrentlySelectedAssetIDs().ToList());
+            asset.AddItems([.. archive.CurrentlySelectedAssetIDs]);
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
         }, true);

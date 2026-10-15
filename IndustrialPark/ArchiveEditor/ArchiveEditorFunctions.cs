@@ -1371,9 +1371,9 @@ namespace IndustrialPark
         public static bool updateReferencesOnCopy = true;
         public static bool replaceAssetsOnPaste = false;
 
-        internal bool PasteAssetsFromClipboard(int layerIndex, out List<uint> finalIndices, AssetClipboard clipboard = null, bool forceRefUpdate = false, bool dontReplace = false)
+        internal (bool success, List<uint> finalIndices, List<IReversibleAction> actions) PasteAssetsFromClipboard(int layerIndex, bool isTemplate = false, AssetClipboard clipboard = null)
         {
-            finalIndices = new List<uint>();
+            var finalIndices = new List<uint>();
 
             try
             {
@@ -1382,12 +1382,13 @@ namespace IndustrialPark
             catch (Exception ex)
             {
                 MessageBox.Show($"Error pasting assets from clipboard: {ex.Message}. Are you sure you have assets copied?");
-                return false;
+                return (false, null, null);
             }
 
             UnsavedChanges = true;
 
             Dictionary<uint, uint> referenceUpdate = new Dictionary<uint, uint>();
+            var actions = isTemplate ? null : new List<IReversibleAction>();
 
             RWVersion? targetVersion = null;
             bool rememberForAll = false;
@@ -1403,8 +1404,12 @@ namespace IndustrialPark
 
                 uint previousAssetID = AHDR.assetID;
 
-                if (replaceAssetsOnPaste && !dontReplace && ContainsAsset(AHDR.assetID))
+                if (!isTemplate && replaceAssetsOnPaste && ContainsAsset(AHDR.assetID))
+                {
+                    if (!isTemplate)
+                        actions.Add(GetAssetRemovedAction(AHDR.assetID));
                     RemoveAsset(AHDR.assetID);
+                }
 
                 var asset = AddAssetWithUniqueID(AHDR, clipboard.games[i], clipboard.platforms[i].Endianness(), layerIndex);
 
@@ -1417,6 +1422,8 @@ namespace IndustrialPark
                 {
                     try
                     {
+                        if (!isTemplate)
+                            actions.Add(GetAssetAddedAction(AHDR.assetID));
                         AddSoundToSNDI(sound.Data, sound.assetID, sound.assetType, out byte[] soundData);
                         sound.Data = soundData;
                     }
@@ -1452,11 +1459,19 @@ namespace IndustrialPark
                 finalIndices.Add(AHDR.assetID);
             }
 
-            if (updateReferencesOnCopy || forceRefUpdate)
-                foreach (var u in finalIndices)
-                    ReplaceReferencesOn(GetFromAssetID(u), referenceUpdate);
+            foreach (var u in finalIndices)
+            {
+                var asset = GetFromAssetID(u);
 
-            return true;
+                if (updateReferencesOnCopy || isTemplate)
+                    ReplaceReferencesOn(asset, referenceUpdate);
+
+                if (!isTemplate)
+                    if (asset is not AssetSound sound)
+                        actions.Add(GetAssetAddedAction(asset));
+            }
+
+            return (true, finalIndices, actions);
         }
         
         public bool ContainsNewlyAddedAssetType(List<uint> assetIDs)
@@ -1559,28 +1574,34 @@ namespace IndustrialPark
             }
         }
 
-        public void SelectAssets(List<uint> assetIDs)
+        public void SelectAssets(IEnumerable<uint> assetIDs)
         {
             ClearSelectedAssets();
 
             foreach (uint assetID in assetIDs)
             {
-                if (!assetDictionary.TryGetValue(assetID, out Asset value))
+                if (!assetDictionary.TryGetValue(assetID, out Asset asset))
                     continue;
 
-                value.isSelected = true;
-                CurrentlySelectedAssets.Add(value);
+                asset.isSelected = true;
+                CurrentlySelectedAssets.Add(asset);
+                if (asset is AssetRWTX)
+                    TextureManager.SelectedTextures.Add(asset.assetName.Replace(".rw3", "", StringComparison.InvariantCultureIgnoreCase));
             }
         }
 
-        public IEnumerable<uint> GetCurrentlySelectedAssetIDs() => CurrentlySelectedAssets.Select(a => a.assetID);
+        public IEnumerable<uint> CurrentlySelectedAssetIDs => CurrentlySelectedAssets.Select(a => a.assetID);
 
         public int GetNumberOfSelectedAssets => CurrentlySelectedAssets.Count;
 
         public void ClearSelectedAssets()
         {
             foreach (var asset in CurrentlySelectedAssets)
+            {
                 asset.isSelected = false;
+                if (asset is AssetRWTX)
+                    TextureManager.SelectedTextures.Remove(asset.assetName.Replace(".rw3", "", StringComparison.InvariantCultureIgnoreCase));
+            }
             
             CurrentlySelectedAssets.Clear();
         }

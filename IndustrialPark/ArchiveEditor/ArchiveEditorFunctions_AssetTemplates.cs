@@ -753,23 +753,26 @@ namespace IndustrialPark
         public static bool chainPointMVPTs = false;
         public static uint chainPointMVPTlast = 0;
 
-        private Asset PlaceUserTemplate(int layerIndex, Vector3 position, ref List<uint> assetIDs, AssetTemplate template)
+        private void PlaceUserTemplate(int layerIndex, Vector3 position, ref List<uint> assetIDs, AssetTemplate template)
         {
             if (template == AssetTemplate.Paste_Clipboard)
             {
-                PasteAssetsFromClipboard(layerIndex, out assetIDs, forceRefUpdate: true, dontReplace: true);
+                (bool success, var finalIndices,  _) = PasteAssetsFromClipboard(layerIndex, true);
+                if (success)
+                    assetIDs.AddRange(finalIndices);
             }
             else
             {
                 try
                 {
                     var clipboard = JsonConvert.DeserializeObject<AssetClipboard>(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
-                    PasteAssetsFromClipboard(layerIndex, out assetIDs, clipboard, forceRefUpdate: true, dontReplace: true);
+                    (bool success, var finalIndices, _) = PasteAssetsFromClipboard(layerIndex, true, clipboard);
+                    if (success)
+                        assetIDs.AddRange(finalIndices);
                 }
                 catch (Exception ex)
                 {
                     MessageBox.Show($"There was an error placing your user template: {ex.Message}");
-                    return null;
                 }
             }
 
@@ -819,8 +822,6 @@ namespace IndustrialPark
                         }
                     }
             }
-
-            return null;
         }
 
         public Asset PlaceTemplate(int layerIndex, AssetTemplate template)
@@ -844,7 +845,10 @@ namespace IndustrialPark
             if (template == AssetTemplate.Null)
                 template = CurrentAssetTemplate;
             if (template == AssetTemplate.User_Template || template == AssetTemplate.Paste_Clipboard)
-                return PlaceUserTemplate(layerIndex, position, ref assetIDs, template);
+            {
+                PlaceUserTemplate(layerIndex, position, ref assetIDs, template);
+                return null;
+            }
             
             switch (template)
             {
@@ -1796,14 +1800,7 @@ namespace IndustrialPark
                     boxMinimum = new Vertex3(),
                 },
 
-                materialList = new MaterialList_0008()
-                {
-                    materialListStruct = new MaterialListStruct_0001()
-                    {
-                        materialCount = 0
-                    },
-                    materialList = new Material_0007[0]
-                },
+                materialList = new MaterialList_0008([]),
 
                 firstWorldChunk = new AtomicSector_0009()
                 {
@@ -1821,19 +1818,15 @@ namespace IndustrialPark
                         uvArray = new Vertex2[0],
                         triangleArray = new Triangle[0]
                     },
-                    atomicSectorExtension = new Extension_0003()
-                    {
-                        extensionSectionList = new List<RWSection>()
+                    atomicSectorExtension = new Extension_0003([
+                        new BinMeshPLG_050E()
                         {
-                            new BinMeshPLG_050E()
-                            {
-                                binMeshHeaderFlags = BinMeshHeaderFlags.TriangleList,
-                                numMeshes = 0,
-                                totalIndexCount = 0,
-                                binMeshList = new BinMesh[0]
-                            }
+                            binMeshHeaderFlags = BinMeshHeaderFlags.TriangleList,
+                            numMeshes = 0,
+                            totalIndexCount = 0,
+                            binMeshList = new BinMesh[0]
                         }
-                    }
+                    ])
                 },
 
                 worldExtension = new Extension_0003()

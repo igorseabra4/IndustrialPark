@@ -230,7 +230,7 @@ namespace IndustrialPark
             toolStripMenuItem_EditData.Enabled = buttonEditDataAsset.Enabled = canEditAsset;
             toolStripMenuItem_MultiEdit.Enabled = buttonMultiEditAsset.Enabled = canEditAsset;
             toolStripMenuItem_CreateGroup.Enabled = canEditAsset;
-            toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && CurrentlySelectedAssetIDs().Any(u => archive.GetFromAssetID(u) is IClickableAsset);
+            toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && archive.CurrentlySelectedAssets.Any(asset => asset is IClickableAsset);
 
             var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
             toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
@@ -826,7 +826,8 @@ namespace IndustrialPark
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            if (!archive.PasteAssetsFromClipboard(SelectedLayerIndex, out List<uint> finalIndices))
+            (bool success, List<uint> finalIndices, List<IReversibleAction> actions) = archive.PasteAssetsFromClipboard(SelectedLayerIndex);
+            if (!success)
                 return;
 
             if (!archive.NoLayers)
@@ -848,7 +849,8 @@ namespace IndustrialPark
 
             SetSelectedIndices(finalIndices);
 
-            Program.UndoBuffer.AddAction([.. finalIndices.Select(archive.GetAssetAddedAction), new SelectionAction(finalIndices)]);
+            actions.Add(new SelectionAction(finalIndices));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void ButtonRemoveAsset_Click(object sender, EventArgs e)
@@ -856,10 +858,10 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0)
                 return;
 
-            RemoveAssets(CurrentlySelectedAssetIDs());
+            RemoveAssets(archive.CurrentlySelectedAssetIDs);
         }
 
-        public void RemoveAssets(List<uint> assetIDs)
+        public void RemoveAssets(IEnumerable<uint> assetIDs)
         {
             programIsChangingStuff = true;
             var types = assetIDs.Select(u => archive.GetFromAssetID(u).assetType).ToHashSet();
@@ -890,7 +892,7 @@ namespace IndustrialPark
 
         private void buttonView_Click(object sender, EventArgs e)
         {
-            var assets = CurrentlySelectedAssetIDs().Select(archive.GetFromAssetID).OfType<IClickableAsset>().ToArray();
+            var assets = archive.CurrentlySelectedAssetIDs.Select(archive.GetFromAssetID).OfType<IClickableAsset>().ToArray();
             if (assets.Length == 0)
                 return;
             currentView++;
@@ -902,9 +904,9 @@ namespace IndustrialPark
 
         private void buttonEditAsset_Click(object sender, EventArgs e)
         {
-            var assetIDs = CurrentlySelectedAssetIDs();
-            if (assetIDs.Count == 1)
-                EditHeader(assetIDs[0], out _);
+            var assetIDs = archive.CurrentlySelectedAssetIDs;
+            if (assetIDs.Count() == 1)
+                EditHeader(assetIDs.First(), out _);
         }
 
         public bool EditHeader(uint oldAssetID, out uint newAssetID)
@@ -944,7 +946,13 @@ namespace IndustrialPark
                         foreach (var ae in Program.MainForm.archiveEditors)
                             ae.archive.ReplaceReferences(oldAssetID, AHDR.assetID);
 
-                    listViewAssets.Items.RemoveAt(listViewAssets.SelectedIndices[0]);
+                    for (int i = 0; i < listViewAssets.Items.Count; i++)
+                        if ((uint)listViewAssets.Items[i].Tag == oldAssetID)
+                        {
+                            listViewAssets.Items.RemoveAt(i);
+                            break;
+                        }
+                    
                     AddToAssetList(AHDR.assetID);
                     SetSelectedIndex(AHDR.assetID);
 
@@ -971,12 +979,12 @@ namespace IndustrialPark
 
         private void buttonMultiEdit_Click(object sender, EventArgs e)
         {
-            archive.OpenInternalEditorMulti(archive.GetCurrentlySelectedAssetIDs(), MousePosition, UpdateCurrentListView);
+            archive.OpenInternalEditorMulti(archive.CurrentlySelectedAssetIDs, MousePosition, UpdateCurrentListView);
         }
 
         public void OpenInternalEditors()
         {
-            archive.OpenInternalEditor(archive.GetCurrentlySelectedAssetIDs(), false, MousePosition, UpdateCurrentListView);
+            archive.OpenInternalEditor(archive.CurrentlySelectedAssetIDs, false, MousePosition, UpdateCurrentListView);
         }
 
         public void OpenInternalEditors(List<uint> whoTargets, bool openAnyway)
@@ -1002,26 +1010,24 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0)
                 return;
 
-            uint selectedAssetID = CurrentlySelectedAssetIDs()[0];
-
-            if (CurrentlySelectedAssetIDs().Count == 1)
+            var selected = archive.CurrentlySelectedAssets;
+            if (selected.Count == 1)
             {
-                var finalAssetName = archive.GetFromAssetID(selectedAssetID).assetName;
-                var assetFileExtension = Path.GetExtension(archive.GetFromAssetID(selectedAssetID).assetFileName).ToLower();
+                var asset = selected[0];
+                var assetFileName = asset.assetName;
+
                 // Check to see if the extension is '.anm' and use 'assetFileName'
-                if (assetFileExtension == ".anm")
-                {
-                    finalAssetName = Path.GetFileName(archive.GetFromAssetID(selectedAssetID).assetFileName);
-                }
+                if (Path.GetExtension(asset.assetFileName).ToLower().Equals(".anm") && !string.IsNullOrWhiteSpace(asset.assetFileName))
+                    assetFileName = Path.GetFileName(asset.assetFileName);
+
                 SaveFileDialog saveFileDialog = new SaveFileDialog()
                 {
-                    //FileName = archive.GetFromAssetID(CurrentlySelectedAssetIDs()[0]).assetName
-                    FileName = finalAssetName
+                    FileName = assetFileName
                 };
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                     try
                     {
-                        var AHDR = archive.GetFromAssetID(selectedAssetID).BuildAHDR(archive.platform.Endianness());
+                        var AHDR = asset.BuildAHDR(archive.platform.Endianness());
                         File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                     }
                     catch (Exception ex)
@@ -1036,42 +1042,23 @@ namespace IndustrialPark
                     IsFolderPicker = true
                 };
                 if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
-                    foreach (uint u in CurrentlySelectedAssetIDs())
+                    foreach (var asset in archive.CurrentlySelectedAssets)
                         try
                         {
-                            var asset = archive.GetFromAssetID(u);
-                            var AHDR = asset.BuildAHDR(archive.platform.Endianness());
+                            var assetFileName = asset.assetName;
 
-                            // Check to see if the file is an '.anm' before exporting raw file(s)
-                            if (Path.GetExtension(asset.assetFileName) == ".anm")
-                            {
-                                // Combine the selected folder path with the filename
-                                string fullPath = Path.Combine(saveFileDialog.FileName, Path.GetFileName(asset.assetFileName));
-                                File.WriteAllBytes(fullPath, AHDR.data);
-                            }
-                            else
-                            {
-                                File.WriteAllBytes(saveFileDialog.FileName + "/" + AHDR.ADBG.assetName, AHDR.data);
-                            }
+                            // Check to see if the extension is '.anm' and use 'assetFileName'
+                            if (Path.GetExtension(asset.assetFileName).ToLower().Equals(".anm") && !string.IsNullOrWhiteSpace(asset.assetFileName))
+                                assetFileName = Path.GetFileName(asset.assetFileName);
+
+                            var AHDR = asset.BuildAHDR(archive.platform.Endianness());
+                            File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, assetFileName), AHDR.data);
                         }
                         catch (Exception ex)
                         {
                             MessageBox.Show("Unable to export asset raw data: " + ex.Message);
                         }
             }
-        }
-
-        private List<uint> CurrentlySelectedAssetIDs()
-        {
-            List<uint> list = new List<uint>();
-            foreach (ListViewItem v in listViewAssets.SelectedItems)
-                list.Add(GetAssetIDFromName(v));
-            return list;
-        }
-
-        private static uint GetAssetIDFromName(ListViewItem v)
-        {
-            return (uint)v.Tag;
         }
 
         private void checkedListBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
@@ -1081,11 +1068,7 @@ namespace IndustrialPark
 
             toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
 
-            List<uint> selected = new List<uint>(listViewAssets.SelectedItems.Count);
-            foreach (ListViewItem v in listViewAssets.SelectedItems)
-                selected.Add(GetAssetIDFromName(v));
-
-            archive.SelectAssets(selected);
+            archive.SelectAssets(listViewAssets.SelectedItems.Cast<ListViewItem>().Select(item => (uint)item.Tag));
 
             SetMenuItemsEnabled();
         }
@@ -1111,7 +1094,7 @@ namespace IndustrialPark
         {
             var selected = new List<uint>();
             if (addToSelection || toggleSelection)
-                selected.AddRange(CurrentlySelectedAssetIDs());
+                selected.AddRange(archive.CurrentlySelectedAssetIDs);
             if (assetID.HasValue)
             {
                 if (toggleSelection && selected.Contains(assetID.Value))
@@ -1126,7 +1109,7 @@ namespace IndustrialPark
         {
             if (!assetID.HasValue || !archive.ContainsAsset(assetID.Value))
                 return;
-            var assetIDs = CurrentlySelectedAssetIDs();
+            var assetIDs = archive.CurrentlySelectedAssetIDs.ToList();
             if (!assetIDs.Contains(assetID.Value))
                 return;
             assetIDs.Remove(assetID.Value);
@@ -1464,12 +1447,12 @@ namespace IndustrialPark
 
         private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
         {
-            var ids = CurrentlySelectedAssetIDs();
+            var ids = archive.CurrentlySelectedAssetIDs;
             var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
             if (assetIDs != null && assetIDs.Count > 0)
             {
                 var asset = (AssetGRUP)archive.GetFromAssetID(assetIDs[0]);
-                asset.AddItems(ids);
+                asset.AddItems([..ids]);
                 if (archive.ContainsNewlyAddedAssetType([asset.assetID]))
                     PopulateAssetListAndComboBox();
                 SetSelectedIndex(asset.assetID);
@@ -2184,7 +2167,7 @@ namespace IndustrialPark
 
         private void copyAssetNamesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var names = from uint assetId in CurrentlySelectedAssetIDs() select GetAssetNameFromID(assetId);
+            var names = archive.CurrentlySelectedAssets.Select(a => a.assetName);
             Clipboard.SetText($"\"{string.Join("\", \"", names)}\"");
         }
 
