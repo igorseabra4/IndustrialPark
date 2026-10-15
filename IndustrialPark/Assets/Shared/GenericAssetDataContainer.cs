@@ -138,7 +138,7 @@ namespace IndustrialPark
                     Verify((AssetID)prop.GetValue(this), prop.Name, prop.GetCustomAttribute(typeof(ValidReferenceRequiredAttribute)) != null, ref result);
 
             foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
-                gadc.Verify(ref result);
+                gadc?.Verify(ref result);
 
             foreach (var prop in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID[]))))
                 if (prop.GetCustomAttribute(typeof(IgnoreVerificationAttribute)) == null)
@@ -150,7 +150,7 @@ namespace IndustrialPark
 
             foreach (var gadcs in typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) && typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).Select(prop => (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)))
                 foreach (var gadc in gadcs)
-                    gadc.Verify(ref result);
+                    gadc?.Verify(ref result);
         }
 
         protected static void Verify(uint assetID, string propName, bool validReferenceRequired, ref List<string> result)

@@ -28,554 +28,504 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.listBoxLinks = new System.Windows.Forms.ListBox();
-            this.buttonAdd = new System.Windows.Forms.Button();
-            this.buttonRemove = new System.Windows.Forms.Button();
-            this.buttonPaste = new System.Windows.Forms.Button();
-            this.buttonCopy = new System.Windows.Forms.Button();
-            this.buttonArrowDown = new System.Windows.Forms.Button();
-            this.buttonArrowUp = new System.Windows.Forms.Button();
-            this.buttonOK = new System.Windows.Forms.Button();
-            this.buttonCancel = new System.Windows.Forms.Button();
-            this.groupBoxEventData = new System.Windows.Forms.GroupBox();
-            this.groupBoxSourceCheckOrFlags = new System.Windows.Forms.GroupBox();
-            this.textBoxSourceCheckOrFlags = new System.Windows.Forms.TextBox();
-            this.enabledcheckBox = new System.Windows.Forms.CheckBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textBoxArgumentAsset = new System.Windows.Forms.TextBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.checkBoxHex = new System.Windows.Forms.CheckBox();
-            this.textBox3 = new System.Windows.Forms.TextBox();
-            this.textBox4 = new System.Windows.Forms.TextBox();
-            this.textBox2 = new System.Windows.Forms.TextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.buttonTargetSelf = new System.Windows.Forms.Button();
-            this.buttonTargetPlus1 = new System.Windows.Forms.Button();
-            this.textBoxTargetAsset = new System.Windows.Forms.TextBox();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.comboSendEvent = new System.Windows.Forms.ComboBox();
-            this.groupBoxSourceEvent = new System.Windows.Forms.GroupBox();
-            this.comboRecieveEvent = new System.Windows.Forms.ComboBox();
-            this.numericUpDownTime = new System.Windows.Forms.NumericUpDown();
-            this.buttonHelp = new System.Windows.Forms.Button();
-            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.groupBox1.SuspendLayout();
-            this.groupBoxEventData.SuspendLayout();
-            this.groupBoxSourceCheckOrFlags.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBoxSourceEvent.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).BeginInit();
-            this.SuspendLayout();
+            components = new System.ComponentModel.Container();
+            groupBox1 = new System.Windows.Forms.GroupBox();
+            listBoxLinks = new System.Windows.Forms.ListBox();
+            buttonAdd = new System.Windows.Forms.Button();
+            buttonRemove = new System.Windows.Forms.Button();
+            buttonPaste = new System.Windows.Forms.Button();
+            buttonCopy = new System.Windows.Forms.Button();
+            buttonArrowDown = new System.Windows.Forms.Button();
+            buttonArrowUp = new System.Windows.Forms.Button();
+            buttonOK = new System.Windows.Forms.Button();
+            buttonCancel = new System.Windows.Forms.Button();
+            groupBoxEventData = new System.Windows.Forms.GroupBox();
+            groupBoxSourceCheckOrFlags = new System.Windows.Forms.GroupBox();
+            textBoxSourceCheckOrFlags = new System.Windows.Forms.TextBox();
+            enabledcheckBox = new System.Windows.Forms.CheckBox();
+            groupBox2 = new System.Windows.Forms.GroupBox();
+            textBoxArgumentAsset = new System.Windows.Forms.TextBox();
+            groupBox6 = new System.Windows.Forms.GroupBox();
+            label6 = new System.Windows.Forms.Label();
+            label4 = new System.Windows.Forms.Label();
+            label2 = new System.Windows.Forms.Label();
+            label1 = new System.Windows.Forms.Label();
+            checkBoxHex = new System.Windows.Forms.CheckBox();
+            textBox3 = new System.Windows.Forms.TextBox();
+            textBox4 = new System.Windows.Forms.TextBox();
+            textBox2 = new System.Windows.Forms.TextBox();
+            textBox1 = new System.Windows.Forms.TextBox();
+            groupBox5 = new System.Windows.Forms.GroupBox();
+            buttonTargetSelf = new System.Windows.Forms.Button();
+            buttonTargetPlus1 = new System.Windows.Forms.Button();
+            textBoxTargetAsset = new System.Windows.Forms.TextBox();
+            groupBox4 = new System.Windows.Forms.GroupBox();
+            comboSendEvent = new System.Windows.Forms.ComboBox();
+            groupBoxSourceEvent = new System.Windows.Forms.GroupBox();
+            comboRecieveEvent = new System.Windows.Forms.ComboBox();
+            numericUpDownTime = new System.Windows.Forms.NumericUpDown();
+            buttonHelp = new System.Windows.Forms.Button();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
+            groupBox1.SuspendLayout();
+            groupBoxEventData.SuspendLayout();
+            groupBoxSourceCheckOrFlags.SuspendLayout();
+            groupBox2.SuspendLayout();
+            groupBox6.SuspendLayout();
+            groupBox5.SuspendLayout();
+            groupBox4.SuspendLayout();
+            groupBoxSourceEvent.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTime).BeginInit();
+            SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this.listBoxLinks);
-            this.groupBox1.Location = new System.Drawing.Point(18, 18);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox1.Size = new System.Drawing.Size(465, 512);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Links";
+            groupBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            groupBox1.Controls.Add(listBoxLinks);
+            groupBox1.Location = new System.Drawing.Point(12, 12);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new System.Drawing.Size(310, 333);
+            groupBox1.TabIndex = 0;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Links";
             // 
             // listBoxLinks
             // 
-            this.listBoxLinks.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.listBoxLinks.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.listBoxLinks.FormattingEnabled = true;
-            this.listBoxLinks.ItemHeight = 20;
-            this.listBoxLinks.Location = new System.Drawing.Point(9, 29);
-            this.listBoxLinks.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.listBoxLinks.Name = "listBoxLinks";
-            this.listBoxLinks.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
-            this.listBoxLinks.Size = new System.Drawing.Size(446, 462);
-            this.listBoxLinks.TabIndex = 1;
-            this.listBoxLinks.SelectedIndexChanged += new System.EventHandler(this.listBoxEvents_SelectedIndexChanged);
+            listBoxLinks.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            listBoxLinks.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            listBoxLinks.FormattingEnabled = true;
+            listBoxLinks.Location = new System.Drawing.Point(6, 19);
+            listBoxLinks.Name = "listBoxLinks";
+            listBoxLinks.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
+            listBoxLinks.Size = new System.Drawing.Size(298, 301);
+            listBoxLinks.TabIndex = 1;
+            listBoxLinks.SelectedIndexChanged += listBoxEvents_SelectedIndexChanged;
             // 
             // buttonAdd
             // 
-            this.buttonAdd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonAdd.Location = new System.Drawing.Point(27, 540);
-            this.buttonAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonAdd.Name = "buttonAdd";
-            this.buttonAdd.Size = new System.Drawing.Size(112, 35);
-            this.buttonAdd.TabIndex = 2;
-            this.buttonAdd.Text = "Add";
-            this.buttonAdd.UseVisualStyleBackColor = true;
-            this.buttonAdd.Click += new System.EventHandler(this.buttonAdd_Click);
+            buttonAdd.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            buttonAdd.Location = new System.Drawing.Point(18, 351);
+            buttonAdd.Name = "buttonAdd";
+            buttonAdd.Size = new System.Drawing.Size(75, 23);
+            buttonAdd.TabIndex = 2;
+            buttonAdd.Text = "Add";
+            buttonAdd.UseVisualStyleBackColor = true;
+            buttonAdd.Click += buttonAdd_Click;
             // 
             // buttonRemove
             // 
-            this.buttonRemove.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonRemove.Location = new System.Drawing.Point(148, 540);
-            this.buttonRemove.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonRemove.Name = "buttonRemove";
-            this.buttonRemove.Size = new System.Drawing.Size(112, 35);
-            this.buttonRemove.TabIndex = 3;
-            this.buttonRemove.Text = "Remove";
-            this.buttonRemove.UseVisualStyleBackColor = true;
-            this.buttonRemove.Click += new System.EventHandler(this.buttonRemove_Click);
+            buttonRemove.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            buttonRemove.Location = new System.Drawing.Point(99, 351);
+            buttonRemove.Name = "buttonRemove";
+            buttonRemove.Size = new System.Drawing.Size(75, 23);
+            buttonRemove.TabIndex = 3;
+            buttonRemove.Text = "Remove";
+            buttonRemove.UseVisualStyleBackColor = true;
+            buttonRemove.Click += buttonRemove_Click;
             // 
             // buttonPaste
             // 
-            this.buttonPaste.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonPaste.Location = new System.Drawing.Point(148, 585);
-            this.buttonPaste.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonPaste.Name = "buttonPaste";
-            this.buttonPaste.Size = new System.Drawing.Size(112, 35);
-            this.buttonPaste.TabIndex = 5;
-            this.buttonPaste.Text = "Paste";
-            this.buttonPaste.UseVisualStyleBackColor = true;
-            this.buttonPaste.Click += new System.EventHandler(this.buttonPaste_Click);
+            buttonPaste.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            buttonPaste.Location = new System.Drawing.Point(99, 380);
+            buttonPaste.Name = "buttonPaste";
+            buttonPaste.Size = new System.Drawing.Size(75, 23);
+            buttonPaste.TabIndex = 5;
+            buttonPaste.Text = "Paste";
+            buttonPaste.UseVisualStyleBackColor = true;
+            buttonPaste.Click += buttonPaste_Click;
             // 
             // buttonCopy
             // 
-            this.buttonCopy.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonCopy.Location = new System.Drawing.Point(27, 585);
-            this.buttonCopy.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonCopy.Name = "buttonCopy";
-            this.buttonCopy.Size = new System.Drawing.Size(112, 35);
-            this.buttonCopy.TabIndex = 4;
-            this.buttonCopy.Text = "Copy";
-            this.buttonCopy.UseVisualStyleBackColor = true;
-            this.buttonCopy.Click += new System.EventHandler(this.buttonCopy_Click);
+            buttonCopy.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            buttonCopy.Location = new System.Drawing.Point(18, 380);
+            buttonCopy.Name = "buttonCopy";
+            buttonCopy.Size = new System.Drawing.Size(75, 23);
+            buttonCopy.TabIndex = 4;
+            buttonCopy.Text = "Copy";
+            buttonCopy.UseVisualStyleBackColor = true;
+            buttonCopy.Click += buttonCopy_Click;
             // 
             // buttonArrowDown
             // 
-            this.buttonArrowDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonArrowDown.Location = new System.Drawing.Point(274, 585);
-            this.buttonArrowDown.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonArrowDown.Name = "buttonArrowDown";
-            this.buttonArrowDown.Size = new System.Drawing.Size(33, 35);
-            this.buttonArrowDown.TabIndex = 7;
-            this.buttonArrowDown.Text = "▼";
-            this.buttonArrowDown.UseVisualStyleBackColor = true;
-            this.buttonArrowDown.Click += new System.EventHandler(this.buttonArrowDown_Click);
+            buttonArrowDown.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            buttonArrowDown.Location = new System.Drawing.Point(183, 380);
+            buttonArrowDown.Name = "buttonArrowDown";
+            buttonArrowDown.Size = new System.Drawing.Size(22, 23);
+            buttonArrowDown.TabIndex = 7;
+            buttonArrowDown.Text = "▼";
+            buttonArrowDown.UseVisualStyleBackColor = true;
+            buttonArrowDown.Click += buttonArrowDown_Click;
             // 
             // buttonArrowUp
             // 
-            this.buttonArrowUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonArrowUp.Location = new System.Drawing.Point(274, 540);
-            this.buttonArrowUp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonArrowUp.Name = "buttonArrowUp";
-            this.buttonArrowUp.Size = new System.Drawing.Size(33, 35);
-            this.buttonArrowUp.TabIndex = 6;
-            this.buttonArrowUp.Text = "▲";
-            this.buttonArrowUp.UseVisualStyleBackColor = true;
-            this.buttonArrowUp.Click += new System.EventHandler(this.buttonArrowUp_Click);
+            buttonArrowUp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            buttonArrowUp.Location = new System.Drawing.Point(183, 351);
+            buttonArrowUp.Name = "buttonArrowUp";
+            buttonArrowUp.Size = new System.Drawing.Size(22, 23);
+            buttonArrowUp.TabIndex = 6;
+            buttonArrowUp.Text = "▲";
+            buttonArrowUp.UseVisualStyleBackColor = true;
+            buttonArrowUp.Click += buttonArrowUp_Click;
             // 
             // buttonOK
             // 
-            this.buttonOK.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonOK.Location = new System.Drawing.Point(504, 580);
-            this.buttonOK.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonOK.Name = "buttonOK";
-            this.buttonOK.Size = new System.Drawing.Size(168, 35);
-            this.buttonOK.TabIndex = 18;
-            this.buttonOK.Text = "OK";
-            this.buttonOK.UseVisualStyleBackColor = true;
-            this.buttonOK.Click += new System.EventHandler(this.buttonOK_Click);
+            buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonOK.Location = new System.Drawing.Point(336, 377);
+            buttonOK.Name = "buttonOK";
+            buttonOK.Size = new System.Drawing.Size(112, 23);
+            buttonOK.TabIndex = 18;
+            buttonOK.Text = "OK";
+            buttonOK.UseVisualStyleBackColor = true;
+            buttonOK.Click += buttonOK_Click;
             // 
             // buttonCancel
             // 
-            this.buttonCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.buttonCancel.Location = new System.Drawing.Point(681, 580);
-            this.buttonCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonCancel.Name = "buttonCancel";
-            this.buttonCancel.Size = new System.Drawing.Size(168, 35);
-            this.buttonCancel.TabIndex = 19;
-            this.buttonCancel.Text = "Cancel";
-            this.buttonCancel.UseVisualStyleBackColor = true;
-            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            buttonCancel.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            buttonCancel.Location = new System.Drawing.Point(454, 377);
+            buttonCancel.Name = "buttonCancel";
+            buttonCancel.Size = new System.Drawing.Size(112, 23);
+            buttonCancel.TabIndex = 19;
+            buttonCancel.Text = "Cancel";
+            buttonCancel.UseVisualStyleBackColor = true;
+            buttonCancel.Click += buttonCancel_Click;
             // 
             // groupBoxEventData
             // 
-            this.groupBoxEventData.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBoxEventData.Controls.Add(this.groupBoxSourceCheckOrFlags);
-            this.groupBoxEventData.Controls.Add(this.enabledcheckBox);
-            this.groupBoxEventData.Controls.Add(this.groupBox2);
-            this.groupBoxEventData.Controls.Add(this.groupBox6);
-            this.groupBoxEventData.Controls.Add(this.groupBox5);
-            this.groupBoxEventData.Controls.Add(this.groupBox4);
-            this.groupBoxEventData.Controls.Add(this.groupBoxSourceEvent);
-            this.groupBoxEventData.Location = new System.Drawing.Point(492, 18);
-            this.groupBoxEventData.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBoxEventData.Name = "groupBoxEventData";
-            this.groupBoxEventData.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBoxEventData.Size = new System.Drawing.Size(366, 554);
-            this.groupBoxEventData.TabIndex = 2;
-            this.groupBoxEventData.TabStop = false;
-            this.groupBoxEventData.Text = "Event Data";
+            groupBoxEventData.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            groupBoxEventData.Controls.Add(groupBoxSourceCheckOrFlags);
+            groupBoxEventData.Controls.Add(enabledcheckBox);
+            groupBoxEventData.Controls.Add(groupBox2);
+            groupBoxEventData.Controls.Add(groupBox6);
+            groupBoxEventData.Controls.Add(groupBox5);
+            groupBoxEventData.Controls.Add(groupBox4);
+            groupBoxEventData.Controls.Add(groupBoxSourceEvent);
+            groupBoxEventData.Location = new System.Drawing.Point(328, 12);
+            groupBoxEventData.Name = "groupBoxEventData";
+            groupBoxEventData.Size = new System.Drawing.Size(244, 360);
+            groupBoxEventData.TabIndex = 2;
+            groupBoxEventData.TabStop = false;
+            groupBoxEventData.Text = "Event Data";
             // 
             // groupBoxSourceCheckOrFlags
             // 
-            this.groupBoxSourceCheckOrFlags.Controls.Add(this.textBoxSourceCheckOrFlags);
-            this.groupBoxSourceCheckOrFlags.Location = new System.Drawing.Point(12, 355);
-            this.groupBoxSourceCheckOrFlags.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBoxSourceCheckOrFlags.Name = "groupBoxSourceCheckOrFlags";
-            this.groupBoxSourceCheckOrFlags.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBoxSourceCheckOrFlags.Size = new System.Drawing.Size(345, 72);
-            this.groupBoxSourceCheckOrFlags.TabIndex = 11;
-            this.groupBoxSourceCheckOrFlags.TabStop = false;
-            this.groupBoxSourceCheckOrFlags.Text = "Source Check";
-            this.toolTip1.SetToolTip(this.groupBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
+            groupBoxSourceCheckOrFlags.Controls.Add(textBoxSourceCheckOrFlags);
+            groupBoxSourceCheckOrFlags.Location = new System.Drawing.Point(8, 231);
+            groupBoxSourceCheckOrFlags.Name = "groupBoxSourceCheckOrFlags";
+            groupBoxSourceCheckOrFlags.Size = new System.Drawing.Size(230, 47);
+            groupBoxSourceCheckOrFlags.TabIndex = 11;
+            groupBoxSourceCheckOrFlags.TabStop = false;
+            groupBoxSourceCheckOrFlags.Text = "Source Check";
+            toolTip1.SetToolTip(groupBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
             // 
             // textBoxSourceCheckOrFlags
             // 
-            this.textBoxSourceCheckOrFlags.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.textBoxSourceCheckOrFlags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxSourceCheckOrFlags.Location = new System.Drawing.Point(9, 29);
-            this.textBoxSourceCheckOrFlags.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textBoxSourceCheckOrFlags.Name = "textBoxSourceCheckOrFlags";
-            this.textBoxSourceCheckOrFlags.Size = new System.Drawing.Size(326, 26);
-            this.textBoxSourceCheckOrFlags.TabIndex = 17;
-            this.toolTip1.SetToolTip(this.textBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
-            this.textBoxSourceCheckOrFlags.TextChanged += new System.EventHandler(this.textBoxSourceCheck_TextChanged);
-            this.textBoxSourceCheckOrFlags.Leave += new System.EventHandler(this.textBoxSourceCheck_Leave);
+            textBoxSourceCheckOrFlags.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            textBoxSourceCheckOrFlags.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBoxSourceCheckOrFlags.Location = new System.Drawing.Point(6, 19);
+            textBoxSourceCheckOrFlags.Name = "textBoxSourceCheckOrFlags";
+            textBoxSourceCheckOrFlags.Size = new System.Drawing.Size(218, 20);
+            textBoxSourceCheckOrFlags.TabIndex = 17;
+            toolTip1.SetToolTip(textBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
+            textBoxSourceCheckOrFlags.TextChanged += textBoxSourceCheck_TextChanged;
+            textBoxSourceCheckOrFlags.Leave += textBoxSourceCheck_Leave;
             // 
             // enabledcheckBox
             // 
-            this.enabledcheckBox.Checked = true;
-            this.enabledcheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.enabledcheckBox.Location = new System.Drawing.Point(14, 365);
-            this.enabledcheckBox.Name = "enabledcheckBox";
-            this.enabledcheckBox.Size = new System.Drawing.Size(187, 51);
-            this.enabledcheckBox.TabIndex = 11;
-            this.enabledcheckBox.Text = "Enabled";
-            this.toolTip1.SetToolTip(this.enabledcheckBox, "Defines whether this link is activated and will be executed");
-            this.enabledcheckBox.UseVisualStyleBackColor = true;
-            this.enabledcheckBox.Visible = false;
-            this.enabledcheckBox.CheckedChanged += new System.EventHandler(this.enabledcheckBox_CheckedChanged);
+            enabledcheckBox.Checked = true;
+            enabledcheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
+            enabledcheckBox.Location = new System.Drawing.Point(9, 237);
+            enabledcheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            enabledcheckBox.Name = "enabledcheckBox";
+            enabledcheckBox.Size = new System.Drawing.Size(125, 33);
+            enabledcheckBox.TabIndex = 11;
+            enabledcheckBox.Text = "Enabled";
+            toolTip1.SetToolTip(enabledcheckBox, "Defines whether this link is activated and will be executed");
+            enabledcheckBox.UseVisualStyleBackColor = true;
+            enabledcheckBox.Visible = false;
+            enabledcheckBox.CheckedChanged += enabledcheckBox_CheckedChanged;
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.textBoxArgumentAsset);
-            this.groupBox2.Location = new System.Drawing.Point(12, 274);
-            this.groupBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox2.Size = new System.Drawing.Size(345, 72);
-            this.groupBox2.TabIndex = 11;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Argument Asset";
-            this.toolTip1.SetToolTip(this.groupBox2, "Asset which will be sent as argument on this link. This varies depending on the D" +
-        "estination Event. Optional on most cases.");
+            groupBox2.Controls.Add(textBoxArgumentAsset);
+            groupBox2.Location = new System.Drawing.Point(8, 178);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Size = new System.Drawing.Size(230, 47);
+            groupBox2.TabIndex = 11;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Argument Asset";
+            toolTip1.SetToolTip(groupBox2, "Asset which will be sent as argument on this link. This varies depending on the target event. Optional on most cases.");
             // 
             // textBoxArgumentAsset
             // 
-            this.textBoxArgumentAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.textBoxArgumentAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxArgumentAsset.Location = new System.Drawing.Point(9, 29);
-            this.textBoxArgumentAsset.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textBoxArgumentAsset.Name = "textBoxArgumentAsset";
-            this.textBoxArgumentAsset.Size = new System.Drawing.Size(326, 26);
-            this.textBoxArgumentAsset.TabIndex = 16;
-            this.toolTip1.SetToolTip(this.textBoxArgumentAsset, "Asset which will be sent as argument on this link. This varies depending on the D" +
-        "estination Event. Optional on most cases.\r\n");
-            this.textBoxArgumentAsset.TextChanged += new System.EventHandler(this.textBoxArgumentAsset_TextChanged);
-            this.textBoxArgumentAsset.Leave += new System.EventHandler(this.textBoxArgumentAsset_Leave);
+            textBoxArgumentAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            textBoxArgumentAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBoxArgumentAsset.Location = new System.Drawing.Point(6, 19);
+            textBoxArgumentAsset.Name = "textBoxArgumentAsset";
+            textBoxArgumentAsset.Size = new System.Drawing.Size(218, 20);
+            textBoxArgumentAsset.TabIndex = 16;
+            toolTip1.SetToolTip(textBoxArgumentAsset, "Asset which will be sent as argument on this link. This varies depending on the target event. Optional on most cases.\r\n");
+            textBoxArgumentAsset.TextChanged += textBoxArgumentAsset_TextChanged;
+            textBoxArgumentAsset.Leave += textBoxArgumentAsset_Leave;
             // 
             // groupBox6
             // 
-            this.groupBox6.Controls.Add(this.label6);
-            this.groupBox6.Controls.Add(this.label4);
-            this.groupBox6.Controls.Add(this.label2);
-            this.groupBox6.Controls.Add(this.label1);
-            this.groupBox6.Controls.Add(this.checkBoxHex);
-            this.groupBox6.Controls.Add(this.textBox3);
-            this.groupBox6.Controls.Add(this.textBox4);
-            this.groupBox6.Controls.Add(this.textBox2);
-            this.groupBox6.Controls.Add(this.textBox1);
-            this.groupBox6.Location = new System.Drawing.Point(12, 437);
-            this.groupBox6.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox6.Size = new System.Drawing.Size(345, 108);
-            this.groupBox6.TabIndex = 4;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Arguments";
-            this.toolTip1.SetToolTip(this.groupBox6, "Arguments for link, vary depending on destination event.");
+            groupBox6.Controls.Add(label6);
+            groupBox6.Controls.Add(label4);
+            groupBox6.Controls.Add(label2);
+            groupBox6.Controls.Add(label1);
+            groupBox6.Controls.Add(checkBoxHex);
+            groupBox6.Controls.Add(textBox3);
+            groupBox6.Controls.Add(textBox4);
+            groupBox6.Controls.Add(textBox2);
+            groupBox6.Controls.Add(textBox1);
+            groupBox6.Location = new System.Drawing.Point(8, 284);
+            groupBox6.Name = "groupBox6";
+            groupBox6.Size = new System.Drawing.Size(230, 70);
+            groupBox6.TabIndex = 4;
+            groupBox6.TabStop = false;
+            groupBox6.Text = "Arguments";
+            toolTip1.SetToolTip(groupBox6, "Arguments for link, vary depending on target event.");
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(176, 75);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(18, 20);
-            this.label6.TabIndex = 24;
-            this.label6.Text = "4";
+            label6.AutoSize = true;
+            label6.Location = new System.Drawing.Point(117, 49);
+            label6.Name = "label6";
+            label6.Size = new System.Drawing.Size(13, 13);
+            label6.TabIndex = 24;
+            label6.Text = "4";
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(176, 34);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(18, 20);
-            this.label4.TabIndex = 23;
-            this.label4.Text = "2";
+            label4.AutoSize = true;
+            label4.Location = new System.Drawing.Point(117, 22);
+            label4.Name = "label4";
+            label4.Size = new System.Drawing.Size(13, 13);
+            label4.TabIndex = 23;
+            label4.Text = "2";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(9, 74);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(18, 20);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "3";
+            label2.AutoSize = true;
+            label2.Location = new System.Drawing.Point(6, 48);
+            label2.Name = "label2";
+            label2.Size = new System.Drawing.Size(13, 13);
+            label2.TabIndex = 21;
+            label2.Text = "3";
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 34);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(18, 20);
-            this.label1.TabIndex = 20;
-            this.label1.Text = "1";
+            label1.AutoSize = true;
+            label1.Location = new System.Drawing.Point(6, 22);
+            label1.Name = "label1";
+            label1.Size = new System.Drawing.Size(13, 13);
+            label1.TabIndex = 20;
+            label1.Text = "1";
             // 
             // checkBoxHex
             // 
-            this.checkBoxHex.AutoSize = true;
-            this.checkBoxHex.Location = new System.Drawing.Point(260, 0);
-            this.checkBoxHex.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.checkBoxHex.Name = "checkBoxHex";
-            this.checkBoxHex.Size = new System.Drawing.Size(63, 24);
-            this.checkBoxHex.TabIndex = 11;
-            this.checkBoxHex.Text = "Hex";
-            this.checkBoxHex.UseVisualStyleBackColor = true;
-            this.checkBoxHex.CheckedChanged += new System.EventHandler(this.checkBoxHex_CheckedChanged);
+            checkBoxHex.AutoSize = true;
+            checkBoxHex.Location = new System.Drawing.Point(173, 0);
+            checkBoxHex.Name = "checkBoxHex";
+            checkBoxHex.Size = new System.Drawing.Size(45, 17);
+            checkBoxHex.TabIndex = 11;
+            checkBoxHex.Text = "Hex";
+            checkBoxHex.UseVisualStyleBackColor = true;
+            checkBoxHex.CheckedChanged += checkBoxHex_CheckedChanged;
             // 
             // textBox3
             // 
-            this.textBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox3.Location = new System.Drawing.Point(38, 69);
-            this.textBox3.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(128, 26);
-            this.textBox3.TabIndex = 14;
-            this.textBox3.TextChanged += new System.EventHandler(this.textBox3_TextChanged);
-            this.textBox3.Leave += new System.EventHandler(this.textBox_Leave);
+            textBox3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBox3.Location = new System.Drawing.Point(25, 45);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new System.Drawing.Size(86, 20);
+            textBox3.TabIndex = 14;
+            textBox3.TextChanged += textBox3_TextChanged;
+            textBox3.Leave += textBox_Leave;
             // 
             // textBox4
             // 
-            this.textBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox4.Location = new System.Drawing.Point(204, 71);
-            this.textBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textBox4.Name = "textBox4";
-            this.textBox4.Size = new System.Drawing.Size(126, 26);
-            this.textBox4.TabIndex = 15;
-            this.textBox4.TextChanged += new System.EventHandler(this.textBox4_TextChanged);
-            this.textBox4.Leave += new System.EventHandler(this.textBox_Leave);
+            textBox4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBox4.Location = new System.Drawing.Point(136, 46);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new System.Drawing.Size(85, 20);
+            textBox4.TabIndex = 15;
+            textBox4.TextChanged += textBox4_TextChanged;
+            textBox4.Leave += textBox_Leave;
             // 
             // textBox2
             // 
-            this.textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox2.Location = new System.Drawing.Point(204, 29);
-            this.textBox2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(126, 26);
-            this.textBox2.TabIndex = 13;
-            this.textBox2.TextChanged += new System.EventHandler(this.textBox2_TextChanged);
-            this.textBox2.Leave += new System.EventHandler(this.textBox_Leave);
+            textBox2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBox2.Location = new System.Drawing.Point(136, 19);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new System.Drawing.Size(85, 20);
+            textBox2.TabIndex = 13;
+            textBox2.TextChanged += textBox2_TextChanged;
+            textBox2.Leave += textBox_Leave;
             // 
             // textBox1
             // 
-            this.textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBox1.Location = new System.Drawing.Point(38, 29);
-            this.textBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(128, 26);
-            this.textBox1.TabIndex = 12;
-            this.textBox1.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            this.textBox1.Leave += new System.EventHandler(this.textBox_Leave);
+            textBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBox1.Location = new System.Drawing.Point(25, 19);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new System.Drawing.Size(86, 20);
+            textBox1.TabIndex = 12;
+            textBox1.TextChanged += textBox1_TextChanged;
+            textBox1.Leave += textBox_Leave;
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.buttonTargetSelf);
-            this.groupBox5.Controls.Add(this.buttonTargetPlus1);
-            this.groupBox5.Controls.Add(this.textBoxTargetAsset);
-            this.groupBox5.Location = new System.Drawing.Point(12, 192);
-            this.groupBox5.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox5.Size = new System.Drawing.Size(345, 72);
-            this.groupBox5.TabIndex = 3;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Target Asset";
-            this.toolTip1.SetToolTip(this.groupBox5, "Asset to which this link will be sent.");
+            groupBox5.Controls.Add(buttonTargetSelf);
+            groupBox5.Controls.Add(buttonTargetPlus1);
+            groupBox5.Controls.Add(textBoxTargetAsset);
+            groupBox5.Location = new System.Drawing.Point(8, 125);
+            groupBox5.Name = "groupBox5";
+            groupBox5.Size = new System.Drawing.Size(230, 47);
+            groupBox5.TabIndex = 3;
+            groupBox5.TabStop = false;
+            groupBox5.Text = "Target Asset";
+            toolTip1.SetToolTip(groupBox5, "Asset to which this link will be sent.");
             // 
             // buttonTargetSelf
             // 
-            this.buttonTargetSelf.Location = new System.Drawing.Point(196, 0);
-            this.buttonTargetSelf.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonTargetSelf.Name = "buttonTargetSelf";
-            this.buttonTargetSelf.Size = new System.Drawing.Size(63, 31);
-            this.buttonTargetSelf.TabIndex = 11;
-            this.buttonTargetSelf.Text = "Self";
-            this.buttonTargetSelf.UseVisualStyleBackColor = true;
-            this.buttonTargetSelf.Click += new System.EventHandler(this.buttonTargetSelf_Click);
+            buttonTargetSelf.Location = new System.Drawing.Point(131, 0);
+            buttonTargetSelf.Name = "buttonTargetSelf";
+            buttonTargetSelf.Size = new System.Drawing.Size(42, 20);
+            buttonTargetSelf.TabIndex = 11;
+            buttonTargetSelf.Text = "Self";
+            buttonTargetSelf.UseVisualStyleBackColor = true;
+            buttonTargetSelf.Click += buttonTargetSelf_Click;
             // 
             // buttonTargetPlus1
             // 
-            this.buttonTargetPlus1.Location = new System.Drawing.Point(268, 0);
-            this.buttonTargetPlus1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonTargetPlus1.Name = "buttonTargetPlus1";
-            this.buttonTargetPlus1.Size = new System.Drawing.Size(63, 31);
-            this.buttonTargetPlus1.TabIndex = 11;
-            this.buttonTargetPlus1.Text = "+1";
-            this.buttonTargetPlus1.UseVisualStyleBackColor = true;
-            this.buttonTargetPlus1.Click += new System.EventHandler(this.buttonTargetPlus1_Click);
+            buttonTargetPlus1.Location = new System.Drawing.Point(179, 0);
+            buttonTargetPlus1.Name = "buttonTargetPlus1";
+            buttonTargetPlus1.Size = new System.Drawing.Size(42, 20);
+            buttonTargetPlus1.TabIndex = 11;
+            buttonTargetPlus1.Text = "+1";
+            buttonTargetPlus1.UseVisualStyleBackColor = true;
+            buttonTargetPlus1.Click += buttonTargetPlus1_Click;
             // 
             // textBoxTargetAsset
             // 
-            this.textBoxTargetAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
-            this.textBoxTargetAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.textBoxTargetAsset.Location = new System.Drawing.Point(9, 29);
-            this.textBoxTargetAsset.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.textBoxTargetAsset.Name = "textBoxTargetAsset";
-            this.textBoxTargetAsset.Size = new System.Drawing.Size(326, 26);
-            this.textBoxTargetAsset.TabIndex = 10;
-            this.toolTip1.SetToolTip(this.textBoxTargetAsset, "Asset to which this link will be sent.");
-            this.textBoxTargetAsset.TextChanged += new System.EventHandler(this.textBoxTargetAsset_TextChanged);
-            this.textBoxTargetAsset.Leave += new System.EventHandler(this.textBoxTargetAsset_Leave);
+            textBoxTargetAsset.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
+            textBoxTargetAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            textBoxTargetAsset.Location = new System.Drawing.Point(6, 19);
+            textBoxTargetAsset.Name = "textBoxTargetAsset";
+            textBoxTargetAsset.Size = new System.Drawing.Size(218, 20);
+            textBoxTargetAsset.TabIndex = 10;
+            toolTip1.SetToolTip(textBoxTargetAsset, "Asset to which this link will be sent.");
+            textBoxTargetAsset.TextChanged += textBoxTargetAsset_TextChanged;
+            textBoxTargetAsset.Leave += textBoxTargetAsset_Leave;
             // 
             // groupBox4
             // 
-            this.groupBox4.Controls.Add(this.comboSendEvent);
-            this.groupBox4.Location = new System.Drawing.Point(12, 111);
-            this.groupBox4.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBox4.Size = new System.Drawing.Size(345, 72);
-            this.groupBox4.TabIndex = 2;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Target Event";
-            this.toolTip1.SetToolTip(this.groupBox4, "Event sent by this link.");
+            groupBox4.Controls.Add(comboSendEvent);
+            groupBox4.Location = new System.Drawing.Point(8, 72);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new System.Drawing.Size(230, 47);
+            groupBox4.TabIndex = 2;
+            groupBox4.TabStop = false;
+            groupBox4.Text = "Target Event";
+            toolTip1.SetToolTip(groupBox4, "Event sent by this link.");
             // 
             // comboSendEvent
             // 
-            this.comboSendEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.comboSendEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.comboSendEvent.FormattingEnabled = true;
-            this.comboSendEvent.Location = new System.Drawing.Point(9, 29);
-            this.comboSendEvent.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.comboSendEvent.Name = "comboSendEvent";
-            this.comboSendEvent.Size = new System.Drawing.Size(325, 28);
-            this.comboSendEvent.TabIndex = 9;
-            this.toolTip1.SetToolTip(this.comboSendEvent, "Event sent by this link.");
-            this.comboSendEvent.SelectedIndexChanged += new System.EventHandler(this.comboSendEvent_SelectedIndexChanged);
-            this.comboSendEvent.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboBox_KeyDown);
+            comboSendEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            comboSendEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            comboSendEvent.FormattingEnabled = true;
+            comboSendEvent.Location = new System.Drawing.Point(6, 19);
+            comboSendEvent.Name = "comboSendEvent";
+            comboSendEvent.Size = new System.Drawing.Size(218, 21);
+            comboSendEvent.TabIndex = 9;
+            toolTip1.SetToolTip(comboSendEvent, "Event sent by this link.");
+            comboSendEvent.SelectedIndexChanged += comboSendEvent_SelectedIndexChanged;
+            comboSendEvent.KeyDown += comboBox_KeyDown;
             // 
             // groupBoxSourceEvent
             // 
-            this.groupBoxSourceEvent.Controls.Add(this.comboRecieveEvent);
-            this.groupBoxSourceEvent.Controls.Add(this.numericUpDownTime);
-            this.groupBoxSourceEvent.Location = new System.Drawing.Point(9, 29);
-            this.groupBoxSourceEvent.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBoxSourceEvent.Name = "groupBoxSourceEvent";
-            this.groupBoxSourceEvent.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.groupBoxSourceEvent.Size = new System.Drawing.Size(348, 72);
-            this.groupBoxSourceEvent.TabIndex = 1;
-            this.groupBoxSourceEvent.TabStop = false;
-            this.groupBoxSourceEvent.Text = "Source Event";
-            this.toolTip1.SetToolTip(this.groupBoxSourceEvent, "Event which activates this link.");
+            groupBoxSourceEvent.Controls.Add(comboRecieveEvent);
+            groupBoxSourceEvent.Controls.Add(numericUpDownTime);
+            groupBoxSourceEvent.Location = new System.Drawing.Point(6, 19);
+            groupBoxSourceEvent.Name = "groupBoxSourceEvent";
+            groupBoxSourceEvent.Size = new System.Drawing.Size(232, 47);
+            groupBoxSourceEvent.TabIndex = 1;
+            groupBoxSourceEvent.TabStop = false;
+            groupBoxSourceEvent.Text = "Source Event";
+            toolTip1.SetToolTip(groupBoxSourceEvent, "Event which activates this link.");
             // 
             // comboRecieveEvent
             // 
-            this.comboRecieveEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
-            this.comboRecieveEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
-            this.comboRecieveEvent.FormattingEnabled = true;
-            this.comboRecieveEvent.Location = new System.Drawing.Point(9, 29);
-            this.comboRecieveEvent.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.comboRecieveEvent.Name = "comboRecieveEvent";
-            this.comboRecieveEvent.Size = new System.Drawing.Size(328, 28);
-            this.comboRecieveEvent.TabIndex = 8;
-            this.toolTip1.SetToolTip(this.comboRecieveEvent, "Event which activates this link.");
-            this.comboRecieveEvent.SelectedIndexChanged += new System.EventHandler(this.comboReceiveEvent_SelectedIndexChanged);
-            this.comboRecieveEvent.KeyDown += new System.Windows.Forms.KeyEventHandler(this.comboBox_KeyDown);
+            comboRecieveEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            comboRecieveEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
+            comboRecieveEvent.FormattingEnabled = true;
+            comboRecieveEvent.Location = new System.Drawing.Point(6, 19);
+            comboRecieveEvent.Name = "comboRecieveEvent";
+            comboRecieveEvent.Size = new System.Drawing.Size(220, 21);
+            comboRecieveEvent.TabIndex = 8;
+            toolTip1.SetToolTip(comboRecieveEvent, "Event which activates this link.");
+            comboRecieveEvent.SelectedIndexChanged += comboReceiveEvent_SelectedIndexChanged;
+            comboRecieveEvent.KeyDown += comboBox_KeyDown;
             // 
             // numericUpDownTime
             // 
-            this.numericUpDownTime.DecimalPlaces = 4;
-            this.numericUpDownTime.Location = new System.Drawing.Point(12, 29);
-            this.numericUpDownTime.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.numericUpDownTime.Name = "numericUpDownTime";
-            this.numericUpDownTime.Size = new System.Drawing.Size(327, 26);
-            this.numericUpDownTime.TabIndex = 18;
-            this.numericUpDownTime.Visible = false;
-            this.numericUpDownTime.ValueChanged += new System.EventHandler(this.numericUpDownTime_ValueChanged);
+            numericUpDownTime.DecimalPlaces = 4;
+            numericUpDownTime.Location = new System.Drawing.Point(8, 19);
+            numericUpDownTime.Name = "numericUpDownTime";
+            numericUpDownTime.Size = new System.Drawing.Size(218, 20);
+            numericUpDownTime.TabIndex = 18;
+            numericUpDownTime.Visible = false;
+            numericUpDownTime.ValueChanged += numericUpDownTime_ValueChanged;
             // 
             // buttonHelp
             // 
-            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.buttonHelp.Location = new System.Drawing.Point(316, 540);
-            this.buttonHelp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(158, 35);
-            this.buttonHelp.TabIndex = 20;
-            this.buttonHelp.Text = "Help!";
-            this.buttonHelp.UseVisualStyleBackColor = true;
-            this.buttonHelp.Click += new System.EventHandler(this.button1_Click);
+            buttonHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            buttonHelp.Location = new System.Drawing.Point(211, 351);
+            buttonHelp.Name = "buttonHelp";
+            buttonHelp.Size = new System.Drawing.Size(105, 23);
+            buttonHelp.TabIndex = 20;
+            buttonHelp.Text = "Help!";
+            buttonHelp.UseVisualStyleBackColor = true;
+            buttonHelp.Click += button1_Click;
             // 
             // LinkEditor
             // 
-            this.AcceptButton = this.buttonOK;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.buttonCancel;
-            this.ClientSize = new System.Drawing.Size(876, 634);
-            this.Controls.Add(this.buttonHelp);
-            this.Controls.Add(this.groupBoxEventData);
-            this.Controls.Add(this.buttonOK);
-            this.Controls.Add(this.buttonCancel);
-            this.Controls.Add(this.buttonArrowDown);
-            this.Controls.Add(this.buttonArrowUp);
-            this.Controls.Add(this.buttonPaste);
-            this.Controls.Add(this.buttonCopy);
-            this.Controls.Add(this.buttonRemove);
-            this.Controls.Add(this.buttonAdd);
-            this.Controls.Add(this.groupBox1);
-            this.KeyPreview = true;
-            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.MaximizeBox = false;
-            this.Name = "LinkEditor";
-            this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Link List Editor";
-            this.groupBox1.ResumeLayout(false);
-            this.groupBoxEventData.ResumeLayout(false);
-            this.groupBoxSourceCheckOrFlags.ResumeLayout(false);
-            this.groupBoxSourceCheckOrFlags.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBoxSourceEvent.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownTime)).EndInit();
-            this.ResumeLayout(false);
+            AcceptButton = buttonOK;
+            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            CancelButton = buttonCancel;
+            ClientSize = new System.Drawing.Size(584, 412);
+            Controls.Add(buttonHelp);
+            Controls.Add(groupBoxEventData);
+            Controls.Add(buttonOK);
+            Controls.Add(buttonCancel);
+            Controls.Add(buttonArrowDown);
+            Controls.Add(buttonArrowUp);
+            Controls.Add(buttonPaste);
+            Controls.Add(buttonCopy);
+            Controls.Add(buttonRemove);
+            Controls.Add(buttonAdd);
+            Controls.Add(groupBox1);
+            KeyPreview = true;
+            MaximizeBox = false;
+            Name = "LinkEditor";
+            ShowIcon = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Link List Editor";
+            groupBox1.ResumeLayout(false);
+            groupBoxEventData.ResumeLayout(false);
+            groupBoxSourceCheckOrFlags.ResumeLayout(false);
+            groupBoxSourceCheckOrFlags.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            groupBox6.ResumeLayout(false);
+            groupBox6.PerformLayout();
+            groupBox5.ResumeLayout(false);
+            groupBox5.PerformLayout();
+            groupBox4.ResumeLayout(false);
+            groupBoxSourceEvent.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)numericUpDownTime).EndInit();
+            ResumeLayout(false);
 
         }
 

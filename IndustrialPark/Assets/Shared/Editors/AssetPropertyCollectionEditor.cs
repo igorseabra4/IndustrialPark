@@ -37,7 +37,9 @@ namespace IndustrialPark
 
             var array = value as Array;
 
-            var parent = (GenericAssetDataContainer)((DynamicTypeDescriptor)context.Instance).Component;
+            var parent = context.Instance is DynamicTypeDescriptor dtd ?
+                (GenericAssetDataContainer)dtd.Component :
+                (GenericAssetDataContainer)context.Instance;
 
             // use wrapper for asset ids
             if (array.GetType().GetElementType().Equals(typeof(AssetID)))
