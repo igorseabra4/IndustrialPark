@@ -112,9 +112,12 @@ namespace IndustrialPark
             cb.SelectedItem = a;
             cb.SelectedIndexChanged += (object sender, EventArgs e) =>
             {
+                List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
                 var flags = asset.AtomicFlags;
                 flags[index] = (AtomicFlags)cb.SelectedItem;
                 asset.AtomicFlags = flags;
+                actions.Add(archive.GetAssetAddedAction(asset));
+                Program.UndoBuffer.AddAction(actions);
             };
             return cb;
         }
@@ -139,8 +142,10 @@ namespace IndustrialPark
                     operation.PerformAndClamp(oldColor.Y, color.Value.Y),
                     operation.PerformAndClamp(oldColor.Z, color.Value.Z),
                     operation.PerformAndClamp(oldColor.W, color.Value.W)));
-
+                List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
                 asset.ApplyVertexColors(performOperation);
+                actions.Add(archive.GetAssetAddedAction(asset));
+                Program.UndoBuffer.AddAction(actions);
                 archive.UnsavedChanges = true;
                 updateListView(asset);
             }
@@ -151,7 +156,10 @@ namespace IndustrialPark
             var factor = ApplyScale.GetVector(true);
             if (factor.HasValue)
             {
+                List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
                 asset.ApplyRotation(MathUtil.DegreesToRadians(factor.Value.X), MathUtil.DegreesToRadians(factor.Value.Y), MathUtil.DegreesToRadians(factor.Value.Z));
+                actions.Add(archive.GetAssetAddedAction(asset));
+                Program.UndoBuffer.AddAction(actions);
                 archive.UnsavedChanges = true;
                 updateListView(asset);
             }
@@ -162,7 +170,10 @@ namespace IndustrialPark
             var factor = ApplyScale.GetVector(false);
             if (factor.HasValue)
             {
+                List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
                 asset.ApplyScale(factor.Value);
+                actions.Add(archive.GetAssetAddedAction(asset));
+                Program.UndoBuffer.AddAction(actions);
                 archive.UnsavedChanges = true;
                 updateListView(asset);
             }
@@ -172,10 +183,13 @@ namespace IndustrialPark
         {
             if (ImportModel.GetModel(archive.game, archive.platform, asset.assetType, out byte[] newModel, out bool createPipt))
             {
+                List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
                 asset.Data = newModel;
                 asset.Setup(Program.MainForm.renderer);
                 if (createPipt && propertyGridPipeInfo.SelectedObject == null)
                     buttonCreatePipeInfo.PerformClick();
+                actions.Add(archive.GetAssetAddedAction(asset));
+                Program.UndoBuffer.AddAction(actions);
                 ArchiveEditorFunctions.RecalculateAllMatrices();
                 archive.UnsavedChanges = true;
                 updateListView(asset);
@@ -219,10 +233,13 @@ namespace IndustrialPark
 
         private void buttonMaterialEditor_Click(object sender, EventArgs e)
         {
+            List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
             var materials = MaterialEffectEditor.GetMaterials(asset.Materials);
             if (materials != null)
             {
                 asset.Materials = materials;
+                actions.Add(archive.GetAssetAddedAction(asset));
+                Program.UndoBuffer.AddAction(actions);
                 archive.UnsavedChanges = true;
                 updateListView(asset);
                 SetupTexturesBox();
@@ -265,25 +282,35 @@ namespace IndustrialPark
 
         private void buttonCreatePipeInfo_Click(object sender, EventArgs e)
         {
+            var hasPipt = archive.ContainsAssetWithType(AssetType.PipeInfoTable);
+            var actions = new List<IReversibleAction>();
             var pipt = archive.GetPIPT(true);
+            if (hasPipt)
+                actions.Add(archive.GetAssetRemovedAction(pipt));
             var entry = new PipeInfo(asset.game)
             {
                 Model = GetAssetID()
             };
             entry.SetGame(asset.game);
             pipt.AddEntry(entry);
+            actions.Add(archive.GetAssetAddedAction(pipt));
             SetupPiptBox(pipeInfos.Count);
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void buttonDeletePipeInfo_Click(object sender, EventArgs e)
         {
             if (pipeInfos.Count > 0 && currentPipeInfo > -1 && currentPipeInfo < pipeInfos.Count)
             {
+                var actions = new List<IReversibleAction>();
                 pipeInfos.RemoveAt(currentPipeInfo);
                 var pipt = archive.GetPIPT();
+                actions.Add(archive.GetAssetRemovedAction(pipt));
                 pipt.RemoveEntry(GetAssetID());
                 pipt.AddEntries(pipeInfos);
+                actions.Add(archive.GetAssetAddedAction(pipt));
                 SetupPiptBox(currentPipeInfo < 1 ? 0 : currentPipeInfo - 1);
+                Program.UndoBuffer.AddAction(actions);
             }
         }
 
@@ -307,8 +334,11 @@ namespace IndustrialPark
         private void propertyGridPipeInfo_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             var pipt = archive.GetPIPT();
+            List<IReversibleAction> actions = [archive.GetAssetRemovedAction(pipt)];
             pipt.RemoveEntry(GetAssetID());
             pipt.AddEntries(pipeInfos);
+            actions.Add(archive.GetAssetAddedAction(pipt));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void SetupLodtBox()
@@ -331,7 +361,11 @@ namespace IndustrialPark
 
         private void buttonCreateLevelOfDetail_Click(object sender, EventArgs e)
         {
+            var hasLodt = archive.ContainsAssetWithType(AssetType.LevelOfDetailTable);
             var lodt = archive.GetLODT(true);
+            List<IReversibleAction> actions = [];
+            if (hasLodt)
+                actions.Add(archive.GetAssetRemovedAction(lodt));
             if (propertyGridLevelOfDetail.SelectedObject == null)
             {
                 var entry = new EntryLODT(archive.game)
@@ -349,6 +383,8 @@ namespace IndustrialPark
                 propertyGridLevelOfDetail.SelectedObject = null;
                 propertyGridLevelOfDetail.Enabled = false;
             }
+            actions.Add(archive.GetAssetAddedAction(lodt));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void propertyGridLevelOfDetail_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
@@ -356,7 +392,10 @@ namespace IndustrialPark
             if (propertyGridLevelOfDetail.SelectedObject == null)
                 return;
             var lodt = archive.GetLODT();
+            List<IReversibleAction> actions = [archive.GetAssetRemovedAction(lodt)];
             lodt.AddEntry(((LodtWrapper)propertyGridLevelOfDetail.SelectedObject).Entry);
+            actions.Add(archive.GetAssetAddedAction(lodt));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void SetupCollBox()
@@ -380,7 +419,11 @@ namespace IndustrialPark
 
         private void buttonCreateCollision_Click(object sender, EventArgs e)
         {
+            var hasColl = archive.ContainsAssetWithType(AssetType.CollisionTable);
             var coll = archive.GetCOLL(true);
+            List<IReversibleAction> actions = [];
+            if (hasColl)
+                actions.Add(archive.GetAssetRemovedAction(coll));
             if (propertyGridCollision.SelectedObject == null)
             {
                 var entry = new EntryCOLL()
@@ -399,6 +442,8 @@ namespace IndustrialPark
                 propertyGridCollision.Enabled = false;
                 buttonImportColl.Enabled = false;
             }
+            actions.Add(archive.GetAssetAddedAction(coll));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void propertyGridCollision_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
@@ -406,7 +451,10 @@ namespace IndustrialPark
             if (propertyGridCollision.SelectedObject == null)
                 return;
             var coll = archive.GetCOLL();
+            List<IReversibleAction> actions = [archive.GetAssetRemovedAction(coll)];
             coll.AddEntry(((CollWrapper)propertyGridCollision.SelectedObject).Entry);
+            actions.Add(archive.GetAssetAddedAction(coll));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void SetupShdwBox()
@@ -429,7 +477,11 @@ namespace IndustrialPark
 
         private void buttonCreateShadow_Click(object sender, EventArgs e)
         {
+            var hasShdw = archive.ContainsAssetWithType(AssetType.ShadowTable);
             var shdw = archive.GetSHDW(true);
+            List<IReversibleAction> actions = [];
+            if (hasShdw)
+                actions.Add(archive.GetAssetRemovedAction(shdw));
             if (propertyGridShadow.SelectedObject == null)
             {
                 var entry = new EntrySHDW()
@@ -447,14 +499,19 @@ namespace IndustrialPark
                 propertyGridShadow.SelectedObject = null;
                 propertyGridShadow.Enabled = false;
             }
+            actions.Add(archive.GetAssetAddedAction(shdw));
+            Program.UndoBuffer.AddAction(actions);
         }
-
+   
         private void propertyGridShadow_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             if (propertyGridShadow.SelectedObject == null)
                 return;
             var shdw = archive.GetSHDW();
+            List<IReversibleAction> actions = [archive.GetAssetRemovedAction(shdw)];
             shdw.AddEntry(((ShdwWrapper)propertyGridShadow.SelectedObject).Entry);
+            actions.Add(archive.GetAssetAddedAction(shdw));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         public bool CheckedForTemplate => checkBoxUseTemplates.Checked;
@@ -480,20 +537,20 @@ namespace IndustrialPark
 
         private void buildCollTreeButton_Click(object sender, EventArgs e)
         {
+            List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
             asset.BuildCollisionTree();
             SetupCollButton();
+            actions.Add(archive.GetAssetAddedAction(asset));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void removeCollPlgButton_Click(object sender, EventArgs e)
         {
+            List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
             asset.RemoveCollisionTree();
             removeCollPlgButton.Enabled = false;
-        }
-
-        private void importCollModlButton_Click(object sender, EventArgs e)
-        {
-            var coll = archive.GetCOLL(true);
-
+            actions.Add(archive.GetAssetAddedAction(asset));
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void buttonImportColl_Click(object sender, EventArgs e)
@@ -517,27 +574,53 @@ namespace IndustrialPark
                 rwmodel.GetBytes(asset.RenderWareVersion));
             Asset collModel = archive.AddAssetWithUniqueID(collmodelAhdr, archive.game, archive.platform.Endianness(), archive.IndexOfLayerOfType(LayerType.MODEL));
 
+            List<IReversibleAction> actions = [archive.GetAssetAddedAction(collModel)];
+
             var coll = archive.GetCOLL();
+            actions.Add(archive.GetAssetRemovedAction(coll));
             foreach (var item in coll.Entries)
                 if (item.Model == asset.assetID)
                 {
-                    if (item.CollisionModel != 0)
+                    if (item.CollisionModel != 0 && archive.ContainsAsset(item.CollisionModel))
+                    {
+                        actions.Add(archive.GetAssetRemovedAction(item.CollisionModel));
                         archive.RemoveAsset(item.CollisionModel);
+                    }
                     item.CollisionModel = collModel.assetID;
                     propertyGridCollision.SelectedObject = new CollWrapper(item);
                 }
+            actions.Add(archive.GetAssetAddedAction(coll));
 
+            actions.Add(archive.GetAssetRemovedAction(asset));
             asset.RemoveCollisionTree();
+            actions.Add(archive.GetAssetAddedAction(asset));
             foreach (var ae in Program.MainForm.archiveEditors)
                 if (ae.archive == archive)
-                {
                     ae.PopulateAssetListAndComboBox();
-                }
+            Program.UndoBuffer.AddAction(actions);
         }
 
         private void numericHighlightAtomic_ValueChanged(object sender, EventArgs e)
         {
             asset.GetRenderWareModelFile()?.highlightAtomic = (int)numericHighlightAtomic.Value;
+        }
+
+        private void numericHighlightMaterial_ValueChanged(object sender, EventArgs e)
+        {
+            numericHighlightAtomic.Value = -1;
+        }
+
+        private RWAnalyze rwAnalyze;
+
+        private void buttonRWanalyze_Click(object sender, EventArgs e)
+        {
+            if (this.rwAnalyze != null)
+            {
+                this.rwAnalyze.Close();
+                this.rwAnalyze.Dispose();
+            }
+            this.rwAnalyze = new RWAnalyze(asset.ModelAsRWSections);
+            this.rwAnalyze.Show();
         }
     }
 }

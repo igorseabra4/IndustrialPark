@@ -65,7 +65,8 @@
             buildCollTreeButton = new System.Windows.Forms.Button();
             removeCollPlgButton = new System.Windows.Forms.Button();
             numericHighlightAtomic = new System.Windows.Forms.NumericUpDown();
-            label1 = new System.Windows.Forms.Label();
+            labelHighlightAtomic = new System.Windows.Forms.Label();
+            buttonRWanalyze = new System.Windows.Forms.Button();
             groupBoxImport.SuspendLayout();
             groupBoxExport.SuspendLayout();
             groupBoxTextures.SuspendLayout();
@@ -495,21 +496,32 @@
             numericHighlightAtomic.Value = new decimal(new int[] { 1, 0, 0, int.MinValue });
             numericHighlightAtomic.ValueChanged += numericHighlightAtomic_ValueChanged;
             // 
-            // label1
+            // labelHighlightAtomic
             // 
-            label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(201, 525);
-            label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(85, 13);
-            label1.TabIndex = 50;
-            label1.Text = "Highlight atomic:";
+            labelHighlightAtomic.AutoSize = true;
+            labelHighlightAtomic.Location = new System.Drawing.Point(201, 525);
+            labelHighlightAtomic.Name = "labelHighlightAtomic";
+            labelHighlightAtomic.Size = new System.Drawing.Size(86, 13);
+            labelHighlightAtomic.TabIndex = 50;
+            labelHighlightAtomic.Text = "Highlight Atomic:";
+            // 
+            // buttonRWanalyze
+            // 
+            buttonRWanalyze.Location = new System.Drawing.Point(145, 582);
+            buttonRWanalyze.Name = "buttonRWanalyze";
+            buttonRWanalyze.Size = new System.Drawing.Size(118, 22);
+            buttonRWanalyze.TabIndex = 54;
+            buttonRWanalyze.Text = "RWAnalyze";
+            buttonRWanalyze.UseVisualStyleBackColor = true;
+            buttonRWanalyze.Click += buttonRWanalyze_Click;
             // 
             // InternalModelEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(527, 633);
-            Controls.Add(label1);
+            Controls.Add(buttonRWanalyze);
+            Controls.Add(labelHighlightAtomic);
             Controls.Add(numericHighlightAtomic);
             Controls.Add(removeCollPlgButton);
             Controls.Add(buildCollTreeButton);
@@ -587,6 +599,7 @@
         private System.Windows.Forms.Button removeCollPlgButton;
         private System.Windows.Forms.Button buttonImportColl;
         private System.Windows.Forms.NumericUpDown numericHighlightAtomic;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelHighlightAtomic;
+        private System.Windows.Forms.Button buttonRWanalyze;
     }
 }
