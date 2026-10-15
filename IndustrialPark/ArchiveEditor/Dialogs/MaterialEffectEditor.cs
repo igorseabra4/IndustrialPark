@@ -25,22 +25,11 @@ namespace IndustrialPark
             toolTip = new ToolTip();
         }
 
-        private bool OK = false;
-
         public static Material_0007[] GetMaterials(Material_0007[] materials)
         {
             MaterialEffectEditor materialEffectEditor = new MaterialEffectEditor(materials);
-            materialEffectEditor.ShowDialog();
-
-            if (materialEffectEditor.OK)
-            {
-                List<Material_0007> outMaterials = new List<Material_0007>();
-                foreach (Material_0007 material in materialEffectEditor.listBoxMaterials.Items)
-                    outMaterials.Add(material);
-
-                return outMaterials.ToArray();
-            }
-
+            if (materialEffectEditor.ShowDialog() == DialogResult.OK)
+                return [.. materialEffectEditor.listBoxMaterials.Items.Cast<Material_0007>()];
             return null;
         }
 
@@ -51,7 +40,6 @@ namespace IndustrialPark
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            OK = true;
             Close();
         }
 
@@ -61,18 +49,19 @@ namespace IndustrialPark
 
         private void listBoxMaterials_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (currentMaterials.Count() == 0)
+            if (programIsChangingStuff)
                 return;
 
             programIsChangingStuff = true;
 
-            panelColor.BackColor = Color.FromArgb(
-                currentMaterials[0].materialStruct.color.A,
-                currentMaterials[0].materialStruct.color.R,
-                currentMaterials[0].materialStruct.color.G,
-                currentMaterials[0].materialStruct.color.B);
+            if (currentMaterials.Length > 0)
+                panelColor.BackColor = Color.FromArgb(
+                    currentMaterials[0].materialStruct.color.A,
+                    currentMaterials[0].materialStruct.color.R,
+                    currentMaterials[0].materialStruct.color.G,
+                    currentMaterials[0].materialStruct.color.B);
 
-            propertyGridTextureInfo.SelectedObjects = (from Material_0007 mat in currentMaterials where mat.texture != null select mat.texture).ToArray();
+            propertyGridTextureInfo.SelectedObjects = [.. currentMaterials.Where(m => m.texture != null).Select(m => m.texture)];
 
             // Using PropertyGrid with multiple objects is broken with "Categorized" sorting after switching to .NET 10
             propertyGridTextureInfo.PropertySort = PropertySort.CategorizedAlphabetical;
@@ -96,7 +85,6 @@ namespace IndustrialPark
                     comboBoxMatEffects.SelectedItem = null;
                     propertyGridMatEffects.SelectedObject = null;
                 }
-                buttonAddTexture.Enabled = currentMaterials[0].texture == null;
             }
             else
             {
@@ -104,7 +92,6 @@ namespace IndustrialPark
                 propertyGridMatEffects.Enabled = false;
                 comboBoxMatEffects.SelectedItem = null;
                 propertyGridMatEffects.SelectedObject = null;
-                buttonAddTexture.Enabled = false;
             }
 
             programIsChangingStuff = false;
@@ -143,7 +130,7 @@ namespace IndustrialPark
 
             bool foundMatEffect = false;
 
-            for (int j = 0; j < currentMaterials[0].materialExtension.extensionSectionList.Count; j++)
+            for (int j = 0; j < currentMaterials[0].materialExtension.extensionSectionList.Length; j++)
                 if (currentMaterials[0].materialExtension.extensionSectionList[j] is MaterialEffectsPLG_0120 matEffects)
                 {
                     matEffects.MaterialEffectType = (MaterialEffectType)comboBoxMatEffects.SelectedItem;
@@ -154,36 +141,35 @@ namespace IndustrialPark
 
             if (!foundMatEffect)
             {
-                var matEffects = new MaterialEffectsPLG_0120
+                var matEffects = new MaterialEffectsPLG_0120()
                 {
                     MaterialEffectType = (MaterialEffectType)comboBoxMatEffects.SelectedItem
                 };
                 propertyGridMatEffects.SelectedObject = matEffects.materialEffect1;
-                currentMaterials[0].materialExtension.extensionSectionList.Add(matEffects);
+                currentMaterials[0].materialExtension.Add(matEffects);
             }
         }
 
         private void propertyGridTextureInfo_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            var selectedIndices = (from int i in listBoxMaterials.SelectedIndices select i).ToHashSet();
-            for (int i = 0; i < listBoxMaterials.Items.Count; i++)
+            programIsChangingStuff = true;
+
+            var selectedIndices = listBoxMaterials.SelectedIndices.Cast<int>().ToList();
+            listBoxMaterials.SelectedIndices.Clear();
+            foreach (int i in selectedIndices)
             {
                 listBoxMaterials.Items[i] = listBoxMaterials.Items[i];
-                listBoxMaterials.SetSelected(i, selectedIndices.Contains(i));
+                listBoxMaterials.SetSelected(i, true);
             }
+
+            programIsChangingStuff = false;
         }
 
         private void buttonAddTexture_Click(object sender, EventArgs e)
         {
-            if (currentMaterials.Count() == 1)
-            {
-                currentMaterials[0].texture = new Texture_0006
-                {
-                    diffuseTextureName = new String_0002("default")
-                };
-                currentMaterials[0].materialStruct.isTextured = 1;
-                propertyGridTextureInfo_PropertyValueChanged(sender, null);
-            }
+            foreach (var m in currentMaterials)
+                if (!m.IsTextured)
+                    m.IsTextured = true;
         }
 
         private void buttonSelectSimilar_Click(object sender, EventArgs e)

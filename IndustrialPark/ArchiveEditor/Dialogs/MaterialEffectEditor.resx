@@ -374,9 +374,6 @@
   <data name="&gt;&gt;groupBox3.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="buttonAddTexture.Enabled" type="System.Boolean, mscorlib">
-    <value>False</value>
-  </data>
   <data name="buttonAddTexture.Location" type="System.Drawing.Point, System.Drawing">
     <value>107, 401</value>
   </data>

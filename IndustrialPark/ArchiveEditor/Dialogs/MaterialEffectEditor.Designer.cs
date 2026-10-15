@@ -65,6 +65,7 @@
             // 
             // buttonOK
             // 
+            buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             resources.ApplyResources(buttonOK, "buttonOK");
             buttonOK.Name = "buttonOK";
             buttonOK.UseVisualStyleBackColor = true;
