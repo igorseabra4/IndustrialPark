@@ -46,6 +46,7 @@ namespace IndustrialPark
             dateTimePicker1.MaxDate = DateTime.MaxValue;
 
             dateTimePicker1.Value = DateTime.Now;
+            labelActionUndone.Visible = false;
         }
 
         private NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString) : this()
@@ -90,7 +91,7 @@ namespace IndustrialPark
 
             try
             {
-                dateTimePicker1.Value = new DateTime(previousDate);
+                dateTimePicker1.Value = DateTimeOffset.FromUnixTimeSeconds(previousDate).UtcDateTime;
             }
             catch
             {
@@ -98,6 +99,7 @@ namespace IndustrialPark
             }
 
             textBoxPCRT.Text = previousDateString;
+            labelActionUndone.Visible = true;
         }
 
         private bool OK = false;
