@@ -39,7 +39,6 @@
             textBoxPCRT = new System.Windows.Forms.TextBox();
             checkBoxDefaultAssets = new System.Windows.Forms.CheckBox();
             checkBoxNoLayers = new System.Windows.Forms.CheckBox();
-            labelActionUndone = new System.Windows.Forms.Label();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -154,15 +153,6 @@
             checkBoxNoLayers.Text = "No Layers";
             checkBoxNoLayers.UseVisualStyleBackColor = true;
             // 
-            // labelActionUndone
-            // 
-            labelActionUndone.AutoSize = true;
-            labelActionUndone.Location = new System.Drawing.Point(18, 201);
-            labelActionUndone.Name = "labelActionUndone";
-            labelActionUndone.Size = new System.Drawing.Size(149, 13);
-            labelActionUndone.TabIndex = 11;
-            labelActionUndone.Text = "This action cannot be undone";
-            // 
             // NewArchive
             // 
             AcceptButton = buttonOK;
@@ -177,7 +167,6 @@
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Controls.Add(checkBoxDefaultAssets);
-            Controls.Add(labelActionUndone);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             MaximizeBox = false;
             Name = "NewArchive";
@@ -205,6 +194,5 @@
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.CheckBox checkBoxDefaultAssets;
         private System.Windows.Forms.CheckBox checkBoxNoLayers;
-        private System.Windows.Forms.Label labelActionUndone;
     }
 }

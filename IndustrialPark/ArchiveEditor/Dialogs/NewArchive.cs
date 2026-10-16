@@ -46,14 +46,13 @@ namespace IndustrialPark
             dateTimePicker1.MaxDate = DateTime.MaxValue;
 
             dateTimePicker1.Value = DateTime.Now;
-            labelActionUndone.Visible = false;
         }
 
         private NewArchive(Platform previousPlatform, Game previousGame, int previousDate, string previousDateString) : this()
         {
             checkBoxDefaultAssets.Visible = false;
             checkBoxNoLayers.Visible = false;
-
+            
             Text = "Convert Archive";
             buttonOK.Text = "Convert";
 
@@ -99,7 +98,6 @@ namespace IndustrialPark
             }
 
             textBoxPCRT.Text = previousDateString;
-            labelActionUndone.Visible = true;
         }
 
         private bool OK = false;
