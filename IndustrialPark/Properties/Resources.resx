@@ -53,12 +53,37 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="BakeRotationDescription" xml:space="preserve">
+    <value>Creates a copy of the model used by this asset with the Entity rotation applied directly to the model.
+The asset will use the newly rotated model, and its Entity rotation values will be reset to (0, 0, 0).
+This function only works with Model assets, not Model Info assets.
+
+Useful for:
+- Rotating platforms that follow Move Points and face the direction of movement, allowing you to change their movement direction.
+- Rotating Teeter-Totter type platforms to change their tilt direction.
+- Rotating TRACK assets used for slides.
+
+This function creates a copy of the model, increasing the archive's file size. If the archive becomes too large, the game may fail to load.
+The original model will not be removed. You can delete it manually if it is no longer used by any other assets.</value>
+  </data>
+  <data name="BakeScaleDescription" xml:space="preserve">
+    <value>Creates a copy of the model with the Entity scale applied directly to the model.
+The asset will use the newly scaled model, and its Entity scale values will be reset to (1, 1, 1).
+This function works with both Model and Model Info assets.
+
+Useful for:
+- Avoiding collision glitches: Collidable assets normally have glitchy collision when scaled non-uniformly through their Entity scale values (when X, Y, and Z are not equal).
+- Scaling NPCs: Most NPC and enemy asset types do not handle Entity scale values properly. Since these assets use Model Info, this function creates a scaled copy of the Model Info asset so you can use the scaled NPC or enemy without relying on the Entity scale values. The Model Info scale is a field which you can also edit yourself in the Model Info asset editor later.
+
+This function creates a copy of the model, increasing the archive's file size. If the archive becomes too large, the game may fail to load.
+The original model will not be removed. You can delete it manually if it is no longer used by any other assets.</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="PlaceholderBanner" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PlaceholderBanner1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

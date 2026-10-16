@@ -375,39 +375,25 @@ namespace IndustrialPark
 
         public void ApplyBakeRotation()
         {
-            var result = MessageBox.Show("A copy of the model with the rotation baked into will be created. " +
-            "The asset will then use the new rotated model and the rotation values will be set to (0, 0, 0). " +
-            "It's, for most part, only needed when rotating TRACK assets (used for custom slides). " +
-            "This only works with Model assets.", "Bake Rotation", MessageBoxButtons.OKCancel);
-            if (result == DialogResult.OK)
+            var newValue = ArchiveEditorFunctions.ApplyBakeRotation(_model, _yaw, _pitch, _roll);
+            if (newValue != _model)
             {
-                var newValue = ArchiveEditorFunctions.ApplyBakeRotation(_model, _yaw, _pitch, _roll);
-                if (newValue != _model)
-                {
-                    _model = newValue;
-                    _yaw = 0;
-                    _pitch = 0;
-                    _roll = 0;
-                    CreateTransformMatrix();
-                }
+                _model = newValue;
+                _yaw = 0;
+                _pitch = 0;
+                _roll = 0;
+                CreateTransformMatrix();
             }
         }
 
         public void ApplyBakeScale()
         {
-            var result = MessageBox.Show("A copy of the model with the scale baked into will be created. " +
-            "The asset will then use the new scaled model and the scale values will be set to (1, 1, 1). " +
-            "Use this to prevent collision glitches. " +
-            "It's only needed when the scale axes are not equal to each other or when scaling models with MINFs (Model Infos).", "Bake Scale", MessageBoxButtons.OKCancel);
-            if (result == DialogResult.OK)
+            var newValue = ArchiveEditorFunctions.ApplyBakeScale(assetName, _model, _scale);
+            if (newValue != _model)
             {
-                var newValue = ArchiveEditorFunctions.ApplyBakeScale(assetName, _model, _scale);
-                if (newValue != _model)
-                {
-                    _model = newValue;
-                    _scale = new Vector3(1f, 1f, 1f);
-                    CreateTransformMatrix();
-                }
+                _model = newValue;
+                _scale = new Vector3(1f, 1f, 1f);
+                CreateTransformMatrix();
             }
         }
 

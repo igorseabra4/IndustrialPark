@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Properties;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
@@ -299,15 +300,31 @@ public partial class InternalAssetEditor : InternalEditor
     {
         AddRow();
 
-        AddTool("Bake Rotation", (object sender, EventArgs e) =>
+        var toolTip = new ToolTip();
+        (var button, var menuItem) = AddTool("Bake Rotation", (object sender, EventArgs e) =>
         {
-            asset.ApplyBakeRotation();
-            propertyGridAsset.Refresh();
+            var result = MessageBox.Show(Resources.BakeRotationDescription, "Bake Rotation", MessageBoxButtons.OKCancel);
+            if (result == DialogResult.OK)
+            {
+                asset.ApplyBakeRotation();
+                propertyGridAsset.Refresh();
+            }
         });
-        AddTool("Bake Scale", (object sender, EventArgs e) =>
+        void showToolTipBakeRotation(object sender, EventArgs e) => toolTip.Show(Resources.BakeRotationDescription, button);
+        button?.MouseHover += showToolTipBakeRotation;
+        menuItem?.MouseHover += showToolTipBakeRotation;
+
+        (button, menuItem) = AddTool("Bake Scale", (object sender, EventArgs e) =>
         {
-            asset.ApplyBakeScale();
-            propertyGridAsset.Refresh();
+            var result = MessageBox.Show(Resources.BakeScaleDescription, "Bake Scale", MessageBoxButtons.OKCancel);
+            if (result == DialogResult.OK)
+            {
+                asset.ApplyBakeScale();
+                propertyGridAsset.Refresh();
+            }
         });
+        void showToolTipBakeScale(object sender, EventArgs e) => toolTip.Show(Resources.BakeScaleDescription, button);
+        button?.MouseHover += showToolTipBakeScale;
+        menuItem?.MouseHover += showToolTipBakeScale;
     }
 }
