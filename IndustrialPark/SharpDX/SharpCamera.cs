@@ -5,6 +5,10 @@ namespace IndustrialPark
 {
     public class SharpCamera
     {
+        public const float DEFAULT_FOV = 60f;
+        public const float DEFAULT_FAR_PLANE = 10000f;
+        public const float DEFAULT_NEAR_PLANE = 0.1f;
+
         public Vector3 Position { get; private set; } = Vector3.Zero;
         public Vector3 Forward { get; private set; } = Vector3.ForwardRH;
         public Vector3 Right { get; private set; } = Vector3.Right;
@@ -139,9 +143,6 @@ namespace IndustrialPark
             Up = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.Up, rotation));
         }
 
-        public const float DefaultFarPlane = 10000f;
-        public const float DefaultNearPlane = 0.1f;
-
         internal void Reset()
         {
             Position = Vector3.Zero;
@@ -153,8 +154,8 @@ namespace IndustrialPark
             _roll = 0;
 
             FieldOfView = MathUtil.Pi / 3f;
-            NearPlane = DefaultNearPlane;
-            FarPlane = DefaultFarPlane;
+            NearPlane = DEFAULT_NEAR_PLANE;
+            FarPlane = DEFAULT_FAR_PLANE;
 
             Update();
         }

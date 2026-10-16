@@ -1622,9 +1622,8 @@ namespace IndustrialPark
         public void UpdateLightKit(AssetID lkitid)
         {
             AssetLKIT.SceneLightKit = null;
-            foreach (var asset in assetDictionary.Values.OfType<AssetLKIT>())
-                if (asset.assetID == lkitid)
-                    AddToRenderableLightKits(asset);
+            if (TryGetAsset(lkitid, out Asset asset) && asset is AssetLKIT lkit)
+                AddToRenderableLightKits(lkit);
         }
 
         public AssetMRKR GetMRKR(uint mrkr)

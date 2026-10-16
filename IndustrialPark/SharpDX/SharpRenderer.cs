@@ -589,7 +589,7 @@ namespace IndustrialPark
 
         public Matrix viewProjection;
         public static Color4 backgroundColor;
-        public static readonly Color4 defaultBackgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
+        public static Color4 defaultBackgroundColor => new Color4(0.05f, 0.05f, 0.15f, 1f);
 
         public BoundingFrustum frustum;
 
@@ -664,8 +664,6 @@ namespace IndustrialPark
 
             if (!AssetFOG.DontRender && SharpRenderer.Fog != null)
                 Camera.FarPlane = (float)Fog.EndDistance;
-            else
-                Camera.FarPlane = SharpCamera.DefaultFarPlane;
 
             if (allowRender)
                 lock (renderableAssets)

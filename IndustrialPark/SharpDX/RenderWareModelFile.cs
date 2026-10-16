@@ -600,7 +600,7 @@ namespace IndustrialPark
                 {
                     renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
 
-                    renderData.LightingEnable = !AssetLKIT.DontRender && meshList[i].SubSets[j].EnableLights;
+                    renderData.LightingEnable = !AssetLKIT.DontRender && AssetLKIT.SceneLightKit != null && meshList[i].SubSets[j].EnableLights;
                     renderData.DiffuseMult = meshList[i].SubSets[j].DiffuseMult;
                     renderData.AmbientMult = meshList[i].SubSets[j].AmbientMult;
 
@@ -768,7 +768,7 @@ namespace IndustrialPark
                         ((pipe?.LightingMode == LightingMode.Prelight || pipe?.LightingMode == LightingMode.Both) |
                         (pipe?.LightingMode == LightingMode.LightKit && AssetLKIT.SceneLightKit == null));
 
-                    renderData.LightingEnable = !AssetLKIT.DontRender && meshList[i].SubSets[j].EnableLights && pipe?.LightingMode != LightingMode.Prelight;
+                    renderData.LightingEnable = !AssetLKIT.DontRender && AssetLKIT.SceneLightKit != null && meshList[i].SubSets[j].EnableLights && pipe?.LightingMode != LightingMode.Prelight;
                     renderData.DiffuseMult = meshList[i].SubSets[j].DiffuseMult;
                     renderData.AmbientMult = meshList[i].SubSets[j].AmbientMult;
 

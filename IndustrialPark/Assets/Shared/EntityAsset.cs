@@ -145,7 +145,7 @@ namespace IndustrialPark
             get => _color.Z;
             set => _color.Z = value;
         }
-        [Category(categoryNameColor), DisplayName("Alpha (0 - 1)"), Description("Alpha is turned off after the first player death on all games except Scooby. Use the TranslucentOn event to fix this.")]
+        [Category(categoryNameColor), DisplayName("Alpha (0 - 1)"), Description("Alpha is turned off after the first player death on all games except Scooby. Use the SetOpacity event, with the opacity value as the first paramenter, to fix this.")]
         public AssetSingle ColorAlpha
         {
             get => _color.W;

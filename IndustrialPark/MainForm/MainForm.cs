@@ -104,7 +104,7 @@ namespace IndustrialPark
             new Thread(() =>
             {
                 if (InvokeRequired)
-                    Invoke(new StartLoop(renderer.RunMainLoop), renderPanel);
+                    Invoke(renderer.RunMainLoop, renderPanel);
                 else
                     renderer.RunMainLoop(renderPanel);
             }).Start();
@@ -233,8 +233,6 @@ namespace IndustrialPark
             if (settings.AutoloadOnStartup && !string.IsNullOrEmpty(settings.LastProjectPath) && File.Exists(settings.LastProjectPath))
                 ApplyProject(settings.LastProjectPath, showEditorsWhenLoadingProject);
         }
-
-        private delegate void StartLoop(Panel renderPanel);
 
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -491,9 +489,9 @@ namespace IndustrialPark
             ApplyProject(JsonConvert.DeserializeObject<ProjectJson>(File.ReadAllText(projectPath)), showEditors);
         }
 
-        private void ApplyProject(ProjectJson ipSettings, bool showEditors = true)
+        private void ApplyProject(ProjectJson project, bool showEditors = true)
         {
-            if (ipSettings.version != ProjectJson.getCurrentVersion)
+            if (project.version != ProjectJson.getCurrentVersion)
                 MessageBox.Show("You are trying to open a project file made with a different version of Industrial Park. The program will attempt to load the project, but there is a chance it will not load properly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
             TextureManager.ClearTextures();
@@ -502,20 +500,20 @@ namespace IndustrialPark
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.CloseArchiveEditor();
 
-            TextureManager.LoadTexturesFromFolder(ipSettings.TextureFolderPaths);
+            TextureManager.LoadTexturesFromFolder(project.TextureFolderPaths);
 
-            ArchiveEditorFunctions.hiddenAssets = ipSettings.hiddenAssets;
+            ArchiveEditorFunctions.hiddenAssets = project.hiddenAssets;
 
-            for (int i = 0; i < ipSettings.hipPaths.Count; i++)
-                if (ipSettings.hipPaths[i] == "Empty")
+            for (int i = 0; i < project.hipPaths.Count; i++)
+                if (project.hipPaths[i] == "Empty")
                     AddArchiveEditor();
                 else
                 {
-                    if (File.Exists(ipSettings.hipPaths[i]))
-                        AddArchiveEditor(ipSettings.hipPaths[i], ipSettings.scoobyPlatforms[i], showEditors);
+                    if (File.Exists(project.hipPaths[i]))
+                        AddArchiveEditor(project.hipPaths[i], project.scoobyPlatforms[i], showEditors);
                     else
                     {
-                        MessageBox.Show("Error opening " + ipSettings.hipPaths[i] + ": file not found",
+                        MessageBox.Show("Error opening " + project.hipPaths[i] + ": file not found",
                             "File not Found",
                             MessageBoxButtons.OK,
                             MessageBoxIcon.Error);
@@ -524,51 +522,50 @@ namespace IndustrialPark
 
             ArchiveEditorFunctions.hiddenAssets.Clear();
 
-            renderer.Camera.SetPosition(ipSettings.CamPos);
-            renderer.Camera.Yaw = ipSettings.Yaw;
-            renderer.Camera.Pitch = ipSettings.Pitch;
-            renderer.Camera.FieldOfView = ipSettings.FieldOfView;
-            renderer.Camera.FarPlane = ipSettings.FarPlane;
-            ArchiveEditorFunctions.Grid = ipSettings.Grid;
+            renderer.Camera.SetPosition(project.CamPos);
+            renderer.Camera.Yaw = project.Yaw;
+            renderer.Camera.Pitch = project.Pitch;
+            renderer.Camera.FieldOfView = project.FieldOfView;
+            renderer.Camera.FarPlane = project.FarPlane;
+            ArchiveEditorFunctions.Grid = project.Grid;
 
-            noCullingCToolStripMenuItem.Checked = ipSettings.NoCulling;
+            noCullingCToolStripMenuItem.Checked = project.NoCulling;
             if (noCullingCToolStripMenuItem.Checked)
                 renderer.device.SetNormalCullMode(CullMode.None);
             else
                 renderer.device.SetNormalCullMode(CullMode.Back);
 
-            wireframeFToolStripMenuItem.Checked = ipSettings.Wireframe;
+            wireframeFToolStripMenuItem.Checked = project.Wireframe;
             if (wireframeFToolStripMenuItem.Checked)
                 renderer.device.SetNormalFillMode(FillMode.Wireframe);
             else
                 renderer.device.SetNormalFillMode(FillMode.Solid);
 
-            SharpRenderer.backgroundColor = ipSettings.BackgroundColor;
-            renderer.SetWidgetColor(ipSettings.WidgetColor);
-            renderer.SetMvptColor(ipSettings.MvptColor);
-            renderer.SetTrigColor(ipSettings.TrigColor);
-            renderer.SetSfxColor(ipSettings.SfxColor);
+            SharpRenderer.backgroundColor = project.BackgroundColor;
+            renderer.SetWidgetColor(project.WidgetColor);
+            renderer.SetMvptColor(project.MvptColor);
+            renderer.SetTrigColor(project.TrigColor);
+            renderer.SetSfxColor(project.SfxColor);
 
-            uIModeToolStripMenuItem.Checked = ipSettings.isDrawingUI;
-            renderer.isDrawingUI = ipSettings.isDrawingUI;
+            uIModeToolStripMenuItem.Checked = project.isDrawingUI;
+            renderer.isDrawingUI = project.isDrawingUI;
 
             if (assetViewToolStripMenuItems != null)
                 for (int i = 0; i < assetViewToolStripMenuItems.Length; i++)
                 {
                     AssetType type = (AssetType)assetViewToolStripMenuItems[i].Tag;
                     var code = type.ToString();
-                    bool value = ipSettings.dontRender.ContainsKey(code) ? ipSettings.dontRender[code] : true;
+                    bool value = project.dontRender.ContainsKey(code) ? project.dontRender[code] : true;
                     assetViewToolStripMenuItems[i].Checked = !value;
                     assetViewTypes[type].GetField("dontRender").SetValue(null, value);
                 }
 
-
-            fogToolStripMenuItem.Checked = ipSettings.FogRender;
-            AssetFOG.DontRender = !ipSettings.FogRender;
-            showVertexColorsToolStripMenuItem.Checked = ipSettings.VertexColorRender;
-            SharpRenderer.RenderVertexColors = ipSettings.VertexColorRender;
-            useLightKitsForRenderingToolStripMenuItem.Checked = ipSettings.LightKitRender;
-            AssetLKIT.DontRender = !ipSettings.LightKitRender;
+            fogToolStripMenuItem.Checked = project.FogRender;
+            AssetFOG.DontRender = !project.FogRender;
+            showVertexColorsToolStripMenuItem.Checked = project.VertexColorRender;
+            SharpRenderer.RenderVertexColors = project.VertexColorRender;
+            useLightKitsForRenderingToolStripMenuItem.Checked = project.LightKitRender;
+            AssetLKIT.DontRender = !project.LightKitRender;
         }
 
         public void SetToolStripStatusLabel(string Text)
@@ -2189,6 +2186,8 @@ namespace IndustrialPark
         private void fogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AssetFOG.DontRender = !fogToolStripMenuItem.Checked;
+            if (AssetFOG.DontRender)
+                renderer.Camera.FarPlane = SharpCamera.DEFAULT_FAR_PLANE;
         }
 
         private void useLightKitsForRenderingToolStripMenuItem_Click(object sender, EventArgs e)

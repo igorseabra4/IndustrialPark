@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class ProjectJson
     {
-        public static int getCurrentVersion => 5;
+        public static int getCurrentVersion => 6;
         public int version;
 
         public List<string> hipPaths;
@@ -52,8 +52,8 @@ namespace IndustrialPark
             Yaw = 0;
             Pitch = 0;
 
-            FieldOfView = MathUtil.DegreesToRadians(60);
-            FarPlane = 10000F;
+            FieldOfView = MathUtil.DegreesToRadians(SharpCamera.DEFAULT_FOV);
+            FarPlane = SharpCamera.DEFAULT_FAR_PLANE;
 
             NoCulling = false;
             Wireframe = false;

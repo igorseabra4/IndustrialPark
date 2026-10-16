@@ -115,7 +115,8 @@ namespace IndustrialPark
 
         private void NumericDrawD_ValueChanged(object sender, EventArgs e)
         {
-            Program.MainForm.renderer.Camera.FarPlane = (float)NumericDrawD.Value;
+            if (!ProgramIsUpdatingValues)
+                Program.MainForm.renderer.Camera.FarPlane = (float)NumericDrawD.Value;
         }
 
         private void NumericFOV_ValueChanged(object sender, EventArgs e)
