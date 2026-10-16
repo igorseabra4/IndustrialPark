@@ -1558,19 +1558,9 @@ namespace IndustrialPark
         }
 
         public ObservableCollection<Asset> CurrentlySelectedAssets { get; private set; } = new ObservableCollection<Asset>();
-        
 
-        private static IList<Asset> allCurrentlySelectedAssets
-        {
-            get
-            {
-                IList<Asset> currentlySelectedAssets = new ObservableCollection<Asset>();
-                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    foreach (Asset assetToAdd in ae.archive.CurrentlySelectedAssets)
-                            currentlySelectedAssets.Add(assetToAdd);
-                return currentlySelectedAssets;
-            }
-        }
+        private static IEnumerable<Asset> allCurrentlySelectedAssets =>
+            Program.MainForm.archiveEditors.SelectMany(ae => ae.archive.CurrentlySelectedAssets);
 
         public void SelectAssets(IEnumerable<uint> assetIDs)
         {

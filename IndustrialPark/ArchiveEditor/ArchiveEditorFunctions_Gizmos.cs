@@ -474,7 +474,7 @@ namespace IndustrialPark
             originalPositionsBoxes.Clear();
             currentlyMovingBoxes.Clear();
 
-            actions.Add(new SelectionAction(allCurrentlySelectedAssets.Select(asset => asset.assetID).ToList()));
+            actions.Add(new SelectionAction(allCurrentlySelectedAssets.Select(asset => asset.assetID)));
             Program.UndoBuffer.AddAction(actions);
         }
 

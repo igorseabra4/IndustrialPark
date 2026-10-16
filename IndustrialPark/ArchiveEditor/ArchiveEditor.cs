@@ -1138,6 +1138,7 @@ namespace IndustrialPark
                 archive.ClearSelectedAssets();
                 listViewAssets.SelectedIndices.Clear();
                 programIsChangingStuff = false;
+                SetMenuItemsEnabled();
                 return;
             }
 
@@ -1149,6 +1150,7 @@ namespace IndustrialPark
                     archive.ClearSelectedAssets();
                     listViewAssets.SelectedIndices.Clear();
                     programIsChangingStuff = false;
+                    SetMenuItemsEnabled();
                     return;
                 }
                 assets.Add(archive.GetFromAssetID(u));
@@ -1190,6 +1192,7 @@ namespace IndustrialPark
                 }
 
             PopulateAssetList(assetType, null, true, assetIDs);
+            SetMenuItemsEnabled();
             programIsChangingStuff = false;
         }
 
@@ -1217,6 +1220,8 @@ namespace IndustrialPark
 
             programIsChangingStuff = false;
             archive.SelectAssets(assetIDs);
+            SetMenuItemsEnabled();
+
             return true;
         }
 
