@@ -523,6 +523,7 @@ namespace IndustrialPark
         }
 
         public bool ContainsAsset(uint key) => assetDictionary.ContainsKey(key);
+        public bool ContainsAsset(Asset key) => assetDictionary.ContainsValue(key);
 
         public IEnumerable<AssetType> ScalableAssetTypesOnArchive() =>
             (from Asset asset in assetDictionary.Values
@@ -547,6 +548,9 @@ namespace IndustrialPark
         }
 
         public bool TryGetAsset(uint key, out Asset asset) => assetDictionary.TryGetValue(key, out asset);
+
+        public static ArchiveEditorFunctions ArchiveContainingAsset(Asset asset) =>
+            Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive.ContainsAsset(asset)).archive;
 
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
         {
@@ -1562,14 +1566,8 @@ namespace IndustrialPark
             {
                 IList<Asset> currentlySelectedAssets = new ObservableCollection<Asset>();
                 foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                {
                     foreach (Asset assetToAdd in ae.archive.CurrentlySelectedAssets)
-                    {
-                        if (!currentlySelectedAssets.Contains(assetToAdd))
                             currentlySelectedAssets.Add(assetToAdd);
-                    }
-                }
-                    
                 return currentlySelectedAssets;
             }
         }

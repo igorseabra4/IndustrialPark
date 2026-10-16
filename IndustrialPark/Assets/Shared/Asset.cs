@@ -5,7 +5,8 @@ namespace IndustrialPark
 {
     public abstract class Asset : GenericAssetDataContainer
     {
-        public bool isSelected;
+        [Browsable(false)]
+        public bool isSelected { get; set; }
         public bool isInvisible = false;
 
         [Browsable(false)]
@@ -60,14 +61,5 @@ namespace IndustrialPark
         }
 
         public override string ToString() => $"{assetName} [{assetID:X8}]";
-
-        public override int GetHashCode() => (int)assetID;
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Asset other)
-                return other.GetHashCode() == GetHashCode();
-            return false;
-        }
     }
 }

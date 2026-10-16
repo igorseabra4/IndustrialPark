@@ -261,7 +261,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Taxi_Stand, eventHandler),
             });
 
-            ToolStripMenuItem bfbb = new ToolStripMenuItem("Battle For Bikini Bottom");
+            ToolStripMenuItem bfbb = new ToolStripMenuItem("BFBB");
             bfbb.DropDownItems.AddRange(new ToolStripItem[]
             {
                 pickupsBFBB,
@@ -377,7 +377,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Block_Spikes, eventHandler),
             });
 
-            ToolStripMenuItem tssm = new ToolStripMenuItem("Movie Game");
+            ToolStripMenuItem tssm = new ToolStripMenuItem("Movie");
             tssm.DropDownItems.AddRange(new ToolStripItem[]
             {
                 pickupsTSSM,
@@ -432,7 +432,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Shooter, eventHandler),
             });
 
-            ToolStripMenuItem rotu = new ToolStripMenuItem("ROTU");
+            ToolStripMenuItem rotu = new ToolStripMenuItem("Underminer");
             rotu.DropDownItems.AddRange(new ToolStripItem[]
             {
                 rotuEnemies,

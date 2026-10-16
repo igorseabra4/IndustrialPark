@@ -226,51 +226,25 @@ namespace IndustrialPark
             return ray.Position + Vector3.Normalize(ray.Direction) * (smallerDistance ?? 2f);
         }
 
-        public static uint? GetClickedAssetID(SharpRenderer renderer, Ray ray, bool? selectionFilter)
+        public static (ArchiveEditorFunctions archive, uint? assetID) GetClickedAsset(SharpRenderer renderer, Ray ray, bool? selectionFilter)
         {
-            float smallerDistance = 10000f;
-            uint? assetID = null;
-
             var assets = renderableAssets.OfType<IClickableAsset>();
+            if (renderer.isDrawingUI)
+                assets = assets.Where(a => ((Asset)a).assetType is AssetType.UserInterface or AssetType.UserInterfaceFont);
             if (selectionFilter.HasValue)
-                assets = assets.Where(a => selectionFilter.Value == ((Asset)a).isSelected);
+                assets = assets.Where(a => selectionFilter.Value == a.isSelected);
 
+            float smallerDistance = renderer.Camera.FarPlane + 1f;
+            IClickableAsset resultAsset = null;
             foreach (var asset in assets)
             {
-                float? distance = asset.GetIntersectionPosition(renderer, ray);
-                if (distance != null && distance < smallerDistance)
+                if (asset.GetIntersectionPosition(renderer, ray) is float distance && distance < smallerDistance)
                 {
-                    smallerDistance = (float)distance;
-                    assetID = asset.assetID;
+                    smallerDistance = distance;
+                    resultAsset = asset;
                 }
             }
-
-            return assetID;
-        }
-
-        public static uint? GetClickedAssetID2D(SharpRenderer renderer, Ray ray, float farPlane, bool? selectionFilter)
-        {
-            float smallerDistance = 3 * farPlane;
-            uint? assetID = null;
-
-            var assets = renderableAssets.Where(a => {
-                var asset = (Asset)a;
-                return asset.assetType == AssetType.UserInterface || asset.assetType == AssetType.UserInterfaceFont;
-            }).Cast<IClickableAsset>();
-            if (selectionFilter.HasValue)
-                assets = assets.Where(a => !selectionFilter.HasValue || selectionFilter.Value == ((Asset)a).isSelected);
-
-            foreach (IClickableAsset asset in assets)
-            {
-                float? distance = asset.GetIntersectionPosition(renderer, ray);
-                if (distance != null && distance < smallerDistance)
-                {
-                    smallerDistance = (float)distance;
-                    assetID = asset.assetID;
-                }
-            }
-
-            return assetID;
+            return resultAsset != null ? (ArchiveContainingAsset((Asset)resultAsset), resultAsset.assetID) : (null, null);
         }
 
         public void DropSelectedAssets(SharpRenderer renderer)

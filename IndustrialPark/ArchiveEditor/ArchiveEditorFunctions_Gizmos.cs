@@ -12,40 +12,37 @@ namespace IndustrialPark
         private static RotationGizmo[] rotationGizmos;
         private static ScaleGizmo[] scaleGizmos;
         private static PositionLocalGizmo[] positionLocalGizmos;
-        private static GizmoBase[] allGizmos;
 
         public static void SetUpGizmos()
         {
-            positionGizmos = new PositionGizmo[3]{
+            positionGizmos = [
                 new PositionGizmo(GizmoType.X),
                 new PositionGizmo(GizmoType.Y),
-                new PositionGizmo(GizmoType.Z)};
+                new PositionGizmo(GizmoType.Z)];
 
-            triggerPositionGizmos = new BoxTrigPositionGizmo[6]{
+            triggerPositionGizmos = [
                 new BoxTrigPositionGizmo(GizmoType.X),
                 new BoxTrigPositionGizmo(GizmoType.Y),
                 new BoxTrigPositionGizmo(GizmoType.Z),
                 new BoxTrigPositionGizmo(GizmoType.TrigX1),
                 new BoxTrigPositionGizmo(GizmoType.TrigY1),
-                new BoxTrigPositionGizmo(GizmoType.TrigZ1)};
+                new BoxTrigPositionGizmo(GizmoType.TrigZ1)];
 
-            rotationGizmos = new RotationGizmo[3]{
+            rotationGizmos = [
                 new RotationGizmo(GizmoType.Yaw),
                 new RotationGizmo(GizmoType.Pitch),
-                new RotationGizmo(GizmoType.Roll)};
+                new RotationGizmo(GizmoType.Roll)];
 
-            scaleGizmos = new ScaleGizmo[4]{
+            scaleGizmos = [
                 new ScaleGizmo(GizmoType.ScaleX),
                 new ScaleGizmo(GizmoType.ScaleY),
                 new ScaleGizmo(GizmoType.ScaleZ),
-                new ScaleGizmo(GizmoType.ScaleAll)};
+                new ScaleGizmo(GizmoType.ScaleAll)];
 
-            positionLocalGizmos = new PositionLocalGizmo[3]{
+            positionLocalGizmos = [
                 new PositionLocalGizmo(GizmoType.X),
                 new PositionLocalGizmo(GizmoType.Y),
-                new PositionLocalGizmo(GizmoType.Z)};
-
-            allGizmos = [.. positionGizmos, .. triggerPositionGizmos, .. rotationGizmos, .. scaleGizmos, .. positionLocalGizmos];
+                new PositionLocalGizmo(GizmoType.Z)];
 
             if (Grid.X < 0.001f)
                 Grid.X = 1f;
@@ -71,114 +68,126 @@ namespace IndustrialPark
             {
                 case GizmoMode.Position:
                 {
-                    var icas = allCurrentlySelectedAssets.OfType<IClickableAsset>();
-                    if (!icas.Any())
+                    var clickableAssets = allCurrentlySelectedAssets.OfType<IClickableAsset>().ToList();
+                    if (clickableAssets.Count == 0)
                         return;
-                    BoundingBox bb = new BoundingBox();
-                    bool found = false;
 
-                    foreach (var a in icas)
-                        if (!found)
-                        {
-                            found = true;
-                            bb = a.GetBoundingBox();
-                        }
-                        else
-                            bb = BoundingBox.Merge(bb, a.GetBoundingBox());
+                    BoundingBox boundingBox = clickableAssets[0].GetBoundingBox();
+                    foreach (var asset in clickableAssets.Skip(1))
+                        boundingBox = BoundingBox.Merge(boundingBox, asset.GetBoundingBox());
+                    GizmoCenterPosition = boundingBox.Center;
+                    float distance = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
 
-                    if (found)
-                    {
-                        GizmoCenterPosition = bb.Center;
-                        float distance = Vector3.Distance(renderer.Camera.Position, bb.Center) / 5f;
-
-                        foreach (PositionGizmo g in positionGizmos)
-                            g.SetPosition(bb.Center, distance);
-                        foreach (PositionGizmo g in positionGizmos.OrderBy(g => -g.GetDistance(Program.MainForm.renderer.Camera.Position)))
-                            g.Draw(renderer);
-                    }
+                    foreach (PositionGizmo gizmo in positionGizmos)
+                        gizmo.SetPosition(GizmoCenterPosition, distance);
+                    foreach (PositionGizmo gizmo in positionGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
+                        gizmo.Draw(renderer);
                     return;
                 }
                 case GizmoMode.Rotation:
-                    var iras = allCurrentlySelectedAssets.OfType<IRotatableAsset>();
-                    if (iras.Any())
+                {
+                    var rotatableAssets = allCurrentlySelectedAssets.OfType<IRotatableAsset>().ToList();
+                    if (rotatableAssets.Count == 0)
+                        return;
+
+                    var asset = rotatableAssets[0];
+                    SetCenterRotation(asset.Yaw, asset.Pitch, asset.Roll);
+                    GizmoCenterPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
+                    float distance = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 2f;
+
+                    for (int i = rotationGizmos.Length - 1; i >= 0; i--)
                     {
-                        var ira = iras.FirstOrDefault();
-                        SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
-
-                        var ira_pos = new Vector3(ira.PositionX, ira.PositionY, ira.PositionZ);
-                        GizmoCenterPosition = ira_pos;
-                        float distance = Vector3.Distance(renderer.Camera.Position, ira_pos) / 2f;
-
-                        for (int i = 2; i >= 0; i--)
-                        {
-                            rotationGizmos[i].SetPosition(ira_pos, distance, GizmoCenterRotation);
-                            rotationGizmos[i].Draw(renderer);
-                        }
+                        rotationGizmos[i].SetPosition(GizmoCenterPosition, distance, GizmoCenterRotation);
+                        rotationGizmos[i].Draw(renderer);
                     }
                     return;
+                }
                 case GizmoMode.Scale:
-                    var isas = allCurrentlySelectedAssets.OfType<IScalableAsset>();
-                    if (isas.Any())
+                    var selectedAssets = allCurrentlySelectedAssets;
+                    var scalableAssets = selectedAssets.OfType<IScalableAsset>().ToList();
+                    var boxVolumes = selectedAssets.OfType<AssetVOLU>().Where(v => v.VolumeShape is VolumeBox).ToList();
+
+                    TriggerGizmo = false;
+                    BoundingBox bbox = default;
+                    IScalableAsset primaryAsset = scalableAssets.FirstOrDefault();
+
+                    if (boxVolumes.Count > 0)
                     {
-                        var isa = isas.FirstOrDefault();
-                        if (isa is IRotatableAsset ira)
-                            SetCenterRotation(ira.Yaw, ira.Pitch, ira.Roll);
+                        var box = (VolumeBox)boxVolumes[0].VolumeShape;
+                        TriggerGizmo = true;
+                        bbox = box.GetBoundingBox();
+                        SetCenterRotation(0, 0, 0);
+                    }
+                    if (primaryAsset != null)
+                    {
+                        if (primaryAsset is AssetTRIG { Shape: TriggerShape.Box } trigger)
+                        {
+                            TriggerGizmo = true;
+                            bbox = trigger.GetBoundingBox();
+                            SetCenterRotation(trigger.Yaw, trigger.Pitch, trigger.Roll);
+                        }
+                        else if (primaryAsset is IRotatableAsset rotatable)
+                        {
+                            SetCenterRotation(rotatable.Yaw, rotatable.Pitch, rotatable.Roll);
+                        }
                         else
+                        {
                             SetCenterRotation(0, 0, 0);
-
-                        var isa_pos = new Vector3(isa.PositionX, isa.PositionY, isa.PositionZ);
-                        GizmoCenterPosition = isa_pos;
-                        float distance = Vector3.Distance(renderer.Camera.Position, isa_pos) / 5f;
-
-                        foreach (ScaleGizmo g in scaleGizmos)
-                            g.SetPosition(isa_pos, distance, GizmoCenterRotation);
-                        foreach (ScaleGizmo g in scaleGizmos.OrderBy(g => -g.GetDistance(Program.MainForm.renderer.Camera.Position)))
-                            g.Draw(renderer);
+                        }
+                    }
+                    if (primaryAsset != null || boxVolumes.Count > 0)
+                    {
+                        GizmoCenterPosition = TriggerGizmo ? bbox.Center : new Vector3(primaryAsset.PositionX, primaryAsset.PositionY, primaryAsset.PositionZ);
+                        float distance = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
+                        foreach (ScaleGizmo gizmo in scaleGizmos)
+                            gizmo.SetPosition(GizmoCenterPosition, distance, GizmoCenterRotation);
+                        foreach (ScaleGizmo gizmo in scaleGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
+                            gizmo.Draw(renderer);
                     }
                     return;
                 case GizmoMode.PositionLocal:
                 {
-                    var icas = allCurrentlySelectedAssets.OfType<IClickableAsset>();
-                    if (icas.Count() != 1)
+                    var clickableAssets = allCurrentlySelectedAssets.OfType<IClickableAsset>().Take(2).ToList();
+                    if (clickableAssets.Count != 1)
                         return;
-                    var ica = icas.FirstOrDefault();
-                    GizmoCenterPosition = ica.GetBoundingBox().Center;
-                    float radius = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
+
+                    var asset = clickableAssets[0];
+                    GizmoCenterPosition = asset.GetBoundingBox().Center;
+                    float distance = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
+
                     TriggerGizmo = false;
                     IVolumeAsset volume = null;
-                    BoundingBox bbox = new BoundingBox();
-                    Vector3 trig_pos = new Vector3();
-                    if (ica is AssetTRIG TRIG && TRIG.Shape == TriggerShape.Box)
+                    if (asset is AssetTRIG { Shape: TriggerShape.Box } trigger)
                     {
                         TriggerGizmo = true;
-                        SetCenterRotation(TRIG.Yaw, TRIG.Pitch, TRIG.Roll);
-                        bbox = TRIG.GetBoundingBox();
-                        volume = TRIG;
-                        trig_pos = new Vector3(TRIG.PositionX, TRIG.PositionY, TRIG.PositionZ);
+                        SetCenterRotation(trigger.Yaw, trigger.Pitch, trigger.Roll);
+                        volume = trigger;
                     }
-                    else if (ica is AssetVOLU VOLU && VOLU.VolumeShape is VolumeBox box)
+                    else if (asset is AssetVOLU { VolumeShape: VolumeBox box })
                     {
                         TriggerGizmo = true;
                         SetCenterRotation(0, 0, 0);
-                        bbox = box.GetBoundingBox();
                         volume = box;
-                        trig_pos = new Vector3(box.CenterX, box.CenterY, box.CenterZ);
                     }
+
                     if (TriggerGizmo)
                     {
-                        Vector3 TrigBound = new Vector3(volume.MaximumX - volume.MinimumX, volume.MaximumY - volume.MinimumY, volume.MaximumZ - volume.MinimumZ) / 2f;
-                        foreach (BoxTrigPositionGizmo g in triggerPositionGizmos)
-                            g.SetPosition(bbox.Center, TrigBound, radius, GizmoCenterRotation);
-                        foreach (BoxTrigPositionGizmo g in triggerPositionGizmos.OrderBy(g => -g.GetDistance(Program.MainForm.renderer.Camera.Position)))
-                            g.Draw(renderer);
+                        Vector3 halfExtents = new Vector3(volume.MaximumX - volume.MinimumX, volume.MaximumY - volume.MinimumY, volume.MaximumZ - volume.MinimumZ) / 2f;
+                        Vector3 center = volume.GetBoundingBox().Center;
+
+                        foreach (BoxTrigPositionGizmo gizmo in triggerPositionGizmos)
+                            gizmo.SetPosition(center, halfExtents, distance, GizmoCenterRotation);
+                        foreach (BoxTrigPositionGizmo gizmo in triggerPositionGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
+                            gizmo.Draw(renderer);
                     }
                     else
                     {
-                        foreach (PositionLocalGizmo g in positionLocalGizmos)
-                            g.SetPosition(ica.GetBoundingBox().Center, radius, GizmoCenterRotation);
-                        foreach (PositionLocalGizmo g in positionLocalGizmos.OrderBy(g => -g.GetDistance(Program.MainForm.renderer.Camera.Position)))
-                            g.Draw(renderer);
+                        foreach (PositionLocalGizmo gizmo in positionLocalGizmos)
+                            gizmo.SetPosition(GizmoCenterPosition, distance, GizmoCenterRotation);
+                        foreach (PositionLocalGizmo gizmo in positionLocalGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
+                            gizmo.Draw(renderer);
                     }
+
                     return;
                 }
             }
@@ -192,7 +201,7 @@ namespace IndustrialPark
             GizmoCenterRotation = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
         }
 
-        public void GizmoSelect(Ray r)
+        public static void ScreenClickedGizmos(Ray r)
         {
             // check which gizmo was selected by the ray, if any
             // set currently gizmoing assets and boxes
@@ -205,33 +214,20 @@ namespace IndustrialPark
                     (int index, _) = GetGizmoIntersectionIndex(positionGizmos, r);
                     if (index != -1 && !positionGizmos[index].isSelected)
                     {
-                        currentlyMoving = CurrentlySelectedAssets.OfType<IClickableAsset>().ToList();
-                        foreach (var asset in currentlyMoving)
-                            originalPositions[((Asset)asset).assetID] = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
-                        positionGizmos[index].isSelected = currentlyMoving.Count != 0;
-
-                        var currentlyMovingBoxes = CurrentlySelectedAssets.Where(a => a is AssetTRIG trig && trig.Shape == TriggerShape.Box || a is AssetVOLU volu && volu.VolumeShape is VolumeBox);
-                        foreach (var boxAsset in currentlyMovingBoxes)
-                        {
-                            var box = boxAsset is AssetTRIG trig ? trig : (IVolumeAsset)((AssetVOLU)boxAsset).VolumeShape;
-                            originalPositionsBoxes[boxAsset.assetID] = (new Vector3(box.MaximumX, box.MaximumY, box.MaximumZ), new Vector3(box.MinimumX, box.MinimumY, box.MinimumZ));
-                        }
+                        SaveOriginalPositions();
+                        SaveOriginalPositionsBoxes();
+                        positionGizmos[index].isSelected = true;
                         IsMovingGizmo = true;
                     }
                 }
                 break;
                 case GizmoMode.Rotation:
                 {
-                    (int index, float dist) = GetGizmoIntersectionIndex(rotationGizmos, r);
+                    (int index, _) = GetGizmoIntersectionIndex(rotationGizmos, r);
                     if (index != -1 && !rotationGizmos[index].isSelected)
                     {
-                        currentlyRotating = CurrentlySelectedAssets.OfType<IRotatableAsset>().ToList();
-                        foreach (var asset in currentlyRotating)
-                        {
-                            originalPositions[((Asset)asset).assetID] = new Vector3(asset.Yaw, asset.Pitch, asset.Roll);
-                            SetCenterRotation(asset.Yaw, asset.Pitch, asset.Roll);
-                        }
-                        rotationGizmos[index].isSelected = currentlyRotating.Count != 0;
+                        SaveOriginalRotations();
+                        rotationGizmos[index].isSelected = true;
                         IsMovingGizmo = true;
                     }
                 }
@@ -241,11 +237,9 @@ namespace IndustrialPark
                     (int index, _) = GetGizmoIntersectionIndex(scaleGizmos, r);
                     if (index != -1 && !scaleGizmos[index].isSelected)
                     {
-                        currentlyScaling = CurrentlySelectedAssets.OfType<IScalableAsset>().ToList();
-                        foreach (var asset in currentlyScaling)
-                            originalPositions[((Asset)asset).assetID] = new Vector3(asset.ScaleX, asset.ScaleY, asset.ScaleZ);
-                        scaleGizmos[index].isSelected = currentlyScaling.Count != 0;
-
+                        SaveOriginalPositionsBoxes();
+                        SaveOriginalScales();
+                        scaleGizmos[index].isSelected = true;
                         IsMovingGizmo = true;
                     }
                 }
@@ -257,15 +251,9 @@ namespace IndustrialPark
                         (int index, _) = GetGizmoIntersectionIndex(triggerPositionGizmos, r);
                         if (index != -1 && !triggerPositionGizmos[index].isSelected)
                         {
-                            currentlyMovingBox = CurrentlySelectedAssets.FirstOrDefault(a => a is AssetTRIG trig && trig.Shape == TriggerShape.Box || a is AssetVOLU volu && volu.VolumeShape is VolumeBox, null);
-                            if (currentlyMovingBox != null)
-                            {
-                                var box = currentlyMovingBox is AssetTRIG trig ? trig : (IVolumeAsset)((AssetVOLU)currentlyMovingBox).VolumeShape;
-                                originalPositionsBoxes[currentlyMovingBox.assetID] = (new Vector3(box.MaximumX, box.MaximumY, box.MaximumZ), new Vector3(box.MinimumX, box.MinimumY, box.MinimumZ));
-                                triggerPositionGizmos[index].isSelected = true;
-
-                                IsMovingGizmo = true;
-                            }
+                            SaveOriginalPositionsBoxes();
+                            triggerPositionGizmos[index].isSelected = true;
+                            IsMovingGizmo = true;
                         }
                     }
                     else
@@ -273,11 +261,8 @@ namespace IndustrialPark
                         (int index, _) = GetGizmoIntersectionIndex(positionLocalGizmos, r);
                         if (index != -1 && !positionLocalGizmos[index].isSelected)
                         {
-                            currentlyMoving = CurrentlySelectedAssets.OfType<IClickableAsset>().ToList();
-                            foreach (var asset in currentlyMoving)
-                                originalPositions[((Asset)asset).assetID] = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
-                            positionLocalGizmos[index].isSelected = currentlyMoving.Count != 0;
-
+                            SaveOriginalPositions();
+                            positionLocalGizmos[index].isSelected = true;
                             IsMovingGizmo = true;
                         }
                     }
@@ -289,7 +274,7 @@ namespace IndustrialPark
         private static (int index, float distance) GetGizmoIntersectionIndex(GizmoBase[] gizmos, Ray r)
         {
             int index = -1;
-            float dist = 1000f;
+            float dist = 10000f;
             for (int g = 0; g < gizmos.Length; g++)
             {
                 float? distance = gizmos[g].IntersectsWith(r);
@@ -302,12 +287,43 @@ namespace IndustrialPark
             return (index, dist);
         }
 
-        public void ScreenUnclicked()
+        private static void SaveOriginalPositions()
         {
-            if (!allGizmos.Any(g => g.isSelected))
+            currentlyMoving = allCurrentlySelectedAssets.OfType<IClickableAsset>().ToList();
+            foreach (var asset in currentlyMoving)
+                originalPositions[((Asset)asset).assetID] = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
+        }
+
+        private static void SaveOriginalRotations()
+        {
+            currentlyRotating = allCurrentlySelectedAssets.OfType<IRotatableAsset>().ToList();
+            foreach (var asset in currentlyRotating)
+                originalPositions[((Asset)asset).assetID] = new Vector3(asset.Yaw, asset.Pitch, asset.Roll);
+        }
+
+        private static void SaveOriginalScales()
+        {
+            currentlyScaling = allCurrentlySelectedAssets.OfType<IScalableAsset>().Where(a => !currentlyMovingBoxes.Contains((Asset)a)).ToList();
+            foreach (var asset in currentlyScaling)
+                originalPositions[((Asset)asset).assetID] = new Vector3(asset.ScaleX, asset.ScaleY, asset.ScaleZ);
+        }
+
+        private static void SaveOriginalPositionsBoxes()
+        {
+            currentlyMovingBoxes = allCurrentlySelectedAssets.Where(a => a is AssetTRIG trig && trig.Shape == TriggerShape.Box || a is AssetVOLU volu && volu.VolumeShape is VolumeBox).ToList();
+            foreach (var asset in currentlyMovingBoxes)
+            {
+                var box = asset is AssetTRIG trig ? trig : (IVolumeAsset)((AssetVOLU)asset).VolumeShape;
+                originalPositionsBoxes[asset.assetID] = (new Vector3(box.MaximumX, box.MaximumY, box.MaximumZ), new Vector3(box.MinimumX, box.MinimumY, box.MinimumZ));
+            }
+        }
+
+        public static void ScreenUnclicked()
+        {
+            if (!IsMovingGizmo)
                 return;
-            if (!CurrentlySelectedAssets.Any())
-                return;
+
+            IsMovingGizmo = false;
 
             // deselect all gizmos, save new positions to undo buffer, clear caches
 
@@ -325,51 +341,47 @@ namespace IndustrialPark
                         g.isSelected = false;
                         foreach (var a in currentlyMoving)
                         {
-                            RefreshAssetEditor(((Asset)a).assetID);
+                            var archive = ArchiveContainingAsset((Asset)a);
+                            archive.RefreshAssetEditor(a.assetID);
                             switch (g.Type)
                             {
                                 case GizmoType.X:
-                                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", originalPositions[((Asset)a).assetID].X, a.PositionX));
+                                    actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionX", originalPositions[a.assetID].X, a.PositionX));
                                     break;
                                 case GizmoType.Y:
-                                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
+                                    actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionY", originalPositions[a.assetID].Y, a.PositionY));
                                     break;
                                 case GizmoType.Z:
-                                    actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                                    actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionZ", originalPositions[a.assetID].Z, a.PositionZ));
                                     break;
                             }
                             if (a is AssetTRIG trig)
                             {
                                 if (trig.Shape == TriggerShape.Box)
                                 {
-                                    AddToActionsBoxMovement(trig, g.Type, actions);
+                                    archive.AddToActionsBoxMovement(trig, g.Type, actions);
                                 }
                                 else
                                 {
                                     switch (g.Type)
                                     {
                                         case GizmoType.X:
-                                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumX", originalPositions[((Asset)a).assetID].X, a.PositionX));
+                                            actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumX", originalPositions[a.assetID].X, a.PositionX));
                                             break;
                                         case GizmoType.Y:
-                                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
+                                            actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumY", originalPositions[a.assetID].Y, a.PositionY));
                                             break;
                                         case GizmoType.Z:
-                                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "MinimumZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                                            actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumZ", originalPositions[a.assetID].Z, a.PositionZ));
                                             break;
                                     }
                                 }
                             }
                             else if (a is AssetVOLU volu)
                             {
-                                AddToActionsBoxMovement(volu, g.Type, actions);
+                                archive.AddToActionsBoxMovement(volu, g.Type, actions);
                             }
-                        }
-                        if (currentlyMoving.Count != 0)
-                        {
-                            currentlyMoving.Clear();
-                            originalPositions.Clear();
-                            originalPositionsBoxes.Clear();
+                            archive.UnsavedChanges = true;
                         }
                     }
                     break;
@@ -381,19 +393,16 @@ namespace IndustrialPark
                         g.isSelected = false;
                         foreach (var a in currentlyRotating)
                         {
-                            RefreshAssetEditor(((Asset)a).assetID);
+                            var archive = ArchiveContainingAsset((Asset)a);
+                            archive.RefreshAssetEditor(((Asset)a).assetID);
                             var og = originalPositions[((Asset)a).assetID];
                             if (og.X != a.Yaw)
-                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Yaw", og.X, a.Yaw));
+                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "Yaw", og.X, a.Yaw));
                             if (og.Y != a.Pitch)
-                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Pitch", og.Y, a.Pitch));
+                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "Pitch", og.Y, a.Pitch));
                             if (og.Z != a.Roll)
-                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "Roll", og.Z, a.Roll));
-                        }
-                        if (currentlyRotating.Count != 0)
-                        {
-                            currentlyRotating.Clear();
-                            originalPositions.Clear();
+                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "Roll", og.Z, a.Roll));
+                            archive.UnsavedChanges = true;
                         }
                     }
                     break;
@@ -403,20 +412,25 @@ namespace IndustrialPark
                         if (!g.isSelected)
                             continue;
                         g.isSelected = false;
+
                         foreach (var a in currentlyScaling)
                         {
-                            RefreshAssetEditor(((Asset)a).assetID);
+                            var archive = ArchiveContainingAsset((Asset)a);
+                            archive.RefreshAssetEditor(((Asset)a).assetID);
                             if (g.Type == GizmoType.ScaleX || g.Type == GizmoType.ScaleAll)
-                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleX", originalPositions[((Asset)a).assetID].X, a.ScaleX));
+                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "ScaleX", originalPositions[((Asset)a).assetID].X, a.ScaleX));
                             if (g.Type == GizmoType.ScaleY || g.Type == GizmoType.ScaleAll)
-                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleY", originalPositions[((Asset)a).assetID].Y, a.ScaleY));
+                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "ScaleY", originalPositions[((Asset)a).assetID].Y, a.ScaleY));
                             if (g.Type == GizmoType.ScaleZ || g.Type == GizmoType.ScaleAll)
-                                actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "ScaleZ", originalPositions[((Asset)a).assetID].Z, a.ScaleZ));
+                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "ScaleZ", originalPositions[((Asset)a).assetID].Z, a.ScaleZ));
+                            archive.UnsavedChanges = true;
                         }
-                        if (currentlyScaling.Count != 0)
+                        foreach (var a in currentlyMovingBoxes)
                         {
-                            currentlyScaling.Clear();
-                            originalPositions.Clear();
+                            var archive = ArchiveContainingAsset(a);
+                            archive.RefreshAssetEditor(a.assetID);
+                            archive.AddToActionsBoxMovement(a, g.Type, actions);
+                            archive.UnsavedChanges = true;
                         }
                     }
                     break;
@@ -428,15 +442,12 @@ namespace IndustrialPark
                         g.isSelected = false;
                         foreach (var a in currentlyMoving)
                         {
-                            RefreshAssetEditor(((Asset)a).assetID);
-                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionX", originalPositions[((Asset)a).assetID].X, a.PositionX));
-                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
-                            actions.Add(new AssetPropertyChangedAction(this, (Asset)a, "PositionZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
-                        }
-                        if (currentlyMoving.Count != 0)
-                        {
-                            currentlyMoving.Clear();
-                            originalPositions.Clear();
+                            var archive = ArchiveContainingAsset((Asset)a);
+                            archive.RefreshAssetEditor(((Asset)a).assetID);
+                            actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionX", originalPositions[((Asset)a).assetID].X, a.PositionX));
+                            actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
+                            actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
+                            archive.UnsavedChanges = true;
                         }
                     }
                     foreach (BoxTrigPositionGizmo g in triggerPositionGizmos)
@@ -444,40 +455,50 @@ namespace IndustrialPark
                         if (!g.isSelected)
                             continue;
                         g.isSelected = false;
-                        RefreshAssetEditor(currentlyMovingBox.assetID);
-                        AddToActionsBoxMovement(currentlyMovingBox, g.Type, actions);
 
-                        currentlyMoving.Clear();
-                        originalPositions.Clear();
-                        originalPositionsBoxes.Clear();
+                        foreach (var a in currentlyMovingBoxes)
+                        {
+                            var archive = ArchiveContainingAsset(a);
+                            archive.RefreshAssetEditor(a.assetID);
+                            archive.AddToActionsBoxMovement(a, g.Type, actions);
+                            archive.UnsavedChanges = true;
+                        }
                     }
                     break;
             }
 
-            actions.Add(new SelectionAction(CurrentlySelectedAssets.Select(asset => asset.assetID).ToList()));
+            originalPositions.Clear();
+            currentlyMoving.Clear();
+            currentlyRotating.Clear();
+            currentlyScaling.Clear();
+            originalPositionsBoxes.Clear();
+            currentlyMovingBoxes.Clear();
+
+            actions.Add(new SelectionAction(allCurrentlySelectedAssets.Select(asset => asset.assetID).ToList()));
             Program.UndoBuffer.AddAction(actions);
         }
 
         private void AddToActionsBoxMovement(Asset boxAsset, GizmoType type, List<IReversibleAction> actions)
         {
+            (Vector3 ogMaximum, Vector3 ogMinimum) = originalPositionsBoxes[boxAsset.assetID];
             if (boxAsset is AssetTRIG trig)
             {
                 switch (type)
                 {
                     case GizmoType.X:
                     case GizmoType.TrigX1:
-                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumX", originalPositionsBoxes[boxAsset.assetID].Minimum.X, trig.MinimumX));
-                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumX", originalPositionsBoxes[boxAsset.assetID].Maximum.X, trig.MaximumX));
+                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumX", ogMinimum.X, trig.MinimumX));
+                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumX", ogMaximum.X, trig.MaximumX));
                         break;
                     case GizmoType.Y:
                     case GizmoType.TrigY1:
-                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumY", originalPositionsBoxes[boxAsset.assetID].Minimum.Y, trig.MinimumY));
-                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumY", originalPositionsBoxes[boxAsset.assetID].Maximum.Y, trig.MaximumY));
+                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumY", ogMinimum.Y, trig.MinimumY));
+                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumY", ogMaximum.Y, trig.MaximumY));
                         break;
                     case GizmoType.Z:
                     case GizmoType.TrigZ1:
-                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumZ", originalPositionsBoxes[boxAsset.assetID].Minimum.Z, trig.MinimumZ));
-                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumZ", originalPositionsBoxes[boxAsset.assetID].Maximum.Z, trig.MaximumZ));
+                        actions.Add(new AssetPropertyChangedAction(this, trig, "MinimumZ", ogMinimum.Z, trig.MinimumZ));
+                        actions.Add(new AssetPropertyChangedAction(this, trig, "MaximumZ", ogMaximum.Z, trig.MaximumZ));
                         break;
                 }
             }
@@ -487,18 +508,18 @@ namespace IndustrialPark
                 {
                     case GizmoType.X:
                     case GizmoType.TrigX1:
-                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumX"], originalPositionsBoxes[boxAsset.assetID].Minimum.X, box.MinimumX));
-                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumX"], originalPositionsBoxes[boxAsset.assetID].Maximum.X, box.MaximumX));
+                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumX"], ogMinimum.X, box.MinimumX));
+                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumX"], ogMaximum.X, box.MaximumX));
                         break;
                     case GizmoType.Y:
                     case GizmoType.TrigY1:
-                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumY"], originalPositionsBoxes[boxAsset.assetID].Minimum.Y, box.MinimumY));
-                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumY"], originalPositionsBoxes[boxAsset.assetID].Maximum.Y, box.MaximumY));
+                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumY"], ogMinimum.Y, box.MinimumY));
+                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumY"], ogMaximum.Y, box.MaximumY));
                         break;
                     case GizmoType.Z:
                     case GizmoType.TrigZ1:
-                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumZ"], originalPositionsBoxes[boxAsset.assetID].Minimum.Z, box.MinimumZ));
-                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumZ"], originalPositionsBoxes[boxAsset.assetID].Maximum.Z, box.MaximumZ));
+                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MinimumZ"], ogMinimum.Z, box.MinimumZ));
+                        actions.Add(new AssetPropertyChangedAction(this, volume, ["VolumeShape", "MaximumZ"], ogMaximum.Z, box.MaximumZ));
                         break;
                 }
             }
@@ -517,304 +538,350 @@ namespace IndustrialPark
         private static List<IClickableAsset> currentlyMoving = new List<IClickableAsset>();
         private static List<IRotatableAsset> currentlyRotating = new List<IRotatableAsset>();
         private static List<IScalableAsset> currentlyScaling = new List<IScalableAsset>();
-        private static Asset currentlyMovingBox = null;
+        private static List<Asset> currentlyMovingBoxes = new List<Asset>();
         private static Dictionary<uint, Vector3> originalPositions = new Dictionary<uint, Vector3>();
         private static Dictionary<uint, (Vector3 Maximum, Vector3 Minimum)> originalPositionsBoxes = new Dictionary<uint, (Vector3, Vector3)>();
         private static Vector3 totalDistanceMoved = Vector3.Zero;
         private static float movementScale = 0.1f;
         public static Vector3 Grid;
+        public static bool RotationGizmoLocalAxis = true;
 
-        public void MouseMoveForPosition(Matrix viewProjection, int distanceX, int distanceY, bool grid)
+        public static void MouseMoveGizmos(Matrix viewProjection, int deltaX, int deltaY, bool grid)
         {
-            if (!positionGizmos.Any(gizmo => gizmo.isSelected))
+            if (!allCurrentlySelectedAssets.Any())
+                return;
+
+            MouseMoveForPosition(viewProjection, deltaX, deltaY, grid);
+            MouseMoveForPositionBoxes(viewProjection, deltaX, deltaY, grid);
+            if (RotationGizmoLocalAxis)
+                MouseMoveForRotationLocalAxis(deltaX, grid);
+            else
+                MouseMoveForRotationSingleAxis(deltaX, grid);
+            MouseMoveForScale(viewProjection, deltaX, deltaY, grid);
+            MouseMoveForScaleBoxes(viewProjection, deltaX, deltaY, grid);
+            MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
+        }
+
+
+        private static void MouseMoveForPosition(Matrix viewProjection, int distanceX, int distanceY, bool grid)
+        {
+            int axis = Array.FindIndex(positionGizmos, pg => pg.isSelected);
+            if (axis == -1)
                 return;
 
             Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-
-            foreach (var ra in currentlyMoving.Cast<IClickableAsset>())
+            Vector3 axisVector = axis switch
             {
-                if (positionGizmos[0].isSelected) // X MOVEMENT
+                0 => Vector3.UnitX,
+                1 => Vector3.UnitY,
+                _ => Vector3.UnitZ
+            };
+            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + axisVector, viewProjection);
+            Vector3 direction = direction2 - direction1;
+            direction.Z = 0;
+            direction.Normalize();
+            float movement = distanceX * direction.X - distanceY * direction.Y;
+            float scaledMovement = movement * movementScale;
+            GizmoType gizmoType = axis switch
+            {
+                0 => GizmoType.X,
+                1 => GizmoType.Y,
+                _ => GizmoType.Z
+            };
+
+            foreach (var asset in currentlyMoving)
+            {
+                float assetMovement = scaledMovement;
+                if (axis == 1 && asset is AssetUI)
+                    assetMovement *= -1;
+
+                switch (axis)
                 {
-                    Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitX, viewProjection);
-                    Vector3 direction = direction2 - direction1;
-                    direction.Z = 0;
-                    direction.Normalize();
-
-                    float movement = distanceX * direction.X - distanceY * direction.Y;
-                    float scaledMoveDistance = movement * movementScale;
-                    totalDistanceMoved.X += scaledMoveDistance;
-
-                    if (ra is AssetTRIG trig && trig.Shape == TriggerShape.Box)
-                    {
-                        if (grid)
-                        {
-                            trig.PositionX = SnapToGrid(originalPositions[((Asset)ra).assetID].X + totalDistanceMoved.X, GizmoType.X);
-                            trig.MinimumX = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Minimum.X + totalDistanceMoved.X, GizmoType.X);
-                            trig.MaximumX = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Maximum.X + totalDistanceMoved.X, GizmoType.X);
-                        }
-                        else
-                        {
-                            ra.PositionX += movement * movementScale;
-                            trig.MinimumX += movement * movementScale;
-                            trig.MaximumX += movement * movementScale;
-                        }
-                    }
-                    else if (ra is AssetVOLU volu && volu.VolumeShape is VolumeBox vbox)
-                    {
-                        if (grid)
-                        {
-                            vbox.MinimumX = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Minimum.X + totalDistanceMoved.X, GizmoType.X);
-                            vbox.MaximumX = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Maximum.X + totalDistanceMoved.X, GizmoType.X);
-                        }
-                        else
-                        {
-                            vbox.MinimumX += movement * movementScale;
-                            vbox.MaximumX += movement * movementScale;
-                        }
-                    }
-                    else
-                    {
-                        if (grid)
-                            ra.PositionX = SnapToGrid(originalPositions[((Asset)ra).assetID].X + totalDistanceMoved.X, GizmoType.X);
-                        else
-                            ra.PositionX += movement * movementScale;
-
-                        if (ra is AssetTRIG roundTrig)
-                            roundTrig.MinimumX = roundTrig.PositionX;
-                    }
-                }
-                else if (positionGizmos[1].isSelected) // Y MOVEMENT
-                {
-                    Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitY, viewProjection);
-                    Vector3 direction = direction2 - direction1;
-                    direction.Z = 0;
-                    direction.Normalize();
-
-                    float movement = distanceX * direction.X - distanceY * direction.Y;
-                    if (ra is AssetUI)
-                        movement *= -1;
-                    float scaledMoveDistance = movement * movementScale;
-                    totalDistanceMoved.Y += scaledMoveDistance;
-
-                    if (ra is AssetTRIG trig && trig.Shape == TriggerShape.Box)
-                    {
-                        if (grid)
-                        {
-                            trig.PositionY = SnapToGrid(originalPositions[((Asset)ra).assetID].Y + totalDistanceMoved.Y, GizmoType.Y);
-                            trig.MinimumY = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Minimum.Y + totalDistanceMoved.Y, GizmoType.Y);
-                            trig.MaximumY = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Maximum.Y + totalDistanceMoved.Y, GizmoType.Y);
-                        }
-                        else
-                        {
-                            ra.PositionY += movement * movementScale;
-                            trig.MinimumY += movement * movementScale;
-                            trig.MaximumY += movement * movementScale;
-                        }
-                    }
-                    else if (ra is AssetVOLU volu && volu.VolumeShape is VolumeBox vbox)
-                    {
-                        if (grid)
-                        {
-                            vbox.MinimumY = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Minimum.Y + totalDistanceMoved.Y, GizmoType.Y);
-                            vbox.MaximumY = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Maximum.Y + totalDistanceMoved.Y, GizmoType.Y);
-                        }
-                        else
-                        {
-                            vbox.MinimumY += movement * movementScale;
-                            vbox.MaximumY += movement * movementScale;
-                        }
-                    }
-                    else
-                    {
-                        if (grid)
-                            ra.PositionY = SnapToGrid(originalPositions[((Asset)ra).assetID].Y + totalDistanceMoved.Y, GizmoType.Y);
-                        else
-                            ra.PositionY += movement * movementScale;
-
-                        if (ra is AssetTRIG roundTrig)
-                            roundTrig.MinimumY = roundTrig.PositionY;
-                    }
-                }
-                else if (positionGizmos[2].isSelected) // Z MOVEMENT
-                {
-                    Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + Vector3.UnitZ, viewProjection);
-                    Vector3 direction = direction2 - direction1;
-                    direction.Z = 0;
-                    direction.Normalize();
-
-                    float movement = distanceX * direction.X - distanceY * direction.Y;
-                    float scaledMoveDistance = movement * movementScale;
-                    totalDistanceMoved.Z += scaledMoveDistance;
-
-                    if (ra is AssetTRIG trig && trig.Shape == TriggerShape.Box)
-                    {
-                        if (grid)
-                        {
-                            trig.PositionZ = SnapToGrid(originalPositions[((Asset)ra).assetID].Z + totalDistanceMoved.Z, GizmoType.Z);
-                            trig.MinimumZ = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Minimum.Z + totalDistanceMoved.Z, GizmoType.Z);
-                            trig.MaximumZ = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Maximum.Z + totalDistanceMoved.Z, GizmoType.Z);
-                        }
-                        else
-                        {
-                            ra.PositionZ += movement * movementScale;
-                            trig.MinimumZ += movement * movementScale;
-                            trig.MaximumZ += movement * movementScale;
-                        }
-                    }
-                    else if (ra is AssetVOLU volu && volu.VolumeShape is VolumeBox vbox)
-                    {
-                        if (grid)
-                        {
-                            vbox.MinimumZ = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Minimum.Z + totalDistanceMoved.Z, GizmoType.Z);
-                            vbox.MaximumZ = SnapToGrid(originalPositionsBoxes[((Asset)ra).assetID].Maximum.Z + totalDistanceMoved.Z, GizmoType.Z);
-                        }
-                        else
-                        {
-                            vbox.MinimumZ += movement * movementScale;
-                            vbox.MaximumZ += movement * movementScale;
-                        }
-                    }
-                    else
-                    {
-                        if (grid)
-                            ra.PositionZ = SnapToGrid(originalPositions[((Asset)ra).assetID].Z + totalDistanceMoved.Z, GizmoType.Z);
-                        else
-                            ra.PositionZ += movement * movementScale;
-
-                        if (ra is AssetTRIG roundTrig)
-                            roundTrig.MinimumZ = roundTrig.PositionZ;
-                    }
+                    case 0:
+                        totalDistanceMoved.X += scaledMovement;
+                        break;
+                    case 1:
+                        totalDistanceMoved.Y += scaledMovement;
+                        break;
+                    case 2:
+                        totalDistanceMoved.Z += scaledMovement;
+                        break;
                 }
 
-                UnsavedChanges = true;
+                uint assetID = ((Asset)asset).assetID;
+
+                float totalAxisMovement = axis switch
+                {
+                    0 => totalDistanceMoved.X,
+                    1 => totalDistanceMoved.Y,
+                    _ => totalDistanceMoved.Z
+                };
+
+                if (asset is AssetTRIG trig && trig.Shape == TriggerShape.Box)
+                {
+                    var originalPosition = originalPositions[assetID];
+                    var (Maximum, Minimum) = originalPositionsBoxes[assetID];
+                    switch (axis)
+                    {
+                        case 0:
+                            if (grid)
+                            {
+                                trig.PositionX = SnapToGrid(originalPosition.X + totalAxisMovement, gizmoType);
+                                trig.MinimumX = SnapToGrid(Minimum.X + totalAxisMovement, gizmoType);
+                                trig.MaximumX = SnapToGrid(Maximum.X + totalAxisMovement, gizmoType);
+                            }
+                            else
+                            {
+                                trig.PositionX += assetMovement;
+                                trig.MinimumX += assetMovement;
+                                trig.MaximumX += assetMovement;
+                            }
+                            break;
+                        case 1:
+                            if (grid)
+                            {
+                                trig.PositionY = SnapToGrid(originalPosition.Y + totalAxisMovement, gizmoType);
+                                trig.MinimumY = SnapToGrid(Minimum.Y + totalAxisMovement, gizmoType);
+                                trig.MaximumY = SnapToGrid(Maximum.Y + totalAxisMovement, gizmoType);
+                            }
+                            else
+                            {
+                                trig.PositionY += assetMovement;
+                                trig.MinimumY += assetMovement;
+                                trig.MaximumY += assetMovement;
+                            }
+                            break;
+                        case 2:
+                            if (grid)
+                            {
+                                trig.PositionZ = SnapToGrid(originalPosition.Z + totalAxisMovement, gizmoType);
+                                trig.MinimumZ = SnapToGrid(Minimum.Z + totalAxisMovement, gizmoType);
+                                trig.MaximumZ = SnapToGrid(Maximum.Z + totalAxisMovement, gizmoType);
+                            }
+                            else
+                            {
+                                trig.PositionZ += assetMovement;
+                                trig.MinimumZ += assetMovement;
+                                trig.MaximumZ += assetMovement;
+                            }
+                            break;
+                    }
+                }
+                else if (asset is AssetVOLU volu && volu.VolumeShape is VolumeBox vbox)
+                {
+                    var (Maximum, Minimum) = originalPositionsBoxes[assetID];
+                    switch (axis)
+                    {
+                        case 0:
+                            if (grid)
+                            {
+                                vbox.MinimumX = SnapToGrid(Minimum.X + totalAxisMovement, gizmoType);
+                                vbox.MaximumX = SnapToGrid(Maximum.X + totalAxisMovement, gizmoType);
+                            }
+                            else
+                            {
+                                vbox.MinimumX += assetMovement;
+                                vbox.MaximumX += assetMovement;
+                            }
+                            break;
+                        case 1:
+                            if (grid)
+                            {
+                                vbox.MinimumY = SnapToGrid(Minimum.Y + totalAxisMovement, gizmoType);
+                                vbox.MaximumY = SnapToGrid(Maximum.Y + totalAxisMovement, gizmoType);
+                            }
+                            else
+                            {
+                                vbox.MinimumY += assetMovement;
+                                vbox.MaximumY += assetMovement;
+                            }
+                            break;
+                        case 2:
+                            if (grid)
+                            {
+                                vbox.MinimumZ = SnapToGrid(Minimum.Z + totalAxisMovement, gizmoType);
+                                vbox.MaximumZ = SnapToGrid(Maximum.Z + totalAxisMovement, gizmoType);
+                            }
+                            else
+                            {
+                                vbox.MinimumZ += assetMovement;
+                                vbox.MaximumZ += assetMovement;
+                            }
+                            break;
+                    }
+                }
+                else
+                {
+                    var originalPosition = originalPositions[assetID];
+                    float originalAxisPosition = axis switch
+                    {
+                        0 => originalPosition.X,
+                        1 => originalPosition.Y,
+                        _ => originalPosition.Z
+                    };
+                    float newPosition = grid
+                        ? SnapToGrid(originalAxisPosition + totalAxisMovement, gizmoType)
+                        : GetCurrentPosition(asset, axis) + assetMovement;
+
+                    SetPosition(asset, axis, newPosition);
+
+                    if (asset is AssetTRIG roundTrig)
+                        SetTriggerMinimum(roundTrig, axis, newPosition);
+                }
             }
         }
 
-        public void MouseMoveForPositionTriggers(Matrix viewProjection, int distanceX, int distanceY, bool grid)
+        private static float GetCurrentPosition(IClickableAsset asset, int axis)
         {
-            // Volumes (Box Triggers)
-            if (triggerPositionGizmos[0].isSelected || triggerPositionGizmos[1].isSelected || triggerPositionGizmos[2].isSelected
-                || triggerPositionGizmos[3].isSelected || triggerPositionGizmos[4].isSelected || triggerPositionGizmos[5].isSelected)
+            return axis switch
             {
-                var box = currentlyMovingBox is AssetTRIG trig ? trig : (IVolumeAsset)((AssetVOLU)currentlyMovingBox).VolumeShape;
-                if (box != null)
+                0 => asset.PositionX,
+                1 => asset.PositionY,
+                _ => asset.PositionZ
+            };
+        }
+
+        private static void SetPosition(IClickableAsset asset, int axis, float value)
+        {
+            switch (axis)
+            {
+                case 0:
+                    asset.PositionX = value;
+                    break;
+                case 1:
+                    asset.PositionY = value;
+                    break;
+                case 2:
+                    asset.PositionZ = value;
+                    break;
+            }
+        }
+
+        private static void SetTriggerMinimum(AssetTRIG trigger, int axis, float value)
+        {
+            switch (axis)
+            {
+                case 0:
+                    trigger.MinimumX = value;
+                    break;
+                case 1:
+                    trigger.MinimumY = value;
+                    break;
+                case 2:
+                    trigger.MinimumZ = value;
+                    break;
+            }
+        }
+
+        private static void MouseMoveForPositionBoxes(Matrix viewProjection, int distanceX, int distanceY, bool grid)
+        {
+            int selectedGizmo = Array.FindIndex(triggerPositionGizmos, g => g.isSelected);
+            if (selectedGizmo == -1)
+                return;
+
+            int axis = selectedGizmo % 3;
+            bool maximum = selectedGizmo < 3;
+
+            Vector3 axisVector = axis switch
+            {
+                0 => Vector3.UnitX,
+                1 => Vector3.UnitY,
+                _ => Vector3.UnitZ
+            };
+            Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
+            Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+            Vector3 direction = direction2 - direction1;
+            direction.Z = 0;
+            direction.Normalize();
+            float movement = distanceX * direction.X - distanceY * direction.Y;
+            float scaledMovement = movement * movementScale;
+
+            GizmoType gizmoType = axis switch
+            {
+                0 => GizmoType.X,
+                1 => GizmoType.Y,
+                _ => GizmoType.Z
+            };
+
+            foreach (var asset in currentlyMovingBoxes)
+            {
+                IVolumeAsset box = asset is AssetTRIG trigger ? trigger : (IVolumeAsset)((AssetVOLU)asset).VolumeShape;
+                uint assetID = asset.assetID;
+                
+                switch (axis)
                 {
-                    Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+                    case 0:
+                        totalDistanceMoved.X += scaledMovement;
+                        break;
+                    case 1:
+                        totalDistanceMoved.Y += scaledMovement;
+                        break;
+                    case 2:
+                        totalDistanceMoved.Z += scaledMovement;
+                        break;
+                }
+                float totalAxisMovement = axis switch
+                {
+                    0 => totalDistanceMoved.X,
+                    1 => totalDistanceMoved.Y,
+                    _ => totalDistanceMoved.Z
+                };
+                float currentBound = axis switch
+                {
+                    0 when maximum => box.MaximumX,
+                    0 => box.MinimumX,
+                    1 when maximum => box.MaximumY,
+                    1 => box.MinimumY,
+                    2 when maximum => box.MaximumZ,
+                    _ => box.MinimumZ
+                };
+                float newBound;
 
-                    if (triggerPositionGizmos[0].isSelected)
+                if (grid)
+                {
+                    var (Maximum, Minimum) = originalPositionsBoxes[assetID];
+                    float originalBound = axis switch
                     {
-                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
+                        0 when maximum => Maximum.X,
+                        0 => Minimum.X,
+                        1 when maximum => Maximum.Y,
+                        1 => Minimum.Y,
+                        2 when maximum => Maximum.Z,
+                        _ => Minimum.Z
+                    };
+                    newBound = SnapToGrid(originalBound + totalAxisMovement, gizmoType);
+                }
+                else
+                {
+                    newBound = currentBound + scaledMovement;
+                }
 
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        float movement = (distanceX * direction.X - distanceY * direction.Y);
-                        float scaledMoveDistance = movement * movementScale;
-                        totalDistanceMoved.X += scaledMoveDistance;
-                        if (grid)
-                            box.MaximumX = SnapToGrid(originalPositions[((Asset)box).assetID].X + totalDistanceMoved.X, GizmoType.X);
-                        else
-                            box.MaximumX += movement * movementScale;
-                    }
-                    else if (triggerPositionGizmos[1].isSelected)
-                    {
-                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
-
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        float movement = (distanceX * direction.X - distanceY * direction.Y);
-                        float scaledMoveDistance = movement * movementScale;
-                        totalDistanceMoved.Y += scaledMoveDistance;
-
-                        if (grid)
-                            box.MaximumY = SnapToGrid(originalPositions[((Asset)box).assetID].Y + totalDistanceMoved.Y, GizmoType.Y);
-                        else
-                            box.MaximumY += movement * movementScale;
-                    }
-                    else if (triggerPositionGizmos[2].isSelected)
-                    {
-                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
-
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        float movement = (distanceX * direction.X - distanceY * direction.Y);
-                        float scaledMoveDistance = movement * movementScale;
-                        totalDistanceMoved.Z += scaledMoveDistance;
-
-                        if (grid)
-                            box.MaximumZ = SnapToGrid(originalPositions[((Asset)box).assetID].Z + totalDistanceMoved.Z, GizmoType.Z);
-                        else
-                            box.MaximumZ += movement * movementScale;
-                    }
-                    else if (triggerPositionGizmos[3].isSelected)
-                    {
-                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
-
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        float movement = (distanceX * direction.X - distanceY * direction.Y);
-                        float scaledMoveDistance = movement * movementScale;
-                        totalDistanceMoved.X += scaledMoveDistance;
-
-                        if (grid)
-                            box.MinimumX = SnapToGrid(originalPositions[((Asset)box).assetID].X + totalDistanceMoved.X, GizmoType.X);
-                        else
-                            box.MinimumX += movement * movementScale;
-                    }
-                    else if (triggerPositionGizmos[4].isSelected)
-                    {
-                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
-
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        float movement = (distanceX * direction.X - distanceY * direction.Y);
-                        float scaledMoveDistance = movement * movementScale;
-                        totalDistanceMoved.Y += scaledMoveDistance;
-
-                        if (grid)
-                            box.MinimumY = SnapToGrid(originalPositions[((Asset)box).assetID].Y + totalDistanceMoved.Y, GizmoType.Y);
-                        else
-                            box.MinimumY += movement * movementScale;
-                    }
-                    else if (triggerPositionGizmos[5].isSelected)
-                    {
-                        Vector3 movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
-
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        float movement = (distanceX * direction.X - distanceY * direction.Y);
-                        float scaledMoveDistance = movement * movementScale;
-                        totalDistanceMoved.Z += scaledMoveDistance;
-
-                        if (grid)
-                            box.MinimumZ = SnapToGrid(originalPositions[((Asset)box).assetID].Z + totalDistanceMoved.Z, GizmoType.Z);
-                        else
-                            box.MinimumZ += movement * movementScale;
-                    }
-
-                    UnsavedChanges = true;
+                switch (axis)
+                {
+                    case 0 when maximum:
+                        box.MaximumX = newBound;
+                        break;
+                    case 0:
+                        box.MinimumX = newBound;
+                        break;
+                    case 1 when maximum:
+                        box.MaximumY = newBound;
+                        break;
+                    case 1:
+                        box.MinimumY = newBound;
+                        break;
+                    case 2 when maximum:
+                        box.MaximumZ = newBound;
+                        break;
+                    case 2:
+                        box.MinimumZ = newBound;
+                        break;
                 }
             }
         }
 
-        public void MouseMoveForRotationLocalAxis(int distanceX, bool grid)
+        private static void MouseMoveForRotationLocalAxis(int distanceX, bool grid)
         {
             var index = Array.FindIndex(rotationGizmos, g => g.isSelected);
             if (index < 0)
@@ -838,14 +905,14 @@ namespace IndustrialPark
             {
                 Axis.X => totalDistanceMoved.X,
                 Axis.Y => totalDistanceMoved.Y,
-                Axis.Z => totalDistanceMoved.Z,
+                _ => totalDistanceMoved.Z,
             };
 
             Vector3 localAxis = axis switch
             {
                 Axis.X => Vector3.UnitY,
                 Axis.Y => Vector3.UnitX,
-                Axis.Z => Vector3.UnitZ
+                _ => Vector3.UnitZ
             };
 
             Matrix deltaRotation = Matrix.RotationAxis(localAxis, MathUtil.DegreesToRadians(angle));
@@ -886,11 +953,9 @@ namespace IndustrialPark
                     ra.Roll = MathUtil.RadiansToDegrees(roll);
                 }
             }
-
-            UnsavedChanges = true;
         }
 
-        public void MouseMoveForRotationSingleAxis(int distanceX, bool grid)
+        private static void MouseMoveForRotationSingleAxis(int distanceX, bool grid)
         {
             Axis axis = (Axis)Array.FindIndex(rotationGizmos, g => g.isSelected);
             if (axis < 0)
@@ -922,126 +987,257 @@ namespace IndustrialPark
                         break;
                 }
             }
-            UnsavedChanges = true;
         }
 
-        public void MouseMoveForScale(Matrix viewProjection, int distanceX, int distanceY, bool grid)
+        private static void MouseMoveForScale(Matrix viewProjection, int distanceX, int distanceY, bool grid)
         {
-            if (scaleGizmos[0].isSelected || scaleGizmos[1].isSelected || scaleGizmos[2].isSelected || scaleGizmos[3].isSelected)
+            int index = Array.FindIndex(scaleGizmos, sg => sg.isSelected);
+            if (index == -1)
+                return;
+
+            Vector3 direction = Vector3.Zero;
+            float movement;
+            if (index < 3)
             {
-                var selectedScalableAssets = from Asset a in CurrentlySelectedAssets where a is IScalableAsset ica select (IScalableAsset)a;
-                if (!selectedScalableAssets.Any())
-                    return;
-
-                foreach (var ra in selectedScalableAssets)
+                Vector3 axisVector = index switch
                 {
-                    Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+                    0 => Vector3.UnitX,
+                    1 => Vector3.UnitY,
+                    _ => Vector3.UnitZ
+                };
+                Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+                Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
+                Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                direction = direction2 - direction1;
+                direction.Z = 0;
+                direction.Normalize();
+                movement = (distanceX * direction.X - distanceY * direction.Y) / 40f;
+            }
+            else
+            {
+                movement = distanceX / 40f;
+            }
 
-                    if (scaleGizmos[0].isSelected)
-                    {
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation), viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        ra.ScaleX += (distanceX * direction.X - distanceY * direction.Y) / 40f;
+            foreach (var asset in currentlyScaling)
+            {
+                switch (index)
+                {
+                    case 0:
+                        asset.ScaleX += movement;
                         if (grid)
-                            ra.ScaleX = SnapToGrid(ra.ScaleX, GizmoType.X);
-
-                        totalDistanceMoved.X = ra.ScaleX - originalPositions[((Asset)ra).assetID].X;
-                    }
-                    else if (scaleGizmos[1].isSelected)
-                    {
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation), viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        ra.ScaleY += (distanceX * direction.X - distanceY * direction.Y) / 40f;
+                            asset.ScaleX = SnapToGrid(asset.ScaleX, GizmoType.X);
+                        totalDistanceMoved.X = asset.ScaleX - originalPositions[((Asset)asset).assetID].X;
+                        continue;
+                    case 1:
+                        asset.ScaleY += movement;
                         if (grid)
-                            ra.ScaleY = SnapToGrid(ra.ScaleY, GizmoType.Y);
-
-                        totalDistanceMoved.Y = ra.ScaleY - originalPositions[((Asset)ra).assetID].Y;
-                    }
-                    else if (scaleGizmos[2].isSelected)
-                    {
-                        Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation), viewProjection);
-                        Vector3 direction = direction2 - direction1;
-                        direction.Z = 0;
-                        direction.Normalize();
-
-                        ra.ScaleZ += (distanceX * direction.X - distanceY * direction.Y) / 40f;
+                            asset.ScaleY = SnapToGrid(asset.ScaleY, GizmoType.Y);
+                        totalDistanceMoved.Y = asset.ScaleY - originalPositions[((Asset)asset).assetID].Y;
+                        continue;
+                    case 2:
+                        asset.ScaleZ += movement;
                         if (grid)
-                            ra.ScaleZ = SnapToGrid(ra.ScaleZ, GizmoType.Z);
-
-                        totalDistanceMoved.Z = ra.ScaleZ - originalPositions[((Asset)ra).assetID].Z;
-                    }
-                    else if (scaleGizmos[3].isSelected)
+                            asset.ScaleZ = SnapToGrid(asset.ScaleZ, GizmoType.Z);
+                        totalDistanceMoved.Z = asset.ScaleZ - originalPositions[((Asset)asset).assetID].Z;
+                        continue;
+                    case 3:
                     {
-                        ra.ScaleX += distanceX / 40f;
-                        ra.ScaleY += distanceX / 40f;
-                        ra.ScaleZ += distanceX / 40f;
-
-                        totalDistanceMoved += distanceX / 40f;
+                        float factor = MathF.Exp(movement / 10f);
+                        asset.ScaleX *= factor;
+                        asset.ScaleY *= factor;
+                        asset.ScaleZ *= factor;
+                        totalDistanceMoved.X = asset.ScaleX - originalPositions[((Asset)asset).assetID].X;
+                        totalDistanceMoved.Y = asset.ScaleY - originalPositions[((Asset)asset).assetID].Y;
+                        totalDistanceMoved.Z = asset.ScaleZ - originalPositions[((Asset)asset).assetID].Z;
+                        continue;
                     }
-
-                    UnsavedChanges = true;
                 }
             }
         }
 
-        public void MouseMoveForPositionLocal(Matrix viewProjection, int distanceX, int distanceY, bool grid)
+        private static void MouseMoveForScaleBoxes(Matrix viewProjection, int distanceX, int distanceY, bool grid)
         {
-            if (positionLocalGizmos[0].isSelected || positionLocalGizmos[1].isSelected || positionLocalGizmos[2].isSelected)
+            int index = Array.FindIndex(scaleGizmos, sg => sg.isSelected);
+            if (index == -1)
+                return;
+
+            Vector3 direction = Vector3.Zero;
+            float movement;
+            if (index < 3)
             {
-                Vector3 movementDirection = new Vector3();
+                Vector3 axisVector = index switch
+                {
+                    0 => Vector3.UnitX,
+                    1 => Vector3.UnitY,
+                    _ => Vector3.UnitZ
+                };
 
-                if (positionLocalGizmos[0].isSelected)
-                    movementDirection = (Vector3)Vector3.Transform(Vector3.UnitX, GizmoCenterRotation);
-                else if (positionLocalGizmos[1].isSelected)
-                    movementDirection = (Vector3)Vector3.Transform(Vector3.UnitY, GizmoCenterRotation);
-                else if (positionLocalGizmos[2].isSelected)
-                    movementDirection = (Vector3)Vector3.Transform(Vector3.UnitZ, GizmoCenterRotation);
+                Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+                Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
+                Vector3 direction2 = (Vector3)Vector3.Transform(
+                    GizmoCenterPosition + movementDirection, viewProjection);
 
-                Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
-                Vector3 direction = direction2 - (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+                direction = direction2 - direction1;
                 direction.Z = 0;
                 direction.Normalize();
 
-                foreach (var ra in currentlyMoving)
-                {
-                    float movement = distanceX * direction.X - distanceY * direction.Y;
+                movement = distanceX * direction.X - distanceY * direction.Y;
+            }
+            else
+            {
+                movement = distanceX;
+            }
+            float scaledMovement = movement * movementScale;
 
+            foreach (var asset in currentlyMovingBoxes)
+            {
+                var box = asset is AssetTRIG trig ? trig : (IVolumeAsset)((AssetVOLU)asset).VolumeShape;
+                uint assetID = asset.assetID;
+
+                if (index < 3)
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            totalDistanceMoved.X += scaledMovement;
+                            break;
+                        case 1:
+                            totalDistanceMoved.Y += scaledMovement;
+                            break;
+                        case 2:
+                            totalDistanceMoved.Z += scaledMovement;
+                            break;
+                    }
+                }
+                else
+                {
+                    totalDistanceMoved += scaledMovement;
+                }
+
+                if (index == 3)
+                {
+                    var (Maximum, Minimum) = originalPositionsBoxes[assetID];
+                    float factor = MathF.Exp(totalDistanceMoved.X / 10f);
+                    float centerX = (Maximum.X + Minimum.X) / 2f;
+                    float centerY = (Maximum.Y + Minimum.Y) / 2f;
+                    float centerZ = (Maximum.Z + Minimum.Z) / 2f;
+                    float halfX = (Maximum.X - Minimum.X) / 2f * factor;
+                    float halfY = (Maximum.Y - Minimum.Y) / 2f * factor;
+                    float halfZ = (Maximum.Z - Minimum.Z) / 2f * factor;
+                    float maximumX = centerX + halfX;
+                    float minimumX = centerX - halfX;
+                    float maximumY = centerY + halfY;
+                    float minimumY = centerY - halfY;
+                    float maximumZ = centerZ + halfZ;
+                    float minimumZ = centerZ - halfZ;
                     if (grid)
                     {
-                        ra.PositionX = SnapToGrid(ra.PositionX + movementDirection.X * movement, GizmoType.X);
-                        ra.PositionY = SnapToGrid(ra.PositionY + movementDirection.Y * movement, GizmoType.Y);
-                        ra.PositionZ = SnapToGrid(ra.PositionZ + movementDirection.Z * movement, GizmoType.Z);
+                        box.MaximumX = SnapToGrid(maximumX, GizmoType.X);
+                        box.MinimumX = SnapToGrid(minimumX, GizmoType.X);
+                        box.MaximumY = SnapToGrid(maximumY, GizmoType.Y);
+                        box.MinimumY = SnapToGrid(minimumY, GizmoType.Y);
+                        box.MaximumZ = SnapToGrid(maximumZ, GizmoType.Z);
+                        box.MinimumZ = SnapToGrid(minimumZ, GizmoType.Z);
                     }
                     else
                     {
-                        ra.PositionX += movementDirection.X * movement / 10f;
-                        ra.PositionY += movementDirection.Y * movement / 10f;
-                        ra.PositionZ += movementDirection.Z * movement / 10f;
-                    }
-
-                    totalDistanceMoved = originalPositions[((Asset)ra).assetID] - new Vector3(ra.PositionX, ra.PositionY, ra.PositionZ);
-
-                    if (ra is AssetTRIG trig && trig.Shape != TriggerShape.Box)
-                    {
-                        trig.MinimumX = trig.PositionX;
-                        trig.MinimumY = trig.PositionY;
-                        trig.MinimumZ = trig.PositionZ;
+                        box.MaximumX = maximumX;
+                        box.MinimumX = minimumX;
+                        box.MaximumY = maximumY;
+                        box.MinimumY = minimumY;
+                        box.MaximumZ = maximumZ;
+                        box.MinimumZ = minimumZ;
                     }
                 }
+                else if (grid)
+                {
+                    var (Maximum, Minimum) = originalPositionsBoxes[assetID];
+                    switch (index)
+                    {
+                        case 0:
+                            box.MaximumX = SnapToGrid(Maximum.X + totalDistanceMoved.X, GizmoType.X);
+                            box.MinimumX = SnapToGrid(Minimum.X - totalDistanceMoved.X, GizmoType.X);
+                            break;
+                        case 1:
+                            box.MaximumY = SnapToGrid(Maximum.Y + totalDistanceMoved.Y, GizmoType.Y);
+                            box.MinimumY = SnapToGrid(Minimum.Y - totalDistanceMoved.Y, GizmoType.Y);
+                            break;
+                        case 2:
+                            box.MaximumZ = SnapToGrid(Maximum.Z + totalDistanceMoved.Z, GizmoType.Z);
+                            box.MinimumZ = SnapToGrid(Minimum.Z - totalDistanceMoved.Z, GizmoType.Z);
+                            break;
+                    }
+                }
+                else
+                {
+                    switch (index)
+                    {
+                        case 0:
+                            box.MaximumX += scaledMovement;
+                            box.MinimumX -= scaledMovement;
+                            break;
+                        case 1:
+                            box.MaximumY += scaledMovement;
+                            box.MinimumY -= scaledMovement;
+                            break;
+                        case 2:
+                            box.MaximumZ += scaledMovement;
+                            box.MinimumZ -= scaledMovement;
+                            break;
+                    }
+                }
+            }
+        }
 
-                UnsavedChanges = true;
+        private static void MouseMoveForPositionLocal(Matrix viewProjection, int distanceX, int distanceY, bool grid)
+        {
+            int index = Array.FindIndex(positionLocalGizmos, pg => pg.isSelected);
+            if (index == -1)
+                return;
+
+            Vector3 axisVector = index switch
+            {
+                0 => Vector3.UnitX,
+                1 => Vector3.UnitY,
+                _ => Vector3.UnitZ,
+            };
+
+            Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
+            Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+            Vector3 direction = direction2 - direction1;
+            direction.Z = 0;
+            direction.Normalize();
+            float movement = distanceX * direction.X - distanceY * direction.Y;
+            float movementScale = grid ? 1f : ArchiveEditorFunctions.movementScale;
+
+            foreach (var asset in currentlyMoving)
+            {
+                asset.PositionX += movementDirection.X * movement * movementScale;
+                asset.PositionY += movementDirection.Y * movement * movementScale;
+                asset.PositionZ += movementDirection.Z * movement * movementScale;
+
+                if (grid)
+                {
+                    asset.PositionX = SnapToGrid(asset.PositionX, GizmoType.X);
+                    asset.PositionY = SnapToGrid(asset.PositionY, GizmoType.Y);
+                    asset.PositionZ = SnapToGrid(asset.PositionZ, GizmoType.Z);
+                }
+
+                totalDistanceMoved = originalPositions[((Asset)asset).assetID] - new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
+
+                if (asset is AssetTRIG trig && trig.Shape != TriggerShape.Box)
+                {
+                    trig.MinimumX = trig.PositionX;
+                    trig.MinimumY = trig.PositionY;
+                    trig.MinimumZ = trig.PositionZ;
+                }
             }
         }
 
         public static GizmoMode ToggleGizmoType(GizmoMode mode = GizmoMode.Null)
         {
-            Program.MainForm.ScreenUnclicked();
+            ScreenUnclicked();
 
             if (mode == GizmoMode.Null)
             {
@@ -1067,24 +1263,24 @@ namespace IndustrialPark
         /// <param name="value">The value to round</param>
         /// <param name="increment">The increment</param>
         /// <returns>The value rounded to the nearest increment</returns>
-        private float SnapToIncrement(float value, float increment = 15.0f)
+        private static float SnapToIncrement(float value, float increment = 15.0f)
         {
             // Round to the nearest increment
             return (float)Math.Round(value / increment) * increment;
         }
 
-        private float SnapToGrid(float value, GizmoType gizmo)
+        private static float SnapToGrid(float value, GizmoType gizmo)
         {
-            if (gizmo == GizmoType.X)
-                return RoundToNearest(value, Grid.X);
-            if (gizmo == GizmoType.Y)
-                return RoundToNearest(value, Grid.Y);
-            if (gizmo == GizmoType.Z)
-                return RoundToNearest(value, Grid.Z);
-            return 0;
+            return gizmo switch
+            {
+                GizmoType.X => RoundToNearest(value, Grid.X),
+                GizmoType.Y => RoundToNearest(value, Grid.Y),
+                GizmoType.Z => RoundToNearest(value, Grid.Z),
+                _ => 0
+            };
         }
 
-        private float RoundToNearest(float n, float x)
+        private static float RoundToNearest(float n, float x)
         {
             return (float)Math.Round(n / x) * x;
         }

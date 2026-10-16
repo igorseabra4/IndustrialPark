@@ -9,5 +9,7 @@
         AssetSingle PositionX { get; }
         AssetSingle PositionY { get; }
         AssetSingle PositionZ { get; }
+
+        uint assetID { get; }
     }
 }

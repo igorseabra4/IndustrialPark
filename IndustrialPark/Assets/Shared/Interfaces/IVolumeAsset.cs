@@ -12,5 +12,6 @@ namespace IndustrialPark
         AssetSingle MaximumZ { get; set; }
 
         void ApplyScale(Vector3 scale, float singleFactor);
+        BoundingBox GetBoundingBox();
     }
 }

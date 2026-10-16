@@ -202,7 +202,7 @@
             // 
             resources.ApplyResources(convertArchiveToolStripMenuItem, "convertArchiveToolStripMenuItem");
             convertArchiveToolStripMenuItem.Name = "convertArchiveToolStripMenuItem";
-            convertArchiveToolStripMenuItem.Click += EditPACKToolStripMenuItem_Click;
+            convertArchiveToolStripMenuItem.Click += convertArchiveToolStripMenuItem_Click;
             // 
             // layersToolStripMenuItem
             // 
