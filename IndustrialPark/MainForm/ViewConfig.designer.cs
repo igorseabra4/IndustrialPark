@@ -79,7 +79,7 @@
             groupBox2.Location = new System.Drawing.Point(10, 63);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new System.Drawing.Size(363, 47);
-            groupBox2.TabIndex = 2;
+            groupBox2.TabIndex = 5;
             groupBox2.TabStop = false;
             groupBox2.Text = "View (Yaw, Pitch, Roll)";
             // 
@@ -91,7 +91,7 @@
             NumericCameraRoll.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
             NumericCameraRoll.Name = "NumericCameraRoll";
             NumericCameraRoll.Size = new System.Drawing.Size(112, 23);
-            NumericCameraRoll.TabIndex = 11;
+            NumericCameraRoll.TabIndex = 8;
             NumericCameraRoll.ValueChanged += NumericCameraRot_ValueChanged;
             // 
             // NumericCameraPitch
@@ -102,7 +102,7 @@
             NumericCameraPitch.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
             NumericCameraPitch.Name = "NumericCameraPitch";
             NumericCameraPitch.Size = new System.Drawing.Size(112, 23);
-            NumericCameraPitch.TabIndex = 10;
+            NumericCameraPitch.TabIndex = 7;
             NumericCameraPitch.ValueChanged += NumericCameraRot_ValueChanged;
             // 
             // NumericCameraYaw
@@ -113,7 +113,7 @@
             NumericCameraYaw.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
             NumericCameraYaw.Name = "NumericCameraYaw";
             NumericCameraYaw.Size = new System.Drawing.Size(112, 23);
-            NumericCameraYaw.TabIndex = 9;
+            NumericCameraYaw.TabIndex = 6;
             NumericCameraYaw.ValueChanged += NumericCameraRot_ValueChanged;
             // 
             // groupBox4
@@ -123,29 +123,31 @@
             groupBox4.Location = new System.Drawing.Point(10, 116);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new System.Drawing.Size(242, 47);
-            groupBox4.TabIndex = 3;
+            groupBox4.TabIndex = 9;
             groupBox4.TabStop = false;
             groupBox4.Text = "Move Speed, Rotate Speed";
             // 
             // NumericIntervalRotation
             // 
             NumericIntervalRotation.DecimalPlaces = 4;
+            NumericIntervalRotation.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             NumericIntervalRotation.Location = new System.Drawing.Point(124, 19);
             NumericIntervalRotation.Minimum = new decimal(new int[] { 1, 0, 0, 262144 });
             NumericIntervalRotation.Name = "NumericIntervalRotation";
             NumericIntervalRotation.Size = new System.Drawing.Size(112, 23);
-            NumericIntervalRotation.TabIndex = 13;
+            NumericIntervalRotation.TabIndex = 11;
             NumericIntervalRotation.Value = new decimal(new int[] { 5, 0, 0, 0 });
             NumericIntervalRotation.ValueChanged += NumericIntervalRotation_ValueChanged;
             // 
             // NumericInterval
             // 
             NumericInterval.DecimalPlaces = 4;
+            NumericInterval.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
             NumericInterval.Location = new System.Drawing.Point(6, 19);
             NumericInterval.Minimum = new decimal(new int[] { 1, 0, 0, 262144 });
             NumericInterval.Name = "NumericInterval";
             NumericInterval.Size = new System.Drawing.Size(112, 23);
-            NumericInterval.TabIndex = 12;
+            NumericInterval.TabIndex = 10;
             NumericInterval.Value = new decimal(new int[] { 5, 0, 0, 0 });
             NumericInterval.ValueChanged += NumericInterval_ValueChanged;
             // 
@@ -156,7 +158,7 @@
             groupBox3.Location = new System.Drawing.Point(12, 173);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new System.Drawing.Size(240, 47);
-            groupBox3.TabIndex = 4;
+            groupBox3.TabIndex = 12;
             groupBox3.TabStop = false;
             groupBox3.Text = "Draw Distance, Field of View";
             // 
@@ -168,7 +170,7 @@
             NumericFOV.Minimum = new decimal(new int[] { 1, 0, 0, 262144 });
             NumericFOV.Name = "NumericFOV";
             NumericFOV.Size = new System.Drawing.Size(112, 23);
-            NumericFOV.TabIndex = 15;
+            NumericFOV.TabIndex = 14;
             NumericFOV.Value = new decimal(new int[] { 60, 0, 0, 0 });
             NumericFOV.ValueChanged += NumericFOV_ValueChanged;
             // 
@@ -180,7 +182,7 @@
             NumericDrawD.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             NumericDrawD.Name = "NumericDrawD";
             NumericDrawD.Size = new System.Drawing.Size(110, 23);
-            NumericDrawD.TabIndex = 14;
+            NumericDrawD.TabIndex = 13;
             NumericDrawD.Value = new decimal(new int[] { 500000, 0, 0, 0 });
             NumericDrawD.ValueChanged += NumericDrawD_ValueChanged;
             // 
@@ -204,7 +206,7 @@
             NumericCameraZ.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
             NumericCameraZ.Name = "NumericCameraZ";
             NumericCameraZ.Size = new System.Drawing.Size(112, 23);
-            NumericCameraZ.TabIndex = 8;
+            NumericCameraZ.TabIndex = 4;
             NumericCameraZ.ValueChanged += NumericCamera_ValueChanged;
             // 
             // NumericCameraY
@@ -215,7 +217,7 @@
             NumericCameraY.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
             NumericCameraY.Name = "NumericCameraY";
             NumericCameraY.Size = new System.Drawing.Size(112, 23);
-            NumericCameraY.TabIndex = 7;
+            NumericCameraY.TabIndex = 3;
             NumericCameraY.ValueChanged += NumericCamera_ValueChanged;
             // 
             // NumericCameraX
@@ -226,7 +228,7 @@
             NumericCameraX.Minimum = new decimal(new int[] { -1, -1, -1, int.MinValue });
             NumericCameraX.Name = "NumericCameraX";
             NumericCameraX.Size = new System.Drawing.Size(112, 23);
-            NumericCameraX.TabIndex = 6;
+            NumericCameraX.TabIndex = 2;
             NumericCameraX.ValueChanged += NumericCamera_ValueChanged;
             // 
             // groupBox7
@@ -237,7 +239,7 @@
             groupBox7.Location = new System.Drawing.Point(10, 226);
             groupBox7.Name = "groupBox7";
             groupBox7.Size = new System.Drawing.Size(363, 47);
-            groupBox7.TabIndex = 5;
+            groupBox7.TabIndex = 15;
             groupBox7.TabStop = false;
             groupBox7.Text = "Grid Size (X, Y, Z)";
             // 
@@ -282,7 +284,7 @@
             buttonViewControls.Location = new System.Drawing.Point(263, 173);
             buttonViewControls.Name = "buttonViewControls";
             buttonViewControls.Size = new System.Drawing.Size(106, 23);
-            buttonViewControls.TabIndex = 19;
+            buttonViewControls.TabIndex = 21;
             buttonViewControls.Text = "View Controls";
             buttonViewControls.UseVisualStyleBackColor = true;
             buttonViewControls.Click += buttonViewControls_Click;
@@ -293,7 +295,7 @@
             buttonAbout.Location = new System.Drawing.Point(263, 202);
             buttonAbout.Name = "buttonAbout";
             buttonAbout.Size = new System.Drawing.Size(106, 23);
-            buttonAbout.TabIndex = 20;
+            buttonAbout.TabIndex = 22;
             buttonAbout.Text = "About";
             buttonAbout.UseVisualStyleBackColor = true;
             buttonAbout.Click += buttonAbout_Click;
@@ -303,7 +305,7 @@
             buttonResetSpeeds.Location = new System.Drawing.Point(263, 144);
             buttonResetSpeeds.Name = "buttonResetSpeeds";
             buttonResetSpeeds.Size = new System.Drawing.Size(106, 23);
-            buttonResetSpeeds.TabIndex = 21;
+            buttonResetSpeeds.TabIndex = 20;
             buttonResetSpeeds.Text = "Reset Speeds";
             buttonResetSpeeds.UseVisualStyleBackColor = true;
             buttonResetSpeeds.Click += buttonResetSpeeds_Click;
@@ -313,7 +315,7 @@
             buttonResetView.Location = new System.Drawing.Point(263, 115);
             buttonResetView.Name = "buttonResetView";
             buttonResetView.Size = new System.Drawing.Size(106, 23);
-            buttonResetView.TabIndex = 22;
+            buttonResetView.TabIndex = 19;
             buttonResetView.Text = "Reset View";
             buttonResetView.UseVisualStyleBackColor = true;
             buttonResetView.Click += buttonResetView_Click;
