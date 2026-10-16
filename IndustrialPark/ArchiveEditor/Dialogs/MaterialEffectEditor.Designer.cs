@@ -96,6 +96,7 @@
             // 
             resources.ApplyResources(panelColor, "panelColor");
             panelColor.Name = "panelColor";
+            panelColor.TabStop = true;
             panelColor.Click += panelColor_Click;
             // 
             // propertyGridTextureInfo

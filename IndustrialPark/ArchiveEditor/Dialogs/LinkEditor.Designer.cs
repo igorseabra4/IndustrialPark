@@ -172,7 +172,7 @@
             buttonOK.Location = new System.Drawing.Point(336, 377);
             buttonOK.Name = "buttonOK";
             buttonOK.Size = new System.Drawing.Size(112, 23);
-            buttonOK.TabIndex = 18;
+            buttonOK.TabIndex = 20;
             buttonOK.Text = "OK";
             buttonOK.UseVisualStyleBackColor = true;
             buttonOK.Click += buttonOK_Click;
@@ -184,7 +184,7 @@
             buttonCancel.Location = new System.Drawing.Point(454, 377);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(112, 23);
-            buttonCancel.TabIndex = 19;
+            buttonCancel.TabIndex = 21;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
             buttonCancel.Click += buttonCancel_Click;
@@ -224,7 +224,7 @@
             textBoxSourceCheckOrFlags.Location = new System.Drawing.Point(6, 19);
             textBoxSourceCheckOrFlags.Name = "textBoxSourceCheckOrFlags";
             textBoxSourceCheckOrFlags.Size = new System.Drawing.Size(218, 20);
-            textBoxSourceCheckOrFlags.TabIndex = 17;
+            textBoxSourceCheckOrFlags.TabIndex = 14;
             toolTip1.SetToolTip(textBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
             textBoxSourceCheckOrFlags.TextChanged += textBoxSourceCheck_TextChanged;
             textBoxSourceCheckOrFlags.Leave += textBoxSourceCheck_Leave;
@@ -234,7 +234,7 @@
             enabledcheckBox.Checked = true;
             enabledcheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
             enabledcheckBox.Location = new System.Drawing.Point(9, 237);
-            enabledcheckBox.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            enabledcheckBox.Margin = new System.Windows.Forms.Padding(2);
             enabledcheckBox.Name = "enabledcheckBox";
             enabledcheckBox.Size = new System.Drawing.Size(125, 33);
             enabledcheckBox.TabIndex = 11;
@@ -262,7 +262,7 @@
             textBoxArgumentAsset.Location = new System.Drawing.Point(6, 19);
             textBoxArgumentAsset.Name = "textBoxArgumentAsset";
             textBoxArgumentAsset.Size = new System.Drawing.Size(218, 20);
-            textBoxArgumentAsset.TabIndex = 16;
+            textBoxArgumentAsset.TabIndex = 13;
             toolTip1.SetToolTip(textBoxArgumentAsset, "Asset which will be sent as argument on this link. This varies depending on the target event. Optional on most cases.\r\n");
             textBoxArgumentAsset.TextChanged += textBoxArgumentAsset_TextChanged;
             textBoxArgumentAsset.Leave += textBoxArgumentAsset_Leave;
@@ -328,7 +328,7 @@
             checkBoxHex.Location = new System.Drawing.Point(173, 0);
             checkBoxHex.Name = "checkBoxHex";
             checkBoxHex.Size = new System.Drawing.Size(45, 17);
-            checkBoxHex.TabIndex = 11;
+            checkBoxHex.TabIndex = 15;
             checkBoxHex.Text = "Hex";
             checkBoxHex.UseVisualStyleBackColor = true;
             checkBoxHex.CheckedChanged += checkBoxHex_CheckedChanged;
@@ -339,7 +339,7 @@
             textBox3.Location = new System.Drawing.Point(25, 45);
             textBox3.Name = "textBox3";
             textBox3.Size = new System.Drawing.Size(86, 20);
-            textBox3.TabIndex = 14;
+            textBox3.TabIndex = 18;
             textBox3.TextChanged += textBox3_TextChanged;
             textBox3.Leave += textBox_Leave;
             // 
@@ -349,7 +349,7 @@
             textBox4.Location = new System.Drawing.Point(136, 46);
             textBox4.Name = "textBox4";
             textBox4.Size = new System.Drawing.Size(85, 20);
-            textBox4.TabIndex = 15;
+            textBox4.TabIndex = 19;
             textBox4.TextChanged += textBox4_TextChanged;
             textBox4.Leave += textBox_Leave;
             // 
@@ -359,7 +359,7 @@
             textBox2.Location = new System.Drawing.Point(136, 19);
             textBox2.Name = "textBox2";
             textBox2.Size = new System.Drawing.Size(85, 20);
-            textBox2.TabIndex = 13;
+            textBox2.TabIndex = 17;
             textBox2.TextChanged += textBox2_TextChanged;
             textBox2.Leave += textBox_Leave;
             // 
@@ -369,7 +369,7 @@
             textBox1.Location = new System.Drawing.Point(25, 19);
             textBox1.Name = "textBox1";
             textBox1.Size = new System.Drawing.Size(86, 20);
-            textBox1.TabIndex = 12;
+            textBox1.TabIndex = 16;
             textBox1.TextChanged += textBox1_TextChanged;
             textBox1.Leave += textBox_Leave;
             // 
@@ -401,7 +401,7 @@
             buttonTargetPlus1.Location = new System.Drawing.Point(179, 0);
             buttonTargetPlus1.Name = "buttonTargetPlus1";
             buttonTargetPlus1.Size = new System.Drawing.Size(42, 20);
-            buttonTargetPlus1.TabIndex = 11;
+            buttonTargetPlus1.TabIndex = 12;
             buttonTargetPlus1.Text = "+1";
             buttonTargetPlus1.UseVisualStyleBackColor = true;
             buttonTargetPlus1.Click += buttonTargetPlus1_Click;

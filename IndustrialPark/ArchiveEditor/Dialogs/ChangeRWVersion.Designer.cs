@@ -120,7 +120,7 @@
             buttonCancel.Location = new System.Drawing.Point(219, 167);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(75, 23);
-            buttonCancel.TabIndex = 7;
+            buttonCancel.TabIndex = 12;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
             // 
@@ -131,7 +131,7 @@
             buttonChange.Location = new System.Drawing.Point(138, 167);
             buttonChange.Name = "buttonChange";
             buttonChange.Size = new System.Drawing.Size(75, 23);
-            buttonChange.TabIndex = 8;
+            buttonChange.TabIndex = 11;
             buttonChange.Text = "Change";
             buttonChange.UseVisualStyleBackColor = true;
             // 
