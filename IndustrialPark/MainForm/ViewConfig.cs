@@ -115,7 +115,7 @@ namespace IndustrialPark
 
         private void NumericDrawD_ValueChanged(object sender, EventArgs e)
         {
-            Program.MainForm.renderer.Camera.DefaultFarPlane = (float)NumericDrawD.Value;
+            Program.MainForm.renderer.Camera.FarPlane = (float)NumericDrawD.Value;
         }
 
         private void NumericFOV_ValueChanged(object sender, EventArgs e)
@@ -188,6 +188,17 @@ namespace IndustrialPark
         private void buttonAbout_Click(object sender, EventArgs e)
         {
             Program.AboutBox.Show();
+        }
+
+        private void buttonResetView_Click(object sender, EventArgs e)
+        {
+            Program.Renderer.Camera.Reset();
+        }
+
+        private void buttonResetSpeeds_Click(object sender, EventArgs e)
+        {
+            Program.Renderer.Camera.Speed = SharpCamera.DEFAULT_SPEED;
+            Program.Renderer.Camera.SpeedRot = SharpCamera.DEFAULT_SPEED_ROT;
         }
     }
 }

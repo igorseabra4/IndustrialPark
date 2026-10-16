@@ -184,7 +184,7 @@ namespace IndustrialPark
             ArchiveEditor.AlwaysListAllAssets = settings.AlwaysListAllAssets;
             listAllAssetsToolStripMenuItem.Checked = settings.AlwaysListAllAssets;
 
-            ArchiveEditor.RotationGizmoLocalAxis = settings.RotationGizmoLocalAxis;
+            ArchiveEditorFunctions.RotationGizmoLocalAxis = settings.RotationGizmoLocalAxis;
             rotationGizmoLocalAxisToolStripMenuItem.Checked = settings.RotationGizmoLocalAxis;
 
             enableAssetToolButtonsToolStripMenuItem.Checked = settings.EnableAssetToolButtons;
@@ -192,6 +192,9 @@ namespace IndustrialPark
 
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
+
+            renderer.Camera.Speed = settings.Speed > 0 ? settings.Speed : SharpCamera.DEFAULT_SPEED;
+            renderer.Camera.SpeedRot = settings.SpeedRot > 0 ? settings.SpeedRot : SharpCamera.DEFAULT_SPEED_ROT;
 
             bool showEditorsWhenLoadingProject = settings.showEditorsWhenLoadingProject;
             showEditorsWhenLoadingProjectToolStripMenuItem.Checked = showEditorsWhenLoadingProject;
@@ -279,7 +282,12 @@ namespace IndustrialPark
                 flyModeCursor = (int)flyModeCursor,
                 translucentEditor = TranslucentWhenOutOfFocus,
                 showEditorsWhenLoadingProject = showEditorsWhenLoadingProjectToolStripMenuItem.Checked,
-                ColorMode = SystemColorMode
+                ColorMode = SystemColorMode,
+                AlwaysListAllAssets = ArchiveEditor.AlwaysListAllAssets,
+                RotationGizmoLocalAxis = ArchiveEditorFunctions.RotationGizmoLocalAxis,
+                EnableAssetToolButtons = InternalEditor.EnableAssetToolButtons,
+                Speed = renderer.Camera.Speed,
+                SpeedRot = renderer.Camera.SpeedRot,
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -457,10 +465,8 @@ namespace IndustrialPark
                 CamPos = renderer.Camera.Position,
                 Yaw = renderer.Camera.Yaw,
                 Pitch = renderer.Camera.Pitch,
-                Speed = renderer.Camera.Speed,
-                SpeedRot = renderer.Camera.SpeedRot,
                 FieldOfView = renderer.Camera.FieldOfView,
-                FarPlane = renderer.Camera.DefaultFarPlane,
+                FarPlane = renderer.Camera.FarPlane,
                 NoCulling = noCullingCToolStripMenuItem.Checked,
                 Wireframe = wireframeFToolStripMenuItem.Checked,
                 BackgroundColor = SharpRenderer.backgroundColor,
@@ -521,11 +527,7 @@ namespace IndustrialPark
             renderer.Camera.SetPosition(ipSettings.CamPos);
             renderer.Camera.Yaw = ipSettings.Yaw;
             renderer.Camera.Pitch = ipSettings.Pitch;
-            // prevent zero/negative camera speeds
-            renderer.Camera.Speed = ipSettings.Speed > 0 ? ipSettings.Speed : 5f;
-            renderer.Camera.SpeedRot = ipSettings.SpeedRot > 0 ? ipSettings.SpeedRot : 5f;
             renderer.Camera.FieldOfView = ipSettings.FieldOfView;
-            renderer.Camera.DefaultFarPlane = ipSettings.FarPlane;
             renderer.Camera.FarPlane = ipSettings.FarPlane;
             ArchiveEditorFunctions.Grid = ipSettings.Grid;
 
@@ -588,7 +590,7 @@ namespace IndustrialPark
         private MouseEventArgs oldMousePosition = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
         public bool TranslucentWhenOutOfFocus;
 
-        private void MouseMoveControl(object sender, MouseEventArgs e)
+        private void renderPanel_MouseMove(object sender, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.None)
                 ScreenUnclicked();
@@ -605,8 +607,6 @@ namespace IndustrialPark
             {
                 if (mouseMode)
                 {
-
-
                     switch (flyModeCursor)
                     {
                         case FlyModeCursor.Default:
@@ -626,8 +626,8 @@ namespace IndustrialPark
                             break;
                     }
 
-                    renderer.Camera.AddYaw(MathUtil.DegreesToRadians(Cursor.Position.X - MouseCenter.X) / 4);
-                    renderer.Camera.AddPitch(MathUtil.DegreesToRadians(Cursor.Position.Y - MouseCenter.Y) / 4);
+                    renderer.Camera.AddYaw((Cursor.Position.X - MouseCenter.X) * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
+                    renderer.Camera.AddPitch((Cursor.Position.Y - MouseCenter.Y) * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
 
                     Cursor.Position = MouseCenter;
                 }
@@ -648,20 +648,20 @@ namespace IndustrialPark
                         float deltaY = e.Y - oldMousePosition.Y;
                         if (PressedKeys.Contains(Keys.ControlKey))
                         {
-                            renderer.Camera.AddPositionForward(-deltaY / 24f);
+                            renderer.Camera.AddPositionForward(-deltaY * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
                         }
                         else if (PressedKeys.Contains(Keys.ShiftKey) && !PressedKeys.Contains(Keys.W) && !PressedKeys.Contains(Keys.A) && !PressedKeys.Contains(Keys.S) && !PressedKeys.Contains(Keys.D))
                         {
-                            renderer.Camera.AddPositionSideways(deltaX / 24f);
-                            renderer.Camera.AddPositionUp(deltaY / 24f);
+                            renderer.Camera.AddPositionSideways(deltaX * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
+                            renderer.Camera.AddPositionUp(deltaY * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
                         }
                         else
                         {
                             float rollRadians = MathUtil.DegreesToRadians(renderer.Camera.Roll);
                             float adjustedDeltaX = deltaX * (float)Math.Cos(rollRadians) - deltaY * (float)Math.Sin(rollRadians);
                             float adjustedDeltaY = deltaX * (float)Math.Sin(rollRadians) + deltaY * (float)Math.Cos(rollRadians);
-                            renderer.Camera.AddYaw(MathUtil.DegreesToRadians(adjustedDeltaX));
-                            renderer.Camera.AddPitch(MathUtil.DegreesToRadians(adjustedDeltaY));
+                            renderer.Camera.AddYaw(adjustedDeltaX * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
+                            renderer.Camera.AddPitch(adjustedDeltaY * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
 
                             // Clamp camera pitch so it doesn't loop around
                             float pitchPadding = 0.01f;
@@ -673,10 +673,10 @@ namespace IndustrialPark
                 }
 
                 if (e.Delta != 0)
-                    renderer.Camera.AddPositionForward(e.Delta / 24);
+                    renderer.Camera.AddPositionForward(e.Delta * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
             }
 
-            MouseMoveForGizmos(e.X - oldMousePosition.X, e.Y - oldMousePosition.Y);
+            ArchiveEditorFunctions.MouseMoveGizmos(renderer.viewProjection, e.X - oldMousePosition.X, e.Y - oldMousePosition.Y, PressedKeys.Contains(Keys.T));
 
             oldMousePosition = e;
         }
@@ -689,12 +689,6 @@ namespace IndustrialPark
         private void ResetMouseCenter(object sender, EventArgs e)
         {
             MouseCenter = renderPanel.PointToScreen(new System.Drawing.Point(renderPanel.Width / 2, renderPanel.Height / 2));
-        }
-
-        private void MouseMoveForGizmos(int deltaX, int deltaY)
-        {
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.MouseMoveGeneric(renderer.viewProjection, deltaX, deltaY, PressedKeys.Contains(Keys.T));
         }
 
         private readonly HashSet<Keys> PressedKeys = new HashSet<Keys>();
@@ -808,6 +802,18 @@ namespace IndustrialPark
                 case Keys.F7:
                     createGameCubeBannerToolStripMenuItem.PerformClick();
                     break;
+                case Keys.D1:
+                    renderer.Camera.IncreaseCameraSpeed(-SharpCamera.DEFAULT_SPEED_INCREMENT);
+                    break;
+                case Keys.D2:
+                    renderer.Camera.IncreaseCameraSpeed(SharpCamera.DEFAULT_SPEED_INCREMENT);
+                    break;
+                case Keys.D3:
+                    renderer.Camera.IncreaseCameraRotationSpeed(-SharpCamera.DEFAULT_SPEED_ROT_INCREMENT);
+                    break;
+                case Keys.D4:
+                    renderer.Camera.IncreaseCameraRotationSpeed(SharpCamera.DEFAULT_SPEED_ROT_INCREMENT);
+                    break;
             }
 
             // Open archive editors with ctrl and 1-9
@@ -850,44 +856,35 @@ namespace IndustrialPark
                 return;
 
             if (PressedKeys.Contains(Keys.A) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddYaw(-0.05f * renderer.TransformScaleFactor);
+                renderer.Camera.AddYaw(-renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.A))
-                renderer.Camera.AddPositionSideways(0.25f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPositionSideways(renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.D) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddYaw(0.05f * renderer.TransformScaleFactor);
+                renderer.Camera.AddYaw(renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.D))
-                renderer.Camera.AddPositionSideways(-0.25f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPositionSideways(-renderer.TransformScaleFactor);
 
             if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPitch(-0.05f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPitch(-renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ShiftKey))
-                renderer.Camera.AddPositionUp(0.25f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPositionUp(renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.W))
-                renderer.Camera.AddPositionForward(0.25f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPositionForward(renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey) & !PressedKeys.Contains(Keys.ShiftKey))
-                renderer.Camera.AddPitch(0.05f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPitch(renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPositionUp(-0.25f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPositionUp(-renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.S) & !PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPositionForward(-0.25f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPositionForward(-renderer.TransformScaleFactor);
 
             if (PressedKeys.Contains(Keys.Q) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddRoll(0.05f * renderer.TransformScaleFactor);
+                renderer.Camera.AddRoll(renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.Q))
-                renderer.Camera.AddPositionUp(-0.25f * renderer.TransformScaleFactor);
+                renderer.Camera.AddPositionUp(-renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.E) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddRoll(-0.05f * renderer.TransformScaleFactor);
+                renderer.Camera.AddRoll(-renderer.TransformScaleFactor);
             else if (PressedKeys.Contains(Keys.E))
-                renderer.Camera.AddPositionUp(0.25f * renderer.TransformScaleFactor);
-
-            if (PressedKeys.Contains(Keys.D1))
-                renderer.Camera.IncreaseCameraSpeed(-1);
-            else if (PressedKeys.Contains(Keys.D2))
-                renderer.Camera.IncreaseCameraSpeed(1);
-            else if (PressedKeys.Contains(Keys.D3))
-                renderer.Camera.IncreaseCameraRotationSpeed(-1);
-            else if (PressedKeys.Contains(Keys.D4))
-                renderer.Camera.IncreaseCameraRotationSpeed(1);
+                renderer.Camera.AddPositionUp(renderer.TransformScaleFactor);
 
             float pitchPadding = 0.01f;
             renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
@@ -1126,43 +1123,36 @@ namespace IndustrialPark
         public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
         {
             if (ArchiveEditorFunctions.IsMovingGizmo)
+                return;
+
+            bool addToSelection = PressedKeys.Contains(Keys.ShiftKey);
+            bool toggleSelection = PressedKeys.Contains(Keys.ControlKey);
+
+            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
+
+            if (isMouseDown)
             {
-                if (!isMouseDown)
-                    ArchiveEditorFunctions.IsMovingGizmo = false;
+                if (!addToSelection && !toggleSelection)
+                    ArchiveEditorFunctions.ScreenClickedGizmos(ray);
             }
             else
             {
-                bool addToSelection = PressedKeys.Contains(Keys.ShiftKey);
-                bool toggleSelection = PressedKeys.Contains(Keys.ControlKey);
+                // both ctrl and shift
+                var removeFromSelection = addToSelection && toggleSelection;
 
-                Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
+                // asset previous selection state must be equal to this, ignored if null
+                bool? alreadySelectedFilter = removeFromSelection ? true : addToSelection ? false : null;
+                
+                (var archive, var assetID) = ArchiveEditorFunctions.GetClickedAsset(renderer, ray, alreadySelectedFilter);
 
-                if (isMouseDown)
-                {
-                    if (!addToSelection && !toggleSelection)
-                        foreach (var ae in archiveEditors)
-                            if (ae.archive.CurrentlySelectedAssets.Count > 0)
-                                ae.archive.GizmoSelect(ray);
-                }
-                else
-                {
-                    var removeFromSelection = addToSelection && toggleSelection;
+                if (assetID == null && (addToSelection || toggleSelection))
+                    return;
 
-                    bool? alreadySelectedFilter = removeFromSelection ? true : addToSelection ? false : null; // asset previous selection state must be equal to this
-
-                    var assetID = renderer.isDrawingUI ?
-                        ArchiveEditorFunctions.GetClickedAssetID2D(renderer, ray, renderer.Camera.FarPlane, alreadySelectedFilter) :
-                        ArchiveEditorFunctions.GetClickedAssetID(renderer, ray, alreadySelectedFilter);
-
-                    if (assetID == null && (addToSelection || toggleSelection))
-                        return;
-
-                    foreach (ArchiveEditor ae in archiveEditors)
-                        if (removeFromSelection)
-                            ae.RemoveFromSelection(assetID ?? 0);
-                        else
-                            ae.SetSelectedIndex(assetID ?? 0, addToSelection, toggleSelection);
-                }
+                foreach (ArchiveEditor ae in archiveEditors)
+                    if (removeFromSelection)
+                        ae.RemoveFromSelection(ae.archive == archive ? assetID : null);
+                    else
+                        ae.SetSelectedIndex(ae.archive == archive ? assetID : null, addToSelection, toggleSelection);
             }
         }
 
@@ -1182,8 +1172,7 @@ namespace IndustrialPark
 
         public void ScreenUnclicked()
         {
-            foreach (var ae in Program.MainForm.archiveEditors)
-                ae.archive.ScreenUnclicked();
+            ArchiveEditorFunctions.ScreenUnclicked();
         }
 
         public void SetSelectedIndices(List<uint> assetIDs)
@@ -2188,7 +2177,7 @@ namespace IndustrialPark
         private void rotationGizmoOnSingleAxisToolStripMenuItem_Click(object sender, EventArgs e)
         {
             rotationGizmoLocalAxisToolStripMenuItem.Checked = !rotationGizmoLocalAxisToolStripMenuItem.Checked;
-            ArchiveEditor.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
         }
 
         private void enableAssetToolButtonsToolStripMenuItem_Click(object sender, EventArgs e)

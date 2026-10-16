@@ -1025,7 +1025,7 @@ namespace IndustrialPark
             renderPanel.MouseClick += renderPanel_MouseClick;
             renderPanel.MouseDown += renderPanel_MouseDown;
             renderPanel.MouseLeave += renderPanel_MouseLeave;
-            renderPanel.MouseMove += MouseMoveControl;
+            renderPanel.MouseMove += renderPanel_MouseMove;
             renderPanel.MouseUp += renderPanel_MouseUp;
             renderPanel.Resize += ResetMouseCenter;
             // 
@@ -1115,7 +1115,7 @@ namespace IndustrialPark
             DragEnter += MainForm_DragEnter;
             KeyDown += MainForm_KeyDown;
             KeyUp += MainForm_KeyUp;
-            MouseWheel += MouseMoveControl;
+            MouseWheel += renderPanel_MouseMove;
             Move += ResetMouseCenter;
             Resize += MainForm_Resize;
             menuStrip1.ResumeLayout(false);

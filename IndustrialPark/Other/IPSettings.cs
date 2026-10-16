@@ -14,6 +14,9 @@ namespace IndustrialPark
 
         public string[] recentArchivePaths;
 
+        public float Speed = SharpCamera.DEFAULT_SPEED;
+        public float SpeedRot = SharpCamera.DEFAULT_SPEED_ROT;
+
         public bool drawOnlyFirstMinf = false;
         public bool renderBasedOnLodt = false;
         public bool renderBasedOnPipt = true;

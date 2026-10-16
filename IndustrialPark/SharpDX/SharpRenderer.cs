@@ -665,7 +665,7 @@ namespace IndustrialPark
             if (!AssetFOG.DontRender && SharpRenderer.Fog != null)
                 Camera.FarPlane = (float)Fog.EndDistance;
             else
-                Camera.FarPlane = Camera.DefaultFarPlane;
+                Camera.FarPlane = SharpCamera.DefaultFarPlane;
 
             if (allowRender)
                 lock (renderableAssets)

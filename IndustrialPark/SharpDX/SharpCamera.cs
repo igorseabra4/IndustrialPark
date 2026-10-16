@@ -50,7 +50,7 @@ namespace IndustrialPark
             {
                 field = Math.Max(0.0001f, value);
             }
-        } = 5f;
+        } = DEFAULT_SPEED;
         public float SpeedRot
         {
             get;
@@ -58,7 +58,13 @@ namespace IndustrialPark
             {
                 field = Math.Max(0.0001f, value);
             }
-        } = 5f;
+        } = DEFAULT_SPEED_ROT;
+
+        public const float DEFAULT_SPEED = 1f;
+        public const float DEFAULT_SPEED_ROT = 30f;
+        public const float DEFAULT_SPEED_INCREMENT = 0.01f;
+        public const float DEFAULT_SPEED_ROT_INCREMENT = 0.1f;
+        public const float DEFAULT_MOUSE_SPEED_MULT = 1f / 6f;
 
         public float FieldOfView;
         public float AspectRatio;
@@ -89,17 +95,17 @@ namespace IndustrialPark
 
         internal void AddYaw(float factor)
         {
-            _yaw -= SpeedRot * factor;
+            _yaw -= SpeedRot * factor / 60f;
         }
 
         internal void AddPitch(float factor)
         {
-            _pitch -= SpeedRot * factor;
+            _pitch -= SpeedRot * factor / 60f;
         }
 
         internal void AddRoll(float factor)
         {
-            _roll -= SpeedRot * factor;
+            _roll -= SpeedRot * factor / 60f;
         }
 
         internal void ResetRoll()
@@ -109,16 +115,12 @@ namespace IndustrialPark
 
         internal void IncreaseCameraSpeed(float v)
         {
-            Speed += v / 10f;
-            if (Speed < 1f)
-                Speed = 1f;
+            Speed += v;
         }
 
         internal void IncreaseCameraRotationSpeed(float v)
         {
-            SpeedRot += v / 10f;
-            if (SpeedRot < 1f)
-                SpeedRot = 1f;
+            SpeedRot += v;
         }
 
         public void Update()
@@ -137,8 +139,8 @@ namespace IndustrialPark
             Up = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.Up, rotation));
         }
 
-        public float DefaultFarPlane = 10000F;
-        public float DefaultNearPlane = 0.1F;
+        public const float DefaultFarPlane = 10000f;
+        public const float DefaultNearPlane = 0.1f;
 
         internal void Reset()
         {

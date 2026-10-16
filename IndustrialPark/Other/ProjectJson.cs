@@ -17,8 +17,6 @@ namespace IndustrialPark
         public Vector3 CamPos;
         public float Yaw;
         public float Pitch;
-        public float Speed;
-        public float SpeedRot;
         public float FieldOfView;
         public float FarPlane;
 
@@ -53,8 +51,6 @@ namespace IndustrialPark
             CamPos = new Vector3();
             Yaw = 0;
             Pitch = 0;
-            Speed = 5f;
-            SpeedRot = 5f;
 
             FieldOfView = MathUtil.DegreesToRadians(60);
             FarPlane = 10000F;
