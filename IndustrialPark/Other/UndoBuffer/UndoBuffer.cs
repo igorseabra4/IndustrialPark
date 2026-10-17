@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
@@ -8,6 +9,14 @@ public class UndoBuffer
 {
     private readonly List<IReversibleAction> actions = [];
     private int currentIndex = -1;
+
+    public bool CanUndo => currentIndex >= 0;
+    public bool CanRedo => currentIndex < actions.Count - 1;
+
+    /// <summary>
+    /// Raised whenever CanUndo or CanRedo may have changed.
+    /// </summary>
+    public event Action Changed;
 
     public void AddAction(IReversibleAction action)
     {
@@ -20,6 +29,7 @@ public class UndoBuffer
 
         actions.Add(action);
         currentIndex++;
+        Changed?.Invoke();
     }
 
     public void AddAction(IEnumerable<IReversibleAction> actions)
@@ -30,14 +40,20 @@ public class UndoBuffer
 
     public void Undo()
     {
-        if (currentIndex >= 0)
+        if (CanUndo)
+        {
             actions[currentIndex--].Undo();
+            Changed?.Invoke();
+        }
     }
 
     public void Redo()
     {
-        if (currentIndex < actions.Count - 1)
+        if (CanRedo)
+        {
             actions[++currentIndex].Redo();
+            Changed?.Invoke();
+        }
     }
 
     public void RemoveActionsOfArchive(ArchiveEditorFunctions archive)
@@ -52,6 +68,7 @@ public class UndoBuffer
                 i--;
             }
         }
+        Changed?.Invoke();
     }
 
     public override string ToString()
