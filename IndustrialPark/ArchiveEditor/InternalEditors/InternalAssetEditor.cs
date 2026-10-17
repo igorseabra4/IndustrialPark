@@ -117,10 +117,9 @@ public partial class InternalAssetEditor : InternalEditor
 
     private void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        foreach (var ae in Program.MainForm.archiveEditors)
-            if (ae.archive == archive)
-                if (ae.EditHeader(asset.assetID, out uint newAssetID))
-                    ae.OpenInternalEditor(newAssetID);
+        var ae = Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive);
+        if (ae.EditHeader(asset.assetID, out uint newAssetID))
+            ae.OpenInternalEditor(newAssetID);
     }
 
     private void viewToolStripMenuItem_Click(object sender, EventArgs e)
@@ -138,9 +137,11 @@ public partial class InternalAssetEditor : InternalEditor
     {
         var result = MessageBox.Show($"Are you sure you want to delete asset [{asset.assetID:X8}] {asset.assetName} ({AssetTypeContainer.AssetTypeToString(asset.assetType)})?", "Confirm asset removal", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
         if (result == DialogResult.Yes)
-            foreach (var ae in Program.MainForm.archiveEditors)
-                if (ae.archive == archive)
-                    ae.RemoveAssets([asset.assetID]);
+        {
+            var actions = new List<IReversibleAction>();
+            Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive).RemoveAssets([asset.assetID], actions);
+            Program.UndoBuffer.AddAction(actions);
+        }
     }
 
     private readonly List<int> RowSizes = new List<int>() { -1 };
