@@ -1,4 +1,5 @@
-﻿using IndustrialPark.Randomizer;
+﻿using IndustrialPark;
+using IndustrialPark.Randomizer;
 using System;
 using System.Windows.Forms;
 
@@ -18,6 +19,8 @@ namespace IndustrialParkRandomizer
             Application.SetCompatibleTextRenderingDefault(false);
 
             new IndustrialPark.SharpRenderer();
+
+            IndustrialPark.Program.MainForm = new MainForm(new IPSettings());
 
             RandomizerMenu menu = new RandomizerMenu();
 

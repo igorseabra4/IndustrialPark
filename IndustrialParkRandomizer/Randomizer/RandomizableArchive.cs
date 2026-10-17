@@ -12,18 +12,6 @@ namespace IndustrialPark.Randomizer
 {
     public class RandomizableArchive : ArchiveEditorFunctions
     {
-        protected Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
-        {
-            try
-            {
-                return CreateAsset(AHDR, game, endianness);
-            }
-            catch
-            {
-                return new AssetGeneric(AHDR, game, endianness);
-            }
-        }
-
         public RandomizableArchive()
         {
             SkipTextureDisplay = true;
@@ -1159,17 +1147,14 @@ namespace IndustrialPark.Randomizer
 
         private bool ShuffleVilTypes(List<NpcType_BFBB> chooseFrom, List<NpcType_BFBB> setTo, bool mixModels, bool veryRandom, bool enemies)
         {
-            if (veryRandom && (LevelName == "sm01" || LevelName == "gl01"))
+            if (veryRandom && (LevelName == "sm01" || LevelName == "gl01" || LevelName == "bb01" || LevelName == "bb02"))
             {
-                HashSet<NpcType_BFBB> uniqueSetTo = new HashSet<NpcType_BFBB>();
-                foreach (NpcType_BFBB v in setTo)
-                    uniqueSetTo.Add(v);
+                HashSet<NpcType_BFBB> uniqueSetTo = [.. setTo];
 
-                while (uniqueSetTo.Count > 5)
+                while (uniqueSetTo.Count > 6)
                 {
                     NpcType_BFBB randomRemove = setTo[random.Next(0, setTo.Count)];
-                    while (setTo.Contains(randomRemove))
-                        setTo.Remove(randomRemove);
+                    setTo.RemoveAll(s => s == randomRemove);
                     uniqueSetTo.Remove(randomRemove);
                 }
             }
@@ -1419,9 +1404,9 @@ namespace IndustrialPark.Randomizer
             vil.Links = links.ToArray();
         }
 
-        private bool ArfAllowed() => !new string[] { "hb07", "rb01", "sm03" }.Contains(LevelName);
+        private bool ArfAllowed() => !new string[] { "hb07", "bb02", "rb01", "sm03" }.Contains(LevelName);
 
-        private bool TubeletsAllowed() => !new string[] { "jf01", "jf02", "jf03", "gl01", "rb01", "sm03", "db04" }.Contains(LevelName);
+        private bool TubeletsAllowed() => !new string[] { "jf01", "jf02", "jf03", "bb02", "gl01", "rb01", "sm03", "db04" }.Contains(LevelName);
 
         private bool ShuffleBoxDynaTypes(List<EnemySupplyCrateType> chooseFrom, List<EnemySupplyCrateType> setTo)
         {
@@ -2974,8 +2959,6 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
-
         private bool IsWarpToSameLevel(string warpName) =>
             LevelName.ToLower().Equals(warpName.ToLower()) || new string(warpName.Reverse().ToArray()).ToLower().Equals(LevelName.ToLower());
 
@@ -4009,19 +3992,13 @@ namespace IndustrialPark.Randomizer
                 string text = TEXT.Text;
                 if (text.Contains(originalText))
                     TEXT.Text = text.Replace(originalText, newText);
-                else
-                    MessageBox.Show("Text asset " + assetID.ToString("X8") + " on file " + LevelName + " doesn't contain " + originalText);
             }
-            else
-                MessageBox.Show("Text asset " + assetID.ToString("X8") + " not found on file " + LevelName);
         }
 
         private void SetCondEvaluationAmount(int shinyAmount, uint assetID)
         {
-            if (ContainsAsset(assetID))
-                ((AssetCOND)GetFromAssetID(assetID)).EvaluationAmount = shinyAmount;
-            else
-                MessageBox.Show("Cond asset " + assetID.ToString("X8") + " not found on file " + LevelName);
+            if (TryGetAsset(assetID, out Asset asset) && asset is AssetCOND cond)
+                cond.EvaluationAmount = shinyAmount;
         }
 
         private void SetGiveShinyObjects(int shinyAmount, uint assetID)
@@ -4035,8 +4012,6 @@ namespace IndustrialPark.Randomizer
 
                 objectAsset.Links = links;
             }
-            else
-                MessageBox.Show("Asset " + assetID.ToString("X8") + " not found on file " + LevelName);
         }
 
         private void SetNumberPlats(int shinyAmount, int power, uint assetID)
@@ -4050,10 +4025,8 @@ namespace IndustrialPark.Randomizer
 
         private void SetPlaceableAssetModel(uint assetID, string modelName)
         {
-            if (ContainsAsset(assetID))
-                ((EntityAsset)GetFromAssetID(assetID)).Model = modelName;
-            else
-                MessageBox.Show("Placeable asset " + assetID.ToString("X8") + " not found on file " + LevelName);
+            if (TryGetAsset(assetID, out Asset asset) && asset is EntityAsset entity)
+                entity.Model = modelName;
         }
 
         public bool RandomizePoliceStation(RandomizerSettings settings)

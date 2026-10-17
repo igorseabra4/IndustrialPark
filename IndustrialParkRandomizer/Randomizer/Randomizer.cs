@@ -18,7 +18,7 @@ namespace IndustrialPark.Randomizer
 
     public class Randomizer
     {
-        public static int currVersion = 60;
+        public static int currVersion = 61;
         public int version = currVersion;
         public string seedText;
         public uint seed;
@@ -56,51 +56,23 @@ namespace IndustrialPark.Randomizer
             seedText = seed.ToString();
         }
 
-        public void Perform(string backupDir, string destinationDir, ProgressBar progressBar)
+        public string Perform(string backupDir, string destinationDir, ProgressBar progressBar)
         {
             HexUIntTypeConverter.Legacy = true;
 
             RandomizableArchive.random = new Random((int)this.seed);
 
-            //if (isDir)
-            PerformDirRandomizer(backupDir, destinationDir, progressBar);
-            //else
-            //{
-            //RandomizableArchive archive = new RandomizableArchive();
-            //archive.OpenFile(rootDir, false, Platform.Unknown);
-            //archive.Randomize(settings);
-            //archive.Save();
-
-            //string message = "Randomization complete!";
-
-            //if (settings.Enemies_Allow_Any_Type)
-            //{
-            //    HashSet<NpcType_BFBB> vilTypes = archive.GetEnemyTypes();
-
-            //    if (vilTypes.Count > 0)
-            //    {
-            //        string vils = "";
-
-            //        foreach (NpcType_BFBB v in vilTypes)
-            //            vils += "\n** " + v.ToString();
-
-            //        message += "\n* Due to Enemies_Allow_Any_Type, you need to import the following enemy HIPs to the HOP:" + vils;
-            //    }
-            //}
-
-            //if (settings.Shiny_Object_Gates || settings.Spatula_Gates)
-            //    message += "\n* Due to Shiny_Object_Gates or Spatula_Gates, you need to import the numbers.HIP file to the HOP";
-
-            //MessageBox.Show(message);
-            //}
+            var result = PerformDirRandomizer(backupDir, destinationDir, progressBar);
 
             ArchiveEditorFunctions.renderableAssets.Clear();
             ArchiveEditorFunctions.renderableJSPs.Clear();
             ArchiveEditorFunctions.renderingDictionary.Clear();
             ArchiveEditorFunctions.ClearNameDictionary();
+
+            return result;
         }
 
-        private void PerformDirRandomizer(string backupDir, string destinationDir, ProgressBar progressBar)
+        private string PerformDirRandomizer(string backupDir, string destinationDir, ProgressBar progressBar)
         {
             if (settings.PlayerCharacters)
                 settings.UnlockCharacters = true;
@@ -388,26 +360,34 @@ namespace IndustrialPark.Randomizer
                 if (!Directory.Exists(destDir))
                     Directory.CreateDirectory(destDir);
                 hip.Save(destPath);
+
+                if (backupDir == destinationDir)
+                    File.Delete(hopPath);
             }
 
             RemoveFiles = string.Join("\n", hops);
 
-            string message = "Randomization complete!";
-
             ApplyINISettings(namesForBoot, game);
 
+            if (warpRandomizerOutput.Count != 0)
+                WriteLog(warpRandomizerOutput, destinationDir);
+            
             progressBar.PerformStep();
 
-            if (warpRandomizerOutput.Count != 0)
-            {
-                WriteLog(warpRandomizerOutput, destinationDir);
+            return GetMessage(destinationDir, warpRandomizerOutput.Count != 0);
+        }
+
+        private string GetMessage(string destinationDir, bool warpRandomizerOutput)
+        {
+            string message = "Randomization complete!";
+
+            if (warpRandomizerOutput)
                 message += "\n* A warps_log.txt file with the result of the Warps randomizer was saved to your root folder. Don't look at that file, it spoils the fun.";
-            }
 
             File.WriteAllText(destinationDir + "/settings.json", JsonConvert.SerializeObject(this, Formatting.Indented));
             message += "\n* The settings.json file with the settings used was saved to your root folder.";
 
-            MessageBox.Show(message);
+            return message;
         }
 
         private readonly string[] skipHips = new string[] { "mn", "sp", "pl" };
@@ -441,36 +421,46 @@ namespace IndustrialPark.Randomizer
             namesForBoot.Remove("S005");
             namesForBoot.Remove("S006");
 
-            var replacements = new Dictionary<string, string>
+            var replacements = new Dictionary<string, string>();
+            replacements["ShowMenuOnBoot"] = settings.dontShowMenuOnBoot ? "0" : "1";
+            if (settings.cheatInvincible)
             {
-                ["ShowMenuOnBoot"] = settings.dontShowMenuOnBoot ? "0" : "1",
-                ["G.TakeDamage"] = settings.cheatInvincible ? "0" : "1",
-                ["TakeDamage"] = settings.cheatInvincible ? "0" : "1",
-                ["G.CheatPlayerSwitch"] = settings.PowerupCheatsBFBB.PlayerSwitch ? "1" : "0",
-                ["G.BubbleBowl"] = settings.PowerupCheatsBFBB.BubbleBowl ? "1" : "0",
-                ["G.CruiseBubble"] = settings.PowerupCheatsBFBB.CruiseBubble ? "1" : "0",
-                ["eSPECIAL_Spring"] = settings.PowerupCheatsScooby.Spring ? "1" : "0",
-                ["eSPECIAL_FootballHelmet"] = settings.PowerupCheatsScooby.Helmet ? "1" : "0",
-                ["eSPECIAL_LightningBolt"] = settings.PowerupCheatsScooby.Smash ? "1" : "0",
-                ["eSPECIAL_Umbrella"] = settings.PowerupCheatsScooby.Umbrella ? "1" : "0",
-                ["G.KarateSpin"] = GetLine(settings.PowerupCheatsMovie.SB_KarateSpin),
-                ["G.Bash"] = GetLine(settings.PowerupCheatsMovie.SB_Bash),
-                ["G.MachoBowl"] = GetLine(settings.PowerupCheatsMovie.SB_Bowl),
-                ["G.WaveGuitar"] = GetLine(settings.PowerupCheatsMovie.SB_Guitar),
-                ["G.BellyBump"] = GetLine(settings.PowerupCheatsMovie.Pat_StarSpin),
-                ["G.Cartwheel"] = GetLine(settings.PowerupCheatsMovie.Pat_Cartwheel),
-                ["G.BellyFlop"] = GetLine(settings.PowerupCheatsMovie.Pat_BellyFlop),
-                ["G.Throw"] = GetLine(settings.PowerupCheatsMovie.Pat_Throw),
-                ["G.HealthSB"] = GetLine(settings.PowerupCheatsMovie.SB_Health),
-                ["G.HealthPat"] = GetLine(settings.PowerupCheatsMovie.Pat_Health),
-                //["G.BBashHeight"] = (0.315 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
-                //["G.Gravity"] = (30.0 / (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
-                //["Carry.ThrowMaxDist"] = (12.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
-                //["SB.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{4.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.8 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
-                //["Patrick.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
-                //["Sandy.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
-                //["SB.cb.fly.live_time"] = (6.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
-            };
+                replacements["G.TakeDamage"] = "0";
+                replacements["TakeDamage"] = "0";
+            }
+            if (game == Game.BFBB)
+            {
+                replacements["G.CheatPlayerSwitch"] = settings.PowerupCheatsBFBB.PlayerSwitch ? "1" : "0";
+                replacements["G.BubbleBowl"] = settings.PowerupCheatsBFBB.BubbleBowl ? "1" : "0";
+                replacements["G.CruiseBubble"] = settings.PowerupCheatsBFBB.CruiseBubble ? "1" : "0";
+            }
+            if (game == Game.Scooby)
+            {
+                replacements["eSPECIAL_Spring"] = settings.PowerupCheatsScooby.Spring ? "1" : "0";
+                replacements["eSPECIAL_FootballHelmet"] = settings.PowerupCheatsScooby.Helmet ? "1" : "0";
+                replacements["eSPECIAL_LightningBolt"] = settings.PowerupCheatsScooby.Smash ? "1" : "0";
+                replacements["eSPECIAL_Umbrella"] = settings.PowerupCheatsScooby.Umbrella ? "1" : "0";
+            }
+            if (game == Game.Incredibles)
+            {
+                replacements["G.KarateSpin"] = GetLine(settings.PowerupCheatsMovie.SB_KarateSpin);
+                replacements["G.Bash"] = GetLine(settings.PowerupCheatsMovie.SB_Bash);
+                replacements["G.MachoBowl"] = GetLine(settings.PowerupCheatsMovie.SB_Bowl);
+                replacements["G.WaveGuitar"] = GetLine(settings.PowerupCheatsMovie.SB_Guitar);
+                replacements["G.BellyBump"] = GetLine(settings.PowerupCheatsMovie.Pat_StarSpin);
+                replacements["G.Cartwheel"] = GetLine(settings.PowerupCheatsMovie.Pat_Cartwheel);
+                replacements["G.BellyFlop"] = GetLine(settings.PowerupCheatsMovie.Pat_BellyFlop);
+                replacements["G.Throw"] = GetLine(settings.PowerupCheatsMovie.Pat_Throw);
+                replacements["G.HealthSB"] = GetLine(settings.PowerupCheatsMovie.SB_Health);
+                replacements["G.HealthPat"] = GetLine(settings.PowerupCheatsMovie.Pat_Health);
+            }
+            //["G.BBashHeight"] = (0.315 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+            //["G.Gravity"] = (30.0 / (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+            //["Carry.ThrowMaxDist"] = (12.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
+            //["SB.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{4.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.8 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+            //["Patrick.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+            //["Sandy.MoveSpeed"] = $"{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{2.5 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{5.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},  {0.1 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{0.6 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)},{1.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)}",
+            //["SB.cb.fly.live_time"] = (6.0 * (settings.Set_Scale_Physics ? settings.scaleFactor : 1.0)).ToString(),
 
             var ini = new List<string>();
 
@@ -509,7 +499,7 @@ namespace IndustrialPark.Randomizer
 
         private string GetLine<T>(T status) where T : struct, IConvertible
         {
-            return Convert.ToInt32(Enum.Parse(typeof(T), status.ToString()) as Enum).ToString();
+            return Convert.ToInt32(Enum.Parse<T>(status.ToString()) as Enum).ToString();
         }
 
         private void WriteLog(List<(string, string, string)> warpRandomizerOutput, string destinationDir)

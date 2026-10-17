@@ -28,269 +28,303 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonPerform = new System.Windows.Forms.Button();
-            this.buttonHelp = new System.Windows.Forms.Button();
-            this.buttonRandomSeed = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.textBoxSeed = new System.Windows.Forms.TextBox();
-            this.buttonClear = new System.Windows.Forms.Button();
-            this.propertyGridSettings = new System.Windows.Forms.PropertyGrid();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.settingsFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.setHeavyModManagerPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.labelHmmPath = new System.Windows.Forms.Label();
-            this.labelSeed = new System.Windows.Forms.Label();
-            this.richTextBoxHelp = new System.Windows.Forms.RichTextBox();
-            this.buttonReset = new System.Windows.Forms.Button();
-            this.comboBoxGame = new System.Windows.Forms.ComboBox();
-            this.menuStrip1.SuspendLayout();
-            this.SuspendLayout();
+            buttonPerform = new System.Windows.Forms.Button();
+            buttonRandomSeed = new System.Windows.Forms.Button();
+            label3 = new System.Windows.Forms.Label();
+            textBoxSeed = new System.Windows.Forms.TextBox();
+            buttonClear = new System.Windows.Forms.Button();
+            propertyGridSettings = new System.Windows.Forms.PropertyGrid();
+            menuStrip1 = new System.Windows.Forms.MenuStrip();
+            settingsFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            optionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            setHeavyModManagerPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
+            aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            labelHmmPath = new System.Windows.Forms.Label();
+            labelSeed = new System.Windows.Forms.Label();
+            richTextBoxHelp = new System.Windows.Forms.RichTextBox();
+            buttonReset = new System.Windows.Forms.Button();
+            comboBoxGame = new System.Windows.Forms.ComboBox();
+            radioButtonHmm = new System.Windows.Forms.RadioButton();
+            radioButtonFiles = new System.Windows.Forms.RadioButton();
+            buttonSelectMainFiles = new System.Windows.Forms.Button();
+            menuStrip1.SuspendLayout();
+            SuspendLayout();
             // 
             // buttonPerform
             // 
-            this.buttonPerform.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonPerform.Enabled = false;
-            this.buttonPerform.Location = new System.Drawing.Point(12, 535);
-            this.buttonPerform.Name = "buttonPerform";
-            this.buttonPerform.Size = new System.Drawing.Size(431, 23);
-            this.buttonPerform.TabIndex = 8;
-            this.buttonPerform.Text = "Run";
-            this.buttonPerform.UseVisualStyleBackColor = true;
-            this.buttonPerform.Click += new System.EventHandler(this.buttonPerform_Click);
-            // 
-            // buttonHelp
-            // 
-            this.buttonHelp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonHelp.Location = new System.Drawing.Point(391, 119);
-            this.buttonHelp.Name = "buttonHelp";
-            this.buttonHelp.Size = new System.Drawing.Size(52, 23);
-            this.buttonHelp.TabIndex = 25;
-            this.buttonHelp.Text = "Help";
-            this.buttonHelp.UseVisualStyleBackColor = true;
-            this.buttonHelp.Click += new System.EventHandler(this.ButtonHelp_Click);
+            buttonPerform.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            buttonPerform.Enabled = false;
+            buttonPerform.Location = new System.Drawing.Point(11, 667);
+            buttonPerform.Name = "buttonPerform";
+            buttonPerform.Size = new System.Drawing.Size(503, 30);
+            buttonPerform.TabIndex = 8;
+            buttonPerform.Text = "Run";
+            buttonPerform.UseVisualStyleBackColor = true;
+            buttonPerform.Click += buttonPerform_Click;
             // 
             // buttonRandomSeed
             // 
-            this.buttonRandomSeed.Location = new System.Drawing.Point(12, 119);
-            this.buttonRandomSeed.Name = "buttonRandomSeed";
-            this.buttonRandomSeed.Size = new System.Drawing.Size(95, 23);
-            this.buttonRandomSeed.TabIndex = 29;
-            this.buttonRandomSeed.Text = "Random Seed";
-            this.buttonRandomSeed.UseVisualStyleBackColor = true;
-            this.buttonRandomSeed.Click += new System.EventHandler(this.ButtonRandomSeed_Click);
+            buttonRandomSeed.Location = new System.Drawing.Point(12, 173);
+            buttonRandomSeed.Name = "buttonRandomSeed";
+            buttonRandomSeed.Size = new System.Drawing.Size(111, 27);
+            buttonRandomSeed.TabIndex = 29;
+            buttonRandomSeed.Text = "Random Seed";
+            buttonRandomSeed.UseVisualStyleBackColor = true;
+            buttonRandomSeed.Click += ButtonRandomSeed_Click;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 64);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(216, 13);
-            this.label3.TabIndex = 27;
-            this.label3.Text = "You can type something to generate a seed:";
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(12, 102);
+            label3.Margin = new System.Windows.Forms.Padding(3);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(237, 15);
+            label3.TabIndex = 27;
+            label3.Text = "You can type something to generate a seed:";
             // 
             // textBoxSeed
             // 
-            this.textBoxSeed.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBoxSeed.Location = new System.Drawing.Point(12, 80);
-            this.textBoxSeed.Name = "textBoxSeed";
-            this.textBoxSeed.Size = new System.Drawing.Size(431, 20);
-            this.textBoxSeed.TabIndex = 0;
-            this.textBoxSeed.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
+            textBoxSeed.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            textBoxSeed.Location = new System.Drawing.Point(12, 123);
+            textBoxSeed.Name = "textBoxSeed";
+            textBoxSeed.Size = new System.Drawing.Size(502, 23);
+            textBoxSeed.TabIndex = 0;
+            textBoxSeed.TextChanged += TextBox1_TextChanged;
             // 
             // buttonClear
             // 
-            this.buttonClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonClear.Location = new System.Drawing.Point(318, 119);
-            this.buttonClear.Name = "buttonClear";
-            this.buttonClear.Size = new System.Drawing.Size(67, 23);
-            this.buttonClear.TabIndex = 32;
-            this.buttonClear.Text = "Disable All";
-            this.buttonClear.UseVisualStyleBackColor = true;
-            this.buttonClear.Click += new System.EventHandler(this.ButtonClear_Click);
+            buttonClear.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            buttonClear.Location = new System.Drawing.Point(436, 173);
+            buttonClear.Name = "buttonClear";
+            buttonClear.Size = new System.Drawing.Size(78, 27);
+            buttonClear.TabIndex = 32;
+            buttonClear.Text = "Disable All";
+            buttonClear.UseVisualStyleBackColor = true;
+            buttonClear.Click += ButtonClear_Click;
             // 
             // propertyGridSettings
             // 
-            this.propertyGridSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.propertyGridSettings.HelpVisible = false;
-            this.propertyGridSettings.Location = new System.Drawing.Point(12, 148);
-            this.propertyGridSettings.Name = "propertyGridSettings";
-            this.propertyGridSettings.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            this.propertyGridSettings.Size = new System.Drawing.Size(431, 279);
-            this.propertyGridSettings.TabIndex = 34;
-            this.propertyGridSettings.ToolbarVisible = false;
-            this.propertyGridSettings.SelectedGridItemChanged += new System.Windows.Forms.SelectedGridItemChangedEventHandler(this.propertyGridAsset_SelectedGridItemChanged);
+            propertyGridSettings.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            propertyGridSettings.BackColor = System.Drawing.SystemColors.Control;
+            propertyGridSettings.HelpVisible = false;
+            propertyGridSettings.Location = new System.Drawing.Point(11, 206);
+            propertyGridSettings.Name = "propertyGridSettings";
+            propertyGridSettings.PropertySort = System.Windows.Forms.PropertySort.Categorized;
+            propertyGridSettings.Size = new System.Drawing.Size(503, 339);
+            propertyGridSettings.TabIndex = 34;
+            propertyGridSettings.ToolbarVisible = false;
+            propertyGridSettings.SelectedGridItemChanged += propertyGridAsset_SelectedGridItemChanged;
             // 
             // menuStrip1
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.settingsFileToolStripMenuItem,
-            this.optionsToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(455, 24);
-            this.menuStrip1.TabIndex = 35;
-            this.menuStrip1.Text = "menuStrip1";
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { settingsFileToolStripMenuItem, optionsToolStripMenuItem, toolStripMenuItemHelp, aboutToolStripMenuItem });
+            menuStrip1.Location = new System.Drawing.Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
+            menuStrip1.Size = new System.Drawing.Size(526, 24);
+            menuStrip1.TabIndex = 35;
+            menuStrip1.Text = "menuStrip1";
             // 
             // settingsFileToolStripMenuItem
             // 
-            this.settingsFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.loadToolStripMenuItem,
-            this.saveToolStripMenuItem});
-            this.settingsFileToolStripMenuItem.Name = "settingsFileToolStripMenuItem";
-            this.settingsFileToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
-            this.settingsFileToolStripMenuItem.Text = "Settings File";
+            settingsFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { loadToolStripMenuItem, saveToolStripMenuItem });
+            settingsFileToolStripMenuItem.Name = "settingsFileToolStripMenuItem";
+            settingsFileToolStripMenuItem.Size = new System.Drawing.Size(82, 20);
+            settingsFileToolStripMenuItem.Text = "Settings File";
             // 
             // loadToolStripMenuItem
             // 
-            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.loadToolStripMenuItem.Text = "Load";
-            this.loadToolStripMenuItem.Click += new System.EventHandler(this.LoadToolStripMenuItem_Click);
+            loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            loadToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            loadToolStripMenuItem.Text = "Load";
+            loadToolStripMenuItem.Click += LoadToolStripMenuItem_Click;
             // 
             // saveToolStripMenuItem
             // 
-            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
-            this.saveToolStripMenuItem.Text = "Save";
-            this.saveToolStripMenuItem.Click += new System.EventHandler(this.SaveToolStripMenuItem_Click);
+            saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            saveToolStripMenuItem.Size = new System.Drawing.Size(100, 22);
+            saveToolStripMenuItem.Text = "Save";
+            saveToolStripMenuItem.Click += SaveToolStripMenuItem_Click;
             // 
             // optionsToolStripMenuItem
             // 
-            this.optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.setHeavyModManagerPathToolStripMenuItem,
-            this.toolStripSeparator1,
-            this.checkForUpdatesOnStartupToolStripMenuItem,
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem});
-            this.optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            this.optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
-            this.optionsToolStripMenuItem.Text = "Options";
+            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { setHeavyModManagerPathToolStripMenuItem, toolStripSeparator1, checkForUpdatesOnStartupToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem });
+            optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            optionsToolStripMenuItem.Text = "Options";
             // 
             // setHeavyModManagerPathToolStripMenuItem
             // 
-            this.setHeavyModManagerPathToolStripMenuItem.Name = "setHeavyModManagerPathToolStripMenuItem";
-            this.setHeavyModManagerPathToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
-            this.setHeavyModManagerPathToolStripMenuItem.Text = "Set Heavy Mod Manager Path";
-            this.setHeavyModManagerPathToolStripMenuItem.Click += new System.EventHandler(this.setHeavyModManagerPathToolStripMenuItem_Click);
+            setHeavyModManagerPathToolStripMenuItem.Name = "setHeavyModManagerPathToolStripMenuItem";
+            setHeavyModManagerPathToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            setHeavyModManagerPathToolStripMenuItem.Text = "Set Heavy Mod Manager Path";
+            setHeavyModManagerPathToolStripMenuItem.Click += setHeavyModManagerPathToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(255, 6);
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new System.Drawing.Size(255, 6);
             // 
             // checkForUpdatesOnStartupToolStripMenuItem
             // 
-            this.checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
-            this.checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
-            this.checkForUpdatesOnStartupToolStripMenuItem.Text = "Check For Updates On Startup";
-            this.checkForUpdatesOnStartupToolStripMenuItem.Click += new System.EventHandler(this.CheckForUpdatesOnStartupToolStripMenuItem_Click);
+            checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
+            checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            checkForUpdatesOnStartupToolStripMenuItem.Text = "Check For Updates On Startup";
+            checkForUpdatesOnStartupToolStripMenuItem.Click += CheckForUpdatesOnStartupToolStripMenuItem_Click;
             // 
             // checkForUpdatesOnEditorFilesToolStripMenuItem
             // 
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check For Updates On EditorFiles...";
-            this.checkForUpdatesOnEditorFilesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesOnEditorFilesToolStripMenuItem_Click);
+            checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
+            checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check For Updates On EditorFiles...";
+            checkForUpdatesOnEditorFilesToolStripMenuItem.Click += checkForUpdatesOnEditorFilesToolStripMenuItem_Click;
+            // 
+            // toolStripMenuItemHelp
+            // 
+            toolStripMenuItemHelp.Name = "toolStripMenuItemHelp";
+            toolStripMenuItemHelp.Size = new System.Drawing.Size(44, 20);
+            toolStripMenuItemHelp.Text = "Help";
+            toolStripMenuItemHelp.Click += toolStripMenuItemHelp_Click;
+            // 
+            // aboutToolStripMenuItem
+            // 
+            aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 20);
+            aboutToolStripMenuItem.Text = "About";
+            aboutToolStripMenuItem.Click += ButtonHelp_Click;
             // 
             // labelHmmPath
             // 
-            this.labelHmmPath.AutoSize = true;
-            this.labelHmmPath.Location = new System.Drawing.Point(9, 24);
-            this.labelHmmPath.Name = "labelHmmPath";
-            this.labelHmmPath.Size = new System.Drawing.Size(166, 13);
-            this.labelHmmPath.TabIndex = 36;
-            this.labelHmmPath.Text = "Heavy Mod Manager path not set";
+            labelHmmPath.AutoSize = true;
+            labelHmmPath.Location = new System.Drawing.Point(12, 52);
+            labelHmmPath.Margin = new System.Windows.Forms.Padding(3);
+            labelHmmPath.Name = "labelHmmPath";
+            labelHmmPath.Size = new System.Drawing.Size(184, 15);
+            labelHmmPath.TabIndex = 36;
+            labelHmmPath.Text = "Heavy Mod Manager path not set";
             // 
             // labelSeed
             // 
-            this.labelSeed.AutoSize = true;
-            this.labelSeed.Location = new System.Drawing.Point(12, 103);
-            this.labelSeed.Name = "labelSeed";
-            this.labelSeed.Size = new System.Drawing.Size(38, 13);
-            this.labelSeed.TabIndex = 37;
-            this.labelSeed.Text = "Seed: ";
+            labelSeed.AutoSize = true;
+            labelSeed.Location = new System.Drawing.Point(12, 152);
+            labelSeed.Margin = new System.Windows.Forms.Padding(3);
+            labelSeed.Name = "labelSeed";
+            labelSeed.Size = new System.Drawing.Size(38, 15);
+            labelSeed.TabIndex = 37;
+            labelSeed.Text = "Seed: ";
             // 
             // richTextBoxHelp
             // 
-            this.richTextBoxHelp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBoxHelp.Location = new System.Drawing.Point(12, 433);
-            this.richTextBoxHelp.Name = "richTextBoxHelp";
-            this.richTextBoxHelp.ReadOnly = true;
-            this.richTextBoxHelp.Size = new System.Drawing.Size(431, 96);
-            this.richTextBoxHelp.TabIndex = 38;
-            this.richTextBoxHelp.Text = "";
+            richTextBoxHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            richTextBoxHelp.Location = new System.Drawing.Point(11, 551);
+            richTextBoxHelp.Name = "richTextBoxHelp";
+            richTextBoxHelp.ReadOnly = true;
+            richTextBoxHelp.Size = new System.Drawing.Size(503, 110);
+            richTextBoxHelp.TabIndex = 38;
+            richTextBoxHelp.Text = "";
             // 
             // buttonReset
             // 
-            this.buttonReset.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonReset.Location = new System.Drawing.Point(261, 119);
-            this.buttonReset.Name = "buttonReset";
-            this.buttonReset.Size = new System.Drawing.Size(51, 23);
-            this.buttonReset.TabIndex = 39;
-            this.buttonReset.Text = "Reset";
-            this.buttonReset.UseVisualStyleBackColor = true;
-            this.buttonReset.Click += new System.EventHandler(this.buttonReset_Click);
+            buttonReset.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            buttonReset.Location = new System.Drawing.Point(326, 173);
+            buttonReset.Name = "buttonReset";
+            buttonReset.Size = new System.Drawing.Size(104, 27);
+            buttonReset.TabIndex = 39;
+            buttonReset.Text = "Default Settings";
+            buttonReset.UseVisualStyleBackColor = true;
+            buttonReset.Click += buttonReset_Click;
             // 
             // comboBoxGame
             // 
-            this.comboBoxGame.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.comboBoxGame.FormattingEnabled = true;
-            this.comboBoxGame.Items.AddRange(new object[] {
-            "SpongeBob SquarePants: Battle For Bikini Bottom",
-            "Scooby-Doo: Night of 100 Frights",
-            "The SpongeBob SquarePants Movie"});
-            this.comboBoxGame.Location = new System.Drawing.Point(12, 40);
-            this.comboBoxGame.Name = "comboBoxGame";
-            this.comboBoxGame.Size = new System.Drawing.Size(431, 21);
-            this.comboBoxGame.TabIndex = 40;
-            this.comboBoxGame.SelectedIndexChanged += new System.EventHandler(this.comboBoxGame_SelectedIndexChanged);
+            comboBoxGame.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
+            comboBoxGame.FormattingEnabled = true;
+            comboBoxGame.Items.AddRange(new object[] { "SpongeBob SquarePants: Battle For Bikini Bottom", "Scooby-Doo: Night of 100 Frights", "The SpongeBob SquarePants Movie" });
+            comboBoxGame.Location = new System.Drawing.Point(12, 73);
+            comboBoxGame.Name = "comboBoxGame";
+            comboBoxGame.Size = new System.Drawing.Size(502, 23);
+            comboBoxGame.TabIndex = 40;
+            comboBoxGame.SelectedIndexChanged += comboBoxGame_SelectedIndexChanged;
+            // 
+            // radioButtonHmm
+            // 
+            radioButtonHmm.AutoSize = true;
+            radioButtonHmm.Checked = true;
+            radioButtonHmm.Location = new System.Drawing.Point(12, 27);
+            radioButtonHmm.Name = "radioButtonHmm";
+            radioButtonHmm.Size = new System.Drawing.Size(201, 19);
+            radioButtonHmm.TabIndex = 41;
+            radioButtonHmm.TabStop = true;
+            radioButtonHmm.Text = "Create Heavy Mod Manager Mod";
+            radioButtonHmm.UseVisualStyleBackColor = true;
+            radioButtonHmm.CheckedChanged += radioButtonHmm_CheckedChanged;
+            // 
+            // radioButtonFiles
+            // 
+            radioButtonFiles.AutoSize = true;
+            radioButtonFiles.Location = new System.Drawing.Point(219, 27);
+            radioButtonFiles.Name = "radioButtonFiles";
+            radioButtonFiles.Size = new System.Drawing.Size(110, 19);
+            radioButtonFiles.TabIndex = 42;
+            radioButtonFiles.Text = "Randomize Files";
+            radioButtonFiles.UseVisualStyleBackColor = true;
+            radioButtonFiles.CheckedChanged += radioButtonFiles_CheckedChanged;
+            // 
+            // buttonSelectMainFiles
+            // 
+            buttonSelectMainFiles.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
+            buttonSelectMainFiles.Enabled = false;
+            buttonSelectMainFiles.Location = new System.Drawing.Point(354, 27);
+            buttonSelectMainFiles.Name = "buttonSelectMainFiles";
+            buttonSelectMainFiles.Size = new System.Drawing.Size(160, 27);
+            buttonSelectMainFiles.TabIndex = 43;
+            buttonSelectMainFiles.Text = "Select main.dol from files";
+            buttonSelectMainFiles.UseVisualStyleBackColor = true;
+            buttonSelectMainFiles.Click += buttonSelectMainFiles_Click;
             // 
             // RandomizerMenu
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(455, 570);
-            this.Controls.Add(this.comboBoxGame);
-            this.Controls.Add(this.buttonReset);
-            this.Controls.Add(this.richTextBoxHelp);
-            this.Controls.Add(this.labelSeed);
-            this.Controls.Add(this.labelHmmPath);
-            this.Controls.Add(this.propertyGridSettings);
-            this.Controls.Add(this.buttonRandomSeed);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.textBoxSeed);
-            this.Controls.Add(this.buttonClear);
-            this.Controls.Add(this.buttonHelp);
-            this.Controls.Add(this.buttonPerform);
-            this.Controls.Add(this.menuStrip1);
-            this.MainMenuStrip = this.menuStrip1;
-            this.MaximizeBox = false;
-            this.Name = "RandomizerMenu";
-            this.ShowIcon = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Randomizer";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RandomizerMenu_FormClosing);
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            ClientSize = new System.Drawing.Size(526, 709);
+            Controls.Add(buttonSelectMainFiles);
+            Controls.Add(radioButtonFiles);
+            Controls.Add(radioButtonHmm);
+            Controls.Add(comboBoxGame);
+            Controls.Add(buttonReset);
+            Controls.Add(richTextBoxHelp);
+            Controls.Add(labelSeed);
+            Controls.Add(labelHmmPath);
+            Controls.Add(propertyGridSettings);
+            Controls.Add(buttonRandomSeed);
+            Controls.Add(label3);
+            Controls.Add(textBoxSeed);
+            Controls.Add(buttonClear);
+            Controls.Add(buttonPerform);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
+            Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
+            MaximizeBox = false;
+            Name = "RandomizerMenu";
+            ShowIcon = false;
+            StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            Text = "Randomizer";
+            FormClosing += RandomizerMenu_FormClosing;
+            Load += RandomizerMenu_Load;
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
+            ResumeLayout(false);
+            PerformLayout();
 
         }
 
         #endregion
         private System.Windows.Forms.Button buttonPerform;
-        private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.Button buttonRandomSeed;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox textBoxSeed;
@@ -310,5 +344,10 @@
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnEditorFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem setHeavyModManagerPathToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.RadioButton radioButtonHmm;
+        private System.Windows.Forms.RadioButton radioButtonFiles;
+        private System.Windows.Forms.Button buttonSelectMainFiles;
+        private System.Windows.Forms.ToolStripMenuItem toolStripMenuItemHelp;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
     }
 }
