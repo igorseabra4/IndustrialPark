@@ -1,8 +1,6 @@
 ﻿using Assimp;
 using Assimp.Configs;
 using IndustrialPark.Models.CollisionTree;
-using IndustrialPark.RenderWare;
-using Newtonsoft.Json;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using System;
@@ -10,9 +8,6 @@ using System.Numerics;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Windows.Forms;
-using System.Xml.Linq;
 
 namespace IndustrialPark.Models
 {
@@ -208,9 +203,34 @@ namespace IndustrialPark.Models
         /// <param name="binMesh">If set to true, will create an optimized model topology used to draw in-game. Can be in triangle list or strip format. Geometry triangles are used for collision only then</param>
         /// <returns>A renderware model file</returns>
         /// <exception cref="ArgumentException"></exception>
-        public static RWSection CreateDFFFromAssimp(string fileName, bool tristrip, bool flipUVs = false, bool ignoreMeshColors = true, bool vertexcolors = false, 
-            bool texcoords = true, bool normals = true, bool geoTriangles = true, bool multiAtomic = false, bool nativeData = false, bool collTree = false, bool binMesh = false)
+        public static RWSection CreateDFFFromAssimp(string fileName, ImportModelSettings settings = null)
         {
+            bool tristrip = false;
+            bool flipUVs = false;
+            bool ignoreMeshColors = true;
+            bool vertexcolors = false;
+            bool texcoords = true;
+            bool normals = true;
+            bool geoTriangles = true;
+            bool multiAtomic = false;
+            bool nativeData = false;
+            bool collTree = false;
+            bool binMesh = false;
+            if (settings != null)
+            {
+                tristrip = settings.TriStrips;
+                flipUVs = settings.FlipUVs;
+                ignoreMeshColors = settings.IgnoreMeshColors;
+                vertexcolors = settings.VertexColors;
+                texcoords = settings.TexCoords;
+                normals = settings.Normals;
+                geoTriangles = settings.GeoTriangles;
+                multiAtomic = settings.MultiAtomic;
+                nativeData = settings.NativeData;
+                collTree = settings.CollTree;
+                binMesh = settings.BinMesh;
+            }
+
             PostProcessSteps pps =
                 PostProcessSteps.Debone |
                 PostProcessSteps.FindInstances |
@@ -239,7 +259,7 @@ namespace IndustrialPark.Models
 
             if (multiAtomic ? scene.Meshes.Any(m => m.VertexCount > TRI_AND_VERTEX_LIMIT || m.FaceCount > TRI_AND_VERTEX_LIMIT) :
                 scene.Meshes.Sum(m => m.VertexCount) > TRI_AND_VERTEX_LIMIT || scene.Meshes.Sum(m => m.FaceCount) > TRI_AND_VERTEX_LIMIT)
-                throw new ArgumentException("Model has too many vertices or triangles. Please import a simpler model.");
+                throw new ArgumentException($"Model has too many vertices or triangles. The vertex and triangle count limit for this format is {TRI_AND_VERTEX_LIMIT}");
 
             //if (nativeData) // Force tristrip and multi-atomic when importing as native data
                 //tristrip = multiAtomic = true;
