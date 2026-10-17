@@ -32,7 +32,13 @@
             tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             buttonHelp = new System.Windows.Forms.Button();
             buttonFindCallers = new System.Windows.Forms.Button();
+            menuStrip1 = new System.Windows.Forms.MenuStrip();
+            editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            editHeaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            deleteAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tableLayoutPanel1.SuspendLayout();
+            menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // richTextBoxAssetText
@@ -42,7 +48,7 @@
             richTextBoxAssetText.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
             richTextBoxAssetText.Location = new System.Drawing.Point(3, 3);
             richTextBoxAssetText.Name = "richTextBoxAssetText";
-            richTextBoxAssetText.Size = new System.Drawing.Size(618, 247);
+            richTextBoxAssetText.Size = new System.Drawing.Size(618, 223);
             richTextBoxAssetText.TabIndex = 7;
             richTextBoxAssetText.Text = "";
             richTextBoxAssetText.TextChanged += richTextBoxAssetText_TextChanged;
@@ -56,24 +62,24 @@
             tableLayoutPanel1.Controls.Add(buttonFindCallers, 1, 1);
             tableLayoutPanel1.Controls.Add(richTextBoxAssetText, 0, 0);
             tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            tableLayoutPanel1.Location = new System.Drawing.Point(0, 24);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 28F));
             tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            tableLayoutPanel1.Size = new System.Drawing.Size(624, 281);
+            tableLayoutPanel1.Size = new System.Drawing.Size(624, 257);
             tableLayoutPanel1.TabIndex = 8;
             // 
             // buttonHelp
             // 
             buttonHelp.AutoSize = true;
             buttonHelp.Dock = System.Windows.Forms.DockStyle.Fill;
-            buttonHelp.Location = new System.Drawing.Point(3, 256);
+            buttonHelp.Location = new System.Drawing.Point(3, 232);
             buttonHelp.Name = "buttonHelp";
             buttonHelp.Size = new System.Drawing.Size(306, 22);
             buttonHelp.TabIndex = 18;
-            buttonHelp.Text = "Open Wiki Page";
+            buttonHelp.Text = "Open wiki page (view format tags)";
             buttonHelp.UseVisualStyleBackColor = true;
             buttonHelp.Click += buttonHelp_Click;
             // 
@@ -81,13 +87,50 @@
             // 
             buttonFindCallers.AutoSize = true;
             buttonFindCallers.Dock = System.Windows.Forms.DockStyle.Fill;
-            buttonFindCallers.Location = new System.Drawing.Point(315, 256);
+            buttonFindCallers.Location = new System.Drawing.Point(315, 232);
             buttonFindCallers.Name = "buttonFindCallers";
             buttonFindCallers.Size = new System.Drawing.Size(306, 22);
             buttonFindCallers.TabIndex = 8;
-            buttonFindCallers.Text = "Find Who Targets Me";
+            buttonFindCallers.Text = "Find who targets me";
             buttonFindCallers.UseVisualStyleBackColor = true;
             buttonFindCallers.Click += buttonFindCallers_Click;
+            // 
+            // menuStrip1
+            // 
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { editToolStripMenuItem });
+            menuStrip1.Location = new System.Drawing.Point(0, 0);
+            menuStrip1.Name = "menuStrip1";
+            menuStrip1.Size = new System.Drawing.Size(624, 24);
+            menuStrip1.TabIndex = 9;
+            menuStrip1.Text = "menuStrip1";
+            // 
+            // editToolStripMenuItem
+            // 
+            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { editHeaderToolStripMenuItem, copyAssetToolStripMenuItem, deleteAssetToolStripMenuItem });
+            editToolStripMenuItem.Name = "editToolStripMenuItem";
+            editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
+            editToolStripMenuItem.Text = "Edit";
+            // 
+            // editHeaderToolStripMenuItem
+            // 
+            editHeaderToolStripMenuItem.Name = "editHeaderToolStripMenuItem";
+            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            editHeaderToolStripMenuItem.Text = "Edit Header";
+            editHeaderToolStripMenuItem.Click += editHeaderToolStripMenuItem_Click;
+            // 
+            // copyAssetToolStripMenuItem
+            // 
+            copyAssetToolStripMenuItem.Name = "copyAssetToolStripMenuItem";
+            copyAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            copyAssetToolStripMenuItem.Text = "Copy Asset";
+            copyAssetToolStripMenuItem.Click += copyAssetToolStripMenuItem_Click;
+            // 
+            // deleteAssetToolStripMenuItem
+            // 
+            deleteAssetToolStripMenuItem.Name = "deleteAssetToolStripMenuItem";
+            deleteAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            deleteAssetToolStripMenuItem.Text = "Delete Asset";
+            deleteAssetToolStripMenuItem.Click += deleteAssetToolStripMenuItem_Click;
             // 
             // InternalTextEditor
             // 
@@ -95,6 +138,8 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(624, 281);
             Controls.Add(tableLayoutPanel1);
+            Controls.Add(menuStrip1);
+            MainMenuStrip = menuStrip1;
             MaximizeBox = false;
             Name = "InternalTextEditor";
             ShowIcon = false;
@@ -103,7 +148,10 @@
             FormClosing += InternalTextEditor_FormClosing;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
+            menuStrip1.ResumeLayout(false);
+            menuStrip1.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -112,5 +160,10 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button buttonFindCallers;
         private System.Windows.Forms.Button buttonHelp;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem editHeaderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyAssetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem deleteAssetToolStripMenuItem;
     }
 }

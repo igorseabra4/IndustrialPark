@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -50,6 +52,29 @@ namespace IndustrialPark
         private void buttonHelp_Click(object sender, EventArgs e)
         {
             ArchiveEditorFunctions.OpenWikiPage(asset);
+        }
+
+        private void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ae = Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive);
+            if (ae.EditHeader(asset.assetID, out uint newAssetID))
+                ae.OpenInternalEditor(newAssetID);
+        }
+
+        private void copyAssetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            archive.CopyAssetsToClipboard(asset.assetID);
+        }
+
+        private void deleteAssetToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show($"Are you sure you want to delete asset [{asset.assetID:X8}] {asset.assetName} ({AssetTypeContainer.AssetTypeToString(asset.assetType)})?", "Confirm asset removal", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (result == DialogResult.Yes)
+            {
+                var actions = new List<IReversibleAction>();
+                Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive).RemoveAssets([asset.assetID], actions);
+                Program.UndoBuffer.AddAction(actions);
+            }
         }
     }
 }

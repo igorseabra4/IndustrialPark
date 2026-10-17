@@ -17,6 +17,8 @@ namespace IndustrialPark
 
             buttonOK.Enabled = false;
             TopMost = true;
+
+            listBox1.AllowDrop = true;
         }
 
         public static string filter => "All supported formats|*.bmp;*.png;*.gif;*.jpg;*.jpeg;*.jpe;*.jif;*.jfif;*.jfi;*.tif;*.tiff;*.rwtex|All files|*";
@@ -125,6 +127,23 @@ namespace IndustrialPark
         {
             if (checkBoxCompress.Checked)
                 checkBoxTransFix.Checked = false;
+        }
+
+        private void listBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void listBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetData(DataFormats.FileDrop) is not string[] files)
+                return;
+            foreach (string file in files)
+                filePaths.Add(file);
+            UpdateListBox();
         }
     }
 }
