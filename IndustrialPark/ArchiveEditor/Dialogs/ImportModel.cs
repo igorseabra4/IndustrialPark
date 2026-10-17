@@ -8,67 +8,251 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static IndustrialPark.Models.Assimp_IO;
+using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
     public partial class ImportModel : Form
     {
-        private bool isSingleModel = false;
-        public ImportModel(Platform platform, AssetType assetType, bool noLayers)
+        public static ImportModelResult GetImportData(Game game, Platform platform)
+        {
+            using ImportModel a = new ImportModel(platform, AssetType.Null);
+            if (a.ShowDialog() != DialogResult.OK || a.filePaths == null || !a.filePaths.Any())
+                return null;
+
+            ReadFileMethods.treatStuffAsByteArray = false;
+
+            var ahdrCollections = new List<List<Section_AHDR>>();
+
+            foreach (string filePath in a.filePaths)
+            {
+                string assetName = Path.GetFileNameWithoutExtension(filePath);
+
+                if (a.assetType == AssetType.JSP || a.assetType == AssetType.Model)
+                {
+                    try
+                    {
+                        byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
+                            File.ReadAllBytes(filePath) :
+                            ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(filePath, a.GetImportModelSettings()), GetModelRenderWareVersion(game));
+
+                        if (a.assetType == AssetType.JSP)
+                        {
+                            byte[][] clumps = a.checkBoxSplitClump.Checked ?
+                            SplitClump(assetData).Select(c => ReadFileMethods.ExportRenderWareFile(c, GetModelRenderWareVersion(game))).ToArray() :
+                            [assetData];
+
+                            var clumpAHDRs = clumps.Select((data, i) => new Section_AHDR($"{assetName}{i}", a.assetType, AHDRFlagsFromAssetType(a.assetType), data));
+                            ahdrCollections.Add([.. clumpAHDRs]);
+                        }
+                        else
+                        {
+                            ahdrCollections.Add([new Section_AHDR(assetName, a.assetType, AHDRFlagsFromAssetType(a.assetType), assetData)]);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Model {assetName} could not be imported:\n{ex.Message}",
+                            "Error Importing Model",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+                }
+                else // BSP
+                {
+                    assetName += ".bsp";
+                    try
+                    {
+                        byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
+                            File.ReadAllBytes(filePath) :
+                            RwUtility.PerformBSPConversion(filePath, game,
+                            a.checkBoxNormals.Checked,
+                            a.checkBoxVertexColors.Checked,
+                            a.checkBoxTexCoords.Checked,
+                            a.checkBoxTriStrips.Checked,
+                            a.checkBoxIgnoreMeshColors.Checked,
+                            a.checkBoxNoMaterials.Checked,
+                            a.checkBoxFlipUVs.Checked,
+                            a.checkBoxCollTree.Checked);
+
+                        ahdrCollections.Add([new Section_AHDR(assetName, a.assetType, AHDRFlagsFromAssetType(a.assetType), assetData)]);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Model {assetName} could not be imported:\n{ex.Message}",
+                            "Error Importing Model",
+                            MessageBoxButtons.OK,
+                            MessageBoxIcon.Error);
+                    }
+                }
+            }
+
+            return new ImportModelResult()
+            {
+                AHDRCollections = ahdrCollections,
+                AssetType = a.assetType,
+                Overwrite = a.checkBoxOverwrite.Checked,
+                GenerateSimps = a.checkBoxGenSimps.Checked,
+                LedgeGrabSimps = a.checkBoxLedgeGrab.Checked,
+                PiptVColors = a.checkBoxCreatePIPT.Checked,
+                SolidSimps = a.checkBoxSolidSimps.Checked,
+            };
+        }
+
+        public static byte[] GetSingleModel(Game game, Platform platform, AssetType assetType)
+        {
+            using ImportModel a = new ImportModel(platform, assetType);
+            if (a.ShowDialog() != DialogResult.OK || a.filePaths == null || !a.filePaths.Any())
+                return null;
+
+            ReadFileMethods.treatStuffAsByteArray = false;
+
+            try
+            {
+                if (assetType == AssetType.Model || assetType == AssetType.JSP)
+                {
+                    return Path.GetExtension(a.filePaths[0]).ToLower().Equals(".dff") ? File.ReadAllBytes(a.filePaths[0]) :
+                        ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0], a.GetImportModelSettings()), GetModelRenderWareVersion(game));
+                }
+                if (assetType == AssetType.BSP)
+                {
+                    return Path.GetExtension(a.filePaths[0]).ToLower().Equals(".bsp") ? File.ReadAllBytes(a.filePaths[0]) :
+                            RwUtility.PerformBSPConversion(a.filePaths[0], game,
+                            a.checkBoxNormals.Checked, a.checkBoxVertexColors.Checked, a.checkBoxTexCoords.Checked, a.checkBoxTriStrips.Checked,
+                            a.checkBoxIgnoreMeshColors.Checked, a.checkBoxNoMaterials.Checked, a.checkBoxFlipUVs.Checked, a.checkBoxCollTree.Checked);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Model could not be imported:\n{ex.Message}",
+                    "Error Importing Model",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+            }
+            return null;
+        }
+
+        private List<string> filePaths;
+        private bool isReplacing;
+        private Platform platform;
+        private AssetType assetType => comboBoxAssetTypes.SelectedItem != null ? (AssetType)comboBoxAssetTypes.SelectedItem : AssetType.Null;
+
+        public ImportModel(Platform platform, AssetType assetType)
         {
             InitializeComponent();
 
             buttonOK.Enabled = false;
             TopMost = true;
-            isSingleModel = assetType != AssetType.Null;
+            isReplacing = assetType != AssetType.Null;
 
             comboBoxAssetTypes.Items.Add(AssetType.Model);
-            comboBoxAssetTypes.Items.Add(AssetType.BSP);
             comboBoxAssetTypes.Items.Add(AssetType.JSP);
-            comboBoxAssetTypes.SelectedItem = AssetType.Model;
+            comboBoxAssetTypes.Items.Add(AssetType.BSP);
 
-            checkBoxUseExistingDefaultLayer.Visible = !noLayers;
+            this.platform = platform;
 
-            if (isSingleModel)
+            comboBoxAssetTypes.SelectedItem = isReplacing ? assetType : AssetType.Model;
+
+            if (isReplacing)
             {
-                grpSIMP.Visible = false;
                 Text = "Select Model";
                 buttonImportRawData.Text = "Select Model...";
-                Height -= grpSIMP.Height;
-                comboBoxAssetTypes.SelectedItem = assetType;
                 comboBoxAssetTypes.Enabled = false;
             }
 
-            //if (platform != Platform.GameCube || assetType == AssetType.JSP)
-            //    checkBoxNativeData.Enabled = false;
+            filePaths = new List<string>();
 
-            if (platform == Platform.PS2)
-                (checkBoxCreatePIPT.Checked, checkBoxCreatePIPT.Enabled) = (true, false);
-
-            if (assetType != AssetType.BSP)
-                checkBoxNoMaterials.Enabled = false;
-
+            listBox1.AllowDrop = true;
         }
 
-        List<string> filePaths = new List<string>();
+        private void UpdateAvailableCheckboxes()
+        {
+            checkBoxFlipUVs.Enabled = true;
+
+            (checkBoxCreatePIPT.Enabled, checkBoxCreatePIPT.Checked) =
+                (platform == Platform.PS2) ?
+                (false, assetType == AssetType.Model && !isReplacing) :
+                (assetType == AssetType.Model && !isReplacing, false);
+
+            checkBoxOverwrite.Enabled = !isReplacing;
+            if (isReplacing)
+                checkBoxOverwrite.Checked = true;
+
+            checkBoxNoMaterials.Enabled = assetType == AssetType.BSP;
+            if (!checkBoxNoMaterials.Enabled)
+                checkBoxNoMaterials.Checked = false;
+
+            checkBoxSplitClump.Enabled = assetType == AssetType.JSP && !isReplacing;
+            if (!checkBoxSplitClump.Enabled)
+                checkBoxSplitClump.Checked = false;
+
+            checkBoxTexCoords.Enabled = true;
+
+            checkBoxNormals.Enabled = assetType != AssetType.JSP;
+            if (assetType == AssetType.JSP)
+                checkBoxNormals.Checked = false;
+            if (assetType == AssetType.Model)
+                checkBoxNormals.Checked = true;
+
+            checkBoxVertexColors.Enabled = true;
+            if (assetType != AssetType.Model)
+                checkBoxVertexColors.Checked = true;
+
+            checkBoxNativeData.Enabled = false;
+            checkBoxNativeData.Checked = false;
+
+            checkBoxTriStrips.Enabled = true;
+
+            checkBoxMultiAtomic.Enabled = assetType == AssetType.Model;
+            checkBoxMultiAtomic.Checked = assetType == AssetType.JSP;
+
+            checkBoxIgnoreMeshColors.Enabled = true;
+            checkBoxIgnoreMeshColors.Checked = true;
+
+            checkBoxBinMesh.Enabled = assetType == AssetType.Model;
+            checkBoxBinMesh.Checked = assetType != AssetType.BSP;
+
+            checkBoxGeoTriangles.Enabled = assetType == AssetType.Model;
+            checkBoxGeoTriangles.Checked = assetType == AssetType.Model;
+
+            checkBoxCollTree.Enabled = assetType != AssetType.JSP;
+            checkBoxCollTree.Checked = assetType != AssetType.JSP;
+
+            if (isReplacing || assetType != AssetType.Model)
+            {
+                grpSIMP.Enabled = false;
+                (checkBoxGenSimps.Enabled, checkBoxGenSimps.Checked) = (false, false);
+                (checkBoxSolidSimps.Enabled, checkBoxSolidSimps.Checked) = (false, false);
+                (checkBoxLedgeGrab.Enabled, checkBoxLedgeGrab.Checked) = (false, false);
+            }
+            else
+            {
+                grpSIMP.Enabled = true;
+                checkBoxGenSimps.Enabled = true;
+                (checkBoxSolidSimps.Enabled, checkBoxSolidSimps.Checked) = (checkBoxGenSimps.Checked, checkBoxGenSimps.Checked);
+                (checkBoxLedgeGrab.Enabled, checkBoxLedgeGrab.Checked) = (checkBoxGenSimps.Checked, checkBoxGenSimps.Checked);
+            }
+        }
 
         private void buttonImportRawData_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog()
             {
-                Multiselect = isSingleModel ? false : true,
+                Multiselect = !isReplacing,
                 Filter = GetImportFilter()
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
-                foreach (string s in openFileDialog.FileNames)
-                    filePaths.Add(s);
-
-                if (isSingleModel)
+                if (isReplacing)
                 {
                     filePaths.Clear();
                     filePaths.Add(openFileDialog.FileName);
+                }
+                else
+                {
+                    foreach (string s in openFileDialog.FileNames)
+                        filePaths.Add(s);
                 }
 
                 UpdateListBox();
@@ -78,13 +262,8 @@ namespace IndustrialPark
         private void UpdateListBox()
         {
             listBox1.Items.Clear();
-
-            if (isSingleModel)
-                listBox1.Items.Add(Path.GetFileName(filePaths[0]));
-            else
-                foreach (string s in filePaths)
-                    listBox1.Items.Add(Path.GetFileName(s));
-
+            foreach (string s in filePaths)
+                listBox1.Items.Add(Path.GetFileName(s));
             buttonOK.Enabled = listBox1.Items.Count > 0;
         }
 
@@ -102,285 +281,14 @@ namespace IndustrialPark
             Close();
         }
 
-        /// <summary>
-        /// Opens a dialog and creates a renderware model from the selected model file. 
-        /// If the file extension ends with ".dff" or ".bsp" it will be read raw.
-        /// </summary>
-        /// <param name="game"></param>
-        /// <param name="platform"></param>
-        /// <param name="model"></param>
-        /// <returns>True if model was created/read successfully, false otherwise</returns>
-        public static bool GetModel(Game game, Platform platform, AssetType assetType, out byte[] model, out bool createPipt)
-        {
-            model = null;
-            createPipt = false;
-
-            using (ImportModel a = new ImportModel(platform, assetType, false))
-                if (a.ShowDialog() == DialogResult.OK)
-                {
-                    createPipt = a.checkBoxCreatePIPT.Checked;
-                    ReadFileMethods.treatStuffAsByteArray = false;
-
-                    try
-                    {
-                        if (assetType == AssetType.Model || assetType == AssetType.JSP)
-                        {
-                            model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".dff") ? File.ReadAllBytes(a.filePaths[0]) :
-                                ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0],
-                                    a.checkBoxTriStrips.Checked,
-                                    a.checkBoxFlipUVs.Checked,
-                                    a.checkBoxIgnoreMeshColors.Checked,
-                                    a.checkBoxVertexColors.Checked,
-                                    a.checkBoxTexCoords.Checked,
-                                    a.checkBoxNormals.Checked,
-                                    a.checkBoxGeoTriangles.Checked,
-                                    a.checkBoxMultiAtomic.Checked,
-                                    a.checkBoxNativeData.Checked,
-                                    a.checkBoxCollTree.Checked,
-                                    a.checkBoxBinMesh.Checked), GetModelRenderWareVersion(game));
-                        }
-                        else if (assetType == AssetType.BSP)
-                        {
-                            model = Path.GetExtension(a.filePaths[0]).ToLower().Equals(".bsp") ? File.ReadAllBytes(a.filePaths[0]) :
-                                RwUtility.PerformBSPConversion(a.filePaths[0], game, 
-                                a.checkBoxNormals.Checked, a.checkBoxVertexColors.Checked, a.checkBoxTexCoords.Checked, a.checkBoxTriStrips.Checked,
-                                a.checkBoxIgnoreMeshColors.Checked, a.checkBoxNoMaterials.Checked, a.checkBoxFlipUVs.Checked, a.checkBoxCollTree.Checked);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.Show(e.Message, "Error importing BSP", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return false;
-                    }
-
-                    return true;
-                }
-            return false;
-        }
-
-        public static (List<Section_AHDR> AHDRs, bool overwrite) GetJSP(Game game, Platform platform, bool noLayers)
-        {
-            using (ImportModel a = new ImportModel(platform, AssetType.JSP, noLayers))
-                if (a.ShowDialog() == DialogResult.OK)
-                {
-                    List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-                    string assetName;
-                    byte[] assetData;
-                    ReadFileMethods.treatStuffAsByteArray = false;
-
-                    assetName = Path.GetFileNameWithoutExtension(a.filePaths[0]);
-
-                    try
-                    {
-                        assetData = ReadFileMethods.ExportRenderWareFile(CreateDFFFromAssimp(a.filePaths[0],
-                                a.checkBoxTriStrips.Checked,
-                                a.checkBoxFlipUVs.Checked,
-                                a.checkBoxIgnoreMeshColors.Checked,
-                                a.checkBoxVertexColors.Checked,
-                                a.checkBoxTexCoords.Checked,
-                                a.checkBoxNormals.Checked,
-                                a.checkBoxGeoTriangles.Checked,
-                                a.checkBoxMultiAtomic.Checked,
-                                a.checkBoxNativeData.Checked,
-                                a.checkBoxCollTree.Checked,
-                                a.checkBoxBinMesh.Checked),
-                            GetModelRenderWareVersion(game));
-                    }
-                    catch (ArgumentException)
-                    {
-                        MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed "
-                            + TRI_AND_VERTEX_LIMIT + ".",
-                            "Error Importing Model",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                        return (null, false);
-                    }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Model could not be imported.",
-                            "Error Importing Model",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Error);
-                        return (null, false);
-                    }
-
-                    var clumps = a.checkBoxSplitClump.Checked ? SplitClump(assetData) : ReadFileMethods.ReadRenderWareFile(assetData);
-                    for (int i = 0; i < clumps.Length; i++)
-                    {
-                        AHDRs.Add(new Section_AHDR(Functions.BKDRHash(assetName + i), AssetType.JSP, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.JSP),
-                            new Section_ADBG(0, assetName + i, "", 0),
-                            ReadFileMethods.ExportRenderWareFile(clumps[i], GetModelRenderWareVersion(game))));
-                    }
-
-                    return (AHDRs, a.checkBoxOverwrite.Checked);
-                }
-            return (null, false);
-        }
-
-        public static (List<Section_AHDR> AHDRs, bool overwrite, bool simps, bool ledgeGrab, bool piptVColors, bool solidSimps, bool jsp, bool useExistingDefaultLayer) GetModels(Game game, Platform platform, bool noLayers)
-        {
-            using (ImportModel a = new ImportModel(platform, AssetType.Null, noLayers))
-                if (a.ShowDialog() == DialogResult.OK)
-                {
-                    List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-
-                    AssetType assetType = (AssetType)a.comboBoxAssetTypes.SelectedItem;
-
-                    foreach (string filePath in a.filePaths)
-                    {
-                        string assetName;
-
-                        byte[] assetData;
-
-                        ReadFileMethods.treatStuffAsByteArray = false;
-
-                        if (assetType == AssetType.Model || assetType == AssetType.JSP)
-                        {
-                            assetName = Path.GetFileNameWithoutExtension(filePath) + (assetType != AssetType.JSP ? ".dff" : "");
-
-                            try
-                            {
-                                assetData = Path.GetExtension(filePath).ToLower().Equals(".dff") ?
-                                    File.ReadAllBytes(filePath) :
-                                    ReadFileMethods.ExportRenderWareFile(
-                                        CreateDFFFromAssimp(filePath,
-                                            a.checkBoxTriStrips.Checked,
-                                            a.checkBoxFlipUVs.Checked,
-                                            a.checkBoxIgnoreMeshColors.Checked,
-                                            a.checkBoxVertexColors.Checked,
-                                            a.checkBoxTexCoords.Checked,
-                                            a.checkBoxNormals.Checked,
-                                            a.checkBoxGeoTriangles.Checked,
-                                            a.checkBoxMultiAtomic.Checked,
-                                            a.checkBoxNativeData.Checked,
-                                            a.checkBoxCollTree.Checked,
-                                            a.checkBoxBinMesh.Checked),
-                                        GetModelRenderWareVersion(game));
-                            }
-                            catch (ArgumentException)
-                            {
-                                MessageBox.Show("Model could not be imported.\nPlease check that the vertex/triangle counts do not exceed "
-                                    + TRI_AND_VERTEX_LIMIT + ".",
-                                    "Error Importing Model",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false, false);
-                            }
-                            catch (Exception)
-                            {
-                                MessageBox.Show("Model could not be imported.",
-                                    "Error Importing Model",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false, false);
-                            }
-                        }
-                        else if (assetType == AssetType.BSP)
-                        {
-                            assetName = Path.GetFileNameWithoutExtension(filePath) + ".bsp";
-
-                            try
-                            {
-                                assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ? File.ReadAllBytes(filePath) :
-                                    RwUtility.PerformBSPConversion(filePath, game,
-                                    a.checkBoxNormals.Checked, a.checkBoxVertexColors.Checked, a.checkBoxTexCoords.Checked, a.checkBoxTriStrips.Checked,
-                                    a.checkBoxIgnoreMeshColors.Checked, a.checkBoxNoMaterials.Checked, a.checkBoxFlipUVs.Checked, a.checkBoxCollTree.Checked);
-                            }
-                            catch (ArgumentException)
-                            {
-                                MessageBox.Show("Model could not be imported.\nPlease check that:\n- Vertex/triangle counts do not exceed "
-                                    + TRI_AND_VERTEX_LIMIT + "\n- Number of vertices matches texture coordinate and vertex color counts",
-                                    "Error Importing Model",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false, false);
-                            }
-                            catch (Exception e)
-                            {
-                                MessageBox.Show($"{e.Message}",
-                                    "Error Importing Model",
-                                    MessageBoxButtons.OK,
-                                    MessageBoxIcon.Error);
-                                return (null, false, false, false, false, false, false, false);
-                            }
-
-                        }
-                        else
-                            throw new ArgumentException();
-
-                        if (assetType == AssetType.JSP)
-                        {
-                            var clumps = a.checkBoxSplitClump.Checked ? SplitClump(assetData) : ReadFileMethods.ReadRenderWareFile(assetData);
-                            for (int i = 0; i < clumps.Length; i++)
-                            {
-                                AHDRs.Add(new Section_AHDR(Functions.BKDRHash(assetName + i), AssetType.JSP, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.JSP),
-                                    new Section_ADBG(0, assetName + i, "", 0),
-                                    ReadFileMethods.ExportRenderWareFile(clumps[i], GetModelRenderWareVersion(game))));
-                            }
-                        }
-                        else
-                            AHDRs.Add(new Section_AHDR(Functions.BKDRHash(assetName), assetType, ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType),
-                                    new Section_ADBG(0, assetName, "", 0),
-                                    assetData));
-                    }
-
-                    return (AHDRs,
-                        a.checkBoxOverwrite.Checked,
-                        a.checkBoxGenSimps.Checked,
-                        a.checkBoxLedgeGrab.Checked,
-                        a.checkBoxCreatePIPT.Checked,
-                        a.checkBoxSolidSimps.Checked,
-                        assetType == AssetType.JSP,
-                        a.checkBoxUseExistingDefaultLayer.Checked);
-                }
-
-            return (null, false, false, false, false, false, false, false);
-        }
-
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)
         {
-            checkBoxLedgeGrab.Enabled = checkBoxGenSimps.Checked;
-            checkBoxSolidSimps.Enabled = checkBoxGenSimps.Checked;
-            checkBoxUseExistingDefaultLayer.Enabled = checkBoxGenSimps.Checked;
+            UpdateAvailableCheckboxes();
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if ((AssetType)comboBoxAssetTypes.SelectedItem != AssetType.Model)
-            {
-                bool isJSP = (AssetType)comboBoxAssetTypes.SelectedItem == AssetType.JSP;
-                checkBoxCreatePIPT.Enabled = false;
-                checkBoxSplitClump.Enabled = isJSP;
-                grpSIMP.Enabled = false;
-
-                checkBoxTexCoords.Checked = true;
-                (checkBoxNormals.Enabled, checkBoxNormals.Checked) = (!isJSP, false);
-                checkBoxVertexColors.Checked = true;
-                //checkBoxNativeData.Checked = checkBoxNativeData.Enabled = false;
-                checkBoxTriStrips.Checked = false;
-                (checkBoxMultiAtomic.Enabled, checkBoxMultiAtomic.Checked) = (false, isJSP);
-                checkBoxIgnoreMeshColors.Enabled = true;
-                (checkBoxBinMesh.Enabled, checkBoxBinMesh.Checked) = (false, isJSP);
-                checkBoxGeoTriangles.Enabled = checkBoxGeoTriangles.Checked = false;
-                checkBoxCollTree.Enabled = checkBoxCollTree.Checked = !isJSP;
-            }
-            else
-            {
-                grpSIMP.Enabled = true;
-                checkBoxGenSimps.Enabled = true;
-                checkBoxGenSimps.Checked = false;
-
-                checkBoxTexCoords.Checked = true;
-                checkBoxNormals.Checked = true;
-                checkBoxVertexColors.Checked = false;
-                //(checkBoxNativeData.Enabled, checkBoxNativeData.Checked) = (true, false);
-                checkBoxTriStrips.Checked = false;
-                (checkBoxMultiAtomic.Enabled, checkBoxMultiAtomic.Checked) = (true, false);
-                checkBoxIgnoreMeshColors.Checked = true;
-                checkBoxBinMesh.Enabled = checkBoxBinMesh.Checked = true;
-                checkBoxGeoTriangles.Enabled = checkBoxGeoTriangles.Checked = true;
-                checkBoxCollTree.Enabled = checkBoxCollTree.Checked = true;
-            }
+            UpdateAvailableCheckboxes();
         }
 
         private void checkBoxGeoTriangles_CheckedChanged(object sender, EventArgs e)
@@ -403,6 +311,24 @@ namespace IndustrialPark
             checkBoxSolidSimps.Checked = !isJSP && !checkBoxNativeData.Checked;
             checkBoxBinMesh.Checked = checkBoxNativeData.Checked;
             checkBoxBinMesh.Enabled = !checkBoxNativeData.Checked;
+        }
+
+        public ImportModelSettings GetImportModelSettings()
+        {
+            return new ImportModelSettings()
+            {
+                TriStrips = checkBoxTriStrips.Checked,
+                FlipUVs = checkBoxFlipUVs.Checked,
+                IgnoreMeshColors = checkBoxIgnoreMeshColors.Checked,
+                VertexColors = checkBoxVertexColors.Checked,
+                TexCoords = checkBoxTexCoords.Checked,
+                Normals = checkBoxNormals.Checked,
+                GeoTriangles = checkBoxGeoTriangles.Checked,
+                MultiAtomic = checkBoxMultiAtomic.Checked,
+                NativeData = checkBoxNativeData.Checked,
+                CollTree = checkBoxCollTree.Checked,
+                BinMesh = checkBoxBinMesh.Checked
+            };
         }
 
         public static RWVersion GetModelRenderWareVersion(Game game)
@@ -466,6 +392,23 @@ namespace IndustrialPark
                 }
             }
             return clumps.ToArray();
+        }
+
+        private void listBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void listBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetData(DataFormats.FileDrop) is not string[] files)
+                return;
+            foreach (string file in files)
+                filePaths.Add(file);
+            UpdateListBox();
         }
     }
 }

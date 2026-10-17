@@ -67,6 +67,7 @@
             numericHighlightAtomic = new System.Windows.Forms.NumericUpDown();
             labelHighlightAtomic = new System.Windows.Forms.Label();
             buttonRWanalyze = new System.Windows.Forms.Button();
+            buttonEditHeader = new System.Windows.Forms.Button();
             groupBoxImport.SuspendLayout();
             groupBoxExport.SuspendLayout();
             groupBoxTextures.SuspendLayout();
@@ -515,11 +516,22 @@
             buttonRWanalyze.UseVisualStyleBackColor = true;
             buttonRWanalyze.Click += buttonRWanalyze_Click;
             // 
+            // buttonFile
+            // 
+            buttonEditHeader.Location = new System.Drawing.Point(396, 526);
+            buttonEditHeader.Name = "buttonEditHeader";
+            buttonEditHeader.Size = new System.Drawing.Size(120, 22);
+            buttonEditHeader.TabIndex = 55;
+            buttonEditHeader.Text = "Edit Header";
+            buttonEditHeader.UseVisualStyleBackColor = true;
+            buttonEditHeader.Click += buttonEditHeader_Click;
+            // 
             // InternalModelEditor
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(527, 633);
+            Controls.Add(buttonEditHeader);
             Controls.Add(buttonRWanalyze);
             Controls.Add(labelHighlightAtomic);
             Controls.Add(numericHighlightAtomic);
@@ -601,5 +613,6 @@
         private System.Windows.Forms.NumericUpDown numericHighlightAtomic;
         private System.Windows.Forms.Label labelHighlightAtomic;
         private System.Windows.Forms.Button buttonRWanalyze;
+        private System.Windows.Forms.Button buttonEditHeader;
     }
 }

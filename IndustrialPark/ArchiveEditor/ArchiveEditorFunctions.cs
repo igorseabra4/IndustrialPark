@@ -1504,10 +1504,9 @@ namespace IndustrialPark
         public void ReplaceReferences(uint oldAssetId, uint newAssetId) =>
             FindWhoTargets(oldAssetId).ForEach(assetId => GetFromAssetID(assetId).ReplaceReferences(oldAssetId, newAssetId));
 
-        public List<uint> ImportMultipleAssets(List<Section_AHDR> AHDRs, int layerIndex, bool overwrite)
+        public List<uint> ImportMultipleAssets(List<Section_AHDR> AHDRs, int layerIndex, bool overwrite, List<IReversibleAction> actions)
         {
             var assetIDs = new List<uint>();
-            var actions = new List<IReversibleAction>();
 
             foreach (Section_AHDR AHDR in AHDRs)
             {
@@ -1553,7 +1552,6 @@ namespace IndustrialPark
             }
 
             actions.Add(new SelectionAction(assetIDs));
-            Program.UndoBuffer.AddAction(actions);
             return assetIDs;
         }
 

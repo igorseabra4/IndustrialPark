@@ -32,69 +32,79 @@ namespace IndustrialPark
                 jspInfoNodeInfo[id] = info;
         }
 
-        public AssetID CreateJSPInfoAndBSPLayers(List<Section_AHDR> AHDRs, bool overwrite, List<IReversibleAction> actions)
+        public List<uint> CreateJSPInfoAndBSPLayers(List<List<Section_AHDR>> ahdrLists, bool overwrite, List<IReversibleAction> actions)
         {
-            foreach (var ahdr in AHDRs)
-                if (overwrite && ContainsAsset(ahdr.assetID))
+            var jspInfoIDs = new List<uint>();
+
+            foreach (var AHDRs in ahdrLists)
+            {
+                foreach (var ahdr in AHDRs)
                 {
-                    actions.Add(GetAssetRemovedAction(ahdr.assetID));
-                    RemoveAsset(ahdr.assetID);
+                    if (overwrite && ContainsAsset(ahdr.assetID))
+                    {
+                        actions.Add(GetAssetRemovedAction(ahdr.assetID));
+                        RemoveAsset(ahdr.assetID);
+                    }
                 }
-            UnsavedChanges = true;
-            
-            int lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.JSPINFO);
-            if (lastJSPINFOIndex == -1)
-                lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.TEXTURE_STRM);
-            if (lastJSPINFOIndex == -1)
-                lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.TEXTURE);
 
-            int layerIndex = lastJSPINFOIndex != -1 ? lastJSPINFOIndex : Layers.Count - 1;
-            layerIndex++;
+                UnsavedChanges = true;
 
-            layerIndex = AddLayer(LayerType.BSP, layerIndex);
-            actions.Add(new LayerAddedAction(this, LayerType.BSP, layerIndex));
-            AddAsset(AHDRs[0], game, platform.Endianness(), layerIndex, true);
-            actions.Add(new AssetAddedAction(this, AHDRs[0], layerIndex));
+                int lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.JSPINFO);
+                if (lastJSPINFOIndex == -1)
+                    lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.TEXTURE_STRM);
+                if (lastJSPINFOIndex == -1)
+                    lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.TEXTURE);
 
-            layerIndex++;
+                int layerIndex = lastJSPINFOIndex != -1 ? lastJSPINFOIndex : Layers.Count - 1;
+                layerIndex++;
 
-            layerIndex = AddLayer(LayerType.BSP, layerIndex);
-            actions.Add(new LayerAddedAction(this, LayerType.BSP, layerIndex));
-            if (AHDRs.Count > 1)
-            {
-                AddAsset(AHDRs[1], game, platform.Endianness(), layerIndex, true);
-                actions.Add(new AssetAddedAction(this, AHDRs[1], layerIndex));
+                layerIndex = AddLayer(LayerType.BSP, layerIndex);
+                actions.Add(new LayerAddedAction(this, LayerType.BSP, layerIndex));
+                AddAsset(AHDRs[0], game, platform.Endianness(), layerIndex, true);
+                actions.Add(new AssetAddedAction(this, AHDRs[0], layerIndex));
+
+                layerIndex++;
+
+                layerIndex = AddLayer(LayerType.BSP, layerIndex);
+                actions.Add(new LayerAddedAction(this, LayerType.BSP, layerIndex));
+                if (AHDRs.Count > 1)
+                {
+                    AddAsset(AHDRs[1], game, platform.Endianness(), layerIndex, true);
+                    actions.Add(new AssetAddedAction(this, AHDRs[1], layerIndex));
+                }
+
+                layerIndex++;
+
+                layerIndex = AddLayer(LayerType.BSP, layerIndex);
+                actions.Add(new LayerAddedAction(this, LayerType.BSP, layerIndex));
+                if (AHDRs.Count > 2)
+                {
+                    AddAsset(AHDRs[2], game, platform.Endianness(), layerIndex, true);
+                    actions.Add(new AssetAddedAction(this, AHDRs[2], layerIndex));
+                }
+
+                layerIndex++;
+
+                layerIndex = AddLayer(LayerType.JSPINFO, layerIndex);
+                actions.Add(new LayerAddedAction(this, LayerType.JSPINFO, layerIndex));
+
+                AssetJSP_INFO info = new AssetJSP_INFO(AHDRs[0].ADBG.assetName[..^1], game, platform);
+                info.JSP_AssetIDs = AHDRs.Select(a => (AssetID)a.assetID).ToArray();
+                GenerateJSPInfo(info);
+
+                if (overwrite && ContainsAsset(info.assetID))
+                {
+                    actions.Add(GetAssetRemovedAction(info.assetID));
+                    RemoveAsset(info.assetID);
+                }
+
+                AddAsset(info, layerIndex, true);
+                actions.Add(new AssetAddedAction(this, info.BuildAHDR(platform.Endianness()), layerIndex));
+
+                jspInfoIDs.Add(info.assetID);
             }
 
-            layerIndex++;
-
-            layerIndex = AddLayer(LayerType.BSP, layerIndex);
-            actions.Add(new LayerAddedAction(this, LayerType.BSP, layerIndex));
-            if (AHDRs.Count > 2)
-            {
-                AddAsset(AHDRs[2], game, platform.Endianness(), layerIndex, true);
-                actions.Add(new AssetAddedAction(this, AHDRs[2], layerIndex));
-            }
-
-            layerIndex++;
-
-            layerIndex = AddLayer(LayerType.JSPINFO, layerIndex);
-            actions.Add(new LayerAddedAction(this, LayerType.JSPINFO, layerIndex));
-
-            AssetJSP_INFO info = new AssetJSP_INFO(AHDRs[0].ADBG.assetName[..^1], game, platform);
-            info.JSP_AssetIDs = AHDRs.Select(a => (AssetID)a.assetID).ToArray();
-            GenerateJSPInfo(info);
-
-            if (overwrite && ContainsAsset(info.assetID))
-            {
-                actions.Add(GetAssetRemovedAction(info.assetID));
-                RemoveAsset(info.assetID);
-            }
-
-            AddAsset(info, layerIndex, true);
-            actions.Add(new AssetAddedAction(this, info.BuildAHDR(platform.Endianness()), layerIndex));
-
-            return info.assetID;
+            return jspInfoIDs;
         }
 
         public void GenerateJSPInfo(AssetJSP_INFO jspInfo)

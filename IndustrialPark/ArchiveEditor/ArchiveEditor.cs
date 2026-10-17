@@ -238,8 +238,6 @@ namespace IndustrialPark
             buildCollisionTreeForAllModelsToolStripMenuItem.Enabled = archive.ContainsAssetWithType(AssetType.Model);
             coll36toolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
             coll36sortTrianglesToolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
-
-            importJSPToolStripMenuItem.Enabled = archive.game >= Game.BFBB;
         }
 
         private void PopulateLayerTypeComboBox()
@@ -711,58 +709,63 @@ namespace IndustrialPark
 
             if (AHDRs != null)
             {
-                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, SelectedLayerIndex, overwrite);
+                var actions = new List<IReversibleAction>();
+                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, SelectedLayerIndex, overwrite, actions);
                 if (!archive.NoLayers)
                     comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
                 OnEditorUpdate();
                 SetSelectedIndices(assetIDs);
                 SetMenuItemsEnabled();
+                Program.UndoBuffer.AddAction(actions);
             }
         }
 
         private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            (List<Section_AHDR> AHDRs,
-                bool overwrite,
-                bool makeSimps,
-                bool ledgeGrabSimps,
-                bool piptVcolors,
-                bool solidSimps,
-                bool jsp,
-                bool placeOnExistingDefaultLayer) = ImportModel.GetModels(archive.game, archive.platform, archive.NoLayers);
+            ImportModelResult result = ImportModel.GetImportData(archive.game, archive.platform);
 
-            if (AHDRs != null)
+            if (result == null)
+                return;
+
+            List<uint> assetIDs = new List<uint>();
+            var actions = new List<IReversibleAction>();
+
+            if (result.AssetType == AssetType.JSP)
             {
-                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, SelectedLayerIndex, overwrite);
-                if (piptVcolors)
-                    archive.MakePiptVcolors(assetIDs);
-                if (makeSimps)
-                    assetIDs.AddRange(archive.MakeSimps(assetIDs, solidSimps, ledgeGrabSimps, placeOnExistingDefaultLayer));
-                PopulateLayerComboBox();
-                OnEditorUpdate();
-                SetSelectedIndices(assetIDs);
-                SetMenuItemsEnabled();
-            }
-        }
-
-        private void importJSPToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            (List<Section_AHDR> AHDRs, bool overwrite) = ImportModel.GetJSP(archive.game, archive.platform, archive.NoLayers);
-
-            if (AHDRs != null)
-            {
-                var actions = new List<IReversibleAction>();
                 if (archive.game == Game.BFBB)
                 {
-                    archive.RemoveLayerOfType(LayerType.BSP, actions);
-                    archive.RemoveLayerOfType(LayerType.JSPINFO, actions);
+                    var assetsToRemove = archive.GetAllAssets()
+                        .Where(a => a.assetType is AssetType.BSP or AssetType.JSP or AssetType.JSPInfo)
+                        .Select(a => a.assetID);
+                    RemoveAssets(assetsToRemove, actions);
+                    if (!archive.NoLayers)
+                    {
+                        archive.RemoveLayerOfType(LayerType.BSP, actions);
+                        archive.RemoveLayerOfType(LayerType.JSPINFO, actions);
+                    }
                 }
-                OnEditorUpdate();
-                AssetID jspInfoId = archive.CreateJSPInfoAndBSPLayers(AHDRs, overwrite, actions);
-                PopulateLayerComboBox();
-                SetSelectedIndices([jspInfoId]);
-                SetMenuItemsEnabled();
+
+                assetIDs.AddRange(archive.CreateJSPInfoAndBSPLayers(result.AHDRCollections, result.Overwrite, actions));
             }
+            else
+            {
+                assetIDs = archive.ImportMultipleAssets([.. result.AHDRCollections.SelectMany(list => list)], SelectedLayerIndex, result.Overwrite, actions);
+
+                if (result.AssetType == AssetType.Model)
+                {
+                    if (result.PiptVColors)
+                        archive.MakePiptVcolors(assetIDs, actions);
+                    if (result.GenerateSimps)
+                        assetIDs.AddRange(archive.MakeSimps(assetIDs, result.SolidSimps, result.LedgeGrabSimps, actions));
+                }
+            }
+
+            Program.UndoBuffer.AddAction(actions);
+
+            PopulateLayerComboBox();
+            SetSelectedIndices(assetIDs);
+            SetMenuItemsEnabled();
+            OnEditorUpdate();
         }
 
         private void importTexturesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -772,7 +775,9 @@ namespace IndustrialPark
 
             if (AHDRs != null)
             {
-                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, SelectedLayerIndex, overwrite);
+                var actions = new List<IReversibleAction>();
+                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, SelectedLayerIndex, overwrite, actions);
+                Program.UndoBuffer.AddAction(actions);
                 if (!archive.NoLayers)
                     comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(SelectedLayerIndex);
                 OnEditorUpdate();
@@ -860,14 +865,17 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0)
                 return;
 
-            RemoveAssets(archive.CurrentlySelectedAssetIDs);
+            var actions = new List<IReversibleAction>();
+            RemoveAssets(archive.CurrentlySelectedAssetIDs, actions);
+            Program.UndoBuffer.AddAction(actions);
         }
 
-        public void RemoveAssets(IEnumerable<uint> assetIDs)
+        public void RemoveAssets(IEnumerable<uint> assetIDs, List<IReversibleAction> actions)
         {
             programIsChangingStuff = true;
             var types = assetIDs.Select(u => archive.GetFromAssetID(u).assetType).ToHashSet();
-            Program.UndoBuffer.AddAction([.. assetIDs.Select(archive.GetAssetRemovedAction), new SelectionAction(assetIDs)]);
+            actions.AddRange(assetIDs.Select(archive.GetAssetRemovedAction));
+            actions.Add(new SelectionAction(assetIDs));
 
             archive.RemoveAsset(assetIDs);
 
@@ -1316,7 +1324,7 @@ namespace IndustrialPark
                 archive.ApplyScale(applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
         }
 
-        private void MergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void mergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             archive.MergeSimilar();
             comboBoxLayers_SelectedIndexChanged(sender, e);
@@ -1543,7 +1551,9 @@ namespace IndustrialPark
 
             if (openTXD.ShowDialog() == DialogResult.OK)
             {
-                archive.ImportTextureDictionary(openTXD.FileName, RW3, SelectedLayerIndex);
+                var actions = new List<IReversibleAction>();
+                archive.ImportTextureDictionary(openTXD.FileName, RW3, SelectedLayerIndex, actions);
+                Program.UndoBuffer.AddAction(actions);
                 PopulateLayerComboBox();
                 SelectFirstLayer();
                 PopulateAssetListAndComboBox();

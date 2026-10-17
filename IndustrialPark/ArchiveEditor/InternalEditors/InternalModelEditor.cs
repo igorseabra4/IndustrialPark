@@ -181,13 +181,11 @@ namespace IndustrialPark
 
         private void buttonImport_Click(object sender, EventArgs e)
         {
-            if (ImportModel.GetModel(archive.game, archive.platform, asset.assetType, out byte[] newModel, out bool createPipt))
+            if (ImportModel.GetSingleModel(archive.game, archive.platform, asset.assetType) is byte[] newModel)
             {
                 List<IReversibleAction> actions = [archive.GetAssetRemovedAction(asset)];
                 asset.Data = newModel;
                 asset.Setup(Program.MainForm.renderer);
-                if (createPipt && propertyGridPipeInfo.SelectedObject == null)
-                    buttonCreatePipeInfo.PerformClick();
                 actions.Add(archive.GetAssetAddedAction(asset));
                 Program.UndoBuffer.AddAction(actions);
                 ArchiveEditorFunctions.RecalculateAllMatrices();
@@ -502,7 +500,7 @@ namespace IndustrialPark
             actions.Add(archive.GetAssetAddedAction(shdw));
             Program.UndoBuffer.AddAction(actions);
         }
-   
+
         private void propertyGridShadow_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             if (propertyGridShadow.SelectedObject == null)
@@ -621,6 +619,13 @@ namespace IndustrialPark
             }
             this.rwAnalyze = new RWAnalyze(asset.ModelAsRWSections);
             this.rwAnalyze.Show();
+        }
+
+        private void buttonEditHeader_Click(object sender, EventArgs e)
+        {
+            var ae = Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive);
+            if (ae.EditHeader(asset.assetID, out uint newAssetID))
+                ae.OpenInternalEditor(newAssetID);
         }
     }
 }

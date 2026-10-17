@@ -7,8 +7,10 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Pipelines;
 using System.Linq;
 using System.Windows.Forms;
+using static System.Windows.Forms.Design.AxImporter;
 using Ray = SharpDX.Ray;
 
 namespace IndustrialPark
@@ -791,7 +793,7 @@ namespace IndustrialPark
             RecalculateAllMatrices();
         }
 
-        public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps, bool placeOnExistingDefaultLayer)
+        public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps, List<IReversibleAction> actions)
         {
             int layerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
 
@@ -801,17 +803,19 @@ namespace IndustrialPark
                 if (GetFromAssetID(i) is AssetMODL MODL)
                 {
                     string simpName = "SIMP_" + MODL.assetName.Replace(".dff", "").ToUpper();
+                    if (ContainsAsset(new AssetID(simpName)))
+                        continue;
                     AssetSIMP simp = (AssetSIMP)PlaceTemplate(layerIndex, new Vector3(), ref outAssetIDs, simpName, AssetTemplate.Simple_Object, true);
                     simp.Model = i;
                     if (!solid)
                     {
-                        simp.SolidityFlags.FlagValueByte = 0;
                         simp.CollType.FlagValueByte = 0;
                     }
                     else if (ledgeGrabSimps)
                     {
                         simp.SolidityFlags.FlagValueByte = 0x82;
                     }
+                    actions.Add(GetAssetAddedAction(simp));
                 }
 
             return outAssetIDs;
@@ -829,17 +833,14 @@ namespace IndustrialPark
             return layerIndex;
         }
 
-        public void MakePiptVcolors(List<uint> assetIDs)
+        public void MakePiptVcolors(List<uint> assetIDs, List<IReversibleAction> actions)
         {
-            var pipt = assetDictionary.Values.OfType<AssetPIPT>().FirstOrDefault();
-            if (pipt == null)
-            {
-                var layerIndex = IndexOfLayerOfType(LayerType.DEFAULT);
-                pipt = (AssetPIPT)PlaceTemplate(layerIndex, AssetTemplate.Pipe_Info_Table);
-            }
-
+            bool containsPipt = ContainsAssetWithType(AssetType.PipeInfoTable);
+            var pipt = GetPIPT(true);
+            if (containsPipt)
+                actions.Add(GetAssetRemovedAction(pipt));
             List<PipeInfo> entries = pipt.Entries.ToList();
-            foreach (uint u in assetIDs)
+            foreach (uint u in assetIDs.Where(u => !entries.Any(e => e.Model == u)).ToList())
                 if (GetFromAssetID(u) is AssetMODL)
                     entries.Add(new PipeInfo(game)
                     {
@@ -847,6 +848,7 @@ namespace IndustrialPark
                         LightingMode = LightingMode.Prelight
                     });
             pipt.Entries = entries.ToArray();
+            actions.Add(GetAssetAddedAction(pipt));
         }
 
         private byte[] ReplaceReferences(byte[] data, Dictionary<uint, uint> referenceUpdate)

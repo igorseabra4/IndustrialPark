@@ -46,9 +46,6 @@
             organizeLegacyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             renameLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            mergeSimilarAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            applyScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            verifyArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             legacySaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             hipHopFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -76,9 +73,11 @@
             overwriteOnImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            importJSPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             generateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            verifyArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            applyScaleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            mergeSimilarAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             buildCollisionTreeForAllModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             coll31ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             coll36toolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -194,7 +193,7 @@
             // 
             // editToolStripMenuItem
             // 
-            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { convertArchiveToolStripMenuItem, layersToolStripMenuItem, mergeSimilarAssetsToolStripMenuItem, applyScaleToolStripMenuItem, verifyArchiveToolStripMenuItem, legacySaveToolStripMenuItem, toolStripSeparator3, hipHopFileToolStripMenuItem, texturesToolStripMenuItem, soundsToolStripMenuItem, importModelsToolStripMenuItem, importMultipleAssetsToolStripMenuItem, importJSPToolStripMenuItem });
+            editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { convertArchiveToolStripMenuItem, layersToolStripMenuItem, legacySaveToolStripMenuItem, toolStripSeparator3, hipHopFileToolStripMenuItem, texturesToolStripMenuItem, soundsToolStripMenuItem, importModelsToolStripMenuItem, importMultipleAssetsToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
             resources.ApplyResources(editToolStripMenuItem, "editToolStripMenuItem");
             // 
@@ -238,24 +237,6 @@
             resources.ApplyResources(renameLayerToolStripMenuItem, "renameLayerToolStripMenuItem");
             renameLayerToolStripMenuItem.Name = "renameLayerToolStripMenuItem";
             renameLayerToolStripMenuItem.Click += renameToolStripMenuItem_Click;
-            // 
-            // mergeSimilarAssetsToolStripMenuItem
-            // 
-            resources.ApplyResources(mergeSimilarAssetsToolStripMenuItem, "mergeSimilarAssetsToolStripMenuItem");
-            mergeSimilarAssetsToolStripMenuItem.Name = "mergeSimilarAssetsToolStripMenuItem";
-            mergeSimilarAssetsToolStripMenuItem.Click += MergeSimilarAssetsToolStripMenuItem_Click;
-            // 
-            // applyScaleToolStripMenuItem
-            // 
-            resources.ApplyResources(applyScaleToolStripMenuItem, "applyScaleToolStripMenuItem");
-            applyScaleToolStripMenuItem.Name = "applyScaleToolStripMenuItem";
-            applyScaleToolStripMenuItem.Click += applyScaleToolStripMenuItem_Click;
-            // 
-            // verifyArchiveToolStripMenuItem
-            // 
-            resources.ApplyResources(verifyArchiveToolStripMenuItem, "verifyArchiveToolStripMenuItem");
-            verifyArchiveToolStripMenuItem.Name = "verifyArchiveToolStripMenuItem";
-            verifyArchiveToolStripMenuItem.Click += verifyArchiveToolStripMenuItem_Click;
             // 
             // legacySaveToolStripMenuItem
             // 
@@ -419,15 +400,9 @@
             importMultipleAssetsToolStripMenuItem.Name = "importMultipleAssetsToolStripMenuItem";
             importMultipleAssetsToolStripMenuItem.Click += importMultipleAssetsToolStripMenuItem_Click;
             // 
-            // importJSPToolStripMenuItem
-            // 
-            importJSPToolStripMenuItem.Name = "importJSPToolStripMenuItem";
-            resources.ApplyResources(importJSPToolStripMenuItem, "importJSPToolStripMenuItem");
-            importJSPToolStripMenuItem.Click += importJSPToolStripMenuItem_Click;
-            // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { generateToolStripMenuItem, buildCollisionTreeForAllModelsToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { generateToolStripMenuItem, verifyArchiveToolStripMenuItem, applyScaleToolStripMenuItem, mergeSimilarAssetsToolStripMenuItem, buildCollisionTreeForAllModelsToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             resources.ApplyResources(toolsToolStripMenuItem, "toolsToolStripMenuItem");
             // 
@@ -436,6 +411,24 @@
             generateToolStripMenuItem.Name = "generateToolStripMenuItem";
             resources.ApplyResources(generateToolStripMenuItem, "generateToolStripMenuItem");
             generateToolStripMenuItem.Click += generateToolStripMenuItem_Click;
+            // 
+            // verifyArchiveToolStripMenuItem
+            // 
+            resources.ApplyResources(verifyArchiveToolStripMenuItem, "verifyArchiveToolStripMenuItem");
+            verifyArchiveToolStripMenuItem.Name = "verifyArchiveToolStripMenuItem";
+            verifyArchiveToolStripMenuItem.Click += verifyArchiveToolStripMenuItem_Click;
+            // 
+            // applyScaleToolStripMenuItem
+            // 
+            resources.ApplyResources(applyScaleToolStripMenuItem, "applyScaleToolStripMenuItem");
+            applyScaleToolStripMenuItem.Name = "applyScaleToolStripMenuItem";
+            applyScaleToolStripMenuItem.Click += applyScaleToolStripMenuItem_Click;
+            // 
+            // mergeSimilarAssetsToolStripMenuItem
+            // 
+            resources.ApplyResources(mergeSimilarAssetsToolStripMenuItem, "mergeSimilarAssetsToolStripMenuItem");
+            mergeSimilarAssetsToolStripMenuItem.Name = "mergeSimilarAssetsToolStripMenuItem";
+            mergeSimilarAssetsToolStripMenuItem.Click += mergeSimilarAssetsToolStripMenuItem_Click;
             // 
             // buildCollisionTreeForAllModelsToolStripMenuItem
             // 
@@ -902,7 +895,6 @@
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabelSelectionCount;
         private System.Windows.Forms.ToolStripMenuItem addTemplateToolStripMenuItem;
         private System.Windows.Forms.ListView listViewAssets;
-        private System.Windows.Forms.ToolStripMenuItem applyScaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem texturesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportRW3ToolStripMenuItem;
@@ -910,8 +902,6 @@
         private System.Windows.Forms.ToolStripMenuItem exportNoRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importNoRW3ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importModelsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem verifyArchiveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem mergeSimilarAssetsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem convertArchiveToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader AssetNameCol;
         private System.Windows.Forms.ColumnHeader AssetIDCol;
@@ -960,7 +950,9 @@
         private System.Windows.Forms.ToolStripMenuItem coll31ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem coll36toolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem coll36sortTrianglesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importJSPToolStripMenuItem;
         private System.Windows.Forms.TextBox textBoxFindAsset;
+        private System.Windows.Forms.ToolStripMenuItem verifyArchiveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem applyScaleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mergeSimilarAssetsToolStripMenuItem;
     }
 }

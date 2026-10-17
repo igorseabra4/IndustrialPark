@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ImportModel));
             comboBoxAssetTypes = new System.Windows.Forms.ComboBox();
             groupBox1 = new System.Windows.Forms.GroupBox();
             buttonImportRawData = new System.Windows.Forms.Button();
             buttonOK = new System.Windows.Forms.Button();
             buttonCancel = new System.Windows.Forms.Button();
-            groupBox2 = new System.Windows.Forms.GroupBox();
             listBox1 = new System.Windows.Forms.ListBox();
             checkBoxFlipUVs = new System.Windows.Forms.CheckBox();
             checkBoxOverwrite = new System.Windows.Forms.CheckBox();
@@ -47,7 +47,6 @@
             checkBoxSplitClump = new System.Windows.Forms.CheckBox();
             checkBoxNoMaterials = new System.Windows.Forms.CheckBox();
             grpSIMP = new System.Windows.Forms.GroupBox();
-            checkBoxUseExistingDefaultLayer = new System.Windows.Forms.CheckBox();
             groupBoxModelSettings = new System.Windows.Forms.GroupBox();
             checkBoxBinMesh = new System.Windows.Forms.CheckBox();
             checkBoxMultiAtomic = new System.Windows.Forms.CheckBox();
@@ -58,8 +57,9 @@
             checkBoxVertexColors = new System.Windows.Forms.CheckBox();
             checkBoxNormals = new System.Windows.Forms.CheckBox();
             checkBoxTexCoords = new System.Windows.Forms.CheckBox();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
+            labelFiles = new System.Windows.Forms.Label();
             groupBox1.SuspendLayout();
-            groupBox2.SuspendLayout();
             grpImportSettings.SuspendLayout();
             grpSIMP.SuspendLayout();
             groupBoxModelSettings.SuspendLayout();
@@ -70,6 +70,7 @@
             comboBoxAssetTypes.FormattingEnabled = true;
             resources.ApplyResources(comboBoxAssetTypes, "comboBoxAssetTypes");
             comboBoxAssetTypes.Name = "comboBoxAssetTypes";
+            toolTip1.SetToolTip(comboBoxAssetTypes, resources.GetString("comboBoxAssetTypes.ToolTip"));
             comboBoxAssetTypes.SelectedIndexChanged += comboBoxAssetTypes_SelectedIndexChanged;
             // 
             // groupBox1
@@ -83,6 +84,7 @@
             // 
             resources.ApplyResources(buttonImportRawData, "buttonImportRawData");
             buttonImportRawData.Name = "buttonImportRawData";
+            toolTip1.SetToolTip(buttonImportRawData, resources.GetString("buttonImportRawData.ToolTip"));
             buttonImportRawData.UseVisualStyleBackColor = true;
             buttonImportRawData.Click += buttonImportRawData_Click;
             // 
@@ -101,19 +103,15 @@
             buttonCancel.Name = "buttonCancel";
             buttonCancel.UseVisualStyleBackColor = true;
             // 
-            // groupBox2
-            // 
-            resources.ApplyResources(groupBox2, "groupBox2");
-            groupBox2.Controls.Add(listBox1);
-            groupBox2.Name = "groupBox2";
-            groupBox2.TabStop = false;
-            // 
             // listBox1
             // 
             resources.ApplyResources(listBox1, "listBox1");
             listBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             listBox1.FormattingEnabled = true;
             listBox1.Name = "listBox1";
+            toolTip1.SetToolTip(listBox1, resources.GetString("listBox1.ToolTip"));
+            listBox1.DragDrop += listBox1_DragDrop;
+            listBox1.DragEnter += listBox1_DragEnter;
             listBox1.KeyDown += listBox1_KeyDown;
             // 
             // checkBoxFlipUVs
@@ -134,6 +132,7 @@
             // 
             resources.ApplyResources(checkBoxGenSimps, "checkBoxGenSimps");
             checkBoxGenSimps.Name = "checkBoxGenSimps";
+            toolTip1.SetToolTip(checkBoxGenSimps, resources.GetString("checkBoxGenSimps.ToolTip"));
             checkBoxGenSimps.UseVisualStyleBackColor = true;
             checkBoxGenSimps.CheckedChanged += checkBoxGenSimps_CheckedChanged;
             // 
@@ -141,6 +140,7 @@
             // 
             resources.ApplyResources(checkBoxCreatePIPT, "checkBoxCreatePIPT");
             checkBoxCreatePIPT.Name = "checkBoxCreatePIPT";
+            toolTip1.SetToolTip(checkBoxCreatePIPT, resources.GetString("checkBoxCreatePIPT.ToolTip"));
             checkBoxCreatePIPT.UseVisualStyleBackColor = true;
             // 
             // checkBoxIgnoreMeshColors
@@ -180,6 +180,7 @@
             // 
             resources.ApplyResources(checkBoxSplitClump, "checkBoxSplitClump");
             checkBoxSplitClump.Name = "checkBoxSplitClump";
+            toolTip1.SetToolTip(checkBoxSplitClump, resources.GetString("checkBoxSplitClump.ToolTip"));
             checkBoxSplitClump.UseVisualStyleBackColor = true;
             // 
             // checkBoxNoMaterials
@@ -190,21 +191,12 @@
             // 
             // grpSIMP
             // 
-            grpSIMP.Controls.Add(checkBoxUseExistingDefaultLayer);
             grpSIMP.Controls.Add(checkBoxGenSimps);
             grpSIMP.Controls.Add(checkBoxSolidSimps);
             grpSIMP.Controls.Add(checkBoxLedgeGrab);
             resources.ApplyResources(grpSIMP, "grpSIMP");
             grpSIMP.Name = "grpSIMP";
             grpSIMP.TabStop = false;
-            // 
-            // checkBoxUseExistingDefaultLayer
-            // 
-            resources.ApplyResources(checkBoxUseExistingDefaultLayer, "checkBoxUseExistingDefaultLayer");
-            checkBoxUseExistingDefaultLayer.Checked = true;
-            checkBoxUseExistingDefaultLayer.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxUseExistingDefaultLayer.Name = "checkBoxUseExistingDefaultLayer";
-            checkBoxUseExistingDefaultLayer.UseVisualStyleBackColor = true;
             // 
             // groupBoxModelSettings
             // 
@@ -288,16 +280,28 @@
             checkBoxTexCoords.Name = "checkBoxTexCoords";
             checkBoxTexCoords.UseVisualStyleBackColor = true;
             // 
+            // toolTip1
+            // 
+            toolTip1.AutoPopDelay = 5000;
+            toolTip1.InitialDelay = 250;
+            toolTip1.ReshowDelay = 100;
+            // 
+            // labelFiles
+            // 
+            resources.ApplyResources(labelFiles, "labelFiles");
+            labelFiles.Name = "labelFiles";
+            // 
             // ImportModel
             // 
             AcceptButton = buttonOK;
             resources.ApplyResources(this, "$this");
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
+            Controls.Add(labelFiles);
+            Controls.Add(listBox1);
             Controls.Add(groupBoxModelSettings);
             Controls.Add(grpSIMP);
             Controls.Add(grpImportSettings);
-            Controls.Add(groupBox2);
             Controls.Add(buttonCancel);
             Controls.Add(groupBox1);
             Controls.Add(buttonOK);
@@ -309,7 +313,6 @@
             Name = "ImportModel";
             ShowIcon = false;
             groupBox1.ResumeLayout(false);
-            groupBox2.ResumeLayout(false);
             grpImportSettings.ResumeLayout(false);
             grpImportSettings.PerformLayout();
             grpSIMP.ResumeLayout(false);
@@ -317,9 +320,8 @@
             groupBoxModelSettings.ResumeLayout(false);
             groupBoxModelSettings.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
-
-        private System.Windows.Forms.CheckBox checkBoxUseExistingDefaultLayer;
 
         #endregion
 
@@ -328,7 +330,6 @@
         private System.Windows.Forms.Button buttonImportRawData;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.CheckBox checkBoxFlipUVs;
         private System.Windows.Forms.CheckBox checkBoxOverwrite;
@@ -351,5 +352,7 @@
         private System.Windows.Forms.CheckBox checkBoxBinMesh;
         private System.Windows.Forms.CheckBox checkBoxNoMaterials;
         private System.Windows.Forms.CheckBox checkBoxSplitClump;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label labelFiles;
     }
 }
