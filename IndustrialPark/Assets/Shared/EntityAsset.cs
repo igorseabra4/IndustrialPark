@@ -287,7 +287,7 @@ namespace IndustrialPark
         }
 
         protected Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
+        protected List<RenderWareFile.Triangle> triangles;
 
         protected virtual void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
         {
@@ -295,7 +295,7 @@ namespace IndustrialPark
             for (int i = 0; i < vertexList.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
             boundingBox = BoundingBox.FromPoints(vertices);
-            triangles = GetFromRenderingDictionary(_model)?.triangleList.ToArray();
+            triangles = GetFromRenderingDictionary(_model)?.triangleList;
         }
 
         public virtual bool ShouldDraw(SharpRenderer renderer)

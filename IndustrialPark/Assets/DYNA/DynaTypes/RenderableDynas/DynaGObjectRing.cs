@@ -151,7 +151,7 @@ namespace IndustrialPark
 
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            triangles = triangleList.ToArray();
+            triangles = triangleList;
         }
 
         protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;

@@ -148,7 +148,7 @@ namespace IndustrialPark
 
             var model = GetFromRenderingDictionary(_modelAssetID);
             CreateBoundingBox((model != null) ? model.vertexListG : SharpRenderer.pyramidVertices);
-            triangles = model?.triangleList.ToArray();
+            triangles = model?.triangleList;
         }
 
         private void CreateBoundingBox(List<Vector3> vertexList)

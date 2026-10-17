@@ -111,7 +111,7 @@ namespace IndustrialPark
 
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            triangles = triangleList.ToArray();
+            triangles = triangleList;
         }
 
         public override bool ShouldDraw(SharpRenderer renderer)

@@ -265,7 +265,7 @@ namespace IndustrialPark
             var model = GetFromRenderingDictionary(Model);
             if (model != null)
             {
-                triangles = model.triangleList.ToArray();
+                triangles = model.triangleList;
                 CreateBoundingBox(model.vertexListG);
             }
             else
@@ -276,7 +276,7 @@ namespace IndustrialPark
         }
 
         protected Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
+        protected List<RenderWareFile.Triangle> triangles;
 
         protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
         {

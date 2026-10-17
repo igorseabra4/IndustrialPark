@@ -43,7 +43,7 @@ namespace IndustrialPark
         public Matrix world { get; protected set; }
         protected BoundingBox boundingBox;
         protected Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
+        protected List<RenderWareFile.Triangle> triangles;
 
         protected abstract List<Vector3> vertexSource { get; }
         protected abstract List<Models.Triangle> triangleSource { get; }
@@ -62,10 +62,10 @@ namespace IndustrialPark
                 vertices[i] = (Vector3)Vector3.Transform(vertexSource[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);
 
-            triangles = new RenderWareFile.Triangle[triangleSource.Count];
+            triangles = new List<RenderWareFile.Triangle>(triangleSource.Count);
             for (int i = 0; i < triangleSource.Count; i++)
-                triangles[i] = new RenderWareFile.Triangle((ushort)triangleSource[i].materialIndex,
-                    (ushort)triangleSource[i].vertex1, (ushort)triangleSource[i].vertex2, (ushort)triangleSource[i].vertex3);
+                triangles.Add(new RenderWareFile.Triangle((ushort)triangleSource[i].materialIndex,
+                    (ushort)triangleSource[i].vertex1, (ushort)triangleSource[i].vertex2, (ushort)triangleSource[i].vertex3));
         }
 
         public abstract void Draw(SharpRenderer renderer);

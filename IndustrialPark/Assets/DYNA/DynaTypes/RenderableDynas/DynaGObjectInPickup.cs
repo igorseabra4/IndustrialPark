@@ -99,7 +99,7 @@ namespace IndustrialPark
                         vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
                     boundingBox = BoundingBox.FromPoints(vertices);
 
-                    triangles = model.triangleList.ToArray();
+                    triangles = model.triangleList;
                     return;
                 }
             }
