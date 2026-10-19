@@ -26,7 +26,7 @@ namespace IndustrialPark
         }
 
         /// <summary>
-        /// Raised when Template Focus or the selected layer changes, so the main window toolbar can update.
+        /// Raised when Target or the selected layer changes, so the main window toolbar can update.
         /// </summary>
         public event Action<ArchiveEditor> ToolbarStateChanged;
 
@@ -53,6 +53,7 @@ namespace IndustrialPark
                 OpenFile(filePath, scoobyPlatform);
 
             _updateFilesizeStatusBarItem();
+            checkBoxTemplateFocus_CheckedChanged(null, null);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -2221,6 +2222,32 @@ namespace IndustrialPark
                 if (!item.Checked)
                     item.Checked = true;
             return unhid;
+        }
+
+        private void checkBoxTemplateFocus_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxTemplateFocus.Checked)
+            {
+                if (Program.IsDarkMode)
+                {
+                    checkBoxTemplateFocus.BackColor = System.Drawing.Color.DarkGreen;
+                }
+                else
+                {
+                    checkBoxTemplateFocus.BackColor = System.Drawing.Color.LightGreen;
+                }
+            }
+            else
+            {
+                if (Program.IsDarkMode)
+                {
+                    checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.Control;
+                }
+                else
+                {
+                    checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.ActiveBorder;
+                }
+            }
         }
     }
 }

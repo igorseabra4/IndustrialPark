@@ -75,7 +75,7 @@ namespace IndustrialPark
         #region Archive and layer
 
         /// <summary>
-        /// Rebuilds the archive dropdown from the open archive editors and selects the one with Template Focus.
+        /// Rebuilds the archive dropdown from the open archive editors and selects the one with Target.
         /// </summary>
         public void UpdateToolbarArchives()
         {

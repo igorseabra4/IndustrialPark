@@ -765,7 +765,7 @@ namespace IndustrialPark
             {
                 try
                 {
-                    var clipboard = JsonConvert.DeserializeObject<AssetClipboard>(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
+                    var clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(File.ReadAllText(Path.Combine(Program.MainForm.userTemplatesFolder, CurrentUserTemplate)));
                     (bool success, var finalIndices, _) = PasteAssetsFromClipboard(layerIndex, true, clipboard);
                     if (success)
                         assetIDs.AddRange(finalIndices);

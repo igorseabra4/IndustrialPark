@@ -722,6 +722,9 @@ namespace IndustrialPark
                 case Keys.B:
                     SelectPreviousTemplate();
                     break;
+                case Keys.C when PressedKeys.Contains(Keys.ControlKey):
+                    CopySelectedAssets();
+                    break;
                 case Keys.C:
                     noCullingCToolStripMenuItem.PerformClick();
                     break;
@@ -775,6 +778,9 @@ namespace IndustrialPark
                     break;
                 case Keys.U:
                     uIModeToolStripMenuItem.PerformClick();
+                    break;
+                case Keys.V when PressedKeys.Contains(Keys.ControlKey):
+                    PasteSelectedAssets();
                     break;
                 case Keys.V:
                     ToggleGizmoType();
@@ -901,6 +907,8 @@ namespace IndustrialPark
         }
 
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
+
+        private ArchiveEditor GetFocusedArchiveEditor() => archiveEditors.FirstOrDefault(ae => ae.TemplateFocus);
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -1110,15 +1118,10 @@ namespace IndustrialPark
             {
                 Vector3 Position = GetScreenClickedPosition(ViewRectangle, e.X, e.Y);
 
-                bool placed = false;
-                foreach (ArchiveEditor archiveEditor in archiveEditors)
-                    if (archiveEditor.TemplateFocus)
-                    {
-                        archiveEditor.PlaceTemplate(Position);
-                        placed = true;
-                    }
-                if (!placed)
-                    MessageBox.Show($"Your template has not been placed as no Archive Editors have Template Focus on.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                if (GetFocusedArchiveEditor() is ArchiveEditor archiveEditor)
+                    archiveEditor.PlaceTemplate(Position);
+                else
+                    MessageBox.Show($"The template could not be placed because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             else if (e.Button == MouseButtons.Right)
             {
@@ -2099,8 +2102,12 @@ namespace IndustrialPark
                 unhid |= ae.UnhideAllAssets();
             if (!unhid)
             {
-                enableAllToolStripMenuItem_Click(null, null);
-                displayToolStripMenuItem.HideDropDown();
+                autoShowDropDowns = false;
+                if (assetViewToolStripMenuItems != null)
+                    foreach (var item in assetViewToolStripMenuItems)
+                        if (!item.Checked)
+                            item.PerformClick();
+                autoShowDropDowns = true;
             }
         }
 
@@ -2276,8 +2283,9 @@ namespace IndustrialPark
         {
             if (Program.ViewControls.WindowState == FormWindowState.Minimized)
                 Program.ViewControls.WindowState = FormWindowState.Normal;
-
-            Program.ViewControls.Show(this);
+            
+            if (!Program.ViewControls.Visible)
+                Program.ViewControls.Show(this);
             Program.ViewControls.Activate();
         }
 
@@ -2290,5 +2298,31 @@ namespace IndustrialPark
         {
             Program.UndoBuffer.Redo();
         }
+
+        private void CopySelectedAssets()
+        {
+            var clipboard = new List<AssetClipboard>();
+            foreach (var ae in archiveEditors)
+                clipboard.AddRange(ae.archive.CreateAssetClipboard());
+            Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
+        }
+
+        private void PasteSelectedAssets()
+        {
+            if (GetFocusedArchiveEditor() is ArchiveEditor archiveEditor)
+            {
+                if (!archiveEditor.archive.NoLayers && archiveEditor.SelectedLayerIndex == -1)
+                {
+                    MessageBox.Show("Please select a layer to paste your asset in!");
+                }
+                else
+                {
+                    archiveEditor.archive.PasteAssetsFromClipboard(archiveEditor.SelectedLayerIndex);
+                }
+            }
+            else
+                MessageBox.Show($"Nothing was pasted because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
     }
 }

@@ -1,35 +1,24 @@
 ﻿using HipHopFile;
 using Newtonsoft.Json;
-using RenderWareFile;
-using System.Collections.Generic;
 
 namespace IndustrialPark
 {
     [JsonObject(MemberSerialization.Fields)]
-    internal class AssetClipboard
+    public class AssetClipboard
     {
-        internal List<Game> games;
-        internal List<Platform> platforms;
-        internal List<Section_AHDR_Clipboard> assets;
-        internal List<AssetID[]> jspExtraInfo;
-        internal List<int?> rwVersions;
+        public Game game;
+        public Platform platform;
+        public Section_AHDR_Clipboard AHDR;
+        public AssetID[] jspExtraInfo;
+        public int? rwVersion;
 
-        internal AssetClipboard()
+        public AssetClipboard(Game game, Platform platform, Section_AHDR ahdr, AssetID[] jspExtraInfo, int? rwVersion)
         {
-            games = new List<Game>();
-            platforms = new List<Platform>();
-            assets = new List<Section_AHDR_Clipboard>();
-            jspExtraInfo = new List<AssetID[]>();
-            rwVersions = new List<int?>();
-        }
-
-        internal void Add(Game game, Platform platform, Section_AHDR asset, AssetID[] jspExtraInfo, RWVersion? rwVer)
-        {
-            games.Add(game);
-            platforms.Add(platform);
-            assets.Add(new Section_AHDR_Clipboard(asset));
-            this.jspExtraInfo.Add(jspExtraInfo);
-            rwVersions.Add(rwVer?.Write());
+            this.game = game;
+            this.platform = platform;
+            this.AHDR = new Section_AHDR_Clipboard(ahdr);
+            this.jspExtraInfo = jspExtraInfo;
+            this.rwVersion = rwVersion;
         }
     }
 
@@ -37,7 +26,7 @@ namespace IndustrialPark
     /// A more basic class of AHDR for clipboard
     /// </summary>
     [JsonObject(MemberSerialization.Fields)]
-    internal class Section_AHDR_Clipboard
+    public class Section_AHDR_Clipboard
     {
         internal uint assetID;
         internal AssetType assetType;

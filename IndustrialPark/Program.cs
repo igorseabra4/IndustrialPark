@@ -1,3 +1,4 @@
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
 using System.Drawing;
@@ -23,6 +24,7 @@ namespace IndustrialPark
 
         public static UndoBuffer UndoBuffer;
         public static BuildISO BuildISO;
+        public static bool IsDarkMode;
 
         public static SharpRenderer Renderer => MainForm != null && MainForm.renderer != null ? MainForm.renderer : null;
         
@@ -52,6 +54,7 @@ namespace IndustrialPark
             UndoBuffer = new UndoBuffer();
 
             Application.SetColorMode(ipSettings != null ? ipSettings.ColorMode : SystemColorMode.System);
+            IsDarkMode = GetIsDarkMode();
 
             MainForm = new MainForm(ipSettings);
 
@@ -64,6 +67,22 @@ namespace IndustrialPark
             UserTemplateManager = new UserTemplateManager();
 
             Application.Run(MainForm);
+        }
+
+        static bool GetIsDarkMode()
+        {
+            if (Application.ColorMode == SystemColorMode.Dark)
+                return true;
+
+            if (Application.ColorMode == SystemColorMode.Classic)
+                return false;
+
+            object value = Registry.GetValue(
+                @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
+                "AppsUseLightTheme",
+                1);
+
+            return Convert.ToInt32(value) == 0;
         }
     }
 }

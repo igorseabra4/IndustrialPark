@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 
@@ -29,20 +30,20 @@ namespace IndustrialPark
 
         public static AssetID AssetIDFromString(string s)
         {
-            if (s.ToLower().StartsWith("0x"))
+            if (s.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase))
                 return Convert.ToUInt32(s, 16);
 
             if (s.StartsWith("{") && s.EndsWith("}"))
             {
                 try
                 {
-                    var assets = JsonConvert.DeserializeObject<AssetClipboard>(s);
-                    return assets.assets[0].assetID;
+                    var assets = JsonConvert.DeserializeObject<List<AssetClipboard>>(s);
+                    return assets[0].AHDR.assetID;
                 }
                 catch { }
             }
 
-            return s;
+            return new AssetID(s);
         }
 
         public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)

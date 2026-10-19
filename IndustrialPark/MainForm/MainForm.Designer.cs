@@ -465,8 +465,8 @@ namespace IndustrialPark
             checkForUpdatesOnStartupToolStripMenuItem.CheckState = CheckState.Checked;
             checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
             checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
-            checkForUpdatesOnStartupToolStripMenuItem.Text = "Check for updates on startup";
-            checkForUpdatesOnStartupToolStripMenuItem.ToolTipText = "If enabled, the application will check for updates once per day when starting.";
+            checkForUpdatesOnStartupToolStripMenuItem.Text = "Check for updates on startup, daily";
+            checkForUpdatesOnStartupToolStripMenuItem.ToolTipText = "If enabled, the application will check for updates when starting.\r\nThis only happens, at most, once per day.";
             checkForUpdatesOnStartupToolStripMenuItem.Click += CheckForUpdatesOnStartupToolStripMenuItem_Click;
             // 
             // discordRichPresenceToolStripMenuItem
@@ -1152,7 +1152,7 @@ namespace IndustrialPark
             toolStripComboBoxArchive.FlatStyle = FlatStyle.Standard;
             toolStripComboBoxArchive.Name = "toolStripComboBoxArchive";
             toolStripComboBoxArchive.Size = new System.Drawing.Size(160, 25);
-            toolStripComboBoxArchive.ToolTipText = "Active archive (Template Focus): templates are placed here";
+            toolStripComboBoxArchive.ToolTipText = "Target archive: templates and pasted assets are placed here";
             toolStripComboBoxArchive.DropDownClosed += toolStripComboBox_DropDownClosed;
             toolStripComboBoxArchive.SelectedIndexChanged += toolStripComboBoxArchive_SelectedIndexChanged;
             // 

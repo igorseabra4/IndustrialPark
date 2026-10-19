@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
 
@@ -50,11 +51,11 @@ namespace IndustrialPark
 
         private void buttonPaste_Click(object sender, EventArgs e)
         {
-            AssetClipboard clipboard;
+            List<AssetClipboard> clipboard;
 
             try
             {
-                clipboard = JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
+                clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
@@ -63,8 +64,8 @@ namespace IndustrialPark
             }
 
             string templateName = "";
-            foreach (var AHDR in clipboard.assets)
-                templateName += "[" + AHDR.assetType.ToString() + "][" + AHDR.assetName + "]";
+            foreach (var asset in clipboard)
+                templateName += "[" + asset.AHDR.assetType.ToString() + "][" + asset.AHDR.assetName + "]";
 
             File.WriteAllText(
                 Path.Combine(Program.MainForm.userTemplatesFolder, templateName),

@@ -1356,7 +1356,12 @@ namespace IndustrialPark
 
         public void CopyAssetsToClipboard(uint? assetID = null)
         {
-            var clipboard = new AssetClipboard();
+            Clipboard.SetText(JsonConvert.SerializeObject(CreateAssetClipboard(assetID), Formatting.None));
+        }
+
+        public List<AssetClipboard> CreateAssetClipboard(uint? assetID = null)
+        {
+            var clipboard = new List<AssetClipboard>();
 
             var assets = assetID.HasValue && ContainsAsset(assetID.Value) ? [GetFromAssetID(assetID.Value)] : CurrentlySelectedAssets;
             foreach (Asset asset in assets)
@@ -1374,22 +1379,22 @@ namespace IndustrialPark
                         MessageBox.Show(e.Message + " The asset will be copied as it is.");
                     }
                 }
-                clipboard.Add(asset.game, platform, AHDR, asset is AssetJSP_INFO jspInfo ? jspInfo.JSP_AssetIDs : null, GetRWVersion(AHDR));
+                clipboard.Add(new AssetClipboard(asset.game, platform, AHDR, asset is AssetJSP_INFO jspInfo ? jspInfo.JSP_AssetIDs : null, GetRWVersion(AHDR)));
             }
 
-            Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
+            return clipboard;
         }
 
         public static bool updateReferencesOnCopy = true;
         public static bool replaceAssetsOnPaste = false;
 
-        internal (bool success, List<uint> finalIndices, List<IReversibleAction> actions) PasteAssetsFromClipboard(int layerIndex, bool isTemplate = false, AssetClipboard clipboard = null)
+        internal (bool success, List<uint> finalIndices, List<IReversibleAction> actions) PasteAssetsFromClipboard(int layerIndex, bool isTemplate = false, List<AssetClipboard> clipboard = null)
         {
             var finalIndices = new List<uint>();
 
             try
             {
-                clipboard ??= JsonConvert.DeserializeObject<AssetClipboard>(Clipboard.GetText());
+                clipboard ??= JsonConvert.DeserializeObject<List<AssetClipboard>>(Clipboard.GetText());
             }
             catch (Exception ex)
             {
@@ -1405,11 +1410,11 @@ namespace IndustrialPark
             RWVersion? targetVersion = null;
             bool rememberForAll = false;
 
-            for (int i = 0; i < clipboard.assets.Count; i++)
+            for (int i = 0; i < clipboard.Count; i++)
             {
-                Section_AHDR AHDR = clipboard.assets[i].ToAHDR();
+                Section_AHDR AHDR = clipboard[i].AHDR.ToAHDR();
 
-                if (IsRenderWareStream(AHDR.assetType) && Dialogs.ChangeRWVersion.IsVersionMismatch(platform, game, AHDR.assetType, clipboard.rwVersions?[i]))
+                if (IsRenderWareStream(AHDR.assetType) && Dialogs.ChangeRWVersion.IsVersionMismatch(platform, game, AHDR.assetType, clipboard[i].rwVersion))
                 {
                     AHDR.data = Dialogs.ChangeRWVersion.ChangeVersion(AHDR, ref targetVersion, ref rememberForAll);
                 }
@@ -1423,7 +1428,7 @@ namespace IndustrialPark
                     RemoveAsset(AHDR.assetID);
                 }
 
-                var asset = AddAssetWithUniqueID(AHDR, clipboard.games[i], clipboard.platforms[i].Endianness(), layerIndex);
+                var asset = AddAssetWithUniqueID(AHDR, clipboard[i].game, clipboard[i].platform.Endianness(), layerIndex);
 
                 asset.SetGame(game);
 
@@ -1446,9 +1451,9 @@ namespace IndustrialPark
                 }
                 else if (asset is AssetJSP_INFO jspInfo)
                 {
-                    jspInfo.JSP_AssetIDs = clipboard.jspExtraInfo[i];
+                    jspInfo.JSP_AssetIDs = clipboard[i].jspExtraInfo;
 
-                    if ((clipboard.games[i] >= Game.Incredibles && game == Game.BFBB) || (clipboard.games[i] == Game.BFBB && game >= Game.Incredibles))
+                    if ((clipboard[i].game >= Game.Incredibles && game == Game.BFBB) || (clipboard[i].game == Game.BFBB && game >= Game.Incredibles))
                     {
                         if (jspInfo.JSP_AssetIDs.All(i => ContainsAsset(i)))
                         {

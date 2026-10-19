@@ -714,36 +714,6 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="&gt;&gt;comboBoxLayerTypes.ZOrder" xml:space="preserve">
     <value>2</value>
   </data>
-  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
-    <value>Bottom, Left</value>
-  </data>
-  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
-    <value>256, 23</value>
-  </data>
-  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
-    <value>34, 13</value>
-  </data>
-  <data name="label1.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="label1.Text" xml:space="preserve">
-    <value>Type:</value>
-  </data>
-  <data name="&gt;&gt;label1.Name" xml:space="preserve">
-    <value>label1</value>
-  </data>
-  <data name="&gt;&gt;label1.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
-    <value>groupBoxLayers</value>
-  </data>
-  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
   <data name="buttonRemoveLayer.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
   </data>
@@ -772,7 +742,7 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
     <value>groupBoxLayers</value>
   </data>
   <data name="&gt;&gt;buttonRemoveLayer.ZOrder" xml:space="preserve">
-    <value>4</value>
+    <value>3</value>
   </data>
   <data name="buttonAddLayer.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Bottom, Right</value>
@@ -802,7 +772,7 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
     <value>groupBoxLayers</value>
   </data>
   <data name="&gt;&gt;buttonAddLayer.ZOrder" xml:space="preserve">
-    <value>5</value>
+    <value>4</value>
   </data>
   <data name="comboBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 19</value>
@@ -823,6 +793,36 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
     <value>groupBoxLayers</value>
   </data>
   <data name="&gt;&gt;comboBoxLayers.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="label1.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
+    <value>Bottom, Left</value>
+  </data>
+  <data name="label1.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="label1.Location" type="System.Drawing.Point, System.Drawing">
+    <value>256, 23</value>
+  </data>
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>34, 13</value>
+  </data>
+  <data name="label1.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Type:</value>
+  </data>
+  <data name="&gt;&gt;label1.Name" xml:space="preserve">
+    <value>label1</value>
+  </data>
+  <data name="&gt;&gt;label1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;label1.Parent" xml:space="preserve">
+    <value>groupBoxLayers</value>
+  </data>
+  <data name="&gt;&gt;label1.ZOrder" xml:space="preserve">
     <value>6</value>
   </data>
   <data name="groupBoxLayers.Location" type="System.Drawing.Point, System.Drawing">
@@ -912,24 +912,23 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="checkBoxTemplateFocus.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Right</value>
   </data>
-  <data name="checkBoxTemplateFocus.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="checkBoxTemplateFocus.CheckAlign" type="System.Drawing.ContentAlignment, System.Drawing">
+    <value>BottomCenter</value>
+  </data>
+  <data name="checkBoxTemplateFocus.FlatStyle" type="System.Windows.Forms.FlatStyle, System.Windows.Forms">
+    <value>Popup</value>
   </data>
   <data name="checkBoxTemplateFocus.Location" type="System.Drawing.Point, System.Drawing">
-    <value>520, 8</value>
-  </data>
-  <data name="checkBoxTemplateFocus.MinimumSize" type="System.Drawing.Size, System.Drawing">
-    <value>75, 23</value>
+    <value>526, 8</value>
   </data>
   <data name="checkBoxTemplateFocus.Size" type="System.Drawing.Size, System.Drawing">
-    <value>75, 30</value>
+    <value>60, 31</value>
   </data>
   <data name="checkBoxTemplateFocus.TabIndex" type="System.Int32, mscorlib">
     <value>21</value>
   </data>
   <data name="checkBoxTemplateFocus.Text" xml:space="preserve">
-    <value>Template
-Focus</value>
+    <value>Target</value>
   </data>
   <data name="checkBoxTemplateFocus.TextAlign" type="System.Drawing.ContentAlignment, System.Drawing">
     <value>MiddleCenter</value>

@@ -12,7 +12,7 @@ namespace IndustrialPark.Randomizer
 {
     public class RandomizableArchive : ArchiveEditorFunctions
     {
-        public RandomizableArchive()
+        public RandomizableArchive() : base(null)
         {
             SkipTextureDisplay = true;
         }

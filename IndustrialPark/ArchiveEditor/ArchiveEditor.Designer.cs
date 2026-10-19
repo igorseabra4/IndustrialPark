@@ -95,10 +95,10 @@
             buttonArrowDown = new System.Windows.Forms.Button();
             buttonArrowUp = new System.Windows.Forms.Button();
             comboBoxLayerTypes = new System.Windows.Forms.ComboBox();
-            label1 = new System.Windows.Forms.Label();
             buttonRemoveLayer = new System.Windows.Forms.Button();
             buttonAddLayer = new System.Windows.Forms.Button();
             comboBoxLayers = new System.Windows.Forms.ComboBox();
+            label1 = new System.Windows.Forms.Label();
             groupBoxAssets = new System.Windows.Forms.GroupBox();
             textBoxFindAsset = new System.Windows.Forms.TextBox();
             buttonMultiEditAsset = new System.Windows.Forms.Button();
@@ -516,10 +516,10 @@
             groupBoxLayers.Controls.Add(buttonArrowDown);
             groupBoxLayers.Controls.Add(buttonArrowUp);
             groupBoxLayers.Controls.Add(comboBoxLayerTypes);
-            groupBoxLayers.Controls.Add(label1);
             groupBoxLayers.Controls.Add(buttonRemoveLayer);
             groupBoxLayers.Controls.Add(buttonAddLayer);
             groupBoxLayers.Controls.Add(comboBoxLayers);
+            groupBoxLayers.Controls.Add(label1);
             groupBoxLayers.Name = "groupBoxLayers";
             groupBoxLayers.TabStop = false;
             // 
@@ -544,11 +544,6 @@
             comboBoxLayerTypes.Name = "comboBoxLayerTypes";
             comboBoxLayerTypes.SelectedIndexChanged += comboBoxLayerTypes_SelectedIndexChanged;
             // 
-            // label1
-            // 
-            resources.ApplyResources(label1, "label1");
-            label1.Name = "label1";
-            // 
             // buttonRemoveLayer
             // 
             resources.ApplyResources(buttonRemoveLayer, "buttonRemoveLayer");
@@ -569,6 +564,11 @@
             resources.ApplyResources(comboBoxLayers, "comboBoxLayers");
             comboBoxLayers.Name = "comboBoxLayers";
             comboBoxLayers.SelectedIndexChanged += comboBoxLayers_SelectedIndexChanged;
+            // 
+            // label1
+            // 
+            resources.ApplyResources(label1, "label1");
+            label1.Name = "label1";
             // 
             // groupBoxAssets
             // 
@@ -609,8 +609,11 @@
             // 
             resources.ApplyResources(checkBoxTemplateFocus, "checkBoxTemplateFocus");
             checkBoxTemplateFocus.AutoCheck = false;
+            checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.Control;
+            checkBoxTemplateFocus.Cursor = System.Windows.Forms.Cursors.Hand;
             checkBoxTemplateFocus.Name = "checkBoxTemplateFocus";
-            checkBoxTemplateFocus.UseVisualStyleBackColor = true;
+            checkBoxTemplateFocus.UseVisualStyleBackColor = false;
+            checkBoxTemplateFocus.CheckedChanged += checkBoxTemplateFocus_CheckedChanged;
             checkBoxTemplateFocus.Click += checkBoxTemplateFocus_Click;
             // 
             // listViewAssets
