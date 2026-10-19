@@ -713,6 +713,9 @@ namespace IndustrialPark
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
+            if (!renderPanel.Focused)
+                return;
+
             PressedKeys.Add(e.KeyCode);
 
             if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
@@ -1560,7 +1563,7 @@ namespace IndustrialPark
             List<uint> whoTargets = WhoTargets(assetID);
 
             bool willOpen = true;
-            if (whoTargets.Count > 15)
+            if (whoTargets.Count > MaxDockedEditors)
                 willOpen = MessageBox.Show($"Warning: you're going to open {whoTargets.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
 
             if (willOpen)
@@ -2342,21 +2345,6 @@ namespace IndustrialPark
             }
             else
                 MessageBox.Show($"Nothing was pasted because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        private void tabControl1_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Middle)
-            {
-                TabControl tc = (TabControl)sender;
-                for (int i = 0; i < tc.TabCount; i++)
-                    if (tc.GetTabRect(i).Contains(e.Location))
-                    {
-                        InternalEditor editor = (InternalEditor)tc.TabPages[i].Controls[0];
-                        editor.Close();
-                        return;
-                    }
-            }
         }
     }
 }

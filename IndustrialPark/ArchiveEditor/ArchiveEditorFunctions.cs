@@ -1582,11 +1582,12 @@ namespace IndustrialPark
             {
                 if (!assetDictionary.TryGetValue(assetID, out Asset asset))
                     continue;
-                any = true;
                 asset.isSelected = true;
                 CurrentlySelectedAssets.Add(asset);
                 if (asset is AssetRWTX)
                     TextureManager.SelectedTextures.Add(asset.assetName.Replace(".rw3", "", StringComparison.InvariantCultureIgnoreCase));
+                if (asset is not (AssetSound or AssetMODL))
+                    any = true;
             }
 
             if (AutoDockSelectedAssetEditors && any)

@@ -1,16 +1,13 @@
 ﻿using Assimp;
 using HipHopFile;
 using IndustrialPark.Models;
-using Newtonsoft.Json;
 using RenderWareFile;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Pipelines;
 using System.Linq;
 using System.Windows.Forms;
-using static System.Windows.Forms.Design.AxImporter;
 using Ray = SharpDX.Ray;
 
 namespace IndustrialPark
@@ -48,7 +45,7 @@ namespace IndustrialPark
         public void OpenInternalEditor(IEnumerable<uint> assets, bool openAnyway, System.Drawing.Point? location, Action<Asset> updateListView, bool autoDock = false)
         {
             bool willOpen = true;
-            if (assets.Count() > 15 && !openAnyway)
+            if (assets.Count() > MainForm.MaxDockedEditors && !openAnyway)
             {
                 willOpen = MessageBox.Show($"Warning: you're going to open {assets.Count()} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
             }

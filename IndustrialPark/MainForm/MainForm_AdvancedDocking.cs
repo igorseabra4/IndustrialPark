@@ -19,6 +19,7 @@ public partial class MainForm
     private const int HTCAPTION = 2;
 
     private int dockedEditorsCount => tabControlRight.TabPages.Count;
+    public const int MaxDockedEditors = 15;
     private Point dragStartPoint;
     private bool isDraggingTab = false;
     private Rectangle initialDragRectangle = default;
@@ -35,11 +36,13 @@ public partial class MainForm
         this.LocationChanged += (_, _) => UpdateInitialDockingArea();
         this.SizeChanged += (_, _) => UpdateInitialDockingArea();
         this.Layout += (_, _) => UpdateInitialDockingArea();
+        this.Shown += (_, _) => UpdateInitialDockingArea();
 
         splitContainer2.Layout += (_, _) => UpdateInitialDockingArea();
         splitContainer2.SplitterMoved += (_, _) => UpdateInitialDockingArea();
 
-        this.Shown += (_, _) => UpdateInitialDockingArea();
+        renderPanel.TabStop = true;
+        renderPanel.MouseDown += (_, _) => renderPanel.Focus();
     }
 
     private void UpdateInitialDockingArea()
@@ -49,6 +52,21 @@ public partial class MainForm
         Rectangle bounds = splitContainer2.RectangleToScreen(splitContainer2.ClientRectangle);
         int width = Math.Min(360, bounds.Width);
         imaginaryDockingZone = new Rectangle(bounds.Right - width, bounds.Top, width, bounds.Height);
+    }
+
+    private void tabControl1_MouseClick(object sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Middle)
+        {
+            TabControl tc = (TabControl)sender;
+            for (int i = 0; i < tc.TabCount; i++)
+                if (tc.GetTabRect(i).Contains(e.Location))
+                {
+                    InternalEditor editor = (InternalEditor)tc.TabPages[i].Controls[0];
+                    editor.Close();
+                    return;
+                }
+        }
     }
 
     private void tabControl1_MouseDown(object sender, MouseEventArgs e)
@@ -102,6 +120,13 @@ public partial class MainForm
         page.Controls.Add(editor);
         tabControlRight.TabPages.Add(page);
         tabControlRight.SelectedTab = page;
+
+        while (dockedEditorsCount > MaxDockedEditors)
+        {
+            var pageOld = tabControlRight.TabPages[0];
+            InternalEditor editorOld = (InternalEditor)pageOld.Controls[0];
+            editorOld.Close();
+        }
     }
 
     public void UndockEditor(int index)
