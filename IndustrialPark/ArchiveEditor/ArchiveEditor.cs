@@ -627,7 +627,7 @@ namespace IndustrialPark
             return info;
         }
 
-        private void UpdateCurrentListView(Asset asset)
+        public void UpdateCurrentListView(Asset asset)
         {
             foreach (ListViewItem item in listViewAssets.Items)
             {

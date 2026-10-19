@@ -28,6 +28,8 @@ namespace IndustrialPark
             RefreshPropertyGrid();
         }
 
+        public override bool CanBeDocked => true;
+
         public override void RefreshPropertyGrid()
         {
             if (b != null)

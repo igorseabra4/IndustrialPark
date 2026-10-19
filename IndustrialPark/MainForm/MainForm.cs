@@ -31,6 +31,7 @@ namespace IndustrialPark
             StartPosition = FormStartPosition.CenterScreen;
             this.settings = settings;
             InitializeComponent();
+            InitAdvancedDocking();
 
 #if !DEBUG
             openFolderToolStripMenuItem.Visible = false;
@@ -144,6 +145,7 @@ namespace IndustrialPark
             StartRenderer();
             UpdateTitleBar();
             ResetMouseCenter(null, null);
+            UpdateInitialDockingArea();
         }
 
         private void ApplyIPSettings(IPSettings settings)
@@ -201,6 +203,12 @@ namespace IndustrialPark
 
             enableAssetToolButtonsToolStripMenuItem.Checked = settings.EnableAssetToolButtons;
             InternalEditor.EnableAssetToolButtons = settings.EnableAssetToolButtons;
+
+            autoDockAssetEditorsToolStripMenuItem.Checked = settings.AutoDockAssetEditors;
+            ArchiveEditorFunctions.AutoDockAssetEditors = settings.AutoDockAssetEditors;
+
+            autoDockSelectedAssetEditorsToolStripMenuItem.Checked = settings.AutoDockSelectedAssetEditors;
+            ArchiveEditorFunctions.AutoDockSelectedAssetEditors = settings.AutoDockSelectedAssetEditors;
 
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
@@ -292,6 +300,8 @@ namespace IndustrialPark
                 AlwaysListAllAssets = ArchiveEditor.AlwaysListAllAssets,
                 RotationGizmoLocalAxis = ArchiveEditorFunctions.RotationGizmoLocalAxis,
                 EnableAssetToolButtons = InternalEditor.EnableAssetToolButtons,
+                AutoDockAssetEditors = ArchiveEditorFunctions.AutoDockAssetEditors,
+                AutoDockSelectedAssetEditors = ArchiveEditorFunctions.AutoDockSelectedAssetEditors,
                 Speed = renderer.Camera.Speed,
                 SpeedRot = renderer.Camera.SpeedRot,
             };
@@ -1157,7 +1167,7 @@ namespace IndustrialPark
 
                 // asset previous selection state must be equal to this, ignored if null
                 bool? alreadySelectedFilter = removeFromSelection ? true : addToSelection ? false : null;
-                
+
                 (var archive, var assetID) = ArchiveEditorFunctions.GetClickedAsset(renderer, ray, alreadySelectedFilter);
 
                 if (assetID == null && (addToSelection || toggleSelection))
@@ -2208,6 +2218,18 @@ namespace IndustrialPark
             ArchiveEditorFunctions.RecalculateAllMatrices();
         }
 
+        private void autoDockAssetEditorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoDockAssetEditorsToolStripMenuItem.Checked = !autoDockAssetEditorsToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.AutoDockAssetEditors = autoDockAssetEditorsToolStripMenuItem.Checked;
+        }
+
+        private void autoDockSelectedAssetEditorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoDockSelectedAssetEditorsToolStripMenuItem.Checked = !autoDockSelectedAssetEditorsToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.AutoDockSelectedAssetEditors = autoDockSelectedAssetEditorsToolStripMenuItem.Checked;
+        }
+
         private void MenuStrip_DropDownOpened(object sender, EventArgs e)
         {
             if (sender is ToolStripMenuItem menuItem && menuItem.DropDown != null)
@@ -2217,8 +2239,6 @@ namespace IndustrialPark
                     .GetValue(menuItem.DropDown) is ToolTip dropDownToolTip)
                 {
                     dropDownToolTip.AutoPopDelay = 20000;
-                    dropDownToolTip.InitialDelay = 200;
-                    dropDownToolTip.ReshowDelay = 100;
                 }
             }
         }
@@ -2283,7 +2303,7 @@ namespace IndustrialPark
         {
             if (Program.ViewControls.WindowState == FormWindowState.Minimized)
                 Program.ViewControls.WindowState = FormWindowState.Normal;
-            
+
             if (!Program.ViewControls.Visible)
                 Program.ViewControls.Show(this);
             Program.ViewControls.Activate();
@@ -2324,5 +2344,19 @@ namespace IndustrialPark
                 MessageBox.Show($"Nothing was pasted because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
         }
 
+        private void tabControl1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Middle)
+            {
+                TabControl tc = (TabControl)sender;
+                for (int i = 0; i < tc.TabCount; i++)
+                    if (tc.GetTabRect(i).Contains(e.Location))
+                    {
+                        InternalEditor editor = (InternalEditor)tc.TabPages[i].Controls[0];
+                        editor.Close();
+                        return;
+                    }
+            }
+        }
     }
 }

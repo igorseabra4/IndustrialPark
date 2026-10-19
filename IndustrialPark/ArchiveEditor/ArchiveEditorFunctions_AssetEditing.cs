@@ -28,6 +28,7 @@ namespace IndustrialPark
 
         public void CloseInternalEditor(InternalEditor i)
         {
+            Program.MainForm.CloseTab(i);
             internalEditors.Remove(i);
         }
 
@@ -44,7 +45,7 @@ namespace IndustrialPark
                 }
         }
 
-        public void OpenInternalEditor(IEnumerable<uint> assets, bool openAnyway, System.Drawing.Point location, Action<Asset> updateListView)
+        public void OpenInternalEditor(IEnumerable<uint> assets, bool openAnyway, System.Drawing.Point? location, Action<Asset> updateListView, bool autoDock = false)
         {
             bool willOpen = true;
             if (assets.Count() > 15 && !openAnyway)
@@ -55,10 +56,10 @@ namespace IndustrialPark
             if (willOpen)
                 foreach (uint u in assets)
                     if (assetDictionary.ContainsKey(u))
-                        OpenInternalEditor(assetDictionary[u], assets.Count() == 1 ? location : null, updateListView);
+                        OpenInternalEditor(assetDictionary[u], assets.Count() == 1 ? location : null, updateListView, autoDock);
         }
 
-        private void OpenInternalEditor(Asset asset, System.Drawing.Point? location, Action<Asset> updateListView)
+        private void OpenInternalEditor(Asset asset, System.Drawing.Point? location, Action<Asset> updateListView, bool autoDock)
         {
             CloseInternalEditor(asset.assetID);
 
@@ -85,13 +86,25 @@ namespace IndustrialPark
                 else if (e.KeyCode == Keys.Z && e.Modifiers == Keys.Control)
                     Program.UndoBuffer.Undo();
             };
-            internalEditors.Add(editor);
             if (location.HasValue)
             {
                 editor.StartPosition = FormStartPosition.Manual;
                 editor.Location = new System.Drawing.Point(Math.Max(0, location.Value.X - editor.Size.Width / 2), Math.Max(0, location.Value.Y - editor.Size.Height / 2));
             }
-            editor.Show(Program.MainForm);
+            editor.Owner = Program.MainForm;
+            if (editor.CanBeDocked)
+            {
+                editor.FormDropped += Program.MainForm.editor_FormDropped;
+                if (AutoDockAssetEditors || autoDock)
+                    Program.MainForm.DockEditor(editor);
+            }
+            else if (autoDock)
+            {
+                // cannot be docked and is set to dock on select
+                return;
+            }
+            editor.Show();
+            internalEditors.Add(editor);
         }
 
         private InternalEditor CreateInternalEditor(Asset asset, Action<Asset> updateListView)
@@ -122,6 +135,9 @@ namespace IndustrialPark
         }
 
         private readonly List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();
+
+        public static bool AutoDockAssetEditors;
+        public static bool AutoDockSelectedAssetEditors;
 
         public void OpenInternalEditorMulti(IEnumerable<uint> list, System.Drawing.Point? location, Action<Asset> updateListView)
         {

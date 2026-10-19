@@ -21,8 +21,8 @@ public partial class InternalAssetEditor : InternalEditor
 
         propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
 
-        Text = $"[{asset.assetType}] {asset}";
-        
+        Text = asset.assetName;
+
         viewToolStripMenuItem.Visible = asset is IClickableAsset;
 
         switch (asset)
@@ -83,6 +83,8 @@ public partial class InternalAssetEditor : InternalEditor
         SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
+    public override bool CanBeDocked => true;
+
     private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
     {
         archive.CloseInternalEditor(this);
@@ -106,7 +108,7 @@ public partial class InternalAssetEditor : InternalEditor
             });
         });
     }
-    
+
     private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
     {
         archive.UnsavedChanges = true;

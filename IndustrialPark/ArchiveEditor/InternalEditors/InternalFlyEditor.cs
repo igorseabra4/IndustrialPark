@@ -18,6 +18,8 @@ namespace IndustrialPark
             UpdateListbox();
         }
 
+        public override bool CanBeDocked => true;
+
         public override void RefreshPropertyGrid()
         {
             listBoxFlyEntries.Refresh();
