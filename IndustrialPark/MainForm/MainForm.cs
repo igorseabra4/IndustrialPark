@@ -148,6 +148,12 @@ namespace IndustrialPark
         {
             SystemColorMode = settings.ColorMode;
 
+            if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
+            {
+                Close();
+                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
+            }
+
             autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
             autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
 
@@ -206,12 +212,6 @@ namespace IndustrialPark
             if (settings.recentArchivePaths != null)
                 foreach (string filepath in settings.recentArchivePaths)
                     SetRecentOpenedArchives(filepath);
-
-            if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
-            {
-                Close();
-                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
-            }
 
             string[] args = Environment.GetCommandLineArgs();
             if (args.Length > 1)
@@ -894,14 +894,11 @@ namespace IndustrialPark
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
             AddArchiveEditor();
-            archiveEditors.Last().Show();
         }
 
-        public void AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown, bool show = true)
+        public ArchiveEditor AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown, bool show = true)
         {
-            ArchiveEditor ae = new ArchiveEditor();
-
-            ae.Begin(filePath, scoobyPlatform);
+            ArchiveEditor ae = new ArchiveEditor(filePath, scoobyPlatform);
             archiveEditors.Add(ae);
 
             ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(ae.GetCurrentlyOpenFileName()));
@@ -924,6 +921,8 @@ namespace IndustrialPark
             // Cannot select assets if the editor isn't shown first?
             if (!show)
                 ae.Hide();
+
+            return ae;
         }
 
         public void EditorUpdate()
@@ -1962,7 +1961,7 @@ namespace IndustrialPark
                 foreach (var hip in hipList)
                 {
                     p.Text = Path.GetFileName(hip);
-                    ArchiveEditorFunctions archive = new ArchiveEditorFunctions();
+                    ArchiveEditorFunctions archive = new ArchiveEditorFunctions(null);
                     archive.OpenFile(hip, false, scoobyPlat);
                     scoobyPlat = archive.platform;
                     foreach (var v in archive.AssetTypesPerLayer())

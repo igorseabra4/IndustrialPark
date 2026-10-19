@@ -55,7 +55,7 @@ namespace IndustrialPark
 
         private void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var ae = Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive);
+            var ae = archive.GetArchiveEditor();
             if (ae.EditHeader(asset.assetID, out uint newAssetID))
                 ae.OpenInternalEditor(newAssetID);
         }
@@ -71,7 +71,7 @@ namespace IndustrialPark
             if (result == DialogResult.Yes)
             {
                 var actions = new List<IReversibleAction>();
-                Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive).RemoveAssets([asset.assetID], actions);
+                archive.GetArchiveEditor().RemoveAssets([asset.assetID], actions);
                 Program.UndoBuffer.AddAction(actions);
             }
         }

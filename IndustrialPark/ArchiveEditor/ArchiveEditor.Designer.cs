@@ -50,7 +50,8 @@
             toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             hipHopFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importHipArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            importHipArchiveForceOverwriteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            overwriteAssetsOnImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator9 = new System.Windows.Forms.ToolStripSeparator();
             exportAssetsIniToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             texturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,10 +68,10 @@
             importRawSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importRawSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importRawSoundStreamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            overwriteSoundsOnImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
             exportAllSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportAllSoundsRawToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
-            overwriteOnImportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importModelsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importMultipleAssetsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -136,6 +137,7 @@
             toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
             copyAssetNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolTip1 = new System.Windows.Forms.ToolTip(components);
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBoxLayers.SuspendLayout();
@@ -252,7 +254,7 @@
             // 
             // hipHopFileToolStripMenuItem
             // 
-            hipHopFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { importHipArchiveToolStripMenuItem, importHipArchiveForceOverwriteToolStripMenuItem, exportAssetsIniToolStripMenuItem });
+            hipHopFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { importHipArchiveToolStripMenuItem, overwriteAssetsOnImportToolStripMenuItem, toolStripSeparator9, exportAssetsIniToolStripMenuItem });
             resources.ApplyResources(hipHopFileToolStripMenuItem, "hipHopFileToolStripMenuItem");
             hipHopFileToolStripMenuItem.Name = "hipHopFileToolStripMenuItem";
             // 
@@ -262,11 +264,18 @@
             importHipArchiveToolStripMenuItem.Name = "importHipArchiveToolStripMenuItem";
             importHipArchiveToolStripMenuItem.Click += importHIPArchiveToolStripMenuItem_Click;
             // 
-            // importHipArchiveForceOverwriteToolStripMenuItem
+            // overwriteAssetsOnImportToolStripMenuItem
             // 
-            resources.ApplyResources(importHipArchiveForceOverwriteToolStripMenuItem, "importHipArchiveForceOverwriteToolStripMenuItem");
-            importHipArchiveForceOverwriteToolStripMenuItem.Name = "importHipArchiveForceOverwriteToolStripMenuItem";
-            importHipArchiveForceOverwriteToolStripMenuItem.Click += importForceOverwriteToolStripMenuItem_Click;
+            overwriteAssetsOnImportToolStripMenuItem.Checked = true;
+            overwriteAssetsOnImportToolStripMenuItem.CheckOnClick = true;
+            overwriteAssetsOnImportToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            overwriteAssetsOnImportToolStripMenuItem.Name = "overwriteAssetsOnImportToolStripMenuItem";
+            resources.ApplyResources(overwriteAssetsOnImportToolStripMenuItem, "overwriteAssetsOnImportToolStripMenuItem");
+            // 
+            // toolStripSeparator9
+            // 
+            toolStripSeparator9.Name = "toolStripSeparator9";
+            resources.ApplyResources(toolStripSeparator9, "toolStripSeparator9");
             // 
             // exportAssetsIniToolStripMenuItem
             // 
@@ -323,7 +332,7 @@
             // 
             // soundsToolStripMenuItem
             // 
-            soundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { importSoundsToolStripMenuItem, importRawSoundsToolStripMenuItem, exportAllSoundsToolStripMenuItem, exportAllSoundsRawToolStripMenuItem, toolStripSeparator7, overwriteOnImportToolStripMenuItem });
+            soundsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { importSoundsToolStripMenuItem, importRawSoundsToolStripMenuItem, overwriteSoundsOnImportToolStripMenuItem, toolStripSeparator7, exportAllSoundsToolStripMenuItem, exportAllSoundsRawToolStripMenuItem });
             resources.ApplyResources(soundsToolStripMenuItem, "soundsToolStripMenuItem");
             soundsToolStripMenuItem.Name = "soundsToolStripMenuItem";
             // 
@@ -363,6 +372,19 @@
             resources.ApplyResources(importRawSoundStreamToolStripMenuItem, "importRawSoundStreamToolStripMenuItem");
             importRawSoundStreamToolStripMenuItem.Click += importRawSoundStreamToolStripMenuItem_Click;
             // 
+            // overwriteSoundsOnImportToolStripMenuItem
+            // 
+            overwriteSoundsOnImportToolStripMenuItem.Checked = true;
+            overwriteSoundsOnImportToolStripMenuItem.CheckOnClick = true;
+            overwriteSoundsOnImportToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            overwriteSoundsOnImportToolStripMenuItem.Name = "overwriteSoundsOnImportToolStripMenuItem";
+            resources.ApplyResources(overwriteSoundsOnImportToolStripMenuItem, "overwriteSoundsOnImportToolStripMenuItem");
+            // 
+            // toolStripSeparator7
+            // 
+            toolStripSeparator7.Name = "toolStripSeparator7";
+            resources.ApplyResources(toolStripSeparator7, "toolStripSeparator7");
+            // 
             // exportAllSoundsToolStripMenuItem
             // 
             resources.ApplyResources(exportAllSoundsToolStripMenuItem, "exportAllSoundsToolStripMenuItem");
@@ -374,19 +396,6 @@
             resources.ApplyResources(exportAllSoundsRawToolStripMenuItem, "exportAllSoundsRawToolStripMenuItem");
             exportAllSoundsRawToolStripMenuItem.Name = "exportAllSoundsRawToolStripMenuItem";
             exportAllSoundsRawToolStripMenuItem.Click += exportAllRawToolStripMenuItem_Click;
-            // 
-            // toolStripSeparator7
-            // 
-            toolStripSeparator7.Name = "toolStripSeparator7";
-            resources.ApplyResources(toolStripSeparator7, "toolStripSeparator7");
-            // 
-            // overwriteOnImportToolStripMenuItem
-            // 
-            overwriteOnImportToolStripMenuItem.Checked = true;
-            overwriteOnImportToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            overwriteOnImportToolStripMenuItem.Name = "overwriteOnImportToolStripMenuItem";
-            resources.ApplyResources(overwriteOnImportToolStripMenuItem, "overwriteOnImportToolStripMenuItem");
-            overwriteOnImportToolStripMenuItem.Click += overwriteOnImportToolStripMenuItem_Click;
             // 
             // importModelsToolStripMenuItem
             // 
@@ -815,6 +824,12 @@
             resources.ApplyResources(copyAssetNamesToolStripMenuItem, "copyAssetNamesToolStripMenuItem");
             copyAssetNamesToolStripMenuItem.Click += copyAssetNamesToolStripMenuItem_Click;
             // 
+            // toolTip1
+            // 
+            toolTip1.AutoPopDelay = 20000;
+            toolTip1.InitialDelay = 500;
+            toolTip1.ReshowDelay = 100;
+            // 
             // ArchiveEditor
             // 
             resources.ApplyResources(this, "$this");
@@ -927,7 +942,6 @@
         private System.Windows.Forms.ToolStripMenuItem renameLayerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hipHopFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importHipArchiveToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importHipArchiveForceOverwriteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportAssetsIniToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem soundsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importSoundsToolStripMenuItem;
@@ -942,7 +956,7 @@
         private System.Windows.Forms.ToolStripMenuItem importRawSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importRawSoundStreamToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator7;
-        private System.Windows.Forms.ToolStripMenuItem overwriteOnImportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem overwriteSoundsOnImportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem legacySaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator8;
         private System.Windows.Forms.ToolStripMenuItem copyAssetNamesToolStripMenuItem;
@@ -954,5 +968,8 @@
         private System.Windows.Forms.ToolStripMenuItem verifyArchiveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem applyScaleToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mergeSimilarAssetsToolStripMenuItem;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
+        private System.Windows.Forms.ToolStripMenuItem overwriteAssetsOnImportToolStripMenuItem;
     }
 }

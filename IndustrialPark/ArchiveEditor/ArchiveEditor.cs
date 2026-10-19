@@ -25,7 +25,7 @@ namespace IndustrialPark
             set => comboBoxLayers.SelectedIndex = value;
         }
 
-        public ArchiveEditor()
+        public ArchiveEditor(string filePath, Platform scoobyPlatform)
         {
             InitializeComponent();
 
@@ -35,11 +35,8 @@ namespace IndustrialPark
 
             textBoxFindAsset.Location = new System.Drawing.Point(256, 14);
             textBoxFindAsset.Size = new Size(260, 21);
-        }
 
-        public void Begin(string filePath, Platform scoobyPlatform)
-        {
-            archive = new ArchiveEditorFunctions();
+            archive = new ArchiveEditorFunctions(this);
 
             textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             archive.SetTextboxForAutocomplete(textBoxFindAsset);
@@ -189,7 +186,6 @@ namespace IndustrialPark
             verifyArchiveToolStripMenuItem.Enabled = true;
             hipHopFileToolStripMenuItem.Enabled = true;
             importHipArchiveToolStripMenuItem.Enabled = true;
-            importHipArchiveForceOverwriteToolStripMenuItem.Enabled = true;
             exportAssetsIniToolStripMenuItem.Enabled = true;
             texturesToolStripMenuItem.Enabled = true;
             soundsToolStripMenuItem.Enabled = true;
@@ -1313,7 +1309,7 @@ namespace IndustrialPark
                     verifyResult.Close();
 
             verifyResult = new ScrollableMessageBox("Verify results on " + Text, archive.VerifyArchive());
-            verifyResult.Show();
+            verifyResult.Show(this);
         }
 
         private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1338,16 +1334,6 @@ namespace IndustrialPark
 
         private void importHIPArchiveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ImportHipClick(false);
-        }
-
-        private void importForceOverwriteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportHipClick(true);
-        }
-
-        private void ImportHipClick(bool forceOverwrite)
-        {
             OpenFileDialog openFile = new OpenFileDialog()
             {
                 Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini",
@@ -1357,7 +1343,7 @@ namespace IndustrialPark
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 Enabled = false;
-                archive.ImportHip(openFile.FileNames, forceOverwrite);
+                archive.ImportHip(openFile.FileNames, overwriteAssetsOnImportToolStripMenuItem.Checked);
                 OnEditorUpdate();
                 Enabled = true;
                 PopulateLayerComboBox();
@@ -1515,12 +1501,6 @@ namespace IndustrialPark
             {
                 listViewAssets.Size = new System.Drawing.Size(listViewAssets.Size.Width - 81, listViewAssets.Size.Height);
             }
-        }
-
-        public void SetAllTopMost(bool value)
-        {
-            TopMost = value;
-            archive.SetAllTopMost(value);
         }
 
         private void exportRW3ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1960,17 +1940,7 @@ namespace IndustrialPark
 
         private void noLayersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var newNoLayers = !noLayersToolStripMenuItem.Checked;
-            if (newNoLayers)
-            {
-                var dr = MessageBox.Show("This will convert the HIP/HOP archive into a format in which layers are virtually gone: " +
-                    "assets will be placed automatically by Industrial Park in the correct layers upon saving and you do not have to worry about them anymore. " +
-                    "Enabling this will erase your current layers. Proceed?",
-                    "No Layers", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-                if (dr != DialogResult.Yes)
-                    return;
-            }
-            archive.NoLayers = newNoLayers;
+            archive.NoLayers = !noLayersToolStripMenuItem.Checked;
             SetNoLayers();
         }
 
@@ -2040,7 +2010,7 @@ namespace IndustrialPark
             {
                 ProgressBar progressBar = new ProgressBar("Export All (Wav)");
                 progressBar.SetProgressBar(0, archive.GetAllAssets().OfType<AssetSound>().Count(), 1);
-                progressBar.Show();
+                progressBar.Show(this);
                 foreach (var asset in archive.GetAllAssets().OfType<AssetSound>())
                 {
                     SoundUtility_vgmstream.ExportToFile(asset, archive, Path.Combine(saveFileDialog.FileName, asset.assetName + ".wav"));
@@ -2095,7 +2065,7 @@ namespace IndustrialPark
 
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                archive.ImportSounds(raw, openFile.FileNames, assetType, overwriteOnImportToolStripMenuItem.Checked, out List<uint> assetIDs);
+                archive.ImportSounds(raw, openFile.FileNames, assetType, overwriteSoundsOnImportToolStripMenuItem.Checked, out List<uint> assetIDs);
                 if (assetIDs.Any())
                 {
                     OnEditorUpdate();
@@ -2128,11 +2098,6 @@ namespace IndustrialPark
             ImportSounds(true, AssetType.SoundStream);
         }
 
-        private void overwriteOnImportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            overwriteOnImportToolStripMenuItem.Checked = !overwriteOnImportToolStripMenuItem.Checked;
-        }
-
         private void legacySaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
             bool isLegacy = ((ToolStripMenuItem)sender).Checked;
@@ -2154,7 +2119,7 @@ namespace IndustrialPark
             List<string> skipped = new List<string>();
 
             ProgressBar progressBar = new ProgressBar("Building Collision PLG...");
-            progressBar.Show();
+            progressBar.Show(this);
             progressBar.SetProgressBar(0, archive.GetAllAssets().OfType<AssetMODL>().Count(), 1);
 
             foreach (var modl in archive.GetAllAssets().OfType<AssetMODL>())

@@ -149,6 +149,14 @@ namespace IndustrialPark
         public Game game;
         public Platform platform;
 
+        private ArchiveEditor archiveEditor;
+        public ArchiveEditorFunctions(ArchiveEditor archiveEditor)
+        {
+            this.archiveEditor = archiveEditor;
+        }
+
+        public ArchiveEditor GetArchiveEditor() => archiveEditor;
+
         public bool New()
         {
             var getNewArchive = NewArchive.GetNewArchive();
@@ -189,7 +197,7 @@ namespace IndustrialPark
             ProgressBar progressBar = new ProgressBar("Opening " + Path.GetFileName(fileName));
 
             if (displayProgressBar)
-                progressBar.Show();
+                progressBar.Show(this.GetArchiveEditor());
 
             assetDictionary = new Dictionary<uint, Asset>();
 
@@ -402,7 +410,7 @@ namespace IndustrialPark
                 {
                     var notConverted = GetUnconvertableAssets();
                     if (!string.IsNullOrEmpty(notConverted))
-                        new ScrollableMessageBox($"[{Path.GetFileName(currentlyOpenFilePath)}] Unconvertable assets", notConverted).Show();
+                        new ScrollableMessageBox($"[{Path.GetFileName(currentlyOpenFilePath)}] Unconvertable assets", notConverted).Show(this.GetArchiveEditor());
                 }
 
                 platform = newPlatform;
@@ -454,7 +462,7 @@ namespace IndustrialPark
             if (showProgress)
             {
                 progressBar = new ProgressBar("Closing Archive");
-                progressBar.Show();
+                progressBar.Show(this.GetArchiveEditor());
                 progressBar.SetProgressBar(0, assetList.Count, 1);
             }
 
