@@ -19,6 +19,8 @@ namespace IndustrialPark
             richTextBoxAssetText.Text = this.asset.Text;
         }
 
+        public override bool CanBeDocked => true;
+
         public override void RefreshPropertyGrid()
         {
             richTextBoxAssetText.Refresh();

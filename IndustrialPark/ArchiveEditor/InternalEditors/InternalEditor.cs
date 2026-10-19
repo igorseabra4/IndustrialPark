@@ -7,9 +7,13 @@ namespace IndustrialPark;
 
 public class InternalEditor : Form
 {
-    protected ArchiveEditorFunctions archive;
+    public ArchiveEditorFunctions archive;
 
     protected Action<Asset> updateListView;
+
+    public bool IsDocked = false;
+
+    public virtual bool CanBeDocked => false;
 
     public virtual uint GetAssetID()
     {
@@ -19,6 +23,32 @@ public class InternalEditor : Form
     public virtual void RefreshPropertyGrid()
     {
         throw new NotImplementedException();
+    }
+
+    public event EventHandler FormDropped;
+    private const int WM_MOVING = 0x0216;
+    private const int WM_EXITSIZEMOVE = 0x0232;
+    private bool isInDockingZone;
+    protected override void WndProc(ref Message m)
+    {
+        base.WndProc(ref m);
+
+        if (IsDocked ||
+            this.Owner is not MainForm mainForm)
+            return;
+
+        if (m.Msg == WM_MOVING)
+        {
+            isInDockingZone = mainForm.IsPointerInDockingZone();
+        }
+        else if (m.Msg == WM_EXITSIZEMOVE)
+        {
+            if (isInDockingZone)
+            {
+                isInDockingZone = false;
+                FormDropped?.Invoke(this, EventArgs.Empty);
+            }
+        }
     }
 
     public static bool EnableAssetToolButtons = false;

@@ -63,6 +63,8 @@ namespace IndustrialPark
             toolStripSeparator1 = new ToolStripSeparator();
             rotationGizmoLocalAxisToolStripMenuItem = new ToolStripMenuItem();
             listAllAssetsToolStripMenuItem = new ToolStripMenuItem();
+            autoDockAssetEditorsToolStripMenuItem = new ToolStripMenuItem();
+            autoDockSelectedAssetEditorsToolStripMenuItem = new ToolStripMenuItem();
             enableAssetToolButtonsToolStripMenuItem = new ToolStripMenuItem();
             translucentToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator7 = new ToolStripSeparator();
@@ -170,11 +172,11 @@ namespace IndustrialPark
             toolStripSeparatorVisibility = new ToolStripSeparator();
             toolStripLabelShow = new ToolStripLabel();
             toolStripDropDownButtonShowTypes = new ToolStripDropDownButton();
-            toolStripSeparatorEditing = new ToolStripSeparator();
-            toolStripButtonDropToGround = new ToolStripButton();
             toolStripSeparatorView = new ToolStripSeparator();
             toolStripButtonWireframe = new ToolStripButton();
             toolStripButtonLightKit = new ToolStripButton();
+            toolStripSeparatorEditing = new ToolStripSeparator();
+            toolStripButtonDropToGround = new ToolStripButton();
             contextMenuStripMain = new ContextMenuStrip(components);
             gizmoToolStripMenuItem = new ToolStripMenuItem();
             positionToolStripMenuItem = new ToolStripMenuItem();
@@ -184,10 +186,20 @@ namespace IndustrialPark
             toolStripMenuItem_Templates = new ToolStripMenuItem();
             userTemplateToolStripMenuItem = new ToolStripMenuItem();
             toolStripComboBoxUserTemplate = new ToolStripComboBox();
+            splitContainer1 = new SplitContainer();
+            splitContainer2 = new SplitContainer();
+            tabControlRight = new TabControl();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             toolStripMain.SuspendLayout();
             contextMenuStripMain.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).BeginInit();
+            splitContainer2.Panel1.SuspendLayout();
+            splitContainer2.Panel2.SuspendLayout();
+            splitContainer2.SuspendLayout();
             SuspendLayout();
             // 
             // menuStrip1
@@ -325,7 +337,7 @@ namespace IndustrialPark
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             undoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Z;
-            undoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            undoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             // 
@@ -333,13 +345,13 @@ namespace IndustrialPark
             // 
             redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             redoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Y;
-            redoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            redoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             redoToolStripMenuItem.Text = "Redo";
             redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { updateReferencesOnCopyPasteToolStripMenuItem, replaceAssetsOnPasteToolStripMenuItem, useLegacyAssetIDFormatToolStripMenuItem, useLegacyAssetTypeFormatToolStripMenuItem, toolStripSeparator4, manageUserTemplatesToolStripMenuItem, templatesPersistentShiniesToolStripMenuItem, templatesChainPointMVPTsToolStripMenuItem, toolStripSeparator1, rotationGizmoLocalAxisToolStripMenuItem, listAllAssetsToolStripMenuItem, enableAssetToolButtonsToolStripMenuItem, translucentToolStripMenuItem, toolStripSeparator7, checkForUpdatesOnStartupToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { updateReferencesOnCopyPasteToolStripMenuItem, replaceAssetsOnPasteToolStripMenuItem, useLegacyAssetIDFormatToolStripMenuItem, useLegacyAssetTypeFormatToolStripMenuItem, toolStripSeparator4, manageUserTemplatesToolStripMenuItem, templatesPersistentShiniesToolStripMenuItem, templatesChainPointMVPTsToolStripMenuItem, toolStripSeparator1, rotationGizmoLocalAxisToolStripMenuItem, listAllAssetsToolStripMenuItem, autoDockAssetEditorsToolStripMenuItem, autoDockSelectedAssetEditorsToolStripMenuItem, enableAssetToolButtonsToolStripMenuItem, translucentToolStripMenuItem, toolStripSeparator7, checkForUpdatesOnStartupToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 19);
             optionsToolStripMenuItem.Text = "&Options";
@@ -433,6 +445,22 @@ namespace IndustrialPark
             listAllAssetsToolStripMenuItem.Text = "Default to 'All' assets on editor list view";
             listAllAssetsToolStripMenuItem.ToolTipText = "If enabled, the Archive Editor will always list all assets when selecting assets from the view.\r\nThis can prevent stuttering by avoiding unnecessary list updates.";
             listAllAssetsToolStripMenuItem.Click += alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click;
+            // 
+            // autoDockAssetEditorsToolStripMenuItem
+            // 
+            autoDockAssetEditorsToolStripMenuItem.Name = "autoDockAssetEditorsToolStripMenuItem";
+            autoDockAssetEditorsToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
+            autoDockAssetEditorsToolStripMenuItem.Text = "Auto-dock new editors";
+            autoDockAssetEditorsToolStripMenuItem.ToolTipText = "Automatically docks asset editors when they are opened.";
+            autoDockAssetEditorsToolStripMenuItem.Click += autoDockAssetEditorsToolStripMenuItem_Click;
+            // 
+            // autoDockSelectedAssetEditorsToolStripMenuItem
+            // 
+            autoDockSelectedAssetEditorsToolStripMenuItem.Name = "autoDockSelectedAssetEditorsToolStripMenuItem";
+            autoDockSelectedAssetEditorsToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
+            autoDockSelectedAssetEditorsToolStripMenuItem.Text = "Auto-open editor on selection";
+            autoDockSelectedAssetEditorsToolStripMenuItem.ToolTipText = "When an asset is selected, automatically opens its editor in the docked area and closes any existing docked editors.";
+            autoDockSelectedAssetEditorsToolStripMenuItem.Click += autoDockSelectedAssetEditorsToolStripMenuItem_Click;
             // 
             // enableAssetToolButtonsToolStripMenuItem
             // 
@@ -1061,7 +1089,7 @@ namespace IndustrialPark
             // renderPanel
             // 
             renderPanel.Dock = DockStyle.Fill;
-            renderPanel.Location = new System.Drawing.Point(0, 46);
+            renderPanel.Location = new System.Drawing.Point(0, 0);
             renderPanel.Name = "renderPanel";
             renderPanel.Size = new System.Drawing.Size(1264, 613);
             renderPanel.TabIndex = 1;
@@ -1243,20 +1271,6 @@ namespace IndustrialPark
             toolStripDropDownButtonShowTypes.ToolTipText = "Choose which asset types appear in the toolbar";
             toolStripDropDownButtonShowTypes.DropDownOpening += toolStripDropDownButtonShowTypes_DropDownOpening;
             // 
-            // toolStripSeparatorEditing
-            // 
-            toolStripSeparatorEditing.Name = "toolStripSeparatorEditing";
-            toolStripSeparatorEditing.Size = new System.Drawing.Size(6, 25);
-            // 
-            // toolStripButtonDropToGround
-            // 
-            toolStripButtonDropToGround.Image = Properties.Resources.icon_drop;
-            toolStripButtonDropToGround.Name = "toolStripButtonDropToGround";
-            toolStripButtonDropToGround.Size = new System.Drawing.Size(110, 22);
-            toolStripButtonDropToGround.Text = "Drop to Ground";
-            toolStripButtonDropToGround.ToolTipText = "Drop the selected assets onto the surface below them (Ctrl+J)";
-            toolStripButtonDropToGround.Click += toolStripButtonDropToGround_Click;
-            // 
             // toolStripSeparatorView
             // 
             toolStripSeparatorView.Name = "toolStripSeparatorView";
@@ -1279,6 +1293,20 @@ namespace IndustrialPark
             toolStripButtonLightKit.Text = "Light Kit";
             toolStripButtonLightKit.ToolTipText = "Toggle light kit rendering (L)";
             toolStripButtonLightKit.Click += toolStripButtonLightKit_Click;
+            // 
+            // toolStripSeparatorEditing
+            // 
+            toolStripSeparatorEditing.Name = "toolStripSeparatorEditing";
+            toolStripSeparatorEditing.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonDropToGround
+            // 
+            toolStripButtonDropToGround.Image = Properties.Resources.icon_drop;
+            toolStripButtonDropToGround.Name = "toolStripButtonDropToGround";
+            toolStripButtonDropToGround.Size = new System.Drawing.Size(110, 22);
+            toolStripButtonDropToGround.Text = "Drop to Ground";
+            toolStripButtonDropToGround.ToolTipText = "Drop the selected assets onto the surface below them (Ctrl+J)";
+            toolStripButtonDropToGround.Click += toolStripButtonDropToGround_Click;
             // 
             // contextMenuStripMain
             // 
@@ -1344,13 +1372,61 @@ namespace IndustrialPark
             toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
             toolStripComboBoxUserTemplate.SelectedIndexChanged += toolStripComboBoxUserTemplate_SelectedIndexChanged;
             // 
+            // splitContainer1
+            // 
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.FixedPanel = FixedPanel.Panel1;
+            splitContainer1.Location = new System.Drawing.Point(0, 46);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Panel1Collapsed = true;
+            splitContainer1.Panel1MinSize = 300;
+            // 
+            // splitContainer1.Panel2
+            // 
+            splitContainer1.Panel2.Controls.Add(splitContainer2);
+            splitContainer1.Panel2MinSize = 300;
+            splitContainer1.Size = new System.Drawing.Size(1264, 613);
+            splitContainer1.SplitterDistance = 421;
+            splitContainer1.TabIndex = 5;
+            // 
+            // splitContainer2
+            // 
+            splitContainer2.Dock = DockStyle.Fill;
+            splitContainer2.FixedPanel = FixedPanel.Panel2;
+            splitContainer2.Location = new System.Drawing.Point(0, 0);
+            splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            splitContainer2.Panel1.Controls.Add(renderPanel);
+            splitContainer2.Panel1MinSize = 300;
+            // 
+            // splitContainer2.Panel2
+            // 
+            splitContainer2.Panel2.Controls.Add(tabControlRight);
+            splitContainer2.Panel2Collapsed = true;
+            splitContainer2.Panel2MinSize = 300;
+            splitContainer2.Size = new System.Drawing.Size(1264, 613);
+            splitContainer2.SplitterDistance = 300;
+            splitContainer2.TabIndex = 0;
+            // 
+            // tabControlRight
+            // 
+            tabControlRight.Dock = DockStyle.Fill;
+            tabControlRight.Location = new System.Drawing.Point(0, 0);
+            tabControlRight.Name = "tabControlRight";
+            tabControlRight.SelectedIndex = 0;
+            tabControlRight.Size = new System.Drawing.Size(96, 100);
+            tabControlRight.TabIndex = 0;
+            tabControlRight.MouseClick += tabControl1_MouseClick;
+            // 
             // MainForm
             // 
             AllowDrop = true;
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1264, 681);
-            Controls.Add(renderPanel);
+            Controls.Add(splitContainer1);
             Controls.Add(toolStripMain);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
@@ -1377,6 +1453,13 @@ namespace IndustrialPark
             toolStripMain.ResumeLayout(false);
             toolStripMain.PerformLayout();
             contextMenuStripMain.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            splitContainer2.Panel1.ResumeLayout(false);
+            splitContainer2.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer2).EndInit();
+            splitContainer2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
 
@@ -1542,6 +1625,11 @@ namespace IndustrialPark
         private ToolStripButton toolStripButtonLightKit;
         private ToolStripSeparator toolStripSeparatorToolbar;
         private ToolStripMenuItem showToolbarToolStripMenuItem;
+        private SplitContainer splitContainer1;
+        private SplitContainer splitContainer2;
+        private TabControl tabControlRight;
+        private ToolStripMenuItem autoDockAssetEditorsToolStripMenuItem;
+        private ToolStripMenuItem autoDockSelectedAssetEditorsToolStripMenuItem;
     }
 }
 

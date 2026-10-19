@@ -1577,15 +1577,24 @@ namespace IndustrialPark
         {
             ClearSelectedAssets();
 
+            bool any = false;
             foreach (uint assetID in assetIDs)
             {
                 if (!assetDictionary.TryGetValue(assetID, out Asset asset))
                     continue;
-
+                any = true;
                 asset.isSelected = true;
                 CurrentlySelectedAssets.Add(asset);
                 if (asset is AssetRWTX)
                     TextureManager.SelectedTextures.Add(asset.assetName.Replace(".rw3", "", StringComparison.InvariantCultureIgnoreCase));
+            }
+
+            if (AutoDockSelectedAssetEditors && any)
+            {
+                Program.MainForm.ClearDockedAssetEditors();
+                OpenInternalEditor(assetIDs.Where(u => !internalEditors.Any(ie => ie.GetAssetID() == u)), true, null, archiveEditor.UpdateCurrentListView, true);
+                foreach (var item in internalEditors.Where(ie => assetIDs.Any(u => u == ie.GetAssetID())))
+                    item.Activate();
             }
         }
 
