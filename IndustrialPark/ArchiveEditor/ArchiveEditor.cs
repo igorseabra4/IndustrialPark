@@ -25,6 +25,11 @@ namespace IndustrialPark
             set => comboBoxLayers.SelectedIndex = value;
         }
 
+        /// <summary>
+        /// Raised when Template Focus or the selected layer changes, so the main window toolbar can update.
+        /// </summary>
+        public event Action<ArchiveEditor> ToolbarStateChanged;
+
         public ArchiveEditor(string filePath, Platform scoobyPlatform)
         {
             InitializeComponent();
@@ -35,6 +40,9 @@ namespace IndustrialPark
 
             textBoxFindAsset.Location = new System.Drawing.Point(256, 14);
             textBoxFindAsset.Size = new Size(260, 21);
+
+            comboBoxLayers.SelectedIndexChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
+            checkBoxTemplateFocus.CheckedChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
 
             archive = new ArchiveEditorFunctions(this);
 
@@ -294,6 +302,25 @@ namespace IndustrialPark
                 new Thread(archive.Save).Start();
 
             _updateFilesizeStatusBarItem();
+        }
+
+        /// <summary>
+        /// Saves on the calling thread (unlike Save, which writes the file in the background).
+        /// </summary>
+        /// <returns>Whether the archive is saved</returns>
+        public bool SaveAndWait()
+        {
+            SoundUtility_vgmstream.StopSound();
+
+            if (archive.currentlyOpenFilePath == null)
+                saveAsToolStripMenuItem_Click(null, null);
+            else
+            {
+                archive.Save();
+                _updateFilesizeStatusBarItem();
+            }
+
+            return !archive.UnsavedChanges;
         }
 
         private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1472,10 +1499,17 @@ namespace IndustrialPark
             checkBoxTemplateFocus.Checked = false;
         }
 
-        private void checkBoxTemplateFocus_Click(object sender, EventArgs e)
+        public void SetTemplateFocus()
         {
             Program.MainForm.ClearTemplateFocus();
             checkBoxTemplateFocus.Checked = true;
+        }
+
+        public IEnumerable<string> LayerNames => comboBoxLayers.Items.Cast<object>().Select(o => o.ToString());
+
+        private void checkBoxTemplateFocus_Click(object sender, EventArgs e)
+        {
+            SetTemplateFocus();
         }
 
         private void hideButtonsToolStripMenuItem_Click(object sender, EventArgs e)

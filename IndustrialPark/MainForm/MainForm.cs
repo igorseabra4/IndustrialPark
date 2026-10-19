@@ -42,6 +42,8 @@ namespace IndustrialPark
             templateButtons = ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
 
             renderer = new SharpRenderer(renderPanel);
+
+            SetupToolbar();
         }
 
         public void UpdateTitleBar()
@@ -175,6 +177,10 @@ namespace IndustrialPark
             hideInvisibleMeshesToolStripMenuItem.Checked = settings.dontDrawInvisible;
             RenderWareModelFile.dontDrawInvisible = settings.dontDrawInvisible;
 
+            SetToolbarVisible(settings.showToolbar);
+            if (settings.toolbarAssetTypes != null)
+                SetToolbarAssetTypes(ParseToolbarAssetTypes(settings.toolbarAssetTypes));
+
             templatesPersistentShiniesToolStripMenuItem.Checked = settings.persistentShinies;
             ArchiveEditorFunctions.persistentShinies = settings.persistentShinies;
 
@@ -271,6 +277,8 @@ namespace IndustrialPark
                 drawMvptsAsPoints = AssetMVPT.DrawAllAsPoints,
                 discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
                 dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
+                showToolbar = showToolbarToolStripMenuItem.Checked,
+                toolbarAssetTypes = toolbarAssetTypes.Select(t => t.ToString()).ToArray(),
                 persistentShinies = ArchiveEditorFunctions.persistentShinies,
                 LegacyAssetIDFormat = HexUIntTypeConverter.Legacy,
                 LegacyAssetTypeFormat = AssetTypeContainer.LegacyAssetNameFormat,
@@ -536,6 +544,7 @@ namespace IndustrialPark
                 renderer.device.SetNormalCullMode(CullMode.Back);
 
             wireframeFToolStripMenuItem.Checked = project.Wireframe;
+            toolStripButtonWireframe.Checked = project.Wireframe;
             if (wireframeFToolStripMenuItem.Checked)
                 renderer.device.SetNormalFillMode(FillMode.Wireframe);
             else
@@ -559,6 +568,8 @@ namespace IndustrialPark
                     assetViewToolStripMenuItems[i].Checked = !value;
                     assetViewTypes[type].GetField("dontRender").SetValue(null, value);
                 }
+
+            UpdateToolbarVisibilityButtons();
 
             fogToolStripMenuItem.Checked = project.FogRender;
             AssetFOG.DontRender = !project.FogRender;
@@ -912,9 +923,11 @@ namespace IndustrialPark
             ae.archive.ChangesMade += UpdateTitleBar;
             ae.archive.CurrentlySelectedAssets.CollectionChanged += UpdateSelectedAssetStatusBarItem;
             ae.EditorUpdate += EditorUpdate;
+            ae.ToolbarStateChanged += ArchiveEditor_ToolbarStateChanged;
             UpdateTitleBar();
             SetupAssetVisibilityButtons();
             closeAllEditorsToolStripMenuItem.Enabled = true;
+            UpdateToolbarArchives();
 
             ae.Show(this);
 
@@ -935,6 +948,7 @@ namespace IndustrialPark
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
         {
             archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 5].Text = newName;
+            UpdateToolbarArchives();
         }
 
         public void SetRecentOpenedArchives(string filepath)
@@ -965,6 +979,7 @@ namespace IndustrialPark
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 5);
             archiveEditors.RemoveAt(index);
             Program.UndoBuffer.RemoveActionsOfArchive(sender.archive);
+            UpdateToolbarArchives();
         }
 
         public void SetCloseAllArchivesEnabled(bool enabled)
@@ -1012,6 +1027,7 @@ namespace IndustrialPark
         {
             wireframeFToolStripMenuItem.Checked = !wireframeFToolStripMenuItem.Checked;
             renderer.device.SetNormalFillMode(wireframeFToolStripMenuItem.Checked ? FillMode.Wireframe : FillMode.Solid);
+            toolStripButtonWireframe.Checked = wireframeFToolStripMenuItem.Checked;
         }
 
         private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -1278,6 +1294,7 @@ namespace IndustrialPark
             useLegacyAssetTypeFormatToolStripMenuItem.Checked = !useLegacyAssetTypeFormatToolStripMenuItem.Checked;
             AssetTypeContainer.LegacyAssetNameFormat = useLegacyAssetTypeFormatToolStripMenuItem.Checked;
             SetupAssetVisibilityButtons();
+            UpdateToolbarVisibilityButtons();
             foreach (var ae in archiveEditors)
                 ae.PopulateAssetListAndComboBox();
         }
@@ -1308,6 +1325,8 @@ namespace IndustrialPark
 
         private void ShowDropDowns()
         {
+            UpdateToolbarVisibilityButtons();
+
             if (autoShowDropDowns)
                 BeginInvoke(() =>
                 {
@@ -1468,6 +1487,7 @@ namespace IndustrialPark
                 var field = assetType.GetField("dontRender");
                 field.SetValue(null, false);
             }
+            UpdateToolbarVisibilityButtons();
         }
 
         private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1708,6 +1728,7 @@ namespace IndustrialPark
             rotationToolStripMenuItem.Checked = outMode == GizmoMode.Rotation;
             scaleToolStripMenuItem.Checked = outMode == GizmoMode.Scale;
             positionLocalToolStripMenuItem.Checked = outMode == GizmoMode.PositionLocal;
+            UpdateToolbarGizmoButtons(outMode);
         }
 
         private void positionToolStripMenuItem_Click(object sender, EventArgs e)
