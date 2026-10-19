@@ -23,6 +23,8 @@ namespace IndustrialPark
         public bool discordRichPresence = true;
         public bool dontDrawInvisible = false;
         public bool drawMvptsAsPoints = false;
+        public bool showToolbar = true;
+        public string[] toolbarAssetTypes; // AssetType names; null uses the default set
 
         public bool persistentShinies = true;
 

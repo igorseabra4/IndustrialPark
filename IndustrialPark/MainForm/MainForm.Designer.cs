@@ -112,6 +112,8 @@ namespace IndustrialPark
             usePIPTForRenderingToolStripMenuItem = new ToolStripMenuItem();
             drawOnlyFirstMINFReferenceToolStripMenuItem = new ToolStripMenuItem();
             allMovePointsArePointsToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparatorToolbar = new ToolStripSeparator();
+            showToolbarToolStripMenuItem = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             saveAllOpenHIPsToolStripMenuItem = new ToolStripMenuItem();
             runGameF5ToolStripMenuItem = new ToolStripMenuItem();
@@ -147,6 +149,32 @@ namespace IndustrialPark
             toolStripStatusLabel4 = new ToolStripStatusLabel();
             toolStripStatusLabelNumSelected = new ToolStripStatusLabel();
             renderPanel = new Panel();
+            toolStripMain = new ToolStrip();
+            toolStripButtonUndo = new ToolStripButton();
+            toolStripButtonRedo = new ToolStripButton();
+            toolStripSeparatorUndo = new ToolStripSeparator();
+            toolStripButtonSaveAll = new ToolStripButton();
+            toolStripButtonSaveAllAndRun = new ToolStripButton();
+            toolStripButtonRunGame = new ToolStripButton();
+            toolStripSeparatorRun = new ToolStripSeparator();
+            toolStripLabelArchive = new ToolStripLabel();
+            toolStripComboBoxArchive = new ToolStripComboBox();
+            toolStripLabelLayer = new ToolStripLabel();
+            toolStripComboBoxLayer = new ToolStripComboBox();
+            toolStripSeparatorGizmos = new ToolStripSeparator();
+            toolStripLabelGizmo = new ToolStripLabel();
+            toolStripButtonGizmoPosition = new ToolStripButton();
+            toolStripButtonGizmoRotation = new ToolStripButton();
+            toolStripButtonGizmoScale = new ToolStripButton();
+            toolStripButtonGizmoPositionLocal = new ToolStripButton();
+            toolStripSeparatorVisibility = new ToolStripSeparator();
+            toolStripLabelShow = new ToolStripLabel();
+            toolStripDropDownButtonShowTypes = new ToolStripDropDownButton();
+            toolStripSeparatorEditing = new ToolStripSeparator();
+            toolStripButtonDropToGround = new ToolStripButton();
+            toolStripSeparatorView = new ToolStripSeparator();
+            toolStripButtonWireframe = new ToolStripButton();
+            toolStripButtonLightKit = new ToolStripButton();
             contextMenuStripMain = new ContextMenuStrip(components);
             gizmoToolStripMenuItem = new ToolStripMenuItem();
             positionToolStripMenuItem = new ToolStripMenuItem();
@@ -158,6 +186,7 @@ namespace IndustrialPark
             toolStripComboBoxUserTemplate = new ToolStripComboBox();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
+            toolStripMain.SuspendLayout();
             contextMenuStripMain.SuspendLayout();
             SuspendLayout();
             // 
@@ -485,7 +514,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, allMovePointsArePointsToolStripMenuItem });
+            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, allMovePointsArePointsToolStripMenuItem, toolStripSeparatorToolbar, showToolbarToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             displayToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
             displayToolStripMenuItem.Text = "&Display";
@@ -778,6 +807,20 @@ namespace IndustrialPark
             allMovePointsArePointsToolStripMenuItem.ToolTipText = resources.GetString("allMovePointsArePointsToolStripMenuItem.ToolTipText");
             allMovePointsArePointsToolStripMenuItem.Click += allMovePointsArePointsToolStripMenuItem_Click;
             // 
+            // toolStripSeparatorToolbar
+            // 
+            toolStripSeparatorToolbar.Name = "toolStripSeparatorToolbar";
+            toolStripSeparatorToolbar.Size = new System.Drawing.Size(241, 6);
+            // 
+            // showToolbarToolStripMenuItem
+            // 
+            showToolbarToolStripMenuItem.Checked = true;
+            showToolbarToolStripMenuItem.CheckState = CheckState.Checked;
+            showToolbarToolStripMenuItem.Name = "showToolbarToolStripMenuItem";
+            showToolbarToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            showToolbarToolStripMenuItem.Text = "Show Toolbar";
+            showToolbarToolStripMenuItem.Click += showToolbarToolStripMenuItem_Click;
+            // 
             // toolsToolStripMenuItem
             // 
             toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, runGameF5ToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, createGameCubeBannerToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem });
@@ -1018,9 +1061,9 @@ namespace IndustrialPark
             // renderPanel
             // 
             renderPanel.Dock = DockStyle.Fill;
-            renderPanel.Location = new System.Drawing.Point(0, 21);
+            renderPanel.Location = new System.Drawing.Point(0, 46);
             renderPanel.Name = "renderPanel";
-            renderPanel.Size = new System.Drawing.Size(1264, 638);
+            renderPanel.Size = new System.Drawing.Size(1264, 613);
             renderPanel.TabIndex = 1;
             renderPanel.MouseClick += renderPanel_MouseClick;
             renderPanel.MouseDown += renderPanel_MouseDown;
@@ -1028,6 +1071,214 @@ namespace IndustrialPark
             renderPanel.MouseMove += renderPanel_MouseMove;
             renderPanel.MouseUp += renderPanel_MouseUp;
             renderPanel.Resize += ResetMouseCenter;
+            // 
+            // toolStripMain
+            // 
+            toolStripMain.GripStyle = ToolStripGripStyle.Hidden;
+            toolStripMain.Items.AddRange(new ToolStripItem[] { toolStripButtonUndo, toolStripButtonRedo, toolStripSeparatorUndo, toolStripButtonSaveAll, toolStripButtonSaveAllAndRun, toolStripButtonRunGame, toolStripSeparatorRun, toolStripLabelArchive, toolStripComboBoxArchive, toolStripLabelLayer, toolStripComboBoxLayer, toolStripSeparatorGizmos, toolStripLabelGizmo, toolStripButtonGizmoPosition, toolStripButtonGizmoRotation, toolStripButtonGizmoScale, toolStripButtonGizmoPositionLocal, toolStripSeparatorVisibility, toolStripLabelShow, toolStripDropDownButtonShowTypes, toolStripSeparatorView, toolStripButtonWireframe, toolStripButtonLightKit, toolStripSeparatorEditing, toolStripButtonDropToGround });
+            toolStripMain.Location = new System.Drawing.Point(0, 21);
+            toolStripMain.Name = "toolStripMain";
+            toolStripMain.Size = new System.Drawing.Size(1264, 25);
+            toolStripMain.TabIndex = 4;
+            toolStripMain.Text = "toolStripMain";
+            // 
+            // toolStripButtonUndo
+            // 
+            toolStripButtonUndo.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonUndo.Image = Properties.Resources.icon_undo;
+            toolStripButtonUndo.Name = "toolStripButtonUndo";
+            toolStripButtonUndo.Size = new System.Drawing.Size(23, 22);
+            toolStripButtonUndo.Text = "Undo";
+            toolStripButtonUndo.ToolTipText = "Undo (Ctrl+Z)";
+            toolStripButtonUndo.Click += toolStripButtonUndo_Click;
+            // 
+            // toolStripButtonRedo
+            // 
+            toolStripButtonRedo.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonRedo.Image = Properties.Resources.icon_redo;
+            toolStripButtonRedo.Name = "toolStripButtonRedo";
+            toolStripButtonRedo.Size = new System.Drawing.Size(23, 22);
+            toolStripButtonRedo.Text = "Redo";
+            toolStripButtonRedo.ToolTipText = "Redo (Ctrl+Y)";
+            toolStripButtonRedo.Click += toolStripButtonRedo_Click;
+            // 
+            // toolStripSeparatorUndo
+            // 
+            toolStripSeparatorUndo.Name = "toolStripSeparatorUndo";
+            toolStripSeparatorUndo.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonSaveAll
+            // 
+            toolStripButtonSaveAll.Image = Properties.Resources.icon_save;
+            toolStripButtonSaveAll.Name = "toolStripButtonSaveAll";
+            toolStripButtonSaveAll.Size = new System.Drawing.Size(68, 22);
+            toolStripButtonSaveAll.Text = "Save All";
+            toolStripButtonSaveAll.ToolTipText = "Save all archives with unsaved changes (F4)";
+            toolStripButtonSaveAll.Click += toolStripButtonSaveAll_Click;
+            // 
+            // toolStripButtonSaveAllAndRun
+            // 
+            toolStripButtonSaveAllAndRun.Image = Properties.Resources.icon_play_2;
+            toolStripButtonSaveAllAndRun.Name = "toolStripButtonSaveAllAndRun";
+            toolStripButtonSaveAllAndRun.Size = new System.Drawing.Size(105, 22);
+            toolStripButtonSaveAllAndRun.Text = "Save All && Run";
+            toolStripButtonSaveAllAndRun.ToolTipText = "Save all archives with unsaved changes, then run the game";
+            toolStripButtonSaveAllAndRun.Click += toolStripButtonSaveAllAndRun_Click;
+            // 
+            // toolStripButtonRunGame
+            // 
+            toolStripButtonRunGame.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripButtonRunGame.Image = Properties.Resources.icon_play;
+            toolStripButtonRunGame.Name = "toolStripButtonRunGame";
+            toolStripButtonRunGame.Size = new System.Drawing.Size(23, 22);
+            toolStripButtonRunGame.Text = "Run Game";
+            toolStripButtonRunGame.ToolTipText = "Run the game (F5)";
+            toolStripButtonRunGame.Click += toolStripButtonRunGame_Click;
+            // 
+            // toolStripSeparatorRun
+            // 
+            toolStripSeparatorRun.Name = "toolStripSeparatorRun";
+            toolStripSeparatorRun.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabelArchive
+            // 
+            toolStripLabelArchive.Name = "toolStripLabelArchive";
+            toolStripLabelArchive.Size = new System.Drawing.Size(50, 22);
+            toolStripLabelArchive.Text = "Archive:";
+            // 
+            // toolStripComboBoxArchive
+            // 
+            toolStripComboBoxArchive.DropDownStyle = ComboBoxStyle.DropDownList;
+            toolStripComboBoxArchive.FlatStyle = FlatStyle.Standard;
+            toolStripComboBoxArchive.Name = "toolStripComboBoxArchive";
+            toolStripComboBoxArchive.Size = new System.Drawing.Size(160, 25);
+            toolStripComboBoxArchive.ToolTipText = "Active archive (Template Focus): templates are placed here";
+            toolStripComboBoxArchive.DropDownClosed += toolStripComboBox_DropDownClosed;
+            toolStripComboBoxArchive.SelectedIndexChanged += toolStripComboBoxArchive_SelectedIndexChanged;
+            // 
+            // toolStripLabelLayer
+            // 
+            toolStripLabelLayer.Name = "toolStripLabelLayer";
+            toolStripLabelLayer.Size = new System.Drawing.Size(38, 22);
+            toolStripLabelLayer.Text = "Layer:";
+            // 
+            // toolStripComboBoxLayer
+            // 
+            toolStripComboBoxLayer.DropDownStyle = ComboBoxStyle.DropDownList;
+            toolStripComboBoxLayer.FlatStyle = FlatStyle.Standard;
+            toolStripComboBoxLayer.Name = "toolStripComboBoxLayer";
+            toolStripComboBoxLayer.Size = new System.Drawing.Size(200, 25);
+            toolStripComboBoxLayer.ToolTipText = "Active layer of the active archive: templates are placed here";
+            toolStripComboBoxLayer.DropDown += toolStripComboBoxLayer_DropDown;
+            toolStripComboBoxLayer.DropDownClosed += toolStripComboBox_DropDownClosed;
+            toolStripComboBoxLayer.SelectedIndexChanged += toolStripComboBoxLayer_SelectedIndexChanged;
+            // 
+            // toolStripSeparatorGizmos
+            // 
+            toolStripSeparatorGizmos.Name = "toolStripSeparatorGizmos";
+            toolStripSeparatorGizmos.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabelGizmo
+            // 
+            toolStripLabelGizmo.Image = Properties.Resources.icon_gizmo;
+            toolStripLabelGizmo.Name = "toolStripLabelGizmo";
+            toolStripLabelGizmo.Size = new System.Drawing.Size(16, 22);
+            toolStripLabelGizmo.ToolTipText = "Gizmo";
+            // 
+            // toolStripButtonGizmoPosition
+            // 
+            toolStripButtonGizmoPosition.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButtonGizmoPosition.Name = "toolStripButtonGizmoPosition";
+            toolStripButtonGizmoPosition.Size = new System.Drawing.Size(41, 22);
+            toolStripButtonGizmoPosition.Text = "Move";
+            toolStripButtonGizmoPosition.ToolTipText = "Position gizmo (V to cycle)";
+            toolStripButtonGizmoPosition.Click += toolStripButtonGizmoPosition_Click;
+            // 
+            // toolStripButtonGizmoRotation
+            // 
+            toolStripButtonGizmoRotation.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButtonGizmoRotation.Name = "toolStripButtonGizmoRotation";
+            toolStripButtonGizmoRotation.Size = new System.Drawing.Size(45, 22);
+            toolStripButtonGizmoRotation.Text = "Rotate";
+            toolStripButtonGizmoRotation.ToolTipText = "Rotation gizmo (V to cycle)";
+            toolStripButtonGizmoRotation.Click += toolStripButtonGizmoRotation_Click;
+            // 
+            // toolStripButtonGizmoScale
+            // 
+            toolStripButtonGizmoScale.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButtonGizmoScale.Name = "toolStripButtonGizmoScale";
+            toolStripButtonGizmoScale.Size = new System.Drawing.Size(38, 22);
+            toolStripButtonGizmoScale.Text = "Scale";
+            toolStripButtonGizmoScale.ToolTipText = "Scale gizmo (V to cycle)";
+            toolStripButtonGizmoScale.Click += toolStripButtonGizmoScale_Click;
+            // 
+            // toolStripButtonGizmoPositionLocal
+            // 
+            toolStripButtonGizmoPositionLocal.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            toolStripButtonGizmoPositionLocal.Name = "toolStripButtonGizmoPositionLocal";
+            toolStripButtonGizmoPositionLocal.Size = new System.Drawing.Size(72, 22);
+            toolStripButtonGizmoPositionLocal.Text = "Local Move";
+            toolStripButtonGizmoPositionLocal.ToolTipText = "Position gizmo in the asset's local space (V to cycle)";
+            toolStripButtonGizmoPositionLocal.Click += toolStripButtonGizmoPositionLocal_Click;
+            // 
+            // toolStripSeparatorVisibility
+            // 
+            toolStripSeparatorVisibility.Name = "toolStripSeparatorVisibility";
+            toolStripSeparatorVisibility.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripLabelShow
+            // 
+            toolStripLabelShow.DisplayStyle = ToolStripItemDisplayStyle.Image;
+            toolStripLabelShow.Image = Properties.Resources.icon_showhide;
+            toolStripLabelShow.Name = "toolStripLabelShow";
+            toolStripLabelShow.Size = new System.Drawing.Size(16, 22);
+            toolStripLabelShow.Text = "Show:";
+            // 
+            // toolStripDropDownButtonShowTypes
+            // 
+            toolStripDropDownButtonShowTypes.DisplayStyle = ToolStripItemDisplayStyle.None;
+            toolStripDropDownButtonShowTypes.Name = "toolStripDropDownButtonShowTypes";
+            toolStripDropDownButtonShowTypes.Size = new System.Drawing.Size(13, 22);
+            toolStripDropDownButtonShowTypes.Text = "Choose asset types";
+            toolStripDropDownButtonShowTypes.ToolTipText = "Choose which asset types appear in the toolbar";
+            toolStripDropDownButtonShowTypes.DropDownOpening += toolStripDropDownButtonShowTypes_DropDownOpening;
+            // 
+            // toolStripSeparatorEditing
+            // 
+            toolStripSeparatorEditing.Name = "toolStripSeparatorEditing";
+            toolStripSeparatorEditing.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonDropToGround
+            // 
+            toolStripButtonDropToGround.Image = Properties.Resources.icon_drop;
+            toolStripButtonDropToGround.Name = "toolStripButtonDropToGround";
+            toolStripButtonDropToGround.Size = new System.Drawing.Size(110, 22);
+            toolStripButtonDropToGround.Text = "Drop to Ground";
+            toolStripButtonDropToGround.ToolTipText = "Drop the selected assets onto the surface below them (Ctrl+J)";
+            toolStripButtonDropToGround.Click += toolStripButtonDropToGround_Click;
+            // 
+            // toolStripSeparatorView
+            // 
+            toolStripSeparatorView.Name = "toolStripSeparatorView";
+            toolStripSeparatorView.Size = new System.Drawing.Size(6, 25);
+            // 
+            // toolStripButtonWireframe
+            // 
+            toolStripButtonWireframe.Image = Properties.Resources.icon_wireframe;
+            toolStripButtonWireframe.Name = "toolStripButtonWireframe";
+            toolStripButtonWireframe.Size = new System.Drawing.Size(82, 22);
+            toolStripButtonWireframe.Text = "Wireframe";
+            toolStripButtonWireframe.ToolTipText = "Toggle wireframe rendering (Y)";
+            toolStripButtonWireframe.Click += toolStripButtonWireframe_Click;
+            // 
+            // toolStripButtonLightKit
+            // 
+            toolStripButtonLightKit.Image = Properties.Resources.icon_sun;
+            toolStripButtonLightKit.Name = "toolStripButtonLightKit";
+            toolStripButtonLightKit.Size = new System.Drawing.Size(71, 22);
+            toolStripButtonLightKit.Text = "Light Kit";
+            toolStripButtonLightKit.ToolTipText = "Toggle light kit rendering (L)";
+            toolStripButtonLightKit.Click += toolStripButtonLightKit_Click;
             // 
             // contextMenuStripMain
             // 
@@ -1100,6 +1351,7 @@ namespace IndustrialPark
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(1264, 681);
             Controls.Add(renderPanel);
+            Controls.Add(toolStripMain);
             Controls.Add(statusStrip1);
             Controls.Add(menuStrip1);
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
@@ -1122,6 +1374,8 @@ namespace IndustrialPark
             menuStrip1.PerformLayout();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
+            toolStripMain.ResumeLayout(false);
+            toolStripMain.PerformLayout();
             contextMenuStripMain.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
@@ -1260,6 +1514,34 @@ namespace IndustrialPark
         private ToolStripMenuItem viewControlsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator7;
         private ToolStripMenuItem allMovePointsArePointsToolStripMenuItem;
+        private ToolStrip toolStripMain;
+        private ToolStripButton toolStripButtonUndo;
+        private ToolStripButton toolStripButtonRedo;
+        private ToolStripSeparator toolStripSeparatorUndo;
+        private ToolStripButton toolStripButtonSaveAll;
+        private ToolStripButton toolStripButtonSaveAllAndRun;
+        private ToolStripButton toolStripButtonRunGame;
+        private ToolStripSeparator toolStripSeparatorRun;
+        private ToolStripLabel toolStripLabelArchive;
+        private ToolStripComboBox toolStripComboBoxArchive;
+        private ToolStripLabel toolStripLabelLayer;
+        private ToolStripComboBox toolStripComboBoxLayer;
+        private ToolStripSeparator toolStripSeparatorGizmos;
+        private ToolStripLabel toolStripLabelGizmo;
+        private ToolStripButton toolStripButtonGizmoPosition;
+        private ToolStripButton toolStripButtonGizmoRotation;
+        private ToolStripButton toolStripButtonGizmoScale;
+        private ToolStripButton toolStripButtonGizmoPositionLocal;
+        private ToolStripSeparator toolStripSeparatorVisibility;
+        private ToolStripLabel toolStripLabelShow;
+        private ToolStripDropDownButton toolStripDropDownButtonShowTypes;
+        private ToolStripSeparator toolStripSeparatorEditing;
+        private ToolStripButton toolStripButtonDropToGround;
+        private ToolStripSeparator toolStripSeparatorView;
+        private ToolStripButton toolStripButtonWireframe;
+        private ToolStripButton toolStripButtonLightKit;
+        private ToolStripSeparator toolStripSeparatorToolbar;
+        private ToolStripMenuItem showToolbarToolStripMenuItem;
     }
 }
 
