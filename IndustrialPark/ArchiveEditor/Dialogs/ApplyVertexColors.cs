@@ -13,7 +13,6 @@ namespace IndustrialPark
         public ApplyVertexColors()
         {
             InitializeComponent();
-            TopMost = true;
 
             numericUpDownX.Minimum = decimal.MinValue;
             numericUpDownY.Minimum = decimal.MinValue;

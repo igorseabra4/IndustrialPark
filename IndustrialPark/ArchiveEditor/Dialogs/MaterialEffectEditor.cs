@@ -12,7 +12,6 @@ namespace IndustrialPark
         private MaterialEffectEditor(Material_0007[] materials)
         {
             InitializeComponent();
-            TopMost = true;
 
             foreach (var m in materials)
                 listBoxMaterials.Items.Add(m);

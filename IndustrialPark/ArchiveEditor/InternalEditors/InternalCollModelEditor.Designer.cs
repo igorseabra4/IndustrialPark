@@ -166,7 +166,6 @@
             this.Name = "InternalCollModelEditor";
             this.ShowIcon = false;
             this.Text = "Collision Model";
-            this.TopMost = true;
             this.groupBoxCollTree.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBoxStats.ResumeLayout(false);

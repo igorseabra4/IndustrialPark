@@ -15,7 +15,6 @@ namespace IndustrialPark
         public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
-            TopMost = true;
 
             this.asset = asset;
             this.archive = archive;

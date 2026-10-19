@@ -207,7 +207,7 @@ namespace IndustrialPark.Randomizer
             }
 
             ProgressBar progressBar = new ProgressBar("Randomizing...");
-            progressBar.Show();
+            progressBar.Show(this);
 
             Enabled = false;
             new Thread(new ThreadStart(() =>

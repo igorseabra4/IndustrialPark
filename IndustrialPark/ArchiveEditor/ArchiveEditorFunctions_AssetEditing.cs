@@ -91,7 +91,7 @@ namespace IndustrialPark
                 editor.StartPosition = FormStartPosition.Manual;
                 editor.Location = new System.Drawing.Point(Math.Max(0, location.Value.X - editor.Size.Width / 2), Math.Max(0, location.Value.Y - editor.Size.Height / 2));
             }
-            editor.Show();
+            editor.Show(Program.MainForm);
         }
 
         private InternalEditor CreateInternalEditor(Asset asset, Action<Asset> updateListView)
@@ -139,17 +139,7 @@ namespace IndustrialPark
                 editor.Location = new System.Drawing.Point(Math.Max(0, location.Value.X - editor.Size.Width / 2), Math.Max(0, location.Value.Y - editor.Size.Height / 2));
             }
             multiInternalEditors.Add(editor);
-            editor.Show();
-        }
-
-        public void SetAllTopMost(bool value)
-        {
-            foreach (var ie in internalEditors)
-            {
-                ie.TopMost = value;
-                foreach (var form in ie.OwnedForms)
-                    form.TopMost = value;
-            }
+            editor.Show(Program.MainForm);
         }
 
         public void SetAllOpacity()
@@ -611,7 +601,7 @@ namespace IndustrialPark
 
             ProgressBar progressBar = new ProgressBar("Verify Archive");
             progressBar.SetProgressBar(0, assetDictionary.Values.Count + 1, 1);
-            progressBar.Show();
+            progressBar.Show(this.GetArchiveEditor());
 
             List<Asset> ordered = assetDictionary.Values.OrderBy(f => f.assetName).ToList();
             ordered = ordered.OrderBy(f => f.assetType.ToString()).ToList();

@@ -30,7 +30,6 @@ namespace IndustrialPark
         private NewArchive()
         {
             InitializeComponent();
-            TopMost = true;
 
             comboBoxGame.Items.Add("Scooby-Doo: Night Of 100 Frights");
             comboBoxGame.Items.Add("Spongebob Squarepants: Battle For Bikini Bottom");

@@ -6,17 +6,17 @@ namespace IndustrialPark
     {
         public static DialogResult Show(string text)
         {
-            return System.Windows.Forms.MessageBox.Show(new Form() { TopMost = true }, text);
+            return System.Windows.Forms.MessageBox.Show(Program.MainForm, text);
         }
 
         public static DialogResult Show(string text, string caption, MessageBoxButtons buttons)
         {
-            return System.Windows.Forms.MessageBox.Show(new Form() { TopMost = true }, text, caption, buttons);
+            return System.Windows.Forms.MessageBox.Show(Program.MainForm, text, caption, buttons);
         }
 
         public static DialogResult Show(string text, string caption, MessageBoxButtons buttons, MessageBoxIcon icon)
         {
-            return System.Windows.Forms.MessageBox.Show(new Form() { TopMost = true }, text, caption, buttons, icon);
+            return System.Windows.Forms.MessageBox.Show(Program.MainForm, text, caption, buttons, icon);
         }
     }
 }

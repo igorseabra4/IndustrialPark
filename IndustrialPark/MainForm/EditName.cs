@@ -8,7 +8,6 @@ namespace IndustrialPark
         public EditName(string oldName, string windowText)
         {
             InitializeComponent();
-            TopMost = true;
             Text = windowText;
             textBox1.Text = oldName;
         }

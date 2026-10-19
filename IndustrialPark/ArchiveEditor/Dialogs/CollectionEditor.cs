@@ -33,7 +33,6 @@ namespace IndustrialPark
         private CollectionEditor(Game game, Type type, Array items, AssetPropertyCollectionOptionsAttribute options)
         {
             InitializeComponent();
-            TopMost = true;
 
             this.game = game;
             this.type = type;

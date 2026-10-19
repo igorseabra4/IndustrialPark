@@ -16,7 +16,6 @@ namespace IndustrialPark
             InitializeComponent();
 
             buttonOK.Enabled = false;
-            TopMost = true;
 
             listBox1.AllowDrop = true;
         }

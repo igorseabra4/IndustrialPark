@@ -10,7 +10,6 @@ public partial class InternalMultiAssetEditor : Form
     public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive, Action<Asset> updateListView)
     {
         InitializeComponent();
-        TopMost = true;
 
         this.assets = assets;
         this.archive = archive;

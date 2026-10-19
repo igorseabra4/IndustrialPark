@@ -181,7 +181,6 @@
             ShowInTaskbar = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             Text = "Change RW version";
-            TopMost = true;
             ((System.ComponentModel.ISupportInitialize)numericUpDownRenderware).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMajor).EndInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownMinor).EndInit();

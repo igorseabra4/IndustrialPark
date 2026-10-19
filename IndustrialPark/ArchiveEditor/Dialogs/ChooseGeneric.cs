@@ -24,7 +24,6 @@ namespace IndustrialPark
 
             InitializeComponent();
 
-            TopMost = true;
             comboBoxItems.Items.Clear();
             foreach (T t in options)
                 comboBoxItems.Items.Add(t);

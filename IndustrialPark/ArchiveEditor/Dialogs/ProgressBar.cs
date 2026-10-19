@@ -9,7 +9,6 @@ namespace IndustrialPark
         {
             InitializeComponent();
             Text = text;
-            TopMost = true;
         }
 
         public void SetProgressBar(int min, int max, int step)

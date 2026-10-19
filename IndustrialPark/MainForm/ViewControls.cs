@@ -30,8 +30,6 @@ namespace IndustrialPark
 
             dataGridView1.AutoGenerateColumns = true;
             dataGridView1.DataSource = shortcutBindingSource;
-
-            TopMost = true;
         }
 
         private void ViewControls_Load(object sender, EventArgs e)

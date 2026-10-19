@@ -10,8 +10,6 @@ namespace IndustrialPark
 
             Text = title;
             richTextBox1.Text = text;
-
-            TopMost = true;
         }
     }
 }

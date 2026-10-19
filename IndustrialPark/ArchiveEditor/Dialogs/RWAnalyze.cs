@@ -10,7 +10,6 @@ namespace IndustrialPark
         public RWAnalyze(RWSection[] data)
         {
             InitializeComponent();
-            TopMost = true;
             this.data = data;
             propertyGridData.SelectedObject = this.data;
         }

@@ -302,7 +302,7 @@ namespace IndustrialPark.SaveFile
                 if (archive != null)
                 {
                     var result = SaveFileScene.GenerateReport(archive, currentPlatform, scene.Data);
-                    new ScrollableMessageBox(scene.SceneID + " Report", result).Show();
+                    new ScrollableMessageBox(scene.SceneID + " Report", result).Show(this);
                 }
                 else
                 {

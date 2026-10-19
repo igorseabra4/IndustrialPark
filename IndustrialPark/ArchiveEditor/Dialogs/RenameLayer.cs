@@ -9,9 +9,7 @@ namespace IndustrialPark
         {
             InitializeComponent();
 
-            TopMost = true;
-
-            textBox1.Text = prevName ?? "";
+                        textBox1.Text = prevName ?? "";
         }
 
         private void buttonOK_Click(object sender, EventArgs e)

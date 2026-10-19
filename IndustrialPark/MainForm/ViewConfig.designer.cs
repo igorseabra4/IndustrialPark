@@ -342,7 +342,6 @@
             Name = "ViewConfig";
             ShowIcon = false;
             Text = "View Config";
-            Load += ViewConfig_Load;
             VisibleChanged += ViewConfig_VisibleChanged;
             groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)NumericCameraRoll).EndInit();

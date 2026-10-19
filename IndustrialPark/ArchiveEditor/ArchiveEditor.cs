@@ -28,7 +28,6 @@ namespace IndustrialPark
         public ArchiveEditor()
         {
             InitializeComponent();
-            TopMost = true;
 
             defaultColor = textBoxFindAsset.BackColor;
 

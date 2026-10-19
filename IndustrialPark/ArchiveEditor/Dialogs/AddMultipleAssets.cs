@@ -16,7 +16,6 @@ namespace IndustrialPark
             comboBoxAssetTypes.Items.AddRange(Enum.GetValues(typeof(AssetType)).Cast<AssetType>().OrderBy(f => f.ToString()).Cast<object>().ToArray());
 
             buttonOK.Enabled = false;
-            TopMost = true;
         }
 
         AssetType assetType = AssetType.Null;

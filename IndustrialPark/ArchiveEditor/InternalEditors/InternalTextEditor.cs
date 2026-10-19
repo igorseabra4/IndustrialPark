@@ -10,7 +10,6 @@ namespace IndustrialPark
         public InternalTextEditor(AssetTEXT asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
-            TopMost = true;
 
             this.asset = asset;
             this.archive = archive;

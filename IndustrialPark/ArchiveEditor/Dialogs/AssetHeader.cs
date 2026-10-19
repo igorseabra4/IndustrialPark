@@ -19,7 +19,6 @@ namespace IndustrialPark
                 comboBoxAssetTypes.Items.Add(new AssetTypeContainer(o));
 
             buttonOK.Enabled = false;
-            TopMost = true;
             defaultColor = textBoxAssetID.BackColor;
         }
 
@@ -54,7 +53,6 @@ namespace IndustrialPark
                 comboBoxAssetTypes.SelectedIndex = 0;
             }
 
-            TopMost = true;
             defaultColor = textBoxAssetID.BackColor;
 
             textBoxAssetID.Text = "0x" + AHDR.assetID.ToString("X8");

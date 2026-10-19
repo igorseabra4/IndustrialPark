@@ -18,7 +18,6 @@ namespace IndustrialPark
             ComponentResourceManager resources = new ComponentResourceManager(typeof(AboutBox));
             this.textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
             this.labelVersion.Text = new IPversion().version;
-            TopMost = true;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)

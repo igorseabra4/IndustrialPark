@@ -19,7 +19,6 @@ namespace IndustrialPark
         public InternalModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
-            TopMost = true;
 
             this.asset = asset;
             this.archive = archive;
@@ -618,12 +617,12 @@ namespace IndustrialPark
                 this.rwAnalyze.Dispose();
             }
             this.rwAnalyze = new RWAnalyze(asset.ModelAsRWSections);
-            this.rwAnalyze.Show();
+            this.rwAnalyze.Show(this);
         }
 
         private void buttonEditHeader_Click(object sender, EventArgs e)
         {
-            var ae = Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive == archive);
+            var ae = archive.GetArchiveEditor();
             if (ae.EditHeader(asset.assetID, out uint newAssetID))
                 ae.OpenInternalEditor(newAssetID);
         }

@@ -69,11 +69,6 @@ namespace IndustrialPark
              ------
         */
 
-        private void ViewConfig_Load(object sender, EventArgs e)
-        {
-            TopMost = true;
-        }
-
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.WindowsShutDown)
@@ -183,12 +178,12 @@ namespace IndustrialPark
 
         private void buttonViewControls_Click(object sender, EventArgs e)
         {
-            Program.ViewControls.Show();
+            Program.ViewControls.Show(Program.MainForm);
         }
 
         private void buttonAbout_Click(object sender, EventArgs e)
         {
-            Program.AboutBox.Show();
+            Program.AboutBox.Show(Program.MainForm);
         }
 
         private void buttonResetView_Click(object sender, EventArgs e)

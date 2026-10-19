@@ -10,7 +10,6 @@ namespace IndustrialPark
         {
             InitializeComponent();
 
-            TopMost = true;
             comboBoxAssetTypes.SelectedIndex = 0;
         }
 

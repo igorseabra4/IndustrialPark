@@ -10,7 +10,6 @@ namespace IndustrialPark
         public UserTemplateManager()
         {
             InitializeComponent();
-            TopMost = true;
             UpdateListBox();
         }
 

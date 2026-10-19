@@ -9,7 +9,6 @@ namespace IndustrialPark.Models
         public ChooseTarget()
         {
             InitializeComponent();
-            TopMost = true;
             formats = new AssimpContext().GetSupportedExportFormats();
         }
 

@@ -142,7 +142,6 @@ namespace IndustrialPark
             InitializeComponent();
 
             buttonOK.Enabled = false;
-            TopMost = true;
             isReplacing = assetType != AssetType.Null;
 
             comboBoxAssetTypes.Items.Add(AssetType.Model);

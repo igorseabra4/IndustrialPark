@@ -16,7 +16,6 @@ namespace IndustrialPark
         private LinkEditor(Game game, Link[] events, LinkType linkType, uint thisAssetID)
         {
             InitializeComponent();
-            TopMost = true;
 
             this.thisAssetID = thisAssetID;
 

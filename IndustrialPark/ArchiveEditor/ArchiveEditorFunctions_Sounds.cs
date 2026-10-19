@@ -143,7 +143,7 @@ namespace IndustrialPark
 
             ProgressBar progressBar = new ProgressBar("Import Sounds");
             progressBar.SetProgressBar(0, fileNames.Count(), 1);
-            progressBar.Show();
+            progressBar.Show(this.GetArchiveEditor());
 
             foreach (var fileName in fileNames)
             {

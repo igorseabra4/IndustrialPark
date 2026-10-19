@@ -135,7 +135,7 @@ namespace IndustrialPark
                     "Welcome!",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
-                Program.AboutBox.Show();
+                Program.AboutBox.Show(this);
             }
 
             SetProjectToolStripStatusLabel();
@@ -225,7 +225,7 @@ namespace IndustrialPark
                 if (Path.GetExtension(args[1]).ToLower() == GameCubeBanner.DEFAULT_FILE_EXTENSION)
                 {
                     CreateGameCubeBanner b = new CreateGameCubeBanner(args[1]);
-                    b.Show();
+                    b.Show(this);
                     return;
                 }
             }
@@ -907,7 +907,7 @@ namespace IndustrialPark
             ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(ae.GetCurrentlyOpenFileName()));
             tempMenuItem.Click += new EventHandler((object sender, EventArgs e) =>
             {
-                ae.Show();
+                ae.Show(this);
                 ae.WindowState = FormWindowState.Normal;
             });
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
@@ -919,7 +919,7 @@ namespace IndustrialPark
             SetupAssetVisibilityButtons();
             closeAllEditorsToolStripMenuItem.Enabled = true;
 
-            ae.Show();
+            ae.Show(this);
 
             // Cannot select assets if the editor isn't shown first?
             if (!show)
@@ -1075,7 +1075,7 @@ namespace IndustrialPark
             if (Program.ViewConfig.WindowState == FormWindowState.Minimized)
                 Program.ViewConfig.WindowState = FormWindowState.Normal;
 
-            Program.ViewConfig.Show();
+            Program.ViewConfig.Show(this);
             Program.ViewConfig.Activate();
         }
 
@@ -1213,7 +1213,7 @@ namespace IndustrialPark
             if (ae.WindowState == FormWindowState.Minimized)
                 ae.WindowState = FormWindowState.Normal;
 
-            ae.Show();
+            ae.Show(this);
             ae.Activate();
         }
 
@@ -1499,7 +1499,7 @@ namespace IndustrialPark
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.AboutBox.Show();
+            Program.AboutBox.Show(this);
         }
 
         public string GetAssetNameFromID(uint assetID)
@@ -1686,7 +1686,7 @@ namespace IndustrialPark
 
         private void manageUserTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.UserTemplateManager.Show();
+            Program.UserTemplateManager.Show(this);
         }
 
         private void templatesPersistentShiniesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1734,31 +1734,31 @@ namespace IndustrialPark
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.EventSearch ??= new EventSearch();
-            Program.EventSearch.Show();
+            Program.EventSearch.Show(this);
         }
 
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AssetIDGenerator ??= new AssetIDGenerator();
-            Program.AssetIDGenerator.Show();
+            Program.AssetIDGenerator.Show(this);
         }
 
         private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.DynaSearch ??= new DynaSearch();
-            Program.DynaSearch.Show();
+            Program.DynaSearch.Show(this);
         }
 
         private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.PickupSearch ??= new PickupSearch();
-            Program.PickupSearch.Show();
+            Program.PickupSearch.Show(this);
         }
 
         private void hansToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.HansMainForm ??= new IndustrialPark.SaveFile.HansMainForm();
-            Program.HansMainForm.Show();
+            Program.HansMainForm.Show(this);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -1771,35 +1771,15 @@ namespace IndustrialPark
                 if (WindowState == FormWindowState.Minimized)
                 {
                     renderer.allowRender = false;
-                    SetAllTopMost(false);
                 }
                 else
                 {
                     renderer.allowRender = true;
-                    SetAllTopMost(true);
                 }
             }
             catch
             {
             }
-        }
-
-        private void SetAllTopMost(bool value)
-        {
-            Program.AboutBox.TopMost = value;
-            Program.ViewConfig.TopMost = value;
-            Program.ViewControls.TopMost = value;
-            Program.UserTemplateManager.TopMost = value;
-
-            Program.EventSearch?.TopMost = value;
-            Program.AssetIDGenerator?.TopMost = value;
-            Program.DynaSearch?.TopMost = value;
-            Program.PickupSearch?.TopMost = value;
-            Program.BuildISO?.TopMost = value;
-            Program.HansMainForm?.TopMost = value;
-
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetAllTopMost(value);
         }
 
         private void runGameF5ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1974,7 +1954,7 @@ namespace IndustrialPark
 
                 var p = new ProgressBar("Opening files...");
                 p.SetProgressBar(0, hipList.Count, 1);
-                p.Show();
+                p.Show(this);
 
                 var layerLogs = new List<string>();
                 var layerTypes = new Dictionary<LayerType, HashSet<AssetType>>();
@@ -2053,7 +2033,7 @@ namespace IndustrialPark
 
         private void openLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new OpenLevel().Show();
+            new OpenLevel().Show(this);
         }
 
         private void closeAllEditorsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2111,15 +2091,14 @@ namespace IndustrialPark
 
         private void buildAndRunPS2ISOToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Program.BuildISO == null)
-                Program.BuildISO = new BuildISO();
-            Program.BuildISO.Show();
+            Program.BuildISO ??= new BuildISO();
+            Program.BuildISO.Show(this);
         }
 
         private void createGameCubeBannerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var bannerCreator = new CreateGameCubeBanner();
-            bannerCreator.Show();
+            bannerCreator.Show(this);
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -2248,7 +2227,7 @@ namespace IndustrialPark
 
         private void viewUndoBufferToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ScrollableMessageBox("Undo Buffer", Program.UndoBuffer.ToString()).Show();
+            new ScrollableMessageBox("Undo Buffer", Program.UndoBuffer.ToString()).Show(this);
         }
 
         public void RefreshAssetList(ArchiveEditorFunctions archive)
@@ -2278,7 +2257,7 @@ namespace IndustrialPark
             if (Program.ViewControls.WindowState == FormWindowState.Minimized)
                 Program.ViewControls.WindowState = FormWindowState.Normal;
 
-            Program.ViewControls.Show();
+            Program.ViewControls.Show(this);
             Program.ViewControls.Activate();
         }
 

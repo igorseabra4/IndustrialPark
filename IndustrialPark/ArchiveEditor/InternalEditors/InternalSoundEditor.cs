@@ -10,7 +10,6 @@ namespace IndustrialPark
         public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
-            TopMost = true;
 
             this.asset = asset;
             this.archive = archive;

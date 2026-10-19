@@ -14,7 +14,6 @@ public partial class InternalAssetEditor : InternalEditor
     public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
     {
         InitializeComponent();
-        TopMost = true;
 
         this.asset = asset;
         this.archive = archive;

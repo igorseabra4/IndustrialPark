@@ -9,7 +9,6 @@ namespace IndustrialPark
         public InternalFlyEditor(AssetFLY asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
         {
             InitializeComponent();
-            TopMost = true;
 
             this.asset = asset;
             this.archive = archive;

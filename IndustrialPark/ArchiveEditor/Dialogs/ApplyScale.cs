@@ -14,7 +14,6 @@ namespace IndustrialPark
         private ApplyScale(bool hasAssets, bool isRotation = false)
         {
             InitializeComponent();
-            TopMost = true;
 
             numericUpDownX.Minimum = decimal.MinValue;
             numericUpDownY.Minimum = decimal.MinValue;
