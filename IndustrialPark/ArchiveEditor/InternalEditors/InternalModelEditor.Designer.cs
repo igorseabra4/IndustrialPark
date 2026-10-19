@@ -459,11 +459,11 @@
             checkBoxUseTemplates.AutoSize = true;
             checkBoxUseTemplates.Location = new System.Drawing.Point(12, 610);
             checkBoxUseTemplates.Name = "checkBoxUseTemplates";
-            checkBoxUseTemplates.Size = new System.Drawing.Size(213, 17);
+            checkBoxUseTemplates.Size = new System.Drawing.Size(300, 17);
             checkBoxUseTemplates.TabIndex = 46;
-            checkBoxUseTemplates.Text = "Use this model when placing a template";
+            checkBoxUseTemplates.Text = "Use this model when placing a generic placeable template";
             checkBoxUseTemplates.UseVisualStyleBackColor = true;
-            checkBoxUseTemplates.Click += checkBoxUseTemplates_Click;
+            checkBoxUseTemplates.CheckedChanged += checkBoxUseTemplates_CheckedChanged;
             // 
             // buildCollTreeButton
             // 
@@ -516,7 +516,7 @@
             buttonRWanalyze.UseVisualStyleBackColor = true;
             buttonRWanalyze.Click += buttonRWanalyze_Click;
             // 
-            // buttonFile
+            // buttonEditHeader
             // 
             buttonEditHeader.Location = new System.Drawing.Point(396, 526);
             buttonEditHeader.Name = "buttonEditHeader";

@@ -34,6 +34,8 @@ namespace IndustrialPark
                 SetupCollBox();
                 SetupShdwBox();
                 SetupCollButton();
+                if (ArchiveEditorFunctions.TemplateModelAssetID == GetAssetID())
+                    checkBoxUseTemplates.Checked = true;
             }
             else
             {
@@ -513,10 +515,18 @@ namespace IndustrialPark
 
         public bool CheckedForTemplate => checkBoxUseTemplates.Checked;
 
-        private void checkBoxUseTemplates_Click(object sender, EventArgs e)
+
+        private void checkBoxUseTemplates_CheckedChanged(object sender, EventArgs e)
         {
-            Program.MainForm.ClearModelTemplateFocus();
-            checkBoxUseTemplates.Checked = true;
+            if (checkBoxUseTemplates.Checked)
+            {
+                Program.MainForm.ClearModelTemplateFocus(this);
+                ArchiveEditorFunctions.TemplateModelAssetID = GetAssetID();
+            }
+            else if (ArchiveEditorFunctions.TemplateModelAssetID == GetAssetID())
+            {
+                ArchiveEditorFunctions.TemplateModelAssetID = 0;
+            }
         }
 
         public void ClearModelTemplateFocus()

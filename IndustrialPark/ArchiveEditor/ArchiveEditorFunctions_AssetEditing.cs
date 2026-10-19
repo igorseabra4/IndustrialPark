@@ -169,11 +169,10 @@ namespace IndustrialPark
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = AboutBox.WikiLink + code, UseShellExecute = true });
         }
 
-        public void ClearModelTemplateFocus()
+        public void ClearModelTemplateFocus(InternalModelEditor except)
         {
-            foreach (var ie in internalEditors)
-                if (ie is InternalModelEditor ime)
-                    ime.ClearModelTemplateFocus();
+            foreach (var ime in internalEditors.OfType<InternalModelEditor>().Where(ime => ime != except))
+                ime.ClearModelTemplateFocus();
         }
 
         public AssetPIPT GetPIPT(bool create = false) => (AssetPIPT)GetAssetOfType(AssetType.PipeInfoTable, AssetTemplate.Pipe_Info_Table, create);

@@ -1888,14 +1888,11 @@ namespace IndustrialPark
             AssetTemplate.Simple_Object,
             AssetTemplate.User_Interface
         ];
+        public static AssetID TemplateModelAssetID = 0;
         private void AssignDefaultModelToTemplate(AssetTemplate template, Asset asset)
         {
-            if (noModelTemplates.Contains(template) && asset is EntityAsset entity && entity.Model == 0)
-            {
-                foreach (var ie in internalEditors)
-                    if (ie is InternalModelEditor ime && ime.CheckedForTemplate)
-                        entity.Model = ime.GetAssetID();
-            }
+            if (TemplateModelAssetID != 0 && noModelTemplates.Contains(template) && asset is EntityAsset entity && entity.Model == 0)
+                entity.Model = TemplateModelAssetID;
         }
     }
 }

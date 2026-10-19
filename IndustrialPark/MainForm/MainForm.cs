@@ -1586,10 +1586,10 @@ namespace IndustrialPark
                 archiveEditor.ClearTemplateFocus();
         }
 
-        public void ClearModelTemplateFocus()
+        public void ClearModelTemplateFocus(InternalModelEditor except)
         {
             foreach (ArchiveEditor archiveEditor in archiveEditors)
-                archiveEditor.archive.ClearModelTemplateFocus();
+                archiveEditor.archive.ClearModelTemplateFocus(except);
         }
 
         private void SetViewAspect(float aspect)
