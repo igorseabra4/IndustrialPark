@@ -37,6 +37,9 @@ namespace IndustrialPark
         public bool AutoDockAssetEditors = false;
         public bool AutoDockSelectedAssetEditors = false;
 
+        public RendererColors Colors = RendererColors.Default;
+        public bool fog = true;
+
         public int dockLeftSize = -1;
         public int dockRightSize = -1;
 

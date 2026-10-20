@@ -212,7 +212,12 @@ namespace IndustrialPark
 
             autoDockSelectedAssetEditorsToolStripMenuItem.Checked = settings.AutoDockSelectedAssetEditors;
             ArchiveEditorFunctions.AutoDockSelectedAssetEditors = settings.AutoDockSelectedAssetEditors;
+
+            fogToolStripMenuItem.Checked = settings.fog;
+            AssetFOG.DontRender = !settings.fog;
             
+            renderer.colors = settings.Colors;
+
             dockLeftSizeInit = settings.dockLeftSize;
             dockRightSizeInit = settings.dockRightSize;
 
@@ -313,6 +318,7 @@ namespace IndustrialPark
                 dockRightSize = dockRightSizeSave,
                 Speed = renderer.Camera.Speed,
                 SpeedRot = renderer.Camera.SpeedRot,
+                fog = !AssetFOG.DontRender,
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -492,20 +498,12 @@ namespace IndustrialPark
                 Pitch = renderer.Camera.Pitch,
                 FieldOfView = renderer.Camera.FieldOfView,
                 FarPlane = renderer.Camera.FarPlane,
-                NoCulling = noCullingCToolStripMenuItem.Checked,
-                Wireframe = wireframeFToolStripMenuItem.Checked,
                 BackgroundColor = SharpRenderer.backgroundColor,
-                WidgetColor = renderer.normalColor,
-                TrigColor = renderer.trigColor,
-                MvptColor = renderer.mvptColor,
-                SfxColor = renderer.sfxColor,
+                Colors = renderer.colors,
                 hiddenAssets = hiddenAssets,
                 isDrawingUI = renderer.isDrawingUI,
                 Grid = ArchiveEditorFunctions.Grid,
                 dontRender = dontRender,
-                FogRender = !AssetFOG.DontRender,
-                LightKitRender = !AssetLKIT.DontRender,
-                VertexColorRender = SharpRenderer.RenderVertexColors,
             };
         }
 
@@ -556,24 +554,9 @@ namespace IndustrialPark
             renderer.Camera.FarPlane = project.FarPlane;
             ArchiveEditorFunctions.Grid = project.Grid;
 
-            noCullingCToolStripMenuItem.Checked = project.NoCulling;
-            if (noCullingCToolStripMenuItem.Checked)
-                renderer.device.SetNormalCullMode(CullMode.None);
-            else
-                renderer.device.SetNormalCullMode(CullMode.Back);
-
-            wireframeFToolStripMenuItem.Checked = project.Wireframe;
-            toolStripButtonWireframe.Checked = project.Wireframe;
-            if (wireframeFToolStripMenuItem.Checked)
-                renderer.device.SetNormalFillMode(FillMode.Wireframe);
-            else
-                renderer.device.SetNormalFillMode(FillMode.Solid);
-
             SharpRenderer.backgroundColor = project.BackgroundColor;
-            renderer.SetWidgetColor(project.WidgetColor);
-            renderer.SetMvptColor(project.MvptColor);
-            renderer.SetTrigColor(project.TrigColor);
-            renderer.SetSfxColor(project.SfxColor);
+
+            renderer.colors = project.Colors;
 
             uIModeToolStripMenuItem.Checked = project.isDrawingUI;
             renderer.isDrawingUI = project.isDrawingUI;
@@ -589,13 +572,6 @@ namespace IndustrialPark
                 }
 
             UpdateToolbarVisibilityButtons();
-
-            fogToolStripMenuItem.Checked = project.FogRender;
-            AssetFOG.DontRender = !project.FogRender;
-            showVertexColorsToolStripMenuItem.Checked = project.VertexColorRender;
-            SharpRenderer.RenderVertexColors = project.VertexColorRender;
-            useLightKitsForRenderingToolStripMenuItem.Checked = project.LightKitRender;
-            AssetLKIT.DontRender = !project.LightKitRender;
         }
 
         public void SetToolStripStatusLabel(string Text)

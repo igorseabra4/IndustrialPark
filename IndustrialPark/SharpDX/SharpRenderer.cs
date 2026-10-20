@@ -346,8 +346,8 @@ namespace IndustrialPark
 
         public void SetSelectionColor(System.Drawing.Color color)
         {
-            selectedColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, selectedColor.W);
-            selectedObjectColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, selectedObjectColor.W);
+            colors.selectedColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, selectedColor.W);
+            colors.selectedObjectColor = new Vector4(color.R / 255f, color.G / 255f, color.B / 255f, selectedObjectColor.W);
         }
 
         public void SetWidgetColor(System.Drawing.Color color)
@@ -358,7 +358,7 @@ namespace IndustrialPark
         public void SetWidgetColor(Vector4 widgetColor)
         {
             widgetColor.W = normalColor.W;
-            normalColor = widgetColor;
+            colors.normalColor = widgetColor;
         }
 
         public void SetTrigColor(System.Drawing.Color color)
@@ -369,7 +369,7 @@ namespace IndustrialPark
         public void SetTrigColor(Vector4 widgetColor)
         {
             widgetColor.W = trigColor.W;
-            trigColor = widgetColor;
+            colors.trigColor = widgetColor;
         }
 
         public void SetMvptColor(System.Drawing.Color color)
@@ -380,7 +380,7 @@ namespace IndustrialPark
         public void SetMvptColor(Vector4 widgetColor)
         {
             widgetColor.W = mvptColor.W;
-            mvptColor = widgetColor;
+            colors.mvptColor = widgetColor;
         }
 
         public void SetSfxColor(System.Drawing.Color color)
@@ -391,28 +391,22 @@ namespace IndustrialPark
         public void SetSfxColor(Vector4 widgetColor)
         {
             widgetColor.W = sfxColor.W;
-            sfxColor = widgetColor;
+            colors.sfxColor = widgetColor;
         }
 
         public void ResetColors()
         {
-            var defaultAlpha = 0.5f;
-
             backgroundColor = defaultBackgroundColor;
-            normalColor = new Vector4(0.2f, 0.6f, 0.8f, defaultAlpha);
-            trigColor = new Vector4(0.3f, 0.8f, 0.7f, defaultAlpha);
-            mvptColor = new Vector4(0.7f, 0.2f, 0.6f, defaultAlpha);
-            sfxColor = new Vector4(1f, 0.2f, 0.2f, defaultAlpha);
-            selectedColor = new Vector4(1f, 0.5f, 0.1f, defaultAlpha - 0.1f);
-            selectedObjectColor = new Vector4(1f, 0f, 0f, 1f);
+            colors = RendererColors.Default;
         }
 
-        public Vector4 normalColor;
-        public Vector4 trigColor;
-        public Vector4 mvptColor;
-        public Vector4 sfxColor;
-        public Vector4 selectedColor;
-        public Vector4 selectedObjectColor;
+        public RendererColors colors = new RendererColors();
+        public Vector4 normalColor => colors.normalColor;
+        public Vector4 trigColor => colors.trigColor;
+        public Vector4 mvptColor => colors.mvptColor;
+        public Vector4 sfxColor => colors.sfxColor;
+        public Vector4 selectedColor => colors.selectedColor;
+        public Vector4 selectedObjectColor => colors.selectedObjectColor;
 
         DefaultRenderData renderData;
 

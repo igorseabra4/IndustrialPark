@@ -6,7 +6,7 @@ namespace IndustrialPark
 {
     public class ProjectJson
     {
-        public static int getCurrentVersion => 6;
+        public static int getCurrentVersion => 7;
         public int version;
 
         public List<string> hipPaths;
@@ -20,24 +20,14 @@ namespace IndustrialPark
         public float FieldOfView;
         public float FarPlane;
 
-        public bool NoCulling;
-        public bool Wireframe;
-
         public Color4 BackgroundColor;
-        public Vector4 WidgetColor;
-        public Vector4 TrigColor;
-        public Vector4 MvptColor;
-        public Vector4 SfxColor;
+        public RendererColors Colors;
 
         public Vector3 Grid;
 
         public bool isDrawingUI;
 
         public Dictionary<string, bool> dontRender;
-
-        public bool FogRender;
-        public bool LightKitRender;
-        public bool VertexColorRender;
 
         public ProjectJson()
         {
@@ -55,24 +45,14 @@ namespace IndustrialPark
             FieldOfView = MathUtil.DegreesToRadians(SharpCamera.DEFAULT_FOV);
             FarPlane = SharpCamera.DEFAULT_FAR_PLANE;
 
-            NoCulling = false;
-            Wireframe = false;
-
-            BackgroundColor = new Color4(0.05f, 0.05f, 0.15f, 1f);
-            WidgetColor = new Vector4(0.2f, 0.6f, 0.8f, 0.55f);
-            TrigColor = new Vector4(0.3f, 0.8f, 0.7f, 0.4f);
-            MvptColor = new Vector4(0.7f, 0.2f, 0.6f, 0.5f);
-            SfxColor = new Vector4(1f, 0.2f, 0.2f, 0.35f);
+            BackgroundColor = SharpRenderer.defaultBackgroundColor;
+            Colors = RendererColors.Default;
 
             Grid = new Vector3(1f, 1f, 1f);
 
             isDrawingUI = false;
 
             dontRender = new Dictionary<string, bool>();
-
-            FogRender = true;
-            LightKitRender = true;
-            VertexColorRender = true;
         }
     }
 }
