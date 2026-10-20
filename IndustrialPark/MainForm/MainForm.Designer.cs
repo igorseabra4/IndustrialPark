@@ -338,7 +338,7 @@ namespace IndustrialPark
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             undoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Z;
-            undoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            undoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             // 
@@ -346,7 +346,7 @@ namespace IndustrialPark
             // 
             redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             redoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Y;
-            redoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            redoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
             redoToolStripMenuItem.Text = "Redo";
             redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
             // 
@@ -452,7 +452,7 @@ namespace IndustrialPark
             autoDockArchiveEditorToolStripMenuItem.Name = "autoDockArchiveEditorToolStripMenuItem";
             autoDockArchiveEditorToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
             autoDockArchiveEditorToolStripMenuItem.Text = "Auto-dock target Archive Editor";
-            autoDockArchiveEditorToolStripMenuItem.ToolTipText = "When enabled, the targeted archive editor will be docked on the left side of the main window.\r\nRight click on the asset list to access all archive editor functionality.";
+            autoDockArchiveEditorToolStripMenuItem.ToolTipText = resources.GetString("autoDockArchiveEditorToolStripMenuItem.ToolTipText");
             autoDockArchiveEditorToolStripMenuItem.Click += autoDockArchiveEditorToolStripMenuItem_Click;
             // 
             // autoDockAssetEditorsToolStripMenuItem
@@ -1099,6 +1099,7 @@ namespace IndustrialPark
             // 
             renderPanel.Dock = DockStyle.Fill;
             renderPanel.Location = new System.Drawing.Point(0, 0);
+            renderPanel.Margin = new Padding(0);
             renderPanel.Name = "renderPanel";
             renderPanel.Size = new System.Drawing.Size(1264, 613);
             renderPanel.TabIndex = 1;
@@ -1386,6 +1387,7 @@ namespace IndustrialPark
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.FixedPanel = FixedPanel.Panel1;
             splitContainer1.Location = new System.Drawing.Point(0, 46);
+            splitContainer1.Margin = new Padding(0);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Panel1Collapsed = true;
             splitContainer1.Panel1MinSize = 150;
@@ -1403,6 +1405,7 @@ namespace IndustrialPark
             splitContainer2.Dock = DockStyle.Fill;
             splitContainer2.FixedPanel = FixedPanel.Panel2;
             splitContainer2.Location = new System.Drawing.Point(0, 0);
+            splitContainer2.Margin = new Padding(0);
             splitContainer2.Name = "splitContainer2";
             // 
             // splitContainer2.Panel1

@@ -53,7 +53,14 @@ namespace IndustrialPark
         {
             showToolbarToolStripMenuItem.Checked = visible;
             toolStripMain.Visible = visible;
+            
+            autoDockArchiveEditorToolStripMenuItem.Enabled = ShowToolbar;
+            autoDockArchiveEditorToolStripMenuItem.Checked = ShowToolbar && AutoDockArchiveEditors;
+
+            RefreshAssetListDock();
         }
+
+        public bool ShowToolbar => showToolbarToolStripMenuItem.Checked;
 
         #region Undo and redo
 

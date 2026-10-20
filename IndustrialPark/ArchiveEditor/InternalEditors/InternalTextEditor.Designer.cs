@@ -37,18 +37,23 @@
             editHeaderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             copyAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             deleteAssetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            openWikiPageviewFormatTagsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            findWhoTargetsMeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tableLayoutPanel1.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
             // 
             // richTextBoxAssetText
             // 
+            richTextBoxAssetText.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             tableLayoutPanel1.SetColumnSpan(richTextBoxAssetText, 2);
             richTextBoxAssetText.Dock = System.Windows.Forms.DockStyle.Fill;
             richTextBoxAssetText.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            richTextBoxAssetText.Location = new System.Drawing.Point(3, 3);
+            richTextBoxAssetText.Location = new System.Drawing.Point(0, 0);
+            richTextBoxAssetText.Margin = new System.Windows.Forms.Padding(0);
             richTextBoxAssetText.Name = "richTextBoxAssetText";
-            richTextBoxAssetText.Size = new System.Drawing.Size(618, 223);
+            richTextBoxAssetText.Size = new System.Drawing.Size(624, 229);
             richTextBoxAssetText.TabIndex = 7;
             richTextBoxAssetText.Text = "";
             richTextBoxAssetText.TextChanged += richTextBoxAssetText_TextChanged;
@@ -97,7 +102,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { editToolStripMenuItem });
+            menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { editToolStripMenuItem, toolsToolStripMenuItem });
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new System.Drawing.Size(624, 24);
@@ -114,23 +119,44 @@
             // editHeaderToolStripMenuItem
             // 
             editHeaderToolStripMenuItem.Name = "editHeaderToolStripMenuItem";
-            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             editHeaderToolStripMenuItem.Text = "Edit Header";
             editHeaderToolStripMenuItem.Click += editHeaderToolStripMenuItem_Click;
             // 
             // copyAssetToolStripMenuItem
             // 
             copyAssetToolStripMenuItem.Name = "copyAssetToolStripMenuItem";
-            copyAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            copyAssetToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             copyAssetToolStripMenuItem.Text = "Copy Asset";
             copyAssetToolStripMenuItem.Click += copyAssetToolStripMenuItem_Click;
             // 
             // deleteAssetToolStripMenuItem
             // 
             deleteAssetToolStripMenuItem.Name = "deleteAssetToolStripMenuItem";
-            deleteAssetToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            deleteAssetToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             deleteAssetToolStripMenuItem.Text = "Delete Asset";
             deleteAssetToolStripMenuItem.Click += deleteAssetToolStripMenuItem_Click;
+            // 
+            // toolsToolStripMenuItem
+            // 
+            toolsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { openWikiPageviewFormatTagsToolStripMenuItem, findWhoTargetsMeToolStripMenuItem });
+            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
+            toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // openWikiPageviewFormatTagsToolStripMenuItem
+            // 
+            openWikiPageviewFormatTagsToolStripMenuItem.Name = "openWikiPageviewFormatTagsToolStripMenuItem";
+            openWikiPageviewFormatTagsToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            openWikiPageviewFormatTagsToolStripMenuItem.Text = "Open wiki page (view format tags)";
+            openWikiPageviewFormatTagsToolStripMenuItem.Click += buttonHelp_Click;
+            // 
+            // findWhoTargetsMeToolStripMenuItem
+            // 
+            findWhoTargetsMeToolStripMenuItem.Name = "findWhoTargetsMeToolStripMenuItem";
+            findWhoTargetsMeToolStripMenuItem.Size = new System.Drawing.Size(255, 22);
+            findWhoTargetsMeToolStripMenuItem.Text = "Find who targets me";
+            findWhoTargetsMeToolStripMenuItem.Click += buttonFindCallers_Click;
             // 
             // InternalTextEditor
             // 
@@ -165,5 +191,8 @@
         private System.Windows.Forms.ToolStripMenuItem editHeaderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem copyAssetToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem deleteAssetToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem openWikiPageviewFormatTagsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem findWhoTargetsMeToolStripMenuItem;
     }
 }

@@ -10,6 +10,13 @@ namespace IndustrialPark
         {
             InitializeComponent();
             richTextBoxAssetText.Text = this.asset.Text;
+
+            if (!EnableAssetToolButtons)
+            {
+                buttonFindCallers.Visible = false;
+                buttonHelp.Visible = false;
+                tableLayoutPanel1.RowCount = 1;
+            }
         }
 
         public override void RefreshPropertyGrid()

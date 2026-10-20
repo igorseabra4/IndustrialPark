@@ -204,8 +204,8 @@ namespace IndustrialPark
             enableAssetToolButtonsToolStripMenuItem.Checked = settings.EnableAssetToolButtons;
             InternalEditor.EnableAssetToolButtons = settings.EnableAssetToolButtons;
 
-            autoDockArchiveEditorToolStripMenuItem.Checked = settings.AutoDockArchiveEditor;
             AutoDockArchiveEditors = settings.AutoDockArchiveEditor;
+            autoDockArchiveEditorToolStripMenuItem.Checked = ShowToolbar && AutoDockArchiveEditors;
 
             autoDockAssetEditorsToolStripMenuItem.Checked = settings.AutoDockAssetEditors;
             ArchiveEditorFunctions.AutoDockAssetEditors = settings.AutoDockAssetEditors;
@@ -1260,6 +1260,7 @@ namespace IndustrialPark
             if (!ae.Visible)
                 ae.Show(this);
             ae.Activate();
+            ae.ActiveControl = null;
         }
 
         private void DeleteSelectedAssets()
@@ -2240,10 +2241,7 @@ namespace IndustrialPark
             autoDockArchiveEditorToolStripMenuItem.Checked = !autoDockArchiveEditorToolStripMenuItem.Checked;
             AutoDockArchiveEditors = autoDockArchiveEditorToolStripMenuItem.Checked;
 
-            if (AutoDockArchiveEditors)
-                DockAssetList();
-            else
-                UndockAssetList();
+            RefreshAssetListDock();
         }
 
         private void autoDockAssetEditorsToolStripMenuItem_Click(object sender, EventArgs e)

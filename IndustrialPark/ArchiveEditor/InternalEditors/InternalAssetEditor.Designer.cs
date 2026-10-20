@@ -47,10 +47,11 @@
             tableLayoutPanel1.SetColumnSpan(propertyGridAsset, 2);
             propertyGridAsset.Dock = System.Windows.Forms.DockStyle.Fill;
             propertyGridAsset.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            propertyGridAsset.Location = new System.Drawing.Point(3, 3);
+            propertyGridAsset.Location = new System.Drawing.Point(0, 0);
+            propertyGridAsset.Margin = new System.Windows.Forms.Padding(0);
             propertyGridAsset.Name = "propertyGridAsset";
             propertyGridAsset.PropertySort = System.Windows.Forms.PropertySort.Categorized;
-            propertyGridAsset.Size = new System.Drawing.Size(338, 411);
+            propertyGridAsset.Size = new System.Drawing.Size(344, 417);
             propertyGridAsset.TabIndex = 5;
             propertyGridAsset.PropertyValueChanged += propertyGridAsset_PropertyValueChanged;
             // 
@@ -90,28 +91,28 @@
             // editHeaderToolStripMenuItem
             // 
             editHeaderToolStripMenuItem.Name = "editHeaderToolStripMenuItem";
-            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             editHeaderToolStripMenuItem.Text = "Edit Header";
             editHeaderToolStripMenuItem.Click += editHeaderToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            viewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            viewToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             viewToolStripMenuItem.Text = "View Asset";
             viewToolStripMenuItem.Click += viewToolStripMenuItem_Click;
             // 
             // copyToolStripMenuItem
             // 
             copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            copyToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             copyToolStripMenuItem.Text = "Copy Asset";
             copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
             // 
             // removeToolStripMenuItem
             // 
             removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            removeToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             removeToolStripMenuItem.Text = "Delete Asset";
             removeToolStripMenuItem.Click += removeToolStripMenuItem_Click;
             // 

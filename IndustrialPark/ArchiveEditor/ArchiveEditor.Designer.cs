@@ -41,6 +41,11 @@
             editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             convertArchiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             layersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            addLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            removeLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveLayerUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveLayerDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparatorLayerEditBox = new System.Windows.Forms.ToolStripSeparator();
             noLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             organizeLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             organizeLegacyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -142,11 +147,6 @@
             copyAssetNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem_CreateGroup = new System.Windows.Forms.ToolStripMenuItem();
             toolTip1 = new System.Windows.Forms.ToolTip(components);
-            addLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            removeLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            moveLayerUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            moveLayerDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripSeparatorLayerEditBox = new System.Windows.Forms.ToolStripSeparator();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBoxLayers.SuspendLayout();
@@ -219,6 +219,35 @@
             layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addLayerToolStripMenuItem, removeLayerToolStripMenuItem, moveLayerUpToolStripMenuItem, moveLayerDownToolStripMenuItem, toolStripSeparatorLayerEditBox, noLayersToolStripMenuItem, organizeLayersToolStripMenuItem, organizeLegacyToolStripMenuItem, toolStripSeparator5, renameLayerToolStripMenuItem });
             resources.ApplyResources(layersToolStripMenuItem, "layersToolStripMenuItem");
             layersToolStripMenuItem.Name = "layersToolStripMenuItem";
+            // 
+            // addLayerToolStripMenuItem
+            // 
+            addLayerToolStripMenuItem.Name = "addLayerToolStripMenuItem";
+            resources.ApplyResources(addLayerToolStripMenuItem, "addLayerToolStripMenuItem");
+            addLayerToolStripMenuItem.Click += buttonAddLayer_Click;
+            // 
+            // removeLayerToolStripMenuItem
+            // 
+            removeLayerToolStripMenuItem.Name = "removeLayerToolStripMenuItem";
+            resources.ApplyResources(removeLayerToolStripMenuItem, "removeLayerToolStripMenuItem");
+            removeLayerToolStripMenuItem.Click += buttonRemoveLayer_Click;
+            // 
+            // moveLayerUpToolStripMenuItem
+            // 
+            moveLayerUpToolStripMenuItem.Name = "moveLayerUpToolStripMenuItem";
+            resources.ApplyResources(moveLayerUpToolStripMenuItem, "moveLayerUpToolStripMenuItem");
+            moveLayerUpToolStripMenuItem.Click += buttonArrowUp_Click;
+            // 
+            // moveLayerDownToolStripMenuItem
+            // 
+            moveLayerDownToolStripMenuItem.Name = "moveLayerDownToolStripMenuItem";
+            resources.ApplyResources(moveLayerDownToolStripMenuItem, "moveLayerDownToolStripMenuItem");
+            moveLayerDownToolStripMenuItem.Click += buttonArrowDown_Click;
+            // 
+            // toolStripSeparatorLayerEditBox
+            // 
+            toolStripSeparatorLayerEditBox.Name = "toolStripSeparatorLayerEditBox";
+            resources.ApplyResources(toolStripSeparatorLayerEditBox, "toolStripSeparatorLayerEditBox");
             // 
             // noLayersToolStripMenuItem
             // 
@@ -569,8 +598,8 @@
             // 
             // comboBoxLayers
             // 
-            comboBoxLayers.FormattingEnabled = true;
             resources.ApplyResources(comboBoxLayers, "comboBoxLayers");
+            comboBoxLayers.FormattingEnabled = true;
             comboBoxLayers.Name = "comboBoxLayers";
             comboBoxLayers.SelectedIndexChanged += comboBoxLayers_SelectedIndexChanged;
             // 
@@ -603,7 +632,6 @@
             // textBoxFindAsset
             // 
             resources.ApplyResources(textBoxFindAsset, "textBoxFindAsset");
-            textBoxFindAsset.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             textBoxFindAsset.Name = "textBoxFindAsset";
             textBoxFindAsset.TextChanged += textBoxFindAsset_TextChanged;
             // 
@@ -861,35 +889,6 @@
             toolTip1.AutoPopDelay = 20000;
             toolTip1.InitialDelay = 500;
             toolTip1.ReshowDelay = 100;
-            // 
-            // addLayerToolStripMenuItem
-            // 
-            addLayerToolStripMenuItem.Name = "addLayerToolStripMenuItem";
-            resources.ApplyResources(addLayerToolStripMenuItem, "addLayerToolStripMenuItem");
-            addLayerToolStripMenuItem.Click += buttonAddLayer_Click;
-            // 
-            // removeLayerToolStripMenuItem
-            // 
-            removeLayerToolStripMenuItem.Name = "removeLayerToolStripMenuItem";
-            resources.ApplyResources(removeLayerToolStripMenuItem, "removeLayerToolStripMenuItem");
-            removeLayerToolStripMenuItem.Click += buttonRemoveLayer_Click;
-            // 
-            // moveLayerUpToolStripMenuItem
-            // 
-            moveLayerUpToolStripMenuItem.Name = "moveLayerUpToolStripMenuItem";
-            resources.ApplyResources(moveLayerUpToolStripMenuItem, "moveLayerUpToolStripMenuItem");
-            moveLayerUpToolStripMenuItem.Click += buttonArrowUp_Click;
-            // 
-            // moveLayerDownToolStripMenuItem
-            // 
-            moveLayerDownToolStripMenuItem.Name = "moveLayerDownToolStripMenuItem";
-            resources.ApplyResources(moveLayerDownToolStripMenuItem, "moveLayerDownToolStripMenuItem");
-            moveLayerDownToolStripMenuItem.Click += buttonArrowDown_Click;
-            // 
-            // toolStripSeparatorLayerEditBox
-            // 
-            toolStripSeparatorLayerEditBox.Name = "toolStripSeparatorLayerEditBox";
-            resources.ApplyResources(toolStripSeparatorLayerEditBox, "toolStripSeparatorLayerEditBox");
             // 
             // ArchiveEditor
             // 

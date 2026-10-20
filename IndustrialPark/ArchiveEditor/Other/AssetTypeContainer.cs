@@ -21,7 +21,7 @@ namespace IndustrialPark
         public static bool LegacyAssetNameFormat = false;
 
         public static string AssetTypeToString(AssetType assetType) =>
-            (assetType == AssetType.Null) ? "All" :
+            (assetType == AssetType.Null) ? "All Assets" :
             (!LegacyAssetNameFormat) ? AssetTypeToString(assetType.ToString()) :
             assetType.IsDyna() ? $"DYNA [{AssetTypeToString(assetType.ToString())}]" :
             assetType.GetCode();

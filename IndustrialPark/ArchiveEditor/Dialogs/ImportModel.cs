@@ -268,7 +268,7 @@ namespace IndustrialPark
 
         private void listBox1_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
+            if (e.KeyCode == Keys.Delete && listBox1.SelectedIndex >= 0 && listBox1.SelectedIndex < listBox1.Items.Count)
             {
                 filePaths.RemoveAt(listBox1.SelectedIndex);
                 UpdateListBox();

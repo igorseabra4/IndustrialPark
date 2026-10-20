@@ -136,6 +136,11 @@ As a result, dragging a ring may rotate the asset in a direction that feels unpr
 If you're not sure which behavior you prefer, try both and see which feels more intuitive.
 This option only makes a difference when the asset is rotated on more than one axis.</value>
   </data>
+  <data name="autoDockArchiveEditorToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>When enabled, the targeted archive editor will be docked on the left side of the main window.
+Right click on the asset list to access all archive editor functionality.
+This option requires the toolbar to be enabled.</value>
+  </data>
   <data name="enableAssetToolButtonsToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>If enabled, buttons will appear on Asset Data Editor windows with functions (such as find who targets me and open wiki page).
 You can always access the tools under their Edit tool strip menu regardless of this setting.</value>

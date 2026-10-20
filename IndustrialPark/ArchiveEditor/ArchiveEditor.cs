@@ -38,9 +38,6 @@ namespace IndustrialPark
 
             ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
 
-            textBoxFindAsset.Location = new System.Drawing.Point(256, 14);
-            textBoxFindAsset.Size = new Size(260, 21);
-
             comboBoxLayers.SelectedIndexChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
             checkBoxTemplateFocus.CheckedChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
 
@@ -1513,7 +1510,7 @@ namespace IndustrialPark
         {
             Program.MainForm.ClearTemplateFocus();
             checkBoxTemplateFocus.Checked = true;
-            if (Program.MainForm.AutoDockArchiveEditors)
+            if (Program.MainForm.AutoDockArchiveEditors && Program.MainForm.ShowToolbar)
                 Program.MainForm.DockAssetList(this);
         }
 

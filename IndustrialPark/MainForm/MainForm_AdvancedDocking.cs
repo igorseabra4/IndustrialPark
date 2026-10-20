@@ -270,4 +270,12 @@ public partial class MainForm
         if (!splitContainer1.Panel1Collapsed)
             splitContainer1.Panel1Collapsed = true;
     }
+
+    public void RefreshAssetListDock()
+    {
+        if (AutoDockArchiveEditors && ShowToolbar)
+            DockAssetList();
+        else
+            UndockAssetList();
+    }
 }
