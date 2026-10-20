@@ -716,7 +716,7 @@ namespace IndustrialPark
             // 
             mVPTColorToolStripMenuItem.Name = "mVPTColorToolStripMenuItem";
             mVPTColorToolStripMenuItem.Size = new System.Drawing.Size(222, 22);
-            mVPTColorToolStripMenuItem.Text = "MVPT/DTRK Color...";
+            mVPTColorToolStripMenuItem.Text = "MovePoint/DashTrack Color...";
             mVPTColorToolStripMenuItem.Click += mVPTColorToolStripMenuItem_Click;
             // 
             // tRIGColorToolStripMenuItem

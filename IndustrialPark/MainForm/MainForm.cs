@@ -215,7 +215,7 @@ namespace IndustrialPark
 
             fogToolStripMenuItem.Checked = settings.fog;
             AssetFOG.DontRender = !settings.fog;
-            
+
             renderer.colors = settings.Colors;
 
             dockLeftSizeInit = settings.dockLeftSize;
@@ -1083,6 +1083,8 @@ namespace IndustrialPark
         private void resetColorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             renderer.ResetColors();
+            if (PressedKeys.Contains(Keys.ShiftKey))
+                renderer.colors = RendererColors.Classic;
         }
 
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
