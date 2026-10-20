@@ -1,25 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace IndustrialPark
 {
     public partial class InternalTextEditor : InternalEditor
     {
-        public InternalTextEditor(AssetTEXT asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+        public InternalTextEditor(AssetTEXT asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
         {
             InitializeComponent();
-
-            this.asset = asset;
-            this.archive = archive;
-            this.updateListView = updateListView;
-
-            Text = $"[{this.asset.assetType}] {this.asset}";
             richTextBoxAssetText.Text = this.asset.Text;
         }
-
-        public override bool CanBeDocked => true;
 
         public override void RefreshPropertyGrid()
         {
@@ -31,18 +22,13 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private AssetTEXT asset;
+        private new AssetTEXT asset => (AssetTEXT)base.asset;
 
         private void richTextBoxAssetText_TextChanged(object sender, EventArgs e)
         {
             asset.Text = richTextBoxAssetText.Text;
             archive.UnsavedChanges = true;
             updateListView(asset);
-        }
-
-        public override uint GetAssetID()
-        {
-            return asset.assetID;
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)

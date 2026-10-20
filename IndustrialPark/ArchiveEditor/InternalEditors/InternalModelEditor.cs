@@ -16,15 +16,9 @@ namespace IndustrialPark
 {
     public partial class InternalModelEditor : InternalEditor
     {
-        public InternalModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+        public InternalModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base (asset, archive, updateListView)
         {
             InitializeComponent();
-
-            this.asset = asset;
-            this.archive = archive;
-            this.updateListView = updateListView;
-
-            Text = $"[{asset.assetType}] {asset}";
 
             SetupTexturesBox();
             if (asset.assetType == AssetType.Model)
@@ -64,12 +58,7 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private readonly AssetRenderWareModel asset;
-
-        public override uint GetAssetID()
-        {
-            return asset.assetID;
-        }
+        private new AssetRenderWareModel asset => (AssetRenderWareModel)base.asset;
 
         private void SetupTexturesBox()
         {

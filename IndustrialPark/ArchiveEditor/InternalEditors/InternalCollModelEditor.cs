@@ -11,23 +11,13 @@ namespace IndustrialPark
 {
     public partial class InternalCollModelEditor : InternalEditor
     {
-        public InternalCollModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+        public InternalCollModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
         {
             InitializeComponent();
-
-            this.asset = asset;
-            this.archive = archive;
-            this.updateListView = updateListView;
-
             UpdateStats();
         }
 
-        private readonly AssetRenderWareModel asset;
-
-        public override uint GetAssetID()
-        {
-            return asset.assetID;
-        }
+        private new AssetRenderWareModel asset => (AssetRenderWareModel)base.asset;
 
         public override void RefreshPropertyGrid()
         {

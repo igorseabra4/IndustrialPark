@@ -11,17 +11,11 @@ namespace IndustrialPark;
 
 public partial class InternalAssetEditor : InternalEditor
 {
-    public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+    public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
     {
         InitializeComponent();
 
-        this.asset = asset;
-        this.archive = archive;
-        this.updateListView = updateListView;
-
         propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
-
-        Text = asset.assetName;
 
         viewToolStripMenuItem.Visible = asset is IClickableAsset;
 
@@ -83,18 +77,9 @@ public partial class InternalAssetEditor : InternalEditor
         SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
-    public override bool CanBeDocked => true;
-
     private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
     {
         archive.CloseInternalEditor(this);
-    }
-
-    private readonly Asset asset;
-
-    public override uint GetAssetID()
-    {
-        return asset.assetID;
     }
 
     public override void RefreshPropertyGrid()

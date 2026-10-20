@@ -12,34 +12,27 @@ namespace IndustrialPark
 {
     public partial class InternalTextureEditor : InternalEditor
     {
-        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
         {
             InitializeComponent();
 
-            this.asset = asset;
-            this.archive = archive;
-            this.updateListView = updateListView;
-
-            DynamicTypeDescriptor dt = new DynamicTypeDescriptor(asset.GetType());
-            asset.SetDynamicProperties(dt);
-            propertyGridAsset.SelectedObject = dt.FromComponent(asset);
-            Text = $"[{asset.assetType}] {asset}";
+            propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
 
             RefreshPropertyGrid();
         }
 
-        public override bool CanBeDocked => true;
-
         public override void RefreshPropertyGrid()
         {
-            if (b != null)
-                b.Dispose();
+            b?.Dispose();
             foreach (Bitmap bitmap in archive.ExportTXDToBitmap(asset.Data).Values)
                 b = bitmap;
             pictureBox1.Image = b;
 
-            tableLayoutPanel1.RowStyles[1].SizeType = SizeType.Absolute;
-            tableLayoutPanel1.RowStyles[1].Height = b.Height + 16;
+            if (b != null)
+            {
+                tableLayoutPanel1.RowStyles[1].SizeType = SizeType.Absolute;
+                tableLayoutPanel1.RowStyles[1].Height = b.Height + 16;
+            }
 
             updateListView(asset);
         }
@@ -50,13 +43,8 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private readonly AssetRWTX asset;
+        private new AssetRWTX asset => (AssetRWTX)base.asset;
         private Bitmap b;
-
-        public override uint GetAssetID()
-        {
-            return asset.assetID;
-        }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)
         {

@@ -61,6 +61,7 @@ namespace IndustrialPark
             CloseInternalEditor(asset.assetID);
 
             var editor = CreateInternalEditor(asset, updateListView);
+            editor.Text = asset.assetName;
             editor.Activated += (sender, e) =>
             {
                 editor.Opacity = 1f;
@@ -93,7 +94,7 @@ namespace IndustrialPark
             {
                 editor.FormDropped += Program.MainForm.editor_FormDropped;
                 if (AutoDockAssetEditors || autoDock)
-                    Program.MainForm.DockEditor(editor);
+                    Program.MainForm.DockAssetEditor(editor);
             }
             else if (autoDock)
             {
@@ -121,7 +122,7 @@ namespace IndustrialPark
                 case AssetType.TextureStream:
                     if (asset is AssetRWTX rwtx)
                         return new InternalTextureEditor(rwtx, this, updateListView);
-                    return new InternalAssetEditor(asset, this, updateListView);
+                    break;
                 case AssetType.Sound:
                 case AssetType.SoundStream:
                     return new InternalSoundEditor((AssetSound)asset, this, updateListView);

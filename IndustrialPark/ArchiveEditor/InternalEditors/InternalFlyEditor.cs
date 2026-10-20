@@ -6,19 +6,12 @@ namespace IndustrialPark
 {
     public partial class InternalFlyEditor : InternalEditor
     {
-        public InternalFlyEditor(AssetFLY asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+        public InternalFlyEditor(AssetFLY asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
         {
             InitializeComponent();
 
-            this.asset = asset;
-            this.archive = archive;
-            this.updateListView = updateListView;
-
-            Text = $"[{asset.assetType}] {asset}";
             UpdateListbox();
         }
-
-        public override bool CanBeDocked => true;
 
         public override void RefreshPropertyGrid()
         {
@@ -26,7 +19,7 @@ namespace IndustrialPark
             propertyGridSpecific.Refresh();
         }
 
-        private readonly AssetFLY asset;
+        private new AssetFLY asset => (AssetFLY)base.asset;
 
         private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
@@ -39,11 +32,6 @@ namespace IndustrialPark
                 Program.MainForm.renderer.StopFly();
                 archive.CloseInternalEditor(this);
             }
-        }
-
-        public override uint GetAssetID()
-        {
-            return asset.assetID;
         }
 
         private void buttonFindCallers_Click(object sender, EventArgs e)

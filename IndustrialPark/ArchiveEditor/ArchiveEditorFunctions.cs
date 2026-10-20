@@ -1586,7 +1586,7 @@ namespace IndustrialPark
                 CurrentlySelectedAssets.Add(asset);
                 if (asset is AssetRWTX)
                     TextureManager.SelectedTextures.Add(asset.assetName.Replace(".rw3", "", StringComparison.InvariantCultureIgnoreCase));
-                if (asset is not (AssetSound or AssetMODL))
+                if (InternalEditor.CanDockAssetEditor(asset))
                     any = true;
             }
 

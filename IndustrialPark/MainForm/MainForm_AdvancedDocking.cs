@@ -99,7 +99,7 @@ public partial class MainForm
         }
     }
 
-    public void DockEditor(InternalEditor editor)
+    public void DockAssetEditor(InternalEditor editor)
     {
         if (!editor.CanBeDocked)
             return;
@@ -198,7 +198,7 @@ public partial class MainForm
         if (this.IsPointerInDockingZone())
         {
             ReleaseCapture();
-            DockEditor(editor);
+            DockAssetEditor(editor);
         }
     }
 

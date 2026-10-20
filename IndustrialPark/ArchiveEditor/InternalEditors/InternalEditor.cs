@@ -5,25 +5,26 @@ using System.Windows.Forms;
 
 namespace IndustrialPark;
 
-public class InternalEditor : Form
+public abstract class InternalEditor : Form
 {
-    public ArchiveEditorFunctions archive;
-
-    protected Action<Asset> updateListView;
+    protected readonly ArchiveEditorFunctions archive;
+    protected readonly Asset asset;
+    protected readonly Action<Asset> updateListView;
 
     public bool IsDocked = false;
+    public bool CanBeDocked => CanDockAssetEditor(asset);
+    public static bool CanDockAssetEditor(Asset asset) => asset is not (AssetSound or AssetRenderWareModel);
 
-    public virtual bool CanBeDocked => false;
-
-    public virtual uint GetAssetID()
+    public InternalEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
     {
-        throw new NotImplementedException();
+        this.asset = asset;
+        this.archive = archive;
+        this.updateListView = updateListView;
     }
 
-    public virtual void RefreshPropertyGrid()
-    {
-        throw new NotImplementedException();
-    }
+    public uint GetAssetID() => asset.assetID;
+
+    public abstract void RefreshPropertyGrid();
 
     public event EventHandler FormDropped;
     private const int WM_MOVING = 0x0216;
@@ -33,8 +34,7 @@ public class InternalEditor : Form
     {
         base.WndProc(ref m);
 
-        if (IsDocked ||
-            this.Owner is not MainForm mainForm)
+        if (IsDocked || this.Owner is not MainForm mainForm)
             return;
 
         if (m.Msg == WM_MOVING)

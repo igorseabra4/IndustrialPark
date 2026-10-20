@@ -7,16 +7,10 @@ namespace IndustrialPark
 {
     public partial class InternalSoundEditor : InternalEditor
     {
-        public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+        public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
         {
             InitializeComponent();
-
-            this.asset = asset;
-            this.archive = archive;
-            this.updateListView = updateListView;
-
-            Text = $"[{asset.assetType}] {asset}";
-
+            
             RefreshPropertyGrid();
 
             if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles && asset.assetType == AssetType.SoundStream))
@@ -114,12 +108,7 @@ namespace IndustrialPark
             archive.CloseInternalEditor(this);
         }
 
-        private readonly AssetSound asset;
-
-        public override uint GetAssetID()
-        {
-            return asset.assetID;
-        }
+        private new AssetSound asset => (AssetSound)base.asset;
 
         private void buttonImportRaw_Click(object sender, EventArgs e)
         {
