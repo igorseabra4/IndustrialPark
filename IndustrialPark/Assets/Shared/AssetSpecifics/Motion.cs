@@ -406,16 +406,18 @@ namespace IndustrialPark
         public EMovementType MovementType { get; set; }
         public EMechanismFlags MovementLoopMode { get; set; }
         public Axis SlideAxis { get; set; }
-        public Axis RotateAxis { get; set; }
         public AssetSingle SlideDistance { get; set; }
         public AssetSingle SlideTime { get; set; }
         public AssetSingle SlideAccelTime { get; set; }
         public AssetSingle SlideDecelTime { get; set; }
+        public Axis RotateAxis { get; set; }
         public AssetSingle RotateDistance { get; set; }
         public AssetSingle RotateTime { get; set; }
         public AssetSingle RotateAccelTime { get; set; }
         public AssetSingle RotateDecelTime { get; set; }
+        [Description("Delay after the forward movement")]
         public AssetSingle RetractDelay { get; set; }
+        [Description("Delay after the reverse movement")]
         public AssetSingle PostRetractDelay { get; set; }
         [Description("Movie/Incredibles only")]
         public byte ScaleAxis { get; set; }
