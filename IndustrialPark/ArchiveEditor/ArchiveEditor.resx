@@ -189,6 +189,33 @@
   <data name="convertArchiveToolStripMenuItem.Text" xml:space="preserve">
     <value>Archive Header</value>
   </data>
+  <data name="addLayerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="addLayerToolStripMenuItem.Text" xml:space="preserve">
+    <value>Add Layer</value>
+  </data>
+  <data name="removeLayerToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="removeLayerToolStripMenuItem.Text" xml:space="preserve">
+    <value>Remove Layer</value>
+  </data>
+  <data name="moveLayerUpToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="moveLayerUpToolStripMenuItem.Text" xml:space="preserve">
+    <value>Move Layer Up</value>
+  </data>
+  <data name="moveLayerDownToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
+    <value>196, 22</value>
+  </data>
+  <data name="moveLayerDownToolStripMenuItem.Text" xml:space="preserve">
+    <value>Move Layer Down</value>
+  </data>
+  <data name="toolStripSeparatorLayerEditBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>193, 6</value>
+  </data>
   <data name="noLayersToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>196, 22</value>
   </data>
@@ -464,7 +491,7 @@ Enabling Legacy Save means this information will not be saved and will be lost w
     <value>&amp;Edit</value>
   </data>
   <data name="generateToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>175, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="generateToolStripMenuItem.Text" xml:space="preserve">
     <value>&amp;Generate Report</value>
@@ -473,7 +500,7 @@ Enabling Legacy Save means this information will not be saved and will be lost w
     <value>False</value>
   </data>
   <data name="verifyArchiveToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>175, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="verifyArchiveToolStripMenuItem.Text" xml:space="preserve">
     <value>Verify Archive</value>
@@ -482,7 +509,7 @@ Enabling Legacy Save means this information will not be saved and will be lost w
     <value>False</value>
   </data>
   <data name="applyScaleToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>175, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="applyScaleToolStripMenuItem.Text" xml:space="preserve">
     <value>Apply Scale</value>
@@ -491,7 +518,7 @@ Enabling Legacy Save means this information will not be saved and will be lost w
     <value>False</value>
   </data>
   <data name="mergeSimilarAssetsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>175, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="mergeSimilarAssetsToolStripMenuItem.Text" xml:space="preserve">
     <value>Merge Table Assets</value>
@@ -528,7 +555,7 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
     <value>False</value>
   </data>
   <data name="buildCollisionTreeForAllModelsToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
-    <value>175, 22</value>
+    <value>180, 22</value>
   </data>
   <data name="buildCollisionTreeForAllModelsToolStripMenuItem.Text" xml:space="preserve">
     <value>Build Collision Tree</value>
@@ -948,9 +975,6 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="listViewAssets.Anchor" type="System.Windows.Forms.AnchorStyles, System.Windows.Forms">
     <value>Top, Bottom, Left, Right</value>
   </data>
-  <data name="AssetNameCol.DisplayIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
   <data name="AssetNameCol.Text" xml:space="preserve">
     <value>Name</value>
   </data>
@@ -958,7 +982,7 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
     <value>232</value>
   </data>
   <data name="AssetIDCol.DisplayIndex" type="System.Int32, mscorlib">
-    <value>0</value>
+    <value>4</value>
   </data>
   <data name="AssetIDCol.Text" xml:space="preserve">
     <value>ID</value>
@@ -966,17 +990,26 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="AssetIDCol.Width" type="System.Int32, mscorlib">
     <value>66</value>
   </data>
+  <data name="AssetTypeCol.DisplayIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
   <data name="AssetTypeCol.Text" xml:space="preserve">
     <value>Type</value>
   </data>
   <data name="AssetTypeCol.Width" type="System.Int32, mscorlib">
     <value>57</value>
   </data>
+  <data name="AssetInfoCol.DisplayIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
   <data name="AssetInfoCol.Text" xml:space="preserve">
     <value>Info</value>
   </data>
   <data name="AssetInfoCol.Width" type="System.Int32, mscorlib">
     <value>96</value>
+  </data>
+  <data name="AssetLinksCol.DisplayIndex" type="System.Int32, mscorlib">
+    <value>3</value>
   </data>
   <data name="AssetLinksCol.Text" xml:space="preserve">
     <value>Links</value>
@@ -1356,12 +1389,6 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="addTemplateToolStripMenuItem.Text" xml:space="preserve">
     <value>Add Template</value>
   </data>
-  <data name="toolStripMenuItem_CreateGroup.Size" type="System.Drawing.Size, System.Drawing">
-    <value>222, 22</value>
-  </data>
-  <data name="toolStripMenuItem_CreateGroup.Text" xml:space="preserve">
-    <value>Create Group From Selected</value>
-  </data>
   <data name="toolStripSeparator4.Size" type="System.Drawing.Size, System.Drawing">
     <value>219, 6</value>
   </data>
@@ -1452,14 +1479,41 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="toolStripSeparator8.Size" type="System.Drawing.Size, System.Drawing">
     <value>219, 6</value>
   </data>
+  <data name="fileToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="fileToolStripMenuItem1.Text" xml:space="preserve">
+    <value>File</value>
+  </data>
+  <data name="editToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="editToolStripMenuItem1.Text" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="toolsToolStripMenuItem1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolsToolStripMenuItem1.Text" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="toolStripSeparatorExtra1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>219, 6</value>
+  </data>
   <data name="copyAssetNamesToolStripMenuItem.Size" type="System.Drawing.Size, System.Drawing">
     <value>222, 22</value>
   </data>
   <data name="copyAssetNamesToolStripMenuItem.Text" xml:space="preserve">
     <value>Copy Asset Names</value>
   </data>
+  <data name="toolStripMenuItem_CreateGroup.Size" type="System.Drawing.Size, System.Drawing">
+    <value>222, 22</value>
+  </data>
+  <data name="toolStripMenuItem_CreateGroup.Text" xml:space="preserve">
+    <value>Create Group From Selected</value>
+  </data>
   <data name="contextMenuStrip_ListBoxAssets.Size" type="System.Drawing.Size, System.Drawing">
-    <value>223, 308</value>
+    <value>223, 380</value>
   </data>
   <data name="&gt;&gt;contextMenuStrip_ListBoxAssets.Name" xml:space="preserve">
     <value>contextMenuStrip_ListBoxAssets</value>
@@ -1878,12 +1932,6 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="&gt;&gt;addTemplateToolStripMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;toolStripMenuItem_CreateGroup.Name" xml:space="preserve">
-    <value>toolStripMenuItem_CreateGroup</value>
-  </data>
-  <data name="&gt;&gt;toolStripMenuItem_CreateGroup.Type" xml:space="preserve">
-    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="&gt;&gt;toolStripSeparator4.Name" xml:space="preserve">
     <value>toolStripSeparator4</value>
   </data>
@@ -1962,10 +2010,40 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   <data name="&gt;&gt;toolStripSeparator8.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="&gt;&gt;fileToolStripMenuItem1.Name" xml:space="preserve">
+    <value>fileToolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;fileToolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem1.Name" xml:space="preserve">
+    <value>editToolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;editToolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolsToolStripMenuItem1.Name" xml:space="preserve">
+    <value>toolsToolStripMenuItem1</value>
+  </data>
+  <data name="&gt;&gt;toolsToolStripMenuItem1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorExtra1.Name" xml:space="preserve">
+    <value>toolStripSeparatorExtra1</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorExtra1.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="&gt;&gt;copyAssetNamesToolStripMenuItem.Name" xml:space="preserve">
     <value>copyAssetNamesToolStripMenuItem</value>
   </data>
   <data name="&gt;&gt;copyAssetNamesToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_CreateGroup.Name" xml:space="preserve">
+    <value>toolStripMenuItem_CreateGroup</value>
+  </data>
+  <data name="&gt;&gt;toolStripMenuItem_CreateGroup.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;toolTip1.Name" xml:space="preserve">
@@ -1973,6 +2051,36 @@ Coll Table, LOD Table, Pipe Table, Shadow Table, Jaw Data, Sound Info</value>
   </data>
   <data name="&gt;&gt;toolTip1.Type" xml:space="preserve">
     <value>System.Windows.Forms.ToolTip, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;addLayerToolStripMenuItem.Name" xml:space="preserve">
+    <value>addLayerToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;addLayerToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;removeLayerToolStripMenuItem.Name" xml:space="preserve">
+    <value>removeLayerToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;removeLayerToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;moveLayerUpToolStripMenuItem.Name" xml:space="preserve">
+    <value>moveLayerUpToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;moveLayerUpToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;moveLayerDownToolStripMenuItem.Name" xml:space="preserve">
+    <value>moveLayerDownToolStripMenuItem</value>
+  </data>
+  <data name="&gt;&gt;moveLayerDownToolStripMenuItem.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripMenuItem, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorLayerEditBox.Name" xml:space="preserve">
+    <value>toolStripSeparatorLayerEditBox</value>
+  </data>
+  <data name="&gt;&gt;toolStripSeparatorLayerEditBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ToolStripSeparator, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>ArchiveEditor</value>

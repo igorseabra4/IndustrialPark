@@ -33,8 +33,12 @@ namespace IndustrialPark
         public bool AlwaysListAllAssets = true;
         public bool RotationGizmoLocalAxis = true;
         public bool EnableAssetToolButtons = true;
+        public bool AutoDockArchiveEditor = false;
         public bool AutoDockAssetEditors = false;
         public bool AutoDockSelectedAssetEditors = false;
+
+        public int dockLeftSize = -1;
+        public int dockRightSize = -1;
 
         public string pcsx2Path;
         public string[] recentBuildIsoGamePaths;

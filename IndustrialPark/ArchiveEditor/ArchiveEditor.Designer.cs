@@ -122,7 +122,6 @@
             label2 = new System.Windows.Forms.Label();
             contextMenuStrip_ListBoxAssets = new System.Windows.Forms.ContextMenuStrip(components);
             addTemplateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            toolStripMenuItem_CreateGroup = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             toolStripMenuItem_Import = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem_Duplicate = new System.Windows.Forms.ToolStripMenuItem();
@@ -136,8 +135,18 @@
             toolStripMenuItem_EditData = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItem_MultiEdit = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator8 = new System.Windows.Forms.ToolStripSeparator();
+            fileToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            editToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            toolsToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparatorExtra1 = new System.Windows.Forms.ToolStripSeparator();
             copyAssetNamesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripMenuItem_CreateGroup = new System.Windows.Forms.ToolStripMenuItem();
             toolTip1 = new System.Windows.Forms.ToolTip(components);
+            addLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            removeLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveLayerUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            moveLayerDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            toolStripSeparatorLayerEditBox = new System.Windows.Forms.ToolStripSeparator();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             groupBoxLayers.SuspendLayout();
@@ -207,7 +216,7 @@
             // 
             // layersToolStripMenuItem
             // 
-            layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { noLayersToolStripMenuItem, organizeLayersToolStripMenuItem, organizeLegacyToolStripMenuItem, toolStripSeparator5, renameLayerToolStripMenuItem });
+            layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addLayerToolStripMenuItem, removeLayerToolStripMenuItem, moveLayerUpToolStripMenuItem, moveLayerDownToolStripMenuItem, toolStripSeparatorLayerEditBox, noLayersToolStripMenuItem, organizeLayersToolStripMenuItem, organizeLegacyToolStripMenuItem, toolStripSeparator5, renameLayerToolStripMenuItem });
             resources.ApplyResources(layersToolStripMenuItem, "layersToolStripMenuItem");
             layersToolStripMenuItem.Name = "layersToolStripMenuItem";
             // 
@@ -731,7 +740,7 @@
             // contextMenuStrip_ListBoxAssets
             // 
             contextMenuStrip_ListBoxAssets.ImageScalingSize = new System.Drawing.Size(24, 24);
-            contextMenuStrip_ListBoxAssets.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { addTemplateToolStripMenuItem, toolStripMenuItem_CreateGroup, toolStripSeparator4, toolStripMenuItem_Import, toolStripMenuItem_Duplicate, toolStripMenuItem_Copy, toolStripMenuItem_Paste, toolStripMenuItem_Remove, toolStripSeparator2, toolStripMenuItem_View, toolStripMenuItem_ExportRaw, toolStripMenuItem_EditHeader, toolStripMenuItem_EditData, toolStripMenuItem_MultiEdit, toolStripSeparator8, copyAssetNamesToolStripMenuItem });
+            contextMenuStrip_ListBoxAssets.Items.AddRange(new System.Windows.Forms.ToolStripItem[] { addTemplateToolStripMenuItem, toolStripSeparator4, toolStripMenuItem_Import, toolStripMenuItem_Duplicate, toolStripMenuItem_Copy, toolStripMenuItem_Paste, toolStripMenuItem_Remove, toolStripSeparator2, toolStripMenuItem_View, toolStripMenuItem_ExportRaw, toolStripMenuItem_EditHeader, toolStripMenuItem_EditData, toolStripMenuItem_MultiEdit, toolStripSeparator8, fileToolStripMenuItem1, editToolStripMenuItem1, toolsToolStripMenuItem1, toolStripSeparatorExtra1, copyAssetNamesToolStripMenuItem, toolStripMenuItem_CreateGroup });
             contextMenuStrip_ListBoxAssets.Name = "contextMenuStrip_ListBoxAssets";
             resources.ApplyResources(contextMenuStrip_ListBoxAssets, "contextMenuStrip_ListBoxAssets");
             // 
@@ -739,12 +748,6 @@
             // 
             addTemplateToolStripMenuItem.Name = "addTemplateToolStripMenuItem";
             resources.ApplyResources(addTemplateToolStripMenuItem, "addTemplateToolStripMenuItem");
-            // 
-            // toolStripMenuItem_CreateGroup
-            // 
-            toolStripMenuItem_CreateGroup.Name = "toolStripMenuItem_CreateGroup";
-            resources.ApplyResources(toolStripMenuItem_CreateGroup, "toolStripMenuItem_CreateGroup");
-            toolStripMenuItem_CreateGroup.Click += ToolStripMenuItem_CreateGroup_Click;
             // 
             // toolStripSeparator4
             // 
@@ -821,17 +824,72 @@
             toolStripSeparator8.Name = "toolStripSeparator8";
             resources.ApplyResources(toolStripSeparator8, "toolStripSeparator8");
             // 
+            // fileToolStripMenuItem1
+            // 
+            fileToolStripMenuItem1.Name = "fileToolStripMenuItem1";
+            resources.ApplyResources(fileToolStripMenuItem1, "fileToolStripMenuItem1");
+            // 
+            // editToolStripMenuItem1
+            // 
+            editToolStripMenuItem1.Name = "editToolStripMenuItem1";
+            resources.ApplyResources(editToolStripMenuItem1, "editToolStripMenuItem1");
+            // 
+            // toolsToolStripMenuItem1
+            // 
+            toolsToolStripMenuItem1.Name = "toolsToolStripMenuItem1";
+            resources.ApplyResources(toolsToolStripMenuItem1, "toolsToolStripMenuItem1");
+            // 
+            // toolStripSeparatorExtra1
+            // 
+            toolStripSeparatorExtra1.Name = "toolStripSeparatorExtra1";
+            resources.ApplyResources(toolStripSeparatorExtra1, "toolStripSeparatorExtra1");
+            // 
             // copyAssetNamesToolStripMenuItem
             // 
             copyAssetNamesToolStripMenuItem.Name = "copyAssetNamesToolStripMenuItem";
             resources.ApplyResources(copyAssetNamesToolStripMenuItem, "copyAssetNamesToolStripMenuItem");
             copyAssetNamesToolStripMenuItem.Click += copyAssetNamesToolStripMenuItem_Click;
             // 
+            // toolStripMenuItem_CreateGroup
+            // 
+            toolStripMenuItem_CreateGroup.Name = "toolStripMenuItem_CreateGroup";
+            resources.ApplyResources(toolStripMenuItem_CreateGroup, "toolStripMenuItem_CreateGroup");
+            toolStripMenuItem_CreateGroup.Click += ToolStripMenuItem_CreateGroup_Click;
+            // 
             // toolTip1
             // 
             toolTip1.AutoPopDelay = 20000;
             toolTip1.InitialDelay = 500;
             toolTip1.ReshowDelay = 100;
+            // 
+            // addLayerToolStripMenuItem
+            // 
+            addLayerToolStripMenuItem.Name = "addLayerToolStripMenuItem";
+            resources.ApplyResources(addLayerToolStripMenuItem, "addLayerToolStripMenuItem");
+            addLayerToolStripMenuItem.Click += buttonAddLayer_Click;
+            // 
+            // removeLayerToolStripMenuItem
+            // 
+            removeLayerToolStripMenuItem.Name = "removeLayerToolStripMenuItem";
+            resources.ApplyResources(removeLayerToolStripMenuItem, "removeLayerToolStripMenuItem");
+            removeLayerToolStripMenuItem.Click += buttonRemoveLayer_Click;
+            // 
+            // moveLayerUpToolStripMenuItem
+            // 
+            moveLayerUpToolStripMenuItem.Name = "moveLayerUpToolStripMenuItem";
+            resources.ApplyResources(moveLayerUpToolStripMenuItem, "moveLayerUpToolStripMenuItem");
+            moveLayerUpToolStripMenuItem.Click += buttonArrowUp_Click;
+            // 
+            // moveLayerDownToolStripMenuItem
+            // 
+            moveLayerDownToolStripMenuItem.Name = "moveLayerDownToolStripMenuItem";
+            resources.ApplyResources(moveLayerDownToolStripMenuItem, "moveLayerDownToolStripMenuItem");
+            moveLayerDownToolStripMenuItem.Click += buttonArrowDown_Click;
+            // 
+            // toolStripSeparatorLayerEditBox
+            // 
+            toolStripSeparatorLayerEditBox.Name = "toolStripSeparatorLayerEditBox";
+            resources.ApplyResources(toolStripSeparatorLayerEditBox, "toolStripSeparatorLayerEditBox");
             // 
             // ArchiveEditor
             // 
@@ -974,5 +1032,14 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator9;
         private System.Windows.Forms.ToolStripMenuItem overwriteAssetsOnImportToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorExtra1;
+        private System.Windows.Forms.ToolStripMenuItem addLayerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeLayerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem moveLayerUpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem moveLayerDownToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparatorLayerEditBox;
     }
 }

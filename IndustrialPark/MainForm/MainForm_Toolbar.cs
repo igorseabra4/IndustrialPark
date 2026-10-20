@@ -13,9 +13,6 @@ namespace IndustrialPark
 
         private Dictionary<GizmoMode, ToolStripButton> toolbarGizmoButtons;
         private Dictionary<ToolStripButton, AssetType> toolbarVisibilityButtons;
-
-        // Archive editors in the same order as the items of toolStripComboBoxArchive
-        private readonly List<ArchiveEditor> toolbarArchiveEditors = new List<ArchiveEditor>();
         private bool updatingToolbar = false;
 
         private void SetupToolbar()
@@ -84,15 +81,12 @@ namespace IndustrialPark
 
             updatingToolbar = true;
 
-            toolbarArchiveEditors.Clear();
-            toolbarArchiveEditors.AddRange(archiveEditors);
-
             toolStripComboBoxArchive.Items.Clear();
-            foreach (var ae in toolbarArchiveEditors)
+            foreach (var ae in archiveEditors)
                 toolStripComboBoxArchive.Items.Add(Path.GetFileName(ae.GetCurrentlyOpenFileName()));
 
-            toolStripComboBoxArchive.SelectedIndex = toolbarArchiveEditors.FindIndex(ae => ae.TemplateFocus);
-            toolStripComboBoxArchive.Enabled = toolbarArchiveEditors.Count > 0;
+            toolStripComboBoxArchive.SelectedIndex = archiveEditors.FindIndex(ae => ae.Targeted);
+            toolStripComboBoxArchive.Enabled = archiveEditors.Count > 0;
 
             updatingToolbar = false;
 
@@ -100,7 +94,7 @@ namespace IndustrialPark
         }
 
         private ArchiveEditor ToolbarActiveArchiveEditor =>
-            toolStripComboBoxArchive.SelectedIndex == -1 ? null : toolbarArchiveEditors[toolStripComboBoxArchive.SelectedIndex];
+            toolStripComboBoxArchive.SelectedIndex == -1 ? null : archiveEditors[toolStripComboBoxArchive.SelectedIndex];
 
         /// <summary>
         /// Rebuilds the layer dropdown from the active archive. Disabled when there is no active archive or it has no layers.
@@ -123,7 +117,7 @@ namespace IndustrialPark
             else
             {
                 toolStripComboBoxLayer.Enabled = true;
-                toolStripComboBoxLayer.ToolTipText = "Active layer of the active archive: templates are placed here";
+                toolStripComboBoxLayer.ToolTipText = "Active layer of the active archive: templates and pasted assets are placed here";
                 toolStripComboBoxLayer.Items.AddRange(ae.LayerNames.ToArray());
                 toolStripComboBoxLayer.SelectedIndex = ae.SelectedLayerIndex;
             }
@@ -176,11 +170,11 @@ namespace IndustrialPark
             if (updatingToolbar)
                 return;
 
-            if (sender.TemplateFocus && ToolbarActiveArchiveEditor != sender)
+            if (sender.Targeted && ToolbarActiveArchiveEditor != sender)
                 UpdateToolbarArchives();
             else if (ToolbarActiveArchiveEditor == sender)
             {
-                if (sender.TemplateFocus)
+                if (sender.Targeted)
                     UpdateToolbarLayers();
                 else
                     UpdateToolbarArchives();

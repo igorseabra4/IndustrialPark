@@ -204,11 +204,17 @@ namespace IndustrialPark
             enableAssetToolButtonsToolStripMenuItem.Checked = settings.EnableAssetToolButtons;
             InternalEditor.EnableAssetToolButtons = settings.EnableAssetToolButtons;
 
+            autoDockArchiveEditorToolStripMenuItem.Checked = settings.AutoDockArchiveEditor;
+            AutoDockArchiveEditors = settings.AutoDockArchiveEditor;
+
             autoDockAssetEditorsToolStripMenuItem.Checked = settings.AutoDockAssetEditors;
             ArchiveEditorFunctions.AutoDockAssetEditors = settings.AutoDockAssetEditors;
 
             autoDockSelectedAssetEditorsToolStripMenuItem.Checked = settings.AutoDockSelectedAssetEditors;
             ArchiveEditorFunctions.AutoDockSelectedAssetEditors = settings.AutoDockSelectedAssetEditors;
+            
+            dockLeftSizeInit = settings.dockLeftSize;
+            dockRightSizeInit = settings.dockRightSize;
 
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
@@ -300,8 +306,11 @@ namespace IndustrialPark
                 AlwaysListAllAssets = ArchiveEditor.AlwaysListAllAssets,
                 RotationGizmoLocalAxis = ArchiveEditorFunctions.RotationGizmoLocalAxis,
                 EnableAssetToolButtons = InternalEditor.EnableAssetToolButtons,
+                AutoDockArchiveEditor = AutoDockArchiveEditors,
                 AutoDockAssetEditors = ArchiveEditorFunctions.AutoDockAssetEditors,
                 AutoDockSelectedAssetEditors = ArchiveEditorFunctions.AutoDockSelectedAssetEditors,
+                dockLeftSize = dockLeftSizeSave,
+                dockRightSize = dockRightSizeSave,
                 Speed = renderer.Camera.Speed,
                 SpeedRot = renderer.Camera.SpeedRot,
             };
@@ -713,9 +722,6 @@ namespace IndustrialPark
 
         private void MainForm_KeyDown(object sender, KeyEventArgs e)
         {
-            if (!renderPanel.Focused)
-                return;
-
             PressedKeys.Add(e.KeyCode);
 
             if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
@@ -729,6 +735,9 @@ namespace IndustrialPark
                 Program.UndoBuffer.Undo();
                 return;
             }
+
+            if (!renderPanel.Focused)
+                return;
 
             switch (e.KeyCode)
             {
@@ -879,7 +888,7 @@ namespace IndustrialPark
         {
             ArchiveEditorFunctions.SkipGizmos = PressedKeys.Contains(Keys.ShiftKey) || PressedKeys.Contains(Keys.ControlKey);
 
-            if (renderer.isDrawingUI)
+            if (!renderPanel.Focused || renderer.isDrawingUI)
                 return;
 
             if (PressedKeys.Contains(Keys.A) & PressedKeys.Contains(Keys.ControlKey))
@@ -921,7 +930,7 @@ namespace IndustrialPark
 
         public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
 
-        private ArchiveEditor GetFocusedArchiveEditor() => archiveEditors.FirstOrDefault(ae => ae.TemplateFocus);
+        private ArchiveEditor GetTargetArchiveEditor() => archiveEditors.FirstOrDefault(ae => ae.Targeted);
 
         private void newToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -936,8 +945,7 @@ namespace IndustrialPark
             ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(ae.GetCurrentlyOpenFileName()));
             tempMenuItem.Click += new EventHandler((object sender, EventArgs e) =>
             {
-                ae.Show(this);
-                ae.WindowState = FormWindowState.Normal;
+                ShowArchiveEditor(ae);
             });
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
 
@@ -1131,7 +1139,7 @@ namespace IndustrialPark
             {
                 Vector3 Position = GetScreenClickedPosition(ViewRectangle, e.X, e.Y);
 
-                if (GetFocusedArchiveEditor() is ArchiveEditor archiveEditor)
+                if (GetTargetArchiveEditor() is ArchiveEditor archiveEditor)
                     archiveEditor.PlaceTemplate(Position);
                 else
                     MessageBox.Show($"The template could not be placed because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -1181,6 +1189,8 @@ namespace IndustrialPark
                         ae.RemoveFromSelection(ae.archive == archive ? assetID : null);
                     else
                         ae.SetSelectedIndex(ae.archive == archive ? assetID : null, addToSelection, toggleSelection);
+                if (ArchiveEditorFunctions.AutoDockSelectedAssetEditors)
+                    renderPanel.Focus();
             }
         }
 
@@ -1241,10 +1251,14 @@ namespace IndustrialPark
 
         private void ShowArchiveEditor(ArchiveEditor ae)
         {
+            if (ae.AssetListDocked)
+                return;
+
             if (ae.WindowState == FormWindowState.Minimized)
                 ae.WindowState = FormWindowState.Normal;
 
-            ae.Show(this);
+            if (!ae.Visible)
+                ae.Show(this);
             ae.Activate();
         }
 
@@ -2221,6 +2235,17 @@ namespace IndustrialPark
             ArchiveEditorFunctions.RecalculateAllMatrices();
         }
 
+        private void autoDockArchiveEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoDockArchiveEditorToolStripMenuItem.Checked = !autoDockArchiveEditorToolStripMenuItem.Checked;
+            AutoDockArchiveEditors = autoDockArchiveEditorToolStripMenuItem.Checked;
+
+            if (AutoDockArchiveEditors)
+                DockAssetList();
+            else
+                UndockAssetList();
+        }
+
         private void autoDockAssetEditorsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             autoDockAssetEditorsToolStripMenuItem.Checked = !autoDockAssetEditorsToolStripMenuItem.Checked;
@@ -2332,7 +2357,7 @@ namespace IndustrialPark
 
         private void PasteSelectedAssets()
         {
-            if (GetFocusedArchiveEditor() is ArchiveEditor archiveEditor)
+            if (GetTargetArchiveEditor() is ArchiveEditor archiveEditor)
             {
                 if (!archiveEditor.archive.NoLayers && archiveEditor.SelectedLayerIndex == -1)
                 {

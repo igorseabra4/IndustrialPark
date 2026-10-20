@@ -41,6 +41,9 @@ public partial class MainForm
         splitContainer2.Layout += (_, _) => UpdateInitialDockingArea();
         splitContainer2.SplitterMoved += (_, _) => UpdateInitialDockingArea();
 
+        splitContainer1.SplitterMoved += SaveDockPanelDistances;
+        splitContainer2.SplitterMoved += SaveDockPanelDistances;
+
         renderPanel.TabStop = true;
         renderPanel.MouseDown += (_, _) => renderPanel.Focus();
     }
@@ -52,6 +55,21 @@ public partial class MainForm
         Rectangle bounds = splitContainer2.RectangleToScreen(splitContainer2.ClientRectangle);
         int width = Math.Min(360, bounds.Width);
         imaginaryDockingZone = new Rectangle(bounds.Right - width, bounds.Top, width, bounds.Height);
+    }
+
+    private int dockLeftSizeInit;
+    private int dockRightSizeInit;
+    private int dockLeftSizeSave;
+    private int dockRightSizeSave;
+    private bool leftOpenFirst = false;
+    private bool rightOpenFirst = false;
+
+    private void SaveDockPanelDistances(object sender, SplitterEventArgs e)
+    {
+        if (!splitContainer1.Panel1Collapsed && !splitContainer1.Panel2Collapsed)
+            dockLeftSizeSave = splitContainer1.SplitterDistance;
+        if (!splitContainer2.Panel1Collapsed && !splitContainer2.Panel2Collapsed)
+            dockRightSizeSave = splitContainer2.Panel2.Width;
     }
 
     private void tabControl1_MouseClick(object sender, MouseEventArgs e)
@@ -105,9 +123,12 @@ public partial class MainForm
             return;
 
         if (dockedEditorsCount == 0)
-        {
-            splitContainer2.SplitterDistance = splitContainer2.Width - editor.Width;
             splitContainer2.Panel2Collapsed = false;
+
+        if (!rightOpenFirst)
+        {
+            rightOpenFirst = true;
+            splitContainer2.SplitterDistance = splitContainer2.ClientSize.Width - splitContainer2.SplitterWidth - dockRightSizeInit;
         }
 
         var page = new TabPage(editor.Text);
@@ -215,5 +236,38 @@ public partial class MainForm
         {
             return imaginaryDockingZone.Contains(mousePos);
         }
+    }
+
+    public Panel PanelLeft => splitContainer1.Panel1;
+    public bool AutoDockArchiveEditors;
+
+    public void DockAssetList(ArchiveEditor archiveEditor = null)
+    {
+        foreach (var ae in archiveEditors.Where(ae => ae.AssetListDocked))
+            ae.MoveAssetListBack(PanelLeft);
+
+        archiveEditor ??= GetTargetArchiveEditor();
+        if (archiveEditor == null)
+            return;
+
+        archiveEditor.MoveAssetListToControl(PanelLeft);
+
+        if (splitContainer1.Panel1Collapsed)
+            splitContainer1.Panel1Collapsed = false;
+
+        if (!leftOpenFirst)
+        {
+            leftOpenFirst = true;
+            splitContainer1.SplitterDistance = dockLeftSizeInit;
+        }
+    }
+
+    public void UndockAssetList()
+    {
+        foreach (var ae in archiveEditors.Where(ae => ae.AssetListDocked))
+            ae.MoveAssetListBack(PanelLeft);
+
+        if (!splitContainer1.Panel1Collapsed)
+            splitContainer1.Panel1Collapsed = true;
     }
 }

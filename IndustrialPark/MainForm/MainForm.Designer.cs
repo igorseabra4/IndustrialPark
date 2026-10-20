@@ -63,6 +63,7 @@ namespace IndustrialPark
             toolStripSeparator1 = new ToolStripSeparator();
             rotationGizmoLocalAxisToolStripMenuItem = new ToolStripMenuItem();
             listAllAssetsToolStripMenuItem = new ToolStripMenuItem();
+            autoDockArchiveEditorToolStripMenuItem = new ToolStripMenuItem();
             autoDockAssetEditorsToolStripMenuItem = new ToolStripMenuItem();
             autoDockSelectedAssetEditorsToolStripMenuItem = new ToolStripMenuItem();
             enableAssetToolButtonsToolStripMenuItem = new ToolStripMenuItem();
@@ -351,7 +352,7 @@ namespace IndustrialPark
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { updateReferencesOnCopyPasteToolStripMenuItem, replaceAssetsOnPasteToolStripMenuItem, useLegacyAssetIDFormatToolStripMenuItem, useLegacyAssetTypeFormatToolStripMenuItem, toolStripSeparator4, manageUserTemplatesToolStripMenuItem, templatesPersistentShiniesToolStripMenuItem, templatesChainPointMVPTsToolStripMenuItem, toolStripSeparator1, rotationGizmoLocalAxisToolStripMenuItem, listAllAssetsToolStripMenuItem, autoDockAssetEditorsToolStripMenuItem, autoDockSelectedAssetEditorsToolStripMenuItem, enableAssetToolButtonsToolStripMenuItem, translucentToolStripMenuItem, toolStripSeparator7, checkForUpdatesOnStartupToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { updateReferencesOnCopyPasteToolStripMenuItem, replaceAssetsOnPasteToolStripMenuItem, useLegacyAssetIDFormatToolStripMenuItem, useLegacyAssetTypeFormatToolStripMenuItem, toolStripSeparator4, manageUserTemplatesToolStripMenuItem, templatesPersistentShiniesToolStripMenuItem, templatesChainPointMVPTsToolStripMenuItem, toolStripSeparator1, rotationGizmoLocalAxisToolStripMenuItem, listAllAssetsToolStripMenuItem, autoDockArchiveEditorToolStripMenuItem, autoDockAssetEditorsToolStripMenuItem, autoDockSelectedAssetEditorsToolStripMenuItem, enableAssetToolButtonsToolStripMenuItem, translucentToolStripMenuItem, toolStripSeparator7, checkForUpdatesOnStartupToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 19);
             optionsToolStripMenuItem.Text = "&Options";
@@ -446,20 +447,28 @@ namespace IndustrialPark
             listAllAssetsToolStripMenuItem.ToolTipText = "If enabled, the Archive Editor will always list all assets when selecting assets from the view.\r\nThis can prevent stuttering by avoiding unnecessary list updates.";
             listAllAssetsToolStripMenuItem.Click += alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click;
             // 
+            // autoDockArchiveEditorToolStripMenuItem
+            // 
+            autoDockArchiveEditorToolStripMenuItem.Name = "autoDockArchiveEditorToolStripMenuItem";
+            autoDockArchiveEditorToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
+            autoDockArchiveEditorToolStripMenuItem.Text = "Auto-dock target Archive Editor";
+            autoDockArchiveEditorToolStripMenuItem.ToolTipText = "When enabled, the targeted archive editor will be docked on the left side of the main window.\r\nRight click on the asset list to access all archive editor functionality.";
+            autoDockArchiveEditorToolStripMenuItem.Click += autoDockArchiveEditorToolStripMenuItem_Click;
+            // 
             // autoDockAssetEditorsToolStripMenuItem
             // 
             autoDockAssetEditorsToolStripMenuItem.Name = "autoDockAssetEditorsToolStripMenuItem";
             autoDockAssetEditorsToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
-            autoDockAssetEditorsToolStripMenuItem.Text = "Auto-dock new editors";
-            autoDockAssetEditorsToolStripMenuItem.ToolTipText = "Automatically docks asset editors when they are opened.";
+            autoDockAssetEditorsToolStripMenuItem.Text = "Auto-dock new asset editors";
+            autoDockAssetEditorsToolStripMenuItem.ToolTipText = "Automatically docks asset editors when they are opened.\r\nYou can dock and undock asset editors at any time by dragging their title bar.";
             autoDockAssetEditorsToolStripMenuItem.Click += autoDockAssetEditorsToolStripMenuItem_Click;
             // 
             // autoDockSelectedAssetEditorsToolStripMenuItem
             // 
             autoDockSelectedAssetEditorsToolStripMenuItem.Name = "autoDockSelectedAssetEditorsToolStripMenuItem";
             autoDockSelectedAssetEditorsToolStripMenuItem.Size = new System.Drawing.Size(279, 22);
-            autoDockSelectedAssetEditorsToolStripMenuItem.Text = "Auto-open editor on selection";
-            autoDockSelectedAssetEditorsToolStripMenuItem.ToolTipText = "When an asset is selected, automatically opens its editor in the docked area and closes any existing docked editors.";
+            autoDockSelectedAssetEditorsToolStripMenuItem.Text = "Auto-open docked editor on selection";
+            autoDockSelectedAssetEditorsToolStripMenuItem.ToolTipText = "If enabled, when an asset is selected, automatically opens its editor in the docked area and closes any existing docked editors.";
             autoDockSelectedAssetEditorsToolStripMenuItem.Click += autoDockSelectedAssetEditorsToolStripMenuItem_Click;
             // 
             // enableAssetToolButtonsToolStripMenuItem
@@ -1196,7 +1205,7 @@ namespace IndustrialPark
             toolStripComboBoxLayer.FlatStyle = FlatStyle.Standard;
             toolStripComboBoxLayer.Name = "toolStripComboBoxLayer";
             toolStripComboBoxLayer.Size = new System.Drawing.Size(200, 25);
-            toolStripComboBoxLayer.ToolTipText = "Active layer of the active archive: templates are placed here";
+            toolStripComboBoxLayer.ToolTipText = "Active layer of the active archive: templates and pasted assets are placed here";
             toolStripComboBoxLayer.DropDown += toolStripComboBoxLayer_DropDown;
             toolStripComboBoxLayer.DropDownClosed += toolStripComboBox_DropDownClosed;
             toolStripComboBoxLayer.SelectedIndexChanged += toolStripComboBoxLayer_SelectedIndexChanged;
@@ -1379,14 +1388,14 @@ namespace IndustrialPark
             splitContainer1.Location = new System.Drawing.Point(0, 46);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Panel1Collapsed = true;
-            splitContainer1.Panel1MinSize = 300;
+            splitContainer1.Panel1MinSize = 150;
             // 
             // splitContainer1.Panel2
             // 
             splitContainer1.Panel2.Controls.Add(splitContainer2);
             splitContainer1.Panel2MinSize = 300;
             splitContainer1.Size = new System.Drawing.Size(1264, 613);
-            splitContainer1.SplitterDistance = 421;
+            splitContainer1.SplitterDistance = 300;
             splitContainer1.TabIndex = 5;
             // 
             // splitContainer2
@@ -1405,7 +1414,7 @@ namespace IndustrialPark
             // 
             splitContainer2.Panel2.Controls.Add(tabControlRight);
             splitContainer2.Panel2Collapsed = true;
-            splitContainer2.Panel2MinSize = 300;
+            splitContainer2.Panel2MinSize = 150;
             splitContainer2.Size = new System.Drawing.Size(1264, 613);
             splitContainer2.SplitterDistance = 300;
             splitContainer2.TabIndex = 0;
@@ -1630,6 +1639,7 @@ namespace IndustrialPark
         private TabControl tabControlRight;
         private ToolStripMenuItem autoDockAssetEditorsToolStripMenuItem;
         private ToolStripMenuItem autoDockSelectedAssetEditorsToolStripMenuItem;
+        private ToolStripMenuItem autoDockArchiveEditorToolStripMenuItem;
     }
 }
 

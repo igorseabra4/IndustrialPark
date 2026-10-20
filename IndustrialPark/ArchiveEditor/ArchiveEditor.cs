@@ -54,6 +54,12 @@ namespace IndustrialPark
 
             _updateFilesizeStatusBarItem();
             checkBoxTemplateFocus_CheckedChanged(null, null);
+
+            fileToolStripMenuItem1.DropDown = fileToolStripMenuItem.DropDown;
+            editToolStripMenuItem1.DropDown = editToolStripMenuItem.DropDown;
+            toolsToolStripMenuItem1.DropDown = toolsToolStripMenuItem.DropDown;
+
+            SetDockedMenuItemsVisibility(false);
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -370,6 +376,9 @@ namespace IndustrialPark
 
         public void CloseArchiveEditor()
         {
+            if (AssetListDocked)
+                Program.MainForm.UndockAssetList();
+
             if (verifyResult != null)
                 if (!verifyResult.IsDisposed)
                     verifyResult.Close();
@@ -1290,7 +1299,7 @@ namespace IndustrialPark
 
             if (comboBoxAssetTypes.Items.Count > 0)
                 comboBoxAssetTypes.SelectedIndex = 0;
-            PopulateAssetList(AssetType.Null, assets, assets.Count == 1, assets.Select(a => a.assetID).ToList());
+            PopulateAssetList(AssetType.Null, assets);
         }
 
         private void convertArchiveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1493,7 +1502,7 @@ namespace IndustrialPark
             }
         }
 
-        public bool TemplateFocus => checkBoxTemplateFocus.Checked;
+        public bool Targeted => checkBoxTemplateFocus.Checked;
 
         public void ClearTemplateFocus()
         {
@@ -1504,6 +1513,8 @@ namespace IndustrialPark
         {
             Program.MainForm.ClearTemplateFocus();
             checkBoxTemplateFocus.Checked = true;
+            if (Program.MainForm.AutoDockArchiveEditors)
+                Program.MainForm.DockAssetList(this);
         }
 
         public IEnumerable<string> LayerNames => comboBoxLayers.Items.Cast<object>().Select(o => o.ToString());
@@ -2248,6 +2259,138 @@ namespace IndustrialPark
                     checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.ActiveBorder;
                 }
             }
+        }
+
+        private sealed class ControlLayout
+        {
+            public required Control Parent { get; init; }
+            public required int Index { get; init; }
+            public required DockStyle Dock { get; init; }
+            public required System.Drawing.Rectangle Bounds { get; init; }
+            public required AnchorStyles Anchor { get; init; }
+            public required Padding Margin { get; init; }
+        }
+
+        private readonly Dictionary<Control, ControlLayout> originalLayouts = new();
+        private TableLayoutPanel assetListContainer = new TableLayoutPanel
+        {
+            Dock = DockStyle.Fill,
+            ColumnCount = 1,
+            RowCount = 3,
+            Margin = Padding.Empty,
+            Padding = Padding.Empty
+        };
+
+        public void MoveAssetListToControl(Panel destination)
+        {
+            if (AssetListDocked)
+                return;
+
+            Control[] controls = [comboBoxAssetTypes, textBoxFindAsset, listViewAssets];
+
+            originalLayouts.Clear();
+
+            foreach (Control control in controls)
+                originalLayouts[control] = new ControlLayout
+                {
+                    Parent = control.Parent,
+                    Index = control.Parent.Controls.GetChildIndex(control),
+                    Dock = control.Dock,
+                    Bounds = control.Bounds,
+                    Anchor = control.Anchor,
+                    Margin = control.Margin
+                };
+
+            assetListContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+            assetListContainer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            assetListContainer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+            assetListContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+            foreach (Control control in controls)
+                control.Parent.Controls.Remove(control);
+
+            destination.Controls.Add(assetListContainer);
+
+            comboBoxAssetTypes.Dock = DockStyle.Fill;
+            textBoxFindAsset.Dock = DockStyle.Fill;
+            listViewAssets.Dock = DockStyle.Fill;
+
+            comboBoxAssetTypes.Margin = new Padding(0);
+            textBoxFindAsset.Margin = new Padding(0);
+            listViewAssets.Margin = new Padding(0);
+
+            assetListContainer.Controls.Add(comboBoxAssetTypes, 0, 0);
+            assetListContainer.Controls.Add(textBoxFindAsset, 0, 1);
+            assetListContainer.Controls.Add(listViewAssets, 0, 2);
+
+            listViewAssets.KeyDown += ArchiveEditor_KeyDown;
+            listViewAssets.KeyUp += ArchiveEditor_KeyUp;
+            listViewAssets.LostFocus += ArchiveEditor_Deactivate;
+
+            AssetListDocked = true;
+            Hide();
+        }
+
+        public void MoveAssetListBack(Control origin)
+        {
+            if (!AssetListDocked)
+                return;
+
+            Control[] controls = [comboBoxAssetTypes, textBoxFindAsset, listViewAssets];
+
+            foreach (Control control in controls)
+                assetListContainer.Controls.Remove(control);
+
+            origin.Controls.Remove(assetListContainer);
+
+            foreach (Control control in controls)
+            {
+                ControlLayout layout = originalLayouts[control];
+                layout.Parent.Controls.Add(control);
+                control.Dock = layout.Dock;
+                control.Anchor = layout.Anchor;
+                control.Margin = layout.Margin;
+                control.Bounds = layout.Bounds;
+            }
+
+            foreach (Control control in controls.OrderBy(c => originalLayouts[c].Index))
+            {
+                ControlLayout layout = originalLayouts[control];
+                layout.Parent.Controls.SetChildIndex(control, layout.Index);
+            }
+
+            originalLayouts.Clear();
+
+            listViewAssets.KeyDown -= ArchiveEditor_KeyDown;
+            listViewAssets.KeyUp -= ArchiveEditor_KeyUp;
+            listViewAssets.LostFocus -= ArchiveEditor_Deactivate;
+
+            AssetListDocked = false;
+        }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        public bool AssetListDocked
+        {
+            get;
+            set
+            {
+                field = value;
+                SetDockedMenuItemsVisibility(value);
+            }
+        } = false;
+
+        private void SetDockedMenuItemsVisibility(bool value)
+        {
+            fileToolStripMenuItem1.Visible = value;
+            editToolStripMenuItem1.Visible = value;
+            toolsToolStripMenuItem1.Visible = value;
+            toolStripSeparatorExtra1.Visible = value;
+
+            addLayerToolStripMenuItem.Visible = value;
+            removeLayerToolStripMenuItem.Visible = value;
+            moveLayerUpToolStripMenuItem.Visible = value;
+            moveLayerDownToolStripMenuItem.Visible = value;
+            toolStripSeparatorLayerEditBox.Visible = value;
         }
     }
 }
