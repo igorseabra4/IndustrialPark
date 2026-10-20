@@ -330,15 +330,19 @@ namespace IndustrialPark
             return null;
         }
 
+        public static float CameraWidgetDrawMinDistance = 0.5f;
+
         public bool ShouldDraw(SharpRenderer renderer)
         {
             if (isSelected)
-                return true;
+                return GetDistanceFrom(renderer.Camera.Position) > CameraWidgetDrawMinDistance;
             if (dontRender)
                 return false;
             if (isInvisible)
                 return false;
             if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
+                return false;
+            if (GetDistanceFrom(renderer.Camera.Position) < CameraWidgetDrawMinDistance)
                 return false;
 
             return renderer.frustum.Intersects(ref boundingBox);
