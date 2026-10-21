@@ -67,6 +67,8 @@ namespace IndustrialPark.Randomizer
             ArchiveEditorFunctions.renderableAssets.Clear();
             ArchiveEditorFunctions.renderableJSPs.Clear();
             ArchiveEditorFunctions.renderingDictionary.Clear();
+            ArchiveEditorFunctions.renderableFOGs.Clear();
+            ArchiveEditorFunctions.renderableLightKits.Clear();
             ArchiveEditorFunctions.ClearNameDictionary();
 
             return result;

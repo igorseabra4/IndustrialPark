@@ -15,7 +15,7 @@
     <OutputPath>..\IndustrialPark\bin\Release\</OutputPath>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>IndustrialParkRandomizer.Program</StartupObject>
+    <StartupObject>IndustrialPark.Randomizer.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>icon.ico</ApplicationIcon>

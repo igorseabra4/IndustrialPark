@@ -138,6 +138,7 @@ namespace IndustrialPark
             ChangesMade?.Invoke();
         }
 
+        public static bool errorDisplay = true;
         public string currentlyOpenFilePath { get; private set; }
         public string LevelName => string.IsNullOrEmpty(currentlyOpenFilePath) ? "" : Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
 
@@ -265,7 +266,7 @@ namespace IndustrialPark
             assetsWithError.RemoveAll(a =>
                 a.reason == ErrorReason.NoData && a.assetname.EndsWith(".ATBL"));
             
-            if (assetsWithError.Any())
+            if (errorDisplay && assetsWithError.Any())
                 MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", assetsWithError), 
                     $"{assetsWithError.Count} Asset(s) with errors", 
                     MessageBoxButtons.OK, MessageBoxIcon.Error);

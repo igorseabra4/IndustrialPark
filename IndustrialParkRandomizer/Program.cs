@@ -1,12 +1,12 @@
-﻿using IndustrialPark;
-using IndustrialPark.Randomizer;
-using System;
+﻿using System;
 using System.Windows.Forms;
 
-namespace IndustrialParkRandomizer
+namespace IndustrialPark.Randomizer
 {
-    static class Program
+    public static class Program
     {
+        public static RandomizerMenu menu;
+
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
         /// </summary>
@@ -18,11 +18,11 @@ namespace IndustrialParkRandomizer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            new IndustrialPark.SharpRenderer();
-
+            new SharpRenderer();
+            IndustrialPark.Program.UndoBuffer = new UndoBuffer();
             IndustrialPark.Program.MainForm = new MainForm(new IPSettings());
-
-            RandomizerMenu menu = new RandomizerMenu();
+            ArchiveEditorFunctions.errorDisplay = false;
+            menu = new RandomizerMenu();
 
             Application.Run(menu);
         }
