@@ -408,7 +408,8 @@ For skinned models, please utilize a DFF exporter on your 3D tool, such as Drago
   <data name="checkBoxCreatePIPT.ToolTip" xml:space="preserve">
     <value>Creates a Pipe Info entry for the imported model with vertex color display enabled.
 This enables in-game vertex colors and disables Light Kit lighting for the model.
-An existing Pipe Info entry for the model is not replaced.</value>
+An existing Pipe Info entry for the model is not replaced.
+Leave this on if your model has vertex colors, or if you want it to be unnafected by scene lights, such as skyboxes.</value>
   </data>
   <data name="&gt;&gt;checkBoxCreatePIPT.Name" xml:space="preserve">
     <value>checkBoxCreatePIPT</value>
@@ -509,57 +510,6 @@ An existing Pipe Info entry for the model is not replaced.</value>
   <data name="&gt;&gt;checkBoxSolidSimps.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;checkBoxSplitClump.Name" xml:space="preserve">
-    <value>checkBoxSplitClump</value>
-  </data>
-  <data name="&gt;&gt;checkBoxSplitClump.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxSplitClump.Parent" xml:space="preserve">
-    <value>grpImportSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxSplitClump.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNoMaterials.Name" xml:space="preserve">
-    <value>checkBoxNoMaterials</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNoMaterials.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNoMaterials.Parent" xml:space="preserve">
-    <value>grpImportSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNoMaterials.ZOrder" xml:space="preserve">
-    <value>1</value>
-  </data>
-  <data name="grpImportSettings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>193, 59</value>
-  </data>
-  <data name="grpImportSettings.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
-    <value>6, 6, 6, 6</value>
-  </data>
-  <data name="grpImportSettings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 80</value>
-  </data>
-  <data name="grpImportSettings.TabIndex" type="System.Int32, mscorlib">
-    <value>18</value>
-  </data>
-  <data name="grpImportSettings.Text" xml:space="preserve">
-    <value>Import Settings</value>
-  </data>
-  <data name="&gt;&gt;grpImportSettings.Name" xml:space="preserve">
-    <value>grpImportSettings</value>
-  </data>
-  <data name="&gt;&gt;grpImportSettings.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;grpImportSettings.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;grpImportSettings.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
   <data name="checkBoxSplitClump.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
   </data>
@@ -625,6 +575,33 @@ Splitting is optional for custom models.</value>
   <data name="&gt;&gt;checkBoxNoMaterials.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="grpImportSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>193, 59</value>
+  </data>
+  <data name="grpImportSettings.Padding" type="System.Windows.Forms.Padding, System.Windows.Forms">
+    <value>6, 6, 6, 6</value>
+  </data>
+  <data name="grpImportSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 80</value>
+  </data>
+  <data name="grpImportSettings.TabIndex" type="System.Int32, mscorlib">
+    <value>18</value>
+  </data>
+  <data name="grpImportSettings.Text" xml:space="preserve">
+    <value>Import Settings</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.Name" xml:space="preserve">
+    <value>grpImportSettings</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;grpImportSettings.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
   <data name="grpSIMP.Location" type="System.Drawing.Point, System.Drawing">
     <value>193, 274</value>
   </data>
@@ -648,138 +625,6 @@ Splitting is optional for custom models.</value>
   </data>
   <data name="&gt;&gt;grpSIMP.ZOrder" xml:space="preserve">
     <value>3</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBinMesh.Name" xml:space="preserve">
-    <value>checkBoxBinMesh</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBinMesh.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBinMesh.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxBinMesh.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="&gt;&gt;checkBoxMultiAtomic.Name" xml:space="preserve">
-    <value>checkBoxMultiAtomic</value>
-  </data>
-  <data name="&gt;&gt;checkBoxMultiAtomic.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxMultiAtomic.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxMultiAtomic.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNativeData.Name" xml:space="preserve">
-    <value>checkBoxNativeData</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNativeData.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNativeData.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNativeData.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTriStrips.Name" xml:space="preserve">
-    <value>checkBoxTriStrips</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTriStrips.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTriStrips.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTriStrips.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;checkBoxCollTree.Name" xml:space="preserve">
-    <value>checkBoxCollTree</value>
-  </data>
-  <data name="&gt;&gt;checkBoxCollTree.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxCollTree.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxCollTree.ZOrder" xml:space="preserve">
-    <value>5</value>
-  </data>
-  <data name="&gt;&gt;checkBoxGeoTriangles.Name" xml:space="preserve">
-    <value>checkBoxGeoTriangles</value>
-  </data>
-  <data name="&gt;&gt;checkBoxGeoTriangles.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxGeoTriangles.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxGeoTriangles.ZOrder" xml:space="preserve">
-    <value>6</value>
-  </data>
-  <data name="&gt;&gt;checkBoxVertexColors.Name" xml:space="preserve">
-    <value>checkBoxVertexColors</value>
-  </data>
-  <data name="&gt;&gt;checkBoxVertexColors.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxVertexColors.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxVertexColors.ZOrder" xml:space="preserve">
-    <value>7</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNormals.Name" xml:space="preserve">
-    <value>checkBoxNormals</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNormals.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNormals.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxNormals.ZOrder" xml:space="preserve">
-    <value>8</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTexCoords.Name" xml:space="preserve">
-    <value>checkBoxTexCoords</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTexCoords.Type" xml:space="preserve">
-    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTexCoords.Parent" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;checkBoxTexCoords.ZOrder" xml:space="preserve">
-    <value>9</value>
-  </data>
-  <data name="groupBoxModelSettings.Location" type="System.Drawing.Point, System.Drawing">
-    <value>193, 145</value>
-  </data>
-  <data name="groupBoxModelSettings.Size" type="System.Drawing.Size, System.Drawing">
-    <value>224, 123</value>
-  </data>
-  <data name="groupBoxModelSettings.TabIndex" type="System.Int32, mscorlib">
-    <value>20</value>
-  </data>
-  <data name="groupBoxModelSettings.Text" xml:space="preserve">
-    <value>Model Settings</value>
-  </data>
-  <data name="&gt;&gt;groupBoxModelSettings.Name" xml:space="preserve">
-    <value>groupBoxModelSettings</value>
-  </data>
-  <data name="&gt;&gt;groupBoxModelSettings.Type" xml:space="preserve">
-    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;groupBoxModelSettings.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;groupBoxModelSettings.ZOrder" xml:space="preserve">
-    <value>2</value>
   </data>
   <data name="checkBoxBinMesh.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>
@@ -1026,6 +871,30 @@ Splitting is optional for custom models.</value>
   </data>
   <data name="&gt;&gt;checkBoxTexCoords.ZOrder" xml:space="preserve">
     <value>9</value>
+  </data>
+  <data name="groupBoxModelSettings.Location" type="System.Drawing.Point, System.Drawing">
+    <value>193, 145</value>
+  </data>
+  <data name="groupBoxModelSettings.Size" type="System.Drawing.Size, System.Drawing">
+    <value>224, 123</value>
+  </data>
+  <data name="groupBoxModelSettings.TabIndex" type="System.Int32, mscorlib">
+    <value>20</value>
+  </data>
+  <data name="groupBoxModelSettings.Text" xml:space="preserve">
+    <value>Model Settings</value>
+  </data>
+  <data name="&gt;&gt;groupBoxModelSettings.Name" xml:space="preserve">
+    <value>groupBoxModelSettings</value>
+  </data>
+  <data name="&gt;&gt;groupBoxModelSettings.Type" xml:space="preserve">
+    <value>System.Windows.Forms.GroupBox, System.Windows.Forms, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;groupBoxModelSettings.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;groupBoxModelSettings.ZOrder" xml:space="preserve">
+    <value>2</value>
   </data>
   <data name="labelFiles.AutoSize" type="System.Boolean, mscorlib">
     <value>True</value>

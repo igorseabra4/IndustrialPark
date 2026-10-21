@@ -362,6 +362,7 @@ namespace IndustrialPark
             }
 
             CloseArchiveEditor();
+            Program.MainForm.Activate();
         }
 
         public event Action EditorUpdate;
