@@ -244,13 +244,6 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (movementPreview)
-            {
-                localFrameCounter++;
-                if (localFrameCounter >= int.MaxValue)
-                    localFrameCounter = 0;
-            }
-
             if (ArchiveEditorFunctions.renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
                 value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else

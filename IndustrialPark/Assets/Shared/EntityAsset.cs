@@ -441,6 +441,15 @@ namespace IndustrialPark
 
         public static bool movementPreview = false;
 
+        /// <summary>
+        /// Advances this entity's movement preview. Called once per frame while movement preview is enabled.
+        /// </summary>
+        /// <param name="frames">Time since the previous frame, in 60 fps frames</param>
+        public virtual void UpdateMovementPreview(double frames)
+        {
+            localFrameCounter += frames;
+        }
+
         protected (EntityAsset driver, bool useRotation) FindDriverAsset()
         {
             foreach (var link in _links)
@@ -501,7 +510,10 @@ namespace IndustrialPark
         }
 
         protected Vector3 uvTransSpeed;
-        protected int localFrameCounter = -1;
+        /// <summary>
+        /// Time since the movement preview started, in 60 fps frames
+        /// </summary>
+        protected double localFrameCounter = -1;
 
         private void FindSurf()
         {
@@ -516,6 +528,6 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public Vector3 UvAnimOffset => movementPreview ? uvTransSpeed * localFrameCounter++ / 60f : Vector3.Zero;
+        public Vector3 UvAnimOffset => movementPreview ? uvTransSpeed * (float)localFrameCounter / 60f : Vector3.Zero;
     }
 }

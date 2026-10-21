@@ -346,7 +346,7 @@ namespace IndustrialPark
 
         public override Matrix PlatLocalRotation()
         {
-            return Matrix.RotationY(localFrameCounter * MathUtil.Pi / 60f);
+            return Matrix.RotationY((float)localFrameCounter * MathUtil.Pi / 60f);
         }
 
         public override Matrix LocalWorld()

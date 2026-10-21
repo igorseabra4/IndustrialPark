@@ -16,6 +16,12 @@ namespace IndustrialPark
             Motion?.Reset();
         }
 
+        public override void UpdateMovementPreview(double frames)
+        {
+            base.UpdateMovementPreview(frames);
+            Motion?.Update(frames);
+        }
+
         public Matrix PlatLocalTranslation() => Motion.PlatLocalTranslation();
 
         public override Matrix PlatLocalRotation() => Motion.PlatLocalRotation();

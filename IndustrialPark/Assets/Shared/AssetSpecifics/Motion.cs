@@ -54,16 +54,28 @@ namespace IndustrialPark
             writer.Write(MotionFlags.FlagValueShort);
         }
 
-        protected int LocalFrameCounter = -1;
+        /// <summary>
+        /// Time since the movement started, in 60 fps frames (the game's frame rate). Advanced by real time, so the preview plays at the same speed at any frame rate.
+        /// </summary>
+        protected double LocalFrameCounter = -1;
 
         public virtual void Reset()
         {
             LocalFrameCounter = -1;
         }
 
-        public virtual void Update()
+        /// <param name="frames">Time since the previous update, in 60 fps frames</param>
+        public virtual void Update(double frames)
         {
-            LocalFrameCounter++;
+            LocalFrameCounter += frames;
+        }
+
+        /// <summary>
+        /// Starts a looping movement over, keeping the time that passed beyond the end of the loop so each loop lasts the same time at any frame rate
+        /// </summary>
+        protected void RestartLoop(float loopLength)
+        {
+            LocalFrameCounter = loopLength > 0 ? Math.Max(0, LocalFrameCounter - loopLength) : 0;
         }
 
         public virtual Matrix PlatLocalTranslation()
@@ -167,7 +179,7 @@ namespace IndustrialPark
                         currentMovementAction = CurrentMovementAction.StartWait;
                         break;
                     }
-                    translationMultiplier = (LocalFrameCounter - StartWaitRange) / (60 * ExtendTime);
+                    translationMultiplier = (float)((LocalFrameCounter - StartWaitRange) / (60 * ExtendTime));
                     if (LocalFrameCounter >= GoingRange)
                         currentMovementAction = CurrentMovementAction.EndWait;
                     break;
@@ -184,11 +196,11 @@ namespace IndustrialPark
                         currentMovementAction = CurrentMovementAction.StartWait;
                         break;
                     }
-                    translationMultiplier = 1 - ((LocalFrameCounter - EndWaitRange) / (60 * RetractTime));
+                    translationMultiplier = 1 - (float)((LocalFrameCounter - EndWaitRange) / (60 * RetractTime));
                     if (LocalFrameCounter >= GoingBackRange)
                     {
                         currentMovementAction = CurrentMovementAction.StartWait;
-                        LocalFrameCounter = 0;
+                        RestartLoop(GoingBackRange);
                     }
                     break;
 
@@ -316,14 +328,14 @@ namespace IndustrialPark
         private Vector3 initialPosition;
         private Vector3 oldPosition;
         private Vector3 targetPosition;
-        private int delay;
+        private double delay;
 
         public override void Reset()
         {
             currentMVPT = FindMVPT(MovePoint);
             if (currentMVPT != null)
             {
-                delay = (int)(currentMVPT.Delay * 60);
+                delay = currentMVPT.Delay * 60;
                 targetPosition = new Vector3(currentMVPT.PositionX, currentMVPT.PositionY, currentMVPT.PositionZ);
                 oldPosition = targetPosition;
             }
@@ -345,16 +357,20 @@ namespace IndustrialPark
             return null;
         }
 
+        public override void Update(double frames)
+        {
+            // the movement doesn't start until the move point's delay is over
+            if (delay > 0)
+                delay -= frames;
+            else
+                base.Update(frames);
+        }
+
         public override Matrix PlatLocalTranslation()
         {
-            if (delay > 0)
+            if (delay <= 0 && currentMVPT != null)
             {
-                delay--;
-                LocalFrameCounter--;
-            }
-            else if (currentMVPT != null)
-            {
-                Vector3 newPosition = Vector3.Lerp(oldPosition, targetPosition, Math.Min(1f, LocalFrameCounter / (Vector3.Distance(oldPosition, targetPosition) / (Math.Abs(Speed) / 60f))));
+                Vector3 newPosition = Vector3.Lerp(oldPosition, targetPosition, (float)Math.Min(1f, LocalFrameCounter / (Vector3.Distance(oldPosition, targetPosition) / (Math.Abs(Speed) / 60f))));
 
                 if (Vector3.Distance(newPosition, targetPosition) < 0.05f)
                 {
@@ -365,7 +381,7 @@ namespace IndustrialPark
                     {
                         currentMVPT = FindMVPT(currentMVPT.NextMovePoints[0]);
                         targetPosition = new Vector3(currentMVPT.PositionX, currentMVPT.PositionY, currentMVPT.PositionZ);
-                        delay = (int)(currentMVPT.Delay * 60);
+                        delay = currentMVPT.Delay * 60;
                     }
                     else
                         Reset();
@@ -609,9 +625,9 @@ namespace IndustrialPark
             };
         }
 
-        public override void Update()
+        public override void Update(double frames)
         {
-            base.Update();
+            base.Update(frames);
 
             switch (currentMovementAction)
             {
@@ -623,7 +639,7 @@ namespace IndustrialPark
                     break;
                 case CurrentMovementAction.Going:
                 {
-                    float movementTime = Math.Max(0f, (LocalFrameCounter - StartWaitRange) / 60f);
+                    float movementTime = Math.Max(0f, (float)(LocalFrameCounter - StartWaitRange) / 60f);
                     float slideProgress = GetSlideProgress(movementTime);
                     float rotationProgress = GetRotationProgress(movementTime);
                     float movementOffset = amountOfMovementsPerformed;
@@ -651,7 +667,7 @@ namespace IndustrialPark
                                 amountOfMovementsPerformed++;
                             slideMovementMultiplier = HasSlide ? amountOfMovementsPerformed : 0f;
                             rotationMovementMultiplier = HasRotation ? amountOfMovementsPerformed : 0f;
-                            LocalFrameCounter = 0;
+                            RestartLoop(GoingRange);
                             currentMovementAction = CurrentMovementAction.StartWait;
                         }
                     }
@@ -665,7 +681,7 @@ namespace IndustrialPark
                     break;
                 case CurrentMovementAction.GoingBack:
                 {
-                    float movementTime = Math.Max(0f, (LocalFrameCounter - EndWaitRange) / 60f);
+                    float movementTime = Math.Max(0f, (float)(LocalFrameCounter - EndWaitRange) / 60f);
                     float slideProgress = GetSlideProgress(movementTime);
                     float rotationProgress = GetRotationProgress(movementTime);
                     slideMovementMultiplier = HasSlide ? 1f - slideProgress : 0f;
@@ -675,7 +691,7 @@ namespace IndustrialPark
                         slideMovementMultiplier = 0f;
                         rotationMovementMultiplier = 0f;
                         amountOfMovementsPerformed = 0;
-                        LocalFrameCounter = 0;
+                        RestartLoop(GoingBackRange);
                         currentMovementAction = CurrentMovementAction.StartWait;
                     }
                     break;
@@ -773,7 +789,7 @@ namespace IndustrialPark
         {
             if (LocalFrameCounter >= (Period * 30))
             {
-                LocalFrameCounter = 0;
+                RestartLoop(Period * 30);
                 comingBack = !comingBack;
             }
 
@@ -782,7 +798,7 @@ namespace IndustrialPark
             //else
             //    angle = -Range_Rad + LocalFrameCounter * speed;
 
-            angle = (comingBack ? 1 : -1) * (Range_Rad - LocalFrameCounter * speed);
+            angle = (comingBack ? 1 : -1) * (Range_Rad - (float)LocalFrameCounter * speed);
 
             return Matrix.Translation(0, -Length, 0) *
                 Matrix.RotationZ(angle) *

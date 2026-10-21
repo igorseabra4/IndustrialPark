@@ -611,6 +611,7 @@ namespace IndustrialPark
 
         private Stopwatch stopwatch = new Stopwatch();
         private const float TARGET_FRAME_TIME = 1.0f / 60.0f;
+        private const float MAX_MOVEMENT_PREVIEW_STEP = 0.25f;
 #if DEBUG
         public static int TotalDrawCalls = 0;
         public static int TotalVerticesDrawn = 0;
@@ -641,6 +642,9 @@ namespace IndustrialPark
 
             // Calculate the scaling factor
             TransformScaleFactor = elapsedSeconds / TARGET_FRAME_TIME;
+
+            // Movement preview advances by real time, measured in 60 fps frames. Long pauses (e.g. a dialog box) are capped so objects don't jump ahead.
+            double movementPreviewFrames = Math.Min(elapsedSeconds, MAX_MOVEMENT_PREVIEW_STEP) / TARGET_FRAME_TIME;
 
             Program.MainForm.KeyboardController();
             Camera.Update();
@@ -706,8 +710,8 @@ namespace IndustrialPark
                                     renderableAssets.Add(a);
                                 else
                                     renderableAssets.Remove(a);
-                                if (EntityAsset.movementPreview && a is AssetWithMotion entity)
-                                      entity.Motion.Update();
+                                if (EntityAsset.movementPreview && a is EntityAsset entity)
+                                    entity.UpdateMovementPreview(movementPreviewFrames);
                             }
 
                         var renderableAssetsTrans = new HashSet<IRenderableAsset>();
