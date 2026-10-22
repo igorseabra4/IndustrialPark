@@ -18,9 +18,9 @@ namespace IndustrialPark
 
             if (editor.OK)
             {
-                Array result = Array.CreateInstance(editor.type, editor.listBoxItems.Items.Count);
-                for (int i = 0; i < editor.listBoxItems.Items.Count; i++)
-                    result.SetValue(editor.isGenericAssetData ? ((DynamicTypeDescriptor)editor.listBoxItems.Items[i]).Component : editor.listBoxItems.Items[i], i);
+                Array result = Array.CreateInstance(editor.type, editor.allItems.Count);
+                for (int i = 0; i < editor.allItems.Count; i++)
+                    result.SetValue(editor.isGenericAssetData ? ((DynamicTypeDescriptor)editor.allItems[i]).Component : editor.allItems[i], i);
                 return result;
             }
             return null;
@@ -29,6 +29,9 @@ namespace IndustrialPark
         private readonly Game game;
         private readonly Type type;
         private readonly bool isGenericAssetData;
+
+        // all items, including those hidden by the search filter; listBoxItems only shows the filtered ones
+        private readonly List<object> allItems = new List<object>();
 
         private CollectionEditor(Game game, Type type, Array items, AssetPropertyCollectionOptionsAttribute options)
         {
@@ -53,6 +56,13 @@ namespace IndustrialPark
                 {
                     buttonCopy.Visible = false;
                     buttonPaste.Visible = false;
+                }
+                if (options.AllowSearch)
+                {
+                    textBoxSearch.Visible = true;
+                    int listBottom = listBoxItems.Bottom;
+                    listBoxItems.Top = textBoxSearch.Bottom + 6;
+                    listBoxItems.Height = listBottom - listBoxItems.Top;
                 }
             }
 
@@ -81,7 +91,10 @@ namespace IndustrialPark
             if (isGenericAssetData)
                 items = items.Cast<GenericAssetDataContainer>().Select(DynamicTypeDescriptor.Create).ToArray();
             foreach (var item in items)
+            {
+                allItems.Add(item);
                 listBoxItems.Items.Add(item);
+            }
         }
 
         private int programaticallyChangingSelection = 0;
@@ -94,7 +107,9 @@ namespace IndustrialPark
             var newItem = CreateNewInstance();
             if (newItem != null)
             {
-                listBoxItems.Items.Add(DynamicTypeDescriptor.Create(newItem));
+                var item = DynamicTypeDescriptor.Create(newItem);
+                allItems.Add(item);
+                listBoxItems.Items.Add(item);
                 listBoxItems.SelectedIndices.Clear();
                 listBoxItems.SelectedIndex = listBoxItems.Items.Count - 1;
             }
@@ -115,6 +130,7 @@ namespace IndustrialPark
                 {
                     int Temp = listBoxItems.SelectedIndices[0];
                     listBoxItems.ClearSelected();
+                    allItems.RemoveAt(IndexInAllItems(listBoxItems.Items[index]));
                     listBoxItems.Items.RemoveAt(index);
                     try
                     { listBoxItems.SelectedIndex = Temp; }
@@ -144,8 +160,9 @@ namespace IndustrialPark
                     listBoxItems.SelectedIndices.Clear();
                     foreach (var item in clipboard)
                     {
-                        object instance = CreatePastedInstance(item);
-                        listBoxItems.Items.Add(DynamicTypeDescriptor.Create(instance));
+                        var instance = DynamicTypeDescriptor.Create(CreatePastedInstance(item));
+                        allItems.Add(instance);
+                        listBoxItems.Items.Add(instance);
                         listBoxItems.SetSelected(listBoxItems.Items.Count - 1, true);
                     }
                 }
@@ -155,6 +172,7 @@ namespace IndustrialPark
                     listBoxItems.SelectedIndices.Clear();
                     foreach (var item in clipboard)
                     {
+                        allItems.Add(item);
                         listBoxItems.Items.Add(item);
                         listBoxItems.SetSelected(listBoxItems.Items.Count - 1, true);
                     }
@@ -180,8 +198,38 @@ namespace IndustrialPark
         {
             if (index1 < 0 || index1 >= listBoxItems.Items.Count || index2 < 0 || index2 >= listBoxItems.Items.Count)
                 return;
+
+            // the visible items may not be adjacent in allItems when filtered, so swap their positions there too
+            int all1 = IndexInAllItems(listBoxItems.Items[index1]);
+            int all2 = IndexInAllItems(listBoxItems.Items[index2]);
+            (allItems[all2], allItems[all1]) = (allItems[all1], allItems[all2]);
+
             (listBoxItems.Items[index2], listBoxItems.Items[index1]) = (listBoxItems.Items[index1], listBoxItems.Items[index2]);
         }
+
+        private int IndexInAllItems(object item) => allItems.FindIndex(x => ReferenceEquals(x, item));
+
+        private void textBoxSearch_TextChanged(object sender, EventArgs e)
+        {
+            var selected = listBoxItems.SelectedItems.Cast<object>().ToList();
+            string search = textBoxSearch.Text.Trim();
+
+            listBoxItems.BeginUpdate();
+            listBoxItems.Items.Clear();
+            foreach (var item in allItems)
+                if (search.Length == 0 || item.ToString().Contains(search, StringComparison.OrdinalIgnoreCase))
+                    listBoxItems.Items.Add(item);
+            for (int i = 0; i < listBoxItems.Items.Count; i++)
+                if (selected.Any(x => ReferenceEquals(x, listBoxItems.Items[i])))
+                    listBoxItems.SetSelected(i, true);
+            listBoxItems.EndUpdate();
+
+            propertyGridItem.SelectedObjects = listBoxItems.SelectedItems.Cast<object>().ToArray();
+        }
+
+        // pressing Enter in the search box shouldn't trigger the OK button and close the dialog
+        private void textBoxSearch_Enter(object sender, EventArgs e) => AcceptButton = null;
+        private void textBoxSearch_Leave(object sender, EventArgs e) => AcceptButton = buttonOK;
 
         private void buttonArrowUp_Click(object sender, EventArgs e)
         {

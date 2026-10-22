@@ -407,7 +407,7 @@ namespace IndustrialPark
         public override string AssetInfo => $"{Entries.Length} entries";
 
         private List<PipeInfo> _entries { get; set; }
-        [Category("Pipe Info Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        [Category("Pipe Info Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowSearch: true)]
         public PipeInfo[] Entries
         {
             get => [.. _entries];
