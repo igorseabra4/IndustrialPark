@@ -18,15 +18,9 @@ namespace IndustrialPark
     {
         private const string categoryName = "Pickup";
 
-        public override string AssetInfo
-        {
-            get
-            {
-                if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
-                    return HexUIntTypeConverter.StringFromAssetID(AssetPICK.pickEntries[PickReferenceID]);
-                return HexUIntTypeConverter.StringFromAssetID(PickReferenceID);
-            }
-        }
+        public override string AssetInfo => Enum.IsDefined((PickupReference)(uint)PickReferenceID) ?
+            ((PickupReference)(uint)PickReferenceID).ToString().Replace('_', ' ') :
+            HexUIntTypeConverter.StringFromAssetID(PickupModel != 0 ? PickupModel : PickReferenceID);
 
         [Category(categoryName)]
         public AssetByte Shape { get => TypeFlag; set => TypeFlag = value; }
@@ -179,7 +173,6 @@ namespace IndustrialPark
                     PickupValue = 0;
                     break;
                 case AssetTemplate.Key:
-                    StateIsPersistent = true;
                     PickReferenceID = 0x6F24CBD8;
                     break;
                 case AssetTemplate.Clue:
@@ -299,23 +292,23 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
+        [Category(categoryName)]
+        public AssetID PickupModel => AssetPICK.pickEntries.TryGetValue(PickReferenceID, out uint value) ? value : PickReferenceID;
+
         protected override void CreateBoundingBox()
         {
-            if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
+            var model = GetFromRenderingDictionary(PickupModel);
+            if (model != null)
             {
-                var model = GetFromRenderingDictionary(AssetPICK.pickEntries[PickReferenceID]);
-                if (model != null)
-                {
-                    var vertexList = model.vertexListG;
+                var vertexList = model.vertexListG;
 
-                    vertices = new Vector3[vertexList.Count];
-                    for (int i = 0; i < vertexList.Count; i++)
-                        vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
-                    boundingBox = BoundingBox.FromPoints(vertices);
+                vertices = new Vector3[vertexList.Count];
+                for (int i = 0; i < vertexList.Count; i++)
+                    vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
+                boundingBox = BoundingBox.FromPoints(vertices);
 
-                    triangles = model.triangleList;
-                    return;
-                }
+                triangles = model.triangleList;
+                return;
             }
 
             vertices = new Vector3[SharpRenderer.cubeVertices.Count];
@@ -328,14 +321,10 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
-                if (renderingDictionary.TryGetValue(AssetPICK.pickEntries[PickReferenceID], out IAssetWithModel value))
-                {
-                    value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
-                    return;
-                }
-
-            renderer.DrawCube(LocalWorld(), isSelected);
+            if (renderingDictionary.TryGetValue(PickupModel, out IAssetWithModel value))
+                value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
+            else
+                renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Browsable(false)]
