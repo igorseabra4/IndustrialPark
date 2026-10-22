@@ -267,6 +267,7 @@ namespace IndustrialPark
 #if DEBUG
             CreateBoundingBoxMesh();
 #endif
+            AssetCAM.CamVertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.Up * 0.8f]);
         }
 
         private SharpMesh LoadMesh(bool tiny, string meshName, ref List<Vector3> vertices, ref List<Models.Triangle> triangles)
@@ -452,10 +453,10 @@ namespace IndustrialPark
             Cube.Draw(device);
         }
 
-        public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f)
+        public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f, Vector4? color = null)
         {
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
-            renderData.Color = isSelected ? selectedColor : normalColor;
+            renderData.Color = isSelected ? selectedColor : (color ?? normalColor);
 
             device.SetCullModeNone();
             device.ApplyRasterState();
@@ -589,7 +590,7 @@ namespace IndustrialPark
 
         public bool isDrawingUI = false;
         public HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
-        public const float DefaultLODTDistance = 100f;
+        public const float DefaultLODTDistance = 10000f;
         public static bool RenderVertexColors = true;
 
         public bool allowRender = true;
@@ -758,6 +759,8 @@ namespace IndustrialPark
             arrowDefault.Dispose();
             whiteDefault.Dispose();
             TextureManager.DisposeTextures();
+
+            AssetCAM.CamVertexBuffer.Dispose();
 
             Cube.Dispose();
             Pyramid.Dispose();

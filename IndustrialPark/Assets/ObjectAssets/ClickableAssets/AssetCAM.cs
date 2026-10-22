@@ -97,27 +97,18 @@ namespace IndustrialPark
             get => _camType;
             set
             {
-                _camType = value;
-                switch (_camType)
+                if (_camType != value)
                 {
-                    case CamType.Follow:
-                        CamSpecific = new CamSpecific_Follow();
-                        break;
-                    case CamType.Shoulder:
-                        CamSpecific = new CamSpecific_Shoulder();
-                        break;
-                    case CamType.Static:
-                        CamSpecific = new CamSpecific_Static();
-                        break;
-                    case CamType.Path:
-                        CamSpecific = new CamSpecific_Path();
-                        break;
-                    case CamType.StaticFollow:
-                        CamSpecific = new CamSpecific_StaticFollow();
-                        break;
-                    default:
-                        CamSpecific = new CamSpecific_Other();
-                        break;
+                    _camType = value;
+                    CamSpecific = _camType switch
+                    {
+                        CamType.Follow => new CamSpecific_Follow(),
+                        CamType.Shoulder => new CamSpecific_Shoulder(),
+                        CamType.Static => new CamSpecific_Static(),
+                        CamType.Path => new CamSpecific_Path(),
+                        CamType.StaticFollow => new CamSpecific_StaticFollow(),
+                        _ => new CamSpecific_Other(),
+                    };
                 }
             }
         }
@@ -215,27 +206,15 @@ namespace IndustrialPark
                 _camType = (CamType)reader.ReadByte();
 
                 reader.BaseStream.Position = 0x60;
-                switch (_camType)
+                CamSpecific = _camType switch
                 {
-                    case CamType.Follow:
-                        CamSpecific = new CamSpecific_Follow(reader);
-                        break;
-                    case CamType.Shoulder:
-                        CamSpecific = new CamSpecific_Shoulder(reader);
-                        break;
-                    case CamType.Static:
-                        CamSpecific = new CamSpecific_Static(reader);
-                        break;
-                    case CamType.Path:
-                        CamSpecific = new CamSpecific_Path(reader);
-                        break;
-                    case CamType.StaticFollow:
-                        CamSpecific = new CamSpecific_StaticFollow(reader);
-                        break;
-                    default:
-                        CamSpecific = new CamSpecific_Other(reader);
-                        break;
-                }
+                    CamType.Follow => new CamSpecific_Follow(reader),
+                    CamType.Shoulder => new CamSpecific_Shoulder(reader),
+                    CamType.Static => new CamSpecific_Static(reader),
+                    CamType.Path => new CamSpecific_Path(reader),
+                    CamType.StaticFollow => new CamSpecific_StaticFollow(reader),
+                    _ => new CamSpecific_Other(reader),
+                };
 
                 CreateTransformMatrix();
                 ArchiveEditorFunctions.AddToRenderableAssets(this);
@@ -309,16 +288,26 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
-            world = Matrix.Translation(_position);
+            var rotation = new Matrix(
+                NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ, 0,
+                NormalizedUpX, NormalizedUpY, NormalizedUpZ, 0,
+                NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ, 0,
+                0, 0, 0, 1
+            );
+
+            world = Matrix.Translation(0f, 0f, -0.5f) *
+                Matrix.Scaling(new Vector3(4f, 3f, 3f) / 8f) *
+                rotation *
+                Matrix.Translation(_position);
             CreateBoundingBox();
         }
 
         protected void CreateBoundingBox()
         {
-            var vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            var vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
 
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
 
             boundingBox = BoundingBox.FromPoints(vertices);
         }
@@ -326,7 +315,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
+                return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
             return null;
         }
 
@@ -342,13 +331,19 @@ namespace IndustrialPark
                 return false;
             if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;
-            if (GetDistanceFrom(renderer.Camera.Position) < CameraWidgetDrawMinDistance)
-                return false;
+            if (renderer.frustum.Intersects(ref boundingBox))
+                return GetDistanceFrom(renderer.Camera.Position) > CameraWidgetDrawMinDistance;
 
-            return renderer.frustum.Intersects(ref boundingBox);
+            return false;
         }
 
-        public void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
+        public static SharpDX.Direct3D11.Buffer CamVertexBuffer;
+
+        public void Draw(SharpRenderer renderer) 
+        {
+            renderer.DrawPyramid(world, isSelected, 1f, renderer.colors.camColor);
+            renderer.DrawSpline(CamVertexBuffer, 2, world, isSelected ? Vector4.One : renderer.colors.camColor, true);
+        }
 
         public BoundingBox GetBoundingBox() => boundingBox;
 
@@ -380,6 +375,35 @@ namespace IndustrialPark
             NormalizedLeftX = -right.X;
             NormalizedLeftY = -right.Y;
             NormalizedLeftZ = -right.Z;
+        }
+
+        public (Vector3 Forward, Vector3 Up, Vector3 Left) GetCameraOrientation() => (
+            new Vector3(NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ),
+            new Vector3(NormalizedUpX, NormalizedUpY, NormalizedUpZ),
+            new Vector3(NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ)
+        );
+
+        public void ApplyRotation(Vector3 Forward, Vector3 Up, Vector3 axis, float angleDegrees)
+        {
+            Matrix rotation = Matrix.RotationAxis(Vector3.Normalize(axis), MathUtil.DegreesToRadians(angleDegrees));
+
+            Vector3 forward = Vector3.Normalize(Vector3.TransformNormal(Forward, rotation));
+            Vector3 up = Vector3.Normalize(Vector3.TransformNormal(Up, rotation));
+            Vector3 left = Vector3.Normalize(Vector3.Cross(up, forward));
+
+            NormalizedForwardX = forward.X;
+            NormalizedForwardY = forward.Y;
+            NormalizedForwardZ = forward.Z;
+
+            NormalizedUpX = up.X;
+            NormalizedUpY = up.Y;
+            NormalizedUpZ = up.Z;
+
+            NormalizedLeftX = left.X;
+            NormalizedLeftY = left.Y;
+            NormalizedLeftZ = left.Z;
+
+            CreateTransformMatrix();
         }
     }
 }

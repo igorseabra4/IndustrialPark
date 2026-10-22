@@ -10,12 +10,14 @@ namespace IndustrialPark
         public Vector4 trigColor;
         public Vector4 mvptColor;
         public Vector4 sfxColor;
+        public Vector4 camColor;
         public Vector4 selectedColor;
         public Vector4 selectedObjectColor;
 
         public static RendererColors Default => new()
         {
             normalColor = new Vector4(0.2f, 0.6f, 0.8f, defaultAlpha),
+            camColor = new Vector4(0.6f, 0.8f, 0.9f, defaultAlpha),
             trigColor = new Vector4(0.3f, 0.8f, 0.7f, defaultAlpha),
             mvptColor = new Vector4(0.62f, 0.28f, 0.82f, defaultAlpha),
             sfxColor = new Vector4(1f, 0.35f, 0.3f, defaultAlpha),
@@ -27,6 +29,7 @@ namespace IndustrialPark
         public static RendererColors Classic => new()
         {
             normalColor = new Vector4(0.2f, 0.6f, 0.8f, classicDefaultAlpha),
+            camColor = new Vector4(0.2f, 0.6f, 0.8f, classicDefaultAlpha),
             trigColor = new Vector4(0.3f, 0.8f, 0.7f, classicDefaultAlpha),
             mvptColor = new Vector4(0.7f, 0.2f, 0.6f, classicDefaultAlpha),
             sfxColor = new Vector4(1f, 0.2f, 0.2f, classicDefaultAlpha),

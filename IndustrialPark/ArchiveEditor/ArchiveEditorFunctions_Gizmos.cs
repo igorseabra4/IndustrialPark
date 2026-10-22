@@ -86,13 +86,24 @@ namespace IndustrialPark
                 }
                 case GizmoMode.Rotation:
                 {
-                    var rotatableAssets = allCurrentlySelectedAssets.OfType<IRotatableAsset>().ToList();
-                    if (rotatableAssets.Count == 0)
-                        return;
+                    var cameras = allCurrentlySelectedAssets.OfType<AssetCAM>().ToList();
+                    if (cameras.Count != 0)
+                    {
+                        var asset = cameras[0];
+                        GizmoCenterRotation = GetRotationMatrix(asset);
+                        GizmoCenterPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
+                    }
+                    else
+                    {
+                        var rotatableAssets = allCurrentlySelectedAssets.OfType<IRotatableAsset>().ToList();
+                        if (rotatableAssets.Count == 0)
+                            return;
 
-                    var asset = rotatableAssets[0];
-                    SetCenterRotation(asset.Yaw, asset.Pitch, asset.Roll);
-                    GizmoCenterPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
+                        var asset = rotatableAssets[0];
+                        GizmoCenterRotation = GetRotationMatrix(asset.Yaw, asset.Pitch, asset.Roll);
+                        GizmoCenterPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
+                    }
+
                     float distance = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 2f;
 
                     for (int i = rotationGizmos.Length - 1; i >= 0; i--)
@@ -116,7 +127,7 @@ namespace IndustrialPark
                         var box = (VolumeBox)boxVolumes[0].VolumeShape;
                         TriggerGizmo = true;
                         bbox = box.GetBoundingBox();
-                        SetCenterRotation(0, 0, 0);
+                        GizmoCenterRotation = GetRotationMatrix(0, 0, 0);
                     }
                     if (primaryAsset != null)
                     {
@@ -124,15 +135,15 @@ namespace IndustrialPark
                         {
                             TriggerGizmo = true;
                             bbox = trigger.GetBoundingBox();
-                            SetCenterRotation(trigger.Yaw, trigger.Pitch, trigger.Roll);
+                            GizmoCenterRotation = GetRotationMatrix(trigger.Yaw, trigger.Pitch, trigger.Roll);
                         }
                         else if (primaryAsset is IRotatableAsset rotatable)
                         {
-                            SetCenterRotation(rotatable.Yaw, rotatable.Pitch, rotatable.Roll);
+                            GizmoCenterRotation = GetRotationMatrix(rotatable.Yaw, rotatable.Pitch, rotatable.Roll);
                         }
                         else
                         {
-                            SetCenterRotation(0, 0, 0);
+                            GizmoCenterRotation = GetRotationMatrix(0, 0, 0);
                         }
                     }
                     if (primaryAsset != null || boxVolumes.Count > 0)
@@ -160,14 +171,26 @@ namespace IndustrialPark
                     if (asset is AssetTRIG { Shape: TriggerShape.Box } trigger)
                     {
                         TriggerGizmo = true;
-                        SetCenterRotation(trigger.Yaw, trigger.Pitch, trigger.Roll);
+                        GizmoCenterRotation = GetRotationMatrix(trigger.Yaw, trigger.Pitch, trigger.Roll);
                         volume = trigger;
                     }
                     else if (asset is AssetVOLU { VolumeShape: VolumeBox box })
                     {
                         TriggerGizmo = true;
-                        SetCenterRotation(0, 0, 0);
+                        GizmoCenterRotation = GetRotationMatrix(0, 0, 0);
                         volume = box;
+                    }
+                    else if (asset is AssetCAM cam)
+                    {
+                        GizmoCenterRotation = GetRotationMatrix(cam);
+                    }
+                    else if (asset is IRotatableAsset ra)
+                    {
+                        GizmoCenterRotation = GetRotationMatrix(ra.Yaw, ra.Pitch, ra.Roll);
+                    }
+                    else
+                    {
+                        GizmoCenterRotation = GetRotationMatrix(0, 0, 0);
                     }
 
                     if (TriggerGizmo)
@@ -196,9 +219,20 @@ namespace IndustrialPark
         private static Vector3 GizmoCenterPosition;
         private static Matrix GizmoCenterRotation;
 
-        private static void SetCenterRotation(float Yaw, float Pitch, float Roll)
+        private static Matrix GetRotationMatrix(float Yaw, float Pitch, float Roll) =>
+            Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
+
+        private static Matrix GetRotationMatrix(AssetCAM cam)
         {
-            GizmoCenterRotation = Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
+            Vector3 forward = Vector3.Normalize(new Vector3(cam.NormalizedForwardX, cam.NormalizedForwardY, cam.NormalizedForwardZ));
+            Vector3 up = Vector3.Normalize(new Vector3(cam.NormalizedUpX, cam.NormalizedUpY, cam.NormalizedUpZ));
+            Vector3 left = Vector3.Normalize(Vector3.Cross(up, forward));
+
+            return new Matrix(
+                left.X, left.Y, left.Z, 0f,
+                up.X, up.Y, up.Z, 0f,
+                forward.X, forward.Y, forward.Z, 0f,
+                0f, 0f, 0f, 1f);
         }
 
         public static void ScreenClickedGizmos(Ray r)
@@ -227,6 +261,7 @@ namespace IndustrialPark
                     if (index != -1 && !rotationGizmos[index].isSelected)
                     {
                         SaveOriginalRotations();
+                        SaveOriginalRotationsCameras();
                         rotationGizmos[index].isSelected = true;
                         IsMovingGizmo = true;
                     }
@@ -318,6 +353,13 @@ namespace IndustrialPark
             }
         }
 
+        private static void SaveOriginalRotationsCameras()
+        {
+            currentlyRotatingCameras = allCurrentlySelectedAssets.OfType<AssetCAM>().ToList();
+            foreach (var cam in currentlyRotatingCameras)
+                originalRotationsCameras[cam.assetID] = cam.GetCameraOrientation();
+        }
+
         public static void ScreenUnclicked()
         {
             if (!IsMovingGizmo)
@@ -404,6 +446,22 @@ namespace IndustrialPark
                                 actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "Roll", og.Z, a.Roll));
                             archive.UnsavedChanges = true;
                         }
+                        foreach (var cam in currentlyRotatingCameras)
+                        {
+                            var archive = ArchiveContainingAsset(cam);
+                            archive.RefreshAssetEditor(cam.assetID);
+                            var (Forward, Up, Left) = originalRotationsCameras[cam.assetID];
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedForwardX", Forward.X, cam.NormalizedForwardX));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedForwardY", Forward.Y, cam.NormalizedForwardY));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedForwardZ", Forward.Z, cam.NormalizedForwardZ));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedLeftX", Left.X, cam.NormalizedLeftX));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedLeftY", Left.Y, cam.NormalizedLeftY));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedLeftZ", Left.Z, cam.NormalizedLeftZ));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedUpX", Up.X, cam.NormalizedUpX));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedUpY", Up.Y, cam.NormalizedUpY));
+                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedUpZ", Up.Z, cam.NormalizedUpZ));
+                            archive.UnsavedChanges = true;
+                        }
                     }
                     break;
                 case GizmoMode.Scale:
@@ -473,6 +531,8 @@ namespace IndustrialPark
             currentlyScaling.Clear();
             originalPositionsBoxes.Clear();
             currentlyMovingBoxes.Clear();
+            originalRotationsCameras.Clear();
+            currentlyRotatingCameras.Clear();
 
             actions.Add(new SelectionAction(allCurrentlySelectedAssets.Select(asset => asset.assetID)));
             Program.UndoBuffer.AddAction(actions);
@@ -557,6 +617,7 @@ namespace IndustrialPark
                 MouseMoveForRotationLocalAxis(deltaX, grid);
             else
                 MouseMoveForRotationSingleAxis(deltaX, grid);
+            MouseMoveForCameraRotation(deltaX, grid, RotationGizmoLocalAxis);
             MouseMoveForScale(viewProjection, deltaX, deltaY, grid);
             MouseMoveForScaleBoxes(viewProjection, deltaX, deltaY, grid);
             MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
@@ -1232,6 +1293,67 @@ namespace IndustrialPark
                     trig.MinimumY = trig.PositionY;
                     trig.MinimumZ = trig.PositionZ;
                 }
+            }
+        }
+
+        private static List<AssetCAM> currentlyRotatingCameras = new List<AssetCAM>();
+        private static readonly Dictionary<uint, (Vector3 Forward, Vector3 Up, Vector3 Left)> originalRotationsCameras = new();
+
+        private static void MouseMoveForCameraRotation(int distanceX, bool grid, bool localAxis)
+        {
+            int index = Array.FindIndex(rotationGizmos, g => g.isSelected);
+            if (index < 0 || currentlyRotatingCameras.Count == 0)
+                return;
+
+            var axis = (Axis)index;
+            switch (axis)
+            {
+                case Axis.X:
+                    totalDistanceMoved.X += distanceX;
+                    break;
+                case Axis.Y:
+                    totalDistanceMoved.Y += distanceX;
+                    break;
+                case Axis.Z:
+                    totalDistanceMoved.Z += distanceX;
+                    break;
+            }
+
+            float angle = axis switch
+            {
+                Axis.X => totalDistanceMoved.X,
+                Axis.Y => totalDistanceMoved.Y,
+                _ => totalDistanceMoved.Z
+            };
+            if (grid)
+                angle = SnapToIncrement(angle);
+
+            foreach (var cam in currentlyRotatingCameras)
+            {
+                (Vector3 Forward, Vector3 Up, Vector3 Left) = originalRotationsCameras[cam.assetID];
+
+                Vector3 rotationAxis;
+
+                if (localAxis)
+                {
+                    rotationAxis = axis switch
+                    {
+                        Axis.X => Up,
+                        Axis.Y => Left,
+                        _ => Forward
+                    };
+                }
+                else
+                {
+                    rotationAxis = axis switch
+                    {
+                        Axis.X => Vector3.UnitY,
+                        Axis.Y => Vector3.UnitX,
+                        _ => Vector3.UnitZ
+                    };
+                }
+
+                cam.ApplyRotation(Forward, Up, rotationAxis, angle);
             }
         }
 

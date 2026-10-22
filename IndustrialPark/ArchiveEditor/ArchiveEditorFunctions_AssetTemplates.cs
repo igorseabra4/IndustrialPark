@@ -737,6 +737,7 @@ namespace IndustrialPark
                 cam.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
                 cam.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
                 cam.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
+                cam.CreateTransformMatrix();
             }
             else if (GetFromAssetID(assetID) is IClickableAsset ir)
             {

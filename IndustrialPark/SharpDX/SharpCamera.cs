@@ -187,7 +187,7 @@ namespace IndustrialPark
             Vector3 expectedUp = (Vector3)Vector3.Transform(Vector3.Up, yawPitch);
             _roll = MathUtil.RadiansToDegrees(
                 (float)Math.Atan2(
-                    Vector3.Dot(Forward, Vector3.Cross(expectedUp, Up)),
+                    Vector3.Dot(Forward, Vector3.Cross(Up, expectedUp)),
                     Vector3.Dot(expectedUp, Up)));
             _roll %= 360f;
         }

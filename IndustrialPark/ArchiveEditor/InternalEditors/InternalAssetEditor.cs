@@ -179,6 +179,7 @@ public partial class InternalAssetEditor : InternalEditor
         AddTool("Get View Position", (object sender, EventArgs e) =>
         {
             asset.SetPosition(Program.MainForm.renderer.Camera.Position);
+            asset.CreateTransformMatrix();
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
         });
@@ -188,6 +189,7 @@ public partial class InternalAssetEditor : InternalEditor
             asset.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
             asset.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
             asset.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
+            asset.CreateTransformMatrix();
 
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
