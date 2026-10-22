@@ -2294,13 +2294,13 @@ namespace IndustrialPark
 
         internal void RefreshLayerList(ArchiveEditorFunctions archive, int index = -1)
         {
-            foreach (var ae in archiveEditors)
-                if (ae.archive == archive && !ae.archive.NoLayers)
-                {
-                    ae.PopulateLayerComboBox();
-                    if (index >= 0 && index < ae.archive.LayerCount)
-                        ae.SelectedLayerIndex = index;
-                }
+            var ae = archive.GetArchiveEditor();
+            if (!ae.archive.NoLayers)
+            {
+                ae.PopulateLayerComboBox();
+                if (index >= 0 && index < ae.archive.LayerCount)
+                    ae.SelectedLayerIndex = index;
+            }
         }
 
         private void viewControlsToolStripMenuItem_Click(object sender, EventArgs e)

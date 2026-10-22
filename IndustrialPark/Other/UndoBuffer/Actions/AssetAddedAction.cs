@@ -1,5 +1,5 @@
 ﻿using HipHopFile;
-using System.IO;
+using RenderWareFile.Sections;
 
 namespace IndustrialPark;
 
@@ -41,4 +41,6 @@ public class AssetAddedAction : IReversibleAction
     {
         return $"[{archive.LevelName.ToUpper()}] {AHDR.ADBG.assetName} created";
     }
+
+    public Section_AHDR GetAHDR() => this.AHDR;
 }

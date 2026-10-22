@@ -53,6 +53,7 @@ namespace IndustrialPark
 
             UnsavedChanges = true;
             var actions = new List<IReversibleAction>();
+            var addedAssets = new List<uint>();
 
             foreach (Section_AHDR AHDR in hip.DICT.ATOC.AHDRList)
             {
@@ -103,8 +104,10 @@ namespace IndustrialPark
                     if (result == DialogResult.Yes)
                     {
                         added = true;
+                        actions.Add(GetAssetRemovedAction(AHDR.assetID));
                         RemoveAsset(AHDR.assetID, false);
                         AddAssetToDictionary(AHDR, hip.game, hip.platform.Endianness(), forceOverwrite, true);
+                        addedAssets.Add(AHDR.assetID);
                     }
                     else
                         foreach (Section_LHDR LHDR in hip.DICT.LTOC.LHDRList)
@@ -114,6 +117,7 @@ namespace IndustrialPark
                 {
                     added = true;
                     AddAssetToDictionary(AHDR, hip.game, hip.platform.Endianness(), forceOverwrite, true);
+                    addedAssets.Add(AHDR.assetID);
                 }
 
                 if (added && GetFromAssetID(AHDR.assetID) is AssetJSP_INFO jspInfo)
@@ -124,9 +128,20 @@ namespace IndustrialPark
             {
                 for (int i = 0; i < hip.DICT.LTOC.LHDRList.Count; i++)
                     if (hip.DICT.LTOC.LHDRList[i].assetIDlist.Count != 0)
-                        Layers.Add(LHDRToLayer(hip.DICT.LTOC.LHDRList[i], hip.game, hip.HIPB.GetLayerName(i)));
+                    {
+                        var layer = LHDRToLayer(hip.DICT.LTOC.LHDRList[i], hip.game, hip.HIPB.GetLayerName(i));
+                        Layers.Add(layer);
+                        actions.Add(new LayerAddedAction(this, layer.Type, Layers.Count - 1));
+                    }
+                List<Layer> layersOld = [.. Layers];
                 Layers = Layers.OrderBy(f => LayerTypeGenericToSpecific(f.Type, game), new LayerComparer(game)).ToList();
+                actions.Add(new AllLayersMovedAction(this, layersOld, Layers));
             }
+
+            foreach (var u in addedAssets)
+                actions.Add(GetAssetAddedAction(u));
+
+            Program.UndoBuffer.AddAction(actions);
 
             RecalculateAllMatrices();
         }

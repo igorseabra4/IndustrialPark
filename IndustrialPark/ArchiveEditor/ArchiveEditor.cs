@@ -575,17 +575,16 @@ namespace IndustrialPark
             listViewAssets.ListViewItemSorter = null;
             listViewAssets.Items.Clear();
 
-            if (archive.NoLayers || comboBoxLayers.SelectedItem != null)
-            {
-                assets ??= archive.GetAssetIDsOnLayer(SelectedLayerIndex).Select(archive.GetFromAssetID).ToList();
+            assets ??= (archive.NoLayers || comboBoxLayers.SelectedItem != null) ?
+                [.. archive.GetAssetIDsOnLayer(SelectedLayerIndex).Select(archive.GetFromAssetID)] :
+                [];
 
-                var items = new List<ListViewItem>(assets.Count);
-                foreach (var asset in assets)
-                    if (type == AssetType.Null || asset.assetType == type)
-                        items.Add(ListViewItemFromAsset(asset, select && selectionAssetIDs.Contains(asset.assetID)));
+            var items = new List<ListViewItem>(assets.Count);
+            foreach (var asset in assets)
+                if (type == AssetType.Null || asset.assetType == type)
+                    items.Add(ListViewItemFromAsset(asset, select && selectionAssetIDs.Contains(asset.assetID)));
 
-                listViewAssets.Items.AddRange(items.ToArray());
-            }
+            listViewAssets.Items.AddRange([.. items]);
 
             listViewAssets.EndUpdate();
 
@@ -1195,16 +1194,9 @@ namespace IndustrialPark
             }
 
             AssetType assetType = AssetType.Null;
-            if (!AlwaysListAllAssets)
-            {
+
+            if (!AlwaysListAllAssets && assets.All(a => a.assetType == assets[0].assetType))
                 assetType = assets[0].assetType;
-                foreach (uint u in assetIDs)
-                    if (archive.GetFromAssetID(u).assetType != assetType)
-                    {
-                        assetType = AssetType.Null;
-                        break;
-                    }
-            }
 
             int layerIndex = archive.NoLayers ? -1 : archive.GetLayerFromAssetID(assets[0].assetID);
             bool layerChanged = !archive.NoLayers && layerIndex != SelectedLayerIndex;
@@ -1216,18 +1208,10 @@ namespace IndustrialPark
             {
                 comboBoxLayers.SelectedIndex = layerIndex;
                 ShowSelectedLayerType();
-            }
-            else
-            {
                 PopulateAssetTypeComboBox(false);
             }
 
-            foreach (AssetTypeContainer atc in comboBoxAssetTypes.Items)
-                if (atc.assetType == assetType)
-                {
-                    comboBoxAssetTypes.SelectedItem = atc;
-                    break;
-                }
+            comboBoxAssetTypes.SelectedItem = comboBoxAssetTypes.Items.Cast<AssetTypeContainer>().FirstOrDefault(atc => atc.assetType == assetType);
 
             PopulateAssetList(assetType, null, true, assetIDs);
             SetMenuItemsEnabled();
@@ -1268,6 +1252,11 @@ namespace IndustrialPark
         private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
         {
             uint assetID = 0;
+            if (textBoxFindAsset.Text == "")
+            {
+                PopulateAssetList();
+                return;
+            }
             try
             {
                 textBoxFindAsset.BackColor = defaultColor;
@@ -1280,20 +1269,14 @@ namespace IndustrialPark
 
             var assets = new List<Asset>();
 
-            if (assetID != 0 && archive.ContainsAsset(assetID))
+            foreach (Asset a in archive.GetAllAssets())
+                if (a.assetName.Contains(textBoxFindAsset.Text, StringComparison.CurrentCultureIgnoreCase))
+                    assets.Add(a);
+            if (assetID != 0 && archive.ContainsAsset(assetID) && !assets.Any(a => a.assetID == assetID))
                 assets.Add(archive.GetFromAssetID(assetID));
-            else
-                foreach (Asset a in archive.GetAllAssets())
-                    if (a.assetName.Contains(textBoxFindAsset.Text, StringComparison.CurrentCultureIgnoreCase))
-                        assets.Add(a);
 
             if (!archive.NoLayers && assets.Count != 0)
-            {
-                var firstOrDef = assets.FirstOrDefault();
-                var theirLayer = archive.GetLayerFromAssetID(firstOrDef.assetID);
-                if (theirLayer != comboBoxLayers.SelectedIndex || comboBoxLayers.SelectedIndex == -1)
-                    comboBoxLayers.SelectedIndex = theirLayer;
-            }
+                comboBoxLayers.SelectedIndex = -1;
 
             if (comboBoxAssetTypes.Items.Count > 0)
                 comboBoxAssetTypes.SelectedIndex = 0;

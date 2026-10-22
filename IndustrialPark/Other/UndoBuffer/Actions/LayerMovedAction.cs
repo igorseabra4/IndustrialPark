@@ -1,6 +1,4 @@
-﻿using System.IO;
-
-namespace IndustrialPark
+﻿namespace IndustrialPark
 {
     public class LayerMovedAction : IReversibleAction
     {

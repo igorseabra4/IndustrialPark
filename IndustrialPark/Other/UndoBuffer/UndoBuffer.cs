@@ -85,4 +85,6 @@ public class UndoBuffer
         result.AppendLine("This text does not update in real time, close and reopen for a new one.");
         return result.ToString();
     }
+
+    public (List<IReversibleAction> actions, int currentIndex) GetCurrentState() => (actions, currentIndex);
 }

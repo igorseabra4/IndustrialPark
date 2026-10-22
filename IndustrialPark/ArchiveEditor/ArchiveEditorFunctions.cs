@@ -593,7 +593,8 @@ namespace IndustrialPark
             if (assetDictionary.ContainsKey(AHDR.assetID))
             {
                 assetDictionary.Remove(AHDR.assetID);
-                MessageBox.Show("Duplicate asset ID found: " + AHDR.assetID.ToString("X8"));
+                if (errorDisplay)
+                    MessageBox.Show("Duplicate asset ID found: " + AHDR.assetID.ToString("X8"));
             }
 
             Asset newAsset;
@@ -675,7 +676,8 @@ namespace IndustrialPark
             if (assetDictionary.ContainsKey(asset.assetID))
             {
                 assetDictionary.Remove(asset.assetID);
-                MessageBox.Show("Duplicate asset ID found: " + asset.assetID.ToString("X8"));
+                if (errorDisplay)
+                    MessageBox.Show("Duplicate asset ID found: " + asset.assetID.ToString("X8"));
             }
 
             assetDictionary[asset.assetID] = asset;
@@ -1576,7 +1578,7 @@ namespace IndustrialPark
 
         public void SelectAssets(IEnumerable<uint> assetIDs)
         {
-            ClearSelectedAssets();
+            ClearSelectedAssets(assetIDs);
 
             bool any = false;
             foreach (uint assetID in assetIDs)
@@ -1584,7 +1586,8 @@ namespace IndustrialPark
                 if (!assetDictionary.TryGetValue(assetID, out Asset asset))
                     continue;
                 asset.isSelected = true;
-                CurrentlySelectedAssets.Add(asset);
+                if (!CurrentlySelectedAssets.Contains(asset))
+                    CurrentlySelectedAssets.Add(asset);
                 if (asset is AssetRWTX)
                     TextureManager.SelectedTextures.Add(asset.assetName.Replace(".rw3", "", StringComparison.InvariantCultureIgnoreCase));
                 if (InternalEditor.CanDockAssetEditor(asset))
@@ -1605,16 +1608,16 @@ namespace IndustrialPark
 
         public int GetNumberOfSelectedAssets => CurrentlySelectedAssets.Count;
 
-        public void ClearSelectedAssets()
+        public void ClearSelectedAssets(IEnumerable<uint> except = null)
         {
-            foreach (var asset in CurrentlySelectedAssets)
+            except = except?.ToHashSet();
+            foreach (var asset in CurrentlySelectedAssets.Where(a => except == null || !except.Contains(a.assetID)).ToList())
             {
                 asset.isSelected = false;
                 if (asset is AssetRWTX)
                     TextureManager.SelectedTextures.Remove(asset.assetName.Replace(".rw3", "", StringComparison.InvariantCultureIgnoreCase));
+                CurrentlySelectedAssets.Remove(asset);
             }
-            
-            CurrentlySelectedAssets.Clear();
         }
 
         public void ResetModels(SharpRenderer renderer)

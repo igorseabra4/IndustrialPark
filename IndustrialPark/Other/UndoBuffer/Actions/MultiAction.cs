@@ -45,4 +45,6 @@ public class MultiAction : IReversibleAction
     }
 
     public bool IsEmpty => actions.Count == 0 || actions.All(a => a is SelectionAction);
+
+    public List<IReversibleAction> GetActions => [.. actions];
 }

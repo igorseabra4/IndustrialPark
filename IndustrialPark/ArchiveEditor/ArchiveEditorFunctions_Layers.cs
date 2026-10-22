@@ -199,5 +199,17 @@ namespace IndustrialPark
                 result[l.Type] = (from uint a in l.AssetIDs select assetDictionary[a].assetType).Distinct().ToHashSet();
             return result;
         }
+
+        public void SetLayerIndices(int[] indices)
+        {
+            if (LayerCount != indices.Length)
+                return;
+
+            var newLayers = new Layer[indices.Length];
+            for (int i = 0; i < indices.Length; i++)
+                newLayers[indices[i]] = Layers[i];
+
+            Layers = newLayers.ToList();
+        }
     }
 }
