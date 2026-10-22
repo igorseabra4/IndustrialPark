@@ -51,6 +51,8 @@ namespace IndustrialPark.Randomizer
         private void RandomizerMenu_Load(object sender, EventArgs e)
         {
             Text = $"Industrial Park Randomizer v{Randomizer.currVersion}";
+
+            InternalEditor.SelectFirstProperty(propertyGridSettings.SelectedGridItem);
         }
 
         private void RandomizerMenu_FormClosing(object sender, FormClosingEventArgs e)
@@ -245,6 +247,7 @@ namespace IndustrialPark.Randomizer
                 Enabled = true;
                 UpdateInterfaceFromRandomizer();
                 MessageBox.Show(message);
+                Activate();
             }));
         }
 
@@ -360,7 +363,7 @@ namespace IndustrialPark.Randomizer
             if (!programIsChangingStuff)
             {
                 randomizer.game = comboBoxGame.SelectedIndex;
-                randomizer.settings.ChangeForGame(randomizer.game);
+                randomizer.settings.ResetToDefault(randomizer.game);
                 UpdateInterfaceFromRandomizer();
             }
         }

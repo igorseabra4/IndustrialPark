@@ -21,7 +21,7 @@ namespace IndustrialPark.Randomizer
 
         public bool Randomize(RandomizerSettings settings)
         {
-            if (LevelName == "hb09")
+            if (game == Game.BFBB && LevelName == "hb09")
                 return RandomizePoliceStation(settings);
 
             bool shuffled = false;
@@ -41,11 +41,11 @@ namespace IndustrialPark.Randomizer
             if (settings.BoulderSettings && ContainsAssetWithType(AssetType.Boulder))
                 shuffled |= RandomizeBoulderSettings(settings);
 
-            if (settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
-                shuffled |= RandomizePickupPositions();
+            if (game != Game.Scooby && settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
+                shuffled |= RandomizePickupPositions(settings.Skip_Springs);
 
-            if (settings.Shiny_Object_Gates && game == Game.Scooby && ContainsAssetWithType(AssetType.Pickup))
-                shuffled |= RandomizeSnackGates(settings.shinyReqMin, settings.shinyReqMax);
+            if (game == Game.Scooby && settings.SnackGates && ContainsAssetWithType(AssetType.Pickup))
+                shuffled |= RandomizeSnackGates(settings.snackReqMin, settings.snackReqMax);
 
             shuffled |= RandomizeTikisCrates(settings);
 
@@ -56,7 +56,6 @@ namespace IndustrialPark.Randomizer
 
             if (settings.Markers)
                 shuffled |= ShuffleMRKRPositions(
-                    settings.allMenuWarpsHB01,
                     settings.Pointer_Positions,
                     settings.Bus_Stop_Trigger_Positions,
                     settings.Teleport_Box_Positions,
@@ -487,7 +486,7 @@ namespace IndustrialPark.Randomizer
             return result;
         }
 
-        private bool RandomizePickupPositions()
+        public bool RandomizePickupPositions(bool skipSprings)
         {
             var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.Pickup select (AssetPKUP)asset).ToList();
 
@@ -499,7 +498,7 @@ namespace IndustrialPark.Randomizer
             else if (game == Game.Incredibles)
                 VerifyPickupsMovie(ref assets);
             else if (game == Game.Scooby)
-                VerifyPickupsScooby(ref assets);
+                VerifyPickupsScooby(ref assets, skipSprings);
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
 
@@ -522,9 +521,9 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeSnackGates(float snackGateMin, float snackGateMax)
         {
-            var assets = (from asset in assetDictionary.Values where asset is AssetPKUP pkup && pkup.PickReferenceID.Equals(0x25E4C286) select (AssetPKUP)asset).ToList();
+            var assets = (from asset in assetDictionary.Values where asset is AssetPKUP pkup && pkup.PickReferenceID.Equals((uint)PickupReference.Snack_Gate) select (AssetPKUP)asset).ToList();
 
-            if (assets.Count < 2)
+            if (assets.Count == 0)
                 return false;
 
             foreach (var a in assets)
@@ -642,10 +641,17 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private void VerifyPickupsScooby(ref List<AssetPKUP> assets)
+        private void VerifyPickupsScooby(ref List<AssetPKUP> assets, bool skipSprings)
         {
             switch (LevelName)
             {
+                case "e002":
+                    RemoveAssetsFromContains(ref assets, "SLIPPERS");
+                    RemoveAssetsFromContains(ref assets, "LAMPSHADE");
+                    break;
+                case "f010" when skipSprings:
+                    RemoveAssetsFromContains(ref assets, "SPRINGS");
+                    break;
                 case "g009":
                     RemoveAssetsFromContains(ref assets, "FLOAT");
                     break;
@@ -656,7 +662,11 @@ namespace IndustrialPark.Randomizer
                     RemoveAssetsFromContains(ref assets, "GUMMACHINE");
                     break;
             }
+            if (DontRandomizeKeys.Contains(LevelName))
+                assets.RemoveAll(asset => asset.PickReferenceID == 0x6F24CBD8); // keys
         }
+
+        private static HashSet<string> DontRandomizeKeys = ["b003", "g001", "g007", "g009", "i001", "i003", "i005", "p002", "p003", "p005"];
 
         private void RemoveFromVolume(uint assetID)
         {
@@ -1853,38 +1863,27 @@ namespace IndustrialPark.Randomizer
             return new string[0];
         }
 
-        private bool ShuffleMRKRPositions(bool noWarps, bool pointers, bool busStops, bool teleBox, bool taxis)
+        private bool ShuffleMRKRPositions(bool pointers, bool busStops, bool teleBox, bool taxis)
         {
             var markerNames = GetMarkerNames();
 
-            if (game == Game.BFBB && !markerNames.Any())
+            if (markerNames.Length == 0)
                 return false;
 
             var assets = new List<IClickableAsset>();
 
-            if (game == Game.BFBB)
-            {
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetMRKR mrkr && markerNames.Contains(mrkr.assetName)).Select(a => (AssetMRKR)a));
+            assets.AddRange(assetDictionary.Values.OfType<AssetMRKR>().Where(mrkr => markerNames.Contains(mrkr.assetName)));
 
-                if (LevelName == "sm02")
-                {
-                    var CHECKPOINT_MK_01 = (AssetMRKR)GetFromAssetID(new AssetID("CHECKPOINT_MK_01"));
-                    CHECKPOINT_MK_01.PositionY += 0.5f;
-                    var CHECKPOINT_MK_02 = (AssetMRKR)GetFromAssetID(new AssetID("CHECKPOINT_MK_02"));
-                    CHECKPOINT_MK_02.PositionY += 0.5f;
-                }
-            }
-            else
+            if (LevelName == "sm02")
             {
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetMRKR mrkr && VerifyMarkerStep1(mrkr, noWarps, busStops, teleBox, taxis)).Select(a => (AssetMRKR)a));
+                var CHECKPOINT_MK_01 = (AssetMRKR)GetFromAssetID(new AssetID("CHECKPOINT_MK_01"));
+                CHECKPOINT_MK_01.PositionY += 0.5f;
+                var CHECKPOINT_MK_02 = (AssetMRKR)GetFromAssetID(new AssetID("CHECKPOINT_MK_02"));
+                CHECKPOINT_MK_02.PositionY += 0.5f;
             }
 
             if (pointers)
-                foreach (DynaPointer dyna in assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaPointer && VerifyPointer(dyna)).Select(a => (DynaPointer)a))
-                    assets.Add(dyna);
-
-            if (pointers)
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaPointer && VerifyPointer(dyna)).Select(a => (DynaPointer)a));
+                assets.AddRange(assetDictionary.Values.OfType<DynaPointer>().Where(VerifyPointer));
 
             if (busStops)
                 assets.AddRange(assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaGObjectBusStop).Select(a => (AssetMRKR)GetFromAssetID(((DynaGObjectBusStop)a).Marker)));
@@ -1933,166 +1932,64 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private bool VerifyMarkerStep1(AssetMRKR mrkr, bool noWarps, bool busStops, bool teleBox, bool taxis)
-        {
-            string assetName = mrkr.assetName;
-
-            if (assetName.Contains("TEMP"))
-                return false;
-            if (noWarps && assetName.Contains("SPAT"))
-                return false;
-
-            List<uint> whoTargets = FindWhoTargets(mrkr.assetID);
-            if (whoTargets.Count > 0)
-            {
-                foreach (uint u in whoTargets)
-                    if (GetFromAssetID(u) is AssetTRIG trig)
-                        foreach (Link link in trig.Links)
-                            if (link.EventSendID == (ushort)EventBFBB.SetCheckPoint)
-                                return VerifyMarkerStep2(assetName);
-                            else if (GetFromAssetID(u) is AssetPORT)
-                                return true;
-
-                return false;
-            }
-
-            return VerifyMarkerStep2(assetName);
-        }
-
-        private bool VerifyMarkerStep2(string assetName)
-        {
-            try
-            {
-                if (game == Game.BFBB)
-                    switch (LevelName)
-                    {
-                        case "jf01":
-                            if (assetName.Contains("BOUCETREE PARTICLE MARKER"))
-                                return false;
-                            break;
-                        case "jf04":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
-                                return false;
-                            break;
-                        case "gl01":
-                            if (assetName.Contains("TOWER"))
-                                return false;
-                            break;
-                        case "rb03":
-                            if (assetName == "RB03MK12" || assetName == "RB03MK13")
-                                return false;
-                            break;
-                        case "sm03":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
-                                return false;
-                            break;
-                        case "sm04":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
-                                return false;
-                            break;
-                        case "kf01":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) == 3)
-                                return false;
-                            break;
-                        case "kf04":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) == 2)
-                                return false;
-                            break;
-                        case "kf05":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
-                                return false;
-                            break;
-                        case "gy01":
-                            if (assetName.Equals("TELEPRT_MARK_B"))
-                                return false;
-                            break;
-                        case "gy03":
-                            if (assetName.Contains("BALLDESTROYED"))
-                                return false;
-                            break;
-                        case "db02":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 6)
-                                return false;
-                            break;
-                    }
-                else
-                if (game == Game.Scooby)
-                {
-                    if (assetName.ToUpper().Contains("CAM") || assetName.ToUpper().Contains("RAIL"))
-                        return false;
-
-                    switch (LevelName)
-                    {
-                        case "r020":
-                            if (assetName.Contains("FROMR003"))
-                                return false;
-                            break;
-                        case "f010":
-                            if (assetName.Contains("WAVE1800"))
-                                return false;
-                            break;
-                    }
-                }
-            }
-            catch { }
-
-            return true;
-        }
+        private static HashSet<string> scoobySkipPlats = ["l013", "c007", "f010"];
 
         private bool ShufflePlatSpeeds(RandomizerSettings settings)
         {
+            if (game == Game.Scooby && scoobySkipPlats.Contains(LevelName))
+                return false;
+
             float minMultiSpeed = settings.speedMin;
             float maxMultiSpeed = settings.speedMax;
-            float minMultiTime = settings.speedMax == 0 ? 0 : 1 / settings.speedMax;
-            float maxMultiTime = settings.speedMin == 0 ? 0 : 1 / settings.speedMin;
+            float minMultiTime = settings.speedMax == 0 ? 0 : 1f / settings.speedMax;
+            float maxMultiTime = settings.speedMin == 0 ? 0 : 1f / settings.speedMin;
 
             bool result = false;
 
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPLAT plat)
+            foreach (AssetPLAT plat in assetDictionary.Values.OfType<AssetPLAT>())
+            {
+                if (plat.PlatformSpecific is PlatSpecific_ConveryorBelt p)
                 {
-                    if (plat.PlatformSpecific is PlatSpecific_ConveryorBelt p)
-                    {
-                        p.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatformSpecific = p;
-                    }
-                    else if (plat.PlatformSpecific is PlatSpecific_FallingPlatform pf)
-                    {
-                        pf.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatformSpecific = pf;
-                    }
-                    else if (plat.PlatformSpecific is PlatSpecific_BreakawayPlatform b)
-                    {
-                        b.BreakawayDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        b.ResetDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        plat.PlatformSpecific = b;
-                    }
-                    else if (plat.PlatformSpecific is PlatSpecific_TeeterTotter tt)
-                    {
-                        tt.InverseMass *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatformSpecific = tt;
-                    }
-
-                    if (plat.Motion is Motion_MovePoint mp)
-                    {
-                        mp.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.Motion = mp;
-                    }
-                    else if (plat.Motion is Motion_Mechanism mc)
-                    {
-                        mc.PostRetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RotateAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RotateDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RotateTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.SlideAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.SlideDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.SlideTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        plat.Motion = mc;
-                    }
-
-                    result = true;
+                    p.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
+                    plat.PlatformSpecific = p;
                 }
+                else if (plat.PlatformSpecific is PlatSpecific_FallingPlatform pf)
+                {
+                    pf.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
+                    plat.PlatformSpecific = pf;
+                }
+                else if (plat.PlatformSpecific is PlatSpecific_BreakawayPlatform b)
+                {
+                    b.BreakawayDelay *= random.NextFloat(minMultiTime, maxMultiTime);
+                    b.ResetDelay *= random.NextFloat(minMultiTime, maxMultiTime);
+                    plat.PlatformSpecific = b;
+                }
+                else if (plat.PlatformSpecific is PlatSpecific_TeeterTotter tt)
+                {
+                    tt.InverseMass *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
+                    plat.PlatformSpecific = tt;
+                }
+
+                if (plat.Motion is Motion_MovePoint mp)
+                {
+                    mp.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
+                    plat.Motion = mp;
+                }
+                else if (plat.Motion is Motion_Mechanism mc)
+                {
+                    mc.PostRetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RotateAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RotateDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RotateTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.SlideAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.SlideDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.SlideTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    plat.Motion = mc;
+                }
+
+                result = true;
+            }
 
             return result;
         }
@@ -2927,16 +2824,22 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
+        private string EditorFilesGameFolderName => game switch
+        {
+            Game.BFBB => "BattleForBikiniBottom",
+            Game.Incredibles => "MovieGame",
+            Game.Scooby => "Scooby",
+            _ => "",
+        };
+
         public void ProgImportHip(string folderName, string fileName)
         {
-            string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
-            ImportHip(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName), true);
+            ImportHip(Path.Combine(editorFilesFolder, EditorFilesGameFolderName, platform.ToString(), folderName, fileName), true);
         }
 
         private void ProgUnimportHip(string folderName, string fileName)
         {
-            string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
-            UnimportHip(HipFile.FromPath(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName)).DICT);
+            UnimportHip(HipFile.FromPath(Path.Combine(editorFilesFolder, EditorFilesGameFolderName, platform.ToString(), folderName, fileName)).DICT);
         }
 
         public void UnimportHip(Section_DICT dict)
@@ -3038,7 +2941,7 @@ namespace IndustrialPark.Randomizer
                             return true;
                         break;
                     case "i001":
-                        if (dest != "h001" || dest != "i002" || dest != "r001")
+                        if (new string[] { "TOS005", "TOE001", "T0F001" }.Contains(port.assetName))
                             return true;
                         break;
                     case "i020":
@@ -3152,6 +3055,7 @@ namespace IndustrialPark.Randomizer
 
                 port.DestinationLevel = localWarpNames[index];
                 port.Rotation = random.NextFloat(0f, 360f);
+                port.DestinationMarker = 0;
 
                 if (markerNames.ContainsKey(port.DestinationLevel.ToUpper()))
                 {
@@ -4034,7 +3938,7 @@ namespace IndustrialPark.Randomizer
             bool shuffled = false;
 
             if (settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
-                shuffled |= RandomizePickupPositions();
+                shuffled |= RandomizePickupPositions(false);
 
             if (settings.Colors)
                 shuffled |=
@@ -4061,6 +3965,689 @@ namespace IndustrialPark.Randomizer
                 shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
 
             return shuffled;
+        }
+
+        public static List<PickupReference> ScoobyPowerupsFrom(bool slippersLamp, bool monsterTokens, bool gumSoapUpgrades)
+        {
+            List<PickupReference> result = [
+                PickupReference.Shovel,
+                PickupReference.Springs,
+                PickupReference.Helmet,
+                PickupReference.Knight_Helmet,
+                PickupReference.Boots,
+                PickupReference.Super_Smash,
+                PickupReference.Plungers,
+                PickupReference.Super_Sonic_Smash,
+                PickupReference.Umbrella,
+                PickupReference.Gum_Machine,
+                PickupReference.Soap_Bubble,
+                ];
+            if (slippersLamp)
+            {
+                result.Add(PickupReference.Slippers);
+                result.Add(PickupReference.Lampshade);
+            }
+            if (monsterTokens)
+            {
+                result.Add(PickupReference.TokenGreenGhost);
+                result.Add(PickupReference.TokenWolfman);
+                result.Add(PickupReference.TokenWitch);
+                result.Add(PickupReference.TokenTarMonster);
+                result.Add(PickupReference.TokenGhostDiver);
+                result.Add(PickupReference.TokenZombie);
+                result.Add(PickupReference.TokenGhost);
+                result.Add(PickupReference.TokenScarecrow);
+                result.Add(PickupReference.TokenGargoyle);
+                result.Add(PickupReference.TokenHeadlessSpectre);
+                result.Add(PickupReference.TokenGeronimo);
+                result.Add(PickupReference.TokenCaveman);
+                result.Add(PickupReference.TokenSeaCreature);
+                result.Add(PickupReference.TokenBlackKnight);
+                result.Add(PickupReference.TokenCreeper);
+                result.Add(PickupReference.TokenWitchDoctor);
+                result.Add(PickupReference.TokenFunlandRobot);
+                result.Add(PickupReference.TokenMastermind);
+                result.Add(PickupReference.TokenGhostCaptainMoody);
+                result.Add(PickupReference.TokenRedbeard);
+                result.Add(PickupReference.TokenSpaceKook);
+            }
+            if (gumSoapUpgrades)
+            {
+                result.Add(PickupReference.Soap_Pack); // e007 - chills 1
+                result.Add(PickupReference.Soap_Pack); // f001 - shock 1
+                result.Add(PickupReference.Soap_Pack); // g003 - crypt 1
+                result.Add(PickupReference.Soap_Pack); // l019 - lighthouse 3
+                result.Add(PickupReference.Soap_Pack); // r005 - don't look down 2
+                result.Add(PickupReference.Soap_Pack); // r021 - upstairs 3
+                result.Add(PickupReference.Soap_Pack); // w023 - aghast 1
+
+                result.Add(PickupReference.Gum_Pack); // c003 - cliff 3
+                result.Add(PickupReference.Gum_Pack); // f003 - shock 2
+                result.Add(PickupReference.Gum_Pack); // g006 - crypt 4
+                result.Add(PickupReference.Gum_Pack); // l011 - coast 1
+                result.Add(PickupReference.Gum_Pack); // o001 - cower 1
+                result.Add(PickupReference.Gum_Pack); // r020 - upstairs 2
+            }
+            return result;
+        }
+
+        private static ConditionalVariableScooby GetConditionalVariableScooby(PickupReference pick) => pick switch
+        {
+            PickupReference.Shovel => ConditionalVariableScooby.Shovel,
+            PickupReference.Springs => ConditionalVariableScooby.Spring,
+            PickupReference.Slippers => ConditionalVariableScooby.Slippers,
+            PickupReference.Lampshade => ConditionalVariableScooby.Lampshade,
+            PickupReference.Helmet => ConditionalVariableScooby.FootballHelmet,
+            PickupReference.Knight_Helmet => ConditionalVariableScooby.BlackKnight,
+            PickupReference.Boots => ConditionalVariableScooby.StickyBoots,
+            PickupReference.Super_Smash => ConditionalVariableScooby.LightningBolt,
+            PickupReference.Plungers => ConditionalVariableScooby.Plungers,
+            PickupReference.Super_Sonic_Smash => ConditionalVariableScooby.LightningBoltStun,
+            PickupReference.Umbrella => ConditionalVariableScooby.Umbrella,
+            PickupReference.Gum_Machine => ConditionalVariableScooby.BubbleGum,
+            PickupReference.Soap_Bubble => ConditionalVariableScooby.SoapBar,
+            _ => 0,
+        };
+
+        public void GetMonsterTokens(Dictionary<uint, List<Asset>> tokens)
+        {
+            if (LevelName == "h003")
+                return;
+
+            var models = assetDictionary.Values.OfType<AssetMODL>().Where(a => a.assetName.Contains("token")).ToList();
+            foreach (var model in models)
+            {
+                if (!tokens.ContainsKey(model.assetID))
+                    tokens[model.assetID] = new List<Asset>();
+                tokens[model.assetID].Add(model);
+                var textures = assetDictionary.Values.OfType<AssetRWTX>().Where(a => model.Textures.Any(t => a.assetName.Contains(t)));
+                tokens[model.assetID].AddRange(textures);
+            }
+        }
+
+        public bool RandomizePowerupLevels(HashSet<PickupReference> powerupsFrom, List<uint> powerupsTo, bool createBossHints, Dictionary<uint, List<Asset>> tokens)
+        {
+            if (LevelName == "s005") // mastermind 2
+                return false;
+
+            var pickups = assetDictionary.Values.OfType<AssetPKUP>()
+                .Where(pkup => powerupsFrom.Contains((PickupReference)(uint)pkup.PickReferenceID))
+                .ToList();
+
+            if (pickups.Count == 0)
+                return false;
+
+            foreach (var pkup in pickups)
+            {
+                var index = -1;
+                do
+                {
+                    index = random.Next(powerupsTo.Count);
+                }
+                while (!ReplacementAllowed((PickupReference)powerupsTo[index], new Vector3(pkup.PositionX, pkup.PositionY, pkup.PositionZ)));
+
+                pkup.PickReferenceID = powerupsTo[index];
+                pkup.Shape = BitConverter.GetBytes(pkup.PickReferenceID)[0];
+                pkup.ScaleX = 1f;
+                pkup.ScaleY = 1f;
+                pkup.ScaleZ = 1f;
+
+                powerupsTo.RemoveAt(index);
+
+                uint modelAssetId = 0;
+                string hipFolderName = "Powerups";
+                string hipImportName = null;
+                switch ((PickupReference)(uint)pkup.PickReferenceID)
+                {
+                    case PickupReference.Shovel:
+                        hipImportName = "shovel.hip";
+                        break;
+                    case PickupReference.Springs:
+                        hipImportName = "springs.hip";
+                        break;
+                    case PickupReference.Umbrella:
+                        hipImportName = "umbrella.hip";
+                        break;
+                    case PickupReference.Helmet:
+                        pkup.ScaleX = 2f;
+                        pkup.ScaleY = 2f;
+                        pkup.ScaleZ = 2f;
+                        hipImportName = "helmet.hip";
+                        break;
+                    case PickupReference.Knight_Helmet:
+                        pkup.ScaleX = 2f;
+                        pkup.ScaleY = 2f;
+                        pkup.ScaleZ = 2f;
+                        hipImportName = "knight_helmet.hip";
+                        break;
+                    case PickupReference.Boots:
+                        hipImportName = "boots.hip";
+                        break;
+                    case PickupReference.Super_Smash:
+                        hipImportName = "smash.hip";
+                        break;
+                    case PickupReference.Super_Sonic_Smash:
+                        hipImportName = "smash_stun.hip";
+                        break;
+                    case PickupReference.Gum_Machine:
+                        hipImportName = "gum.hip";
+                        break;
+                    case PickupReference.Soap_Bubble:
+                        hipImportName = "soap.hip";
+                        break;
+                    case PickupReference.Slippers:
+                        hipImportName = "slippers.hip";
+                        break;
+                    case PickupReference.Lampshade:
+                        hipImportName = "lampshade.hip";
+                        break;
+                    case PickupReference.Plungers:
+                        hipImportName = "plungers.hip";
+                        break;
+                    case PickupReference.Gum_Pack:
+                        hipImportName = "gum_pack.hip";
+                        hipFolderName = "Pickups";
+                        break;
+                    case PickupReference.Soap_Pack:
+                        hipImportName = "soap_box.hip";
+                        hipFolderName = "Pickups";
+                        break;
+                    default:
+                        var pkupRef = (PickupReference)(uint)pkup.PickReferenceID;
+                        if (pkupRef.ToString().StartsWith("Token"))
+                        {
+                            modelAssetId = AssetPICK.pickEntries[pkup.PickReferenceID];
+                            var assets = tokens[modelAssetId];
+                            foreach (var asset in assets)
+                                AddAsset(asset, -1, false);
+                        }
+                        break;
+                }
+
+                if (hipImportName != null)
+                {
+                    ProgImportHip(hipFolderName, hipImportName);
+
+                    var (actions, currentIndex) = IndustrialPark.Program.UndoBuffer.GetCurrentState();
+                    var model = ((MultiAction)actions[currentIndex]).GetActions.OfType<AssetAddedAction>().Select(a => a.GetAHDR()).FirstOrDefault(a => a.assetType == AssetType.Model);
+                    modelAssetId = model.assetID;
+                }
+                else if (modelAssetId == 0)
+                {
+                    throw new Exception("Unsupported powerup.");
+                }
+
+                switch (LevelName)
+                {
+                    case "h001":
+                        var checkShovelCond = (AssetCOND)GetFromAssetID(new AssetID("CHECK SHOVEL CONDITIONAL"));
+                        checkShovelCond.Conditional_Scooby = GetConditionalVariableScooby((PickupReference)powerupsTo[index]);
+                        break;
+                    case "e002":
+                        var lampshadeMech = (AssetPLAT)GetFromAssetID(0x5E356230);
+                        lampshadeMech.Model = modelAssetId;
+                        lampshadeMech.ScaleX = pkup.ScaleX;
+                        lampshadeMech.ScaleY = pkup.ScaleY;
+                        lampshadeMech.ScaleZ = pkup.ScaleZ;
+                        var groundsgonecounter = (AssetCNTR)GetFromAssetID(new AssetID("GROUNDSGONE COUNTER"));
+                        groundsgonecounter.Links = [];
+                        break;
+                    case "e007":
+                        var invisTrig = (AssetTRIG)GetFromAssetID(0xF5024627);
+                        invisTrig.Links = [..invisTrig.Links, new Link(Game.Scooby) {
+                            EventReceiveID = (ushort)EventScooby.ScenePrepare,
+                            EventSendID = (ushort)EventScooby.EnterPlayer,
+                            TargetAsset = invisTrig.assetID,
+                        }];
+                        break;
+                    default:
+                        break;
+                }
+
+                if (createBossHints)
+                {
+                    Vector3 position = default;
+                    switch (LevelName)
+                    {
+                        case "g009":
+                            position = new Vector3(-30f, 18f, 36f);
+                            break;
+                        case "o008":
+                            position = new Vector3(12.8f, 53.5f, -232f);
+                            break;
+                        case "w028":
+                            position = new Vector3(-0.5f, 1.2f, -6.2f);
+                            break;
+                        default:
+                            continue;
+                    }
+                    var plat = (AssetPLAT)PlaceTemplate(-1, position, template: AssetTemplate.Platform);
+                    plat.Model = modelAssetId;
+                    plat.ColorAlpha = 0.8f;
+                    plat.PlatformFlags.FlagValueShort = 0;
+                    plat.Motion = new Motion_Mechanism(Game.Scooby)
+                    {
+                        MovementType = EMovementType.Rotate,
+                        RotateAxis = Axis.Y,
+                        RotateDistance = 360f,
+                        RotateTime = 5f,
+                    };
+                    plat.Motion.MotionFlags.FlagValueShort = 0;
+                    plat.ScaleX = pkup.ScaleX;
+                    plat.ScaleY = pkup.ScaleY;
+                    plat.ScaleZ = pkup.ScaleZ;
+                }
+            }
+            return true;
+        }
+
+        private bool ReplacementAllowed(PickupReference pickup, Vector3 position)
+        {
+            switch (LevelName)
+            {
+                case "b001": // cellar 1
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash &&
+                        pickup != PickupReference.Soap_Bubble &&
+                        pickup != PickupReference.Gum_Machine;
+                case "b004": // cellar 4
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Super_Smash &&
+                        pickup != PickupReference.Helmet;
+                case "c003": // cliff 3
+                    if (Vector3.Distance(position, new Vector3(-177.5f, -11f, -34)) < 20f || (position.Z <= -67f && position.Y >= -8f)) // distant platform or upper area
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Helmet &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "c005": // cave in 1
+                    if (position.Y > -7.9f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "c007": // cave in 3
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash;
+                case "e001":
+                    if (Vector3.Distance(position, new Vector3(34.0f, 1.5f, -30.33f)) < 2f)
+                        return pickup != PickupReference.Helmet;
+                    return true;
+                case "e002": // edge 2
+                    return
+                        pickup != PickupReference.TokenGreenGhost &&
+                        pickup != PickupReference.TokenWolfman &&
+                        pickup != PickupReference.TokenWitch &&
+                        pickup != PickupReference.TokenTarMonster &&
+                        pickup != PickupReference.TokenGhostDiver &&
+                        pickup != PickupReference.TokenZombie &&
+                        pickup != PickupReference.TokenGhost &&
+                        pickup != PickupReference.TokenScarecrow &&
+                        pickup != PickupReference.TokenGargoyle &&
+                        pickup != PickupReference.TokenHeadlessSpectre &&
+                        pickup != PickupReference.TokenGeronimo &&
+                        pickup != PickupReference.TokenCaveman &&
+                        pickup != PickupReference.TokenSeaCreature &&
+                        pickup != PickupReference.TokenBlackKnight &&
+                        pickup != PickupReference.TokenCreeper &&
+                        pickup != PickupReference.TokenWitchDoctor &&
+                        pickup != PickupReference.TokenFunlandRobot &&
+                        pickup != PickupReference.TokenMastermind &&
+                        pickup != PickupReference.TokenGhostCaptainMoody &&
+                        pickup != PickupReference.TokenRedbeard &&
+                        pickup != PickupReference.TokenSpaceKook;
+                case "e003":
+                    if (position.X > 285f && position.X < 296f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Boots &&
+                            pickup != PickupReference.Super_Smash;
+                    return true;
+                case "e007": // chills 1
+                    if (position.Y >= 20f) // above trees
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "e009": // chills 3
+                    if (Vector3.Distance(position, new Vector3(-28.0f, 19.5f, 2.0f)) < 4f) // above jump on bat area
+                        return pickup != PickupReference.Springs;
+                    return true;
+                case "f001": // shock 1
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash;
+                case "f003": // shock 2
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Boots &&
+                        pickup != PickupReference.Gum_Machine &&
+                        pickup != PickupReference.Soap_Bubble;
+                case "f004": // fishy 1
+                    if (position.X < -153f && position.Y > 8f) // token area
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Helmet &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Umbrella &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash;
+                case "f007": // fishy 4
+                    if (position.Y > -3.3f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Umbrella &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "f010": // pier 3
+                    return true;
+                case "g002": // grave plot 2
+                    return true;
+                case "g003": // crypt 1
+                    if (position.Y >= 3.8f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Umbrella &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "g005": // crypt 3
+                    if (Vector3.Distance(position, new Vector3(96.39f, 3.5f, 85.22f)) < 6.77f)
+                        return pickup != PickupReference.Helmet;
+                    return true;
+                case "g006": // crypt 4
+                    return true;
+                case "g008": // tomb 2
+                    if (Vector3.Distance(position, new Vector3(11.0f, 11.0f, 77f)) < 2f)
+                        return pickup != PickupReference.Helmet;
+                    if (Vector3.Distance(position, new Vector3(13.8f, 16.3f, 39.5f)) < 5.6f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Umbrella;
+                    return true;
+                case "g009": // tomb 3 green ghost
+                    return pickup != PickupReference.Super_Smash;
+                case "h001": // hub
+                    return true;
+                case "h002": // playground
+                    return true;
+                case "i001": // clamor 1
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash &&
+                        pickup != PickupReference.Soap_Bubble;
+                case "i005": // manors 2
+                    return true;
+                case "l011": // coast 1
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Umbrella &&
+                        pickup != PickupReference.Plungers;
+                case "l013": // coast 2
+                    if (position.Y > 0)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Soap_Bubble &&
+                            pickup != PickupReference.Gum_Machine;
+                    return true;
+                case "l014": // coast 3
+                    if (position.Z > 8.5f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Soap_Bubble &&
+                            pickup != PickupReference.Gum_Machine;
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Super_Smash;
+                case "l017": // lighthouse 1
+                    return pickup != PickupReference.Helmet;
+                case "l019": // lighthouse 3
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Umbrella &&
+                        pickup != PickupReference.Soap_Bubble;
+                case "o001": // cower 1
+                    if (position.Y >= 39.3f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Helmet &&
+                            pickup != PickupReference.Boots;
+                    return true;
+                case "o002": // attic 2
+                    if (position.X > -20f && position.X < 10f && position.Z > -246.35f && position.Z < -244.35f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Plungers &&
+                            pickup != PickupReference.Helmet;
+                    return true;
+                case "o008": // knight 3 black knight
+                    return pickup != PickupReference.Helmet;
+                case "p003": // creepy 3
+                    if (position.Y > 18f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "r004": // don't look down 1
+                    if (position.X < 107f && position.Y > 25f && position.Z < -160f)
+                        return pickup != PickupReference.Super_Smash;
+                    return true;
+                case "r005": // don't look down 2
+                    return
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash;
+                case "r020": // upstairs 2
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Plungers &&
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Umbrella;
+                case "r021": // upstairs 3
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Helmet;
+                case "s002": // lab 2
+                    if (position.Y > 30.5f)
+                        return
+                            pickup != PickupReference.Shovel &&
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Helmet &&
+                            pickup != PickupReference.Knight_Helmet &&
+                            pickup != PickupReference.Boots &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Plungers &&
+                            pickup != PickupReference.Super_Sonic_Smash &&
+                            pickup != PickupReference.Umbrella &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble &&
+                            pickup != PickupReference.Slippers &&
+                            pickup != PickupReference.Lampshade;
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash &&
+                        pickup != PickupReference.Gum_Machine &&
+                        pickup != PickupReference.Soap_Bubble;
+                case "s003": // lab 3
+                    if (position.Y > 26f)
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Helmet &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Umbrella &&
+                            pickup != PickupReference.Gum_Machine &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "w022": // wreck 3
+                    return
+                        pickup != PickupReference.Springs &&
+                        pickup != PickupReference.Super_Smash &&
+                        pickup != PickupReference.Umbrella &&
+                        pickup != PickupReference.Gum_Machine &&
+                        pickup != PickupReference.Soap_Bubble;
+                case "w023": // aghast 1
+                    if (position.X >= 241f && position.Z <= -24.5f) // secret ship
+                        return
+                            pickup != PickupReference.Springs &&
+                            pickup != PickupReference.Umbrella &&
+                            pickup != PickupReference.Super_Smash &&
+                            pickup != PickupReference.Soap_Bubble;
+                    return true;
+                case "w025": // aghast 2
+                    if (position.Y > -6f)
+                        return
+                           pickup != PickupReference.Springs &&
+                           pickup != PickupReference.Umbrella &&
+                           pickup != PickupReference.Helmet &&
+                           pickup != PickupReference.Super_Smash &&
+                           pickup != PickupReference.Gum_Machine &&
+                           pickup != PickupReference.Soap_Bubble;
+                    return
+                        pickup != PickupReference.Helmet &&
+                        pickup != PickupReference.Super_Smash;
+                case "w028": // shiver 2 redbeard
+                    return true;
+                default:
+                    throw new ArgumentException($"Unsupported level for Scooby Powerups: {LevelName}");
+            }
+        }
+
+        public bool UnlockGroundskeeper()
+        {
+            if (LevelName == "h001")
+            {
+                var pkup = (AssetPKUP)GetFromAssetID(new AssetID("SHOVEL"));
+                pkup.Links = [.. pkup.Links, new Link(Game.Scooby)
+                {
+                    EventReceiveID = (ushort)EventScooby.ScenePrepare,
+                    EventSendID = (ushort)EventScooby.False,
+                    TargetAsset = 0x1F21DCB5 // CHECK SHOVEL CONDITIONAL
+                }];
+                return true;
+            }
+            return false;
+        }
+
+        public bool UnlockCellar1Door()
+        {
+            if (LevelName == "b001")
+            {
+                var chain = (AssetHANG)GetFromAssetID(0xCC43FFE8);
+                chain.Links = [.. chain.Links, new Link(Game.Scooby)
+                {
+                    EventReceiveID = (ushort)EventScooby.Mount,
+                    EventSendID = (ushort)EventScooby.ButtonPress,
+                    TargetAsset = new AssetID("WINEBUTTON0")
+                }];
+                return true;
+            }
+            return false;
+        }
+
+        public bool Hedge1_UnlockGate()
+        {
+            if (LevelName == "e001")
+            {
+                var trig = (AssetTRIG)GetFromAssetID(0xC91CA497);
+                trig.EnabledOnStart = true;
+                return true;
+            }
+            return false;
+        }
+
+        public bool Aghast1_PlungersOnDeck()
+        {
+            if (LevelName == "w023")
+            {
+                var surf = (AssetSURF)GetFromAssetID(new AssetID("DECK_OF_SHIP"));
+                surf.PhysicsFlags.FlagValueByte = 3;
+                return true;
+            }
+            return false;
+        }
+
+        public bool Wreck1_Softlock()
+        {
+            if (LevelName == "w020")
+            {
+                var player = (AssetPLYR)GetFromAssetID(new AssetID("SCOOBY"));
+                var marker = (AssetMRKR)GetFromAssetID(new AssetID("FROMLIGHTHOUSE"));
+                player.PositionX = marker.PositionX;
+                player.PositionY = marker.PositionY;
+                player.PositionZ = marker.PositionZ;
+                return true;
+            }
+            return false;
+        }
+
+        public void AddWarpGateToRedbeard()
+        {
+            if (game != Game.Scooby || LevelName != "w028")
+                return;
+
+            ProgImportHip("Pickups", "warp_gate.hip");
+
+            var warpGate = (AssetPKUP)PlaceTemplate(-1, new Vector3(1.75f, 1.38f, 11.0f), template: AssetTemplate.Warp_Gate);
+            warpGate.VisibilityFlags.FlagValueByte = 0;
+
+            var noHelmet = (AssetCOND)PlaceTemplate(-1, customName: "NoHelmetCond", template: AssetTemplate.Conditional);
+            noHelmet.Conditional_Scooby = ConditionalVariableScooby.FootballHelmet;
+            noHelmet.Operation = ConditionalOperation.EQUAL_TO;
+            noHelmet.EvaluationAmount = 0;
+            noHelmet.Links = [
+                new Link(Game.Scooby) {
+                        EventReceiveID = (ushort)EventScooby.True,
+                        EventSendID = (ushort)EventScooby.Visible,
+                        TargetAsset = warpGate.assetID,
+                    },
+                ];
+
+            var noSmash = (AssetCOND)PlaceTemplate(-1, customName: "NoSmashCond", template: AssetTemplate.Conditional);
+            noSmash.Conditional_Scooby = ConditionalVariableScooby.LightningBolt;
+            noSmash.Operation = ConditionalOperation.EQUAL_TO;
+            noSmash.EvaluationAmount = 0;
+            noSmash.Links = [
+                new Link(Game.Scooby) {
+                        EventReceiveID = (ushort)EventScooby.ScenePrepare,
+                        EventSendID = (ushort)EventScooby.Evaluate,
+                        TargetAsset = noSmash.assetID,
+                    },
+                    new Link(Game.Scooby) {
+                        EventReceiveID = (ushort)EventScooby.True,
+                        EventSendID = (ushort)EventScooby.Evaluate,
+                        TargetAsset = noHelmet.assetID,
+                    },
+                ];
+        }
+
+        public void AddWarpGateToDontLookDown2()
+        {
+            if (game != Game.Scooby || LevelName != "r005")
+                return;
+
+            ProgImportHip("Pickups", "warp_gate.hip");
+            PlaceTemplate(-1, new Vector3(24.54f, 24.88f, -187.34f), template: AssetTemplate.Warp_Gate);
         }
     }
 }

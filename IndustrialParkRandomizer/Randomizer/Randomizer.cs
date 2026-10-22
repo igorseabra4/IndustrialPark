@@ -32,20 +32,14 @@ namespace IndustrialPark.Randomizer
         public Randomizer(int game)
         {
             this.game = game;
-            settings = new RandomizerSettings(game);
+            settings = new RandomizerSettings();
+            settings.ResetToDefault(game);
         }
 
         public void SetSeed(string seed)
         {
             seedText = seed;
-            try
-            {
-                this.seed = Convert.ToUInt32(seed);
-            }
-            catch
-            {
-                this.seed = BKDRHash(seed);
-            }
+            this.seed = uint.TryParse(seed, out uint result) ? result : BKDRHash(seed);
         }
 
         public void RandomSeed()
@@ -59,6 +53,20 @@ namespace IndustrialPark.Randomizer
         public string Perform(string backupDir, string destinationDir, ProgressBar progressBar)
         {
             HexUIntTypeConverter.Legacy = true;
+
+            if (Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+            {
+                AutomaticUpdater.VerifyEditorFiles();
+            }
+            else
+            {
+                DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
+
+                if (dialogResult == DialogResult.Yes)
+                    AutomaticUpdater.DownloadEditorFiles();
+                else if (dialogResult == DialogResult.No)
+                    return "Canceled";
+            }
 
             RandomizableArchive.random = new Random((int)this.seed);
 
@@ -105,11 +113,11 @@ namespace IndustrialPark.Randomizer
             Game game = Game.Unknown;
             Platform scoobyPlatform = Platform.Unknown;
 
-            List<string> toSkip = new List<string>(settings.skipFiles.Length + settings.skipFilesWarps.Length); // Uses these to skip warps that shouldn't be randomized
-            toSkip.AddRange(settings.skipFiles);
-            toSkip.AddRange(settings.skipFilesWarps);
+            List<string> toSkip = [.. settings.skipFiles, .. settings.skipFilesWarps]; // Uses these to skip warps that shouldn't be randomized
 
             bool platformVerified = false; // Not all game/plaftorm combinations support all methods
+
+            Dictionary<uint, List<Asset>> tokens = null;
 
             // This goes through each file in the game and gets the warp names
             foreach (string hipPath in hipPaths)
@@ -124,18 +132,9 @@ namespace IndustrialPark.Randomizer
                 {
                     game = hip.game;
                     scoobyPlatform = hip.platform;
-
-                    if (Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
-                        AutomaticUpdater.VerifyEditorFiles();
-                    else
-                    {
-                        DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                        if (dialogResult == DialogResult.Yes)
-                            AutomaticUpdater.DownloadEditorFiles();
-                    }
-
                     platformVerified = true;
+                    if (game == Game.Scooby)
+                        tokens = new Dictionary<uint, List<Asset>>();
                 }
 
                 string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
@@ -150,6 +149,8 @@ namespace IndustrialPark.Randomizer
 
                 if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
                     namesForBoot.Add(nameForBoot);
+                if (settings.Include_MonsterTokens)
+                    hip.GetMonsterTokens(tokens);
             }
 
             HashSet<string> uinqueWarpNames = new HashSet<string>();
@@ -165,6 +166,7 @@ namespace IndustrialPark.Randomizer
 
             // Perform things on boot.hip
             string bootPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/boot.hip";
+
             if (File.Exists(bootPath))
             {
                 var boot = new RandomizableArchive();
@@ -194,7 +196,7 @@ namespace IndustrialPark.Randomizer
                 if (settings.RandomCharacters)
                     shouldSave |= boot.RandomizePlayerOnSpawn();
 
-                if (settings.Textures)
+                if (game == Game.BFBB && settings.Textures)
                 {
                     boot.RemoveAsset(new AssetID("tiki_wooden.RW3"));
                     shouldSave = true;
@@ -319,11 +321,19 @@ namespace IndustrialPark.Randomizer
                 }
             }
 
-            // Time for the actual randomization process!
+            // Randomize level files now
 
             List<(string, string, string)> warpRandomizerOutput = new List<(string, string, string)>();
 
             var hops = new List<string>();
+
+            var scoobyPowerups = RandomizableArchive.ScoobyPowerupsFrom(
+                !settings.Skip_Slippers_Lampshade,
+                settings.Include_MonsterTokens,
+                settings.Include_GumSoap_Upgrades);
+
+            List<uint> powerupsTo = game != Game.Scooby ? null : [.. scoobyPowerups.Select(u => (uint)u)];
+            HashSet<PickupReference> powerupsFrom = game != Game.Scooby ? null : [.. scoobyPowerups];
 
             foreach (string hipPath in hipPaths)
             {
@@ -346,12 +356,34 @@ namespace IndustrialPark.Randomizer
                     hip.UnimportCharacters();
                     hip.FixTreedome();
                 }
-
-                if (settings.UnlockCharacters || settings.disableCutscenes)
+                if (game == Game.BFBB && (settings.UnlockCharacters || settings.disableCutscenes))
                     hip.KillFinalBossCutscenes();
-
                 if (settings.Warps && !FileInSecondBox(hip.currentlyOpenFilePath))
                     hip.SetWarpNames(toSkip, ref warpNames, ref warpRandomizerOutput, uinqueWarpNames, ref markerNames);
+
+                if (game == Game.Scooby)
+                {
+                    if (settings.Hedge1_UnlockGate)
+                        hip.Hedge1_UnlockGate();
+                    if (settings.Redbeard_Softlock)
+                        hip.AddWarpGateToRedbeard();
+                    if (settings.Wreck1_Softlock)
+                        hip.Wreck1_Softlock();
+                    if (settings.Aghast1_DecksAreSlides)
+                        hip.Aghast1_PlungersOnDeck();
+                    if (settings.Cellar1_UnlockDoor)
+                        hip.UnlockCellar1Door();
+                    if (settings.Unlock_Groundskeeper)
+                        hip.UnlockGroundskeeper();
+
+                    if (settings.Pickups) // scooby pickup positions should be before power ups
+                        hip.RandomizePickupPositions(settings.Skip_Springs);
+                    if (settings.Power_Up_Levels_Scooby)
+                        hip.RandomizePowerupLevels(powerupsFrom, powerupsTo, settings.Power_Up_Levels_Scooby_Hints, tokens);
+
+                    if (settings.DontLookDown_Softlock)
+                        hip.AddWarpGateToDontLookDown2();
+                }
 
                 hip.Randomize(settings);
 
@@ -366,6 +398,9 @@ namespace IndustrialPark.Randomizer
                 if (backupDir == destinationDir)
                     File.Delete(hopPath);
             }
+
+            if (settings.Power_Up_Levels_Scooby && powerupsTo.Count != 0)
+                MessageBox.Show($"There was an error with the Scooby Powerups randomizer: {string.Join(", ", powerupsTo.Select(a => $"0x{a:X8}"))} were not placed.");
 
             RemoveFiles = string.Join("\n", hops);
 
