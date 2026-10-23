@@ -218,7 +218,7 @@ namespace IndustrialPark
         public void Draw(SharpRenderer renderer)
         {
             if (DrawAsPoint)
-                renderer.DrawPyramid(world, isSelected, 1f);
+                renderer.DrawPyramid(world, isSelected, 1f, renderer.mvptColor);
             else
                 renderer.DrawSphere(world, isSelected, renderer.mvptColor);
         }
