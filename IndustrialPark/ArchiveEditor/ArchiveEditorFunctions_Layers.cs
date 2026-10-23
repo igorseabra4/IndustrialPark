@@ -188,9 +188,9 @@ namespace IndustrialPark
             return false;
         }
 
-        public List<AssetType> AssetTypesOnLayer(int index) => NoLayers ?
-            (from Asset a in assetDictionary.Values select a.assetType).Distinct().ToList() :
-            (from uint a in Layers[index].AssetIDs select assetDictionary[a].assetType).Distinct().ToList();
+        public IEnumerable<AssetType> AssetTypesOnLayer(int index) => NoLayers ?
+            assetDictionary.Values.Select(a => a.assetType).Distinct() :
+            Layers[index].AssetIDs.Select(u => assetDictionary[u].assetType).Distinct();
 
         public Dictionary<LayerType, HashSet<AssetType>> AssetTypesPerLayer()
         {

@@ -1101,7 +1101,8 @@ namespace IndustrialPark
             if (Program.ViewConfig.WindowState == FormWindowState.Minimized)
                 Program.ViewConfig.WindowState = FormWindowState.Normal;
 
-            Program.ViewConfig.Show(this);
+            if (!Program.ViewConfig.Visible)
+                Program.ViewConfig.Show(this);
             Program.ViewConfig.Activate();
         }
 
@@ -1531,7 +1532,9 @@ namespace IndustrialPark
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.AboutBox.Show(this);
+            if (!Program.AboutBox.Visible)
+                Program.AboutBox.Show(this);
+            Program.AboutBox.Activate();
         }
 
         public string GetAssetNameFromID(uint assetID)
@@ -1718,7 +1721,9 @@ namespace IndustrialPark
 
         private void manageUserTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.UserTemplateManager.Show(this);
+            if (!Program.UserTemplateManager.Visible)
+                Program.UserTemplateManager.Show(this);
+            Program.UserTemplateManager.Activate();
         }
 
         private void templatesPersistentShiniesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1767,31 +1772,36 @@ namespace IndustrialPark
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.EventSearch ??= new EventSearch();
-            Program.EventSearch.Show(this);
+            if (!Program.EventSearch.Visible)
+                Program.EventSearch.Show(this);
         }
 
         private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.AssetIDGenerator ??= new AssetIDGenerator();
-            Program.AssetIDGenerator.Show(this);
+            if (!Program.AssetIDGenerator.Visible)
+                Program.AssetIDGenerator.Show(this);
         }
 
         private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.DynaSearch ??= new DynaSearch();
-            Program.DynaSearch.Show(this);
+            if (!Program.DynaSearch.Visible)
+                Program.DynaSearch.Show(this);
         }
 
         private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.PickupSearch ??= new PickupSearch();
-            Program.PickupSearch.Show(this);
+            if (!Program.PickupSearch.Visible)
+                Program.PickupSearch.Show(this);
         }
 
         private void hansToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.HansMainForm ??= new IndustrialPark.SaveFile.HansMainForm();
-            Program.HansMainForm.Show(this);
+            if (!Program.HansMainForm.Visible)
+                Program.HansMainForm.Show(this);
         }
 
         private void MainForm_Resize(object sender, EventArgs e)
@@ -2129,7 +2139,8 @@ namespace IndustrialPark
         private void buildAndRunPS2ISOToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Program.BuildISO ??= new BuildISO();
-            Program.BuildISO.Show(this);
+            if (!Program.BuildISO.Visible)
+                Program.BuildISO.Show(this);
         }
 
         private void createGameCubeBannerToolStripMenuItem_Click(object sender, EventArgs e)

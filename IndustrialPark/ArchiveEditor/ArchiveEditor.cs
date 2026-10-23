@@ -201,7 +201,7 @@ namespace IndustrialPark
             exportAssetsIniToolStripMenuItem.Enabled = true;
             texturesToolStripMenuItem.Enabled = true;
             soundsToolStripMenuItem.Enabled = true;
-            buttonAddLayer.Enabled = true;
+            addLayerToolStripMenuItem.Enabled = buttonAddLayer.Enabled = true;
             importSoundsToolStripMenuItem.Enabled = true;
             importRawSoundsToolStripMenuItem.Enabled = true;
 
@@ -225,9 +225,9 @@ namespace IndustrialPark
             exportAllSoundsToolStripMenuItem.Enabled = canExportSounds;
             exportAllSoundsRawToolStripMenuItem.Enabled = canExportSounds;
 
-            buttonRemoveLayer.Enabled = SelectedLayerIndex != -1;
-            buttonArrowUp.Enabled = archive.LayerCount > 1 && SelectedLayerIndex > 0;
-            buttonArrowDown.Enabled = archive.LayerCount > 1 && SelectedLayerIndex != -1 && SelectedLayerIndex < archive.LayerCount - 1;
+            removeLayerToolStripMenuItem.Enabled = buttonRemoveLayer.Enabled = !archive.NoLayers && SelectedLayerIndex != -1;
+            moveLayerUpToolStripMenuItem.Enabled = buttonArrowUp.Enabled = archive.LayerCount > 1 && SelectedLayerIndex > 0;
+            moveLayerDownToolStripMenuItem.Enabled = buttonArrowDown.Enabled = archive.LayerCount > 1 && SelectedLayerIndex != -1 && SelectedLayerIndex < archive.LayerCount - 1;
 
             var canEditAsset = listViewAssets.SelectedItems.Count != 0;
             toolStripMenuItem_Duplicate.Enabled = buttonDuplicateAsset.Enabled = canEditAsset;
@@ -484,6 +484,9 @@ namespace IndustrialPark
 
         private void buttonRemoveLayer_Click(object sender, EventArgs e)
         {
+            if (SelectedLayerIndex < 0 || SelectedLayerIndex >= archive.LayerCount)
+                return;
+
             int cnt = archive.GetAssetIDsOnLayer(SelectedLayerIndex).Count;
             if (cnt > 0 &&
                 MessageBox.Show($"Are you sure you want to delete this layer with {cnt} assets?", "Warning",
@@ -560,7 +563,7 @@ namespace IndustrialPark
             if (archive.NoLayers || SelectedLayerIndex != -1)
             {
                 comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Null));
-                comboBoxAssetTypes.Items.AddRange(archive.AssetTypesOnLayer(SelectedLayerIndex).Select(f => new AssetTypeContainer(f)).OrderBy(f => f.ToString()).ToArray());
+                comboBoxAssetTypes.Items.AddRange([.. archive.AssetTypesOnLayer(SelectedLayerIndex).Select(f => new AssetTypeContainer(f)).OrderBy(f => f.ToString())]);
                 if (selectAllOption)
                     comboBoxAssetTypes.SelectedIndex = 0;
             }
@@ -908,7 +911,7 @@ namespace IndustrialPark
 
             archive.RemoveAsset(assetIDs);
 
-            if (!archive.NoLayers)
+            if (!archive.NoLayers && SelectedLayerIndex != -1)
                 comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
 
             archive.UnsavedChanges = true;
@@ -2012,7 +2015,7 @@ namespace IndustrialPark
 
         private void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (comboBoxLayers.SelectedIndex != -1)
+            if (SelectedLayerIndex != -1)
             {
                 var layerIndex = SelectedLayerIndex;
                 if (archive.RenameLayer(comboBoxLayers.SelectedIndex))

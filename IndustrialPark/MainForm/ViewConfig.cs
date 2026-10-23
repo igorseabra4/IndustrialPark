@@ -178,12 +178,16 @@ namespace IndustrialPark
 
         private void buttonViewControls_Click(object sender, EventArgs e)
         {
-            Program.ViewControls.Show(Program.MainForm);
+            if (!Program.ViewControls.Visible)
+                Program.ViewControls.Show(Program.MainForm);
+            Program.ViewControls.Activate();
         }
 
         private void buttonAbout_Click(object sender, EventArgs e)
         {
-            Program.AboutBox.Show(Program.MainForm);
+            if (!Program.AboutBox.Visible)
+                Program.AboutBox.Show(Program.MainForm);
+            Program.AboutBox.Activate();
         }
 
         private void buttonResetView_Click(object sender, EventArgs e)
