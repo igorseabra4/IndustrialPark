@@ -213,6 +213,9 @@ namespace IndustrialPark
             autoDockSelectedAssetEditorsToolStripMenuItem.Checked = settings.AutoDockSelectedAssetEditors;
             ArchiveEditorFunctions.AutoDockSelectedAssetEditors = settings.AutoDockSelectedAssetEditors;
 
+            gizmoConesToolStripMenuItem.Checked = settings.GizmoCones;
+            GizmoBase.UseCones = settings.GizmoCones;
+
             fogToolStripMenuItem.Checked = settings.fog;
             AssetFOG.DontRender = !settings.fog;
 
@@ -314,6 +317,7 @@ namespace IndustrialPark
                 AutoDockArchiveEditor = AutoDockArchiveEditors,
                 AutoDockAssetEditors = ArchiveEditorFunctions.AutoDockAssetEditors,
                 AutoDockSelectedAssetEditors = ArchiveEditorFunctions.AutoDockSelectedAssetEditors,
+                GizmoCones = GizmoBase.UseCones,
                 dockLeftSize = dockLeftSizeSave,
                 dockRightSize = dockRightSizeSave,
                 Speed = renderer.Camera.Speed,
@@ -2232,6 +2236,12 @@ namespace IndustrialPark
         {
             autoDockSelectedAssetEditorsToolStripMenuItem.Checked = !autoDockSelectedAssetEditorsToolStripMenuItem.Checked;
             ArchiveEditorFunctions.AutoDockSelectedAssetEditors = autoDockSelectedAssetEditorsToolStripMenuItem.Checked;
+        }
+
+        private void gizmoConeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            gizmoConesToolStripMenuItem.Checked = !gizmoConesToolStripMenuItem.Checked;
+            GizmoBase.UseCones = gizmoConesToolStripMenuItem.Checked;
         }
 
         private void MenuStrip_DropDownOpened(object sender, EventArgs e)

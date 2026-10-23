@@ -13,30 +13,33 @@ namespace IndustrialPark
 
         public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
         {
+            Radius = Math.Abs(Radius);
+
             switch (Type)
             {
                 case GizmoType.ScaleX:
-                    transformMatrix = Matrix.Scaling(Math.Max(Math.Abs(Radius) / 6f, 1f)) * Matrix.Translation(Math.Abs(Radius) + 1f, 0f, 0f) * Rotation * Matrix.Translation(Position);
+                    lineTransformMatrix = Matrix.Scaling(Radius) * Matrix.RotationY(MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(Radius / 4f) * Matrix.Translation(Radius, 0f, 0f) * Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.ScaleY:
-                    transformMatrix = Matrix.Scaling(Math.Max(Math.Abs(Radius) / 6f, 1f)) * Matrix.Translation(0f, Math.Abs(Radius) + 1f, 0f) * Rotation * Matrix.Translation(Position);
+                    lineTransformMatrix = Matrix.Scaling(Radius) * Matrix.RotationX(-MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(Radius / 4f) * Matrix.Translation(0f, Radius, 0f) * Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.ScaleZ:
-                    transformMatrix = Matrix.Scaling(Math.Max(Math.Abs(Radius) / 6f, 1f)) * Matrix.Translation(0f, 0f, Math.Abs(Radius) + 1f) * Rotation * Matrix.Translation(Position);
+                    lineTransformMatrix = Matrix.Scaling(Radius) * Rotation * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(Radius / 4f) * Matrix.Translation(0f, 0f, Radius) * Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.ScaleAll:
-                    transformMatrix = Matrix.Scaling(Radius / 8f) * Rotation * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(Radius / 6f) * Rotation * Matrix.Translation(Position);
                     break;
             }
 
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i], transformMatrix);
-            boundingBox = BoundingBox.FromPoints(vertices);
-            position = (Vector3)Vector3.Transform(Vector3.Zero, transformMatrix);
+            ResetBounds();
         }
 
         public override SharpMesh Mesh => SharpRenderer.Cube;
-
+        protected override List<Vector3> vertexList => SharpRenderer.cubeVertices;
         protected override List<Models.Triangle> triangleList => SharpRenderer.cubeTriangles;
+        protected override bool drawLine => Type != GizmoType.ScaleAll;
     }
 }

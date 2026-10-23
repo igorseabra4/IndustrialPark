@@ -36,6 +36,7 @@ namespace IndustrialPark
         public bool AutoDockArchiveEditor = false;
         public bool AutoDockAssetEditors = false;
         public bool AutoDockSelectedAssetEditors = false;
+        public bool GizmoCones = true;
 
         public RendererColors Colors = RendererColors.Default;
         public bool fog = true;

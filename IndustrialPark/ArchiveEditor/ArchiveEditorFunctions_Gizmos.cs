@@ -11,7 +11,6 @@ namespace IndustrialPark
         private static BoxTrigPositionGizmo[] triggerPositionGizmos;
         private static RotationGizmo[] rotationGizmos;
         private static ScaleGizmo[] scaleGizmos;
-        private static PositionLocalGizmo[] positionLocalGizmos;
 
         public static void SetUpGizmos()
         {
@@ -38,11 +37,6 @@ namespace IndustrialPark
                 new ScaleGizmo(GizmoType.ScaleY),
                 new ScaleGizmo(GizmoType.ScaleZ),
                 new ScaleGizmo(GizmoType.ScaleAll)];
-
-            positionLocalGizmos = [
-                new PositionLocalGizmo(GizmoType.X),
-                new PositionLocalGizmo(GizmoType.Y),
-                new PositionLocalGizmo(GizmoType.Z)];
 
             if (Grid.X < 0.001f)
                 Grid.X = 1f;
@@ -79,7 +73,7 @@ namespace IndustrialPark
                     float distance = Vector3.Distance(renderer.Camera.Position, GizmoCenterPosition) / 5f;
 
                     foreach (PositionGizmo gizmo in positionGizmos)
-                        gizmo.SetPosition(GizmoCenterPosition, distance);
+                        gizmo.SetPosition(GizmoCenterPosition, distance, Matrix.Identity);
                     foreach (PositionGizmo gizmo in positionGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
                         gizmo.Draw(renderer);
                     return;
@@ -205,9 +199,9 @@ namespace IndustrialPark
                     }
                     else
                     {
-                        foreach (PositionLocalGizmo gizmo in positionLocalGizmos)
+                        foreach (PositionGizmo gizmo in positionGizmos)
                             gizmo.SetPosition(GizmoCenterPosition, distance, GizmoCenterRotation);
-                        foreach (PositionLocalGizmo gizmo in positionLocalGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
+                        foreach (PositionGizmo gizmo in positionGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
                             gizmo.Draw(renderer);
                     }
 
@@ -293,11 +287,11 @@ namespace IndustrialPark
                     }
                     else
                     {
-                        (int index, _) = GetGizmoIntersectionIndex(positionLocalGizmos, r);
-                        if (index != -1 && !positionLocalGizmos[index].isSelected)
+                        (int index, _) = GetGizmoIntersectionIndex(positionGizmos, r);
+                        if (index != -1 && !positionGizmos[index].isSelected)
                         {
                             SaveOriginalPositions();
-                            positionLocalGizmos[index].isSelected = true;
+                            positionGizmos[index].isSelected = true;
                             IsMovingGizmo = true;
                         }
                     }
@@ -493,7 +487,7 @@ namespace IndustrialPark
                     }
                     break;
                 case GizmoMode.PositionLocal:
-                    foreach (PositionLocalGizmo g in positionLocalGizmos)
+                    foreach (PositionGizmo g in positionGizmos)
                     {
                         if (!g.isSelected)
                             continue;
@@ -611,16 +605,36 @@ namespace IndustrialPark
             if (!allCurrentlySelectedAssets.Any())
                 return;
 
-            MouseMoveForPosition(viewProjection, deltaX, deltaY, grid);
-            MouseMoveForPositionBoxes(viewProjection, deltaX, deltaY, grid);
-            if (RotationGizmoLocalAxis)
-                MouseMoveForRotationLocalAxis(deltaX, grid);
-            else
-                MouseMoveForRotationSingleAxis(deltaX, grid);
-            MouseMoveForCameraRotation(deltaX, grid, RotationGizmoLocalAxis);
-            MouseMoveForScale(viewProjection, deltaX, deltaY, grid);
-            MouseMoveForScaleBoxes(viewProjection, deltaX, deltaY, grid);
-            MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
+            switch (CurrentGizmoMode)
+            {
+                case GizmoMode.Position:
+                    if (currentlyMoving.Count != 0)
+                        MouseMoveForPosition(viewProjection, deltaX, deltaY, grid);
+                    break;
+                case GizmoMode.Rotation:
+                    if (currentlyRotating.Count != 0)
+                    {
+                        if (RotationGizmoLocalAxis)
+                            MouseMoveForRotationLocalAxis(deltaX, grid);
+                        else
+                            MouseMoveForRotationSingleAxis(deltaX, grid);
+                    }
+                    if (currentlyRotatingCameras.Count != 0)
+                        MouseMoveForCameraRotation(deltaX, grid, RotationGizmoLocalAxis);
+                    break;
+                case GizmoMode.Scale:
+                    if (currentlyScaling.Count != 0)
+                        MouseMoveForScale(viewProjection, deltaX, deltaY, grid);
+                    if (currentlyMovingBoxes.Count != 0)
+                        MouseMoveForScaleBoxes(viewProjection, deltaX, deltaY, grid);
+                    break;
+                case GizmoMode.PositionLocal:
+                    if (currentlyMoving.Count != 0)
+                        MouseMoveForPositionLocal(viewProjection, deltaX, deltaY, grid);
+                    if (currentlyMovingBoxes.Count != 0)
+                        MouseMoveForPositionBoxes(viewProjection, deltaX, deltaY, grid);
+                    break;
+            }
         }
 
 
@@ -1252,7 +1266,7 @@ namespace IndustrialPark
 
         private static void MouseMoveForPositionLocal(Matrix viewProjection, int distanceX, int distanceY, bool grid)
         {
-            int index = Array.FindIndex(positionLocalGizmos, pg => pg.isSelected);
+            int index = Array.FindIndex(positionGizmos, pg => pg.isSelected);
             if (index == -1)
                 return;
 
@@ -1302,7 +1316,7 @@ namespace IndustrialPark
         private static void MouseMoveForCameraRotation(int distanceX, bool grid, bool localAxis)
         {
             int index = Array.FindIndex(rotationGizmos, g => g.isSelected);
-            if (index < 0 || currentlyRotatingCameras.Count == 0)
+            if (index < 0)
                 return;
 
             var axis = (Axis)index;

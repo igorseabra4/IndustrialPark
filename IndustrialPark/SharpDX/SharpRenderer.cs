@@ -223,6 +223,7 @@ namespace IndustrialPark
         public static SharpMesh Sphere { get; private set; }
         public static SharpMesh Plane { get; private set; }
         public static SharpMesh Torus { get; private set; }
+        public static SharpMesh Cone { get; private set; }
 #if DEBUG
         public static SharpMesh BoundingBox { get; private set; }
         public static List<Vector3> boundingBoxVertices;
@@ -240,6 +241,8 @@ namespace IndustrialPark
         public static List<Models.Triangle> planeTriangles;
         public static List<Vector3> torusVertices;
         public static List<Models.Triangle> torusTriangles;
+        public static List<Vector3> coneVertices;
+        public static List<Models.Triangle> coneTriangles;
 
         public void LoadModels(bool tiny = false)
         {
@@ -263,10 +266,15 @@ namespace IndustrialPark
             torusTriangles = [];
             Torus = LoadMesh(tiny, "Torus", ref torusVertices, ref torusTriangles);
 
+            coneVertices = [];
+            coneTriangles = [];
+            Cone = LoadMesh(tiny, "Cone", ref coneVertices, ref coneTriangles);
+
             CreatePlaneMesh(tiny);
 #if DEBUG
             CreateBoundingBoxMesh();
 #endif
+            GizmoBase.VertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.ForwardLH]);
             AssetCAM.CamVertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.Up * 0.8f]);
         }
 
@@ -760,6 +768,7 @@ namespace IndustrialPark
             whiteDefault.Dispose();
             TextureManager.DisposeTextures();
 
+            GizmoBase.VertexBuffer.Dispose();
             AssetCAM.CamVertexBuffer.Dispose();
 
             Cube.Dispose();

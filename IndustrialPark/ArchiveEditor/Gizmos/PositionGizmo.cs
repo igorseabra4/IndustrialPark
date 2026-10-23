@@ -1,41 +1,28 @@
 ﻿using SharpDX;
-using System.Collections.Generic;
 
 namespace IndustrialPark
 {
-    public class PositionGizmo : GizmoBase
+    public class PositionGizmo(GizmoType type) : GizmoBase(type)
     {
-        public PositionGizmo(GizmoType type) : base(type)
-        {
-            vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
-        }
-
-        public void SetPosition(Vector3 Position, float Radius)
+        public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
         {
             switch (Type)
             {
                 case GizmoType.X:
-                    Position.X += Radius;
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationY(MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    lineTransformMatrix = Matrix.Scaling(Radius) * Matrix.RotationY(MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationY(MathUtil.PiOverTwo) * Matrix.Translation(Radius, 0f, 0f) * Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.Y:
-                    Position.Y += Radius;
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationX(-MathUtil.Pi / 2) * Matrix.Translation(Position);
+                    lineTransformMatrix = Matrix.Scaling(Radius) * Matrix.RotationX(-MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0f, Radius, 0f) * Rotation * Matrix.Translation(Position);
                     break;
                 case GizmoType.Z:
-                    Position.Z += Radius;
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.Translation(Position);
+                    lineTransformMatrix = Matrix.Scaling(Radius) * Rotation * Matrix.Translation(Position);
+                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.Translation(0f, 0f, Radius) * Rotation * Matrix.Translation(Position);
                     break;
             }
 
-            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], transformMatrix);
-            boundingBox = BoundingBox.FromPoints(vertices);
-            position = (Vector3)Vector3.Transform(Vector3.Zero, transformMatrix);
+            ResetBounds();
         }
-
-        public override SharpMesh Mesh => SharpRenderer.Pyramid;
-
-        protected override List<Models.Triangle> triangleList => SharpRenderer.pyramidTriangles;
     }
 }

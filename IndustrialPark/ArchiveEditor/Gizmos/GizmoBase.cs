@@ -32,12 +32,18 @@ namespace IndustrialPark
 
     public abstract class GizmoBase
     {
+        public static bool UseCones = true;
+        public static SharpDX.Direct3D11.Buffer VertexBuffer;
+
         public GizmoType Type { get; protected set; }
         public bool isSelected;
         protected Matrix transformMatrix = Matrix.Identity;
+        protected Matrix lineTransformMatrix = Matrix.Identity;
 
         public GizmoBase(GizmoType type)
         {
+            vertices = new Vector3[vertexList.Count];
+
             this.Type = type;
 
             switch (type)
@@ -73,8 +79,26 @@ namespace IndustrialPark
             isSelected = false;
         }
 
-        protected RenderData.DefaultRenderData renderData;
+        protected Vector3 position;
+        protected Vector3[] vertices;
+        public BoundingBox boundingBox;
 
+        protected void ResetBounds()
+        {
+            for (int i = 0; i < vertexList.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(vertexList[i], transformMatrix);
+            boundingBox = BoundingBox.FromPoints(vertices);
+            position = Vector3.TransformCoordinate(Vector3.Zero, transformMatrix);
+        }
+
+        public virtual SharpMesh Mesh => UseCones ? SharpRenderer.Cone : SharpRenderer.Pyramid;
+        protected virtual List<Vector3> vertexList => UseCones ? SharpRenderer.coneVertices : SharpRenderer.pyramidVertices;
+        protected virtual List<Models.Triangle> triangleList => UseCones ? SharpRenderer.coneTriangles : SharpRenderer.pyramidTriangles;
+
+        protected virtual bool drawLine => true;
+
+        protected RenderData.DefaultRenderData renderData;
+        
         public void Draw(SharpRenderer renderer)
         {
             renderData.worldViewProjection = transformMatrix * renderer.viewProjection;
@@ -93,15 +117,10 @@ namespace IndustrialPark
             Mesh.Draw(renderer.device);
 
             renderer.device.SetDefaultDepthState();
+
+            if (drawLine)
+                renderer.DrawSpline(VertexBuffer, 2, lineTransformMatrix, renderData.Color, true);
         }
-
-        public abstract SharpMesh Mesh { get; }
-
-        public BoundingBox boundingBox;
-
-        protected Vector3[] vertices;
-
-        protected abstract List<Models.Triangle> triangleList { get; }
 
         public float? IntersectsWith(Ray ray)
         {
@@ -115,8 +134,6 @@ namespace IndustrialPark
 
             return smallestDistance;
         }
-
-        protected Vector3 position;
 
         public float GetDistance(Vector3 position)
         {
