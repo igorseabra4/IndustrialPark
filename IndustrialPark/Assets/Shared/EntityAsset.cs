@@ -47,7 +47,7 @@ namespace IndustrialPark
         public FlagBitmask Flag0A { get; set; } = ByteFlagsDescriptor();
         [Category(categoryNameFlags)]
         public FlagBitmask SolidityFlags { get; set; } = ByteFlagsDescriptor(
-            "Diggable",
+            "Translucent On",
             "Precise Collision",
             null,
             "Grabbable",

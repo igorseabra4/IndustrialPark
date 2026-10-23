@@ -43,10 +43,10 @@ namespace IndustrialPark
 
         [Category(dynaCategoryName + " Entity")]
         public FlagBitmask PseudoSolidityFlags { get; set; } = ByteFlagsDescriptor(
-            null,
+            "Translucent On",
             "Precise Collision",
             null,
-            null,
+            "Grabbable",
             "Hittable",
             "Animate Collision",
             null,

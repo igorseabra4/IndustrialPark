@@ -288,10 +288,17 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix()
         {
+            var left = new Vector3(NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ);
+            left.Normalize();
+            var up = new Vector3(NormalizedUpX, NormalizedUpY, NormalizedUpZ);
+            up.Normalize();
+            var forward = new Vector3(NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ);
+            forward.Normalize();
+
             var rotation = new Matrix(
-                NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ, 0,
-                NormalizedUpX, NormalizedUpY, NormalizedUpZ, 0,
-                NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ, 0,
+                left.X, left.Y, left.Z, 0,
+                up.X, up.Y, up.Z, 0,
+                forward.X, forward.Y, forward.Z, 0,
                 0, 0, 0, 1
             );
 
