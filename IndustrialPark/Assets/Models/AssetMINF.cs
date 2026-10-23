@@ -268,14 +268,14 @@ namespace IndustrialPark
                 uint _model = reference.Model;
                 if (renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
                 {
-                    value.Draw(renderer, world, color, uvAnimOffset, isSelected);
+                    value.Draw(renderer, world, color, uvAnimOffset, isSelected || this.isSelected);
                     noneDrawn = false;
                 }
                 if (drawOnlyFirst)
                     break;
             }
             if (noneDrawn)
-                renderer.DrawCube(world, isSelected | isSelected);
+                renderer.DrawCube(world, isSelected || this.isSelected);
         }
 
         private uint _model => References.Length > 0 ? References[0].Model : 0;

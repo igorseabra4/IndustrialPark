@@ -75,9 +75,9 @@ namespace IndustrialPark
         public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool isSelected)
         {
             if (renderBasedOnPipt && pipeEntries != null)
-                model.RenderPipt(renderer, world, color, uvAnimOffset, isSelected, _dontDrawMeshNumber, pipeEntries);
+                model.RenderPipt(renderer, world, color, uvAnimOffset, isSelected || this.isSelected, _dontDrawMeshNumber, pipeEntries);
             else
-                model.Render(renderer, world, color, uvAnimOffset, isSelected, _dontDrawMeshNumber);
+                model.Render(renderer, world, color, uvAnimOffset, isSelected || this.isSelected, _dontDrawMeshNumber);
         }
     }
 }
