@@ -548,28 +548,52 @@ namespace IndustrialPark.Randomizer
 
         private void WriteLog(List<(string, string, string)> warpRandomizerOutput, string destinationDir)
         {
-            using (StreamWriter streamWriter = new StreamWriter(new FileStream(destinationDir + "/warps_log.txt", FileMode.Create)))
+            using StreamWriter streamWriter = new StreamWriter(new FileStream(destinationDir + "/warps_log.txt", FileMode.Create));
+            HashSet<string> uniqueNames = new HashSet<string>();
+            foreach (var s in warpRandomizerOutput)
+                uniqueNames.Add(s.Item1);
+
+            streamWriter.WriteLine($"// Warps randomizer log:");
+            streamWriter.WriteLine($"// Format is: (Level)-[Default Warp Destination]->(New Warp Destination)");
+            streamWriter.WriteLine($"// This log is actually a script in the Cypher Query Language, which can be used to generate a graph in Neo4j.");
+            streamWriter.WriteLine();
+            streamWriter.WriteLine($"// Total amount of rooms: {uniqueNames.Count}");
+            streamWriter.WriteLine($"// Total amount of warps: {warpRandomizerOutput.Count}");
+
+            var roomsPerWarpCount = GetRoomsPerWarpCount(warpRandomizerOutput);
+            foreach (var key in roomsPerWarpCount.Keys.OrderBy(k => k))
+                streamWriter.WriteLine($"// Number of rooms reached by {key} warps: {roomsPerWarpCount[key]}");
+            streamWriter.WriteLine();
+
+            streamWriter.WriteLine($"CREATE");
+            foreach (var s in uniqueNames)
+                streamWriter.WriteLine($"({s}: Level {{ name: '{s}'}} ),");
+            for (int i = 0; i < warpRandomizerOutput.Count - 1; i++)
             {
-                HashSet<string> uniqueNames = new HashSet<string>();
-                foreach (var s in warpRandomizerOutput)
-                    uniqueNames.Add(s.Item1);
-
-                streamWriter.WriteLine($"// Warps randomizer log:");
-                streamWriter.WriteLine($"// Format is: (Level)-[Default Warp Destination]->(New Warp Destination)");
-                streamWriter.WriteLine($"// This log is actually a script in the Cypher Query Language, which can be used to generate a graph in Neo4j.");
-                streamWriter.WriteLine();
-
-                streamWriter.WriteLine($"CREATE");
-                foreach (var s in uniqueNames)
-                    streamWriter.WriteLine($"({s}: Level {{ name: '{s}'}} ),");
-                for (int i = 0; i < warpRandomizerOutput.Count - 1; i++)
-                {
-                    var s = warpRandomizerOutput[i];
-                    streamWriter.WriteLine($"({s.Item1})-[:{s.Item2}]->({s.Item3}),");
-                }
-                var c = warpRandomizerOutput[warpRandomizerOutput.Count - 1];
-                streamWriter.WriteLine($"({c.Item1})-[:{c.Item2}]->({c.Item3})");
+                var s = warpRandomizerOutput[i];
+                streamWriter.WriteLine($"({s.Item1})-[:{s.Item2}]->({s.Item3}),");
             }
+            var c = warpRandomizerOutput[warpRandomizerOutput.Count - 1];
+            streamWriter.WriteLine($"({c.Item1})-[:{c.Item2}]->({c.Item3})");
+        }
+
+        private static Dictionary<int, int> GetRoomsPerWarpCount(List<(string, string, string)> warpRandomizerOutput)
+        {
+            var step1 = new Dictionary<string, int>();
+            foreach ((_, _, var dest) in warpRandomizerOutput)
+            {
+                if (!step1.ContainsKey(dest))
+                    step1[dest] = 0;
+                step1[dest]++;
+            }
+            var step2 = new Dictionary<int, int>();
+            foreach (var count in step1.Values)
+            {
+                if (!step2.ContainsKey(count))
+                    step2[count] = 0;
+                step2[count]++;
+            }
+            return step2;
         }
     }
 }
