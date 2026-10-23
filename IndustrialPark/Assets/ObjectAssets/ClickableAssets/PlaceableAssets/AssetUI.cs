@@ -206,9 +206,9 @@ namespace IndustrialPark
 
             foreach (var t in SharpRenderer.planeTriangles)
             {
-                var v1 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex1], world);
-                var v2 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex2], world);
-                var v3 = (Vector3)Vector3.Transform(SharpRenderer.planeVertices[t.vertex3], world);
+                var v1 = Vector3.TransformCoordinate(SharpRenderer.planeVertices[t.vertex1], world);
+                var v2 = Vector3.TransformCoordinate(SharpRenderer.planeVertices[t.vertex2], world);
+                var v3 = Vector3.TransformCoordinate(SharpRenderer.planeVertices[t.vertex3], world);
 
                 if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
                 {

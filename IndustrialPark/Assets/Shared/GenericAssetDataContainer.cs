@@ -184,9 +184,9 @@ namespace IndustrialPark
 
             foreach (var t in triangles)
             {
-                var v1 = (Vector3)Vector3.Transform(vertices[t.vertex1], world);
-                var v2 = (Vector3)Vector3.Transform(vertices[t.vertex2], world);
-                var v3 = (Vector3)Vector3.Transform(vertices[t.vertex3], world);
+                var v1 = Vector3.TransformCoordinate(vertices[t.vertex1], world);
+                var v2 = Vector3.TransformCoordinate(vertices[t.vertex2], world);
+                var v3 = Vector3.TransformCoordinate(vertices[t.vertex3], world);
 
                 if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
                 {

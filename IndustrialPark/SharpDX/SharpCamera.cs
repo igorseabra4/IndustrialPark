@@ -138,9 +138,9 @@ namespace IndustrialPark
                 MathUtil.DegreesToRadians(Pitch),
                 MathUtil.DegreesToRadians(Roll));
 
-            Forward = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.ForwardRH, rotation));
-            Right = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.Right, rotation));
-            Up = Vector3.Normalize((Vector3)Vector3.Transform(Vector3.Up, rotation));
+            Forward = Vector3.Normalize(Vector3.TransformCoordinate(Vector3.ForwardRH, rotation));
+            Right = Vector3.Normalize(Vector3.TransformCoordinate(Vector3.Right, rotation));
+            Up = Vector3.Normalize(Vector3.TransformCoordinate(Vector3.Up, rotation));
         }
 
         internal void Reset()
@@ -184,7 +184,7 @@ namespace IndustrialPark
                 MathUtil.DegreesToRadians(_yaw),
                 MathUtil.DegreesToRadians(_pitch),
                 0f);
-            Vector3 expectedUp = (Vector3)Vector3.Transform(Vector3.Up, yawPitch);
+            Vector3 expectedUp = Vector3.TransformCoordinate(Vector3.Up, yawPitch);
             _roll = MathUtil.RadiansToDegrees(
                 (float)Math.Atan2(
                     Vector3.Dot(Forward, Vector3.Cross(Up, expectedUp)),

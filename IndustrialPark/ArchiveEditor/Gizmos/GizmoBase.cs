@@ -86,7 +86,7 @@ namespace IndustrialPark
         protected void ResetBounds()
         {
             for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexList[i], transformMatrix);
+                vertices[i] = Vector3.TransformCoordinate(vertexList[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);
             position = Vector3.TransformCoordinate(Vector3.Zero, transformMatrix);
         }

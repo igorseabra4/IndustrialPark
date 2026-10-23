@@ -31,7 +31,7 @@ namespace IndustrialPark
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
                         * (driverUseRotation ? driver.PlatLocalRotation() : Matrix.Identity)
-                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                        * Matrix.Translation(Vector3.TransformCoordinate(Vector3.Zero, driver.LocalWorld()));
                 }
 
                 if (Motion is Motion_ExtendRetract)

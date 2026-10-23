@@ -304,7 +304,7 @@ namespace IndustrialPark
 
                 vertices = new Vector3[vertexList.Count];
                 for (int i = 0; i < vertexList.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
+                    vertices[i] = Vector3.TransformCoordinate(vertexList[i], world);
                 boundingBox = BoundingBox.FromPoints(vertices);
 
                 triangles = model.triangleList;
@@ -313,7 +313,7 @@ namespace IndustrialPark
 
             vertices = new Vector3[SharpRenderer.cubeVertices.Count];
             for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+                vertices[i] = Vector3.TransformCoordinate(SharpRenderer.cubeVertices[i] * 0.5f, world);
             boundingBox = BoundingBox.FromPoints(vertices);
 
             triangles = null;
@@ -348,7 +348,7 @@ namespace IndustrialPark
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
                         * (driverUseRotation ? driver.PlatLocalRotation() : Matrix.Identity)
-                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                        * Matrix.Translation(Vector3.TransformCoordinate(Vector3.Zero, driver.LocalWorld()));
                 }
 
                 return PlatLocalRotation()

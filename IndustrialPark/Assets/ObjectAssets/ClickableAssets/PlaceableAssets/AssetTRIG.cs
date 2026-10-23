@@ -270,7 +270,7 @@ namespace IndustrialPark
                 vertices = new Vector3[verticesF.Count];
 
                 for (int i = 0; i < verticesF.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(verticesF[i], world);
+                    vertices[i] = Vector3.TransformCoordinate(verticesF[i], world);
 
                 boundingBox = BoundingBox.FromPoints(vertices);
             }

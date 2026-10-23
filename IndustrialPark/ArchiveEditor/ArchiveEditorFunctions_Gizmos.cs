@@ -644,14 +644,14 @@ namespace IndustrialPark
             if (axis == -1)
                 return;
 
-            Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
+            Vector3 direction1 = Vector3.TransformCoordinate(GizmoCenterPosition, viewProjection);
             Vector3 axisVector = axis switch
             {
                 0 => Vector3.UnitX,
                 1 => Vector3.UnitY,
                 _ => Vector3.UnitZ
             };
-            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + axisVector, viewProjection);
+            Vector3 direction2 = Vector3.TransformCoordinate(GizmoCenterPosition + axisVector, viewProjection);
             Vector3 direction = direction2 - direction1;
             direction.Z = 0;
             direction.Normalize();
@@ -863,9 +863,9 @@ namespace IndustrialPark
                 1 => Vector3.UnitY,
                 _ => Vector3.UnitZ
             };
-            Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
-            Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+            Vector3 movementDirection = Vector3.TransformCoordinate(axisVector, GizmoCenterRotation);
+            Vector3 direction1 = Vector3.TransformCoordinate(GizmoCenterPosition, viewProjection);
+            Vector3 direction2 = Vector3.TransformCoordinate(GizmoCenterPosition + movementDirection, viewProjection);
             Vector3 direction = direction2 - direction1;
             direction.Z = 0;
             direction.Normalize();
@@ -1080,9 +1080,9 @@ namespace IndustrialPark
                     1 => Vector3.UnitY,
                     _ => Vector3.UnitZ
                 };
-                Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
-                Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+                Vector3 direction1 = Vector3.TransformCoordinate(GizmoCenterPosition, viewProjection);
+                Vector3 movementDirection = Vector3.TransformCoordinate(axisVector, GizmoCenterRotation);
+                Vector3 direction2 = Vector3.TransformCoordinate(GizmoCenterPosition + movementDirection, viewProjection);
                 direction = direction2 - direction1;
                 direction.Z = 0;
                 direction.Normalize();
@@ -1147,9 +1147,9 @@ namespace IndustrialPark
                     _ => Vector3.UnitZ
                 };
 
-                Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-                Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
-                Vector3 direction2 = (Vector3)Vector3.Transform(
+                Vector3 direction1 = Vector3.TransformCoordinate(GizmoCenterPosition, viewProjection);
+                Vector3 movementDirection = Vector3.TransformCoordinate(axisVector, GizmoCenterRotation);
+                Vector3 direction2 = Vector3.TransformCoordinate(
                     GizmoCenterPosition + movementDirection, viewProjection);
 
                 direction = direction2 - direction1;
@@ -1277,9 +1277,9 @@ namespace IndustrialPark
                 _ => Vector3.UnitZ,
             };
 
-            Vector3 movementDirection = (Vector3)Vector3.Transform(axisVector, GizmoCenterRotation);
-            Vector3 direction1 = (Vector3)Vector3.Transform(GizmoCenterPosition, viewProjection);
-            Vector3 direction2 = (Vector3)Vector3.Transform(GizmoCenterPosition + movementDirection, viewProjection);
+            Vector3 movementDirection = Vector3.TransformCoordinate(axisVector, GizmoCenterRotation);
+            Vector3 direction1 = Vector3.TransformCoordinate(GizmoCenterPosition, viewProjection);
+            Vector3 direction2 = Vector3.TransformCoordinate(GizmoCenterPosition + movementDirection, viewProjection);
             Vector3 direction = direction2 - direction1;
             direction.Z = 0;
             direction.Normalize();

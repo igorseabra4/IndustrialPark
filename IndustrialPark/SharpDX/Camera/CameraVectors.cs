@@ -39,7 +39,7 @@ namespace IndustrialPark
 
             Matrix.RotationYawPitchRoll(yawRadians, pitchRadians, rollRadians, out Matrix result);
 
-            cameraVectors._forwardVector = (Vector3)Vector3.Transform(Vector3.ForwardRH, result);
+            cameraVectors._forwardVector = Vector3.TransformCoordinate(Vector3.ForwardRH, result);
             cameraVectors._forwardVector.Normalize();
 
             cameraVectors._leftVector = Vector3.Cross(Vector3.Up, cameraVectors._forwardVector);

@@ -227,7 +227,7 @@ namespace IndustrialPark
                 MorphTarget m = g.geometryStruct.morphTargets[0];
                 foreach (Vertex3 v in m.vertices)
                 {
-                    Vector3 pos = (Vector3)Vector3.Transform(new Vector3(v.X, v.Y, v.Z), transformMatrix);
+                    Vector3 pos = Vector3.TransformCoordinate(new Vector3(v.X, v.Y, v.Z), transformMatrix);
                     vertexList1.Add(pos);
                     vertexListG.Add(pos);
                 }
@@ -373,7 +373,7 @@ namespace IndustrialPark
             {
                 for (int i = 0; i < vertexList1.Count; i++)
                 {
-                    Vector3 position = (Vector3)Vector3.Transform(new Vector3(vertexList1[i].X, vertexList1[i].Y, vertexList1[i].Z), transformMatrix);
+                    Vector3 position = Vector3.TransformCoordinate(new Vector3(vertexList1[i].X, vertexList1[i].Y, vertexList1[i].Z), transformMatrix);
                     SharpDX.Color color = new SharpDX.Color(colorList[i].R, colorList[i].G, colorList[i].B, colorList[i].A);
                     Vector2 texcoord = new Vector2(textCoordList[i].X, textCoordList[i].Y);
 
@@ -385,7 +385,7 @@ namespace IndustrialPark
             {
                 for (int i = 0; i < vec4vertices.Count; i++)
                 {
-                    Vector3 position = (Vector3)Vector3.Transform(new Vector3(vec4vertices[i].X, vec4vertices[i].Y, vec4vertices[i].Z), transformMatrix);
+                    Vector3 position = Vector3.TransformCoordinate(new Vector3(vec4vertices[i].X, vec4vertices[i].Y, vec4vertices[i].Z), transformMatrix);
                     SharpDX.Color color = (colorList.Count != 0) ? new SharpDX.Color(colorList[i].R * 2, colorList[i].G * 2, colorList[i].B * 2, colorList[i].A * 2) : new SharpDX.Color(255, 255, 255, 255);
                     Vector2 texcoord = new Vector2(textCoordList[i].X, textCoordList[i].Y);
 
@@ -480,7 +480,7 @@ namespace IndustrialPark
                         {
                             if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_POS)
                             {
-                                position = (Vector3)Vector3.Transform(
+                                position = Vector3.TransformCoordinate(
                                     new Vector3(
                                         vertexList1[objectList[j]].X,
                                         vertexList1[objectList[j]].Y,
