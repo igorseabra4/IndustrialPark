@@ -137,18 +137,25 @@ namespace IndustrialPark.Randomizer
                         tokens = new Dictionary<uint, List<Asset>>();
                 }
 
-                string nameForBoot = Path.GetFileNameWithoutExtension(hipPath).ToUpper();
+                string levelName = Path.GetFileNameWithoutExtension(hipPath).ToLower();
 
                 if (settings.Warps && !FileInSecondBox(hipPath))
                 {
                     warpNames.AddRange(hip.GetWarpNames(toSkip));
-                    if (!markerNames.ContainsKey(nameForBoot))
-                        markerNames[nameForBoot] = new List<string>();
-                    markerNames[nameForBoot].AddRange(hip.GetMarkerNames());
+                    var localMarkerNames =
+                        game == Game.BFBB ? RandomizerHelper.GetMarkerNamesBfbb(levelName) : 
+                        game == Game.Scooby ? RandomizerHelper.GetMarkerNamesScooby(levelName) : 
+                        [];
+                    if (localMarkerNames.Length != 0)
+                    {
+                        if (!markerNames.ContainsKey(levelName))
+                            markerNames[levelName] = [];
+                        markerNames[levelName].AddRange(localMarkerNames);
+                    }
                 }
 
-                if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(nameForBoot))
-                    namesForBoot.Add(nameForBoot);
+                if (settings.bootLevelMode == BootLevelMode.Random && !namesForBoot.Contains(levelName))
+                    namesForBoot.Add(levelName);
                 if (settings.Include_MonsterTokens)
                     hip.GetMonsterTokens(tokens);
             }
@@ -159,7 +166,7 @@ namespace IndustrialPark.Randomizer
                 foreach (string s in warpNames)
                     uinqueWarpNames.Add(s);
                 warpNames.Clear();
-                warpNames.AddRange(uinqueWarpNames);
+                warpNames.AddRange(uinqueWarpNames.OrderBy(w => w));
             }
 
             progressBar.PerformStep(" | Patching boot.hip...");
@@ -327,7 +334,7 @@ namespace IndustrialPark.Randomizer
 
             var hops = new List<string>();
 
-            var scoobyPowerups = RandomizableArchive.ScoobyPowerupsFrom(
+            var scoobyPowerups = RandomizerHelper.ScoobyPowerupsFrom(
                 !settings.Skip_Slippers_Lampshade,
                 settings.Include_MonsterTokens,
                 settings.Include_GumSoap_Upgrades);
@@ -369,7 +376,7 @@ namespace IndustrialPark.Randomizer
                         hip.AddWarpGateToRedbeard();
                     if (settings.Wreck1_Softlock)
                         hip.Wreck1_Softlock();
-                    if (settings.Aghast1_DecksAreSlides)
+                    if (settings.Aghast1_PlungersWork)
                         hip.Aghast1_PlungersOnDeck();
                     if (settings.Cellar1_UnlockDoor)
                         hip.UnlockCellar1Door();

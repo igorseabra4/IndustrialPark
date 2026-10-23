@@ -100,8 +100,6 @@ namespace IndustrialPark.Randomizer
         public override int GetHashCode()
         {
             int hashCode = -1866944443;
-            hashCode = hashCode * -1521134295 + _preset.GetHashCode();
-            hashCode = hashCode * -1521134295 + Preset.GetHashCode();
             hashCode = hashCode * -1521134295 + SB_Health.GetHashCode();
             hashCode = hashCode * -1521134295 + SB_KarateSpin.GetHashCode();
             hashCode = hashCode * -1521134295 + SB_Bash.GetHashCode();

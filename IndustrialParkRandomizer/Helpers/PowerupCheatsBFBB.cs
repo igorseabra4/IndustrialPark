@@ -4,7 +4,7 @@ namespace IndustrialPark.Randomizer
 {
     public class PowerupCheatsBFBB
     {
-        [Description("Switches player on D-Pad.")]
+        [Description("Switches between SpongeBob, Patrick or Sandy on D-Pad, in levels where they are available.")]
         public bool PlayerSwitch { get; set; } = false;
         [Description(Constants.powerupExample)]
         public bool BubbleBowl { get; set; } = false;
