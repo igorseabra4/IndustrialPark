@@ -101,6 +101,7 @@ namespace IndustrialPark
             mVPTColorToolStripMenuItem = new ToolStripMenuItem();
             tRIGColorToolStripMenuItem = new ToolStripMenuItem();
             sFXInColorToolStripMenuItem = new ToolStripMenuItem();
+            gizmoConesToolStripMenuItem = new ToolStripMenuItem();
             noCullingCToolStripMenuItem = new ToolStripMenuItem();
             wireframeFToolStripMenuItem = new ToolStripMenuItem();
             lowerQualityGraphicsToolStripMenuItem = new ToolStripMenuItem();
@@ -190,7 +191,7 @@ namespace IndustrialPark
             splitContainer1 = new SplitContainer();
             splitContainer2 = new SplitContainer();
             tabControlRight = new TabControl();
-            gizmoConesToolStripMenuItem = new ToolStripMenuItem();
+            noneToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             toolStripMain.SuspendLayout();
@@ -650,7 +651,7 @@ namespace IndustrialPark
             // defaultToolStripMenuItem
             // 
             defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
-            defaultToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            defaultToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             defaultToolStripMenuItem.Tag = "0";
             defaultToolStripMenuItem.Text = "Default";
             defaultToolStripMenuItem.Click += changeFlyModeCursor;
@@ -660,7 +661,7 @@ namespace IndustrialPark
             crosshairToolStripMenuItem.Checked = true;
             crosshairToolStripMenuItem.CheckState = CheckState.Checked;
             crosshairToolStripMenuItem.Name = "crosshairToolStripMenuItem";
-            crosshairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            crosshairToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             crosshairToolStripMenuItem.Tag = "1";
             crosshairToolStripMenuItem.Text = "Crosshair";
             crosshairToolStripMenuItem.Click += changeFlyModeCursor;
@@ -668,7 +669,7 @@ namespace IndustrialPark
             // hiddenToolStripMenuItem
             // 
             hiddenToolStripMenuItem.Name = "hiddenToolStripMenuItem";
-            hiddenToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            hiddenToolStripMenuItem.Size = new System.Drawing.Size(123, 22);
             hiddenToolStripMenuItem.Tag = "2";
             hiddenToolStripMenuItem.Text = "Hidden";
             hiddenToolStripMenuItem.Click += changeFlyModeCursor;
@@ -733,6 +734,15 @@ namespace IndustrialPark
             sFXInColorToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
             sFXInColorToolStripMenuItem.Text = "SFX/SDFX Color...";
             sFXInColorToolStripMenuItem.Click += sFXInColorToolStripMenuItem_Click;
+            // 
+            // gizmoConesToolStripMenuItem
+            // 
+            gizmoConesToolStripMenuItem.Checked = true;
+            gizmoConesToolStripMenuItem.CheckState = CheckState.Checked;
+            gizmoConesToolStripMenuItem.Name = "gizmoConesToolStripMenuItem";
+            gizmoConesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            gizmoConesToolStripMenuItem.Text = "Cone shaped position gizmos";
+            gizmoConesToolStripMenuItem.Click += gizmoConeToolStripMenuItem_Click;
             // 
             // noCullingCToolStripMenuItem
             // 
@@ -1324,56 +1334,54 @@ namespace IndustrialPark
             contextMenuStripMain.ImageScalingSize = new System.Drawing.Size(24, 24);
             contextMenuStripMain.Items.AddRange(new ToolStripItem[] { gizmoToolStripMenuItem, toolStripMenuItem_Templates, userTemplateToolStripMenuItem });
             contextMenuStripMain.Name = "contextMenuStripMain";
-            contextMenuStripMain.Size = new System.Drawing.Size(156, 70);
+            contextMenuStripMain.Size = new System.Drawing.Size(181, 92);
             // 
             // gizmoToolStripMenuItem
             // 
-            gizmoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { positionToolStripMenuItem, rotationToolStripMenuItem, scaleToolStripMenuItem, positionLocalToolStripMenuItem });
+            gizmoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { positionToolStripMenuItem, rotationToolStripMenuItem, scaleToolStripMenuItem, positionLocalToolStripMenuItem, noneToolStripMenuItem });
             gizmoToolStripMenuItem.Name = "gizmoToolStripMenuItem";
-            gizmoToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            gizmoToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             gizmoToolStripMenuItem.Text = "Gizmo (V)";
             // 
             // positionToolStripMenuItem
             // 
-            positionToolStripMenuItem.Checked = true;
-            positionToolStripMenuItem.CheckState = CheckState.Checked;
             positionToolStripMenuItem.Name = "positionToolStripMenuItem";
-            positionToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            positionToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             positionToolStripMenuItem.Text = "Position";
             positionToolStripMenuItem.Click += positionToolStripMenuItem_Click;
             // 
             // rotationToolStripMenuItem
             // 
             rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
-            rotationToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            rotationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             rotationToolStripMenuItem.Text = "Rotation";
             rotationToolStripMenuItem.Click += rotationToolStripMenuItem_Click;
             // 
             // scaleToolStripMenuItem
             // 
             scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
-            scaleToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            scaleToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             scaleToolStripMenuItem.Text = "Scale";
             scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
             // 
             // positionLocalToolStripMenuItem
             // 
             positionLocalToolStripMenuItem.Name = "positionLocalToolStripMenuItem";
-            positionLocalToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            positionLocalToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             positionLocalToolStripMenuItem.Text = "Position (Local)";
             positionLocalToolStripMenuItem.Click += positionLocalToolStripMenuItem_Click;
             // 
             // toolStripMenuItem_Templates
             // 
             toolStripMenuItem_Templates.Name = "toolStripMenuItem_Templates";
-            toolStripMenuItem_Templates.Size = new System.Drawing.Size(155, 22);
+            toolStripMenuItem_Templates.Size = new System.Drawing.Size(180, 22);
             toolStripMenuItem_Templates.Text = "Template (B/N)";
             // 
             // userTemplateToolStripMenuItem
             // 
             userTemplateToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripComboBoxUserTemplate });
             userTemplateToolStripMenuItem.Name = "userTemplateToolStripMenuItem";
-            userTemplateToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            userTemplateToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             userTemplateToolStripMenuItem.Text = "User Template";
             userTemplateToolStripMenuItem.Click += userTemplateToolStripMenuItem_Click;
             // 
@@ -1433,14 +1441,14 @@ namespace IndustrialPark
             tabControlRight.TabIndex = 0;
             tabControlRight.MouseClick += tabControl1_MouseClick;
             // 
-            // gizmoConeToolStripMenuItem
+            // noneToolStripMenuItem
             // 
-            gizmoConesToolStripMenuItem.Checked = true;
-            gizmoConesToolStripMenuItem.CheckState = CheckState.Checked;
-            gizmoConesToolStripMenuItem.Name = "gizmoConeToolStripMenuItem";
-            gizmoConesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            gizmoConesToolStripMenuItem.Text = "Cone shaped position gizmos";
-            gizmoConesToolStripMenuItem.Click += gizmoConeToolStripMenuItem_Click;
+            noneToolStripMenuItem.Name = "noneToolStripMenuItem";
+            noneToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            noneToolStripMenuItem.Text = "None";
+            noneToolStripMenuItem.Click += noneToolStripMenuItem_Click;
+            noneToolStripMenuItem.Checked = true;
+            noneToolStripMenuItem.CheckState = CheckState.Checked;
             // 
             // MainForm
             // 
@@ -1654,6 +1662,7 @@ namespace IndustrialPark
         private ToolStripMenuItem autoDockSelectedAssetEditorsToolStripMenuItem;
         private ToolStripMenuItem autoDockArchiveEditorToolStripMenuItem;
         private ToolStripMenuItem gizmoConesToolStripMenuItem;
+        private ToolStripMenuItem noneToolStripMenuItem;
     }
 }
 

@@ -46,7 +46,7 @@ namespace IndustrialPark
                 Grid.Z = 1f;
         }
 
-        public static GizmoMode CurrentGizmoMode { get; private set; } = GizmoMode.Position;
+        public static GizmoMode CurrentGizmoMode { get; private set; } = GizmoMode.None;
         public static bool IsMovingGizmo = false;
         public static bool TriggerGizmo = false;
         public static bool SkipGizmos = false;
@@ -1371,24 +1371,17 @@ namespace IndustrialPark
             }
         }
 
-        public static GizmoMode ToggleGizmoType(GizmoMode mode = GizmoMode.Null)
+        public static GizmoMode SetGizmoMode(GizmoMode mode = GizmoMode.Cycle)
         {
             ScreenUnclicked();
-
-            if (mode == GizmoMode.Null)
-            {
-                if (CurrentGizmoMode == GizmoMode.Position)
-                    CurrentGizmoMode = GizmoMode.Rotation;
-                else if (CurrentGizmoMode == GizmoMode.Rotation)
-                    CurrentGizmoMode = GizmoMode.Scale;
-                else if (CurrentGizmoMode == GizmoMode.Scale)
-                    CurrentGizmoMode = GizmoMode.PositionLocal;
-                else if (CurrentGizmoMode == GizmoMode.PositionLocal)
-                    CurrentGizmoMode = GizmoMode.Position;
-            }
-            else
-                CurrentGizmoMode = mode;
-
+            CurrentGizmoMode = mode != GizmoMode.Cycle ? mode :
+                CurrentGizmoMode switch
+                {
+                    GizmoMode.Position => GizmoMode.Rotation,
+                    GizmoMode.Rotation => GizmoMode.Scale,
+                    GizmoMode.Scale => GizmoMode.PositionLocal,
+                    _ => GizmoMode.Position,
+                };
             return CurrentGizmoMode;
         }
 

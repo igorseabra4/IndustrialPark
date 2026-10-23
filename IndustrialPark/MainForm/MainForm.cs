@@ -785,7 +785,7 @@ namespace IndustrialPark
                     PasteSelectedAssets();
                     break;
                 case Keys.V:
-                    ToggleGizmoType();
+                    SetGizmoMode(GizmoMode.Cycle);
                     break;
                 case Keys.Y:
                     wireframeFToolStripMenuItem.PerformClick();
@@ -1738,35 +1738,42 @@ namespace IndustrialPark
             ArchiveEditorFunctions.chainPointMVPTs = templatesChainPointMVPTsToolStripMenuItem.Checked;
         }
 
-        private void ToggleGizmoType(GizmoMode mode = GizmoMode.Null)
+        private void SetGizmoMode(GizmoMode mode)
         {
-            GizmoMode outMode = ArchiveEditorFunctions.ToggleGizmoType(mode);
+            ArchiveEditorFunctions.SetGizmoMode(mode);
+            var newMode = ArchiveEditorFunctions.CurrentGizmoMode;
 
-            positionToolStripMenuItem.Checked = outMode == GizmoMode.Position;
-            rotationToolStripMenuItem.Checked = outMode == GizmoMode.Rotation;
-            scaleToolStripMenuItem.Checked = outMode == GizmoMode.Scale;
-            positionLocalToolStripMenuItem.Checked = outMode == GizmoMode.PositionLocal;
-            UpdateToolbarGizmoButtons(outMode);
+            positionToolStripMenuItem.Checked = newMode == GizmoMode.Position;
+            rotationToolStripMenuItem.Checked = newMode == GizmoMode.Rotation;
+            scaleToolStripMenuItem.Checked = newMode == GizmoMode.Scale;
+            positionLocalToolStripMenuItem.Checked = newMode == GizmoMode.PositionLocal;
+            noneToolStripMenuItem.Checked = newMode == GizmoMode.None;
+            UpdateToolbarGizmoButtons(newMode);
         }
 
         private void positionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToggleGizmoType(GizmoMode.Position);
+            SetGizmoMode(GizmoMode.Position);
         }
 
         private void rotationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToggleGizmoType(GizmoMode.Rotation);
+            SetGizmoMode(GizmoMode.Rotation);
         }
 
         private void scaleToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToggleGizmoType(GizmoMode.Scale);
+            SetGizmoMode(GizmoMode.Scale);
         }
 
         private void positionLocalToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ToggleGizmoType(GizmoMode.PositionLocal);
+            SetGizmoMode(GizmoMode.PositionLocal);
+        }
+
+        private void noneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetGizmoMode(GizmoMode.None);
         }
 
         private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)

@@ -23,7 +23,8 @@ namespace IndustrialPark
 
     public enum GizmoMode
     {
-        Null,
+        None,
+        Cycle,
         Position,
         Rotation,
         Scale,

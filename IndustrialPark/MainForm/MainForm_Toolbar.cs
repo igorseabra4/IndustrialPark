@@ -201,13 +201,13 @@ namespace IndustrialPark
                 entry.Value.Checked = entry.Key == mode;
         }
 
-        private void toolStripButtonGizmoPosition_Click(object sender, EventArgs e) => ToggleGizmoType(GizmoMode.Position);
+        private void toolStripButtonGizmoPosition_Click(object sender, EventArgs e) => SetGizmoMode(GizmoMode.Position);
 
-        private void toolStripButtonGizmoRotation_Click(object sender, EventArgs e) => ToggleGizmoType(GizmoMode.Rotation);
+        private void toolStripButtonGizmoRotation_Click(object sender, EventArgs e) => SetGizmoMode(GizmoMode.Rotation);
 
-        private void toolStripButtonGizmoScale_Click(object sender, EventArgs e) => ToggleGizmoType(GizmoMode.Scale);
+        private void toolStripButtonGizmoScale_Click(object sender, EventArgs e) => SetGizmoMode(GizmoMode.Scale);
 
-        private void toolStripButtonGizmoPositionLocal_Click(object sender, EventArgs e) => ToggleGizmoType(GizmoMode.PositionLocal);
+        private void toolStripButtonGizmoPositionLocal_Click(object sender, EventArgs e) => SetGizmoMode(GizmoMode.PositionLocal);
 
         #endregion
 
