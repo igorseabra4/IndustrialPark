@@ -59,120 +59,50 @@ namespace IndustrialPark
                 {
                     var parType = (ParticleCommandType)reader.ReadInt32();
 
-                    switch (parType)
+                    Commands[i] = parType switch
                     {
-                        case ParticleCommandType.Move:
-                            Commands[i] = new ParticleCommand_Move(reader);
-                            break;
-                        case ParticleCommandType.MoveRandom:
-                            Commands[i] = new ParticleCommand_MoveRandom(reader);
-                            break;
-                        case ParticleCommandType.MoveRandomPar:
-                            Commands[i] = new ParticleCommand_MoveRandomPar(reader);
-                            break;
-                        case ParticleCommandType.Accelerate:
-                            Commands[i] = new ParticleCommand_Accelerate(reader);
-                            break;
-                        case ParticleCommandType.VelocityApply:
-                            Commands[i] = new ParticleCommand_VelocityApply(reader);
-                            break;
-                        case ParticleCommandType.Jet:
-                            Commands[i] = new ParticleCommand_Jet(reader);
-                            break;
-                        case ParticleCommandType.KillSlow:
-                            Commands[i] = new ParticleCommand_KillSlow(reader);
-                            break;
-                        case ParticleCommandType.Follow:
-                            Commands[i] = new ParticleCommand_Follow(reader);
-                            break;
-                        case ParticleCommandType.OrbitPoint:
-                            Commands[i] = new ParticleCommand_OrbitPoint(reader);
-                            break;
-                        case ParticleCommandType.OrbitLine:
-                            Commands[i] = new ParticleCommand_OrbitLine(reader);
-                            break;
-                        case ParticleCommandType.Scale3rdPolyReg:
-                            Commands[i] = new ParticleCommand_Scale3rdPolyReg(reader);
-                            break;
-                        case ParticleCommandType.Alpha3rdPolyReg:
-                            Commands[i] = new ParticleCommand_Alpha3rdPolyReg(reader);
-                            break;
-                        case ParticleCommandType.Tex:
-                            Commands[i] = new ParticleCommand_Tex(reader);
-                            break;
-                        case ParticleCommandType.TexAnim:
-                            Commands[i] = new ParticleCommand_TexAnim(reader);
-                            break;
-                        case ParticleCommandType.PlayerCollision:
-                            Commands[i] = new ParticleCommand_Scale3rdPolyReg(reader);
-                            break;
-                        case ParticleCommandType.RotPar:
-                            Commands[i] = new ParticleCommand_RotPar(reader);
-                            break;
-                        case ParticleCommandType.RandomVelocityPar:
-                            Commands[i] = new ParticleCommand_RandomVelocityPar(reader);
-                            break;
-                        case ParticleCommandType.Custom:
-                            Commands[i] = new ParticleCommand_Custom(reader);
-                            break;
-                        case ParticleCommandType.KillDistance:
-                            Commands[i] = new ParticleCommand_KillDistance(reader);
-                            break;
-                        case ParticleCommandType.Age:
-                            Commands[i] = new ParticleCommand_Age(reader);
-                            break;
-                        case ParticleCommandType.ApplyWind:
-                            Commands[i] = new ParticleCommand_ApplyWind(reader);
-                            break;
-                        case ParticleCommandType.ApplyCamMat:
-                            Commands[i] = new ParticleCommand_ApplyCamMat(reader);
-                            break;
-                        case ParticleCommandType.RotateAround:
-                            Commands[i] = new ParticleCommand_RotateAround(reader);
-                            break;
-                        case ParticleCommandType.SmokeAlpha:
-                            Commands[i] = new ParticleCommand_SmokeAlpha(reader);
-                            break;
-                        case ParticleCommandType.Scale:
-                            Commands[i] = new ParticleCommand_Scale(reader);
-                            break;
-                        case ParticleCommandType.ClipVolumes:
-                            Commands[i] = new ParticleCommand_ClipVolumes(reader);
-                            break;
-                        case ParticleCommandType.AnimalMagentism:
-                            Commands[i] = new ParticleCommand_AnimalMagentism(reader);
-                            break;
-                        case ParticleCommandType.DamagePlayer:
-                            Commands[i] = new ParticleCommand_DamagePlayer(reader);
-                            break;
-                        case ParticleCommandType.CollideFall:
-                            Commands[i] = new ParticleCommand_CollideFall(reader);
-                            break;
-                        case ParticleCommandType.FallSticky:
-                            Commands[i] = new ParticleCommand_CollideFallSticky(reader);
-                            break;
-                        case ParticleCommandType.Shaper:
-                            Commands[i] = new ParticleCommand_Shaper(reader);
-                            break;
-                        case ParticleCommandType.AlphaInOut:
-                            Commands[i] = new ParticleCommand_AlphaInOut(reader);
-                            break;
-                        case ParticleCommandType.SizeInOut:
-                            Commands[i] = new ParticleCommand_SizeInOut(reader);
-                            break;
-                        case ParticleCommandType.DampenSpeed:
-                            Commands[i] = new ParticleCommand_DampenData(reader);
-                            break;
-                        default:
-                            throw new Exception($"Unsupported Particle command: {parType}");
-                    }
+                        ParticleCommandType.Move => new ParticleCommand_Move(reader),
+                        ParticleCommandType.MoveRandom => new ParticleCommand_MoveRandom(reader),
+                        ParticleCommandType.MoveRandomPar => new ParticleCommand_MoveRandomPar(reader),
+                        ParticleCommandType.Accelerate => new ParticleCommand_Accelerate(reader),
+                        ParticleCommandType.VelocityApply => new ParticleCommand_VelocityApply(reader),
+                        ParticleCommandType.Jet => new ParticleCommand_Jet(reader),
+                        ParticleCommandType.KillSlow => new ParticleCommand_KillSlow(reader),
+                        ParticleCommandType.Follow => new ParticleCommand_Follow(reader),
+                        ParticleCommandType.OrbitPoint => new ParticleCommand_OrbitPoint(reader),
+                        ParticleCommandType.OrbitLine => new ParticleCommand_OrbitLine(reader),
+                        ParticleCommandType.Scale3rdPolyReg => new ParticleCommand_Scale3rdPolyReg(reader),
+                        ParticleCommandType.Alpha3rdPolyReg => new ParticleCommand_Alpha3rdPolyReg(reader),
+                        ParticleCommandType.Tex => new ParticleCommand_Tex(reader),
+                        ParticleCommandType.TexAnim => new ParticleCommand_TexAnim(reader),
+                        ParticleCommandType.PlayerCollision => new ParticleCommand_Scale3rdPolyReg(reader),
+                        ParticleCommandType.RotPar => new ParticleCommand_RotPar(reader),
+                        ParticleCommandType.RandomVelocityPar => new ParticleCommand_RandomVelocityPar(reader),
+                        ParticleCommandType.Custom => new ParticleCommand_Custom(reader),
+                        ParticleCommandType.KillDistance => new ParticleCommand_KillDistance(reader),
+                        ParticleCommandType.Age => new ParticleCommand_Age(reader),
+                        ParticleCommandType.ApplyWind => new ParticleCommand_ApplyWind(reader),
+                        ParticleCommandType.ApplyCamMat => new ParticleCommand_ApplyCamMat(reader),
+                        ParticleCommandType.RotateAround => new ParticleCommand_RotateAround(reader),
+                        ParticleCommandType.SmokeAlpha => new ParticleCommand_SmokeAlpha(reader),
+                        ParticleCommandType.Scale => new ParticleCommand_Scale(reader),
+                        ParticleCommandType.ClipVolumes => new ParticleCommand_ClipVolumes(reader),
+                        ParticleCommandType.AnimalMagentism => new ParticleCommand_AnimalMagentism(reader),
+                        ParticleCommandType.DamagePlayer => new ParticleCommand_DamagePlayer(reader, game),
+                        ParticleCommandType.CollideFall => new ParticleCommand_CollideFall(reader),
+                        ParticleCommandType.FallSticky => new ParticleCommand_CollideFallSticky(reader),
+                        ParticleCommandType.Shaper => new ParticleCommand_Shaper(reader),
+                        ParticleCommandType.AlphaInOut => new ParticleCommand_AlphaInOut(reader),
+                        ParticleCommandType.SizeInOut => new ParticleCommand_SizeInOut(reader),
+                        ParticleCommandType.DampenSpeed => new ParticleCommand_DampenData(reader),
+                        _ => throw new Exception($"Unsupported Particle command: {parType}"),
+                    };
                 }
             }
         }
         public override bool SkipBuildTesting => Commands.Any(i => i.NeedsFix == true);
         public override void Serialize(EndianBinaryWriter writer)
         {
-
             base.Serialize(writer);
             writer.Write(Type);
             writer.Write(ParticleSystem);
@@ -209,46 +139,43 @@ namespace IndustrialPark
             }
         }
 
-        public static ParticleCommand CreateEntry(ParticleCommandType type)
+        public static ParticleCommand CreateEntry(ParticleCommandType type, Game game) => type switch
         {
-            return type switch
-            {
-                ParticleCommandType.Move => new ParticleCommand_Move(),
-                ParticleCommandType.MoveRandom => new ParticleCommand_MoveRandom(),
-                ParticleCommandType.MoveRandomPar => new ParticleCommand_MoveRandomPar(),
-                ParticleCommandType.Accelerate => new ParticleCommand_Accelerate(),
-                ParticleCommandType.VelocityApply => new ParticleCommand_VelocityApply(),
-                ParticleCommandType.Jet => new ParticleCommand_Jet(),
-                ParticleCommandType.KillSlow => new ParticleCommand_KillSlow(),
-                ParticleCommandType.Follow => new ParticleCommand_Follow(),
-                ParticleCommandType.OrbitPoint => new ParticleCommand_OrbitPoint(),
-                ParticleCommandType.OrbitLine => new ParticleCommand_OrbitLine(),
-                ParticleCommandType.Scale3rdPolyReg => new ParticleCommand_Scale3rdPolyReg(),
-                ParticleCommandType.Alpha3rdPolyReg => new ParticleCommand_Alpha3rdPolyReg(),
-                ParticleCommandType.Tex => new ParticleCommand_Tex(),
-                ParticleCommandType.TexAnim => new ParticleCommand_TexAnim(),
-                ParticleCommandType.PlayerCollision => new ParticleCommand_PlayerCollision(),
-                ParticleCommandType.RotPar => new ParticleCommand_RotPar(),
-                ParticleCommandType.RandomVelocityPar => new ParticleCommand_RandomVelocityPar(),
-                ParticleCommandType.Custom => new ParticleCommand_Custom(),
-                ParticleCommandType.KillDistance => new ParticleCommand_KillDistance(),
-                ParticleCommandType.Age => new ParticleCommand_Age(),
-                ParticleCommandType.ApplyWind => new ParticleCommand_ApplyWind(),
-                ParticleCommandType.ApplyCamMat => new ParticleCommand_ApplyCamMat(),
-                ParticleCommandType.RotateAround => new ParticleCommand_RotateAround(),
-                ParticleCommandType.SmokeAlpha => new ParticleCommand_SmokeAlpha(),
-                ParticleCommandType.Scale => new ParticleCommand_Scale(),
-                ParticleCommandType.ClipVolumes => new ParticleCommand_ClipVolumes(),
-                ParticleCommandType.AnimalMagentism => new ParticleCommand_AnimalMagentism(),
-                ParticleCommandType.DamagePlayer => new ParticleCommand_DamagePlayer(),
-                ParticleCommandType.CollideFall => new ParticleCommand_CollideFall(),
-                ParticleCommandType.FallSticky => new ParticleCommand_CollideFallSticky(),
-                ParticleCommandType.Shaper => new ParticleCommand_Shaper(),
-                ParticleCommandType.AlphaInOut => new ParticleCommand_AlphaInOut(),
-                ParticleCommandType.SizeInOut => new ParticleCommand_SizeInOut(),
-                ParticleCommandType.DampenSpeed => new ParticleCommand_DampenData(),
-                _ => throw new Exception($"Unsupported Particle command: {type}"),
-            };
-        }
+            ParticleCommandType.Move => new ParticleCommand_Move(),
+            ParticleCommandType.MoveRandom => new ParticleCommand_MoveRandom(),
+            ParticleCommandType.MoveRandomPar => new ParticleCommand_MoveRandomPar(),
+            ParticleCommandType.Accelerate => new ParticleCommand_Accelerate(),
+            ParticleCommandType.VelocityApply => new ParticleCommand_VelocityApply(),
+            ParticleCommandType.Jet => new ParticleCommand_Jet(),
+            ParticleCommandType.KillSlow => new ParticleCommand_KillSlow(),
+            ParticleCommandType.Follow => new ParticleCommand_Follow(),
+            ParticleCommandType.OrbitPoint => new ParticleCommand_OrbitPoint(),
+            ParticleCommandType.OrbitLine => new ParticleCommand_OrbitLine(),
+            ParticleCommandType.Scale3rdPolyReg => new ParticleCommand_Scale3rdPolyReg(),
+            ParticleCommandType.Alpha3rdPolyReg => new ParticleCommand_Alpha3rdPolyReg(),
+            ParticleCommandType.Tex => new ParticleCommand_Tex(),
+            ParticleCommandType.TexAnim => new ParticleCommand_TexAnim(),
+            ParticleCommandType.PlayerCollision => new ParticleCommand_PlayerCollision(),
+            ParticleCommandType.RotPar => new ParticleCommand_RotPar(),
+            ParticleCommandType.RandomVelocityPar => new ParticleCommand_RandomVelocityPar(),
+            ParticleCommandType.Custom => new ParticleCommand_Custom(),
+            ParticleCommandType.KillDistance => new ParticleCommand_KillDistance(),
+            ParticleCommandType.Age => new ParticleCommand_Age(),
+            ParticleCommandType.ApplyWind => new ParticleCommand_ApplyWind(),
+            ParticleCommandType.ApplyCamMat => new ParticleCommand_ApplyCamMat(),
+            ParticleCommandType.RotateAround => new ParticleCommand_RotateAround(),
+            ParticleCommandType.SmokeAlpha => new ParticleCommand_SmokeAlpha(),
+            ParticleCommandType.Scale => new ParticleCommand_Scale(),
+            ParticleCommandType.ClipVolumes => new ParticleCommand_ClipVolumes(),
+            ParticleCommandType.AnimalMagentism => new ParticleCommand_AnimalMagentism(),
+            ParticleCommandType.DamagePlayer => new ParticleCommand_DamagePlayer(game),
+            ParticleCommandType.CollideFall => new ParticleCommand_CollideFall(),
+            ParticleCommandType.FallSticky => new ParticleCommand_CollideFallSticky(),
+            ParticleCommandType.Shaper => new ParticleCommand_Shaper(),
+            ParticleCommandType.AlphaInOut => new ParticleCommand_AlphaInOut(),
+            ParticleCommandType.SizeInOut => new ParticleCommand_SizeInOut(),
+            ParticleCommandType.DampenSpeed => new ParticleCommand_DampenData(),
+            _ => throw new Exception($"Unsupported Particle command: {type}"),
+        };
     }
 }

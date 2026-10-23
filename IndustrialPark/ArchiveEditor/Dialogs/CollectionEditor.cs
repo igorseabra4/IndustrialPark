@@ -61,7 +61,7 @@ namespace IndustrialPark
                 "ParticleCommand" => () =>
                 {
                     (var type, bool ok) = ChooseGeneric<ParticleCommandType>.Get();
-                    return ok ? AssetPARS.CreateEntry(type) : null;
+                    return ok ? AssetPARS.CreateEntry(type, game) : null;
                 }
                 ,
                 "Shrapnel" => () => {

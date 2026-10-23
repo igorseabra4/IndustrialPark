@@ -645,7 +645,7 @@ namespace IndustrialPark
                         if (showMessageBox)
                             MessageBox.Show($"There was an error loading asset " + err +
                                             " and editing has been disabled for it.");
-
+                        
                         newAsset = new AssetGeneric(AHDR, game, endianness);
 #if DEBUG
                     string folder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "build_test" + Path.GetFileName(currentlyOpenFilePath) + "_out\\");
@@ -725,6 +725,8 @@ namespace IndustrialPark
                 case AssetType.Animation:
                     if (game >= Game.ROTU)
                         return new AssetANIM_V2(AHDR, game, endianness);
+                    if (game == Game.Scooby && AHDR.ADBG.assetName.EndsWith("mp"))
+                        return new AssetGeneric(AHDR, game, endianness);
                     return new AssetANIM_V1(AHDR, game, endianness);
                 case AssetType.BSP:
                 case AssetType.JSP:

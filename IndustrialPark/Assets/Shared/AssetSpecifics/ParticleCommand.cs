@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
@@ -943,21 +944,28 @@ namespace IndustrialPark
 
         [Category(categoryNameE)]
         public int Damage { get; set; }
-        [Category(categoryNameE)]
+        [Category(categoryNameE), Description("Not present in Scooby.")]
         public int Granular { get; set; }
 
-        public ParticleCommand_DamagePlayer() : base(ParticleCommandType.DamagePlayer) { }
-        public ParticleCommand_DamagePlayer(EndianBinaryReader reader) : base(reader, ParticleCommandType.DamagePlayer)
+        public ParticleCommand_DamagePlayer(Game game) : base(ParticleCommandType.DamagePlayer)
         {
+            this._game = game;
+        }
+
+        public ParticleCommand_DamagePlayer(EndianBinaryReader reader, Game game) : base(reader, ParticleCommandType.DamagePlayer)
+        {
+            this._game = game;
             Damage = reader.ReadInt32();
-            Granular = reader.ReadInt32();
+            if (_game > Game.Scooby)
+                Granular = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
             writer.Write(Damage);
-            writer.Write(Granular);
+            if (_game > Game.Scooby)
+                writer.Write(Granular);
         }
     }
 
