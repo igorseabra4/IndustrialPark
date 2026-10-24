@@ -12,7 +12,7 @@ namespace IndustrialPark
 
         private const string categoryName = "Shrapnel";
 
-        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowCopy: false)]
         public Shrapnel[] Entries { get; set; }
         [Browsable(false)]
         public AssetID ThisAssetID { get; set; }

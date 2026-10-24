@@ -78,7 +78,8 @@ namespace IndustrialPark
             }
         }
 
-        public override bool HasReference(uint assetID) => CutsceneData.Where(i => i.AssetID.Equals(assetID) && i.chunkSize == 0 && i.fileOffset == 0).Any();
+        public override bool HasReference(uint assetID) => CutsceneData.Any(i => i.AssetID.Equals(assetID) && i.chunkSize == 0 && i.fileOffset == 0);
+
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(new byte[12 * 4]);
@@ -179,9 +180,9 @@ namespace IndustrialPark
 
         private const string categoryName = "Cutscene";
 
-        private int _audioTrackCount;
+        private readonly int _audioTrackCount;
         private CutsceneAudioTrackV1[] _audioTracks;
-        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false, allowRemove: false, allowCopy: false)]
         public CutsceneAudioTrackV1[] AudioTracks
         {
             get => _audioTracks;

@@ -16,7 +16,7 @@ namespace IndustrialPark
         public AssetSingle TotalTime { get; set; }
         [Category(categoryName)]
         public AssetSingle LoopTime { get; set; }
-        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowCopy: false)]
         public UIMCommand[] Commands { get; set; }
 
         public AssetUIM(string assetName) : base(assetName, AssetType.UserInterfaceMotion, BaseAssetType.UIM)

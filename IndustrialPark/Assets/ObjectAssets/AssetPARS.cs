@@ -29,7 +29,7 @@ namespace IndustrialPark
         public byte RenderSourceBlendMode { get; set; }
         [Category(categoryName)]
         public byte RenderDestBlendMode { get; set; }
-        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowCopy: false)]
         public ParticleCommand[] Commands { get; set; }
         [Category(categoryName)]
         public FlagBitmask ParFlags { get; set; } = IntFlagsDescriptor();
