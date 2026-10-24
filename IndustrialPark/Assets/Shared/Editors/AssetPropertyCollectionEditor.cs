@@ -12,13 +12,15 @@ namespace IndustrialPark
         public bool AllowRemove { get; set; }
         public bool AllowReorder { get; set; }
         public bool AllowCopy { get; set; }
+        public bool AllowSearch { get; set; }
 
-        public AssetPropertyCollectionOptionsAttribute(bool allowAdd = true, bool allowRemove = true, bool allowCopy = true, bool allowReorder = true)
+        public AssetPropertyCollectionOptionsAttribute(bool allowAdd = true, bool allowRemove = true, bool allowCopy = true, bool allowReorder = true, bool allowSearch = false)
         {
             AllowAdd = allowAdd;
             AllowRemove = allowRemove;
             AllowReorder = allowReorder;
             AllowCopy = allowCopy;
+            AllowSearch = allowSearch;
         }
     }
 
