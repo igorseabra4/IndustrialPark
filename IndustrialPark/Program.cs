@@ -44,16 +44,11 @@ namespace IndustrialPark
 
             Application.SetDefaultFont(new System.Drawing.Font(new FontFamily("Microsoft Sans Serif"), 8.25f));
 
-            IPSettings ipSettings = null;
-            try
-            {
-                ipSettings = File.Exists(MainForm.pathToSettings) ? JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings)) : null;
-            }
-            catch { }
+            IPSettings ipSettings = LoadSettingsFile();
 
             UndoBuffer = new UndoBuffer();
 
-            Application.SetColorMode(ipSettings != null ? ipSettings.ColorMode : SystemColorMode.System);
+            Application.SetColorMode(ipSettings.ColorMode);
             IsDarkMode = GetIsDarkMode();
 
             MainForm = new MainForm(ipSettings);
@@ -67,6 +62,21 @@ namespace IndustrialPark
             UserTemplateManager = new UserTemplateManager();
 
             Application.Run(MainForm);
+        }
+
+        private static IPSettings LoadSettingsFile()
+        {
+            if (File.Exists(MainForm.pathToSettings))
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings));
+                }
+                catch
+                {
+                }
+            }
+            return new IPSettings();
         }
 
         static bool GetIsDarkMode()

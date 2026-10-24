@@ -5,12 +5,13 @@ namespace IndustrialPark
 {
     public class IPSettings
     {
-        public bool AutosaveOnClose;
-        public bool AutoloadOnStartup;
-        public string LastProjectPath;
+        public bool FirstTime = true;
+        public bool AutosaveOnClose = true;
+        public bool AutoloadOnStartup = true;
+        public string LastProjectPath = null;
 
-        public bool CheckForUpdatesOnStartup;
-        public DateTime LastCheckedForUpdate;
+        public bool CheckForUpdatesOnStartup = true;
+        public DateTime LastCheckedForUpdate = DateTime.MinValue;
 
         public string[] recentArchivePaths;
 
@@ -24,10 +25,8 @@ namespace IndustrialPark
         public bool dontDrawInvisible = false;
         public bool drawMvptsAsPoints = false;
         public bool showToolbar = true;
-        public string[] toolbarAssetTypes; // AssetType names; null uses the default set
-
+        public string[] toolbarAssetTypes = null; // AssetType names; null uses the default set
         public bool persistentShinies = true;
-
         public bool LegacyAssetIDFormat = false;
         public bool LegacyAssetTypeFormat = false;
         public bool AlwaysListAllAssets = true;

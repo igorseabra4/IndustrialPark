@@ -24,7 +24,7 @@ namespace IndustrialPark
             Hide = 2
         }
 
-        private IPSettings settings;
+        private readonly IPSettings settings;
 
         public MainForm(IPSettings settings)
         {
@@ -123,11 +123,7 @@ namespace IndustrialPark
         {
             UpdateUserTemplateComboBox();
 
-            if (this.settings != null)
-                ApplyIPSettings(this.settings);
-            else if (File.Exists(pathToSettings))
-                ApplyIPSettings(JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(pathToSettings)));
-            else
+            if (settings.FirstTime)
             {
                 if (AutomaticUpdater.UpdateIndustrialPark(out _))
                 {
@@ -142,6 +138,8 @@ namespace IndustrialPark
                     MessageBoxIcon.Information);
                 Program.AboutBox.Show(this);
             }
+            
+            ApplyIPSettings(settings);
 
             SetProjectToolStripStatusLabel();
             StartRenderer();
@@ -290,6 +288,7 @@ namespace IndustrialPark
 
             IPSettings settings = new IPSettings
             {
+                FirstTime = false,
                 AutosaveOnClose = autoSaveOnClosingToolStripMenuItem.Checked,
                 AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
                 LastProjectPath = currentProjectPath,
@@ -417,7 +416,7 @@ namespace IndustrialPark
         private void SaveProject(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = Application.StartupPath + "\\default_project.json";
+                fileName = Path.Combine(Application.StartupPath, "default_project.json");
             currentProjectPath = fileName;
             SaveProject();
         }
