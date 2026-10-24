@@ -1575,12 +1575,9 @@ namespace IndustrialPark
 
         public ObservableCollection<Asset> CurrentlySelectedAssets { get; private set; } = new ObservableCollection<Asset>();
 
-        private static IEnumerable<Asset> allCurrentlySelectedAssets =>
-            Program.MainForm.archiveEditors.SelectMany(ae => ae.archive.CurrentlySelectedAssets);
-
         public void SelectAssets(IEnumerable<uint> assetIDs)
         {
-            ClearSelectedAssets(assetIDs);
+            ClearSelectedAssets(except: assetIDs);
 
             bool any = false;
             foreach (uint assetID in assetIDs)
@@ -1598,8 +1595,8 @@ namespace IndustrialPark
 
             if (AutoDockSelectedAssetEditors && any)
             {
-                Program.MainForm.ClearDockedAssetEditors();
-                OpenInternalEditor(assetIDs.Where(u => !internalEditors.Any(ie => ie.GetAssetID() == u)), true, null, archiveEditor.UpdateCurrentListView, true);
+                Program.MainForm.ClearDockedAssetEditors(except: assetIDs);
+                OpenInternalEditor(assetIDs, true, null, archiveEditor.UpdateCurrentListView, true);
                 foreach (var item in internalEditors.Where(ie => assetIDs.Any(u => u == ie.GetAssetID())))
                     item.Activate();
                 Program.MainForm.CloseDockPanelIfEmpty();

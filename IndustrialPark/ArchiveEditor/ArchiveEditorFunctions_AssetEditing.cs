@@ -46,18 +46,22 @@ namespace IndustrialPark
         {
             bool willOpen = true;
             if (assets.Count() > MainForm.MaxDockedEditors && !openAnyway)
-            {
                 willOpen = MessageBox.Show($"Warning: you're going to open {assets.Count()} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-            }
 
             if (willOpen)
                 foreach (uint u in assets)
-                    if (assetDictionary.ContainsKey(u))
-                        OpenInternalEditor(assetDictionary[u], assets.Count() == 1 ? location : null, updateListView, autoDock);
+                    if (TryGetAsset(u, out Asset asset))
+                        OpenInternalEditor(asset, assets.Count() == 1 ? location : null, updateListView, autoDock);
         }
 
         private void OpenInternalEditor(Asset asset, System.Drawing.Point? location, Action<Asset> updateListView, bool autoDock)
         {
+            if (internalEditors.FirstOrDefault(e => e.GetAssetID() == asset.assetID) is InternalEditor existing)
+            {
+                existing.Activate();
+                return;
+            }
+
             CloseInternalEditor(asset.assetID);
 
             var editor = CreateInternalEditor(asset, updateListView);
@@ -130,6 +134,16 @@ namespace IndustrialPark
                     return new InternalTextEditor((AssetTEXT)asset, this, updateListView);
             }
             return new InternalAssetEditor(asset, this, updateListView);
+        }
+
+        public void RefreshAssetEditor(uint assetID)
+        {
+            foreach (var v in internalEditors)
+                if (v.GetAssetID() == assetID)
+                    v.RefreshPropertyGrid();
+            foreach (var v in multiInternalEditors)
+                if (v.AssetIDs.Contains(assetID))
+                    v.RefreshPropertyGrid();
         }
 
         private readonly List<InternalMultiAssetEditor> multiInternalEditors = new List<InternalMultiAssetEditor>();

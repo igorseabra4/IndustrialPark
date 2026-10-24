@@ -190,13 +190,14 @@ public partial class MainForm
 
     bool collapse = true;
 
-    public void ClearDockedAssetEditors()
+    public void ClearDockedAssetEditors(System.Collections.Generic.IEnumerable<uint> except)
     {
         collapse = false;
         foreach (TabPage page in tabControlRight.TabPages.Cast<TabPage>().ToList())
         {
             InternalEditor editor = (InternalEditor)page.Controls[0];
-            editor.Close();
+            if (!except.Contains(editor.GetAssetID()))
+                editor.Close();
         }
         collapse = true;
     }
