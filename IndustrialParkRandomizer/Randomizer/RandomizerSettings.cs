@@ -55,6 +55,9 @@ public class RandomizerSettings
     [Bfbb(false)]
     public bool PlayerSounds { get; set; }
 
+    [Category("\tRandomizer"), Description("Randomize food.")]
+    [Scooby(true)]
+    public bool Food { get; set; }
 
     [Category("Power-Ups"), DisplayName("Power-Up Rooms"), Description("Randomizes the rooms where power-ups are located.")]
     [Scooby(true)]
@@ -67,6 +70,10 @@ public class RandomizerSettings
     [Category("Power-Ups"), DisplayName("Include Gum and Soap Upgrades"), Description("Includes Gum and Soap upgrades as power-ups in the Power-Up Rooms randomizer. Does not include the items in Mastermind Unmasked 2.")]
     [Scooby(true)]
     public bool Include_GumSoap_Upgrades { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Power-Up Pool"), Description(Constants.powerupPool), TypeConverter(typeof(ExpandableObjectConverter))]
+    [Scooby]
+    public PowerupPoolScooby Power_Up_Pool_Scooby { get; set; }
 
     [Category("Power-Ups"), DisplayName("Unlock Groundskeeper at Hub"), Description("The Groundskeeper will appear at the hub without requiring you to obtain the map first.")]
     [Scooby(true)]
@@ -451,13 +458,14 @@ public class RandomizerSettings
         PowerupCheatsBFBB = new PowerupCheatsBFBB();
         PowerupCheatsScooby = new PowerupCheatsScooby();
         PowerupCheatsMovie = new PowerupCheatsMovie();
+
+        Power_Up_Pool_Scooby = new PowerupPoolScooby();
     }
 
     public void SetAllFalse()
     {
         PowerupCheatsMovie.Preset = Preset.Nothing;
         bootLevelMode = BootLevelMode.Default;
-
 
         foreach (PropertyInfo property in GetType().GetProperties())
             if (property.PropertyType == typeof(bool) && property.CanWrite)

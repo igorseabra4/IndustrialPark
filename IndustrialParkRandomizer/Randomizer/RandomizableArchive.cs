@@ -45,6 +45,9 @@ namespace IndustrialPark.Randomizer
             if (game != Game.Scooby && settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
                 shuffled |= RandomizePickupPositions(settings.Skip_Springs);
 
+            if (game == Game.Scooby && settings.Food && ContainsAssetWithType(AssetType.Pickup))
+                shuffled |= RandomizeFood();
+
             if (game == Game.Scooby && settings.SnackGates && ContainsAssetWithType(AssetType.Pickup))
                 shuffled |= RandomizeSnackGates(settings.snackReqMin, settings.snackReqMax);
 
@@ -514,6 +517,28 @@ namespace IndustrialPark.Randomizer
 
                 if (game == Game.Incredibles)
                     RemoveFromVolume(a.assetID);
+            }
+
+            return true;
+        }
+
+        public bool RandomizeFood()
+        {
+            var assets = assetDictionary.Values.OfType<AssetPKUP>().Where(pkup => Food.Contains((PickupReference)(uint)pkup.PickReferenceID)).ToList();
+
+            if (assets.Count == 0)
+                return false;
+
+            var food = new List<PickupReference>();
+
+            foreach (AssetPKUP a in assets)
+            {
+                if (food.Count == 0)
+                    food.AddRange(Food.OrderBy(f => f));
+
+                int index = random.Next(0, food.Count);
+                a.PickReferenceID = (uint)food[index];
+                food.RemoveAt(index);
             }
 
             return true;
@@ -3826,6 +3851,7 @@ namespace IndustrialPark.Randomizer
                     var plat = (AssetPLAT)PlaceTemplate(-1, position, template: AssetTemplate.Platform);
                     plat.Model = modelAssetId;
                     plat.ColorAlpha = 0.8f;
+                    plat.SolidityFlags.FlagValueByte = 3;
                     plat.PlatformFlags.FlagValueShort = 0;
                     plat.Motion = new Motion_Mechanism(Game.Scooby)
                     {
@@ -3838,6 +3864,12 @@ namespace IndustrialPark.Randomizer
                     plat.ScaleX = pkup.ScaleX;
                     plat.ScaleY = pkup.ScaleY;
                     plat.ScaleZ = pkup.ScaleZ;
+                    plat.StateIsPersistent = true;
+                    pkup.Links = [.. pkup.Links, new Link(Game.Scooby) {
+                        EventReceiveID = (ushort)EventScooby.Pickup,
+                        EventSendID = (ushort)EventScooby.Invisible,
+                        TargetAsset = plat.assetID,
+                    }];
                 }
             }
             return true;

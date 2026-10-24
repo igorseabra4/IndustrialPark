@@ -191,6 +191,15 @@ namespace IndustrialPark.Randomizer
             return result;
         }
 
+        public static HashSet<PickupReference> Food =
+        [
+            PickupReference.Sandwich,
+            PickupReference.Hamburger,
+            PickupReference.Cake,
+            PickupReference.Ice_Cream,
+            PickupReference.Turkey,
+        ];
+
         public static ConditionalVariableScooby GetConditionalVariableScooby(PickupReference pick) => pick switch
         {
             PickupReference.Shovel => ConditionalVariableScooby.Shovel,
