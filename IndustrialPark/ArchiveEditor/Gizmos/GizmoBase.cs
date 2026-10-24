@@ -65,7 +65,7 @@ namespace IndustrialPark
                     renderData.Color = new Vector4(0f, 0f, 1f, 0.4f);
                     break;
                 case GizmoType.ScaleAll:
-                    renderData.Color = new Vector4(0.6f, 0.5f, 0.5f, 0.4f);
+                    renderData.Color = new Vector4(0.7f, 0.7f, 0.7f, 0.4f);
                     break;
                 case GizmoType.MinX:
                     renderData.Color = new Vector4(0f, 1f, 1f, 0.4f);
@@ -113,9 +113,10 @@ namespace IndustrialPark
 
         protected RenderData.DefaultRenderData renderData;
         
-        public void Draw(SharpRenderer renderer)
+        public void Draw(SharpRenderer renderer, bool isMoving)
         {
             renderData.worldViewProjection = transformMatrix * renderer.viewProjection;
+            renderData.Color.W = isMoving ? 0.18f : 0.4f;
 
             renderer.device.SetFillModeSolid();
             renderer.device.SetCullModeNone();

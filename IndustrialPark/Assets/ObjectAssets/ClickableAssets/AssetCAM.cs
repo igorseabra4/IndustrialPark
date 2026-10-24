@@ -286,6 +286,19 @@ namespace IndustrialPark
                 result.Add("Left vector seems to not be normalized.");
         }
 
+        public Matrix GetCameraRotationMatrix()
+        {
+            Vector3 forward = Vector3.Normalize(new Vector3(NormalizedForwardX, NormalizedForwardY, NormalizedForwardZ));
+            Vector3 up = Vector3.Normalize(new Vector3(NormalizedUpX, NormalizedUpY, NormalizedUpZ));
+            Vector3 left = Vector3.Normalize(Vector3.Cross(up, forward));
+
+            return new Matrix(
+                left.X, left.Y, left.Z, 0f,
+                up.X, up.Y, up.Z, 0f,
+                forward.X, forward.Y, forward.Z, 0f,
+                0f, 0f, 0f, 1f);
+        }
+
         public void CreateTransformMatrix()
         {
             var left = new Vector3(NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ);

@@ -78,9 +78,9 @@ namespace IndustrialPark
             set
             {
                 field = value;
-                field.X = Math.Max(0.001f, field.X);
-                field.Y = Math.Max(0.001f, field.Y);
-                field.Z = Math.Max(0.001f, field.Z);
+                field.X = Math.Max(0.0001f, field.X);
+                field.Y = Math.Max(0.0001f, field.Y);
+                field.Z = Math.Max(0.0001f, field.Z);
             }
         }
 
@@ -108,13 +108,14 @@ namespace IndustrialPark
                     BoundingBox boundingBox = clickableAssets[0].GetBoundingBox();
                     foreach (var asset in clickableAssets.Skip(1))
                         boundingBox = BoundingBox.Merge(boundingBox, asset.GetBoundingBox());
-                    var gizmoPosition = boundingBox.Center;
+                    var gizmoPosition = clickableAssets.Count > 1 ? boundingBox.Center :
+                        new Vector3(clickableAssets[0].PositionX, clickableAssets[0].PositionY, clickableAssets[0].PositionZ);
                     float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition) / 5f;
 
                     foreach (PositionGizmo gizmo in positionGizmos)
                         gizmo.SetPosition(gizmoPosition, distance, Matrix.Identity);
                     foreach (PositionGizmo gizmo in positionGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
-                        gizmo.Draw(renderer);
+                        gizmo.Draw(renderer, IsMovingGizmo);
                     return;
                 }
                 case GizmoMode.Rotation:
@@ -127,7 +128,7 @@ namespace IndustrialPark
                     if (cameras.Count != 0)
                     {
                         var asset = cameras[0];
-                        gizmoRotation = GetRotationMatrix(asset);
+                        gizmoRotation = asset.GetCameraRotationMatrix();
                         gizmoPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
                     }
                     else
@@ -146,7 +147,7 @@ namespace IndustrialPark
                     for (int i = rotationGizmos.Length - 1; i >= 0; i--)
                     {
                         rotationGizmos[i].SetPosition(gizmoPosition, distance, gizmoRotation);
-                        rotationGizmos[i].Draw(renderer);
+                        rotationGizmos[i].Draw(renderer, IsMovingGizmo);
                     }
                     return;
                 }
@@ -166,7 +167,7 @@ namespace IndustrialPark
                         var box = (VolumeBox)boxVolumes[0].VolumeShape;
                         TriggerGizmo = true;
                         bbox = box.GetBoundingBox();
-                        gizmoRotation = GetRotationMatrix(0, 0, 0);
+                        gizmoRotation = Matrix.Identity;
                     }
                     if (primaryAsset != null)
                     {
@@ -182,7 +183,7 @@ namespace IndustrialPark
                         }
                         else
                         {
-                            gizmoRotation = GetRotationMatrix(0, 0, 0);
+                            gizmoRotation = Matrix.Identity;
                         }
                     }
                     if (primaryAsset != null || boxVolumes.Count > 0)
@@ -192,7 +193,7 @@ namespace IndustrialPark
                         foreach (ScaleGizmo gizmo in scaleGizmos)
                             gizmo.SetPosition(gizmoPosition, distance, gizmoRotation);
                         foreach (ScaleGizmo gizmo in scaleGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
-                            gizmo.Draw(renderer);
+                            gizmo.Draw(renderer, IsMovingGizmo);
                     }
                     return;
                 }
@@ -203,53 +204,54 @@ namespace IndustrialPark
                         return;
 
                     var asset = clickableAssets[0];
-                    var gizmoPosition = asset.GetBoundingBox().Center;
-                    float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition) / 5f;
-                    Matrix gizmoRotation = default;
 
+                    Matrix gizmoRotation = default;
                     TriggerGizmo = false;
                     IVolumeAsset volume = null;
-                    if (asset is AssetTRIG { Shape: TriggerShape.Box } trigger)
+
+                    switch (asset)
                     {
-                        TriggerGizmo = true;
-                        gizmoRotation = GetRotationMatrix(trigger.Yaw, trigger.Pitch, trigger.Roll);
-                        volume = trigger;
-                    }
-                    else if (asset is AssetVOLU { VolumeShape: VolumeBox box })
-                    {
-                        TriggerGizmo = true;
-                        gizmoRotation = GetRotationMatrix(0, 0, 0);
-                        volume = box;
-                    }
-                    else if (asset is AssetCAM cam)
-                    {
-                        gizmoRotation = GetRotationMatrix(cam);
-                    }
-                    else if (asset is IRotatableAsset ra)
-                    {
-                        gizmoRotation = GetRotationMatrix(ra.Yaw, ra.Pitch, ra.Roll);
-                    }
-                    else
-                    {
-                        gizmoRotation = GetRotationMatrix(0, 0, 0);
+                        case AssetTRIG { Shape: TriggerShape.Box } trigger:
+                            TriggerGizmo = true;
+                            gizmoRotation = GetRotationMatrix(trigger.Yaw, trigger.Pitch, trigger.Roll);
+                            volume = trigger;
+                            break;
+                        case AssetVOLU { VolumeShape: VolumeBox box }:
+                            TriggerGizmo = true;
+                            gizmoRotation = Matrix.Identity;
+                            volume = box;
+                            break;
+                        case AssetCAM cam:
+                            gizmoRotation = cam.GetCameraRotationMatrix();
+                            break;
+                        case IRotatableAsset ra:
+                            gizmoRotation = GetRotationMatrix(ra.Yaw, ra.Pitch, ra.Roll);
+                            break;
+                        default:
+                            gizmoRotation = Matrix.Identity;
+                            break;
                     }
 
                     if (TriggerGizmo)
                     {
                         Vector3 halfExtents = new Vector3(volume.MaximumX - volume.MinimumX, volume.MaximumY - volume.MinimumY, volume.MaximumZ - volume.MinimumZ) / 2f;
                         Vector3 center = volume.GetBoundingBox().Center;
+                        float distance = Vector3.Distance(renderer.Camera.Position, center) / 5f;
 
                         foreach (BoxTrigPositionGizmo gizmo in triggerPositionGizmos)
                             gizmo.SetPosition(center, halfExtents, distance, gizmoRotation);
                         foreach (BoxTrigPositionGizmo gizmo in triggerPositionGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
-                            gizmo.Draw(renderer);
+                            gizmo.Draw(renderer, IsMovingGizmo);
                     }
                     else
                     {
+                        var gizmoPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
+                        float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition) / 5f;
+
                         foreach (PositionGizmo gizmo in positionGizmos)
                             gizmo.SetPosition(gizmoPosition, distance, gizmoRotation);
                         foreach (PositionGizmo gizmo in positionGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
-                            gizmo.Draw(renderer);
+                            gizmo.Draw(renderer, IsMovingGizmo);
                     }
 
                     return;
@@ -257,20 +259,8 @@ namespace IndustrialPark
             }
         }
 
-        private static Matrix GetRotationMatrix(float Yaw, float Pitch, float Roll) => Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
-
-        private static Matrix GetRotationMatrix(AssetCAM cam)
-        {
-            Vector3 forward = Vector3.Normalize(new Vector3(cam.NormalizedForwardX, cam.NormalizedForwardY, cam.NormalizedForwardZ));
-            Vector3 up = Vector3.Normalize(new Vector3(cam.NormalizedUpX, cam.NormalizedUpY, cam.NormalizedUpZ));
-            Vector3 left = Vector3.Normalize(Vector3.Cross(up, forward));
-
-            return new Matrix(
-                left.X, left.Y, left.Z, 0f,
-                up.X, up.Y, up.Z, 0f,
-                forward.X, forward.Y, forward.Z, 0f,
-                0f, 0f, 0f, 1f);
-        }
+        private static Matrix GetRotationMatrix(float Yaw, float Pitch, float Roll) =>
+            Matrix.RotationYawPitchRoll(MathUtil.DegreesToRadians(Yaw), MathUtil.DegreesToRadians(Pitch), MathUtil.DegreesToRadians(Roll));
 
         public void TrySelectGizmo(Ray r)
         {
