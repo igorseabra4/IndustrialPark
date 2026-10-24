@@ -1291,10 +1291,17 @@ namespace IndustrialPark
 
                 if (!ignoreNumber)
                 {
-                    int lastIndex = assetName.LastIndexOf(separator);
-                    if (lastIndex >= 0 && int.TryParse(assetName.AsSpan(lastIndex + 1), out _))
-                        assetName = assetName[..lastIndex];
-                    assetName += $"{separator}{candidateNumber:D2}";
+                    var match = System.Text.RegularExpressions.Regex.Match(assetName, @"(\D?)(\d+)$");
+                    int len = 2;
+
+                    if (match.Success)
+                    {
+                        separator = match.Groups[1].Value.FirstOrDefault('_');
+                        assetName = assetName[..match.Index];
+                        len = match.Length - 1;
+                    }
+
+                    assetName += $"{separator}{candidateNumber.ToString($"D{len}")}";
                 }
 
                 assetID = BKDRHash(assetName);
