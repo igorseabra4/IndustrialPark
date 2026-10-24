@@ -64,9 +64,9 @@ namespace IndustrialPark
             }
         } = DEFAULT_SPEED_ROT;
 
-        public const float DEFAULT_SPEED = 1f;
+        public const float DEFAULT_SPEED = 30f;
         public const float DEFAULT_SPEED_ROT = 30f;
-        public const float DEFAULT_SPEED_INCREMENT = 0.01f;
+        public const float DEFAULT_SPEED_INCREMENT = 0.1f;
         public const float DEFAULT_SPEED_ROT_INCREMENT = 0.1f;
         public const float DEFAULT_MOUSE_SPEED_MULT = 1f / 6f;
 
@@ -84,17 +84,17 @@ namespace IndustrialPark
 
         internal void AddPositionForward(float factor)
         {
-            Position += Forward * Speed * factor;
+            Position += Forward * Speed * factor / 60f;
         }
 
         internal void AddPositionSideways(float factor)
         {
-            Position -= Right * Speed * factor;
+            Position -= Right * Speed * factor / 60f;
         }
 
         internal void AddPositionUp(float factor)
         {
-            Position += Up * Speed * factor;
+            Position += Up * Speed * factor / 60f;
         }
 
         internal void AddYaw(float factor)

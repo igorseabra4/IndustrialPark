@@ -142,7 +142,7 @@
             // NumericInterval
             // 
             NumericInterval.DecimalPlaces = 4;
-            NumericInterval.Increment = new decimal(new int[] { 1, 0, 0, 131072 });
+            NumericInterval.Increment = new decimal(new int[] { 1, 0, 0, 65536 });
             NumericInterval.Location = new System.Drawing.Point(6, 19);
             NumericInterval.Minimum = new decimal(new int[] { 1, 0, 0, 262144 });
             NumericInterval.Name = "NumericInterval";
