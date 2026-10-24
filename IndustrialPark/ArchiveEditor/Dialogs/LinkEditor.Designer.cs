@@ -84,7 +84,7 @@
             groupBox1.Location = new System.Drawing.Point(12, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new System.Drawing.Size(310, 333);
-            groupBox1.TabIndex = 0;
+            groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
             groupBox1.Text = "Links";
             // 
@@ -169,10 +169,11 @@
             // buttonOK
             // 
             buttonOK.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonOK.DialogResult = System.Windows.Forms.DialogResult.OK;
             buttonOK.Location = new System.Drawing.Point(336, 377);
             buttonOK.Name = "buttonOK";
             buttonOK.Size = new System.Drawing.Size(112, 23);
-            buttonOK.TabIndex = 20;
+            buttonOK.TabIndex = 22;
             buttonOK.Text = "OK";
             buttonOK.UseVisualStyleBackColor = true;
             buttonOK.Click += buttonOK_Click;
@@ -184,7 +185,7 @@
             buttonCancel.Location = new System.Drawing.Point(454, 377);
             buttonCancel.Name = "buttonCancel";
             buttonCancel.Size = new System.Drawing.Size(112, 23);
-            buttonCancel.TabIndex = 21;
+            buttonCancel.TabIndex = 23;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
             buttonCancel.Click += buttonCancel_Click;
@@ -202,7 +203,7 @@
             groupBoxEventData.Location = new System.Drawing.Point(328, 12);
             groupBoxEventData.Name = "groupBoxEventData";
             groupBoxEventData.Size = new System.Drawing.Size(244, 360);
-            groupBoxEventData.TabIndex = 2;
+            groupBoxEventData.TabIndex = 9;
             groupBoxEventData.TabStop = false;
             groupBoxEventData.Text = "Event Data";
             // 
@@ -212,7 +213,7 @@
             groupBoxSourceCheckOrFlags.Location = new System.Drawing.Point(8, 231);
             groupBoxSourceCheckOrFlags.Name = "groupBoxSourceCheckOrFlags";
             groupBoxSourceCheckOrFlags.Size = new System.Drawing.Size(230, 47);
-            groupBoxSourceCheckOrFlags.TabIndex = 11;
+            groupBoxSourceCheckOrFlags.TabIndex = 15;
             groupBoxSourceCheckOrFlags.TabStop = false;
             groupBoxSourceCheckOrFlags.Text = "Source Check";
             toolTip1.SetToolTip(groupBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
@@ -224,7 +225,7 @@
             textBoxSourceCheckOrFlags.Location = new System.Drawing.Point(6, 19);
             textBoxSourceCheckOrFlags.Name = "textBoxSourceCheckOrFlags";
             textBoxSourceCheckOrFlags.Size = new System.Drawing.Size(218, 20);
-            textBoxSourceCheckOrFlags.TabIndex = 14;
+            textBoxSourceCheckOrFlags.TabIndex = 15;
             toolTip1.SetToolTip(textBoxSourceCheckOrFlags, "Link will only be activated if the sender asset matches this one. Optional.");
             textBoxSourceCheckOrFlags.TextChanged += textBoxSourceCheck_TextChanged;
             textBoxSourceCheckOrFlags.Leave += textBoxSourceCheck_Leave;
@@ -250,7 +251,7 @@
             groupBox2.Location = new System.Drawing.Point(8, 178);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new System.Drawing.Size(230, 47);
-            groupBox2.TabIndex = 11;
+            groupBox2.TabIndex = 14;
             groupBox2.TabStop = false;
             groupBox2.Text = "Argument Asset";
             toolTip1.SetToolTip(groupBox2, "Asset which will be sent as argument on this link. This varies depending on the target event. Optional on most cases.");
@@ -262,7 +263,7 @@
             textBoxArgumentAsset.Location = new System.Drawing.Point(6, 19);
             textBoxArgumentAsset.Name = "textBoxArgumentAsset";
             textBoxArgumentAsset.Size = new System.Drawing.Size(218, 20);
-            textBoxArgumentAsset.TabIndex = 13;
+            textBoxArgumentAsset.TabIndex = 14;
             toolTip1.SetToolTip(textBoxArgumentAsset, "Asset which will be sent as argument on this link. This varies depending on the target event. Optional on most cases.\r\n");
             textBoxArgumentAsset.TextChanged += textBoxArgumentAsset_TextChanged;
             textBoxArgumentAsset.Leave += textBoxArgumentAsset_Leave;
@@ -281,7 +282,7 @@
             groupBox6.Location = new System.Drawing.Point(8, 284);
             groupBox6.Name = "groupBox6";
             groupBox6.Size = new System.Drawing.Size(230, 70);
-            groupBox6.TabIndex = 4;
+            groupBox6.TabIndex = 16;
             groupBox6.TabStop = false;
             groupBox6.Text = "Arguments";
             toolTip1.SetToolTip(groupBox6, "Arguments for link, vary depending on target event.");
@@ -328,7 +329,7 @@
             checkBoxHex.Location = new System.Drawing.Point(173, 0);
             checkBoxHex.Name = "checkBoxHex";
             checkBoxHex.Size = new System.Drawing.Size(45, 17);
-            checkBoxHex.TabIndex = 15;
+            checkBoxHex.TabIndex = 17;
             checkBoxHex.Text = "Hex";
             checkBoxHex.UseVisualStyleBackColor = true;
             checkBoxHex.CheckedChanged += checkBoxHex_CheckedChanged;
@@ -339,7 +340,7 @@
             textBox3.Location = new System.Drawing.Point(25, 45);
             textBox3.Name = "textBox3";
             textBox3.Size = new System.Drawing.Size(86, 20);
-            textBox3.TabIndex = 18;
+            textBox3.TabIndex = 20;
             textBox3.TextChanged += textBox3_TextChanged;
             textBox3.Leave += textBox_Leave;
             // 
@@ -349,7 +350,7 @@
             textBox4.Location = new System.Drawing.Point(136, 46);
             textBox4.Name = "textBox4";
             textBox4.Size = new System.Drawing.Size(85, 20);
-            textBox4.TabIndex = 19;
+            textBox4.TabIndex = 21;
             textBox4.TextChanged += textBox4_TextChanged;
             textBox4.Leave += textBox_Leave;
             // 
@@ -359,7 +360,7 @@
             textBox2.Location = new System.Drawing.Point(136, 19);
             textBox2.Name = "textBox2";
             textBox2.Size = new System.Drawing.Size(85, 20);
-            textBox2.TabIndex = 17;
+            textBox2.TabIndex = 19;
             textBox2.TextChanged += textBox2_TextChanged;
             textBox2.Leave += textBox_Leave;
             // 
@@ -369,7 +370,7 @@
             textBox1.Location = new System.Drawing.Point(25, 19);
             textBox1.Name = "textBox1";
             textBox1.Size = new System.Drawing.Size(86, 20);
-            textBox1.TabIndex = 16;
+            textBox1.TabIndex = 18;
             textBox1.TextChanged += textBox1_TextChanged;
             textBox1.Leave += textBox_Leave;
             // 
@@ -381,7 +382,7 @@
             groupBox5.Location = new System.Drawing.Point(8, 125);
             groupBox5.Name = "groupBox5";
             groupBox5.Size = new System.Drawing.Size(230, 47);
-            groupBox5.TabIndex = 3;
+            groupBox5.TabIndex = 11;
             groupBox5.TabStop = false;
             groupBox5.Text = "Target Asset";
             toolTip1.SetToolTip(groupBox5, "Asset to which this link will be sent.");
@@ -391,7 +392,7 @@
             buttonTargetSelf.Location = new System.Drawing.Point(131, 0);
             buttonTargetSelf.Name = "buttonTargetSelf";
             buttonTargetSelf.Size = new System.Drawing.Size(42, 20);
-            buttonTargetSelf.TabIndex = 11;
+            buttonTargetSelf.TabIndex = 12;
             buttonTargetSelf.Text = "Self";
             buttonTargetSelf.UseVisualStyleBackColor = true;
             buttonTargetSelf.Click += buttonTargetSelf_Click;
@@ -401,7 +402,7 @@
             buttonTargetPlus1.Location = new System.Drawing.Point(179, 0);
             buttonTargetPlus1.Name = "buttonTargetPlus1";
             buttonTargetPlus1.Size = new System.Drawing.Size(42, 20);
-            buttonTargetPlus1.TabIndex = 12;
+            buttonTargetPlus1.TabIndex = 13;
             buttonTargetPlus1.Text = "+1";
             buttonTargetPlus1.UseVisualStyleBackColor = true;
             buttonTargetPlus1.Click += buttonTargetPlus1_Click;
@@ -413,7 +414,7 @@
             textBoxTargetAsset.Location = new System.Drawing.Point(6, 19);
             textBoxTargetAsset.Name = "textBoxTargetAsset";
             textBoxTargetAsset.Size = new System.Drawing.Size(218, 20);
-            textBoxTargetAsset.TabIndex = 10;
+            textBoxTargetAsset.TabIndex = 11;
             toolTip1.SetToolTip(textBoxTargetAsset, "Asset to which this link will be sent.");
             textBoxTargetAsset.TextChanged += textBoxTargetAsset_TextChanged;
             textBoxTargetAsset.Leave += textBoxTargetAsset_Leave;
@@ -424,7 +425,7 @@
             groupBox4.Location = new System.Drawing.Point(8, 72);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new System.Drawing.Size(230, 47);
-            groupBox4.TabIndex = 2;
+            groupBox4.TabIndex = 10;
             groupBox4.TabStop = false;
             groupBox4.Text = "Target Event";
             toolTip1.SetToolTip(groupBox4, "Event sent by this link.");
@@ -437,7 +438,7 @@
             comboSendEvent.Location = new System.Drawing.Point(6, 19);
             comboSendEvent.Name = "comboSendEvent";
             comboSendEvent.Size = new System.Drawing.Size(218, 21);
-            comboSendEvent.TabIndex = 9;
+            comboSendEvent.TabIndex = 10;
             toolTip1.SetToolTip(comboSendEvent, "Event sent by this link.");
             comboSendEvent.SelectedIndexChanged += comboSendEvent_SelectedIndexChanged;
             comboSendEvent.KeyDown += comboBox_KeyDown;
@@ -449,7 +450,7 @@
             groupBoxSourceEvent.Location = new System.Drawing.Point(6, 19);
             groupBoxSourceEvent.Name = "groupBoxSourceEvent";
             groupBoxSourceEvent.Size = new System.Drawing.Size(232, 47);
-            groupBoxSourceEvent.TabIndex = 1;
+            groupBoxSourceEvent.TabIndex = 9;
             groupBoxSourceEvent.TabStop = false;
             groupBoxSourceEvent.Text = "Source Event";
             toolTip1.SetToolTip(groupBoxSourceEvent, "Event which activates this link.");
@@ -462,7 +463,7 @@
             comboRecieveEvent.Location = new System.Drawing.Point(6, 19);
             comboRecieveEvent.Name = "comboRecieveEvent";
             comboRecieveEvent.Size = new System.Drawing.Size(220, 21);
-            comboRecieveEvent.TabIndex = 8;
+            comboRecieveEvent.TabIndex = 9;
             toolTip1.SetToolTip(comboRecieveEvent, "Event which activates this link.");
             comboRecieveEvent.SelectedIndexChanged += comboReceiveEvent_SelectedIndexChanged;
             comboRecieveEvent.KeyDown += comboBox_KeyDown;
@@ -483,7 +484,7 @@
             buttonHelp.Location = new System.Drawing.Point(211, 351);
             buttonHelp.Name = "buttonHelp";
             buttonHelp.Size = new System.Drawing.Size(105, 23);
-            buttonHelp.TabIndex = 20;
+            buttonHelp.TabIndex = 8;
             buttonHelp.Text = "Help!";
             buttonHelp.UseVisualStyleBackColor = true;
             buttonHelp.Click += button1_Click;

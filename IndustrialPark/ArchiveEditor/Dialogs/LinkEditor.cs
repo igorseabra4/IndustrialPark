@@ -38,10 +38,13 @@ namespace IndustrialPark
 
             textBoxTargetAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBoxTargetAsset.AutoCompleteCustomSource = sourceObjects;
+            textBoxTargetAsset.AutoCompleteMode = AutoCompleteMode.Suggest;
             textBoxArgumentAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBoxArgumentAsset.AutoCompleteCustomSource = sourceAll;
+            textBoxArgumentAsset.AutoCompleteMode = AutoCompleteMode.Suggest;
             textBoxSourceCheckOrFlags.AutoCompleteSource = AutoCompleteSource.CustomSource;
             textBoxSourceCheckOrFlags.AutoCompleteCustomSource = sourceObjects;
+            textBoxSourceCheckOrFlags.AutoCompleteMode = AutoCompleteMode.Suggest;
 
             numericUpDownTime.Minimum = decimal.MinValue;
             numericUpDownTime.Maximum = decimal.MaxValue;
@@ -81,7 +84,11 @@ namespace IndustrialPark
             }
 
             comboRecieveEvent.AutoCompleteCustomSource = eventAutoCompleteCollection;
+            comboRecieveEvent.AutoCompleteMode = AutoCompleteMode.Suggest;
+            comboRecieveEvent.AutoCompleteSource = AutoCompleteSource.CustomSource;
             comboSendEvent.AutoCompleteCustomSource = eventAutoCompleteCollection;
+            comboSendEvent.AutoCompleteMode = AutoCompleteMode.Suggest;
+            comboSendEvent.AutoCompleteSource = AutoCompleteSource.CustomSource;
 
             foreach (var assetEvent in events)
                 listBoxLinks.Items.Add(assetEvent);
@@ -90,13 +97,9 @@ namespace IndustrialPark
         public static Link[] GetLinks(Game game, Link[] links, LinkType linkType, uint thisAssetID)
         {
             LinkEditor linkEditor = new LinkEditor(game, links, linkType, thisAssetID);
-            linkEditor.ShowDialog();
-
-            if (linkEditor.OK)
+            if (linkEditor.ShowDialog() == DialogResult.OK)
             {
-                List<Link> newLinks = new List<Link>();
-                foreach (Link l in linkEditor.listBoxLinks.Items)
-                    newLinks.Add(l);
+                var newLinks = linkEditor.listBoxLinks.Items.Cast<Link>();
 
                 if (linkType == LinkType.Timed || linkType == LinkType.TimedRotu)
                     return newLinks.OrderBy(link=>link.Time).ToArray();
@@ -106,7 +109,11 @@ namespace IndustrialPark
             return null;
         }
 
-        private bool OK = false;
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            AcceptButton = (keyData == Keys.Enter && ActiveControl is ComboBox or TextBox) ? null : buttonOK;
+            return base.ProcessCmdKey(ref msg, keyData);
+        }
 
         private readonly Color bgColor;
         private bool ProgramIsChangingStuff = false;
@@ -273,7 +280,6 @@ namespace IndustrialPark
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
-            OK = true;
             Close();
         }
 
@@ -559,12 +565,14 @@ namespace IndustrialPark
 
         private void buttonTargetPlus1_Click(object sender, EventArgs e)
         {
-            try
+            string assetName = textBoxTargetAsset.Text;
+            var match = System.Text.RegularExpressions.Regex.Match(assetName, @"\d+$");
+
+            if (match.Success && int.TryParse(match.Value, out int num))
             {
-                int num = Convert.ToInt32(textBoxTargetAsset.Text.Split('_').Last());
-                textBoxTargetAsset.Text = textBoxTargetAsset.Text.Substring(0, textBoxTargetAsset.Text.LastIndexOf('_')) + '_' + (num + 1).ToString("D2");
+                textBoxTargetAsset.Text = string.Concat(assetName.AsSpan(0, match.Index), (num + 1).ToString($"D{match.Length}"));
             }
-            catch
+            else
             {
                 MessageBox.Show("Unable to find sequence number in asset name");
             }
