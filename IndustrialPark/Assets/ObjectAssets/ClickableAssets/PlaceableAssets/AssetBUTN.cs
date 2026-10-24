@@ -49,7 +49,7 @@ namespace IndustrialPark
 
         public AssetBUTN(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Button, BaseAssetType.Button, position)
         {
-            if (template == AssetTemplate.Button_Red)
+            if (template == AssetTemplate.Button_Red || template == AssetTemplate.Button_Red_WithBase)
             {
                 Model = "button";
                 PressedModel = "button_grn";

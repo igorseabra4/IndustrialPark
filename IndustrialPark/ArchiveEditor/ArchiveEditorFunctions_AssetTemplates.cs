@@ -245,6 +245,7 @@ namespace IndustrialPark
             stageitemsBFBB.DropDownItems.AddRange(new ToolStripItem[]
             {
                 GetTemplateMenuItem(AssetTemplate.Button_Red, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Button_Red_WithBase, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Pressure_Plate, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint_Set, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint_Invisible, eventHandler),
@@ -259,6 +260,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.Hovering_Platform, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Springboard, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Taxi_Stand, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Button_Red_Base, eventHandler),
             });
 
             ToolStripMenuItem bfbb = new ToolStripMenuItem("BFBB");
@@ -345,6 +347,7 @@ namespace IndustrialPark
             stageitemsTSSM.DropDownItems.AddRange(new ToolStripItem[]
             {
                 GetTemplateMenuItem(AssetTemplate.Button_Red, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Button_Red_WithBase, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint_Set, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Checkpoint_Invisible, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Teleport_Box, eventHandler),
@@ -355,6 +358,7 @@ namespace IndustrialPark
                 GetTemplateMenuItem(AssetTemplate.CollapsePlatform_Planktopolis, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.CollapsePlatform_Spongeball, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.CollapsePlatform_ThugTug, eventHandler),
+                GetTemplateMenuItem(AssetTemplate.Button_Red_Base, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Ring, eventHandler),
                 GetTemplateMenuItem(AssetTemplate.Ring_Control, eventHandler),
             });
@@ -534,187 +538,100 @@ namespace IndustrialPark
 
         public static string GetName(AssetTemplate template)
         {
-            switch (template)
+            return template switch
             {
-                case AssetTemplate.NPC:
-                    return "NPC (BFBB/Incredibles)";
-                case AssetTemplate.Villain:
-                    return "Villain (Scooby)";
-                case AssetTemplate.MovePoint:
-                    return "Move Point";
-                case AssetTemplate.MovePoint_Arena:
-                    return "Move Point (arena, off)";
-                case AssetTemplate.SFX_OnEvent:
-                    return "SFX (on event)";
-                case AssetTemplate.SFX_OnRadius:
-                    return "SFX (on radius)";
-                case AssetTemplate.Shiny_Blue:
-                    return "Shiny Object (Blue)";
-                case AssetTemplate.Shiny_Green:
-                    return "Shiny Object (Green)";
-                case AssetTemplate.Shiny_Purple:
-                    return "Shiny Object (Purple)";
-                case AssetTemplate.Shiny_Red:
-                    return "Shiny Object (Red)";
-                case AssetTemplate.Shiny_Yellow:
-                    return "Shiny Object (Yellow)";
-                case AssetTemplate.Manliness_Red:
-                    return "Manliness Point (Red)";
-                case AssetTemplate.Manliness_Yellow:
-                    return "Manliness Point (Yellow)";
-                case AssetTemplate.Manliness_Green:
-                    return "Manliness Point (Green)";
-                case AssetTemplate.Manliness_Blue:
-                    return "Manliness Point (Blue)";
-                case AssetTemplate.Manliness_Purple:
-                    return "Manliness Point (Purple)";
-                case AssetTemplate.Hammer:
-                    return "Ham-mer";
-                case AssetTemplate.TarTar:
-                    return "Tar-Tar";
-                case AssetTemplate.ChompBot:
-                    return "Chomp Bot";
-                case AssetTemplate.GLove:
-                    return "G-Love";
-                case AssetTemplate.Chuck_Trigger:
-                    return "Chuck (trigger)";
-                case AssetTemplate.Monsoon_Trigger:
-                    return "Monsoon (trigger)";
-                case AssetTemplate.Sleepytime:
-                    return "Sleepytime (stationary)";
-                case AssetTemplate.Sleepytime_Moving:
-                    return "Sleepytime (moving)";
-                case AssetTemplate.BombBot:
-                    return "Bomb Bot";
-                case AssetTemplate.BzztBot:
-                    return "Bzzt Bot";
-                case AssetTemplate.Slick_Trigger:
-                    return "Slick (trigger)";
-                case AssetTemplate.Jellyfish_Pink:
-                    return "Jellyfish (Pink)";
-                case AssetTemplate.Jellyfish_Blue:
-                    return "Jellyfish (Blue)";
-                case AssetTemplate.Jellyfish:
-                    return "Jellyfish";
-                case AssetTemplate.Jellyfish_Bucket:
-                    return "Jellyfish (Buckethead)";
-                case AssetTemplate.Fogger_GoofyGoober:
-                    return "Fogger (Goofy Goober)";
-                case AssetTemplate.Fogger_Desert:
-                    return "Fogger (Desert)";
-                case AssetTemplate.Fogger_ThugTug:
-                    return "Fogger (Thug Tug)";
-                case AssetTemplate.Fogger_Trench:
-                    return "Fogger (Trench)";
-                case AssetTemplate.Fogger_Junkyard:
-                    return "Fogger (Junkyard)";
-                case AssetTemplate.Fogger_Planktopolis:
-                    return "Fogger (Planktopolis)";
-                case AssetTemplate.Fogger_v1:
-                    return "Fogger (v1)";
-                case AssetTemplate.Fogger_v2:
-                    return "Fogger (v2)";
-                case AssetTemplate.Fogger_v3:
-                    return "Fogger (v3)";
-                case AssetTemplate.Slammer_GoofyGoober:
-                    return "Slammer (Goofy Goober)";
-                case AssetTemplate.Slammer_Desert:
-                    return "Slammer (Desert)";
-                case AssetTemplate.Slammer_ThugTug:
-                    return "Slammer (Thug Tug)";
-                case AssetTemplate.Flinger_Desert:
-                    return "Flinger (Desert)";
-                case AssetTemplate.Flinger_Trench:
-                    return "Flinger (Trench)";
-                case AssetTemplate.Flinger_Junkyard:
-                    return "Flinger (Junkyard)";
-                case AssetTemplate.Spinner_ThugTug:
-                    return "Spinner (Thug Tug)";
-                case AssetTemplate.Spinner_Junkyard:
-                    return "Spinner (Junkyard)";
-                case AssetTemplate.Spinner_Planktopolis:
-                    return "Spinner (Planktopolis)";
-                case AssetTemplate.Popper_Trench:
-                    return "Popper (Trench)";
-                case AssetTemplate.Popper_Planktopolis:
-                    return "Popper (Planktopolis)";
-                case AssetTemplate.Turret_v1:
-                    return "Turret (v1)";
-                case AssetTemplate.Turret_v2:
-                    return "Turret (v2)";
-                case AssetTemplate.Turret_v3:
-                    return "Turret (v3)";
-                case AssetTemplate.Spawner_BB:
-                    return "Spawner (Goofy Goober)";
-                case AssetTemplate.Spawner_DE:
-                    return "Spawner (Desert)";
-                case AssetTemplate.Spawner_TR:
-                    return "Spawner (Trench)";
-                case AssetTemplate.Spawner_JK:
-                    return "Spawner (Junkyard)";
-                case AssetTemplate.Spawner_PT:
-                    return "Spawner (Planktopolis)";
-                case AssetTemplate.Spawner_GG:
-                    return "Spawner (GG, unused)";
-                case AssetTemplate.Button_Red:
-                    return "Red Button";
-                case AssetTemplate.Texas_Hitch_Platform:
-                    return "Texas Hitch (Platform)";
-                case AssetTemplate.Swinger_Platform:
-                    return "Swinger (Platform)";
-                case AssetTemplate.Checkpoint_Invisible:
-                    return "Checkpoint (Invisible)";
-                case AssetTemplate.CollapsePlatform_Planktopolis:
-                    return "Collapse Platform (Planktopolis)";
-                case AssetTemplate.CollapsePlatform_Spongeball:
-                    return "Collapse Platform (Spongeball)";
-                case AssetTemplate.CollapsePlatform_ThugTug:
-                    return "Collapse Platform (Thug Tug)";
-                case AssetTemplate.Health_10:
-                    return "Health (10)";
-                case AssetTemplate.Health_25:
-                    return "Health (25)";
-                case AssetTemplate.Health_50:
-                    return "Health (50)";
-                case AssetTemplate.Power_25:
-                    return "Power (25)";
-                case AssetTemplate.Power_50:
-                    return "Power (50)";
-                case AssetTemplate.Bonus:
-                    return "Bonus Item";
-                case AssetTemplate.Red_Button:
-                    return "Red Button (Helmet)";
-                case AssetTemplate.Red_Button_Smash:
-                    return "Red Button (Super Smash)";
-                case AssetTemplate.Floor_Button:
-                    return "Floor Button (Step)";
-                case AssetTemplate.Floor_Button_Smash:
-                    return "Floor Button (Super Smash)";
-                case AssetTemplate.Volume_Box:
-                    return "Volume (Box)";
-                case AssetTemplate.Volume_Sphere:
-                    return "Volume (Sphere)";
-                case AssetTemplate.Floating_Block_Spiked:
-                    return "Floating Block (spiked)";
-                case AssetTemplate.Scale_Block_Driven:
-                    return "Scale Block (with driver)";
-                case AssetTemplate.Scale_Block_Spiked_Driven:
-                    return "Scale Block (spiked with driver)";
-                case AssetTemplate.Ice_Block_Spiked:
-                    return "Ice Block (spiked)";
-                case AssetTemplate.Trampoline_Block_Driven:
-                    return "Trampoline Block (with driver)";
-                case AssetTemplate.Trampoline_Block_Spiked_Driven:
-                    return "Trampoline Block (spiked with driver)";
-                case AssetTemplate.Block_Spikes:
-                    return "Spikes";
-                case AssetTemplate.CObject_SpringBoard:
-                    return "SpringBoard";
-                case AssetTemplate.RotuRat:
-                    return "Rat";
-            }
-
-            return template.ToString().Replace('_', ' ');
+                AssetTemplate.NPC => "NPC (BFBB/Incredibles)",
+                AssetTemplate.Villain => "Villain (Scooby)",
+                AssetTemplate.MovePoint => "Move Point",
+                AssetTemplate.MovePoint_Arena => "Move Point (arena, off)",
+                AssetTemplate.SFX_OnEvent => "SFX (on event)",
+                AssetTemplate.SFX_OnRadius => "SFX (on radius)",
+                AssetTemplate.Shiny_Blue => "Shiny Object (Blue)",
+                AssetTemplate.Shiny_Green => "Shiny Object (Green)",
+                AssetTemplate.Shiny_Purple => "Shiny Object (Purple)",
+                AssetTemplate.Shiny_Red => "Shiny Object (Red)",
+                AssetTemplate.Shiny_Yellow => "Shiny Object (Yellow)",
+                AssetTemplate.Manliness_Red => "Manliness Point (Red)",
+                AssetTemplate.Manliness_Yellow => "Manliness Point (Yellow)",
+                AssetTemplate.Manliness_Green => "Manliness Point (Green)",
+                AssetTemplate.Manliness_Blue => "Manliness Point (Blue)",
+                AssetTemplate.Manliness_Purple => "Manliness Point (Purple)",
+                AssetTemplate.Hammer => "Ham-mer",
+                AssetTemplate.TarTar => "Tar-Tar",
+                AssetTemplate.ChompBot => "Chomp Bot",
+                AssetTemplate.GLove => "G-Love",
+                AssetTemplate.Chuck_Trigger => "Chuck (trigger)",
+                AssetTemplate.Monsoon_Trigger => "Monsoon (trigger)",
+                AssetTemplate.Sleepytime => "Sleepytime (stationary)",
+                AssetTemplate.Sleepytime_Moving => "Sleepytime (moving)",
+                AssetTemplate.BombBot => "Bomb Bot",
+                AssetTemplate.BzztBot => "Bzzt Bot",
+                AssetTemplate.Slick_Trigger => "Slick (trigger)",
+                AssetTemplate.Jellyfish_Pink => "Jellyfish (Pink)",
+                AssetTemplate.Jellyfish_Blue => "Jellyfish (Blue)",
+                AssetTemplate.Jellyfish => "Jellyfish",
+                AssetTemplate.Jellyfish_Bucket => "Jellyfish (Buckethead)",
+                AssetTemplate.Fogger_GoofyGoober => "Fogger (Goofy Goober)",
+                AssetTemplate.Fogger_Desert => "Fogger (Desert)",
+                AssetTemplate.Fogger_ThugTug => "Fogger (Thug Tug)",
+                AssetTemplate.Fogger_Trench => "Fogger (Trench)",
+                AssetTemplate.Fogger_Junkyard => "Fogger (Junkyard)",
+                AssetTemplate.Fogger_Planktopolis => "Fogger (Planktopolis)",
+                AssetTemplate.Fogger_v1 => "Fogger (v1)",
+                AssetTemplate.Fogger_v2 => "Fogger (v2)",
+                AssetTemplate.Fogger_v3 => "Fogger (v3)",
+                AssetTemplate.Slammer_GoofyGoober => "Slammer (Goofy Goober)",
+                AssetTemplate.Slammer_Desert => "Slammer (Desert)",
+                AssetTemplate.Slammer_ThugTug => "Slammer (Thug Tug)",
+                AssetTemplate.Flinger_Desert => "Flinger (Desert)",
+                AssetTemplate.Flinger_Trench => "Flinger (Trench)",
+                AssetTemplate.Flinger_Junkyard => "Flinger (Junkyard)",
+                AssetTemplate.Spinner_ThugTug => "Spinner (Thug Tug)",
+                AssetTemplate.Spinner_Junkyard => "Spinner (Junkyard)",
+                AssetTemplate.Spinner_Planktopolis => "Spinner (Planktopolis)",
+                AssetTemplate.Popper_Trench => "Popper (Trench)",
+                AssetTemplate.Popper_Planktopolis => "Popper (Planktopolis)",
+                AssetTemplate.Turret_v1 => "Turret (v1)",
+                AssetTemplate.Turret_v2 => "Turret (v2)",
+                AssetTemplate.Turret_v3 => "Turret (v3)",
+                AssetTemplate.Spawner_BB => "Spawner (Goofy Goober)",
+                AssetTemplate.Spawner_DE => "Spawner (Desert)",
+                AssetTemplate.Spawner_TR => "Spawner (Trench)",
+                AssetTemplate.Spawner_JK => "Spawner (Junkyard)",
+                AssetTemplate.Spawner_PT => "Spawner (Planktopolis)",
+                AssetTemplate.Spawner_GG => "Spawner (GG, unused)",
+                AssetTemplate.Button_Red => "Red Button",
+                AssetTemplate.Button_Red_WithBase => "Red Button + Base",
+                AssetTemplate.Button_Red_Base => "Button Base",
+                AssetTemplate.Texas_Hitch_Platform => "Texas Hitch (Platform)",
+                AssetTemplate.Swinger_Platform => "Swinger (Platform)",
+                AssetTemplate.Checkpoint_Invisible => "Checkpoint (Invisible)",
+                AssetTemplate.CollapsePlatform_Planktopolis => "Collapse Platform (Planktopolis)",
+                AssetTemplate.CollapsePlatform_Spongeball => "Collapse Platform (Spongeball)",
+                AssetTemplate.CollapsePlatform_ThugTug => "Collapse Platform (Thug Tug)",
+                AssetTemplate.Health_10 => "Health (10)",
+                AssetTemplate.Health_25 => "Health (25)",
+                AssetTemplate.Health_50 => "Health (50)",
+                AssetTemplate.Power_25 => "Power (25)",
+                AssetTemplate.Power_50 => "Power (50)",
+                AssetTemplate.Bonus => "Bonus Item",
+                AssetTemplate.Red_Button => "Red Button (Helmet)",
+                AssetTemplate.Red_Button_Smash => "Red Button (Super Smash)",
+                AssetTemplate.Floor_Button => "Floor Button (Step)",
+                AssetTemplate.Floor_Button_Smash => "Floor Button (Super Smash)",
+                AssetTemplate.Volume_Box => "Volume (Box)",
+                AssetTemplate.Volume_Sphere => "Volume (Sphere)",
+                AssetTemplate.Floating_Block_Spiked => "Floating Block (spiked)",
+                AssetTemplate.Scale_Block_Driven => "Scale Block (with driver)",
+                AssetTemplate.Scale_Block_Spiked_Driven => "Scale Block (spiked with driver)",
+                AssetTemplate.Ice_Block_Spiked => "Ice Block (spiked)",
+                AssetTemplate.Trampoline_Block_Driven => "Trampoline Block (with driver)",
+                AssetTemplate.Trampoline_Block_Spiked_Driven => "Trampoline Block (spiked with driver)",
+                AssetTemplate.Block_Spikes => "Spikes",
+                AssetTemplate.CObject_SpringBoard => "SpringBoard",
+                AssetTemplate.RotuRat => "Rat",
+                _ => template.ToString().Replace('_', ' '),
+            };
         }
 
         public void SetAssetPositionToView(uint assetID)
@@ -1083,6 +1000,7 @@ namespace IndustrialPark
                     return new AssetBOUL(assetName, position);
                 case AssetTemplate.Button:
                 case AssetTemplate.Button_Red:
+                case AssetTemplate.Button_Red_WithBase:
                 case AssetTemplate.Pressure_Plate:
                 case AssetTemplate.Red_Button:
                 case AssetTemplate.Red_Button_Smash:
@@ -1092,6 +1010,8 @@ namespace IndustrialPark
                     var button = new AssetBUTN(assetName, position, template);
                     if (template == AssetTemplate.Pressure_Plate)
                         PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Pressure_Plate_Base, true);
+                    else if (template == AssetTemplate.Button_Red_WithBase)
+                        PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Button_Red_Base, true);
                     else if (template == AssetTemplate.Red_Button)
                         PlaceTemplate(layerIndex, position, ref assetIDs, assetName + "_BASE", AssetTemplate.Red_Button_Base, true);
                     else if (template == AssetTemplate.Red_Button_Smash)
@@ -1169,6 +1089,7 @@ namespace IndustrialPark
                 case AssetTemplate.Cauldron:
                 case AssetTemplate.Flower:
                 case AssetTemplate.Block_Spikes:
+                case AssetTemplate.Button_Red_Base:
                 {
                     var simp = new AssetSIMP(assetName, position, template);
                     switch (template)

@@ -118,6 +118,9 @@ namespace IndustrialPark
                     Surface = "SPIKE_SURF";
                     SimpFlags.FlagValueByte = 8;
                     break;
+                case AssetTemplate.Button_Red_Base:
+                    Model = "button_base";
+                    break;
             }
         }
 

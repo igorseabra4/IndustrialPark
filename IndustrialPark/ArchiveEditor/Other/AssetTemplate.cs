@@ -180,6 +180,8 @@
 
         // Stage Items
         Button_Red,
+        Button_Red_Base,
+        Button_Red_WithBase,
         Pressure_Plate,
         Taxi_Stand,
         Texas_Hitch,
