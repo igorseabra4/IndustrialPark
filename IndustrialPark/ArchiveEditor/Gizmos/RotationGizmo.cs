@@ -5,20 +5,19 @@ namespace IndustrialPark
 {
     public class RotationGizmo(GizmoType type) : GizmoBase(type)
     {
-        public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
+        public void SetPosition(Vector3 Position, float distance, Matrix Rotation)
         {
+            transformMatrix = Matrix.Scaling(distance / 4f, distance / 12f, distance / 4f);
             switch (Type)
             {
-                case GizmoType.Yaw:
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Rotation * Matrix.Translation(Position);
-                    break;
                 case GizmoType.Pitch:
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationZ(MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
+                    transformMatrix *= Matrix.RotationZ(MathUtil.PiOverTwo);
                     break;
                 case GizmoType.Roll:
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationX(MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
+                    transformMatrix *= Matrix.RotationX(MathUtil.PiOverTwo);
                     break;
             }
+            transformMatrix *= Rotation * Matrix.Translation(Position);
 
             ResetBounds(Rotation);
         }

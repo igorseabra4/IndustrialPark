@@ -4,23 +4,30 @@ namespace IndustrialPark
 {
     public class PositionGizmo(GizmoType type) : GizmoBase(type)
     {
-        public void SetPosition(Vector3 Position, float Radius, Matrix Rotation)
+        public void SetPosition(Vector3 Position, float distance, Matrix Rotation)
         {
+            distance /= 5f;
+
+            lineTransformMatrix = Matrix.Scaling(distance);
+            transformMatrix = Matrix.Scaling(distance / 2f);
+
             switch (Type)
             {
                 case GizmoType.X:
-                    lineTransformMatrix = Matrix.Scaling(Radius) * Matrix.RotationY(MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationY(MathUtil.PiOverTwo) * Matrix.Translation(Radius, 0f, 0f) * Rotation * Matrix.Translation(Position);
+                    lineTransformMatrix *= Matrix.RotationY(MathUtil.PiOverTwo);
+                    transformMatrix *= Matrix.RotationY(MathUtil.PiOverTwo) * Matrix.Translation(distance, 0f, 0f);
                     break;
                 case GizmoType.Y:
-                    lineTransformMatrix = Matrix.Scaling(Radius) * Matrix.RotationX(-MathUtil.PiOverTwo) * Rotation * Matrix.Translation(Position);
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0f, Radius, 0f) * Rotation * Matrix.Translation(Position);
+                    lineTransformMatrix *= Matrix.RotationX(-MathUtil.PiOverTwo);
+                    transformMatrix *= Matrix.RotationX(-MathUtil.PiOverTwo) * Matrix.Translation(0f, distance, 0f);
                     break;
                 case GizmoType.Z:
-                    lineTransformMatrix = Matrix.Scaling(Radius) * Rotation * Matrix.Translation(Position);
-                    transformMatrix = Matrix.Scaling(Radius / 2f) * Matrix.Translation(0f, 0f, Radius) * Rotation * Matrix.Translation(Position);
+                    transformMatrix *= Matrix.Translation(0f, 0f, distance);
                     break;
             }
+
+            lineTransformMatrix *= Rotation * Matrix.Translation(Position);
+            transformMatrix *= Rotation * Matrix.Translation(Position);
 
             ResetBounds(Rotation);
         }

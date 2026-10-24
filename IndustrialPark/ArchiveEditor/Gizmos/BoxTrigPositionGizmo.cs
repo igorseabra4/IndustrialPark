@@ -7,46 +7,43 @@ public class BoxTrigPositionGizmo(GizmoType type) : GizmoBase(type)
 {
     protected override bool drawLine => false;
 
-    public void SetPosition(Vector3 Position, Vector3 Size, float Radius, Matrix Rotation)
+    public void SetPosition(Vector3 Position, Vector3 Size, float distance, Matrix Rotation)
     {
+        distance /= 5f;
+        transformMatrix = Matrix.Scaling(distance / 2f);
         switch (Type)
         {
             case GizmoType.X:
-                transformMatrix = Matrix.Scaling(Radius / 2f) *
+                transformMatrix *=
                     Matrix.RotationY(MathUtil.PiOverTwo) *
-                    Matrix.Translation(new Vector3(Radius + Math.Abs(Size.X), 0f, 0f)) *
-                    Rotation * Matrix.Translation(Position);
+                    Matrix.Translation(distance + Math.Abs(Size.X), 0f, 0f);
                 break;
             case GizmoType.Y:
-                transformMatrix = Matrix.Scaling(Radius / 2f) *
+                transformMatrix *=
                     Matrix.RotationX(-MathUtil.PiOverTwo) *
-                    Matrix.Translation(new Vector3(0f, Radius + Math.Abs(Size.Y), 0f)) *
-                    Rotation * Matrix.Translation(Position);
+                    Matrix.Translation(0f, distance + Math.Abs(Size.Y), 0f);
                 break;
             case GizmoType.Z:
-                transformMatrix = Matrix.Scaling(Radius / 2f) *
-                    Matrix.Translation(new Vector3(0f, 0f, Radius + Math.Abs(Size.Z))) *
-                    Rotation * Matrix.Translation(Position);
+                transformMatrix *=
+                    Matrix.Translation(0f, 0f, distance + Math.Abs(Size.Z));
                 break;
             case GizmoType.MinX:
-                transformMatrix = Matrix.Scaling(Radius / 2f) *
+                transformMatrix *=
                     Matrix.RotationY(-MathUtil.PiOverTwo) *
-                    Matrix.Translation(new Vector3(-Radius - Math.Abs(Size.X), 0f, 0f)) *
-                    Rotation * Matrix.Translation(Position);
+                    Matrix.Translation(-distance - Math.Abs(Size.X), 0f, 0f);
                 break;
             case GizmoType.MinY:
-                transformMatrix = Matrix.Scaling(Radius / 2f) *
+                transformMatrix *=
                     Matrix.RotationX(MathUtil.PiOverTwo) *
-                    Matrix.Translation(new Vector3(0f, -Radius - Math.Abs(Size.Y), 0f)) *
-                    Rotation * Matrix.Translation(Position);
+                    Matrix.Translation(0f, -distance - Math.Abs(Size.Y), 0f);
                 break;
             case GizmoType.MinZ:
-                transformMatrix = Matrix.Scaling(Radius / 2f) *
+                transformMatrix *=
                     Matrix.RotationX(MathUtil.Pi) *
-                    Matrix.Translation(new Vector3(0f, 0f, -Radius - Math.Abs(Size.Z))) *
-                    Rotation * Matrix.Translation(Position);
+                    Matrix.Translation(0f, 0f, -distance - Math.Abs(Size.Z));
                 break;
         }
+        transformMatrix *= Rotation * Matrix.Translation(Position);
 
         ResetBounds(Rotation);
     }

@@ -110,7 +110,7 @@ namespace IndustrialPark
                         boundingBox = BoundingBox.Merge(boundingBox, asset.GetBoundingBox());
                     var gizmoPosition = clickableAssets.Count > 1 ? boundingBox.Center :
                         new Vector3(clickableAssets[0].PositionX, clickableAssets[0].PositionY, clickableAssets[0].PositionZ);
-                    float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition) / 5f;
+                    float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition);
 
                     foreach (PositionGizmo gizmo in positionGizmos)
                         gizmo.SetPosition(gizmoPosition, distance, Matrix.Identity);
@@ -142,7 +142,7 @@ namespace IndustrialPark
                         gizmoPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
                     }
 
-                    float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition) / 2f;
+                    float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition);
 
                     for (int i = rotationGizmos.Length - 1; i >= 0; i--)
                     {
@@ -189,7 +189,7 @@ namespace IndustrialPark
                     if (primaryAsset != null || boxVolumes.Count > 0)
                     {
                         var gizmoPosition = TriggerGizmo ? bbox.Center : new Vector3(primaryAsset.PositionX, primaryAsset.PositionY, primaryAsset.PositionZ);
-                        float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition) / 5f;
+                        float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition);
                         foreach (ScaleGizmo gizmo in scaleGizmos)
                             gizmo.SetPosition(gizmoPosition, distance, gizmoRotation);
                         foreach (ScaleGizmo gizmo in scaleGizmos.OrderByDescending(g => g.GetDistance(renderer.Camera.Position)))
@@ -236,7 +236,7 @@ namespace IndustrialPark
                     {
                         Vector3 halfExtents = new Vector3(volume.MaximumX - volume.MinimumX, volume.MaximumY - volume.MinimumY, volume.MaximumZ - volume.MinimumZ) / 2f;
                         Vector3 center = volume.GetBoundingBox().Center;
-                        float distance = Vector3.Distance(renderer.Camera.Position, center) / 5f;
+                        float distance = Vector3.Distance(renderer.Camera.Position, center);
 
                         foreach (BoxTrigPositionGizmo gizmo in triggerPositionGizmos)
                             gizmo.SetPosition(center, halfExtents, distance, gizmoRotation);
@@ -246,7 +246,7 @@ namespace IndustrialPark
                     else
                     {
                         var gizmoPosition = new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ);
-                        float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition) / 5f;
+                        float distance = Vector3.Distance(renderer.Camera.Position, gizmoPosition);
 
                         foreach (PositionGizmo gizmo in positionGizmos)
                             gizmo.SetPosition(gizmoPosition, distance, gizmoRotation);
