@@ -16,9 +16,9 @@ namespace IndustrialPark
         ScaleZ,
         ScaleAll,
 
-        TrigX1,
-        TrigY1,
-        TrigZ1
+        MinX,
+        MinY,
+        MinZ,
     }
 
     public enum GizmoMode
@@ -67,29 +67,42 @@ namespace IndustrialPark
                 case GizmoType.ScaleAll:
                     renderData.Color = new Vector4(0.6f, 0.5f, 0.5f, 0.4f);
                     break;
-                case GizmoType.TrigX1:
+                case GizmoType.MinX:
                     renderData.Color = new Vector4(0f, 1f, 1f, 0.4f);
                     break;
-                case GizmoType.TrigY1:
+                case GizmoType.MinY:
                     renderData.Color = new Vector4(1f, 0f, 1f, 0.4f);
                     break;
-                case GizmoType.TrigZ1:
+                case GizmoType.MinZ:
                     renderData.Color = new Vector4(1f, 1f, 0f, 0.4f);
                     break;
             }
             isSelected = false;
         }
 
-        protected Vector3 position;
+        public Vector3 AxisVector => Type switch
+        {
+            GizmoType.X or GizmoType.MinX or GizmoType.ScaleX or GizmoType.Pitch => Vector3.UnitX,
+            GizmoType.Y or GizmoType.MinY or GizmoType.ScaleY or GizmoType.Yaw => Vector3.UnitY,
+            GizmoType.Z or GizmoType.MinZ or GizmoType.ScaleZ or GizmoType.Roll => Vector3.UnitZ,
+            _ => throw new System.ArgumentException(),
+        };
+
+        public Vector3 Position { get; protected set; }
+
+        public Matrix Rotation { get; protected set; }
+
         protected Vector3[] vertices;
+
         public BoundingBox boundingBox;
 
-        protected void ResetBounds()
+        protected void ResetBounds(Matrix rotation)
         {
             for (int i = 0; i < vertexList.Count; i++)
                 vertices[i] = Vector3.TransformCoordinate(vertexList[i], transformMatrix);
             boundingBox = BoundingBox.FromPoints(vertices);
-            position = Vector3.TransformCoordinate(Vector3.Zero, transformMatrix);
+            Position = Vector3.TransformCoordinate(Vector3.Zero, transformMatrix);
+            Rotation = rotation;
         }
 
         public virtual SharpMesh Mesh => UseCones ? SharpRenderer.Cone : SharpRenderer.Pyramid;
@@ -136,9 +149,6 @@ namespace IndustrialPark
             return smallestDistance;
         }
 
-        public float GetDistance(Vector3 position)
-        {
-            return Vector3.Distance(this.position, position);
-        }
+        public float GetDistance(Vector3 other) => Vector3.Distance(Position, other);
     }
 }

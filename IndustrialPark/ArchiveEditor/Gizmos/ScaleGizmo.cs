@@ -34,7 +34,7 @@ namespace IndustrialPark
                     break;
             }
 
-            ResetBounds();
+            ResetBounds(Rotation);
         }
 
         public override SharpMesh Mesh => SharpRenderer.Cube;

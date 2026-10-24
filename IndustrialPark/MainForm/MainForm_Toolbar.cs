@@ -34,7 +34,7 @@ namespace IndustrialPark
 
             UpdateToolbarUndoButtons();
             UpdateToolbarArchives();
-            UpdateToolbarGizmoButtons(ArchiveEditorFunctions.CurrentGizmoMode);
+            UpdateToolbarGizmoButtons(gizmoManager.CurrentGizmoMode);
             UpdateToolbarVisibilityButtons();
             toolStripButtonWireframe.Checked = wireframeFToolStripMenuItem.Checked;
 

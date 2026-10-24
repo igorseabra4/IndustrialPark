@@ -42,7 +42,6 @@ namespace IndustrialPark
             ResetColors();
             SetSharpShader();
             LoadTexture();
-            ArchiveEditorFunctions.SetUpGizmos();
         }
 
         public SharpRenderer()
@@ -749,7 +748,7 @@ namespace IndustrialPark
             device.SetBlendStateAlphaBlend();
             device.UpdateAllStates();
 
-            ArchiveEditorFunctions.RenderGizmos(this);
+            Program.MainForm.gizmoManager.RenderGizmos(this);
 
             device.Present();
         }

@@ -22,7 +22,7 @@ namespace IndustrialPark
                     break;
             }
 
-            ResetBounds();
+            ResetBounds(Rotation);
         }
     }
 }

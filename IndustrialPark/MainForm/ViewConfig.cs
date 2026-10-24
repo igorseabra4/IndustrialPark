@@ -124,7 +124,7 @@ namespace IndustrialPark
         private void numericGrid_ValueChanged(object sender, EventArgs e)
         {
             if (!ProgramIsUpdatingValues)
-                ArchiveEditorFunctions.Grid = new Vector3((float)numericGridX.Value, (float)numericGridY.Value, (float)numericGridZ.Value);
+                Program.MainForm.gizmoManager.Grid = new Vector3((float)numericGridX.Value, (float)numericGridY.Value, (float)numericGridZ.Value);
         }
 
         private void ViewConfig_VisibleChanged(object sender, EventArgs e)
@@ -168,9 +168,9 @@ namespace IndustrialPark
             NumericCameraPitch.Value = (decimal)Program.MainForm.renderer.Camera.Pitch;
             NumericCameraRoll.Value = (decimal)Program.MainForm.renderer.Camera.Roll;
 
-            numericGridX.Value = (decimal)ArchiveEditorFunctions.Grid.X;
-            numericGridY.Value = (decimal)ArchiveEditorFunctions.Grid.Y;
-            numericGridZ.Value = (decimal)ArchiveEditorFunctions.Grid.Z;
+            numericGridX.Value = (decimal)Program.MainForm.gizmoManager.Grid.X;
+            numericGridY.Value = (decimal)Program.MainForm.gizmoManager.Grid.Y;
+            numericGridZ.Value = (decimal)Program.MainForm.gizmoManager.Grid.Z;
 
             ProgramIsUpdatingValues = false;
             _invalidCameraValues = false;

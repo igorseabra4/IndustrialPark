@@ -44,6 +44,8 @@ namespace IndustrialPark
 
             renderer = new SharpRenderer(renderPanel);
 
+            gizmoManager = new GizmoManager(() => archiveEditors.SelectMany(ae => ae.archive.CurrentlySelectedAssets));
+
             SetupToolbar();
         }
 
@@ -198,7 +200,7 @@ namespace IndustrialPark
             ArchiveEditor.AlwaysListAllAssets = settings.AlwaysListAllAssets;
             listAllAssetsToolStripMenuItem.Checked = settings.AlwaysListAllAssets;
 
-            ArchiveEditorFunctions.RotationGizmoLocalAxis = settings.RotationGizmoLocalAxis;
+            gizmoManager.RotationGizmoLocalAxis = settings.RotationGizmoLocalAxis;
             rotationGizmoLocalAxisToolStripMenuItem.Checked = settings.RotationGizmoLocalAxis;
 
             enableAssetToolButtonsToolStripMenuItem.Checked = settings.EnableAssetToolButtons;
@@ -312,7 +314,7 @@ namespace IndustrialPark
                 showEditorsWhenLoadingProject = showEditorsWhenLoadingProjectToolStripMenuItem.Checked,
                 ColorMode = SystemColorMode,
                 AlwaysListAllAssets = ArchiveEditor.AlwaysListAllAssets,
-                RotationGizmoLocalAxis = ArchiveEditorFunctions.RotationGizmoLocalAxis,
+                RotationGizmoLocalAxis = gizmoManager.RotationGizmoLocalAxis,
                 EnableAssetToolButtons = InternalEditor.EnableAssetToolButtons,
                 AutoDockArchiveEditor = AutoDockArchiveEditors,
                 AutoDockAssetEditors = ArchiveEditorFunctions.AutoDockAssetEditors,
@@ -506,7 +508,7 @@ namespace IndustrialPark
                 Colors = renderer.colors,
                 hiddenAssets = hiddenAssets,
                 isDrawingUI = renderer.isDrawingUI,
-                Grid = ArchiveEditorFunctions.Grid,
+                Grid = gizmoManager.Grid,
                 dontRender = dontRender,
             };
         }
@@ -556,7 +558,7 @@ namespace IndustrialPark
             renderer.Camera.Pitch = project.Pitch;
             renderer.Camera.FieldOfView = project.FieldOfView;
             renderer.Camera.FarPlane = project.FarPlane;
-            ArchiveEditorFunctions.Grid = project.Grid;
+            gizmoManager.Grid = project.Grid;
 
             SharpRenderer.backgroundColor = project.BackgroundColor;
 
@@ -683,7 +685,7 @@ namespace IndustrialPark
                     renderer.Camera.AddPositionForward(e.Delta * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
             }
 
-            ArchiveEditorFunctions.MouseMoveGizmos(renderer.viewProjection, e.X - oldMousePosition.X, e.Y - oldMousePosition.Y, PressedKeys.Contains(Keys.T));
+            gizmoManager.MouseMoveGizmos(renderer.viewProjection, e.X - oldMousePosition.X, e.Y - oldMousePosition.Y, PressedKeys.Contains(Keys.T));
 
             oldMousePosition = e;
         }
@@ -866,7 +868,7 @@ namespace IndustrialPark
 
         public void KeyboardController()
         {
-            ArchiveEditorFunctions.SkipGizmos = PressedKeys.Contains(Keys.ShiftKey) || PressedKeys.Contains(Keys.ControlKey);
+            gizmoManager.SkipGizmos = PressedKeys.Contains(Keys.ShiftKey) || PressedKeys.Contains(Keys.ControlKey);
 
             if (!renderPanel.Focused || renderer.isDrawingUI)
                 return;
@@ -908,7 +910,9 @@ namespace IndustrialPark
                 90 - pitchPadding);
         }
 
-        public List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
+        public readonly GizmoManager gizmoManager;
+
+        public readonly List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
 
         private ArchiveEditor GetTargetArchiveEditor() => archiveEditors.FirstOrDefault(ae => ae.Targeted);
 
@@ -1107,10 +1111,10 @@ namespace IndustrialPark
         }
 
         private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
-                renderPanel.ClientRectangle.X,
-                renderPanel.ClientRectangle.Y,
-                renderPanel.ClientRectangle.Width,
-                renderPanel.ClientRectangle.Height);
+            renderPanel.ClientRectangle.X,
+            renderPanel.ClientRectangle.Y,
+            renderPanel.ClientRectangle.Width,
+            renderPanel.ClientRectangle.Height);
 
         private void renderPanel_MouseClick(object sender, MouseEventArgs e)
         {
@@ -1141,7 +1145,7 @@ namespace IndustrialPark
 
         public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
         {
-            if (ArchiveEditorFunctions.IsMovingGizmo)
+            if (gizmoManager.IsMovingGizmo)
                 return;
 
             bool addToSelection = PressedKeys.Contains(Keys.ShiftKey);
@@ -1152,7 +1156,7 @@ namespace IndustrialPark
             if (isMouseDown)
             {
                 if (!addToSelection && !toggleSelection)
-                    ArchiveEditorFunctions.ScreenClickedGizmos(ray);
+                    gizmoManager.TrySelectGizmo(ray);
             }
             else
             {
@@ -1193,7 +1197,7 @@ namespace IndustrialPark
 
         public void ScreenUnclicked()
         {
-            ArchiveEditorFunctions.ScreenUnclicked();
+            gizmoManager.FinishGizmoMovement();
         }
 
         public void SetSelectedIndices(List<uint> assetIDs)
@@ -1740,15 +1744,15 @@ namespace IndustrialPark
 
         private void SetGizmoMode(GizmoMode mode)
         {
-            ArchiveEditorFunctions.SetGizmoMode(mode);
-            var newMode = ArchiveEditorFunctions.CurrentGizmoMode;
+            gizmoManager.CurrentGizmoMode = mode;
+            mode = gizmoManager.CurrentGizmoMode;
 
-            positionToolStripMenuItem.Checked = newMode == GizmoMode.Position;
-            rotationToolStripMenuItem.Checked = newMode == GizmoMode.Rotation;
-            scaleToolStripMenuItem.Checked = newMode == GizmoMode.Scale;
-            positionLocalToolStripMenuItem.Checked = newMode == GizmoMode.PositionLocal;
-            noneToolStripMenuItem.Checked = newMode == GizmoMode.None;
-            UpdateToolbarGizmoButtons(newMode);
+            positionToolStripMenuItem.Checked = mode == GizmoMode.Position;
+            rotationToolStripMenuItem.Checked = mode == GizmoMode.Rotation;
+            scaleToolStripMenuItem.Checked = mode == GizmoMode.Scale;
+            positionLocalToolStripMenuItem.Checked = mode == GizmoMode.PositionLocal;
+            noneToolStripMenuItem.Checked = mode == GizmoMode.None;
+            UpdateToolbarGizmoButtons(mode);
         }
 
         private void positionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2208,7 +2212,7 @@ namespace IndustrialPark
         private void rotationGizmoOnSingleAxisToolStripMenuItem_Click(object sender, EventArgs e)
         {
             rotationGizmoLocalAxisToolStripMenuItem.Checked = !rotationGizmoLocalAxisToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
+            gizmoManager.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
         }
 
         private void enableAssetToolButtonsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -2369,7 +2373,9 @@ namespace IndustrialPark
                 }
                 else
                 {
-                    archiveEditor.archive.PasteAssetsFromClipboard(archiveEditor.SelectedLayerIndex);
+                    (bool success, var finalIndices, _) = archiveEditor.archive.PasteAssetsFromClipboard(archiveEditor.SelectedLayerIndex);
+                    if (success)
+                        archiveEditor.SetSelectedIndices(finalIndices);
                 }
             }
             else

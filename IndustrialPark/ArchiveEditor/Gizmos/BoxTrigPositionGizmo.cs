@@ -28,19 +28,19 @@ public class BoxTrigPositionGizmo(GizmoType type) : GizmoBase(type)
                     Matrix.Translation(new Vector3(0f, 0f, Radius + Math.Abs(Size.Z))) *
                     Rotation * Matrix.Translation(Position);
                 break;
-            case GizmoType.TrigX1:
+            case GizmoType.MinX:
                 transformMatrix = Matrix.Scaling(Radius / 2f) *
                     Matrix.RotationY(-MathUtil.PiOverTwo) *
                     Matrix.Translation(new Vector3(-Radius - Math.Abs(Size.X), 0f, 0f)) *
                     Rotation * Matrix.Translation(Position);
                 break;
-            case GizmoType.TrigY1:
+            case GizmoType.MinY:
                 transformMatrix = Matrix.Scaling(Radius / 2f) *
                     Matrix.RotationX(MathUtil.PiOverTwo) *
                     Matrix.Translation(new Vector3(0f, -Radius - Math.Abs(Size.Y), 0f)) *
                     Rotation * Matrix.Translation(Position);
                 break;
-            case GizmoType.TrigZ1:
+            case GizmoType.MinZ:
                 transformMatrix = Matrix.Scaling(Radius / 2f) *
                     Matrix.RotationX(MathUtil.Pi) *
                     Matrix.Translation(new Vector3(0f, 0f, -Radius - Math.Abs(Size.Z))) *
@@ -48,6 +48,6 @@ public class BoxTrigPositionGizmo(GizmoType type) : GizmoBase(type)
                 break;
         }
 
-        ResetBounds();
+        ResetBounds(Rotation);
     }
 }
