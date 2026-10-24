@@ -41,7 +41,20 @@
             buttonHelp = new System.Windows.Forms.Button();
             toolTip1 = new System.Windows.Forms.ToolTip(components);
             propertyGridItem = new System.Windows.Forms.PropertyGrid();
+            textBoxSearch = new System.Windows.Forms.TextBox();
             SuspendLayout();
+            //
+            // textBoxSearch
+            //
+            textBoxSearch.Location = new System.Drawing.Point(12, 12);
+            textBoxSearch.Name = "textBoxSearch";
+            textBoxSearch.PlaceholderText = "Search...";
+            textBoxSearch.Size = new System.Drawing.Size(187, 20);
+            textBoxSearch.TabIndex = 0;
+            textBoxSearch.Visible = false;
+            textBoxSearch.TextChanged += textBoxSearch_TextChanged;
+            textBoxSearch.Enter += textBoxSearch_Enter;
+            textBoxSearch.Leave += textBoxSearch_Leave;
             // 
             // listBoxItems
             // 
@@ -173,6 +186,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(624, 396);
+            Controls.Add(textBoxSearch);
             Controls.Add(listBoxItems);
             Controls.Add(propertyGridItem);
             Controls.Add(buttonHelp);
@@ -192,6 +206,7 @@
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Collection Editor";
             ResumeLayout(false);
+            PerformLayout();
 
         }
 
@@ -208,5 +223,6 @@
         private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.PropertyGrid propertyGridItem;
+        private System.Windows.Forms.TextBox textBoxSearch;
     }
 }
