@@ -210,7 +210,7 @@ namespace IndustrialPark
             autoDockAssetEditorsToolStripMenuItem.Checked = settings.AutoDockAssetEditors;
             ArchiveEditorFunctions.AutoDockAssetEditors = settings.AutoDockAssetEditors;
 
-            autoDockSelectedAssetEditorsToolStripMenuItem.Checked = settings.AutoDockSelectedAssetEditors;
+            openDockedEditorOnSelectionToolStripMenuItem.Checked = settings.AutoDockSelectedAssetEditors;
             ArchiveEditorFunctions.AutoDockSelectedAssetEditors = settings.AutoDockSelectedAssetEditors;
 
             gizmoConesToolStripMenuItem.Checked = settings.GizmoCones;
@@ -2253,10 +2253,10 @@ namespace IndustrialPark
             ArchiveEditorFunctions.AutoDockAssetEditors = autoDockAssetEditorsToolStripMenuItem.Checked;
         }
 
-        private void autoDockSelectedAssetEditorsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void openDockedEditorOnSelectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            autoDockSelectedAssetEditorsToolStripMenuItem.Checked = !autoDockSelectedAssetEditorsToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.AutoDockSelectedAssetEditors = autoDockSelectedAssetEditorsToolStripMenuItem.Checked;
+            openDockedEditorOnSelectionToolStripMenuItem.Checked = !openDockedEditorOnSelectionToolStripMenuItem.Checked;
+            ArchiveEditorFunctions.AutoDockSelectedAssetEditors = openDockedEditorOnSelectionToolStripMenuItem.Checked;
         }
 
         private void gizmoConeToolStripMenuItem_Click(object sender, EventArgs e)
