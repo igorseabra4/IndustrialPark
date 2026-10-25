@@ -43,6 +43,7 @@ namespace IndustrialPark
         public int dockLeftSize = -1;
         public int dockRightSize = -1;
 
+        public string DolphinPath;
         public string pcsx2Path;
         public string[] recentBuildIsoGamePaths;
         public int flyModeCursor = 1;
