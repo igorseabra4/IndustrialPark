@@ -120,6 +120,21 @@
   <metadata name="menuStrip1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>17, 17</value>
   </metadata>
+  <data name="runGameF5ToolStripMenuItem.ToolTipText" xml:space="preserve">
+    <value>Attempts to launch the game using the currently selected level as the BOOT parameter. The launch method depends on your configuration:
+
+* Heavy Mod Manager is running: Sends a request to Heavy Mod Manager to launch the game.
+Heavy Mod Manager enables Developer Mode, activates the mod, applies the active mods, sets the BOOT level, and launches the game in Dolphin.
+This option is used when editing files belonging to a Heavy Mod Manager mod. Your mod's BOOT level is not modified permanently.
+
+* Dolphin path is configured: Updates the game's INI file to set the BOOT parameter to the selected level, then launches Dolphin.
+Configure the Dolphin path in the Tools menu. This option is used when working with extracted game files.
+
+* Neither of the above applies: Checks whether Windows has a file association for .dol files. If one exists, updates the game's INI file
+with the selected level as the boot parameter and opens the .dol file using its associated application (preferably Dolphin).
+
+* No applicable launch method is available: Does nothing.</value>
+  </data>
   <data name="replaceAssetsOnPasteToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>If enabled, pasted assets will replace existing assets with the same IDs.
 If disabled, pasted assets will be assigned new names and IDs.

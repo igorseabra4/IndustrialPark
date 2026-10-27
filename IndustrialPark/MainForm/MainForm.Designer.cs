@@ -127,9 +127,9 @@ namespace IndustrialPark
             saveAllOpenHIPsToolStripMenuItem = new ToolStripMenuItem();
             runGameF5ToolStripMenuItem = new ToolStripMenuItem();
             buildAndRunPS2ISOToolStripMenuItem = new ToolStripMenuItem();
+            createGameCubeBannerToolStripMenuItem = new ToolStripMenuItem();
             stopSoundToolStripMenuItem = new ToolStripMenuItem();
             exportSceneToolStripMenuItem = new ToolStripMenuItem();
-            createGameCubeBannerToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator8 = new ToolStripSeparator();
             checkForUpdatesNowToolStripMenuItem = new ToolStripMenuItem();
             downloadIndustrialParkEditorFilesToolStripMenuItem = new ToolStripMenuItem();
@@ -137,6 +137,7 @@ namespace IndustrialPark
             downloadVgmstreamToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
             ensureAssociationsToolStripMenuItem = new ToolStripMenuItem();
+            setDolphinPathToolStripMenuItem = new ToolStripMenuItem();
             researchToolStripMenuItem = new ToolStripMenuItem();
             viewUndoBufferToolStripMenuItem = new ToolStripMenuItem();
             assetIDGeneratorToolStripMenuItem = new ToolStripMenuItem();
@@ -152,11 +153,11 @@ namespace IndustrialPark
             statusStrip1 = new StatusStrip();
             toolStripStatusLabelMain = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
-            toolStripStatusLabelProject = new ToolStripStatusLabel();
+            toolStripStatusLabelNumSelected = new ToolStripStatusLabel();
             toolStripStatusLabel3 = new ToolStripStatusLabel();
             toolStripStatusLabelTemplate = new ToolStripStatusLabel();
             toolStripStatusLabel4 = new ToolStripStatusLabel();
-            toolStripStatusLabelNumSelected = new ToolStripStatusLabel();
+            toolStripStatusLabelProject = new ToolStripStatusLabel();
             renderPanel = new Panel();
             toolStripMain = new ToolStrip();
             toolStripButtonUndo = new ToolStripButton();
@@ -218,8 +219,8 @@ namespace IndustrialPark
             menuStrip1.LayoutStyle = ToolStripLayoutStyle.Flow;
             menuStrip1.Location = new System.Drawing.Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Padding = new Padding(4, 1, 0, 1);
-            menuStrip1.Size = new System.Drawing.Size(1264, 21);
+            menuStrip1.Padding = new Padding(5, 1, 0, 1);
+            menuStrip1.Size = new System.Drawing.Size(1685, 26);
             menuStrip1.TabIndex = 0;
             menuStrip1.Text = "menuStrip1";
             // 
@@ -227,7 +228,7 @@ namespace IndustrialPark
             // 
             archiveEditorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem, importLevelToolStripMenuItem, openLastToolStripMenuItem, closeAllEditorsToolStripMenuItem, toolStripSeparator3 });
             archiveEditorToolStripMenuItem.Name = "archiveEditorToolStripMenuItem";
-            archiveEditorToolStripMenuItem.Size = new System.Drawing.Size(93, 19);
+            archiveEditorToolStripMenuItem.Size = new System.Drawing.Size(116, 24);
             archiveEditorToolStripMenuItem.Text = "&Archive Editor";
             archiveEditorToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
@@ -235,7 +236,7 @@ namespace IndustrialPark
             // 
             newToolStripMenuItem.Name = "newToolStripMenuItem";
             newToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.N;
-            newToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            newToolStripMenuItem.Size = new System.Drawing.Size(228, 26);
             newToolStripMenuItem.Text = "&New Editor";
             newToolStripMenuItem.Click += newToolStripMenuItem_Click;
             // 
@@ -243,41 +244,41 @@ namespace IndustrialPark
             // 
             importLevelToolStripMenuItem.Name = "importLevelToolStripMenuItem";
             importLevelToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.O;
-            importLevelToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            importLevelToolStripMenuItem.Size = new System.Drawing.Size(228, 26);
             importLevelToolStripMenuItem.Text = "&Open Level...";
             importLevelToolStripMenuItem.Click += openLevelToolStripMenuItem_Click;
             // 
             // openLastToolStripMenuItem
             // 
             openLastToolStripMenuItem.Name = "openLastToolStripMenuItem";
-            openLastToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            openLastToolStripMenuItem.Size = new System.Drawing.Size(228, 26);
             openLastToolStripMenuItem.Text = "Recent Archives";
             // 
             // closeAllEditorsToolStripMenuItem
             // 
             closeAllEditorsToolStripMenuItem.Enabled = false;
             closeAllEditorsToolStripMenuItem.Name = "closeAllEditorsToolStripMenuItem";
-            closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
+            closeAllEditorsToolStripMenuItem.Size = new System.Drawing.Size(228, 26);
             closeAllEditorsToolStripMenuItem.Text = "&Close All Editors";
             closeAllEditorsToolStripMenuItem.Click += closeAllEditorsToolStripMenuItem_Click;
             // 
             // toolStripSeparator3
             // 
             toolStripSeparator3.Name = "toolStripSeparator3";
-            toolStripSeparator3.Size = new System.Drawing.Size(182, 6);
+            toolStripSeparator3.Size = new System.Drawing.Size(225, 6);
             // 
             // projectToolStripMenuItem
             // 
             projectToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { newToolStripMenuItem1, openToolStripMenuItem, saveToolStripMenuItem, saveAsToolStripMenuItem, toolStripSeparator5, autoSaveOnClosingToolStripMenuItem, autoLoadOnStartupToolStripMenuItem, showEditorsWhenLoadingProjectToolStripMenuItem });
             projectToolStripMenuItem.Name = "projectToolStripMenuItem";
-            projectToolStripMenuItem.Size = new System.Drawing.Size(56, 19);
+            projectToolStripMenuItem.Size = new System.Drawing.Size(69, 24);
             projectToolStripMenuItem.Text = "&Project";
             projectToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
             // newToolStripMenuItem1
             // 
             newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            newToolStripMenuItem1.Size = new System.Drawing.Size(262, 22);
+            newToolStripMenuItem1.Size = new System.Drawing.Size(328, 26);
             newToolStripMenuItem1.Text = "&New";
             newToolStripMenuItem1.ToolTipText = "Closes all open editors and resets the current project.";
             newToolStripMenuItem1.Click += newToolStripMenuItem1_Click;
@@ -285,35 +286,35 @@ namespace IndustrialPark
             // openToolStripMenuItem
             // 
             openToolStripMenuItem.Name = "openToolStripMenuItem";
-            openToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            openToolStripMenuItem.Size = new System.Drawing.Size(328, 26);
             openToolStripMenuItem.Text = "&Open";
             openToolStripMenuItem.Click += openToolStripMenuItem_Click;
             // 
             // saveToolStripMenuItem
             // 
             saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            saveToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            saveToolStripMenuItem.Size = new System.Drawing.Size(328, 26);
             saveToolStripMenuItem.Text = "&Save";
             saveToolStripMenuItem.Click += saveToolStripMenuItem_Click;
             // 
             // saveAsToolStripMenuItem
             // 
             saveAsToolStripMenuItem.Name = "saveAsToolStripMenuItem";
-            saveAsToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            saveAsToolStripMenuItem.Size = new System.Drawing.Size(328, 26);
             saveAsToolStripMenuItem.Text = "Save &As...";
             saveAsToolStripMenuItem.Click += saveAsToolStripMenuItem_Click;
             // 
             // toolStripSeparator5
             // 
             toolStripSeparator5.Name = "toolStripSeparator5";
-            toolStripSeparator5.Size = new System.Drawing.Size(259, 6);
+            toolStripSeparator5.Size = new System.Drawing.Size(325, 6);
             // 
             // autoSaveOnClosingToolStripMenuItem
             // 
             autoSaveOnClosingToolStripMenuItem.Checked = true;
             autoSaveOnClosingToolStripMenuItem.CheckState = CheckState.Checked;
             autoSaveOnClosingToolStripMenuItem.Name = "autoSaveOnClosingToolStripMenuItem";
-            autoSaveOnClosingToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            autoSaveOnClosingToolStripMenuItem.Size = new System.Drawing.Size(328, 26);
             autoSaveOnClosingToolStripMenuItem.Text = "Auto-Save On Closing";
             autoSaveOnClosingToolStripMenuItem.Click += autoSaveOnClosingToolStripMenuItem_Click;
             // 
@@ -322,7 +323,7 @@ namespace IndustrialPark
             autoLoadOnStartupToolStripMenuItem.Checked = true;
             autoLoadOnStartupToolStripMenuItem.CheckState = CheckState.Checked;
             autoLoadOnStartupToolStripMenuItem.Name = "autoLoadOnStartupToolStripMenuItem";
-            autoLoadOnStartupToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            autoLoadOnStartupToolStripMenuItem.Size = new System.Drawing.Size(328, 26);
             autoLoadOnStartupToolStripMenuItem.Text = "Auto-Load On Startup";
             autoLoadOnStartupToolStripMenuItem.Click += autoLoadOnStartupToolStripMenuItem_Click;
             // 
@@ -331,7 +332,7 @@ namespace IndustrialPark
             showEditorsWhenLoadingProjectToolStripMenuItem.Checked = true;
             showEditorsWhenLoadingProjectToolStripMenuItem.CheckState = CheckState.Checked;
             showEditorsWhenLoadingProjectToolStripMenuItem.Name = "showEditorsWhenLoadingProjectToolStripMenuItem";
-            showEditorsWhenLoadingProjectToolStripMenuItem.Size = new System.Drawing.Size(262, 22);
+            showEditorsWhenLoadingProjectToolStripMenuItem.Size = new System.Drawing.Size(328, 26);
             showEditorsWhenLoadingProjectToolStripMenuItem.Text = "Show Editors When Loading Project";
             showEditorsWhenLoadingProjectToolStripMenuItem.Click += showEditorsWhenLoadingProjectToolStripMenuItem_Click;
             // 
@@ -339,14 +340,14 @@ namespace IndustrialPark
             // 
             editToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { undoToolStripMenuItem, redoToolStripMenuItem });
             editToolStripMenuItem.Name = "editToolStripMenuItem";
-            editToolStripMenuItem.Size = new System.Drawing.Size(39, 19);
+            editToolStripMenuItem.Size = new System.Drawing.Size(49, 24);
             editToolStripMenuItem.Text = "&Edit";
             // 
             // undoToolStripMenuItem
             // 
             undoToolStripMenuItem.Name = "undoToolStripMenuItem";
             undoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Z;
-            undoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            undoToolStripMenuItem.Size = new System.Drawing.Size(179, 26);
             undoToolStripMenuItem.Text = "Undo";
             undoToolStripMenuItem.Click += undoToolStripMenuItem_Click;
             // 
@@ -354,7 +355,7 @@ namespace IndustrialPark
             // 
             redoToolStripMenuItem.Name = "redoToolStripMenuItem";
             redoToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Y;
-            redoToolStripMenuItem.Size = new System.Drawing.Size(144, 22);
+            redoToolStripMenuItem.Size = new System.Drawing.Size(179, 26);
             redoToolStripMenuItem.Text = "Redo";
             redoToolStripMenuItem.Click += redoToolStripMenuItem_Click;
             // 
@@ -362,7 +363,7 @@ namespace IndustrialPark
             // 
             optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { archiveEditorToolStripMenuItem1, assetEditorToolStripMenuItem, templatesToolStripMenuItem, toolStripSeparator1, rotationGizmoLocalAxisToolStripMenuItem, checkForUpdatesOnStartupToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 19);
+            optionsToolStripMenuItem.Size = new System.Drawing.Size(75, 24);
             optionsToolStripMenuItem.Text = "&Options";
             optionsToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
@@ -370,7 +371,7 @@ namespace IndustrialPark
             // 
             archiveEditorToolStripMenuItem1.DropDownItems.AddRange(new ToolStripItem[] { updateReferencesOnCopyPasteToolStripMenuItem, replaceAssetsOnPasteToolStripMenuItem, toolStripSeparator12, listAllAssetsToolStripMenuItem, autoDockArchiveEditorToolStripMenuItem, autoDockAssetEditorsToolStripMenuItem, translucentToolStripMenuItem });
             archiveEditorToolStripMenuItem1.Name = "archiveEditorToolStripMenuItem1";
-            archiveEditorToolStripMenuItem1.Size = new System.Drawing.Size(210, 22);
+            archiveEditorToolStripMenuItem1.Size = new System.Drawing.Size(266, 26);
             archiveEditorToolStripMenuItem1.Text = "Archive Editor";
             // 
             // updateReferencesOnCopyPasteToolStripMenuItem
@@ -378,7 +379,7 @@ namespace IndustrialPark
             updateReferencesOnCopyPasteToolStripMenuItem.Checked = true;
             updateReferencesOnCopyPasteToolStripMenuItem.CheckState = CheckState.Checked;
             updateReferencesOnCopyPasteToolStripMenuItem.Name = "updateReferencesOnCopyPasteToolStripMenuItem";
-            updateReferencesOnCopyPasteToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            updateReferencesOnCopyPasteToolStripMenuItem.Size = new System.Drawing.Size(336, 26);
             updateReferencesOnCopyPasteToolStripMenuItem.Text = "Update &References on Rename/Paste";
             updateReferencesOnCopyPasteToolStripMenuItem.ToolTipText = "If enabled, asset references will be updated to match the new asset name and ID when renaming an asset.\r\nReferences between assets are also updated when copying and pasting multiple assets together.";
             updateReferencesOnCopyPasteToolStripMenuItem.Click += updateReferencesOnCopyPasteToolStripMenuItem_Click;
@@ -386,7 +387,7 @@ namespace IndustrialPark
             // replaceAssetsOnPasteToolStripMenuItem
             // 
             replaceAssetsOnPasteToolStripMenuItem.Name = "replaceAssetsOnPasteToolStripMenuItem";
-            replaceAssetsOnPasteToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            replaceAssetsOnPasteToolStripMenuItem.Size = new System.Drawing.Size(336, 26);
             replaceAssetsOnPasteToolStripMenuItem.Text = "Replace &Assets on Paste";
             replaceAssetsOnPasteToolStripMenuItem.ToolTipText = resources.GetString("replaceAssetsOnPasteToolStripMenuItem.ToolTipText");
             replaceAssetsOnPasteToolStripMenuItem.Click += replaceAssetsOnPasteToolStripMenuItem_Click;
@@ -394,14 +395,14 @@ namespace IndustrialPark
             // toolStripSeparator12
             // 
             toolStripSeparator12.Name = "toolStripSeparator12";
-            toolStripSeparator12.Size = new System.Drawing.Size(265, 6);
+            toolStripSeparator12.Size = new System.Drawing.Size(333, 6);
             // 
             // listAllAssetsToolStripMenuItem
             // 
             listAllAssetsToolStripMenuItem.Checked = true;
             listAllAssetsToolStripMenuItem.CheckState = CheckState.Checked;
             listAllAssetsToolStripMenuItem.Name = "listAllAssetsToolStripMenuItem";
-            listAllAssetsToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            listAllAssetsToolStripMenuItem.Size = new System.Drawing.Size(336, 26);
             listAllAssetsToolStripMenuItem.Text = "Default to 'All Assets' list filter";
             listAllAssetsToolStripMenuItem.ToolTipText = "If enabled, the Archive Editor will always list all assets when selecting assets from the view.\r\nIf disabled, selecting from the view will filter the asset list by the type of the selected assets.";
             listAllAssetsToolStripMenuItem.Click += alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click;
@@ -409,7 +410,7 @@ namespace IndustrialPark
             // autoDockArchiveEditorToolStripMenuItem
             // 
             autoDockArchiveEditorToolStripMenuItem.Name = "autoDockArchiveEditorToolStripMenuItem";
-            autoDockArchiveEditorToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            autoDockArchiveEditorToolStripMenuItem.Size = new System.Drawing.Size(336, 26);
             autoDockArchiveEditorToolStripMenuItem.Text = "Dock target Archive Editor";
             autoDockArchiveEditorToolStripMenuItem.ToolTipText = resources.GetString("autoDockArchiveEditorToolStripMenuItem.ToolTipText");
             autoDockArchiveEditorToolStripMenuItem.Click += autoDockArchiveEditorToolStripMenuItem_Click;
@@ -417,7 +418,7 @@ namespace IndustrialPark
             // autoDockAssetEditorsToolStripMenuItem
             // 
             autoDockAssetEditorsToolStripMenuItem.Name = "autoDockAssetEditorsToolStripMenuItem";
-            autoDockAssetEditorsToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            autoDockAssetEditorsToolStripMenuItem.Size = new System.Drawing.Size(336, 26);
             autoDockAssetEditorsToolStripMenuItem.Text = "Dock new asset editors";
             autoDockAssetEditorsToolStripMenuItem.ToolTipText = "Automatically docks asset editors when they are opened.\r\nYou can dock and undock asset editors at any time by dragging their title bar.";
             autoDockAssetEditorsToolStripMenuItem.Click += autoDockAssetEditorsToolStripMenuItem_Click;
@@ -427,7 +428,7 @@ namespace IndustrialPark
             translucentToolStripMenuItem.Checked = true;
             translucentToolStripMenuItem.CheckState = CheckState.Checked;
             translucentToolStripMenuItem.Name = "translucentToolStripMenuItem";
-            translucentToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            translucentToolStripMenuItem.Size = new System.Drawing.Size(336, 26);
             translucentToolStripMenuItem.Text = "Translucent when out of focus";
             translucentToolStripMenuItem.ToolTipText = "If enabled, Archive Editors and Asset Data Editors will become transparent when they lose focus.";
             translucentToolStripMenuItem.Click += translucentToolStripMenuItem_Click;
@@ -436,13 +437,13 @@ namespace IndustrialPark
             // 
             assetEditorToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { openDockedEditorOnSelectionToolStripMenuItem, enableAssetToolButtonsToolStripMenuItem, toolStripSeparator4, useLegacyAssetIDFormatToolStripMenuItem, useLegacyAssetTypeFormatToolStripMenuItem });
             assetEditorToolStripMenuItem.Name = "assetEditorToolStripMenuItem";
-            assetEditorToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            assetEditorToolStripMenuItem.Size = new System.Drawing.Size(266, 26);
             assetEditorToolStripMenuItem.Text = "Asset Editor";
             // 
             // openDockedEditorOnSelectionToolStripMenuItem
             // 
             openDockedEditorOnSelectionToolStripMenuItem.Name = "openDockedEditorOnSelectionToolStripMenuItem";
-            openDockedEditorOnSelectionToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            openDockedEditorOnSelectionToolStripMenuItem.Size = new System.Drawing.Size(309, 26);
             openDockedEditorOnSelectionToolStripMenuItem.Text = "Open docked editor on selection";
             openDockedEditorOnSelectionToolStripMenuItem.Click += openDockedEditorOnSelectionToolStripMenuItem_Click;
             // 
@@ -451,7 +452,7 @@ namespace IndustrialPark
             enableAssetToolButtonsToolStripMenuItem.Checked = true;
             enableAssetToolButtonsToolStripMenuItem.CheckState = CheckState.Checked;
             enableAssetToolButtonsToolStripMenuItem.Name = "enableAssetToolButtonsToolStripMenuItem";
-            enableAssetToolButtonsToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            enableAssetToolButtonsToolStripMenuItem.Size = new System.Drawing.Size(309, 26);
             enableAssetToolButtonsToolStripMenuItem.Text = "Enable asset tool buttons";
             enableAssetToolButtonsToolStripMenuItem.ToolTipText = resources.GetString("enableAssetToolButtonsToolStripMenuItem.ToolTipText");
             enableAssetToolButtonsToolStripMenuItem.Click += enableAssetToolButtonsToolStripMenuItem_Click;
@@ -459,12 +460,12 @@ namespace IndustrialPark
             // toolStripSeparator4
             // 
             toolStripSeparator4.Name = "toolStripSeparator4";
-            toolStripSeparator4.Size = new System.Drawing.Size(243, 6);
+            toolStripSeparator4.Size = new System.Drawing.Size(306, 6);
             // 
             // useLegacyAssetIDFormatToolStripMenuItem
             // 
             useLegacyAssetIDFormatToolStripMenuItem.Name = "useLegacyAssetIDFormatToolStripMenuItem";
-            useLegacyAssetIDFormatToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            useLegacyAssetIDFormatToolStripMenuItem.Size = new System.Drawing.Size(309, 26);
             useLegacyAssetIDFormatToolStripMenuItem.Text = "Use &Legacy Asset ID Format";
             useLegacyAssetIDFormatToolStripMenuItem.ToolTipText = "If enabled, asset IDs will always be displayed as hexadecimal numbers.";
             useLegacyAssetIDFormatToolStripMenuItem.Click += useLegacyAssetIDFormatToolStripMenuItem_Click;
@@ -472,7 +473,7 @@ namespace IndustrialPark
             // useLegacyAssetTypeFormatToolStripMenuItem
             // 
             useLegacyAssetTypeFormatToolStripMenuItem.Name = "useLegacyAssetTypeFormatToolStripMenuItem";
-            useLegacyAssetTypeFormatToolStripMenuItem.Size = new System.Drawing.Size(246, 22);
+            useLegacyAssetTypeFormatToolStripMenuItem.Size = new System.Drawing.Size(309, 26);
             useLegacyAssetTypeFormatToolStripMenuItem.Text = "Use Legacy Asset Type &Format";
             useLegacyAssetTypeFormatToolStripMenuItem.ToolTipText = "If enabled, asset types will be displayed using their four-letter codes instead of their descriptive names.";
             useLegacyAssetTypeFormatToolStripMenuItem.Click += useLegacyAssetTypeFormatToolStripMenuItem_Click;
@@ -481,7 +482,7 @@ namespace IndustrialPark
             // 
             templatesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { templatesPersistentShiniesToolStripMenuItem, templatesChainPointMVPTsToolStripMenuItem, manageUserTemplatesToolStripMenuItem });
             templatesToolStripMenuItem.Name = "templatesToolStripMenuItem";
-            templatesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            templatesToolStripMenuItem.Size = new System.Drawing.Size(266, 26);
             templatesToolStripMenuItem.Text = "Templates";
             // 
             // templatesPersistentShiniesToolStripMenuItem
@@ -489,7 +490,7 @@ namespace IndustrialPark
             templatesPersistentShiniesToolStripMenuItem.Checked = true;
             templatesPersistentShiniesToolStripMenuItem.CheckState = CheckState.Checked;
             templatesPersistentShiniesToolStripMenuItem.Name = "templatesPersistentShiniesToolStripMenuItem";
-            templatesPersistentShiniesToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            templatesPersistentShiniesToolStripMenuItem.Size = new System.Drawing.Size(260, 26);
             templatesPersistentShiniesToolStripMenuItem.Text = "&Persistent Shinies";
             templatesPersistentShiniesToolStripMenuItem.ToolTipText = "If enabled, Shiny Object, Manliness Point and Scooby Snack templates will have Persistent set to True.";
             templatesPersistentShiniesToolStripMenuItem.Click += templatesPersistentShiniesToolStripMenuItem_Click;
@@ -497,7 +498,7 @@ namespace IndustrialPark
             // templatesChainPointMVPTsToolStripMenuItem
             // 
             templatesChainPointMVPTsToolStripMenuItem.Name = "templatesChainPointMVPTsToolStripMenuItem";
-            templatesChainPointMVPTsToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            templatesChainPointMVPTsToolStripMenuItem.Size = new System.Drawing.Size(260, 26);
             templatesChainPointMVPTsToolStripMenuItem.Text = "Chain Point &MovePoints";
             templatesChainPointMVPTsToolStripMenuItem.ToolTipText = "If enabled, when placing Point Move Point templates, each newly placed template will be\r\nadded to the previous template's Next Move Points, starting with the second template.";
             templatesChainPointMVPTsToolStripMenuItem.Click += templatesChainPointMVPTsToolStripMenuItem_Click;
@@ -505,21 +506,21 @@ namespace IndustrialPark
             // manageUserTemplatesToolStripMenuItem
             // 
             manageUserTemplatesToolStripMenuItem.Name = "manageUserTemplatesToolStripMenuItem";
-            manageUserTemplatesToolStripMenuItem.Size = new System.Drawing.Size(209, 22);
+            manageUserTemplatesToolStripMenuItem.Size = new System.Drawing.Size(260, 26);
             manageUserTemplatesToolStripMenuItem.Text = "Manage User &Templates...";
             manageUserTemplatesToolStripMenuItem.Click += manageUserTemplatesToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new System.Drawing.Size(207, 6);
+            toolStripSeparator1.Size = new System.Drawing.Size(263, 6);
             // 
             // rotationGizmoLocalAxisToolStripMenuItem
             // 
             rotationGizmoLocalAxisToolStripMenuItem.Checked = true;
             rotationGizmoLocalAxisToolStripMenuItem.CheckState = CheckState.Checked;
             rotationGizmoLocalAxisToolStripMenuItem.Name = "rotationGizmoLocalAxisToolStripMenuItem";
-            rotationGizmoLocalAxisToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            rotationGizmoLocalAxisToolStripMenuItem.Size = new System.Drawing.Size(266, 26);
             rotationGizmoLocalAxisToolStripMenuItem.Text = "Rotation follows local axis";
             rotationGizmoLocalAxisToolStripMenuItem.ToolTipText = resources.GetString("rotationGizmoLocalAxisToolStripMenuItem.ToolTipText");
             rotationGizmoLocalAxisToolStripMenuItem.Click += rotationGizmoOnSingleAxisToolStripMenuItem_Click;
@@ -529,7 +530,7 @@ namespace IndustrialPark
             checkForUpdatesOnStartupToolStripMenuItem.Checked = true;
             checkForUpdatesOnStartupToolStripMenuItem.CheckState = CheckState.Checked;
             checkForUpdatesOnStartupToolStripMenuItem.Name = "checkForUpdatesOnStartupToolStripMenuItem";
-            checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(266, 26);
             checkForUpdatesOnStartupToolStripMenuItem.Text = "Check for updates daily";
             checkForUpdatesOnStartupToolStripMenuItem.ToolTipText = "If enabled, the application will check for updates when starting, at most once per day.";
             checkForUpdatesOnStartupToolStripMenuItem.Click += CheckForUpdatesOnStartupToolStripMenuItem_Click;
@@ -539,7 +540,7 @@ namespace IndustrialPark
             discordRichPresenceToolStripMenuItem.Checked = true;
             discordRichPresenceToolStripMenuItem.CheckState = CheckState.Checked;
             discordRichPresenceToolStripMenuItem.Name = "discordRichPresenceToolStripMenuItem";
-            discordRichPresenceToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            discordRichPresenceToolStripMenuItem.Size = new System.Drawing.Size(266, 26);
             discordRichPresenceToolStripMenuItem.Text = "Discord Rich Presence";
             discordRichPresenceToolStripMenuItem.ToolTipText = "If enabled, your current activity will be displayed on your Discord profile.";
             discordRichPresenceToolStripMenuItem.Click += discordRichPresenceToolStripMenuItem_Click;
@@ -548,7 +549,7 @@ namespace IndustrialPark
             // 
             themeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { systemDefaultToolStripMenuItem, lightModeToolStripMenuItem, darkModeToolStripMenuItem });
             themeToolStripMenuItem.Name = "themeToolStripMenuItem";
-            themeToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            themeToolStripMenuItem.Size = new System.Drawing.Size(266, 26);
             themeToolStripMenuItem.Text = "Theme";
             themeToolStripMenuItem.ToolTipText = "The new theme will be applied after restart.";
             // 
@@ -558,14 +559,14 @@ namespace IndustrialPark
             systemDefaultToolStripMenuItem.CheckOnClick = true;
             systemDefaultToolStripMenuItem.CheckState = CheckState.Checked;
             systemDefaultToolStripMenuItem.Name = "systemDefaultToolStripMenuItem";
-            systemDefaultToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            systemDefaultToolStripMenuItem.Size = new System.Drawing.Size(192, 26);
             systemDefaultToolStripMenuItem.Text = "System Default";
             systemDefaultToolStripMenuItem.Click += systemDefaultToolStripMenuItem_Click;
             // 
             // lightModeToolStripMenuItem
             // 
             lightModeToolStripMenuItem.Name = "lightModeToolStripMenuItem";
-            lightModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            lightModeToolStripMenuItem.Size = new System.Drawing.Size(192, 26);
             lightModeToolStripMenuItem.Text = "Classic Mode";
             lightModeToolStripMenuItem.Click += lightModeToolStripMenuItem_Click;
             // 
@@ -573,7 +574,7 @@ namespace IndustrialPark
             // 
             darkModeToolStripMenuItem.CheckOnClick = true;
             darkModeToolStripMenuItem.Name = "darkModeToolStripMenuItem";
-            darkModeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            darkModeToolStripMenuItem.Size = new System.Drawing.Size(192, 26);
             darkModeToolStripMenuItem.Text = "Dark Mode";
             darkModeToolStripMenuItem.Click += darkModeToolStripMenuItem_Click;
             // 
@@ -581,7 +582,7 @@ namespace IndustrialPark
             // 
             displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, gizmoConesToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, lightKitToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, allMovePointsArePointsToolStripMenuItem, toolStripSeparatorToolbar, showToolbarToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
-            displayToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
+            displayToolStripMenuItem.Size = new System.Drawing.Size(72, 24);
             displayToolStripMenuItem.Text = "&Display";
             displayToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
@@ -589,47 +590,47 @@ namespace IndustrialPark
             // 
             assetTypesToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { enableAllToolStripMenuItem, disableAllToolStripMenuItem, toolStripSeparatorAssetTypes });
             assetTypesToolStripMenuItem.Name = "assetTypesToolStripMenuItem";
-            assetTypesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            assetTypesToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             assetTypesToolStripMenuItem.Text = "Asset Types";
             // 
             // enableAllToolStripMenuItem
             // 
             enableAllToolStripMenuItem.Name = "enableAllToolStripMenuItem";
-            enableAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            enableAllToolStripMenuItem.Size = new System.Drawing.Size(164, 26);
             enableAllToolStripMenuItem.Text = "Enable All";
             enableAllToolStripMenuItem.Click += enableAllToolStripMenuItem_Click;
             // 
             // disableAllToolStripMenuItem
             // 
             disableAllToolStripMenuItem.Name = "disableAllToolStripMenuItem";
-            disableAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            disableAllToolStripMenuItem.Size = new System.Drawing.Size(164, 26);
             disableAllToolStripMenuItem.Text = "Disable All";
             disableAllToolStripMenuItem.Click += disableAllToolStripMenuItem_Click;
             // 
             // toolStripSeparatorAssetTypes
             // 
             toolStripSeparatorAssetTypes.Name = "toolStripSeparatorAssetTypes";
-            toolStripSeparatorAssetTypes.Size = new System.Drawing.Size(177, 6);
+            toolStripSeparatorAssetTypes.Size = new System.Drawing.Size(161, 6);
             // 
             // viewConfigToolStripMenuItem
             // 
             viewConfigToolStripMenuItem.Name = "viewConfigToolStripMenuItem";
             viewConfigToolStripMenuItem.ShortcutKeys = Keys.F2;
-            viewConfigToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            viewConfigToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             viewConfigToolStripMenuItem.Text = "&View Config";
             viewConfigToolStripMenuItem.Click += viewConfigToolStripMenuItem_Click;
             // 
             // refreshTexturesAndModelsToolStripMenuItem
             // 
             refreshTexturesAndModelsToolStripMenuItem.Name = "refreshTexturesAndModelsToolStripMenuItem";
-            refreshTexturesAndModelsToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            refreshTexturesAndModelsToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             refreshTexturesAndModelsToolStripMenuItem.Text = "Refresh Textures and Models...";
             refreshTexturesAndModelsToolStripMenuItem.Click += refreshTexturesToolStripMenuItem_Click;
             // 
             // uIModeToolStripMenuItem
             // 
             uIModeToolStripMenuItem.Name = "uIModeToolStripMenuItem";
-            uIModeToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            uIModeToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             uIModeToolStripMenuItem.Text = "UI Mode (U)";
             uIModeToolStripMenuItem.Click += uIModeToolStripMenuItem_Click;
             // 
@@ -637,47 +638,47 @@ namespace IndustrialPark
             // 
             uIModeAutoSizeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripMenuItem116, toolStripMenuItem43, toolStripMenuItem169 });
             uIModeAutoSizeToolStripMenuItem.Name = "uIModeAutoSizeToolStripMenuItem";
-            uIModeAutoSizeToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            uIModeAutoSizeToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             uIModeAutoSizeToolStripMenuItem.Text = "Set viewport aspect";
             uIModeAutoSizeToolStripMenuItem.ToolTipText = "The window must not be maximized.";
             // 
             // toolStripMenuItem116
             // 
             toolStripMenuItem116.Name = "toolStripMenuItem116";
-            toolStripMenuItem116.Size = new System.Drawing.Size(180, 22);
+            toolStripMenuItem116.Size = new System.Drawing.Size(138, 26);
             toolStripMenuItem116.Text = "1.16 : 1";
             toolStripMenuItem116.Click += toolStripMenuItem116_Click;
             // 
             // toolStripMenuItem43
             // 
             toolStripMenuItem43.Name = "toolStripMenuItem43";
-            toolStripMenuItem43.Size = new System.Drawing.Size(180, 22);
+            toolStripMenuItem43.Size = new System.Drawing.Size(138, 26);
             toolStripMenuItem43.Text = "4 : 3";
             toolStripMenuItem43.Click += toolStripMenuItem43_Click;
             // 
             // toolStripMenuItem169
             // 
             toolStripMenuItem169.Name = "toolStripMenuItem169";
-            toolStripMenuItem169.Size = new System.Drawing.Size(180, 22);
+            toolStripMenuItem169.Size = new System.Drawing.Size(138, 26);
             toolStripMenuItem169.Text = "16 : 9";
             toolStripMenuItem169.Click += toolStripMenuItem169_Click;
             // 
             // toolStripSeparator10
             // 
             toolStripSeparator10.Name = "toolStripSeparator10";
-            toolStripSeparator10.Size = new System.Drawing.Size(241, 6);
+            toolStripSeparator10.Size = new System.Drawing.Size(301, 6);
             // 
             // cursorInFlyModeToolStripMenuItem
             // 
             cursorInFlyModeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { defaultToolStripMenuItem, crosshairToolStripMenuItem, hiddenToolStripMenuItem });
             cursorInFlyModeToolStripMenuItem.Name = "cursorInFlyModeToolStripMenuItem";
-            cursorInFlyModeToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            cursorInFlyModeToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             cursorInFlyModeToolStripMenuItem.Text = "Cursor in Fly Mode";
             // 
             // defaultToolStripMenuItem
             // 
             defaultToolStripMenuItem.Name = "defaultToolStripMenuItem";
-            defaultToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            defaultToolStripMenuItem.Size = new System.Drawing.Size(152, 26);
             defaultToolStripMenuItem.Tag = "0";
             defaultToolStripMenuItem.Text = "Default";
             defaultToolStripMenuItem.Click += changeFlyModeCursor;
@@ -687,7 +688,7 @@ namespace IndustrialPark
             crosshairToolStripMenuItem.Checked = true;
             crosshairToolStripMenuItem.CheckState = CheckState.Checked;
             crosshairToolStripMenuItem.Name = "crosshairToolStripMenuItem";
-            crosshairToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            crosshairToolStripMenuItem.Size = new System.Drawing.Size(152, 26);
             crosshairToolStripMenuItem.Tag = "1";
             crosshairToolStripMenuItem.Text = "Crosshair";
             crosshairToolStripMenuItem.Click += changeFlyModeCursor;
@@ -695,7 +696,7 @@ namespace IndustrialPark
             // hiddenToolStripMenuItem
             // 
             hiddenToolStripMenuItem.Name = "hiddenToolStripMenuItem";
-            hiddenToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            hiddenToolStripMenuItem.Size = new System.Drawing.Size(152, 26);
             hiddenToolStripMenuItem.Tag = "2";
             hiddenToolStripMenuItem.Text = "Hidden";
             hiddenToolStripMenuItem.Click += changeFlyModeCursor;
@@ -704,60 +705,60 @@ namespace IndustrialPark
             // 
             colorsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { resetColorsToolStripMenuItem, backgroundColorToolStripMenuItem1, selectionColorToolStripMenuItem1, toolStripSeparator11, widgetColorToolStripMenuItem, mVPTColorToolStripMenuItem, tRIGColorToolStripMenuItem, sFXInColorToolStripMenuItem });
             colorsToolStripMenuItem.Name = "colorsToolStripMenuItem";
-            colorsToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            colorsToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             colorsToolStripMenuItem.Text = "Colors";
             // 
             // resetColorsToolStripMenuItem
             // 
             resetColorsToolStripMenuItem.Name = "resetColorsToolStripMenuItem";
-            resetColorsToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            resetColorsToolStripMenuItem.Size = new System.Drawing.Size(284, 26);
             resetColorsToolStripMenuItem.Text = "Reset Colors";
             resetColorsToolStripMenuItem.Click += resetColorsToolStripMenuItem_Click;
             // 
             // backgroundColorToolStripMenuItem1
             // 
             backgroundColorToolStripMenuItem1.Name = "backgroundColorToolStripMenuItem1";
-            backgroundColorToolStripMenuItem1.Size = new System.Drawing.Size(232, 22);
+            backgroundColorToolStripMenuItem1.Size = new System.Drawing.Size(284, 26);
             backgroundColorToolStripMenuItem1.Text = "Background Color...";
             backgroundColorToolStripMenuItem1.Click += backgroundColorToolStripMenuItem1_Click;
             // 
             // selectionColorToolStripMenuItem1
             // 
             selectionColorToolStripMenuItem1.Name = "selectionColorToolStripMenuItem1";
-            selectionColorToolStripMenuItem1.Size = new System.Drawing.Size(232, 22);
+            selectionColorToolStripMenuItem1.Size = new System.Drawing.Size(284, 26);
             selectionColorToolStripMenuItem1.Text = "Selection Color...";
             selectionColorToolStripMenuItem1.Click += selectionColorToolStripMenuItem_Click;
             // 
             // toolStripSeparator11
             // 
             toolStripSeparator11.Name = "toolStripSeparator11";
-            toolStripSeparator11.Size = new System.Drawing.Size(229, 6);
+            toolStripSeparator11.Size = new System.Drawing.Size(281, 6);
             // 
             // widgetColorToolStripMenuItem
             // 
             widgetColorToolStripMenuItem.Name = "widgetColorToolStripMenuItem";
-            widgetColorToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            widgetColorToolStripMenuItem.Size = new System.Drawing.Size(284, 26);
             widgetColorToolStripMenuItem.Text = "Box/Triangle Widget Color...";
             widgetColorToolStripMenuItem.Click += widgetColorToolStripMenuItem_Click;
             // 
             // mVPTColorToolStripMenuItem
             // 
             mVPTColorToolStripMenuItem.Name = "mVPTColorToolStripMenuItem";
-            mVPTColorToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            mVPTColorToolStripMenuItem.Size = new System.Drawing.Size(284, 26);
             mVPTColorToolStripMenuItem.Text = "MovePoint/DashTrack Color...";
             mVPTColorToolStripMenuItem.Click += mVPTColorToolStripMenuItem_Click;
             // 
             // tRIGColorToolStripMenuItem
             // 
             tRIGColorToolStripMenuItem.Name = "tRIGColorToolStripMenuItem";
-            tRIGColorToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            tRIGColorToolStripMenuItem.Size = new System.Drawing.Size(284, 26);
             tRIGColorToolStripMenuItem.Text = "Sphere Trigger Color...";
             tRIGColorToolStripMenuItem.Click += tRIGColorToolStripMenuItem_Click;
             // 
             // sFXInColorToolStripMenuItem
             // 
             sFXInColorToolStripMenuItem.Name = "sFXInColorToolStripMenuItem";
-            sFXInColorToolStripMenuItem.Size = new System.Drawing.Size(232, 22);
+            sFXInColorToolStripMenuItem.Size = new System.Drawing.Size(284, 26);
             sFXInColorToolStripMenuItem.Text = "SFX/SDFX Color...";
             sFXInColorToolStripMenuItem.Click += sFXInColorToolStripMenuItem_Click;
             // 
@@ -766,28 +767,28 @@ namespace IndustrialPark
             gizmoConesToolStripMenuItem.Checked = true;
             gizmoConesToolStripMenuItem.CheckState = CheckState.Checked;
             gizmoConesToolStripMenuItem.Name = "gizmoConesToolStripMenuItem";
-            gizmoConesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            gizmoConesToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             gizmoConesToolStripMenuItem.Text = "Cone shaped position gizmos";
             gizmoConesToolStripMenuItem.Click += gizmoConeToolStripMenuItem_Click;
             // 
             // noCullingCToolStripMenuItem
             // 
             noCullingCToolStripMenuItem.Name = "noCullingCToolStripMenuItem";
-            noCullingCToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            noCullingCToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             noCullingCToolStripMenuItem.Text = "Backface Culling (C)";
             noCullingCToolStripMenuItem.Click += noCullingCToolStripMenuItem_Click;
             // 
             // wireframeFToolStripMenuItem
             // 
             wireframeFToolStripMenuItem.Name = "wireframeFToolStripMenuItem";
-            wireframeFToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            wireframeFToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             wireframeFToolStripMenuItem.Text = "Wireframe (Y)";
             wireframeFToolStripMenuItem.Click += wireframeFToolStripMenuItem_Click;
             // 
             // lowerQualityGraphicsToolStripMenuItem
             // 
             lowerQualityGraphicsToolStripMenuItem.Name = "lowerQualityGraphicsToolStripMenuItem";
-            lowerQualityGraphicsToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            lowerQualityGraphicsToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             lowerQualityGraphicsToolStripMenuItem.Text = "Lower quality graphics";
             lowerQualityGraphicsToolStripMenuItem.Click += lowerQualityGraphicsToolStripMenuItem_Click;
             // 
@@ -796,14 +797,14 @@ namespace IndustrialPark
             vSyncToolStripMenuItem.Checked = true;
             vSyncToolStripMenuItem.CheckState = CheckState.Checked;
             vSyncToolStripMenuItem.Name = "vSyncToolStripMenuItem";
-            vSyncToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            vSyncToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             vSyncToolStripMenuItem.Text = "VSync";
             vSyncToolStripMenuItem.Click += vSyncToolStripMenuItem_Click;
             // 
             // toolStripSeparator6
             // 
             toolStripSeparator6.Name = "toolStripSeparator6";
-            toolStripSeparator6.Size = new System.Drawing.Size(241, 6);
+            toolStripSeparator6.Size = new System.Drawing.Size(301, 6);
             // 
             // showVertexColorsToolStripMenuItem
             // 
@@ -811,7 +812,7 @@ namespace IndustrialPark
             showVertexColorsToolStripMenuItem.CheckOnClick = true;
             showVertexColorsToolStripMenuItem.CheckState = CheckState.Checked;
             showVertexColorsToolStripMenuItem.Name = "showVertexColorsToolStripMenuItem";
-            showVertexColorsToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            showVertexColorsToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             showVertexColorsToolStripMenuItem.Text = "Vertex Colors (P)";
             showVertexColorsToolStripMenuItem.Click += showVertexColorsToolStripMenuItem_Click;
             // 
@@ -844,28 +845,28 @@ namespace IndustrialPark
             fogToolStripMenuItem.CheckOnClick = true;
             fogToolStripMenuItem.CheckState = CheckState.Checked;
             fogToolStripMenuItem.Name = "fogToolStripMenuItem";
-            fogToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            fogToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             fogToolStripMenuItem.Text = "Fog (F)";
             fogToolStripMenuItem.Click += fogToolStripMenuItem_Click;
             // 
             // movementPreviewToolStripMenuItem
             // 
             movementPreviewToolStripMenuItem.Name = "movementPreviewToolStripMenuItem";
-            movementPreviewToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            movementPreviewToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             movementPreviewToolStripMenuItem.Text = "Movement preview (M)";
             movementPreviewToolStripMenuItem.Click += movementPreviewToolStripMenuItem_Click;
             // 
             // hideInvisibleMeshesToolStripMenuItem
             // 
             hideInvisibleMeshesToolStripMenuItem.Name = "hideInvisibleMeshesToolStripMenuItem";
-            hideInvisibleMeshesToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            hideInvisibleMeshesToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             hideInvisibleMeshesToolStripMenuItem.Text = "Hide invisible geometry (J)";
             hideInvisibleMeshesToolStripMenuItem.Click += hideInvisibleMeshesToolStripMenuItem_Click;
             // 
             // useLODTForRenderingToolStripMenuItem
             // 
             useLODTForRenderingToolStripMenuItem.Name = "useLODTForRenderingToolStripMenuItem";
-            useLODTForRenderingToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            useLODTForRenderingToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             useLODTForRenderingToolStripMenuItem.Text = "Use LOD Table for rendering";
             useLODTForRenderingToolStripMenuItem.Click += useMaxRenderDistanceToolStripMenuItem_Click;
             // 
@@ -874,14 +875,14 @@ namespace IndustrialPark
             usePIPTForRenderingToolStripMenuItem.Checked = true;
             usePIPTForRenderingToolStripMenuItem.CheckState = CheckState.Checked;
             usePIPTForRenderingToolStripMenuItem.Name = "usePIPTForRenderingToolStripMenuItem";
-            usePIPTForRenderingToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            usePIPTForRenderingToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             usePIPTForRenderingToolStripMenuItem.Text = "Use Pipe Table for rendering";
             usePIPTForRenderingToolStripMenuItem.Click += UsePIPTForRenderingToolStripMenuItem_Click;
             // 
             // drawOnlyFirstMINFReferenceToolStripMenuItem
             // 
             drawOnlyFirstMINFReferenceToolStripMenuItem.Name = "drawOnlyFirstMINFReferenceToolStripMenuItem";
-            drawOnlyFirstMINFReferenceToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             drawOnlyFirstMINFReferenceToolStripMenuItem.Text = "Draw only first MINF reference";
             drawOnlyFirstMINFReferenceToolStripMenuItem.ToolTipText = "If enabled, will only draw the first model referenced by a model info asset instead of all of them.";
             drawOnlyFirstMINFReferenceToolStripMenuItem.Click += drawOnlyFirstMINFReferenceToolStripMenuItem_Click;
@@ -889,7 +890,7 @@ namespace IndustrialPark
             // allMovePointsArePointsToolStripMenuItem
             // 
             allMovePointsArePointsToolStripMenuItem.Name = "allMovePointsArePointsToolStripMenuItem";
-            allMovePointsArePointsToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            allMovePointsArePointsToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             allMovePointsArePointsToolStripMenuItem.Text = "All Move Points render as points";
             allMovePointsArePointsToolStripMenuItem.ToolTipText = resources.GetString("allMovePointsArePointsToolStripMenuItem.ToolTipText");
             allMovePointsArePointsToolStripMenuItem.Click += allMovePointsArePointsToolStripMenuItem_Click;
@@ -897,22 +898,22 @@ namespace IndustrialPark
             // toolStripSeparatorToolbar
             // 
             toolStripSeparatorToolbar.Name = "toolStripSeparatorToolbar";
-            toolStripSeparatorToolbar.Size = new System.Drawing.Size(241, 6);
+            toolStripSeparatorToolbar.Size = new System.Drawing.Size(301, 6);
             // 
             // showToolbarToolStripMenuItem
             // 
             showToolbarToolStripMenuItem.Checked = true;
             showToolbarToolStripMenuItem.CheckState = CheckState.Checked;
             showToolbarToolStripMenuItem.Name = "showToolbarToolStripMenuItem";
-            showToolbarToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            showToolbarToolStripMenuItem.Size = new System.Drawing.Size(304, 26);
             showToolbarToolStripMenuItem.Text = "Show Toolbar";
             showToolbarToolStripMenuItem.Click += showToolbarToolStripMenuItem_Click;
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, runGameF5ToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, createGameCubeBannerToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, runGameF5ToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, createGameCubeBannerToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem, setDolphinPathToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 19);
+            toolsToolStripMenuItem.Size = new System.Drawing.Size(58, 24);
             toolsToolStripMenuItem.Text = "&Tools";
             toolsToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
@@ -920,7 +921,7 @@ namespace IndustrialPark
             // 
             saveAllOpenHIPsToolStripMenuItem.Name = "saveAllOpenHIPsToolStripMenuItem";
             saveAllOpenHIPsToolStripMenuItem.ShortcutKeys = Keys.Control | Keys.Shift | Keys.S;
-            saveAllOpenHIPsToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            saveAllOpenHIPsToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             saveAllOpenHIPsToolStripMenuItem.Text = "Save all open HIPs";
             saveAllOpenHIPsToolStripMenuItem.Click += saveAllOpenHIPsToolStripMenuItem_Click;
             // 
@@ -928,146 +929,154 @@ namespace IndustrialPark
             // 
             runGameF5ToolStripMenuItem.Name = "runGameF5ToolStripMenuItem";
             runGameF5ToolStripMenuItem.ShortcutKeys = Keys.F5;
-            runGameF5ToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            runGameF5ToolStripMenuItem.Text = "Run game in Dolphin";
+            runGameF5ToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
+            runGameF5ToolStripMenuItem.Text = "Launch Game";
+            runGameF5ToolStripMenuItem.ToolTipText = resources.GetString("runGameF5ToolStripMenuItem.ToolTipText");
             runGameF5ToolStripMenuItem.Click += runGameF5ToolStripMenuItem_Click;
             // 
             // buildAndRunPS2ISOToolStripMenuItem
             // 
             buildAndRunPS2ISOToolStripMenuItem.Name = "buildAndRunPS2ISOToolStripMenuItem";
             buildAndRunPS2ISOToolStripMenuItem.ShortcutKeys = Keys.F6;
-            buildAndRunPS2ISOToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            buildAndRunPS2ISOToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             buildAndRunPS2ISOToolStripMenuItem.Text = "Build/Run PS2 ISO";
             buildAndRunPS2ISOToolStripMenuItem.Click += buildAndRunPS2ISOToolStripMenuItem_Click;
+            // 
+            // createGameCubeBannerToolStripMenuItem
+            // 
+            createGameCubeBannerToolStripMenuItem.Name = "createGameCubeBannerToolStripMenuItem";
+            createGameCubeBannerToolStripMenuItem.ShortcutKeys = Keys.F7;
+            createGameCubeBannerToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
+            createGameCubeBannerToolStripMenuItem.Text = "Create GameCube banner...";
+            createGameCubeBannerToolStripMenuItem.Click += createGameCubeBannerToolStripMenuItem_Click;
             // 
             // stopSoundToolStripMenuItem
             // 
             stopSoundToolStripMenuItem.Name = "stopSoundToolStripMenuItem";
-            stopSoundToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            stopSoundToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             stopSoundToolStripMenuItem.Text = "Stop sound";
             stopSoundToolStripMenuItem.Click += stopSoundToolStripMenuItem_Click;
             // 
             // exportSceneToolStripMenuItem
             // 
             exportSceneToolStripMenuItem.Name = "exportSceneToolStripMenuItem";
-            exportSceneToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            exportSceneToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             exportSceneToolStripMenuItem.Text = "Export scene...";
             exportSceneToolStripMenuItem.Click += exportSceneToolStripMenuItem_Click;
-            // 
-            // createGameCubeBannerToolStripMenuItem
-            // 
-            createGameCubeBannerToolStripMenuItem.Name = "createGameCubeBannerToolStripMenuItem";
-            createGameCubeBannerToolStripMenuItem.ShortcutKeys = Keys.F7;
-            createGameCubeBannerToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            createGameCubeBannerToolStripMenuItem.Text = "Create GameCube banner...";
-            createGameCubeBannerToolStripMenuItem.Click += createGameCubeBannerToolStripMenuItem_Click;
             // 
             // toolStripSeparator8
             // 
             toolStripSeparator8.Name = "toolStripSeparator8";
-            toolStripSeparator8.Size = new System.Drawing.Size(250, 6);
+            toolStripSeparator8.Size = new System.Drawing.Size(311, 6);
             // 
             // checkForUpdatesNowToolStripMenuItem
             // 
             checkForUpdatesNowToolStripMenuItem.Name = "checkForUpdatesNowToolStripMenuItem";
-            checkForUpdatesNowToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            checkForUpdatesNowToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             checkForUpdatesNowToolStripMenuItem.Text = "Check for updates now...";
             checkForUpdatesNowToolStripMenuItem.Click += CheckForUpdatesNowToolStripMenuItem_Click;
             // 
             // downloadIndustrialParkEditorFilesToolStripMenuItem
             // 
             downloadIndustrialParkEditorFilesToolStripMenuItem.Name = "downloadIndustrialParkEditorFilesToolStripMenuItem";
-            downloadIndustrialParkEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            downloadIndustrialParkEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             downloadIndustrialParkEditorFilesToolStripMenuItem.Text = "Download EditorFiles...";
             downloadIndustrialParkEditorFilesToolStripMenuItem.Click += DownloadIndustrialParkEditorFilesToolStripMenuItem_Click;
             // 
             // checkForUpdatesOnEditorFilesToolStripMenuItem
             // 
             checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
-            checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check for updates on EditorFiles...";
             checkForUpdatesOnEditorFilesToolStripMenuItem.Click += CheckForUpdatesOnEditorFilesToolStripMenuItem_Click;
             // 
             // downloadVgmstreamToolStripMenuItem
             // 
             downloadVgmstreamToolStripMenuItem.Name = "downloadVgmstreamToolStripMenuItem";
-            downloadVgmstreamToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            downloadVgmstreamToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             downloadVgmstreamToolStripMenuItem.Text = "Download vgmstream...";
             downloadVgmstreamToolStripMenuItem.Click += downloadVgmstreamToolStripMenuItem_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new System.Drawing.Size(250, 6);
+            toolStripSeparator2.Size = new System.Drawing.Size(311, 6);
             // 
             // ensureAssociationsToolStripMenuItem
             // 
             ensureAssociationsToolStripMenuItem.Name = "ensureAssociationsToolStripMenuItem";
-            ensureAssociationsToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            ensureAssociationsToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
             ensureAssociationsToolStripMenuItem.Text = "Associate HIP/HOP/BNR Files...";
             ensureAssociationsToolStripMenuItem.Click += ensureAssociationsToolStripMenuItem_Click;
+            // 
+            // setDolphinPathToolStripMenuItem
+            // 
+            setDolphinPathToolStripMenuItem.Name = "setDolphinPathToolStripMenuItem";
+            setDolphinPathToolStripMenuItem.Size = new System.Drawing.Size(314, 26);
+            setDolphinPathToolStripMenuItem.Text = "Set Dolphin Path...";
+            setDolphinPathToolStripMenuItem.Click += setDolphinPathToolStripMenuItem_Click;
             // 
             // researchToolStripMenuItem
             // 
             researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem, openFolderToolStripMenuItem, eventSearchToolStripMenuItem, dYNASearchToolStripMenuItem, dynaNameSearcherToolStripMenuItem, pickupSearcherToolStripMenuItem });
             researchToolStripMenuItem.Name = "researchToolStripMenuItem";
-            researchToolStripMenuItem.Size = new System.Drawing.Size(124, 19);
+            researchToolStripMenuItem.Size = new System.Drawing.Size(154, 24);
             researchToolStripMenuItem.Text = "&Research/Advanced";
             researchToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
             // viewUndoBufferToolStripMenuItem
             // 
             viewUndoBufferToolStripMenuItem.Name = "viewUndoBufferToolStripMenuItem";
-            viewUndoBufferToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            viewUndoBufferToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             viewUndoBufferToolStripMenuItem.Text = "Log Undo Buffer";
             viewUndoBufferToolStripMenuItem.Click += viewUndoBufferToolStripMenuItem_Click;
             // 
             // assetIDGeneratorToolStripMenuItem
             // 
             assetIDGeneratorToolStripMenuItem.Name = "assetIDGeneratorToolStripMenuItem";
-            assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            assetIDGeneratorToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             assetIDGeneratorToolStripMenuItem.Text = "Asset ID Generator";
             assetIDGeneratorToolStripMenuItem.Click += assetIDGeneratorToolStripMenuItem_Click;
             // 
             // hansToolStripMenuItem
             // 
             hansToolStripMenuItem.Name = "hansToolStripMenuItem";
-            hansToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            hansToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             hansToolStripMenuItem.Text = "Hans (Save File Editor)";
             hansToolStripMenuItem.Click += hansToolStripMenuItem_Click;
             // 
             // openFolderToolStripMenuItem
             // 
             openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            openFolderToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            openFolderToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             openFolderToolStripMenuItem.Text = "Open Folder";
             openFolderToolStripMenuItem.Click += openFolderToolStripMenuItem_Click;
             // 
             // eventSearchToolStripMenuItem
             // 
             eventSearchToolStripMenuItem.Name = "eventSearchToolStripMenuItem";
-            eventSearchToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            eventSearchToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             eventSearchToolStripMenuItem.Text = "Event Search";
             eventSearchToolStripMenuItem.Click += eventSearchToolStripMenuItem_Click;
             // 
             // dYNASearchToolStripMenuItem
             // 
             dYNASearchToolStripMenuItem.Name = "dYNASearchToolStripMenuItem";
-            dYNASearchToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            dYNASearchToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             dYNASearchToolStripMenuItem.Text = "DYNA Search";
             dYNASearchToolStripMenuItem.Click += dYNASearchToolStripMenuItem_Click;
             // 
             // dynaNameSearcherToolStripMenuItem
             // 
             dynaNameSearcherToolStripMenuItem.Name = "dynaNameSearcherToolStripMenuItem";
-            dynaNameSearcherToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            dynaNameSearcherToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             dynaNameSearcherToolStripMenuItem.Text = "Dyna Name Searcher";
             dynaNameSearcherToolStripMenuItem.Click += dynaNameSearcherToolStripMenuItem_Click;
             // 
             // pickupSearcherToolStripMenuItem
             // 
             pickupSearcherToolStripMenuItem.Name = "pickupSearcherToolStripMenuItem";
-            pickupSearcherToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            pickupSearcherToolStripMenuItem.Size = new System.Drawing.Size(241, 26);
             pickupSearcherToolStripMenuItem.Text = "Pickup Searcher";
             pickupSearcherToolStripMenuItem.Click += pickupSearcherToolStripMenuItem_Click;
             // 
@@ -1075,7 +1084,7 @@ namespace IndustrialPark
             // 
             helpToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewControlsToolStripMenuItem, aboutToolStripMenuItem });
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            helpToolStripMenuItem.Size = new System.Drawing.Size(44, 19);
+            helpToolStripMenuItem.Size = new System.Drawing.Size(55, 24);
             helpToolStripMenuItem.Text = "&Help";
             helpToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
             // 
@@ -1083,7 +1092,7 @@ namespace IndustrialPark
             // 
             viewControlsToolStripMenuItem.Name = "viewControlsToolStripMenuItem";
             viewControlsToolStripMenuItem.ShortcutKeys = Keys.F1;
-            viewControlsToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            viewControlsToolStripMenuItem.Size = new System.Drawing.Size(253, 26);
             viewControlsToolStripMenuItem.Text = "View Controls";
             viewControlsToolStripMenuItem.Click += viewControlsToolStripMenuItem_Click;
             // 
@@ -1091,59 +1100,63 @@ namespace IndustrialPark
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
             aboutToolStripMenuItem.ShortcutKeys = Keys.F3;
-            aboutToolStripMenuItem.Size = new System.Drawing.Size(204, 22);
+            aboutToolStripMenuItem.Size = new System.Drawing.Size(253, 26);
             aboutToolStripMenuItem.Text = "About Industrial Park";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
             // statusStrip1
             // 
             statusStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
-            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelMain, toolStripStatusLabel2, toolStripStatusLabelProject, toolStripStatusLabel3, toolStripStatusLabelTemplate, toolStripStatusLabel4, toolStripStatusLabelNumSelected });
-            statusStrip1.Location = new System.Drawing.Point(0, 659);
+            statusStrip1.Items.AddRange(new ToolStripItem[] { toolStripStatusLabelMain, toolStripStatusLabel2, toolStripStatusLabelNumSelected, toolStripStatusLabel3, toolStripStatusLabelTemplate, toolStripStatusLabel4, toolStripStatusLabelProject });
+            statusStrip1.Location = new System.Drawing.Point(0, 865);
             statusStrip1.Name = "statusStrip1";
-            statusStrip1.Size = new System.Drawing.Size(1264, 22);
+            statusStrip1.Padding = new Padding(1, 0, 19, 0);
+            statusStrip1.Size = new System.Drawing.Size(1685, 26);
             statusStrip1.TabIndex = 3;
             statusStrip1.Text = "statusStrip1";
             // 
             // toolStripStatusLabelMain
             // 
             toolStripStatusLabelMain.Name = "toolStripStatusLabelMain";
-            toolStripStatusLabelMain.Size = new System.Drawing.Size(0, 17);
+            toolStripStatusLabelMain.Size = new System.Drawing.Size(78, 20);
+            toolStripStatusLabelMain.Text = "MainLabel";
             toolStripStatusLabelMain.Click += toolStripStatusLabel1_Click;
             // 
             // toolStripStatusLabel2
             // 
             toolStripStatusLabel2.Name = "toolStripStatusLabel2";
-            toolStripStatusLabel2.Size = new System.Drawing.Size(10, 17);
+            toolStripStatusLabel2.Size = new System.Drawing.Size(13, 20);
             toolStripStatusLabel2.Text = "|";
             // 
-            // toolStripStatusLabelProject
+            // toolStripStatusLabelNumSelected
             // 
-            toolStripStatusLabelProject.Name = "toolStripStatusLabelProject";
-            toolStripStatusLabelProject.Size = new System.Drawing.Size(0, 17);
+            toolStripStatusLabelNumSelected.Name = "toolStripStatusLabelNumSelected";
+            toolStripStatusLabelNumSelected.Size = new System.Drawing.Size(76, 20);
+            toolStripStatusLabelNumSelected.Text = "0 selected";
             // 
             // toolStripStatusLabel3
             // 
             toolStripStatusLabel3.Name = "toolStripStatusLabel3";
-            toolStripStatusLabel3.Size = new System.Drawing.Size(10, 17);
+            toolStripStatusLabel3.Size = new System.Drawing.Size(13, 20);
             toolStripStatusLabel3.Text = "|";
             // 
             // toolStripStatusLabelTemplate
             // 
             toolStripStatusLabelTemplate.Name = "toolStripStatusLabelTemplate";
-            toolStripStatusLabelTemplate.Size = new System.Drawing.Size(0, 17);
+            toolStripStatusLabelTemplate.Size = new System.Drawing.Size(114, 20);
+            toolStripStatusLabelTemplate.Text = "Template: None";
             // 
             // toolStripStatusLabel4
             // 
             toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            toolStripStatusLabel4.Size = new System.Drawing.Size(10, 17);
+            toolStripStatusLabel4.Size = new System.Drawing.Size(13, 20);
             toolStripStatusLabel4.Text = "|";
             // 
-            // toolStripStatusLabelNumSelected
+            // toolStripStatusLabelProject
             // 
-            toolStripStatusLabelNumSelected.Name = "toolStripStatusLabelNumSelected";
-            toolStripStatusLabelNumSelected.Size = new System.Drawing.Size(59, 17);
-            toolStripStatusLabelNumSelected.Text = "0 selected";
+            toolStripStatusLabelProject.Name = "toolStripStatusLabelProject";
+            toolStripStatusLabelProject.Size = new System.Drawing.Size(91, 20);
+            toolStripStatusLabelProject.Text = "ProjectLabel";
             // 
             // renderPanel
             // 
@@ -1151,7 +1164,7 @@ namespace IndustrialPark
             renderPanel.Location = new System.Drawing.Point(0, 0);
             renderPanel.Margin = new Padding(0);
             renderPanel.Name = "renderPanel";
-            renderPanel.Size = new System.Drawing.Size(1264, 613);
+            renderPanel.Size = new System.Drawing.Size(1685, 811);
             renderPanel.TabIndex = 1;
             renderPanel.MouseClick += renderPanel_MouseClick;
             renderPanel.MouseDown += renderPanel_MouseDown;
@@ -1163,10 +1176,11 @@ namespace IndustrialPark
             // toolStripMain
             // 
             toolStripMain.GripStyle = ToolStripGripStyle.Hidden;
+            toolStripMain.ImageScalingSize = new System.Drawing.Size(20, 20);
             toolStripMain.Items.AddRange(new ToolStripItem[] { toolStripButtonUndo, toolStripButtonRedo, toolStripSeparatorUndo, toolStripButtonSaveAll, toolStripButtonSaveAllAndRun, toolStripButtonRunGame, toolStripSeparatorRun, toolStripLabelArchive, toolStripComboBoxArchive, toolStripLabelLayer, toolStripComboBoxLayer, toolStripSeparatorGizmos, toolStripLabelGizmo, toolStripButtonGizmoPosition, toolStripButtonGizmoRotation, toolStripButtonGizmoScale, toolStripButtonGizmoPositionLocal, toolStripSeparatorVisibility, toolStripLabelShow, toolStripDropDownButtonShowTypes, toolStripSeparatorView, toolStripButtonWireframe, toolStripButtonLightKit, toolStripDropDownButtonLightKit, toolStripSeparatorEditing, toolStripButtonDropToGround });
-            toolStripMain.Location = new System.Drawing.Point(0, 21);
+            toolStripMain.Location = new System.Drawing.Point(0, 26);
             toolStripMain.Name = "toolStripMain";
-            toolStripMain.Size = new System.Drawing.Size(1264, 25);
+            toolStripMain.Size = new System.Drawing.Size(1685, 28);
             toolStripMain.TabIndex = 4;
             toolStripMain.Text = "toolStripMain";
             // 
@@ -1175,7 +1189,7 @@ namespace IndustrialPark
             toolStripButtonUndo.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolStripButtonUndo.Image = Properties.Resources.icon_undo;
             toolStripButtonUndo.Name = "toolStripButtonUndo";
-            toolStripButtonUndo.Size = new System.Drawing.Size(23, 22);
+            toolStripButtonUndo.Size = new System.Drawing.Size(29, 25);
             toolStripButtonUndo.Text = "Undo";
             toolStripButtonUndo.ToolTipText = "Undo (Ctrl+Z)";
             toolStripButtonUndo.Click += toolStripButtonUndo_Click;
@@ -1185,7 +1199,7 @@ namespace IndustrialPark
             toolStripButtonRedo.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolStripButtonRedo.Image = Properties.Resources.icon_redo;
             toolStripButtonRedo.Name = "toolStripButtonRedo";
-            toolStripButtonRedo.Size = new System.Drawing.Size(23, 22);
+            toolStripButtonRedo.Size = new System.Drawing.Size(29, 25);
             toolStripButtonRedo.Text = "Redo";
             toolStripButtonRedo.ToolTipText = "Redo (Ctrl+Y)";
             toolStripButtonRedo.Click += toolStripButtonRedo_Click;
@@ -1193,13 +1207,13 @@ namespace IndustrialPark
             // toolStripSeparatorUndo
             // 
             toolStripSeparatorUndo.Name = "toolStripSeparatorUndo";
-            toolStripSeparatorUndo.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparatorUndo.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripButtonSaveAll
             // 
             toolStripButtonSaveAll.Image = Properties.Resources.icon_save;
             toolStripButtonSaveAll.Name = "toolStripButtonSaveAll";
-            toolStripButtonSaveAll.Size = new System.Drawing.Size(68, 22);
+            toolStripButtonSaveAll.Size = new System.Drawing.Size(86, 25);
             toolStripButtonSaveAll.Text = "Save All";
             toolStripButtonSaveAll.ToolTipText = "Save all archives with unsaved changes (F4)";
             toolStripButtonSaveAll.Click += toolStripButtonSaveAll_Click;
@@ -1208,7 +1222,7 @@ namespace IndustrialPark
             // 
             toolStripButtonSaveAllAndRun.Image = Properties.Resources.icon_play_2;
             toolStripButtonSaveAllAndRun.Name = "toolStripButtonSaveAllAndRun";
-            toolStripButtonSaveAllAndRun.Size = new System.Drawing.Size(105, 22);
+            toolStripButtonSaveAllAndRun.Size = new System.Drawing.Size(131, 25);
             toolStripButtonSaveAllAndRun.Text = "Save All && Run";
             toolStripButtonSaveAllAndRun.ToolTipText = "Save all archives with unsaved changes, then run the game";
             toolStripButtonSaveAllAndRun.Click += toolStripButtonSaveAllAndRun_Click;
@@ -1218,7 +1232,7 @@ namespace IndustrialPark
             toolStripButtonRunGame.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolStripButtonRunGame.Image = Properties.Resources.icon_play;
             toolStripButtonRunGame.Name = "toolStripButtonRunGame";
-            toolStripButtonRunGame.Size = new System.Drawing.Size(23, 22);
+            toolStripButtonRunGame.Size = new System.Drawing.Size(29, 25);
             toolStripButtonRunGame.Text = "Run Game";
             toolStripButtonRunGame.ToolTipText = "Run the game (F5)";
             toolStripButtonRunGame.Click += toolStripButtonRunGame_Click;
@@ -1226,12 +1240,12 @@ namespace IndustrialPark
             // toolStripSeparatorRun
             // 
             toolStripSeparatorRun.Name = "toolStripSeparatorRun";
-            toolStripSeparatorRun.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparatorRun.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripLabelArchive
             // 
             toolStripLabelArchive.Name = "toolStripLabelArchive";
-            toolStripLabelArchive.Size = new System.Drawing.Size(50, 22);
+            toolStripLabelArchive.Size = new System.Drawing.Size(61, 25);
             toolStripLabelArchive.Text = "Archive:";
             // 
             // toolStripComboBoxArchive
@@ -1239,7 +1253,7 @@ namespace IndustrialPark
             toolStripComboBoxArchive.DropDownStyle = ComboBoxStyle.DropDownList;
             toolStripComboBoxArchive.FlatStyle = FlatStyle.Standard;
             toolStripComboBoxArchive.Name = "toolStripComboBoxArchive";
-            toolStripComboBoxArchive.Size = new System.Drawing.Size(160, 25);
+            toolStripComboBoxArchive.Size = new System.Drawing.Size(212, 28);
             toolStripComboBoxArchive.ToolTipText = "Target archive: templates and pasted assets are placed here";
             toolStripComboBoxArchive.DropDownClosed += toolStripComboBox_DropDownClosed;
             toolStripComboBoxArchive.SelectedIndexChanged += toolStripComboBoxArchive_SelectedIndexChanged;
@@ -1247,7 +1261,7 @@ namespace IndustrialPark
             // toolStripLabelLayer
             // 
             toolStripLabelLayer.Name = "toolStripLabelLayer";
-            toolStripLabelLayer.Size = new System.Drawing.Size(38, 22);
+            toolStripLabelLayer.Size = new System.Drawing.Size(47, 25);
             toolStripLabelLayer.Text = "Layer:";
             // 
             // toolStripComboBoxLayer
@@ -1255,7 +1269,7 @@ namespace IndustrialPark
             toolStripComboBoxLayer.DropDownStyle = ComboBoxStyle.DropDownList;
             toolStripComboBoxLayer.FlatStyle = FlatStyle.Standard;
             toolStripComboBoxLayer.Name = "toolStripComboBoxLayer";
-            toolStripComboBoxLayer.Size = new System.Drawing.Size(200, 25);
+            toolStripComboBoxLayer.Size = new System.Drawing.Size(265, 28);
             toolStripComboBoxLayer.ToolTipText = "Active layer of the active archive: templates and pasted assets are placed here";
             toolStripComboBoxLayer.DropDown += toolStripComboBoxLayer_DropDown;
             toolStripComboBoxLayer.DropDownClosed += toolStripComboBox_DropDownClosed;
@@ -1264,20 +1278,20 @@ namespace IndustrialPark
             // toolStripSeparatorGizmos
             // 
             toolStripSeparatorGizmos.Name = "toolStripSeparatorGizmos";
-            toolStripSeparatorGizmos.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparatorGizmos.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripLabelGizmo
             // 
             toolStripLabelGizmo.Image = Properties.Resources.icon_gizmo;
             toolStripLabelGizmo.Name = "toolStripLabelGizmo";
-            toolStripLabelGizmo.Size = new System.Drawing.Size(16, 22);
+            toolStripLabelGizmo.Size = new System.Drawing.Size(20, 25);
             toolStripLabelGizmo.ToolTipText = "Gizmo";
             // 
             // toolStripButtonGizmoPosition
             // 
             toolStripButtonGizmoPosition.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripButtonGizmoPosition.Name = "toolStripButtonGizmoPosition";
-            toolStripButtonGizmoPosition.Size = new System.Drawing.Size(41, 22);
+            toolStripButtonGizmoPosition.Size = new System.Drawing.Size(50, 25);
             toolStripButtonGizmoPosition.Text = "Move";
             toolStripButtonGizmoPosition.ToolTipText = "Position gizmo (V to cycle)";
             toolStripButtonGizmoPosition.Click += toolStripButtonGizmoPosition_Click;
@@ -1286,7 +1300,7 @@ namespace IndustrialPark
             // 
             toolStripButtonGizmoRotation.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripButtonGizmoRotation.Name = "toolStripButtonGizmoRotation";
-            toolStripButtonGizmoRotation.Size = new System.Drawing.Size(45, 22);
+            toolStripButtonGizmoRotation.Size = new System.Drawing.Size(57, 25);
             toolStripButtonGizmoRotation.Text = "Rotate";
             toolStripButtonGizmoRotation.ToolTipText = "Rotation gizmo (V to cycle)";
             toolStripButtonGizmoRotation.Click += toolStripButtonGizmoRotation_Click;
@@ -1295,7 +1309,7 @@ namespace IndustrialPark
             // 
             toolStripButtonGizmoScale.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripButtonGizmoScale.Name = "toolStripButtonGizmoScale";
-            toolStripButtonGizmoScale.Size = new System.Drawing.Size(38, 22);
+            toolStripButtonGizmoScale.Size = new System.Drawing.Size(48, 25);
             toolStripButtonGizmoScale.Text = "Scale";
             toolStripButtonGizmoScale.ToolTipText = "Scale gizmo (V to cycle)";
             toolStripButtonGizmoScale.Click += toolStripButtonGizmoScale_Click;
@@ -1304,7 +1318,7 @@ namespace IndustrialPark
             // 
             toolStripButtonGizmoPositionLocal.DisplayStyle = ToolStripItemDisplayStyle.Text;
             toolStripButtonGizmoPositionLocal.Name = "toolStripButtonGizmoPositionLocal";
-            toolStripButtonGizmoPositionLocal.Size = new System.Drawing.Size(72, 22);
+            toolStripButtonGizmoPositionLocal.Size = new System.Drawing.Size(89, 25);
             toolStripButtonGizmoPositionLocal.Text = "Local Move";
             toolStripButtonGizmoPositionLocal.ToolTipText = "Position gizmo in the asset's local space (V to cycle)";
             toolStripButtonGizmoPositionLocal.Click += toolStripButtonGizmoPositionLocal_Click;
@@ -1312,21 +1326,21 @@ namespace IndustrialPark
             // toolStripSeparatorVisibility
             // 
             toolStripSeparatorVisibility.Name = "toolStripSeparatorVisibility";
-            toolStripSeparatorVisibility.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparatorVisibility.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripLabelShow
             // 
             toolStripLabelShow.DisplayStyle = ToolStripItemDisplayStyle.Image;
             toolStripLabelShow.Image = Properties.Resources.icon_showhide;
             toolStripLabelShow.Name = "toolStripLabelShow";
-            toolStripLabelShow.Size = new System.Drawing.Size(16, 22);
+            toolStripLabelShow.Size = new System.Drawing.Size(20, 25);
             toolStripLabelShow.Text = "Show:";
             // 
             // toolStripDropDownButtonShowTypes
             // 
             toolStripDropDownButtonShowTypes.DisplayStyle = ToolStripItemDisplayStyle.None;
             toolStripDropDownButtonShowTypes.Name = "toolStripDropDownButtonShowTypes";
-            toolStripDropDownButtonShowTypes.Size = new System.Drawing.Size(13, 22);
+            toolStripDropDownButtonShowTypes.Size = new System.Drawing.Size(14, 25);
             toolStripDropDownButtonShowTypes.Text = "Choose asset types";
             toolStripDropDownButtonShowTypes.ToolTipText = "Choose which asset types appear in the toolbar";
             toolStripDropDownButtonShowTypes.DropDownOpening += toolStripDropDownButtonShowTypes_DropDownOpening;
@@ -1334,13 +1348,13 @@ namespace IndustrialPark
             // toolStripSeparatorView
             // 
             toolStripSeparatorView.Name = "toolStripSeparatorView";
-            toolStripSeparatorView.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparatorView.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripButtonWireframe
             // 
             toolStripButtonWireframe.Image = Properties.Resources.icon_wireframe;
             toolStripButtonWireframe.Name = "toolStripButtonWireframe";
-            toolStripButtonWireframe.Size = new System.Drawing.Size(82, 22);
+            toolStripButtonWireframe.Size = new System.Drawing.Size(103, 25);
             toolStripButtonWireframe.Text = "Wireframe";
             toolStripButtonWireframe.ToolTipText = "Toggle wireframe rendering (Y)";
             toolStripButtonWireframe.Click += toolStripButtonWireframe_Click;
@@ -1349,7 +1363,7 @@ namespace IndustrialPark
             // 
             toolStripButtonLightKit.Image = Properties.Resources.icon_sun;
             toolStripButtonLightKit.Name = "toolStripButtonLightKit";
-            toolStripButtonLightKit.Size = new System.Drawing.Size(71, 22);
+            toolStripButtonLightKit.Size = new System.Drawing.Size(88, 25);
             toolStripButtonLightKit.Text = "Light Kit";
             toolStripButtonLightKit.ToolTipText = "Toggle light kit rendering (L)";
             toolStripButtonLightKit.Click += toolStripButtonLightKit_Click;
@@ -1366,13 +1380,13 @@ namespace IndustrialPark
             // toolStripSeparatorEditing
             // 
             toolStripSeparatorEditing.Name = "toolStripSeparatorEditing";
-            toolStripSeparatorEditing.Size = new System.Drawing.Size(6, 25);
+            toolStripSeparatorEditing.Size = new System.Drawing.Size(6, 28);
             // 
             // toolStripButtonDropToGround
             // 
             toolStripButtonDropToGround.Image = Properties.Resources.icon_drop;
             toolStripButtonDropToGround.Name = "toolStripButtonDropToGround";
-            toolStripButtonDropToGround.Size = new System.Drawing.Size(110, 22);
+            toolStripButtonDropToGround.Size = new System.Drawing.Size(138, 25);
             toolStripButtonDropToGround.Text = "Drop to Ground";
             toolStripButtonDropToGround.ToolTipText = "Drop the selected assets onto the surface below them (Ctrl+J)";
             toolStripButtonDropToGround.Click += toolStripButtonDropToGround_Click;
@@ -1382,40 +1396,40 @@ namespace IndustrialPark
             contextMenuStripMain.ImageScalingSize = new System.Drawing.Size(24, 24);
             contextMenuStripMain.Items.AddRange(new ToolStripItem[] { gizmoToolStripMenuItem, toolStripMenuItem_Templates, userTemplateToolStripMenuItem });
             contextMenuStripMain.Name = "contextMenuStripMain";
-            contextMenuStripMain.Size = new System.Drawing.Size(156, 70);
+            contextMenuStripMain.Size = new System.Drawing.Size(181, 76);
             // 
             // gizmoToolStripMenuItem
             // 
             gizmoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { positionToolStripMenuItem, rotationToolStripMenuItem, scaleToolStripMenuItem, positionLocalToolStripMenuItem, noneToolStripMenuItem });
             gizmoToolStripMenuItem.Name = "gizmoToolStripMenuItem";
-            gizmoToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            gizmoToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
             gizmoToolStripMenuItem.Text = "Gizmo (V)";
             // 
             // positionToolStripMenuItem
             // 
             positionToolStripMenuItem.Name = "positionToolStripMenuItem";
-            positionToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            positionToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
             positionToolStripMenuItem.Text = "Position";
             positionToolStripMenuItem.Click += positionToolStripMenuItem_Click;
             // 
             // rotationToolStripMenuItem
             // 
             rotationToolStripMenuItem.Name = "rotationToolStripMenuItem";
-            rotationToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            rotationToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
             rotationToolStripMenuItem.Text = "Rotation";
             rotationToolStripMenuItem.Click += rotationToolStripMenuItem_Click;
             // 
             // scaleToolStripMenuItem
             // 
             scaleToolStripMenuItem.Name = "scaleToolStripMenuItem";
-            scaleToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            scaleToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
             scaleToolStripMenuItem.Text = "Scale";
             scaleToolStripMenuItem.Click += scaleToolStripMenuItem_Click;
             // 
             // positionLocalToolStripMenuItem
             // 
             positionLocalToolStripMenuItem.Name = "positionLocalToolStripMenuItem";
-            positionLocalToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            positionLocalToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
             positionLocalToolStripMenuItem.Text = "Position (Local)";
             positionLocalToolStripMenuItem.Click += positionLocalToolStripMenuItem_Click;
             // 
@@ -1424,35 +1438,35 @@ namespace IndustrialPark
             noneToolStripMenuItem.Checked = true;
             noneToolStripMenuItem.CheckState = CheckState.Checked;
             noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            noneToolStripMenuItem.Size = new System.Drawing.Size(156, 22);
+            noneToolStripMenuItem.Size = new System.Drawing.Size(193, 26);
             noneToolStripMenuItem.Text = "None";
             noneToolStripMenuItem.Click += noneToolStripMenuItem_Click;
             // 
             // toolStripMenuItem_Templates
             // 
             toolStripMenuItem_Templates.Name = "toolStripMenuItem_Templates";
-            toolStripMenuItem_Templates.Size = new System.Drawing.Size(155, 22);
+            toolStripMenuItem_Templates.Size = new System.Drawing.Size(180, 24);
             toolStripMenuItem_Templates.Text = "Template (B/N)";
             // 
             // userTemplateToolStripMenuItem
             // 
             userTemplateToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { toolStripComboBoxUserTemplate });
             userTemplateToolStripMenuItem.Name = "userTemplateToolStripMenuItem";
-            userTemplateToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            userTemplateToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
             userTemplateToolStripMenuItem.Text = "User Template";
             userTemplateToolStripMenuItem.Click += userTemplateToolStripMenuItem_Click;
             // 
             // toolStripComboBoxUserTemplate
             // 
             toolStripComboBoxUserTemplate.Name = "toolStripComboBoxUserTemplate";
-            toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 23);
+            toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(160, 28);
             toolStripComboBoxUserTemplate.SelectedIndexChanged += toolStripComboBoxUserTemplate_SelectedIndexChanged;
             // 
             // splitContainer1
             // 
             splitContainer1.Dock = DockStyle.Fill;
             splitContainer1.FixedPanel = FixedPanel.Panel1;
-            splitContainer1.Location = new System.Drawing.Point(0, 46);
+            splitContainer1.Location = new System.Drawing.Point(0, 54);
             splitContainer1.Margin = new Padding(0);
             splitContainer1.Name = "splitContainer1";
             splitContainer1.Panel1Collapsed = true;
@@ -1462,8 +1476,9 @@ namespace IndustrialPark
             // 
             splitContainer1.Panel2.Controls.Add(splitContainer2);
             splitContainer1.Panel2MinSize = 300;
-            splitContainer1.Size = new System.Drawing.Size(1264, 613);
-            splitContainer1.SplitterDistance = 300;
+            splitContainer1.Size = new System.Drawing.Size(1685, 811);
+            splitContainer1.SplitterDistance = 400;
+            splitContainer1.SplitterWidth = 5;
             splitContainer1.TabIndex = 5;
             // 
             // splitContainer2
@@ -1484,14 +1499,16 @@ namespace IndustrialPark
             splitContainer2.Panel2.Controls.Add(tabControlRight);
             splitContainer2.Panel2Collapsed = true;
             splitContainer2.Panel2MinSize = 150;
-            splitContainer2.Size = new System.Drawing.Size(1264, 613);
+            splitContainer2.Size = new System.Drawing.Size(1685, 811);
             splitContainer2.SplitterDistance = 300;
+            splitContainer2.SplitterWidth = 5;
             splitContainer2.TabIndex = 0;
             // 
             // tabControlRight
             // 
             tabControlRight.Dock = DockStyle.Fill;
             tabControlRight.Location = new System.Drawing.Point(0, 0);
+            tabControlRight.Margin = new Padding(4);
             tabControlRight.Name = "tabControlRight";
             tabControlRight.SelectedIndex = 0;
             tabControlRight.Size = new System.Drawing.Size(96, 100);
@@ -1501,9 +1518,9 @@ namespace IndustrialPark
             // MainForm
             // 
             AllowDrop = true;
-            AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(1264, 681);
+            ClientSize = new System.Drawing.Size(1685, 891);
             Controls.Add(splitContainer1);
             Controls.Add(toolStripMain);
             Controls.Add(statusStrip1);
@@ -1511,6 +1528,7 @@ namespace IndustrialPark
             Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             KeyPreview = true;
             MainMenuStrip = menuStrip1;
+            Margin = new Padding(4);
             Name = "MainForm";
             Text = "Industrial Park";
             Deactivate += MainForm_Deactivate;
@@ -1717,6 +1735,7 @@ namespace IndustrialPark
         private ToolStripMenuItem openDockedEditorOnSelectionToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator4;
         private ToolStripSeparator toolStripSeparator12;
+        private ToolStripMenuItem setDolphinPathToolStripMenuItem;
     }
 }
 

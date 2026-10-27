@@ -138,7 +138,7 @@ namespace IndustrialPark
                     MessageBoxIcon.Information);
                 Program.AboutBox.Show(this);
             }
-            
+
             ApplyIPSettings(settings);
 
             SetProjectToolStripStatusLabel();
@@ -226,10 +226,11 @@ namespace IndustrialPark
 
             BuildISO.PCSX2Path = settings.pcsx2Path;
             BuildISO.recentGameDirPaths = settings.recentBuildIsoGamePaths;
+            RemoteControl.DolphinPath = settings.DolphinPath;
 
             renderer.Camera.Speed = settings.Speed > 0 ? settings.Speed : SharpCamera.DEFAULT_SPEED;
             renderer.Camera.SpeedRot = settings.SpeedRot > 0 ? settings.SpeedRot : SharpCamera.DEFAULT_SPEED_ROT;
-
+            
             bool showEditorsWhenLoadingProject = settings.showEditorsWhenLoadingProject;
             showEditorsWhenLoadingProjectToolStripMenuItem.Checked = showEditorsWhenLoadingProject;
 
@@ -324,6 +325,8 @@ namespace IndustrialPark
                 Speed = renderer.Camera.Speed,
                 SpeedRot = renderer.Camera.SpeedRot,
                 fog = !AssetFOG.DontRender,
+                DolphinPath = RemoteControl.DolphinPath,
+                Colors = renderer.colors,
             };
 
             File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
@@ -1837,54 +1840,16 @@ namespace IndustrialPark
 
         private void runGameF5ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string dolPath = null;
-            string filesPath = null;
-            string hipName = null;
-            foreach (var ae in archiveEditors)
+            var ae = archiveEditors.FirstOrDefault(ae => ae.archive.LevelName.Length == 4 && ae.archive.LevelName is not ("boot" or "font" or "plat"));
+            try
             {
-                hipName = ae.GetCurrentlyOpenFileName().ToLower();
-                string rootFolderName = Path.GetDirectoryName(Path.GetDirectoryName(hipName));
-
-                if (!(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")))
-                    rootFolderName = Path.GetDirectoryName(rootFolderName);
-
-                dolPath = Path.Combine(rootFolderName, "sys", "main.dol");
-                filesPath = Path.Combine(rootFolderName, "files");
-
-                if (File.Exists(dolPath))
-                    break;
-                dolPath = null;
+                if (ae == null)
+                    throw new Exception("No Archive Editor containing a stage found.");
+                RemoteControl.RunGame(ae.archive.game, ae.GetCurrentlyOpenFileName());
             }
-
-            var validIniNames = new string[] { "sb.ini", "sb04.ini", "sd2.ini", "in.ini", "in2.ini", "rats.ini" };
-
-            if (hipName != null && !(hipName.Contains("boot") || hipName.Contains("font") || hipName.Contains("plat")) && filesPath != null)
-                foreach (string s in Directory.GetFiles(filesPath))
-                    if (validIniNames.Contains(Path.GetFileName(s).ToLower()))
-                    {
-                        string[] ini = File.ReadAllLines(s);
-                        for (int i = 0; i < ini.Length; i++)
-                            if (ini[i].StartsWith("BOOT"))
-                            {
-                                ini[i] = "BOOT=" + Path.GetFileNameWithoutExtension(hipName).ToUpper();
-                                break;
-                            }
-                        File.WriteAllLines(s, ini);
-                        break;
-                    }
-
-            if (dolPath == null)
-                MessageBox.Show("Unable to find DOL to launch.", "Unable to find DOL", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            else
+            catch (Exception ex)
             {
-                try
-                {
-                    RemoteControl.TryToRunGame(dolPath);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Failed to open Dolphin: " + ex.Message, "Error opening Dolphin", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
+                MessageBox.Show("Failed to run game:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -2263,6 +2228,21 @@ namespace IndustrialPark
         {
             gizmoConesToolStripMenuItem.Checked = !gizmoConesToolStripMenuItem.Checked;
             GizmoBase.UseCones = gizmoConesToolStripMenuItem.Checked;
+        }
+
+        private void setDolphinPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openFile = new OpenFileDialog()
+            {
+                Filter = "Executables|*.exe",
+                Title = "Please select your Dolphin executable or a shortcut"
+            };
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                RemoteControl.DolphinPath = openFile.FileName;
+                MessageBox.Show($"Dolphin path set successfully:\n{RemoteControl.DolphinPath}", "Dolphin path set", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void MenuStrip_DropDownOpened(object sender, EventArgs e)
