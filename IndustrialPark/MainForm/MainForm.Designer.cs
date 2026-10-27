@@ -112,6 +112,8 @@ namespace IndustrialPark
             toolStripSeparator6 = new ToolStripSeparator();
             showVertexColorsToolStripMenuItem = new ToolStripMenuItem();
             useLightKitsForRenderingToolStripMenuItem = new ToolStripMenuItem();
+            lightKitToolStripMenuItem = new ToolStripMenuItem();
+            lightKitSeparatorToolStripMenuItem = new ToolStripSeparator();
             fogToolStripMenuItem = new ToolStripMenuItem();
             movementPreviewToolStripMenuItem = new ToolStripMenuItem();
             hideInvisibleMeshesToolStripMenuItem = new ToolStripMenuItem();
@@ -180,6 +182,7 @@ namespace IndustrialPark
             toolStripSeparatorView = new ToolStripSeparator();
             toolStripButtonWireframe = new ToolStripButton();
             toolStripButtonLightKit = new ToolStripButton();
+            toolStripDropDownButtonLightKit = new ToolStripDropDownButton();
             toolStripSeparatorEditing = new ToolStripSeparator();
             toolStripButtonDropToGround = new ToolStripButton();
             contextMenuStripMain = new ContextMenuStrip(components);
@@ -576,7 +579,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, gizmoConesToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, useLightKitsForRenderingToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, allMovePointsArePointsToolStripMenuItem, toolStripSeparatorToolbar, showToolbarToolStripMenuItem });
+            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, gizmoConesToolStripMenuItem, noCullingCToolStripMenuItem, wireframeFToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, showVertexColorsToolStripMenuItem, lightKitToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleMeshesToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, allMovePointsArePointsToolStripMenuItem, toolStripSeparatorToolbar, showToolbarToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             displayToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
             displayToolStripMenuItem.Text = "&Display";
@@ -819,8 +822,21 @@ namespace IndustrialPark
             useLightKitsForRenderingToolStripMenuItem.CheckState = CheckState.Checked;
             useLightKitsForRenderingToolStripMenuItem.Name = "useLightKitsForRenderingToolStripMenuItem";
             useLightKitsForRenderingToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
-            useLightKitsForRenderingToolStripMenuItem.Text = "Light Kit (L)";
+            useLightKitsForRenderingToolStripMenuItem.Text = "Enabled (L)";
             useLightKitsForRenderingToolStripMenuItem.Click += useLightKitsForRenderingToolStripMenuItem_Click;
+            // 
+            // lightKitToolStripMenuItem
+            // 
+            lightKitToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { useLightKitsForRenderingToolStripMenuItem, lightKitSeparatorToolStripMenuItem });
+            lightKitToolStripMenuItem.Name = "lightKitToolStripMenuItem";
+            lightKitToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            lightKitToolStripMenuItem.Text = "Light Kit";
+            lightKitToolStripMenuItem.DropDownOpening += lightKitToolStripMenuItem_DropDownOpening;
+            // 
+            // lightKitSeparatorToolStripMenuItem
+            // 
+            lightKitSeparatorToolStripMenuItem.Name = "lightKitSeparatorToolStripMenuItem";
+            lightKitSeparatorToolStripMenuItem.Size = new System.Drawing.Size(241, 6);
             // 
             // fogToolStripMenuItem
             // 
@@ -1147,7 +1163,7 @@ namespace IndustrialPark
             // toolStripMain
             // 
             toolStripMain.GripStyle = ToolStripGripStyle.Hidden;
-            toolStripMain.Items.AddRange(new ToolStripItem[] { toolStripButtonUndo, toolStripButtonRedo, toolStripSeparatorUndo, toolStripButtonSaveAll, toolStripButtonSaveAllAndRun, toolStripButtonRunGame, toolStripSeparatorRun, toolStripLabelArchive, toolStripComboBoxArchive, toolStripLabelLayer, toolStripComboBoxLayer, toolStripSeparatorGizmos, toolStripLabelGizmo, toolStripButtonGizmoPosition, toolStripButtonGizmoRotation, toolStripButtonGizmoScale, toolStripButtonGizmoPositionLocal, toolStripSeparatorVisibility, toolStripLabelShow, toolStripDropDownButtonShowTypes, toolStripSeparatorView, toolStripButtonWireframe, toolStripButtonLightKit, toolStripSeparatorEditing, toolStripButtonDropToGround });
+            toolStripMain.Items.AddRange(new ToolStripItem[] { toolStripButtonUndo, toolStripButtonRedo, toolStripSeparatorUndo, toolStripButtonSaveAll, toolStripButtonSaveAllAndRun, toolStripButtonRunGame, toolStripSeparatorRun, toolStripLabelArchive, toolStripComboBoxArchive, toolStripLabelLayer, toolStripComboBoxLayer, toolStripSeparatorGizmos, toolStripLabelGizmo, toolStripButtonGizmoPosition, toolStripButtonGizmoRotation, toolStripButtonGizmoScale, toolStripButtonGizmoPositionLocal, toolStripSeparatorVisibility, toolStripLabelShow, toolStripDropDownButtonShowTypes, toolStripSeparatorView, toolStripButtonWireframe, toolStripButtonLightKit, toolStripDropDownButtonLightKit, toolStripSeparatorEditing, toolStripButtonDropToGround });
             toolStripMain.Location = new System.Drawing.Point(0, 21);
             toolStripMain.Name = "toolStripMain";
             toolStripMain.Size = new System.Drawing.Size(1264, 25);
@@ -1337,6 +1353,15 @@ namespace IndustrialPark
             toolStripButtonLightKit.Text = "Light Kit";
             toolStripButtonLightKit.ToolTipText = "Toggle light kit rendering (L)";
             toolStripButtonLightKit.Click += toolStripButtonLightKit_Click;
+            // 
+            // toolStripDropDownButtonLightKit
+            // 
+            toolStripDropDownButtonLightKit.DisplayStyle = ToolStripItemDisplayStyle.None;
+            toolStripDropDownButtonLightKit.Name = "toolStripDropDownButtonLightKit";
+            toolStripDropDownButtonLightKit.Size = new System.Drawing.Size(13, 22);
+            toolStripDropDownButtonLightKit.Text = "Choose light kit";
+            toolStripDropDownButtonLightKit.ToolTipText = "Choose which light kit to preview";
+            toolStripDropDownButtonLightKit.DropDownOpening += toolStripDropDownButtonLightKit_DropDownOpening;
             // 
             // toolStripSeparatorEditing
             // 
@@ -1628,6 +1653,8 @@ namespace IndustrialPark
         private ToolStripMenuItem openLastToolStripMenuItem;
         private ToolStripMenuItem fogToolStripMenuItem;
         private ToolStripMenuItem useLightKitsForRenderingToolStripMenuItem;
+        private ToolStripMenuItem lightKitToolStripMenuItem;
+        private ToolStripSeparator lightKitSeparatorToolStripMenuItem;
         private ToolStripMenuItem hansToolStripMenuItem;
         private ToolStripMenuItem translucentToolStripMenuItem;
         private ToolStripMenuItem themeToolStripMenuItem;
@@ -1674,6 +1701,7 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparatorView;
         private ToolStripButton toolStripButtonWireframe;
         private ToolStripButton toolStripButtonLightKit;
+        private ToolStripDropDownButton toolStripDropDownButtonLightKit;
         private ToolStripSeparator toolStripSeparatorToolbar;
         private ToolStripMenuItem showToolbarToolStripMenuItem;
         private SplitContainer splitContainer1;
