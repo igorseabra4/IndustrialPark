@@ -127,8 +127,18 @@ namespace IndustrialPark
         public const int MAX_DIRECTIONAL_LIGHTS = 8;
         [Browsable(false)]
         public static bool DontRender = false;
+        /// <summary>
+        /// The light kit set by the Environment asset's Object_LightKit.
+        /// </summary>
         [Browsable(false)]
-        public static AssetLKIT SceneLightKit = null;
+        public static AssetLKIT EnvironmentLightKit = null;
+        /// <summary>
+        /// A light kit picked from the View menu or toolbar to preview instead of EnvironmentLightKit; null to use the environment's.
+        /// </summary>
+        [Browsable(false)]
+        public static AssetLKIT PreviewLightKit = null;
+        [Browsable(false)]
+        public static AssetLKIT SceneLightKit => PreviewLightKit ?? EnvironmentLightKit;
 
         public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LightKit)
         {

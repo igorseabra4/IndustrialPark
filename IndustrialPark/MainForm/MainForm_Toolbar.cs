@@ -1,4 +1,4 @@
-using HipHopFile;
+﻿using HipHopFile;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -42,6 +42,9 @@ namespace IndustrialPark
             useLightKitsForRenderingToolStripMenuItem.CheckedChanged += (sender, e) =>
                 toolStripButtonLightKit.Checked = useLightKitsForRenderingToolStripMenuItem.Checked;
             toolStripButtonLightKit.Checked = useLightKitsForRenderingToolStripMenuItem.Checked;
+
+            // Menus without items don't open, so give the toolbar's light kit chooser its initial items
+            UpdateToolbarLightKitChooser();
         }
 
         private void showToolbarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -404,6 +407,73 @@ namespace IndustrialPark
         private void toolStripButtonWireframe_Click(object sender, EventArgs e) => wireframeFToolStripMenuItem.PerformClick();
 
         private void toolStripButtonLightKit_Click(object sender, EventArgs e) => useLightKitsForRenderingToolStripMenuItem.PerformClick();
+
+        private void toolStripDropDownButtonLightKit_DropDownOpening(object sender, EventArgs e) => UpdateToolbarLightKitChooser();
+
+        private void UpdateToolbarLightKitChooser()
+        {
+            toolStripDropDownButtonLightKit.DropDownItems.Clear();
+            toolStripDropDownButtonLightKit.DropDownItems.AddRange(CreateLightKitChooserItems().ToArray());
+        }
+
+        private void lightKitToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            // Keep the Enabled toggle and its separator at the top, and rebuild the light kits below them
+            var items = lightKitToolStripMenuItem.DropDownItems;
+            while (items.Count > 2)
+                items[items.Count - 1].Dispose();
+            items.AddRange(CreateLightKitChooserItems().ToArray());
+        }
+
+        /// <summary>
+        /// Creates menu items for the environment's light kit followed by every light kit in the open archives, checking the one being previewed.
+        /// </summary>
+        private List<ToolStripItem> CreateLightKitChooserItems()
+        {
+            var items = new List<ToolStripItem>();
+
+            var environmentLightKit = AssetLKIT.EnvironmentLightKit;
+            var environmentItem = new ToolStripMenuItem(environmentLightKit == null ? "Environment (none)" : $"Environment ({environmentLightKit.assetName})")
+            {
+                Checked = AssetLKIT.PreviewLightKit == null,
+                ToolTipText = "Use the Environment asset's Object_LightKit",
+            };
+            environmentItem.Click += (sender, e) => SelectPreviewLightKit(null);
+            items.Add(environmentItem);
+            items.Add(new ToolStripSeparator());
+
+            bool showArchiveNames = archiveEditors.Count > 1;
+            int lightKitCount = 0;
+            foreach (var ae in archiveEditors)
+                foreach (var lkit in ae.archive.GetAllAssets().OfType<AssetLKIT>().OrderBy(a => a.assetName))
+                {
+                    string text = showArchiveNames ? $"{lkit.assetName} ({Path.GetFileName(ae.GetCurrentlyOpenFileName())})" : lkit.assetName;
+                    var item = new ToolStripMenuItem(text)
+                    {
+                        Checked = AssetLKIT.PreviewLightKit == lkit,
+                        ToolTipText = lkit.AssetInfo,
+                    };
+                    item.Click += (sender, e) => SelectPreviewLightKit(lkit);
+                    items.Add(item);
+                    lightKitCount++;
+                }
+
+            if (lightKitCount == 0)
+                items.Add(new ToolStripMenuItem("No light kits in the open archives") { Enabled = false });
+
+            return items;
+        }
+
+        private void SelectPreviewLightKit(AssetLKIT lkit)
+        {
+            ArchiveEditorFunctions.SetPreviewLightKit(lkit);
+
+            // Choosing a light kit to look at should also show it
+            if (!useLightKitsForRenderingToolStripMenuItem.Checked)
+                useLightKitsForRenderingToolStripMenuItem.PerformClick();
+
+            renderPanel.Focus();
+        }
 
         private void toolStripButtonSaveAll_Click(object sender, EventArgs e) => saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
 

@@ -19,21 +19,9 @@ namespace IndustrialPark
         {
             lock (renderableLightKits)
             {
-                foreach (var light in lkit.Lights)
-                {
-                    if (light.ColorRed > 1f || light.ColorGreen > 1f || light.ColorBlue > 1f)
-                    {
-                        float s = Math.Max(light.ColorRed, Math.Max(light.ColorGreen, light.ColorBlue));
-                        s = Math.Max(s, 0.00001f);
-                        s = 1f / s;
-
-                        light.ColorRed *= s;
-                        light.ColorGreen *= s;
-                        light.ColorBlue *= s;
-                    }
-                }
+                NormalizeLightKitColors(lkit);
                 renderableLightKits.Add(lkit);
-                AssetLKIT.SceneLightKit = lkit;
+                AssetLKIT.EnvironmentLightKit = lkit;
             }
         }
         public static void RemoveFromRenderableLightKits(AssetLKIT lkit)
@@ -41,7 +29,37 @@ namespace IndustrialPark
             lock (renderableLightKits)
             {
                 renderableLightKits.Remove(lkit);
-                AssetLKIT.SceneLightKit = renderableLightKits.LastOrDefault();
+                AssetLKIT.EnvironmentLightKit = renderableLightKits.LastOrDefault();
+                if (AssetLKIT.PreviewLightKit == lkit)
+                    AssetLKIT.PreviewLightKit = null;
+            }
+        }
+        /// <summary>
+        /// Previews a light kit in place of the environment's. Pass null to go back to the environment's light kit.
+        /// </summary>
+        public static void SetPreviewLightKit(AssetLKIT lkit)
+        {
+            lock (renderableLightKits)
+            {
+                if (lkit != null)
+                    NormalizeLightKitColors(lkit);
+                AssetLKIT.PreviewLightKit = lkit;
+            }
+        }
+        private static void NormalizeLightKitColors(AssetLKIT lkit)
+        {
+            foreach (var light in lkit.Lights)
+            {
+                if (light.ColorRed > 1f || light.ColorGreen > 1f || light.ColorBlue > 1f)
+                {
+                    float s = Math.Max(light.ColorRed, Math.Max(light.ColorGreen, light.ColorBlue));
+                    s = Math.Max(s, 0.00001f);
+                    s = 1f / s;
+
+                    light.ColorRed *= s;
+                    light.ColorGreen *= s;
+                    light.ColorBlue *= s;
+                }
             }
         }
 
@@ -1653,7 +1671,7 @@ namespace IndustrialPark
 
         public void UpdateLightKit(AssetID lkitid)
         {
-            AssetLKIT.SceneLightKit = null;
+            AssetLKIT.EnvironmentLightKit = null;
             if (TryGetAsset(lkitid, out Asset asset) && asset is AssetLKIT lkit)
                 AddToRenderableLightKits(lkit);
         }
