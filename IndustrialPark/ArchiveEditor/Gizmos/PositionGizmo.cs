@@ -6,10 +6,10 @@ namespace IndustrialPark
     {
         public void SetPosition(Vector3 Position, float distance, Matrix Rotation)
         {
-            distance /= 5f;
+            distance /= 4f;
 
-            lineTransformMatrix = Matrix.Scaling(distance);
-            transformMatrix = Matrix.Scaling(distance / 2f);
+            lineTransformMatrix = Matrix.Scaling(distance * 3f / 4f);
+            transformMatrix = Matrix.Scaling(distance / 4f, distance / 4f, distance / 2f);
 
             switch (Type)
             {

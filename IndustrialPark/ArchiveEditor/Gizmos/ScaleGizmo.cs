@@ -13,9 +13,9 @@ namespace IndustrialPark
 
         public void SetPosition(Vector3 Position, float distance, Matrix Rotation)
         {
-            distance = Math.Abs(distance / 5f);
+            distance = Math.Abs(distance / 4f);
 
-            lineTransformMatrix = Matrix.Scaling(distance);
+            lineTransformMatrix = Matrix.Scaling(distance * 7f / 8f);
             transformMatrix = Matrix.Scaling(distance / 4f);
 
             switch (Type)
