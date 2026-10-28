@@ -162,6 +162,9 @@ namespace IndustrialPark
             filePaths = new List<string>();
 
             listBox1.AllowDrop = true;
+
+            if (HasUserOptions && (!isReplacing || userAssetType == assetType))
+                LoadUserOptions();
         }
 
         private void UpdateAvailableCheckboxes()
@@ -217,6 +220,11 @@ namespace IndustrialPark
             checkBoxCollTree.Enabled = assetType != AssetType.JSP;
             checkBoxCollTree.Checked = assetType != AssetType.JSP;
 
+            UpdateSimpsBoxes();
+        }
+
+        private void UpdateSimpsBoxes()
+        {
             if (isReplacing || assetType != AssetType.Model)
             {
                 grpSIMP.Enabled = false;
@@ -232,6 +240,46 @@ namespace IndustrialPark
                 (checkBoxLedgeGrab.Enabled, checkBoxLedgeGrab.Checked) = (checkBoxGenSimps.Checked, checkBoxGenSimps.Checked);
             }
         }
+
+        private static Dictionary<string, bool> userOptions = null;
+        private static AssetType userAssetType = AssetType.Null;
+        private CheckBox[] controls => [
+            checkBoxFlipUVs,
+            checkBoxOverwrite,
+            checkBoxSplitClump,
+            checkBoxCreatePIPT,
+            checkBoxNoMaterials,
+            checkBoxTexCoords,
+            checkBoxVertexColors,
+            checkBoxTriStrips,
+            checkBoxIgnoreMeshColors,
+            checkBoxGeoTriangles,
+            checkBoxNormals,
+            checkBoxNativeData,
+            checkBoxMultiAtomic,
+            checkBoxBinMesh,
+            checkBoxCollTree,
+            checkBoxGenSimps,
+            checkBoxSolidSimps,
+            checkBoxLedgeGrab,
+        ];
+
+        private void SaveUserOptions()
+        {
+            userAssetType = assetType;
+            userOptions = [];
+            foreach (var control in controls)
+                userOptions[control.Name] = control.Checked;
+        }
+
+        private void LoadUserOptions()
+        {
+            comboBoxAssetTypes.SelectedItem = userAssetType;
+            foreach (var control in controls)
+                control.Checked = userOptions[control.Name];
+        }
+
+        private static bool HasUserOptions => userAssetType != AssetType.Null && userOptions != null;
 
         private void buttonImportRawData_Click(object sender, EventArgs e)
         {
@@ -277,12 +325,13 @@ namespace IndustrialPark
 
         private void buttonOK_Click(object sender, EventArgs e)
         {
+            SaveUserOptions();
             Close();
         }
 
         private void checkBoxGenSimps_CheckedChanged(object sender, EventArgs e)
         {
-            UpdateAvailableCheckboxes();
+            UpdateSimpsBoxes();
         }
 
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
