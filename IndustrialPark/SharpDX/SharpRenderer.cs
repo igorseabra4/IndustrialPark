@@ -442,10 +442,10 @@ namespace IndustrialPark
         }
 #endif
 
-        public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f)
+        public void DrawCube(Matrix world, bool isSelected, float multiplier = 0.5f, Vector4? color = null)
         {
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
-            renderData.Color = isSelected ? selectedColor : normalColor;
+            renderData.Color = color ?? (isSelected ? selectedColor : normalColor);
 
             device.SetCullModeNone();
             device.ApplyRasterState();
@@ -753,6 +753,7 @@ namespace IndustrialPark
             device.UpdateAllStates();
 
             Program.MainForm.gizmoManager.RenderGizmos(this);
+            Program.MainForm.markerConnector.Draw(this);
 
             device.Present();
         }

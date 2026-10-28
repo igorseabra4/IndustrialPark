@@ -45,6 +45,7 @@ namespace IndustrialPark
             renderer = new SharpRenderer(renderPanel);
 
             gizmoManager = new GizmoManager(() => archiveEditors.SelectMany(ae => ae.archive.CurrentlySelectedAssets));
+            markerConnector = new ConnectMarkers(() => archiveEditors.SelectMany(ae => ae.archive.CurrentlySelectedAssets).OfType<AssetMRKR>());
 
             SetupToolbar();
         }
@@ -230,7 +231,7 @@ namespace IndustrialPark
 
             renderer.Camera.Speed = settings.Speed > 0 ? settings.Speed : SharpCamera.DEFAULT_SPEED;
             renderer.Camera.SpeedRot = settings.SpeedRot > 0 ? settings.SpeedRot : SharpCamera.DEFAULT_SPEED_ROT;
-            
+
             bool showEditorsWhenLoadingProject = settings.showEditorsWhenLoadingProject;
             showEditorsWhenLoadingProjectToolStripMenuItem.Checked = showEditorsWhenLoadingProject;
 
@@ -2338,7 +2339,7 @@ namespace IndustrialPark
         {
             var clipboard = new List<AssetClipboard>();
             foreach (var ae in archiveEditors)
-                clipboard.AddRange(ae.archive.CreateAssetClipboard());
+                clipboard.AddRange(ae.archive.CreateAssetClipboard(copyHierarchy: PressedKeys.Contains(Keys.ShiftKey)));
             Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
         }
 
@@ -2359,6 +2360,59 @@ namespace IndustrialPark
             }
             else
                 MessageBox.Show($"Nothing was pasted because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+        }
+
+        public ConnectMarkers markerConnector;
+
+        private void connectMarkersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (markerConnector.SetupConnectMarkers())
+            {
+                if (!markerConnector.Visible)
+                    markerConnector.Show(this);
+                markerConnector.Activate();
+            }
+            else
+            {
+                markerConnector.Hide();
+            }
+        }
+
+        public bool PlaceTemplatesAt(List<Vector3> positions, bool deleteMarkers, AssetMRKR markerA, AssetMRKR markerB)
+        {
+            if (ArchiveEditorFunctions.CurrentAssetTemplate == AssetTemplate.Null || positions == null || positions.Count == 0)
+                return false;
+            if (GetTargetArchiveEditor() is ArchiveEditor ae)
+            {
+                var selected = new List<uint>();
+                foreach (Vector3 position in positions)
+                {
+                    var placed = ae.PlaceTemplate(position);
+                    if (placed == null || placed.Count == 0)
+                        return false;
+                    selected.AddRange(placed);
+                }
+                if (deleteMarkers)
+                {
+                    var actions = new List<IReversibleAction>();
+                    if (ArchiveEditorFunctions.ArchiveContainingAsset(markerA) is ArchiveEditorFunctions archiveA)
+                    {
+                        actions.Add(archiveA.GetAssetRemovedAction(markerA));
+                        archiveA.RemoveAsset(markerA.assetID);
+                    }
+                    if (ArchiveEditorFunctions.ArchiveContainingAsset(markerB) is ArchiveEditorFunctions archiveB)
+                    {
+                        actions.Add(archiveB.GetAssetRemovedAction(markerB));
+                        archiveB.RemoveAsset(markerB.assetID);
+                    }
+                    Program.UndoBuffer.AddAction(actions);
+                }
+                if (selected.Count != 0)
+                    SetSelectedIndices(selected);
+                return true;
+            }
+            MessageBox.Show($"The template could not be placed because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            return false;
         }
     }
 }
