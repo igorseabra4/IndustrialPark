@@ -68,5 +68,7 @@ namespace IndustrialPark
                     items.Add(i);
             Items = items.ToArray();
         }
+
+        public List<uint> GetItems() => Items.Select(u => (uint)u).Where(i => i != 0).ToList();
     }
 }

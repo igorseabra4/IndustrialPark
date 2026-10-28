@@ -1203,10 +1203,10 @@ namespace IndustrialPark
             gizmoManager.FinishGizmoMovement();
         }
 
-        public void SetSelectedIndices(List<uint> assetIDs)
+        public void SetSelectedIndices(List<uint> assetIDs, bool clearIfEmpty = true)
         {
             foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetSelectedIndices(assetIDs);
+                ae.SetSelectedIndices(assetIDs, clearIfEmpty);
         }
 
         /// <summary>

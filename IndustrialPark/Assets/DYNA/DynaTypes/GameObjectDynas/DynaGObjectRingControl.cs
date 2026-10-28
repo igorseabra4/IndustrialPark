@@ -120,5 +120,7 @@ namespace IndustrialPark
                     rings.Add(u);
             Rings = rings.ToArray();
         }
+
+        public List<uint> GetItems() => Rings.Select(r => (uint)r).ToList();
     }
 }

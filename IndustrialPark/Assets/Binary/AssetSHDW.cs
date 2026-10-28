@@ -92,6 +92,8 @@ namespace IndustrialPark
                 AddEntry(new EntrySHDW() { Model = i });
         }
 
+        public List<uint> GetItems() => _entries.SelectMany(a => new uint[] { a.Model, a.ShadowModel }).Where(a => a != 0).ToList();
+
         public void AddEntry(EntrySHDW entry)
         {
             RemoveEntry(entry.Model);

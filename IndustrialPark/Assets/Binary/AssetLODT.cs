@@ -148,6 +148,8 @@ namespace IndustrialPark
                 AddEntry(new EntryLODT(game) { BaseModel = i, MaxDistance = 100f });
         }
 
+        public List<uint> GetItems() => _entries.SelectMany(a => new uint[] { a.BaseModel, a.LOD1_Model, a.LOD2_Model, a.LOD3_Model }).Where(a => a != 0).ToList();
+
         public void AddEntry(EntryLODT entry)
         {
             RemoveEntry(entry.BaseModel);

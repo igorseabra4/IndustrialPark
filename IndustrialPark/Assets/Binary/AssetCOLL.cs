@@ -93,6 +93,8 @@ namespace IndustrialPark
                 AddEntry(new EntryCOLL() { Model = i });
         }
 
+        public List<uint> GetItems() => _entries.SelectMany(a => new uint[] { a.Model, a.CollisionModel, a.CameraCollisionModel }).Where(a => a != 0).ToList();
+
         public void AddEntry(EntryCOLL entry)
         {
             RemoveEntry(entry.Model);

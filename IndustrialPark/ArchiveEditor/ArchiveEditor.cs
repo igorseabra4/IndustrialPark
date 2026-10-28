@@ -1173,10 +1173,10 @@ namespace IndustrialPark
 
         public static bool AlwaysListAllAssets { get; internal set; }
 
-        public void SetSelectedIndices(List<uint> assetIDs)
+        public void SetSelectedIndices(List<uint> assetIDs, bool clearIfEmpty = true)
         {
             programIsChangingStuff = true;
-            if (assetIDs.Count == 0)
+            if (assetIDs.Count == 0 && clearIfEmpty)
             {
                 archive.ClearSelectedAssets();
                 listViewAssets.SelectedIndices.Clear();
@@ -1188,7 +1188,9 @@ namespace IndustrialPark
             var assets = new List<Asset>(assetIDs.Count);
             foreach (uint u in assetIDs)
             {
-                if (!archive.ContainsAsset(u))
+                if (archive.TryGetAsset(u, out Asset asset))
+                    assets.Add(asset);
+                else if (clearIfEmpty)
                 {
                     archive.ClearSelectedAssets();
                     listViewAssets.SelectedIndices.Clear();
@@ -1196,8 +1198,10 @@ namespace IndustrialPark
                     SetMenuItemsEnabled();
                     return;
                 }
-                assets.Add(archive.GetFromAssetID(u));
             }
+
+            if (assets.Count == 0)
+                return;
 
             AssetType assetType = AssetType.Null;
 

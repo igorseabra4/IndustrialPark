@@ -146,5 +146,7 @@ namespace IndustrialPark
                     entries.Add(new SoundGroupInfo(i));
             Entries = entries.ToArray();
         }
+
+        public List<uint> GetItems() => Entries.Select(a => (uint)a.Sound).ToList();
     }
 }

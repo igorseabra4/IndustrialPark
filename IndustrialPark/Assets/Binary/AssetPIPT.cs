@@ -501,6 +501,8 @@ namespace IndustrialPark
             Entries = entries.ToArray();
         }
 
+        public List<uint> GetItems() => Entries.Select(a => (uint)a.Model).Distinct().ToList();
+
         public void AddEntry(PipeInfo entry)
         {
             var entries = Entries.ToList();

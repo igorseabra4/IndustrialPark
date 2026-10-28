@@ -204,7 +204,11 @@ public partial class InternalAssetEditor : InternalEditor
             asset.AddItems([.. archive.CurrentlySelectedAssetIDs]);
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
-        }, true);
+        });
+        AddTool("Select " + asset.GetItemsText, (object sender, EventArgs e) =>
+        {
+            Program.MainForm.SetSelectedIndices(asset.GetItems(), false);
+        });
     }
 
     private void SetupForFog(AssetFOG asset)

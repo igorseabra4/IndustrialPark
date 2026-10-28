@@ -6,5 +6,6 @@ namespace IndustrialPark
     {
         string GetItemsText { get; }
         void AddItems(List<uint> items);
+        List<uint> GetItems();
     }
 }

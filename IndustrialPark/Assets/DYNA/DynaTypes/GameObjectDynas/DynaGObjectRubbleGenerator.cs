@@ -163,5 +163,7 @@ namespace IndustrialPark
                     models.Add(u);
             Models = models.ToArray();
         }
+
+        public List<uint> GetItems() => Models.Select(m => (uint)m).ToList();
     }
 }

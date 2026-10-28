@@ -55,5 +55,7 @@ namespace IndustrialPark
                     Animations[i] = items[j++];
             }
         }
+
+        public List<uint> GetItems() => Animations.Where(a => a != 0).Select(a => (uint)a).ToList();
     }
 }

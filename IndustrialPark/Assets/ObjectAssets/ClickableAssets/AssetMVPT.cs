@@ -282,6 +282,8 @@ namespace IndustrialPark
             NextMovePoints = items.ToArray();
         }
 
+        public List<uint> GetItems() => NextMovePoints.Select(a => (uint)a).ToList();
+
         public void CopyTransformation()
         {
             var transformation = new Transformation()
