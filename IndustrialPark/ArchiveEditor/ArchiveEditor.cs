@@ -186,6 +186,9 @@ namespace IndustrialPark
 
         private void SetMenuItemsEnabled()
         {
+            if (archive.IsNull)
+                return;
+
             saveToolStripMenuItem.Enabled = true;
             saveAsToolStripMenuItem.Enabled = true;
             convertArchiveToolStripMenuItem.Enabled = true;
@@ -226,8 +229,8 @@ namespace IndustrialPark
             exportAllSoundsRawToolStripMenuItem.Enabled = canExportSounds;
 
             removeLayerToolStripMenuItem.Enabled = buttonRemoveLayer.Enabled = !archive.NoLayers && SelectedLayerIndex != -1;
-            moveLayerUpToolStripMenuItem.Enabled = buttonArrowUp.Enabled = archive.LayerCount > 1 && SelectedLayerIndex > 0;
-            moveLayerDownToolStripMenuItem.Enabled = buttonArrowDown.Enabled = archive.LayerCount > 1 && SelectedLayerIndex != -1 && SelectedLayerIndex < archive.LayerCount - 1;
+            moveLayerUpToolStripMenuItem.Enabled = buttonArrowUp.Enabled = !archive.NoLayers && archive.LayerCount > 1 && SelectedLayerIndex > 0;
+            moveLayerDownToolStripMenuItem.Enabled = buttonArrowDown.Enabled = !archive.NoLayers && archive.LayerCount > 1 && SelectedLayerIndex != -1 && SelectedLayerIndex < archive.LayerCount - 1;
 
             var canEditAsset = listViewAssets.SelectedItems.Count != 0;
             toolStripMenuItem_Duplicate.Enabled = buttonDuplicateAsset.Enabled = canEditAsset;
@@ -1472,7 +1475,7 @@ namespace IndustrialPark
 
         private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
         {
-            var ids = archive.CurrentlySelectedAssetIDs;
+            var ids = archive.CurrentlySelectedAssetIDs.ToList();
             var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
             if (assetIDs != null && assetIDs.Count > 0)
             {

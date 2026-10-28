@@ -8,7 +8,7 @@ namespace IndustrialPark
 {
     public partial class ArchiveEditorFunctions
     {
-        protected List<Layer> Layers;
+        protected List<Layer> Layers = new List<Layer>();
 
         private bool _noLayers = false;
         public bool NoLayers

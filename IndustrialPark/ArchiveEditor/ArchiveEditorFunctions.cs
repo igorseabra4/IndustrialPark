@@ -144,6 +144,7 @@ namespace IndustrialPark
 
         protected Section_PACK PACK;
 
+        public bool IsNull => PACK == null;
 
         protected Dictionary<uint, Asset> assetDictionary = new Dictionary<uint, Asset>();
 
@@ -226,6 +227,8 @@ namespace IndustrialPark
                 hipFile.game = ChooseGame.GetGame();
             game = hipFile.game;
 
+            if (hipFile.platform == Platform.Unknown && scoobyPlatform != Platform.Unknown)
+                hipFile.platform = scoobyPlatform;
             while (hipFile.platform == Platform.Unknown)
                 hipFile.platform = ChoosePlatformDialog.GetPlatform();
             platform = hipFile.platform;
