@@ -1340,7 +1340,11 @@ namespace IndustrialPark
         {
             var applyScale = ApplyScale.GetScaleWithAssets(archive.ScalableAssetTypesOnArchive().Select(a => new AssetTypeContainer(a)).OrderBy(t => t.ToString()));
             if (applyScale.HasValue)
-                archive.ApplyScale(applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
+            {
+                var actions = archive.ApplyScale(applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
+                if (actions != null && actions.Any())
+                    Program.UndoBuffer.AddAction(actions);
+            }
         }
 
         private void mergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)

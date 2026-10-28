@@ -660,13 +660,16 @@ namespace IndustrialPark
             return string.Join("\n", result);
         }
 
-        public void ApplyScale(Vector3 factor, IEnumerable<AssetType> assetTypes = null, bool bakeEntityUnproportionalScales = true, bool bakeNpcsVilScales = false)
+        public IEnumerable<IReversibleAction> ApplyScale(Vector3 factor, IEnumerable<AssetType> assetTypes = null, bool bakeEntityUnproportionalScales = true, bool bakeNpcsVilScales = false)
         {
             if (factor.X == 1f && factor.Y == 1f && factor.Z == 1f)
             {
-                MessageBox.Show("Scale not applied as the scale vector is (1, 1, 1).");
-                return;
+                if (errorDisplay)
+                    MessageBox.Show("Scale not applied as the scale vector is (1, 1, 1).");
+                return null;
             }
+
+            var actions = new List<IReversibleAction>();
 
             float singleFactor = (factor.X + factor.Y + factor.Z) / 3;
 
@@ -674,6 +677,7 @@ namespace IndustrialPark
 
             foreach (Asset a in assets)
             {
+                var removed = GetAssetRemovedAction(a);
                 if (a is IVolumeAsset volume)
                 {
                     volume.ApplyScale(factor, singleFactor);
@@ -804,10 +808,18 @@ namespace IndustrialPark
                     }
                     fly.Frames = entries;
                 }
+                else
+                {
+                    continue;
+                }
+                var added = GetAssetAddedAction(a);
+                actions.Add(removed);
+                actions.Add(added);
             }
 
             UnsavedChanges = true;
             RecalculateAllMatrices();
+            return actions;
         }
 
         public List<uint> MakeSimps(List<uint> assetIDs, bool solid, bool ledgeGrabSimps, List<IReversibleAction> actions)
