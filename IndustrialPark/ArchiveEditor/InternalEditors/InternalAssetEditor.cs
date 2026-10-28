@@ -199,15 +199,15 @@ public partial class InternalAssetEditor : InternalEditor
     private void SetupForAddSelected(IAssetAddSelected asset)
     {
         AddRow();
-        AddTool("Add selected to " + asset.GetItemsText, (object sender, EventArgs e) =>
+        AddTool($"Select {asset.GetItemsText} assets", (object sender, EventArgs e) =>
+        {
+            Program.MainForm.SetSelectedIndices(asset.GetItems(), false);
+        });
+        AddTool($"Add selected to {asset.GetItemsText}", (object sender, EventArgs e) =>
         {
             asset.AddItems([.. archive.CurrentlySelectedAssetIDs]);
             RefreshPropertyGrid();
             archive.UnsavedChanges = true;
-        });
-        AddTool("Select " + asset.GetItemsText, (object sender, EventArgs e) =>
-        {
-            Program.MainForm.SetSelectedIndices(asset.GetItems(), false);
         });
     }
 

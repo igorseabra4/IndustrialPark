@@ -14,7 +14,12 @@ namespace IndustrialPark
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value is string s)
-                return new AssetSingle(Convert.ToSingle(s));
+            {
+                if (string.IsNullOrWhiteSpace(s))
+                    return new AssetSingle(0);
+                if (float.TryParse(s, out float result))
+                    return new AssetSingle(result);
+            }
 
             return base.ConvertFrom(context, culture, value);
         }

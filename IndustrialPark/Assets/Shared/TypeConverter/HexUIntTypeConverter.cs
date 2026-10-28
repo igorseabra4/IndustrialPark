@@ -33,7 +33,7 @@ namespace IndustrialPark
             if (s.StartsWith("0x", StringComparison.CurrentCultureIgnoreCase))
                 return Convert.ToUInt32(s, 16);
 
-            if (s.StartsWith("{") && s.EndsWith("}"))
+            if (s.StartsWith("[") && s.EndsWith("]"))
             {
                 try
                 {

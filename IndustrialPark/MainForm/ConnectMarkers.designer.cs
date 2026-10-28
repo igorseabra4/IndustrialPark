@@ -52,16 +52,16 @@
             label1.AutoSize = true;
             label1.Location = new System.Drawing.Point(12, 14);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(51, 20);
+            label1.Size = new System.Drawing.Size(41, 15);
             label1.TabIndex = 0;
             label1.Text = "Mode:";
             // 
             // radioLine
             // 
             radioLine.AutoSize = true;
-            radioLine.Location = new System.Drawing.Point(69, 12);
+            radioLine.Location = new System.Drawing.Point(59, 12);
             radioLine.Name = "radioLine";
-            radioLine.Size = new System.Drawing.Size(57, 24);
+            radioLine.Size = new System.Drawing.Size(47, 19);
             radioLine.TabIndex = 1;
             radioLine.TabStop = true;
             radioLine.Text = "Line";
@@ -70,9 +70,9 @@
             // radioCircle
             // 
             radioCircle.AutoSize = true;
-            radioCircle.Location = new System.Drawing.Point(132, 12);
+            radioCircle.Location = new System.Drawing.Point(112, 12);
             radioCircle.Name = "radioCircle";
-            radioCircle.Size = new System.Drawing.Size(67, 24);
+            radioCircle.Size = new System.Drawing.Size(55, 19);
             radioCircle.TabIndex = 2;
             radioCircle.TabStop = true;
             radioCircle.Text = "Circle";
@@ -81,9 +81,9 @@
             // radioArc
             // 
             radioArc.AutoSize = true;
-            radioArc.Location = new System.Drawing.Point(205, 12);
+            radioArc.Location = new System.Drawing.Point(173, 12);
             radioArc.Name = "radioArc";
-            radioArc.Size = new System.Drawing.Size(52, 24);
+            radioArc.Size = new System.Drawing.Size(43, 19);
             radioArc.TabIndex = 3;
             radioArc.TabStop = true;
             radioArc.Text = "Arc";
@@ -92,64 +92,64 @@
             // labelNumber
             // 
             labelNumber.AutoSize = true;
-            labelNumber.Location = new System.Drawing.Point(12, 44);
+            labelNumber.Location = new System.Drawing.Point(12, 39);
             labelNumber.Name = "labelNumber";
-            labelNumber.Size = new System.Drawing.Size(66, 20);
+            labelNumber.Size = new System.Drawing.Size(54, 15);
             labelNumber.TabIndex = 4;
             labelNumber.Text = "Number:";
             // 
             // numericNumber
             // 
-            numericNumber.Location = new System.Drawing.Point(84, 42);
+            numericNumber.Location = new System.Drawing.Point(72, 37);
             numericNumber.Maximum = new decimal(new int[] { 1000, 0, 0, 0 });
             numericNumber.Name = "numericNumber";
-            numericNumber.Size = new System.Drawing.Size(173, 27);
+            numericNumber.Size = new System.Drawing.Size(158, 23);
             numericNumber.TabIndex = 5;
             // 
             // numericAngle
             // 
             numericAngle.DecimalPlaces = 4;
-            numericAngle.Location = new System.Drawing.Point(84, 75);
+            numericAngle.Location = new System.Drawing.Point(72, 66);
             numericAngle.Maximum = new decimal(new int[] { 360, 0, 0, 0 });
             numericAngle.Minimum = new decimal(new int[] { 360, 0, 0, int.MinValue });
             numericAngle.Name = "numericAngle";
-            numericAngle.Size = new System.Drawing.Size(173, 27);
+            numericAngle.Size = new System.Drawing.Size(158, 23);
             numericAngle.TabIndex = 7;
             // 
             // labelAngle
             // 
             labelAngle.AutoSize = true;
-            labelAngle.Location = new System.Drawing.Point(12, 77);
+            labelAngle.Location = new System.Drawing.Point(12, 68);
             labelAngle.Name = "labelAngle";
-            labelAngle.Size = new System.Drawing.Size(51, 20);
+            labelAngle.Size = new System.Drawing.Size(41, 15);
             labelAngle.TabIndex = 6;
             labelAngle.Text = "Angle:";
             // 
             // numericArc
             // 
             numericArc.DecimalPlaces = 4;
-            numericArc.Location = new System.Drawing.Point(84, 108);
+            numericArc.Location = new System.Drawing.Point(72, 95);
             numericArc.Maximum = new decimal(new int[] { 3599999, 0, 0, 262144 });
             numericArc.Minimum = new decimal(new int[] { 3599999, 0, 0, -2147221504 });
             numericArc.Name = "numericArc";
-            numericArc.Size = new System.Drawing.Size(173, 27);
+            numericArc.Size = new System.Drawing.Size(158, 23);
             numericArc.TabIndex = 9;
             numericArc.Value = new decimal(new int[] { 180, 0, 0, 0 });
             // 
             // labelArc
             // 
             labelArc.AutoSize = true;
-            labelArc.Location = new System.Drawing.Point(12, 110);
+            labelArc.Location = new System.Drawing.Point(12, 97);
             labelArc.Name = "labelArc";
-            labelArc.Size = new System.Drawing.Size(34, 20);
+            labelArc.Size = new System.Drawing.Size(28, 15);
             labelArc.TabIndex = 8;
             labelArc.Text = "Arc:";
             // 
             // buttonCreate
             // 
-            buttonCreate.Location = new System.Drawing.Point(12, 171);
+            buttonCreate.Location = new System.Drawing.Point(12, 149);
             buttonCreate.Name = "buttonCreate";
-            buttonCreate.Size = new System.Drawing.Size(245, 29);
+            buttonCreate.Size = new System.Drawing.Size(218, 29);
             buttonCreate.TabIndex = 11;
             buttonCreate.Text = "Place Templates";
             buttonCreate.UseVisualStyleBackColor = true;
@@ -157,9 +157,9 @@
             // 
             // buttonCancel
             // 
-            buttonCancel.Location = new System.Drawing.Point(12, 206);
+            buttonCancel.Location = new System.Drawing.Point(12, 184);
             buttonCancel.Name = "buttonCancel";
-            buttonCancel.Size = new System.Drawing.Size(245, 29);
+            buttonCancel.Size = new System.Drawing.Size(218, 29);
             buttonCancel.TabIndex = 12;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
@@ -170,19 +170,19 @@
             checkDeleteMarkers.AutoSize = true;
             checkDeleteMarkers.Checked = true;
             checkDeleteMarkers.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkDeleteMarkers.Location = new System.Drawing.Point(12, 141);
+            checkDeleteMarkers.Location = new System.Drawing.Point(12, 124);
             checkDeleteMarkers.Name = "checkDeleteMarkers";
-            checkDeleteMarkers.Size = new System.Drawing.Size(131, 24);
+            checkDeleteMarkers.Size = new System.Drawing.Size(104, 19);
             checkDeleteMarkers.TabIndex = 10;
             checkDeleteMarkers.Text = "Delete Markers";
             checkDeleteMarkers.UseVisualStyleBackColor = true;
             // 
             // ConnectMarkers
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new System.Drawing.Size(269, 247);
+            ClientSize = new System.Drawing.Size(241, 224);
             ControlBox = false;
             Controls.Add(checkDeleteMarkers);
             Controls.Add(buttonCancel);
