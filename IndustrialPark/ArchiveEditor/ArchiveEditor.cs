@@ -862,7 +862,7 @@ namespace IndustrialPark
             if (listViewAssets.SelectedItems.Count == 0)
                 return;
 
-            archive.CopyAssetsToClipboard();
+            archive.CopyAssetsToClipboard(copyHierarchy: PressedKeys.Contains(Keys.ShiftKey));
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)

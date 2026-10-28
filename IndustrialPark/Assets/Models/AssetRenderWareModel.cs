@@ -147,6 +147,14 @@ namespace IndustrialPark
                 result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
         }
 
+        public override List<uint> GetHierarchy()
+        {
+            var result = base.GetHierarchy();
+            result.AddRange(Textures.Select(s => Functions.BKDRHash(s + ".RW3")));
+            result.AddRange(Textures.Select(s => Functions.BKDRHash(s)));
+            return result;
+        }
+
         private RWVersion renderWareVersion;
         public RWVersion RenderWareVersion
         {

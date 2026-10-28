@@ -106,6 +106,49 @@ namespace IndustrialPark
             return false;
         }
 
+        public virtual List<uint> GetHierarchy()
+        {
+            var hierarchy = new List<uint>();
+            var properties = GetType().GetProperties();
+
+            foreach (var prop in properties)
+            {
+                var propValue = prop.GetValue(this);
+
+                if (propValue == null)
+                    continue;
+
+                if (prop.PropertyType.Equals(typeof(AssetID)) && !hierarchy.Contains((AssetID)propValue))
+                    hierarchy.Add((AssetID)propValue);
+
+                if (typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType))
+                    hierarchy.AddRange(((GenericAssetDataContainer)propValue).GetHierarchy());
+
+                var interfaces = prop.PropertyType.GetInterfaces();
+                foreach (var i in interfaces)
+                {
+                    if (i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)))
+                    {
+                        if (i.GenericTypeArguments[0].Equals(typeof(AssetID)))
+                        {
+                            var enumerable = (IEnumerable<AssetID>)propValue;
+                            foreach (var u in enumerable)
+                                if (!hierarchy.Contains((AssetID)propValue))
+                                    hierarchy.Add((AssetID)propValue);
+                        }
+                        else if (typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))
+                        {
+                            var enumerable = (IEnumerable<GenericAssetDataContainer>)propValue;
+                            foreach (var gadc in enumerable)
+                                hierarchy.AddRange(gadc.GetHierarchy());
+                        }
+                    }
+                }
+            }
+
+            return hierarchy;
+        }
+
         public virtual void ReplaceReferences(uint oldAssetId, uint newAssetId)
         {
             if (oldAssetId == 0)

@@ -48,6 +48,14 @@ namespace IndustrialPark
                     result.Add("No open archive contains asset " + s + ", which is referenced in this asset.");
         }
 
+        public override List<uint> GetHierarchy()
+        {
+            var result = base.GetHierarchy();
+            result.AddRange(AssetNamesInText.Select(s => Functions.BKDRHash(s + ".RW3")));
+            result.AddRange(AssetNamesInText.Select(s => Functions.BKDRHash(s)));
+            return result;
+        }
+
         private List<string> AssetNamesInText
         {
             get

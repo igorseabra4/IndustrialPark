@@ -561,6 +561,9 @@ namespace IndustrialPark
         public static ArchiveEditorFunctions ArchiveContainingAsset(Asset asset) =>
             Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive.ContainsAsset(asset)).archive;
 
+        public static ArchiveEditorFunctions ArchiveContainingAsset(uint asset) =>
+            Program.MainForm.archiveEditors.FirstOrDefault(ae => ae.archive.ContainsAsset(asset))?.archive;
+
         public Dictionary<uint, Asset>.ValueCollection GetAllAssets()
         {
             return assetDictionary.Values;
@@ -1366,16 +1369,38 @@ namespace IndustrialPark
                     ReplaceReferencesOn(GetFromAssetID(u), referenceUpdate);
         }
 
-        public void CopyAssetsToClipboard(uint? assetID = null)
+        public void CopyAssetsToClipboard(uint? assetID = null, bool copyHierarchy = false)
         {
-            Clipboard.SetText(JsonConvert.SerializeObject(CreateAssetClipboard(assetID), Formatting.None));
+            Clipboard.SetText(JsonConvert.SerializeObject(CreateAssetClipboard(assetID, copyHierarchy), Formatting.None));
         }
 
-        public List<AssetClipboard> CreateAssetClipboard(uint? assetID = null)
+        public List<AssetClipboard> CreateAssetClipboard(uint? assetID = null, bool copyHierarchy = false)
         {
             var clipboard = new List<AssetClipboard>();
 
             var assets = assetID.HasValue && ContainsAsset(assetID.Value) ? [GetFromAssetID(assetID.Value)] : CurrentlySelectedAssets;
+
+            if (copyHierarchy)
+            {
+                for (int i = 0; i < assets.Count; i++)
+                {
+                    var hierarchy = assets[i].GetHierarchy();
+                    foreach (var u in hierarchy)
+                        if (u != 0 && !assets.Any(a => a.assetID == u))
+                        {
+                            if (TryGetAsset(u, out Asset asset))
+                            {
+                                assets.Add(asset);
+                            }
+                            else
+                            {
+                                if (ArchiveContainingAsset(u) is ArchiveEditorFunctions archive)
+                                    assets.Add(archive.GetFromAssetID(u));
+                            }    
+                        }
+                }
+            }
+
             foreach (Asset asset in assets)
             {
                 Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(JsonConvert.SerializeObject(asset.BuildAHDR(platform.Endianness())));
