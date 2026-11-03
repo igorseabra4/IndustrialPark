@@ -8,7 +8,7 @@ namespace IndustrialPark
     {
         public ScaleGizmo(GizmoType type) : base(type)
         {
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            vertices = new Vector3[Program.Renderer.cubeVertices.Count];
         }
 
         public void SetPosition(Vector3 Position, float distance, Matrix Rotation)
@@ -42,9 +42,9 @@ namespace IndustrialPark
             ResetBounds(Rotation);
         }
 
-        public override SharpMesh Mesh => SharpRenderer.Cube;
-        protected override List<Vector3> vertexList => SharpRenderer.cubeVertices;
-        protected override List<Models.Triangle> triangleList => SharpRenderer.cubeTriangles;
+        public override SharpMesh Mesh => Program.Renderer.Cube;
+        protected override List<Vector3> vertexList => Program.Renderer.cubeVertices;
+        protected override List<Models.Triangle> triangleList => Program.Renderer.cubeTriangles;
         protected override bool drawLine => Type != GizmoType.ScaleAll;
     }
 }

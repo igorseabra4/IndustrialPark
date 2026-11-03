@@ -9,29 +9,17 @@ namespace IndustrialPark
         public AssetSingle CenterX
         {
             get => _position.X;
-            set
-            {
-                _position.X = value;
-                FixPosition();
-            }
+            set => _position.X = value;
         }
         public AssetSingle CenterY
         {
             get => _position.Y;
-            set
-            {
-                _position.Y = value;
-                FixPosition();
-            }
+            set => _position.Y = value;
         }
         public AssetSingle CenterZ
         {
             get => _position.Z;
-            set
-            {
-                _position.Z = value;
-                FixPosition();
-            }
+            set => _position.Z = value;
         }
 
         public VolumeSpecific_Generic() { }
@@ -54,11 +42,9 @@ namespace IndustrialPark
         protected Matrix world;
         protected Vector3[] vertices;
 
-        public abstract void CreateTransformMatrix();
+        public abstract void CreateTransformMatrix(SharpRenderer renderer);
         public abstract float? GetIntersectionPosition(SharpRenderer renderer, Ray ray);
         public abstract void Draw(SharpRenderer renderer, bool isSelected);
-
-        public virtual void FixPosition() => CreateTransformMatrix();
 
         public float GetDistanceFrom(Vector3 position)
         {
@@ -176,14 +162,14 @@ namespace IndustrialPark
             writer.Write(MinimumZ);
         }
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             Vector3 boxSize = _maximum - _minimum;
             Vector3 midPos = (_minimum + _maximum) / 2f;
 
             world = Matrix.Scaling(boxSize) * Matrix.Translation(midPos);
 
-            var verticesF = SharpRenderer.cubeVertices;
+            var verticesF = renderer.cubeVertices;
             vertices = new Vector3[verticesF.Count];
             for (int i = 0; i < verticesF.Count; i++)
                 vertices[i] = Vector3.TransformCoordinate(verticesF[i], world);
@@ -193,7 +179,7 @@ namespace IndustrialPark
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
+                return TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world);
             return null;
         }
 
@@ -208,28 +194,20 @@ namespace IndustrialPark
             FixPosition();
         }
 
-        public override void FixPosition()
+        public void FixPosition()
         {
             if (_minimum.X > _maximum.X)
             {
-                var temp = _maximum.X;
-                _maximum.X = _minimum.X;
-                _minimum.X = temp;
+                (_minimum.X, _maximum.X) = (_maximum.X, _minimum.X);
             }
             if (_minimum.Y > _maximum.Y)
             {
-                var temp = _maximum.Y;
-                _maximum.Y = _minimum.Y;
-                _minimum.Y = temp;
+                (_minimum.Y, _maximum.Y) = (_maximum.Y, _minimum.Y);
             }
             if (_minimum.Z > _maximum.Z)
             {
-                var temp = _maximum.Z;
-                _maximum.Z = _minimum.Z;
-                _minimum.Z = temp;
+                (_minimum.Z, _maximum.Z) = (_maximum.Z, _minimum.Z);
             }
-
-            base.FixPosition();
         }
 
         public override void Draw(SharpRenderer renderer, bool isSelected) => renderer.DrawCube(world, isSelected, 1f);
@@ -258,11 +236,7 @@ namespace IndustrialPark
         public AssetSingle Radius
         {
             get => _radius;
-            set
-            {
-                _radius = value;
-                CreateTransformMatrix();
-            }
+            set => _radius = value;
         }
 
         public VolumeSphere() { }
@@ -277,7 +251,7 @@ namespace IndustrialPark
             writer.Write(Radius);
         }
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             var center = new Vector3(CenterX, CenterY, CenterZ);
             world = Matrix.Scaling(Radius * 2f) * Matrix.Translation(center);
@@ -289,7 +263,7 @@ namespace IndustrialPark
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ray.Intersects(ref boundingSphere))
-                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                return TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
             return null;
         }
 
@@ -301,7 +275,6 @@ namespace IndustrialPark
             _position.Y *= factor.Y;
             _position.Z *= factor.Z;
             _radius *= singleFactor;
-            FixPosition();
         }
     }
 
@@ -311,11 +284,7 @@ namespace IndustrialPark
         public AssetSingle Height
         {
             get => _height;
-            set
-            {
-                _height = value;
-                CreateTransformMatrix();
-            }
+            set => _height = value;
         }
 
         public VolumeCylinder() { }
@@ -330,11 +299,11 @@ namespace IndustrialPark
             writer.Write(Height);
         }
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.Scaling(Radius * 2f, Height * 2f, Radius * 2f) * Matrix.Translation(CenterX, CenterY, CenterZ);
 
-            List<Vector3> verticesF = SharpRenderer.cylinderVertices;
+            List<Vector3> verticesF = renderer.cylinderVertices;
             vertices = new Vector3[verticesF.Count];
             for (int i = 0; i < verticesF.Count; i++)
                 vertices[i] = Vector3.TransformCoordinate(verticesF[i], world);
@@ -344,7 +313,7 @@ namespace IndustrialPark
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.cylinderTriangles, SharpRenderer.cylinderVertices, world);
+                return TriangleIntersection(ray, renderer.cylinderTriangles, renderer.cylinderVertices, world);
             return null;
         }
 

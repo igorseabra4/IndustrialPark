@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using SharpDX;
 using System.ComponentModel;
 
@@ -319,7 +320,7 @@ namespace IndustrialPark
             {
                 if (isSkyBox)
                 {
-                    Vector3 skyTranslation = Program.MainForm.renderer.Camera.Position;
+                    Vector3 skyTranslation = Program.Renderer.Camera.Position;
                     if (!skyBoxUseY)
                         skyTranslation.Y = PositionY;
 

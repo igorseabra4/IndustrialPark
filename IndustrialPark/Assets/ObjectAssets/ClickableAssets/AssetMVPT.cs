@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -19,19 +20,19 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
         [Category(categoryName), Description("Allows the object to follow a curved path through this point, calculated using the previous and next points. Set to 1 to enable.")]
@@ -48,7 +49,7 @@ namespace IndustrialPark
         public AssetSingle ZoneRadius
         {
             get => _zoneRadius;
-            set { _zoneRadius = value; CreateTransformMatrix(); }
+            set => _zoneRadius = value;
         }
 
         private float _arenaRadius;
@@ -56,7 +57,7 @@ namespace IndustrialPark
         public AssetSingle ArenaRadius
         {
             get => _arenaRadius;
-            set { _arenaRadius = value; CreateTransformMatrix(); }
+            set => _arenaRadius = value;
         }
 
         [Category(categoryName), Description("Determines whether the point starts enabled or disabled. Disabled points cannot be selected as next destinations. Use the On and Off events to change the point's state, or Reset to restore its initial state. An NPC can still start at a disabled point if it is directly referenced in the NPC asset.")]
@@ -91,38 +92,34 @@ namespace IndustrialPark
                     ArenaRadius = -1;
                     break;
             }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
+
+        public static bool chainPointMVPTs = false;
+
+        public static uint chainPointMVPTlast = 0;
 
         public AssetMVPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                Weight = reader.ReadUInt16();
-                On = reader.ReadByte() != 0;
-                BezierIndex = reader.ReadByte();
-                Flg_Props = reader.ReadByte();
-                reader.ReadByte(); // pad
-                ushort pointCount = reader.ReadUInt16();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            Weight = reader.ReadUInt16();
+            On = reader.ReadByte() != 0;
+            BezierIndex = reader.ReadByte();
+            Flg_Props = reader.ReadByte();
+            reader.ReadByte(); // pad
+            ushort pointCount = reader.ReadUInt16();
 
-                if (game != Game.Scooby)
-                    Delay = reader.ReadSingle();
-                _zoneRadius = reader.ReadSingle();
-                if (game != Game.Scooby)
-                    _arenaRadius = reader.ReadSingle();
+            if (game != Game.Scooby)
+                Delay = reader.ReadSingle();
+            _zoneRadius = reader.ReadSingle();
+            if (game != Game.Scooby)
+                _arenaRadius = reader.ReadSingle();
 
-                NextMovePoints = new AssetID[pointCount];
-                for (int i = 0; i < NextMovePoints.Length; i++)
-                    NextMovePoints[i] = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            NextMovePoints = new AssetID[pointCount];
+            for (int i = 0; i < NextMovePoints.Length; i++)
+                NextMovePoints[i] = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -156,28 +153,28 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
         private bool DrawAsPoint => DrawAllAsPoints || _arenaRadius <= 0f;
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = DrawAsPoint
                 ? Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f))
                 : Matrix.Scaling(_arenaRadius * 2f) * Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
         public BoundingSphere boundingSphere;
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(SharpRenderer renderer)
         {
             if (DrawAsPoint)
             {
-                var vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+                var vertices = new Vector3[renderer.pyramidVertices.Count];
 
-                for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
+                for (int i = 0; i < renderer.pyramidVertices.Count; i++)
+                    vertices[i] = (Vector3)Vector3.Transform(renderer.pyramidVertices[i], world);
 
                 boundingBox = BoundingBox.FromPoints(vertices);
                 boundingSphere = BoundingSphere.FromBox(boundingBox);
@@ -195,8 +192,8 @@ namespace IndustrialPark
                 if (ray.Intersects(ref boundingSphere))
                 {
                     return DrawAsPoint
-                        ? TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world)
-                        : TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                        ? TriangleIntersection(ray, renderer.pyramidTriangles, renderer.pyramidVertices, world)
+                        : TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
                 }
             return null;
         }
@@ -307,8 +304,6 @@ namespace IndustrialPark
                 _position.Y = transformation._positionY;
                 _position.Z = transformation._positionZ;
                 SetScale(transformation._scaleSingle);
-
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

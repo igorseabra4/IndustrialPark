@@ -17,19 +17,19 @@ namespace IndustrialPark
         public virtual AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(dynaCategoryName)]
         public virtual AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(dynaCategoryName)]
         public virtual AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
         public RenderableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType)
@@ -45,23 +45,25 @@ namespace IndustrialPark
         protected Vector3[] vertices;
         protected List<RenderWareFile.Triangle> triangles;
 
-        protected abstract List<Vector3> vertexSource { get; }
-        protected abstract List<Models.Triangle> triangleSource { get; }
+        protected abstract List<Vector3> vertexSource(SharpRenderer renderer);
+        protected abstract List<Models.Triangle> triangleSource(SharpRenderer renderer);
 
-        public virtual void CreateTransformMatrix()
+        public virtual void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected virtual void CreateBoundingBox()
+        protected virtual void CreateBoundingBox(SharpRenderer renderer)
         {
+            var vertexSource = this.vertexSource(renderer);
             vertices = new Vector3[vertexSource.Count];
             for (int i = 0; i < vertexSource.Count; i++)
                 vertices[i] = (Vector3)Vector3.Transform(vertexSource[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);
 
+            var triangleSource = this.triangleSource(renderer);
             triangles = new List<RenderWareFile.Triangle>(triangleSource.Count);
             for (int i = 0; i < triangleSource.Count; i++)
                 triangles.Add(new RenderWareFile.Triangle((ushort)triangleSource[i].materialIndex,
@@ -83,7 +85,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, triangleSource, vertexSource, world) : TriangleIntersection(ray);
+                return triangles == null ? TriangleIntersection(ray, triangleSource(renderer), vertexSource(renderer), world) : TriangleIntersection(ray);
             return null;
         }
 
@@ -100,7 +102,7 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         protected abstract bool DontRender { get; }
 
@@ -137,7 +139,6 @@ namespace IndustrialPark
                 _position.X = transformation._positionX;
                 _position.Y = transformation._positionY;
                 _position.Z = transformation._positionZ;
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

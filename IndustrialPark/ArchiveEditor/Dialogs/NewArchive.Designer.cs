@@ -38,7 +38,7 @@
             dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             textBoxPCRT = new System.Windows.Forms.TextBox();
             checkBoxDefaultAssets = new System.Windows.Forms.CheckBox();
-            checkBoxNoLayers = new System.Windows.Forms.CheckBox();
+            checkBoxAutoLayers = new System.Windows.Forms.CheckBox();
             groupBox1.SuspendLayout();
             groupBox2.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -83,7 +83,6 @@
             buttonCancel.TabIndex = 10;
             buttonCancel.Text = "Cancel";
             buttonCancel.UseVisualStyleBackColor = true;
-            buttonCancel.Click += buttonCancel_Click;
             // 
             // groupBox2
             // 
@@ -141,17 +140,17 @@
             checkBoxDefaultAssets.Text = "Add Default Assets";
             checkBoxDefaultAssets.UseVisualStyleBackColor = true;
             // 
-            // checkBoxNoLayers
+            // checkBoxAutoLayers
             // 
-            checkBoxNoLayers.AutoSize = true;
-            checkBoxNoLayers.Checked = true;
-            checkBoxNoLayers.CheckState = System.Windows.Forms.CheckState.Checked;
-            checkBoxNoLayers.Location = new System.Drawing.Point(140, 200);
-            checkBoxNoLayers.Name = "checkBoxNoLayers";
-            checkBoxNoLayers.Size = new System.Drawing.Size(74, 17);
-            checkBoxNoLayers.TabIndex = 8;
-            checkBoxNoLayers.Text = "No Layers";
-            checkBoxNoLayers.UseVisualStyleBackColor = true;
+            checkBoxAutoLayers.AutoSize = true;
+            checkBoxAutoLayers.Checked = true;
+            checkBoxAutoLayers.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxAutoLayers.Location = new System.Drawing.Point(140, 200);
+            checkBoxAutoLayers.Name = "checkBoxAutoLayers";
+            checkBoxAutoLayers.Size = new System.Drawing.Size(74, 17);
+            checkBoxAutoLayers.TabIndex = 8;
+            checkBoxAutoLayers.Text = "No Layers";
+            checkBoxAutoLayers.UseVisualStyleBackColor = true;
             // 
             // NewArchive
             // 
@@ -160,7 +159,7 @@
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             CancelButton = buttonCancel;
             ClientSize = new System.Drawing.Size(317, 255);
-            Controls.Add(checkBoxNoLayers);
+            Controls.Add(checkBoxAutoLayers);
             Controls.Add(groupBox3);
             Controls.Add(buttonOK);
             Controls.Add(buttonCancel);
@@ -193,6 +192,6 @@
         private System.Windows.Forms.TextBox textBoxPCRT;
         private System.Windows.Forms.DateTimePicker dateTimePicker1;
         private System.Windows.Forms.CheckBox checkBoxDefaultAssets;
-        private System.Windows.Forms.CheckBox checkBoxNoLayers;
+        private System.Windows.Forms.CheckBox checkBoxAutoLayers;
     }
 }

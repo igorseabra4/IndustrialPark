@@ -1,4 +1,6 @@
-﻿using SharpDX;
+﻿using IndustrialPark.Archive;
+using IndustrialPark.AssetEditorColors;
+using SharpDX;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -97,24 +99,18 @@ namespace IndustrialPark
 
         private void colorPickerBtn_Click(object sender, EventArgs e)
         {
-            var colorDialog = new ColorDialog()
-            {
-                FullOpen = true,
-                ShowHelp = true,
-                Color = System.Drawing.Color.FromArgb(
-                    255,
-                    ClampToByteRange((int)(numericUpDownX.Value * 255)),
-                    ClampToByteRange((int)(numericUpDownY.Value * 255)),
-                    ClampToByteRange((int)(numericUpDownZ.Value * 255))
-                )
-            };
+            var (result, color) = AssetColorEditor.GetColorFromDialog(System.Drawing.Color.FromArgb(
+                255,
+                ClampToByteRange((int)(numericUpDownX.Value * 255)),
+                ClampToByteRange((int)(numericUpDownY.Value * 255)),
+                ClampToByteRange((int)(numericUpDownZ.Value * 255))
+            ));
 
-            // Update the text box color if the user clicks OK 
-            if (colorDialog.ShowDialog() == DialogResult.OK)
+            if (result == DialogResult.OK)
             {
-                numericUpDownX.Value = (decimal)colorDialog.Color.R / 255;
-                numericUpDownY.Value = (decimal)colorDialog.Color.G / 255;
-                numericUpDownZ.Value = (decimal)colorDialog.Color.B / 255;
+                numericUpDownX.Value = (decimal)color.R / 255;
+                numericUpDownY.Value = (decimal)color.G / 255;
+                numericUpDownZ.Value = (decimal)color.B / 255;
             }
         }
     }

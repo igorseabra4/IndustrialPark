@@ -54,7 +54,7 @@ namespace IndustrialPark.Randomizer
         {
             HexUIntTypeConverter.Legacy = true;
 
-            if (Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+            if (Directory.Exists(AutomaticUpdater.editorFilesFolder))
             {
                 AutomaticUpdater.VerifyEditorFiles();
             }
@@ -71,13 +71,6 @@ namespace IndustrialPark.Randomizer
             RandomizableArchive.random = new Random((int)this.seed);
 
             var result = PerformDirRandomizer(backupDir, destinationDir, progressBar);
-
-            ArchiveEditorFunctions.renderableAssets.Clear();
-            ArchiveEditorFunctions.renderableJSPs.Clear();
-            ArchiveEditorFunctions.renderingDictionary.Clear();
-            ArchiveEditorFunctions.renderableFOGs.Clear();
-            ArchiveEditorFunctions.renderableLightKits.Clear();
-            ArchiveEditorFunctions.ClearNameDictionary();
 
             return result;
         }
@@ -119,19 +112,32 @@ namespace IndustrialPark.Randomizer
 
             Dictionary<uint, List<Asset>> tokens = null;
 
+            RandomizableArchive OpenHipFile(string hipPath)
+            {
+                HipFile hipFile = HipFile.FromPath(hipPath);
+
+                if (hipFile.game == Game.Unknown)
+                    hipFile.game = game;
+
+                if (hipFile.platform == Platform.Unknown && scoobyPlatform != Platform.Unknown)
+                    hipFile.platform = scoobyPlatform;
+                while (hipFile.platform == Platform.Unknown)
+                    hipFile.platform = scoobyPlatform = ChoosePlatformDialog.GetPlatform();
+                return new RandomizableArchive(hipFile, hipPath);
+            }
+
             // This goes through each file in the game and gets the warp names
             foreach (string hipPath in hipPaths)
             {
-                RandomizableArchive hip = new RandomizableArchive();
-                hip.OpenFile(hipPath, false, scoobyPlatform);
+                var hip = OpenHipFile(hipPath);
 
-                progressBar.PerformStep($" | Opening {Path.GetFileNameWithoutExtension(hip.currentlyOpenFilePath)}...");
+                progressBar.PerformStep($" | Opening {Path.GetFileNameWithoutExtension(hip.CurrentFilePath)}...");
 
                 // Verifies if game/platform combination is ok, also checks for EditorFiles in case it needs those
                 if (!platformVerified)
                 {
-                    game = hip.game;
-                    scoobyPlatform = hip.platform;
+                    game = hip.Game;
+                    scoobyPlatform = hip.Platform;
                     platformVerified = true;
                     if (game == Game.Scooby)
                         tokens = new Dictionary<uint, List<Asset>>();
@@ -143,8 +149,8 @@ namespace IndustrialPark.Randomizer
                 {
                     warpNames.AddRange(hip.GetWarpNames(toSkip));
                     var localMarkerNames =
-                        game == Game.BFBB ? RandomizerHelper.GetMarkerNamesBfbb(levelName) : 
-                        game == Game.Scooby ? RandomizerHelper.GetMarkerNamesScooby(levelName) : 
+                        game == Game.BFBB ? RandomizerHelper.GetMarkerNamesBfbb(levelName) :
+                        game == Game.Scooby ? RandomizerHelper.GetMarkerNamesScooby(levelName) :
                         [];
                     if (localMarkerNames.Length != 0)
                     {
@@ -160,13 +166,13 @@ namespace IndustrialPark.Randomizer
                     hip.GetMonsterTokens(tokens);
             }
 
-            HashSet<string> uinqueWarpNames = new HashSet<string>();
+            HashSet<string> uniqueWarpNames = new HashSet<string>();
             if (settings.Warps)
             {
                 foreach (string s in warpNames)
-                    uinqueWarpNames.Add(s);
+                    uniqueWarpNames.Add(s);
                 warpNames.Clear();
-                warpNames.AddRange(uinqueWarpNames.OrderBy(w => w));
+                warpNames.AddRange(uniqueWarpNames.OrderBy(w => w));
             }
 
             progressBar.PerformStep(" | Patching boot.hip...");
@@ -176,15 +182,13 @@ namespace IndustrialPark.Randomizer
 
             if (File.Exists(bootPath))
             {
-                var boot = new RandomizableArchive();
-                boot.OpenFile(bootPath, false, scoobyPlatform);
-                boot.NoLayers = true;
+                var boot = OpenHipFile(bootPath);
 
                 bool shouldSave = false;
 
                 if (settings.Music)
                 {
-                    if (boot.game == Game.Scooby)
+                    if (game == Game.Scooby)
                         shouldSave |= boot.RandomizeSounds(false, true);
                     else
                         shouldSave |= boot.RandomizePlaylist();
@@ -216,7 +220,7 @@ namespace IndustrialPark.Randomizer
 
                 if (shouldSave)
                 {
-                    var destPath = boot.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destPath = boot.CurrentFilePath.Replace(backupDir, destinationDir);
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
@@ -230,13 +234,11 @@ namespace IndustrialPark.Randomizer
                 string sppaPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/sp/sppa.hop";
                 if (File.Exists(sppaPath))
                 {
-                    var sppa = new RandomizableArchive();
-                    sppa.OpenFile(sppaPath, false, scoobyPlatform);
-                    sppa.NoLayers = true;
+                    var sppa = OpenHipFile(sppaPath);
 
                     sppa.RandomizeSounds(false, limited: true);
 
-                    var destPath = sppa.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destPath = sppa.CurrentFilePath.Replace(backupDir, destinationDir);
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
@@ -247,13 +249,11 @@ namespace IndustrialPark.Randomizer
                 string spsbPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/sp/spsb.hop";
                 if (File.Exists(spsbPath))
                 {
-                    var spsb = new RandomizableArchive();
-                    spsb.OpenFile(spsbPath, false, scoobyPlatform);
-                    spsb.NoLayers = true;
+                    var spsb = OpenHipFile(spsbPath);
 
                     spsb.RandomizeSounds(false, limited: true);
 
-                    var destPath = spsb.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destPath = spsb.CurrentFilePath.Replace(backupDir, destinationDir);
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
@@ -264,13 +264,11 @@ namespace IndustrialPark.Randomizer
                 string spscPath = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/sp/spsc.hop";
                 if (File.Exists(spscPath))
                 {
-                    var spsc = new RandomizableArchive();
-                    spsc.OpenFile(spscPath, false, scoobyPlatform);
-                    spsc.NoLayers = true;
+                    var spsc = OpenHipFile(spscPath);
 
                     spsc.RandomizeSounds(false, limited: true);
 
-                    var destPath = spsc.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destPath = spsc.CurrentFilePath.Replace(backupDir, destinationDir);
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
@@ -285,9 +283,7 @@ namespace IndustrialPark.Randomizer
                 string mnu5path = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/mn/mnu5.hip";
                 if (File.Exists(mnu5path))
                 {
-                    var mnu5 = new RandomizableArchive();
-                    mnu5.OpenFile(mnu5path, false, scoobyPlatform);
-                    mnu5.NoLayers = true;
+                    var mnu5 = OpenHipFile(mnu5path);
 
                     if (settings.restoreRobotLaugh)
                         mnu5.RestoreRobotLaugh();
@@ -295,7 +291,7 @@ namespace IndustrialPark.Randomizer
                     if (settings.PlayerSounds)
                         mnu5.RandomizeSounds(false, limited: true);
 
-                    var destPath = mnu5.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destPath = mnu5.CurrentFilePath.Replace(backupDir, destinationDir);
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
@@ -310,9 +306,7 @@ namespace IndustrialPark.Randomizer
                 string mnu4path = (string.IsNullOrEmpty(backupDir) ? destinationDir : backupDir) + "/mn/mnu4.hip";
                 if (File.Exists(mnu4path))
                 {
-                    var mnu4 = new RandomizableArchive();
-                    mnu4.OpenFile(mnu4path, false, scoobyPlatform);
-                    mnu4.NoLayers = true;
+                    var mnu4 = OpenHipFile(mnu4path);
 
                     if (settings.widescreen)
                         mnu4.WidescreenMenu();
@@ -320,7 +314,7 @@ namespace IndustrialPark.Randomizer
                     if (settings.PlayerSounds)
                         mnu4.RandomizeSounds(false, limited: true);
 
-                    var destPath = mnu4.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                    var destPath = mnu4.CurrentFilePath.Replace(backupDir, destinationDir);
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
@@ -344,17 +338,15 @@ namespace IndustrialPark.Randomizer
 
             foreach (string hipPath in hipPaths)
             {
-                RandomizableArchive hip = new RandomizableArchive();
-                hip.OpenFile(hipPath, false, scoobyPlatform);
-                hip.NoLayers = true;
+                var hip = OpenHipFile(hipPath);
 
-                progressBar.PerformStep($" | Randomizing {Path.GetFileNameWithoutExtension(hip.currentlyOpenFilePath)}...");
+                progressBar.PerformStep($" | Randomizing {Path.GetFileNameWithoutExtension(hip.CurrentFilePath)}...");
 
                 string hopPath = Path.ChangeExtension(hipPath, ".HOP");
 
                 if (File.Exists(hopPath))
                 {
-                    hip.ImportHip(hopPath, true);
+                    hip.Transformer.ImportHip(hopPath, true);
                     hops.Add(hopPath.Replace(backupDir, "").Substring(1));
                 }
 
@@ -365,8 +357,8 @@ namespace IndustrialPark.Randomizer
                 }
                 if (game == Game.BFBB && (settings.UnlockCharacters || settings.disableCutscenes))
                     hip.KillFinalBossCutscenes();
-                if (settings.Warps && !FileInSecondBox(hip.currentlyOpenFilePath))
-                    hip.SetWarpNames(toSkip, ref warpNames, ref warpRandomizerOutput, uinqueWarpNames, ref markerNames);
+                if (settings.Warps && !FileInSecondBox(hip.CurrentFilePath))
+                    hip.SetWarpNames(toSkip, ref warpNames, ref warpRandomizerOutput, uniqueWarpNames, ref markerNames);
 
                 if (game == Game.Scooby)
                 {
@@ -394,9 +386,9 @@ namespace IndustrialPark.Randomizer
 
                 hip.Randomize(settings);
 
-                progressBar.PerformStep($" | Saving {Path.GetFileNameWithoutExtension(hip.currentlyOpenFilePath)}...");
+                progressBar.PerformStep($" | Saving {Path.GetFileNameWithoutExtension(hip.CurrentFilePath)}...");
 
-                var destPath = hip.currentlyOpenFilePath.Replace(backupDir, destinationDir);
+                var destPath = hip.CurrentFilePath.Replace(backupDir, destinationDir);
                 var destDir = Path.GetDirectoryName(destPath);
                 if (!Directory.Exists(destDir))
                     Directory.CreateDirectory(destDir);

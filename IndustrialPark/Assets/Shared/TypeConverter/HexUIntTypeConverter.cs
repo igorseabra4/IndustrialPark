@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using IndustrialPark.Archive;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -64,7 +65,7 @@ namespace IndustrialPark
             if (Legacy)
                 return value.ToString("X8");
 
-            return Program.MainForm.GetAssetNameFromID(value);
+            return Program.NameRepository.Get(value);
         }
     }
 }

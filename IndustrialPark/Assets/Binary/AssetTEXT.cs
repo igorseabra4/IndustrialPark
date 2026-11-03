@@ -17,11 +17,9 @@ namespace IndustrialPark
 
         public AssetTEXT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                var length = reader.ReadInt32();
-                Text = reader.ReadString(length);
-            }
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            var length = reader.ReadInt32();
+            Text = reader.ReadString(length);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -44,7 +42,7 @@ namespace IndustrialPark
             base.Verify(ref result);
 
             foreach (string s in AssetNamesInText)
-                if (!(Program.MainForm.AssetExists(Functions.BKDRHash(s)) || Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3"))))
+                if (!(Program.NameRepository.AssetExists(new AssetID(s)) || Program.NameRepository.AssetExists(new AssetID(s + ".RW3"))))
                     result.Add("No open archive contains asset " + s + ", which is referenced in this asset.");
         }
 

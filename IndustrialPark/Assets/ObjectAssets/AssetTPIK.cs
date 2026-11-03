@@ -82,7 +82,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetTPIK : BaseAsset, IDictionaryAsset
+    public class AssetTPIK : BaseAsset, IDisposableAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
@@ -142,7 +142,7 @@ namespace IndustrialPark
                 tpikEntries[entry.PickupHash] = entry;
         }
 
-        public void ClearDictionary()
+        public void Dispose()
         {
             foreach (EntryTPIK entry in Entries)
                 tpikEntries.Remove(entry.PickupHash);

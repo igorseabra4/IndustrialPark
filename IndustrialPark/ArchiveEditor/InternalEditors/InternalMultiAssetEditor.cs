@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IndustrialPark.Archive;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -7,13 +8,11 @@ namespace IndustrialPark;
 
 public partial class InternalMultiAssetEditor : Form
 {
-    public InternalMultiAssetEditor(Asset[] assets, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+    public InternalMultiAssetEditor(Asset[] assets)
     {
         InitializeComponent();
 
         this.assets = assets;
-        this.archive = archive;
-        this.updateListView = updateListView;
 
         var descriptors = assets.Select(DynamicTypeDescriptor.Create).ToArray();
         propertyGridAsset.SelectedObjects = descriptors;
@@ -26,24 +25,19 @@ public partial class InternalMultiAssetEditor : Form
         InternalEditor.SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
-    private ArchiveEditorFunctions archive;
-    private readonly Action<Asset> updateListView;
     private readonly Asset[] assets;
     public uint[] AssetIDs => (from Asset a in assets select a.assetID).ToArray();
 
     private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
     {
-        archive.UnsavedChanges = true;
         foreach (var asset in assets)
-            updateListView(asset);
+            asset.InvokePropertyChanged(true);
+        
         propertyGridAsset.Refresh();
     }
 
     public void RefreshPropertyGrid()
     {
-        Task.Run(() =>
-        {
-            Invoke(propertyGridAsset.Refresh);
-        });
+        Invoke(propertyGridAsset.Refresh);
     }
 }

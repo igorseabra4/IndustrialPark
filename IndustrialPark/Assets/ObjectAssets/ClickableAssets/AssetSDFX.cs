@@ -17,7 +17,7 @@ namespace IndustrialPark
         public AssetID SoundGroup
         {
             get => _soundGroup;
-            set { _soundGroup = value; CreateTransformMatrix(); }
+            set => _soundGroup = value;
         }
 
         [Category(categoryName)]
@@ -27,19 +27,19 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
         [Category(categoryName)]
@@ -48,34 +48,22 @@ namespace IndustrialPark
             null,
             "Play from Entity");
 
-        private Func<uint, AssetSGRP> GetSGRP;
+        public Func<uint, AssetSGRP> GetSGRP;
 
-        public AssetSDFX(string assetName, Vector3 position, Func<uint, AssetSGRP> getSGRP) : base(assetName, AssetType.SDFX, BaseAssetType.SDFX)
+        public AssetSDFX(string assetName, Vector3 position) : base(assetName, AssetType.SDFX, BaseAssetType.SDFX)
         {
-            GetSGRP = getSGRP;
-
             _position = position;
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public AssetSDFX(Section_AHDR AHDR, Game game, Endianness endianness, Func<uint, AssetSGRP> getSGRP) : base(AHDR, game, endianness)
+        public AssetSDFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            GetSGRP = getSGRP;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                _soundGroup = reader.ReadUInt32();
-                Emitter = reader.ReadUInt32();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                SDFXFlags.FlagValueInt = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            _soundGroup = reader.ReadUInt32();
+            Emitter = reader.ReadUInt32();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            SDFXFlags.FlagValueInt = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -96,7 +84,7 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
             world2 = Matrix.Scaling(_radius2 * 2f) * Matrix.Translation(_position);
@@ -115,7 +103,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingSphere))
-                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                return TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
             return null;
         }
 
@@ -142,7 +130,7 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         public BoundingBox GetBoundingBox() => boundingBox;
 
@@ -152,7 +140,7 @@ namespace IndustrialPark
         {
             get
             {
-                var soundGroup = GetSGRP(_soundGroup);
+                var soundGroup = GetSGRP?.Invoke(_soundGroup);
                 return soundGroup == null ? 1f : (float)soundGroup.InnerRadius;
             }
         }
@@ -161,7 +149,7 @@ namespace IndustrialPark
         {
             get
             {
-                var soundGroup = GetSGRP(_soundGroup);
+                var soundGroup = GetSGRP?.Invoke(_soundGroup);
                 return soundGroup == null ? 1f : (float)soundGroup.OuterRadius;
             }
         }
@@ -185,8 +173,6 @@ namespace IndustrialPark
                 _position.X = transformation._positionX;
                 _position.Y = transformation._positionY;
                 _position.Z = transformation._positionZ;
-
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

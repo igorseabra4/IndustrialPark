@@ -13,7 +13,7 @@ namespace IndustrialPark
 
         public static System.Windows.Forms.Timer timer1;
 
-        public static List<ArchiveEditor> archiveEditors = Program.MainForm.archiveEditors;
+        public static List<ArchiveEditor> archiveEditors = Program.ArchiveEditors;
 
         public static string currentArchiveEditor = string.Empty;
 
@@ -78,10 +78,7 @@ namespace IndustrialPark
                 if (!idling)
                 {
                     alreadyIdling = false;
-                    if (archiveEditor == null)
-                        // .SingleOrDefault() works best here but it's not worth throwing an
-                        // exception just to update the presence.
-                        archiveEditor = archiveEditors.Where(x => x.ContainsFocus).FirstOrDefault();
+                    archiveEditor ??= archiveEditors.FirstOrDefault(x => x.ContainsFocus);
 
                     // no point updating if it wasn't changed
                     if (currentArchiveEditor == archiveEditor.Text)
@@ -129,7 +126,7 @@ namespace IndustrialPark
                     // If no match, it's OK to prefix with "a".
                     details = $"Editing {("IU".IndexOf(game.ElementAt(0)) >= 0 || game.StartsWith("RO") ? $"an {game}" : $"a {game}")} level";
 
-                    state = $"{archiveEditor.Text}{(archiveEditor.archive.platform != Platform.Unknown ? $" - {archiveEditor.archive.platform}" : "")}";
+                    state = $"{archiveEditor.Text}{(archiveEditor.archive.Platform != Platform.Unknown ? $" - {archiveEditor.archive.Platform}" : "")}";
                 }
                 else
                 {
@@ -166,7 +163,7 @@ namespace IndustrialPark
 
         private static string GameHandler(ArchiveEditor archiveEditor)
         {
-            Game game = archiveEditor.archive.game;
+            Game game = archiveEditor.archive.Game;
             switch (game)
             {
                 case Game.Scooby:
@@ -176,7 +173,7 @@ namespace IndustrialPark
                 case Game.RatProto:
                     return "Ratatouille";
                 default:
-                    switch (ArchiveEditor.GetGameFromGameConfigIni(archiveEditor.GetCurrentlyOpenFileName()))
+                    switch (ArchiveEditor.GetGameFromGameConfigIni(archiveEditor.GetCurrentFilePath()))
                     {
                         case 3:
                             return "TSSM";

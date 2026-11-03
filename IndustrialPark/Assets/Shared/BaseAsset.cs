@@ -116,25 +116,23 @@ namespace IndustrialPark
 
         public BaseAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = 0x4;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = 0x4;
 
-                BaseAssetType = (BaseAssetType)reader.ReadByte();
-                byte LinkCount = reader.ReadByte();
+            BaseAssetType = (BaseAssetType)reader.ReadByte();
+            byte LinkCount = reader.ReadByte();
 
-                BaseFlags = reader.ReadUInt16();
+            BaseFlags = reader.ReadUInt16();
 
-                reader.BaseStream.Position = linkStartPosition(reader.BaseStream.Length, LinkCount);
+            reader.BaseStream.Position = linkStartPosition(reader.BaseStream.Length, LinkCount);
 
-                _links = new Link[LinkCount];
-                for (int i = 0; i < _links.Length; i++)
-                    _links[i] = new Link(reader, LinkType.Normal, game);
-            }
+            _links = new Link[LinkCount];
+            for (int i = 0; i < _links.Length; i++)
+                _links[i] = new Link(reader, LinkType.Normal, game);
         }
 
         // meant for use with DUPC VIL only
-        protected BaseAsset(EndianBinaryReader reader, Game game)
+        protected BaseAsset(EndianBinaryReader reader, Game game) : base()
         {
             _game = game;
             assetID = reader.ReadUInt32();

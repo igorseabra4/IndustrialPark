@@ -31,6 +31,8 @@
             dataGridView1 = new System.Windows.Forms.DataGridView();
             textBoxSearch = new System.Windows.Forms.TextBox();
             linkLabel1 = new System.Windows.Forms.LinkLabel();
+            buttonDefaults = new System.Windows.Forms.Button();
+            labelEditHelp = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
             // 
@@ -52,6 +54,8 @@
             dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             dataGridView1.Size = new System.Drawing.Size(600, 478);
             dataGridView1.TabIndex = 0;
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
+            dataGridView1.CellFormatting += dataGridView1_CellFormatting;
             // 
             // textBoxSearch
             // 
@@ -75,11 +79,34 @@
             linkLabel1.Text = "Click here to check out the tutorial";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
+            // buttonDefaults
+            // 
+            buttonDefaults.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            buttonDefaults.Location = new System.Drawing.Point(537, 519);
+            buttonDefaults.Name = "buttonDefaults";
+            buttonDefaults.Size = new System.Drawing.Size(75, 20);
+            buttonDefaults.TabIndex = 3;
+            buttonDefaults.Text = "Reset All";
+            buttonDefaults.UseVisualStyleBackColor = true;
+            buttonDefaults.Click += buttonDefaults_Click;
+            // 
+            // labelEditHelp
+            // 
+            labelEditHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            labelEditHelp.AutoSize = true;
+            labelEditHelp.Location = new System.Drawing.Point(356, 523);
+            labelEditHelp.Name = "labelEditHelp";
+            labelEditHelp.Size = new System.Drawing.Size(175, 13);
+            labelEditHelp.TabIndex = 4;
+            labelEditHelp.Text = "Double-click blue commands to edit";
+            // 
             // ViewControls
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             ClientSize = new System.Drawing.Size(624, 541);
+            Controls.Add(labelEditHelp);
+            Controls.Add(buttonDefaults);
             Controls.Add(linkLabel1);
             Controls.Add(textBoxSearch);
             Controls.Add(dataGridView1);
@@ -87,7 +114,7 @@
             Name = "ViewControls";
             ShowIcon = false;
             Text = "View Controls";
-            Load += ViewControls_Load;
+            KeyDown += ViewControls_KeyDown;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
             ResumeLayout(false);
             PerformLayout();
@@ -98,5 +125,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.TextBox textBoxSearch;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Button buttonDefaults;
+        private System.Windows.Forms.Label labelEditHelp;
     }
 }

@@ -9,9 +9,9 @@ using System.Linq;
 
 namespace IndustrialPark
 {
-    public static class TextureManager
+    public class TextureManager
     {
-        public static string TreatTextureName(string entry)
+        public string TreatTextureName(string entry)
         {
             entry = Path.GetFileNameWithoutExtension(entry).Trim('_');
             entry = entry.Trim('_');
@@ -19,31 +19,31 @@ namespace IndustrialPark
         }
 
         public const string DefaultTexture = "default";
-        private static Dictionary<string, ShaderResourceView> Textures = new Dictionary<string, ShaderResourceView>();
+        private Dictionary<string, ShaderResourceView> Textures = new Dictionary<string, ShaderResourceView>();
 
-        public static HashSet<string> OpenTextureFolders { get; private set; } = new HashSet<string>();
+        public HashSet<string> OpenTextureFolders { get; private set; } = new HashSet<string>();
 
-        public static bool HasTexture(string textureName)
+        public bool HasTexture(string textureName)
         {
             return Textures.ContainsKey(textureName);
         }
 
-        public static ShaderResourceView GetTextureFromDictionary(Material_0007 material)
+        public ShaderResourceView GetTextureFromDictionary(Material_0007 material)
         {
             if (material != null && material.texture != null && Textures.ContainsKey(material.texture.DiffuseTextureName))
                 return Textures[material.texture.DiffuseTextureName];
-            return SharpRenderer.whiteDefault;
+            return Program.Renderer.whiteDefault;
         }
 
-        public static ShaderResourceView GetTextureFromDictionary(uint assetID)
+        public ShaderResourceView GetTextureFromDictionary(uint assetID)
         {
             foreach (string s in Textures.Keys)
                 if (Functions.BKDRHash(s) == assetID)
                     return Textures[s];
-            return SharpRenderer.whiteDefault;
+            return Program.Renderer.whiteDefault;
         }
 
-        public static void LoadTexturesFromTXD(string textureFile, bool reapply = true)
+        public void LoadTexturesFromTXD(string textureFile, bool reapply = true)
         {
             foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(textureFile))
                 if (rw is TextureDictionary_0016 td)
@@ -54,30 +54,30 @@ namespace IndustrialPark
                 ReapplyTextures();
         }
 
-        private static void AddTextureNative(TextureNativeStruct_0001 tnStruct)
+        private void AddTextureNative(TextureNativeStruct_0001 tnStruct)
         {
             ShaderResourceView texture;
 
             try
-            { texture = Program.MainForm.renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
+            { texture = Program.Renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
             catch { return; }
 
             DisposeTexture(tnStruct.textureName);
             Textures[tnStruct.textureName] = texture;
         }
 
-        public static void RemoveTexture(string textureName, ArchiveEditorFunctions sender, uint assetID)
+        public void RemoveTexture(string textureName, Archive.Archive sender, uint assetID)
         {
-            foreach (var ae in Program.MainForm.archiveEditors)
-                if (ae.archive != sender && ae.archive.ContainsAsset(assetID))
+            foreach (var ae in Program.ArchiveEditors)
+                if (ae.archive != null && ae.archive != sender && ae.archive.ContainsAsset(assetID))
                     return;
-
+            
             DisposeTexture(textureName);
             Textures.Remove(textureName);
             ReapplyTextures();
         }
 
-        public static void LoadTexturesFromFolder(IEnumerable<string> folderNames)
+        public void LoadTexturesFromFolder(IEnumerable<string> folderNames)
         {
             string[] extensions = new string[] { ".png", ".bmp", ".gif", ".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".tif", ".tiff" };
 
@@ -95,14 +95,14 @@ namespace IndustrialPark
             ReapplyTextures();
         }
 
-        private static void AddTextureBitmap(string path)
+        private void AddTextureBitmap(string path)
         {
             string textureName = TreatTextureName(Path.GetFileNameWithoutExtension(path));
             DisposeTexture(textureName);
-            Textures[textureName] = Program.MainForm.renderer.device.LoadTextureFromFile(path);
+            Textures[textureName] = Program.Renderer.device.LoadTextureFromFile(path);
         }
 
-        public static void ReapplyTextures()
+        public void ReapplyTextures()
         {
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 if (mesh != null)
@@ -119,18 +119,18 @@ namespace IndustrialPark
                         else
                         {
                             DisposeIfNotWhiteDefault(sub.DiffuseMap);
-                            sub.DiffuseMap = SharpRenderer.whiteDefault;
+                            sub.DiffuseMap = Program.Renderer.whiteDefault;
                         }
                     }
         }
 
-        private static void DisposeIfNotWhiteDefault(ShaderResourceView texture)
+        private void DisposeIfNotWhiteDefault(ShaderResourceView texture)
         {
-            if (texture != null && !texture.IsDisposed && texture != SharpRenderer.whiteDefault)
+            if (texture != null && !texture.IsDisposed && texture != Program.Renderer.whiteDefault)
                 texture.Dispose();
         }
 
-        public static void SetTextureForAnimation(string diffuseMapName, string newMapName)
+        public void SetTextureForAnimation(string diffuseMapName, string newMapName)
         {
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 foreach (SharpSubSet sub in mesh.SubSets)
@@ -140,28 +140,27 @@ namespace IndustrialPark
                 }
         }
 
-        public static void DisposeTexture(string textureName)
+        public void DisposeTexture(string textureName)
         {
-            if (Textures.ContainsKey(textureName) && Textures[textureName] != null && !Textures[textureName].IsDisposed)
-                Textures[textureName].Dispose();
+            if (Textures.TryGetValue(textureName, out ShaderResourceView value) && value != null && !value.IsDisposed)
+                value.Dispose();
         }
 
-        public static void DisposeTextures()
+        public void DisposeTextures()
         {
             foreach (ShaderResourceView texture in Textures.Values)
-                if (texture != null)
-                    texture.Dispose();
+                texture?.Dispose();
         }
 
-        public static void ClearTextures()
+        public void ClearTextures()
         {
             OpenTextureFolders.Clear();
             DisposeTextures();
             Textures.Clear();
         }
 
-        public static HashSet<string> SelectedTextures = new HashSet<string>();
+        public HashSet<string> SelectedTextures = new HashSet<string>();
 
-        public static bool IsSelected(string texture) => SelectedTextures.Contains(texture);
+        public bool IsSelected(string texture) => SelectedTextures.Contains(texture);
     }
 }

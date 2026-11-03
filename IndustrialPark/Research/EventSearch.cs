@@ -102,25 +102,26 @@ namespace IndustrialPark
             {
                 if (Path.GetExtension(s).ToLower() == ".hip" || Path.GetExtension(s).ToLower() == ".hop")
                 {
-                    ArchiveEditorFunctions archive = new ArchiveEditorFunctions(null) { SkipTextureDisplay = true };
-                    archive.OpenFile(s, false, scoobyPlatform);
-                    if (scoobyPlatform == Platform.Unknown)
-                        scoobyPlatform = archive.platform;
+                    HipFile hipFile = HipFile.FromPath(s);
+                    if (hipFile.platform == Platform.Unknown && scoobyPlatform != Platform.Unknown)
+                        hipFile.platform = scoobyPlatform;
+                    var archive = new Archive.Archive(hipFile, s, true, out _);
+                    scoobyPlatform = archive.Platform;
                     WriteWhatIFound(archive);
-                    archive.Dispose(false);
+                    archive.Dispose();
                 }
             }
             foreach (string s in Directory.GetDirectories(folderPath))
                 AddFolder(s, ref scoobyPlatform);
         }
 
-        private void WriteWhatIFound(ArchiveEditorFunctions archive)
+        private void WriteWhatIFound(Archive.Archive archive)
         {
             progressBar1.Minimum = 0;
             progressBar1.Maximum = archive.AssetCount;
             progressBar1.Step = 1;
 
-            foreach (Asset asset in archive.GetAllAssets())
+            foreach (Asset asset in archive.Assets)
             {
                 progressBar1.PerformStep();
 

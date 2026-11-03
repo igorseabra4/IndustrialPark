@@ -1,4 +1,5 @@
-﻿using System;
+﻿using IndustrialPark.Archive;
+using System;
 using System.Windows.Forms;
 
 namespace IndustrialPark.Randomizer
@@ -18,10 +19,8 @@ namespace IndustrialPark.Randomizer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            new SharpRenderer();
-            IndustrialPark.Program.UndoBuffer = new UndoBuffer();
-            IndustrialPark.Program.MainForm = new MainForm(new IPSettings());
-            ArchiveEditorFunctions.errorDisplay = false;
+            Application.SetColorMode(SystemColorMode.System);
+
             menu = new RandomizerMenu();
 
             Application.Run(menu);

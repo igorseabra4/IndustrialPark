@@ -18,12 +18,22 @@ public partial class MainForm
     private const int WM_NCLBUTTONDOWN = 0x00A1;
     private const int HTCAPTION = 2;
 
-    private int dockedEditorsCount => tabControlRight.TabPages.Count;
+    public int dockedEditorsCount => tabControlRight.TabPages.Count;
     public const int MaxDockedEditors = 15;
     private Point dragStartPoint;
     private bool isDraggingTab = false;
     private Rectangle initialDragRectangle = default;
     private Rectangle imaginaryDockingZone = default;
+
+    private int dockLeftSizeInit;
+    private int dockRightSizeInit;
+    private int dockLeftSizeSave;
+    private int dockRightSizeSave;
+    private bool leftOpenFirst = false;
+    private bool rightOpenFirst = false;
+
+    public Panel PanelLeft => splitContainer1.Panel1;
+    public bool AutoDockArchiveEditors;
 
     public void InitAdvancedDocking()
     {
@@ -56,13 +66,6 @@ public partial class MainForm
         int width = Math.Min(360, bounds.Width);
         imaginaryDockingZone = new Rectangle(bounds.Right - width, bounds.Top, width, bounds.Height);
     }
-
-    private int dockLeftSizeInit;
-    private int dockRightSizeInit;
-    private int dockLeftSizeSave;
-    private int dockRightSizeSave;
-    private bool leftOpenFirst = false;
-    private bool rightOpenFirst = false;
 
     private void SaveDockPanelDistances(object sender, SplitterEventArgs e)
     {
@@ -128,7 +131,8 @@ public partial class MainForm
         if (!rightOpenFirst)
         {
             rightOpenFirst = true;
-            splitContainer2.SplitterDistance = splitContainer2.ClientSize.Width - splitContainer2.SplitterWidth - dockRightSizeInit;
+            if (dockRightSizeInit > 0)
+                splitContainer2.SplitterDistance = splitContainer2.ClientSize.Width - splitContainer2.SplitterWidth - dockRightSizeInit;
         }
 
         var page = new TabPage(editor.Text);
@@ -188,15 +192,27 @@ public partial class MainForm
         }
     }
 
+    public void SelectDockedTab(InternalEditor editor)
+    {
+        foreach (TabPage page in tabControlRight.TabPages)
+        {
+            if (page.Controls.Contains(editor))
+            {
+                tabControlRight.SelectedTab = page;
+                return;
+            }
+        }
+    }
+
     bool collapse = true;
 
-    public void ClearDockedAssetEditors(System.Collections.Generic.IEnumerable<uint> except)
+    public void ClearDockedAssetEditors(System.Collections.Generic.IEnumerable<Asset> except)
     {
         collapse = false;
         foreach (TabPage page in tabControlRight.TabPages.Cast<TabPage>().ToList())
         {
             InternalEditor editor = (InternalEditor)page.Controls[0];
-            if (!except.Contains(editor.GetAssetID()))
+            if (!except.Contains(editor.GetAsset()))
                 editor.Close();
         }
         collapse = true;
@@ -239,15 +255,12 @@ public partial class MainForm
         }
     }
 
-    public Panel PanelLeft => splitContainer1.Panel1;
-    public bool AutoDockArchiveEditors;
-
     public void DockAssetList(ArchiveEditor archiveEditor = null)
     {
-        foreach (var ae in archiveEditors.Where(ae => ae.AssetListDocked))
+        foreach (var ae in ArchiveEditors.Where(ae => ae.AssetListDocked))
             ae.MoveAssetListBack(PanelLeft);
 
-        archiveEditor ??= GetTargetArchiveEditor();
+        archiveEditor ??= Program.ArchiveManager.GetTargetArchiveEditor();
         if (archiveEditor == null)
             return;
 
@@ -259,13 +272,14 @@ public partial class MainForm
         if (!leftOpenFirst)
         {
             leftOpenFirst = true;
-            splitContainer1.SplitterDistance = dockLeftSizeInit;
+            if (dockLeftSizeInit > 0)
+                splitContainer1.SplitterDistance = dockLeftSizeInit;
         }
     }
 
     public void UndockAssetList()
     {
-        foreach (var ae in archiveEditors.Where(ae => ae.AssetListDocked))
+        foreach (var ae in ArchiveEditors.Where(ae => ae.AssetListDocked))
             ae.MoveAssetListBack(PanelLeft);
 
         if (!splitContainer1.Panel1Collapsed)

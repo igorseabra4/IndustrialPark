@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using System;
 using System.IO;
 using System.Windows.Forms;
@@ -7,17 +8,18 @@ namespace IndustrialPark
 {
     public partial class InternalSoundEditor : InternalEditor
     {
-        public InternalSoundEditor(AssetSound asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
+        public InternalSoundEditor(AssetSound asset, ArchiveEditor ae) : base(asset, ae)
         {
             InitializeComponent();
-            
             RefreshPropertyGrid();
 
-            if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles && asset.assetType == AssetType.SoundStream))
+            var archive = ae.archive;
+
+            if (archive.Platform == Platform.Xbox || (archive.Platform == Platform.GameCube && archive.Game >= Game.Incredibles && asset.assetType == AssetType.SoundStream))
                 compressCheckBox.Enabled = true;
-            if (archive.platform != Platform.PS2 || (archive.platform == Platform.PS2 && asset.assetType == AssetType.SoundStream))
+            if (archive.Platform != Platform.PS2 || (archive.Platform == Platform.PS2 && asset.assetType == AssetType.SoundStream))
                 checkBoxPS2Looping.Enabled = false;
-            if (archive.platform == Platform.Xbox || (archive.platform == Platform.GameCube && archive.game >= Game.Incredibles))
+            if (archive.Platform == Platform.Xbox || (archive.Platform == Platform.GameCube && archive.Game >= Game.Incredibles))
                 forceMonoCheckBox.Enabled = true;
         }
 
@@ -25,87 +27,91 @@ namespace IndustrialPark
         {
             try
             {
-                var sndi = archive.GetSNDI();
+                var sndi = archiveEditor.archive.TableManager.GetSNDI();
                 soundSizeLabel.Text = ArchiveEditor.ConvertSize(asset.Data.Length);
-                if (sndi != null)
+                if (sndi == null)
                 {
-                    if (sndi is AssetSNDI_PS2 ps2)
-                    {
-                        var entry = ps2.GetEntry(asset.assetID, asset.assetType);
-                        propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(entry, asset.Data, asset.assetType == AssetType.SoundStream);
-                        CalculateSoundLength(entry);
-                        return;
-                    }
-                    if (sndi is AssetSNDI_XBOX xbox)
-                    {
-                        var entry = xbox.GetEntry(asset.assetID, asset.assetType);
-                        propertyGridSoundData.SelectedObject = new SoundInfoXboxWrapper(entry);
-                        CalculateSoundLength(entry);
-                        return;
-                    }
-                    if (sndi is AssetSNDI_GCN_V1 gcn1)
-                    {
-                        var entry = gcn1.GetEntry(asset.assetID, asset.assetType);
-                        propertyGridSoundData.SelectedObject = new SoundInfoGcn1Wrapper(entry);
-                        CalculateSoundLength(entry);
-                        return;
-                    }
-                    if (sndi is AssetSNDI_GCN_V2 gcn2)
-                    {
-                        var entry = gcn2.GetEntry(asset.assetID);
-                        soundSizeLabel.Text = ArchiveEditor.ConvertSize(entry.LengthCompressedBytes);
-                        propertyGridSoundData.SelectedObject = entry.Clone();
-                        CalculateSoundLength(entry);
-                        return;
-
-                    }
+                    propertyGridSoundData.SelectedObject = null;
+                    return;
+                }
+                switch (sndi)
+                {
+                    case AssetSNDI_PS2 ps2:
+                        {
+                            var entry = ps2.GetEntry(asset.assetID, asset.assetType);
+                            propertyGridSoundData.SelectedObject = new SoundInfoPs2Wrapper(entry, asset.Data, asset.assetType == AssetType.SoundStream);
+                            CalculateSoundLength(entry);
+                        }
+                        break;
+                    case AssetSNDI_XBOX xbox:
+                        {
+                            var entry = xbox.GetEntry(asset.assetID, asset.assetType);
+                            propertyGridSoundData.SelectedObject = new SoundInfoXboxWrapper(entry);
+                            CalculateSoundLength(entry);
+                        }
+                        break;
+                    case AssetSNDI_GCN_V1 gcn1:
+                        {
+                            var entry = gcn1.GetEntry(asset.assetID, asset.assetType);
+                            propertyGridSoundData.SelectedObject = new SoundInfoGcn1Wrapper(entry);
+                            CalculateSoundLength(entry);
+                        }
+                        break;
+                    case AssetSNDI_GCN_V2 gcn2:
+                        {
+                            var entry = gcn2.GetEntry(asset.assetID);
+                            soundSizeLabel.Text = ArchiveEditor.ConvertSize(entry.LengthCompressedBytes);
+                            propertyGridSoundData.SelectedObject = entry.Clone();
+                            CalculateSoundLength(entry);
+                        }
+                        break;
                 }
             }
             catch (Exception e)
             {
                 MessageBox.Show(e.Message);
             }
-
-            propertyGridSoundData.SelectedObject = null;
+            propertyGridSoundData.Refresh();
         }
 
         private void propertyGridSoundData_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             if (propertyGridSoundData.SelectedObject == null)
                 return;
-            var sndi = archive.GetSNDI();
+            var sndi = archiveEditor.archive.TableManager.GetSNDI();
+            archiveEditor.BeginTransaction();
             if (sndi != null)
             {
                 if (sndi is AssetSNDI_PS2 ps2)
                 {
                     ps2.SetEntry(((SoundInfoPs2Wrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
                     asset.Data = ((SoundInfoPs2Wrapper)propertyGridSoundData.SelectedObject).SoundData;
-                    RefreshPropertyGrid();
-                    archive.UnsavedChanges = true;
+                    sndi.InvokePropertyChanged(false);
+                    asset.InvokePropertyChanged(false);
                 }
                 else if (sndi is AssetSNDI_XBOX xbox)
                 {
                     xbox.SetEntry(((SoundInfoXboxWrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
-                    archive.UnsavedChanges = true;
+                    xbox.InvokePropertyChanged(false);
                 }
                 else if (sndi is AssetSNDI_GCN_V1 gcn1)
                 {
                     gcn1.SetEntry(((SoundInfoGcn1Wrapper)propertyGridSoundData.SelectedObject).Entry, asset.assetType);
-                    archive.UnsavedChanges = true;
+                    gcn1.InvokePropertyChanged(false);
                 }
                 else if (sndi is AssetSNDI_GCN_V2 gcn2)
                 {
                     gcn2.SetEntry((FSB3_SampleHeader)propertyGridSoundData.SelectedObject);
-                    archive.UnsavedChanges = true;
+                    gcn2.InvokePropertyChanged(false);
                 }
             }
+            archiveEditor.EndTransaction();
             SoundUtility_vgmstream.ClearSound();
         }
 
         private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             SoundUtility_vgmstream.StopSound();
-            archive.CloseInternalEditor(this);
         }
 
         private new AssetSound asset => (AssetSound)base.asset;
@@ -120,28 +126,29 @@ namespace IndustrialPark
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 byte[] file = File.ReadAllBytes(openFileDialog.FileName);
+                asset.Data = file;
+
                 if (checkBoxSendToSNDI.Checked)
                 {
                     try
                     {
-                        archive.AddSoundToSNDI(file, asset.assetID, asset.assetType, out byte[] soundData);
+                        archiveEditor.archive.SoundManager.AddToSoundInfo(asset);
 
+                        var data = asset.Data;
                         if (checkBoxPS2Looping.Checked)
-                            EntrySoundInfo_PS2.SetLoopingRange(ref soundData);
-
-                        asset.Data = soundData;
+                            EntrySoundInfo_PS2.SetLoopingRange(ref data);
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message);
                     }
                 }
-                else
-                {
-                    asset.Data = file;
-                }
-                archive.UnsavedChanges = true;
-                updateListView(asset);
+
+                archiveEditor.BeginTransaction();
+                asset.InvokePropertyChanged(false);
+                archiveEditor.archive.TableManager.GetSNDI().InvokePropertyChanged(false);
+                archiveEditor.EndTransaction();
+
                 SoundUtility_vgmstream.ClearSound();
                 RefreshPropertyGrid();
             }
@@ -149,18 +156,19 @@ namespace IndustrialPark
 
         private void buttonExportRaw_Click(object sender, EventArgs e)
         {
+            var platform = archiveEditor.archive.Platform;
             SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
                 FileName = asset.assetName + (
-                (archive.platform == Platform.GameCube && asset.game < Game.Incredibles) ? ".DSP" :
-                (archive.platform == Platform.Xbox) ? ".WAV" :
-                (archive.platform == Platform.PS2) ? ".VAG" :
+                (platform == Platform.GameCube && asset.game < Game.Incredibles) ? ".DSP" :
+                (platform == Platform.Xbox) ? ".WAV" :
+                (platform == Platform.PS2) ? ".VAG" :
                 ""),
                 Filter = "All files|*"
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                File.WriteAllBytes(saveFileDialog.FileName, archive.GetSoundData(asset.assetID, asset.Data));
+                File.WriteAllBytes(saveFileDialog.FileName, archiveEditor.archive.GetSoundData(asset.assetID, asset.Data));
         }
 
         private void buttonExport_Click(object sender, EventArgs e)
@@ -172,17 +180,12 @@ namespace IndustrialPark
             };
 
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
-                SoundUtility_vgmstream.ExportToFile(asset, archive, saveFileDialog.FileName);
-        }
-
-        private void buttonFindCallers_Click(object sender, EventArgs e)
-        {
-            Program.MainForm.FindWhoTargets(GetAssetID());
+                SoundUtility_vgmstream.ExportToFile(asset, archiveEditor.archive, saveFileDialog.FileName);
         }
 
         private void buttonGenerateJawData_Click(object sender, EventArgs e)
         {
-            ApplyJawData(SoundUtility_vgmstream.GenerateJawData(archive.GetSoundData(asset.assetID, asset.Data), (float)numericUpDownJawMultiplier.Value));
+            ApplyJawData(SoundUtility_vgmstream.GenerateJawData(archiveEditor.archive.GetSoundData(asset.assetID, asset.Data), (float)numericUpDownJawMultiplier.Value));
         }
 
         private void buttonImportJawData_Click(object sender, EventArgs e)
@@ -198,28 +201,26 @@ namespace IndustrialPark
 
         private void ApplyJawData(byte[] jawData)
         {
+            archiveEditor.BeginTransaction();
+            AssetJAW JAW;
             try
             {
-                var JAW = archive.GetJAW(true);
+                JAW = archiveEditor.archive.TableManager.GetJAW(true);
                 JAW.AddEntry(jawData, asset.assetID);
+
+                asset.InvokePropertyChanged(false);
+                JAW.InvokePropertyChanged(false);
+                archiveEditor.EndTransaction();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-
-            archive.UnsavedChanges = true;
-            updateListView(asset);
-        }
-
-        private void buttonHelp_Click(object sender, EventArgs e)
-        {
-            ArchiveEditorFunctions.OpenWikiPage(asset);
         }
 
         private void buttonPlay_Click(object sender, EventArgs e)
         {
-            SoundUtility_vgmstream.PlaySound(asset, archive);
+            SoundUtility_vgmstream.PlaySound(asset, archiveEditor.archive);
         }
 
         private void buttonImportSound_Click(object sender, EventArgs e)
@@ -236,8 +237,10 @@ namespace IndustrialPark
                 soundSizeLabel.Visible = false;
                 Enabled = false;
 
-                byte[] data = archive.CreateSoundFile(
-                    openFileDialog.FileName, 
+                byte[] data = SoundService.CreateSoundFile(
+                    archiveEditor.archive.Game,
+                    archiveEditor.archive.Platform,
+                    openFileDialog.FileName,
                     checkBoxPS2Looping.Checked,
                     compressCheckBox.Checked,
                     forceMonoCheckBox.Checked,
@@ -247,17 +250,20 @@ namespace IndustrialPark
                 {
                     try
                     {
-                        archive.AddSoundToSNDI(data, asset.assetID, asset.assetType, out byte[] soundData);
-                        asset.Data = soundData;
+                        archiveEditor.BeginTransaction();
+
+                        asset.Data = data;
+                        archiveEditor.archive.SoundManager.AddToSoundInfo(asset);
+
+                        asset.InvokePropertyChanged(false);
+                        archiveEditor.archive.TableManager.GetSNDI().InvokePropertyChanged(false);
+                        archiveEditor.EndTransaction();
+                        SoundUtility_vgmstream.ClearSound();
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
-                        
-                    archive.UnsavedChanges = true;
-                    updateListView(asset);
-                    SoundUtility_vgmstream.ClearSound();
                 }
 
                 Enabled = true;

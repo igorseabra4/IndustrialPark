@@ -1,2391 +1,2388 @@
-﻿using HipHopFile;
+﻿using DiscordRPC;
+using HipHopFile;
+using IndustrialPark.Archive;
 using IndustrialPark.Models.CollisionTree;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark;
+
+public partial class ArchiveEditor : Form
 {
-    public partial class ArchiveEditor : Form
+    private readonly System.Drawing.Color defaultColor;
+    private bool programIsChangingStuff = false;
+    public bool Targeted => checkBoxTemplateFocus.Checked;
+
+    public Archive.Archive archive;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool UnsavedChanges
     {
-        public ArchiveEditorFunctions archive;
-
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int SelectedLayerIndex
+        get;
+        set
         {
-            get => comboBoxLayers.SelectedIndex;
-            set => comboBoxLayers.SelectedIndex = value;
+            field = value;
+            ChangesMade?.Invoke();
+        }
+    }
+
+    public event Action ChangesMade;
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public int SelectedLayerIndex
+    {
+        get => comboBoxLayers.SelectedIndex;
+        set => comboBoxLayers.SelectedIndex = value;
+    }
+
+    private AssetType curSelectedType = AssetType.Null;
+
+    protected AssetSelectionManager selectionManager;
+    public IEnumerable<Asset> SelectedAssets => selectionManager.SelectedAssets;
+    public IEnumerable<uint> SelectedAssetIDs => selectionManager.SelectedAssetIDs;
+    private AssetHistoryManager historyManager;
+    private ScrollableMessageBox verifyResult;
+    public IEnumerable<string> LayerNames => comboBoxLayers.Items.Cast<object>().Select(o => o.ToString());
+
+    /// <summary>
+    /// Raised when Target or the selected layer changes, so the main window toolbar can update.
+    /// </summary>
+    public event Action<ArchiveEditor> ToolbarStateChanged;
+    public event Action EditorUpdate;
+    protected void OnEditorUpdate() => EditorUpdate?.Invoke();
+    public event Action TransactionBegin;
+    public void BeginTransaction() => TransactionBegin?.Invoke();
+    public event Action TransactionEnd;
+    public void EndTransaction() => TransactionEnd?.Invoke();
+
+    public ArchiveEditor(string filePath, Platform scoobyPlatform)
+    {
+        InitializeComponent();
+
+        defaultColor = textBoxFindAsset.BackColor;
+
+        AssetFactoryService.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
+
+        comboBoxLayers.SelectedIndexChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
+        checkBoxTemplateFocus.CheckedChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
+
+        textBoxFindAsset.AutoCompleteMode = AutoCompleteMode.Suggest;
+        textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
+        textBoxFindAsset.AutoCompleteCustomSource = new AutoCompleteStringCollection();
+
+        selectionManager = new AssetSelectionManager();
+
+        if (!string.IsNullOrWhiteSpace(filePath))
+            OpenFile(filePath, scoobyPlatform);
+
+        _updateFilesizeStatusBarItem();
+        checkBoxTemplateFocus_CheckedChanged(null, null);
+
+        fileToolStripMenuItem1.DropDown = fileToolStripMenuItem.DropDown;
+        editToolStripMenuItem1.DropDown = editToolStripMenuItem.DropDown;
+        toolsToolStripMenuItem1.DropDown = toolsToolStripMenuItem.DropDown;
+
+        SetDockedMenuItemsVisibility(false);
+    }
+
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+        if (e.CloseReason == CloseReason.WindowsShutDown)
+            return;
+        if (e.CloseReason == CloseReason.FormOwnerClosing)
+            return;
+
+        e.Cancel = true;
+        Hide();
+    }
+
+    private HashSet<Keys> PressedKeys = new HashSet<Keys>();
+
+    private void ArchiveEditor_KeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Handled)
+            return;
+
+        if (!PressedKeys.Contains(e.KeyCode))
+            PressedKeys.Add(e.KeyCode);
+
+        if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
+            (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
+        {
+            Debug.WriteLine("Redo from Archive Editor");
+            Program.UndoBuffer.Redo();
+        }
+        else if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
+        {
+
+            Debug.WriteLine("Undo from Archive Editor");
+            Program.UndoBuffer.Undo();
         }
 
-        /// <summary>
-        /// Raised when Target or the selected layer changes, so the main window toolbar can update.
-        /// </summary>
-        public event Action<ArchiveEditor> ToolbarStateChanged;
+        if (PressedKeys.Contains(Keys.Delete))
+           ButtonRemoveAsset_Click(sender, e);
 
-        public ArchiveEditor(string filePath, Platform scoobyPlatform)
+        if (PressedKeys.Contains(Keys.ControlKey))
         {
-            InitializeComponent();
-
-            defaultColor = textBoxFindAsset.BackColor;
-
-            ArchiveEditorFunctions.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
-
-            comboBoxLayers.SelectedIndexChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
-            checkBoxTemplateFocus.CheckedChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
-
-            archive = new ArchiveEditorFunctions(this);
-
-            textBoxFindAsset.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            archive.SetTextboxForAutocomplete(textBoxFindAsset);
-
-            if (!string.IsNullOrWhiteSpace(filePath))
-                OpenFile(filePath, scoobyPlatform);
-
-            _updateFilesizeStatusBarItem();
-            checkBoxTemplateFocus_CheckedChanged(null, null);
-
-            fileToolStripMenuItem1.DropDown = fileToolStripMenuItem.DropDown;
-            editToolStripMenuItem1.DropDown = editToolStripMenuItem.DropDown;
-            toolsToolStripMenuItem1.DropDown = toolsToolStripMenuItem.DropDown;
-
-            SetDockedMenuItemsVisibility(false);
+            if (PressedKeys.Contains(Keys.S))
+            {
+                Save();
+            }
+            else if (PressedKeys.Contains(Keys.N))
+            {
+                newToolStripMenuItem_Click(sender, e);
+            }
+            else if (PressedKeys.Contains(Keys.O))
+            {
+                openToolStripMenuItem_Click(sender, e);
+            }
+            else if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.W))
+            {
+                closeToolStripMenuItem_Click(sender, e);
+            }
+            else if (PressedKeys.Contains(Keys.I))
+            {
+                buttonImportAsset_Click(sender, e);
+            }
+            else if (PressedKeys.Contains(Keys.D))
+            {
+                buttonDuplicate_Click(sender, e);
+            }
+            else if (PressedKeys.Contains(Keys.C))
+            {
+                buttonCopy_Click(sender, e);
+            }
+            else if (PressedKeys.Contains(Keys.V))
+            {
+                PasteAssets();
+            }
+            else if (PressedKeys.Contains(Keys.G))
+            {
+                OpenInternalEditors();
+            }
+            else if (PressedKeys.Contains(Keys.H))
+            {
+                buttonEditHeader_Click(sender, e);
+            }
+            else if (PressedKeys.Contains(Keys.A))
+            {
+                var assetIDs = listViewAssets.Items.Cast<ListViewItem>().Select(i => (uint)i.Tag);
+                SetSelectedAssets(assetIDs);
+            }
         }
+        e.Handled = true;
+    }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
+    private void ArchiveEditor_KeyUp(object sender, KeyEventArgs e)
+    {
+        PressedKeys.Remove(e.KeyCode);
+    }
+
+    private void ArchiveEditor_Activated(object sender, EventArgs e)
+    {
+        Opacity = 1f;
+        foreach (var child in OwnedForms)
+            child.SendToBack();
+        BringToFront();
+    }
+
+    private void ArchiveEditor_Deactivate(object sender, EventArgs e)
+    {
+        PressedKeys.Clear();
+        if (Program.MainForm.TranslucentWhenOutOfFocus && CanFocus && !OwnedForms.Any())
+            Opacity = 0.5f;
+    }
+
+    private void newToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (UnsavedChanges)
         {
-            if (e.CloseReason == CloseReason.WindowsShutDown)
+            DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Cancel)
                 return;
-            if (e.CloseReason == CloseReason.FormOwnerClosing)
-                return;
-
-            e.Cancel = true;
-            Hide();
+            if (result == DialogResult.Yes)
+                Save();
         }
 
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
+        var getNewArchive = NewArchive.GetNewArchive();
+
+        if (getNewArchive.HasValue)
         {
-            if (archive.UnsavedChanges)
-            {
-                DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+            DisposeArchive(true);
 
-                if (result == DialogResult.Cancel)
-                    return;
-                if (result == DialogResult.Yes)
-                    archive.Save();
-            }
+            archive = new Archive.Archive(
+                getNewArchive.Value.platform,
+                getNewArchive.Value.game,
+                getNewArchive.Value.fileDate,
+                getNewArchive.Value.dateString,
+                getNewArchive.Value.autoLayers,
+                getNewArchive.Value.addDefaultAssets
+            );
 
-            if (archive.New())
-            {
-                archive.autoCompleteSource.Clear();
-                SetMenuItemsEnabled();
-                SetNoLayers();
-                SetupAssetVisibilityButtons();
-            }
-        }
+            historyManager = new AssetHistoryManager(archive);
+            foreach (var (assetID, data) in archive.Assets.Select(a => (a.assetID, a.BuildAHDR(archive.Platform.Endianness()).data)))
+                historyManager.AddAsset(assetID, data);
 
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (archive.UnsavedChanges)
-            {
-                DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Cancel)
-                    return;
-                if (result == DialogResult.Yes)
-                    archive.Save();
-            }
-
-            OpenFileDialog openFile = new OpenFileDialog()
-            {
-                Filter = "HIP/HOP Files|*.hip;*.hop",
-                Title = "Please choose a HIP or HOP file"
-            };
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                bool shouldOpenFile = true;
-
-                foreach (var archiveEditor in Program.MainForm.archiveEditors)
-                {
-                    if (Path.GetFileName(archiveEditor.GetCurrentlyOpenFileName()) ==
-                        Path.GetFileName(openFile.FileName))
-                    {
-                        var result = MessageBox.Show(
-                                        $"A file named {Path.GetFileName(openFile.FileName)} is already open. Would you still like to open it?",
-                                        "Duplicate file detected",
-                                        MessageBoxButtons.YesNo,
-                                        MessageBoxIcon.Warning);
-
-                        if (result != DialogResult.Yes)
-                        {
-                            shouldOpenFile = false;
-                        }
-                    }
-                }
-
-                if (shouldOpenFile)
-                {
-                    OpenFile(openFile.FileName);
-                }
-                _updateFilesizeStatusBarItem();
-            }
-        }
-
-        /// <summary>
-        /// Opens a HIP file from the specified path.
-        /// </summary>
-        /// <param name="fileName">The HIP file to open</param>
-        /// <param name="scoobyPlatform">The </param>
-        private void OpenFile(string fileName, Platform scoobyPlatform = Platform.Unknown)
-        {
-            //new Thread(() =>
-            //{
-            archive.OpenFile(fileName, true, scoobyPlatform);
-            //    Invoke(new Action(() =>
-            //   {
-            OpenFileDone(fileName);
-            //   }));
-            //}).Start();
-        }
-
-        private void OpenFileDone(string fileName)
-        {
-            toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
-            Text = Path.GetFileName(fileName);
-            archive.UnsavedChanges = false;
-
+            ArchiveSubscriptions();
             SetMenuItemsEnabled();
-
-            SetNoLayers();
-
+            SetAutoLayers();
             SetupAssetVisibilityButtons();
+        }
+    }
 
-            Program.MainForm.SetToolStripItemName(this, Text);
-            Program.MainForm.SetRecentOpenedArchives(fileName);
+    private void openToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (UnsavedChanges)
+        {
+            DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
+            if (result == DialogResult.Cancel)
+                return;
+            if (result == DialogResult.Yes)
+                Save();
+        }
+
+        OpenFileDialog openFile = new OpenFileDialog()
+        {
+            Filter = "HIP/HOP Files|*.hip;*.hop",
+            Title = "Please choose a HIP or HOP file"
+        };
+        if (openFile.ShowDialog() == DialogResult.OK)
+        {
+            bool shouldOpenFile = true;
+
+            foreach (var archiveEditor in Program.ArchiveEditors)
+            {
+                if (Path.GetFileName(archiveEditor.GetCurrentFilePath()) ==
+                    Path.GetFileName(openFile.FileName))
+                {
+                    var result = MessageBox.Show(
+                                    $"A file named {Path.GetFileName(openFile.FileName)} is already open. Would you still like to open it?",
+                                    "Duplicate file detected",
+                                    MessageBoxButtons.YesNo,
+                                    MessageBoxIcon.Warning);
+
+                    if (result != DialogResult.Yes)
+                        shouldOpenFile = false;
+                }
+            }
+
+            if (shouldOpenFile)
+                OpenFile(openFile.FileName);
+            _updateFilesizeStatusBarItem();
+        }
+    }
+
+    private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        Save();
+    }
+
+    private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        SaveAs();
+    }
+
+    private void closeToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (UnsavedChanges)
+        {
+            DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Cancel)
+                return;
+            if (result == DialogResult.Yes)
+                SaveAndWait();
+        }
+
+        CloseArchiveEditor();
+        Program.MainForm.Activate();
+    }
+
+    private void convertArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        BeginTransaction();
+        if (archive.Transformer.EditPack(out IEnumerable<string> unconvertable))
+        {
+            EndTransaction();
+            PopulateLayerTypeComboBox();
+            PopulateLayerComboBox();
             SelectFirstLayer();
-        }
-
-        private void SelectFirstLayer()
-        {
-            if (!archive.NoLayers && comboBoxLayers.SelectedIndex == -1)
-                comboBoxLayers.SelectedIndex = archive.GetFirstActiveLayerIndex();
-        }
-
-        private void SetupAssetVisibilityButtons()
-        {
-            Program.MainForm.SetupAssetVisibilityButtons();
-        }
-
-        private void SetMenuItemsEnabled()
-        {
-            if (archive.IsNull)
-                return;
-
-            saveToolStripMenuItem.Enabled = true;
-            saveAsToolStripMenuItem.Enabled = true;
-            convertArchiveToolStripMenuItem.Enabled = true;
-            layersToolStripMenuItem.Enabled = true;
-            noLayersToolStripMenuItem.Enabled = true;
-            organizeLayersToolStripMenuItem.Enabled = true;
-            organizeLegacyToolStripMenuItem.Enabled = true;
-            mergeSimilarAssetsToolStripMenuItem.Enabled = true;
-            applyScaleToolStripMenuItem.Enabled = true;
-            verifyArchiveToolStripMenuItem.Enabled = true;
-            hipHopFileToolStripMenuItem.Enabled = true;
-            importHipArchiveToolStripMenuItem.Enabled = true;
-            exportAssetsIniToolStripMenuItem.Enabled = true;
-            texturesToolStripMenuItem.Enabled = true;
-            soundsToolStripMenuItem.Enabled = true;
-            addLayerToolStripMenuItem.Enabled = buttonAddLayer.Enabled = true;
-            importSoundsToolStripMenuItem.Enabled = true;
-            importRawSoundsToolStripMenuItem.Enabled = true;
-
-            var canImportAssetsToLayer = archive.NoLayers || (SelectedLayerIndex != -1);
-            importTexturesToolStripMenuItem.Enabled = canImportAssetsToLayer;
-            importRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
-            importNoRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
-            importModelsToolStripMenuItem.Enabled = canImportAssetsToLayer;
-            importMultipleAssetsToolStripMenuItem.Enabled = canImportAssetsToLayer;
-
-            toolStripMenuItem_Import.Enabled = buttonImportAsset.Enabled = canImportAssetsToLayer;
-            toolStripMenuItem_Paste.Enabled = buttonPasteAssets.Enabled = canImportAssetsToLayer;
-            addTemplateToolStripMenuItem.Enabled = canImportAssetsToLayer;
-
-            var canExportTextures = archive.ContainsAssetWithType(AssetType.Texture);
-            exportAllTexturesToolStripMenuItem.Enabled = canExportTextures;
-            exportRW3ToolStripMenuItem.Enabled = canExportTextures;
-            exportNoRW3ToolStripMenuItem.Enabled = canExportTextures;
-
-            var canExportSounds = archive.ContainsAssetWithType(AssetType.Sound) || archive.ContainsAssetWithType(AssetType.SoundStream);
-            exportAllSoundsToolStripMenuItem.Enabled = canExportSounds;
-            exportAllSoundsRawToolStripMenuItem.Enabled = canExportSounds;
-
-            removeLayerToolStripMenuItem.Enabled = buttonRemoveLayer.Enabled = !archive.NoLayers && SelectedLayerIndex != -1;
-            moveLayerUpToolStripMenuItem.Enabled = buttonArrowUp.Enabled = !archive.NoLayers && archive.LayerCount > 1 && SelectedLayerIndex > 0;
-            moveLayerDownToolStripMenuItem.Enabled = buttonArrowDown.Enabled = !archive.NoLayers && archive.LayerCount > 1 && SelectedLayerIndex != -1 && SelectedLayerIndex < archive.LayerCount - 1;
-
-            var canEditAsset = listViewAssets.SelectedItems.Count != 0;
-            toolStripMenuItem_Duplicate.Enabled = buttonDuplicateAsset.Enabled = canEditAsset;
-            toolStripMenuItem_Copy.Enabled = buttonCopyAsset.Enabled = canEditAsset;
-            toolStripMenuItem_Remove.Enabled = buttonRemoveAsset.Enabled = canEditAsset;
-            toolStripMenuItem_ExportRaw.Enabled = buttonExportRawAsset.Enabled = canEditAsset;
-            toolStripMenuItem_EditData.Enabled = buttonEditDataAsset.Enabled = canEditAsset;
-            toolStripMenuItem_MultiEdit.Enabled = buttonMultiEditAsset.Enabled = canEditAsset;
-            toolStripMenuItem_CreateGroup.Enabled = canEditAsset;
-            toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && archive.CurrentlySelectedAssets.Any(asset => asset is IClickableAsset);
-
-            var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
-            toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
-
-            buildCollisionTreeForAllModelsToolStripMenuItem.Enabled = archive.ContainsAssetWithType(AssetType.Model);
-            coll36toolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
-            coll36sortTrianglesToolStripMenuItem.Enabled = archive.game >= Game.Incredibles;
-        }
-
-        private void PopulateLayerTypeComboBox()
-        {
-            if (archive.NoLayers)
-                return;
-
-            programIsChangingStuff = true;
-
-            comboBoxLayerTypes.Items.Clear();
-            if (archive.game >= Game.Incredibles)
-                comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_TSSM)).Cast<object>().ToArray());
-            else
-                comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_BFBB)).Cast<object>().ToArray());
-
-            programIsChangingStuff = false;
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Save();
-        }
-
-        /// <summary>
-        /// Updates the status bar to display the archive's filsize.
-        /// </summary>
-        private void _updateFilesizeStatusBarItem()
-        {
-            if (GetCurrentlyOpenFileName() == "Empty")
-            {
-                return;
-            }
-
-            long filesizeBytes = new FileInfo(GetCurrentlyOpenFileName()).Length;
-
-            toolStripStatusLabelFileSize.Text = ConvertSize((int)filesizeBytes);
-        }
-
-        public static string ConvertSize(int size)
-        {
-            if (size <= 1024)
-                return $"{size} B";
-
-            string[] name = new string[] { "B", "KiB", "MiB", "GiB" };
-
-            double i = Math.Floor(Math.Log(size, 1024));
-            double s = Math.Round(size / Math.Pow(1024, i), 2);
-
-            return $"{s} {name[(int)i]}";
-        }
-
-        public void Save()
-        {
-            SoundUtility_vgmstream.StopSound();
-
-            if (archive.currentlyOpenFilePath == null)
-                saveAsToolStripMenuItem_Click(null, null);
-            else
-                new Thread(archive.Save).Start();
-
-            _updateFilesizeStatusBarItem();
-        }
-
-        /// <summary>
-        /// Saves on the calling thread (unlike Save, which writes the file in the background).
-        /// </summary>
-        /// <returns>Whether the archive is saved</returns>
-        public bool SaveAndWait()
-        {
-            SoundUtility_vgmstream.StopSound();
-
-            if (archive.currentlyOpenFilePath == null)
-                saveAsToolStripMenuItem_Click(null, null);
-            else
-            {
-                archive.Save();
-                _updateFilesizeStatusBarItem();
-            }
-
-            return !archive.UnsavedChanges;
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFileDialog = new SaveFileDialog()
-            {
-                FileName = archive.currentlyOpenFilePath,
-                Filter = "HIP/HOP Files|*.hip;*.hop",
-                Title = "Please choose a HIP or HOP file to save as"
-            };
-            if (saveFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                archive.Save(saveFileDialog.FileName);
-
-                Text = Path.GetFileName(saveFileDialog.FileName);
-                Program.MainForm.SetToolStripItemName(this, Text);
-                Program.MainForm.SetRecentOpenedArchives(saveFileDialog.FileName);
-                toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
-                archive.UnsavedChanges = false;
-            }
-
-            _updateFilesizeStatusBarItem();
-        }
-
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (archive.UnsavedChanges)
-            {
-                DialogResult result = MessageBox.Show("You have unsaved changes. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Cancel)
-                    return;
-                if (result == DialogResult.Yes)
-                    archive.Save();
-            }
-
-            CloseArchiveEditor();
-            Program.MainForm.Activate();
-        }
-
-        public event Action EditorUpdate;
-
-        protected virtual void OnEditorUpdate()
-        {
-            EditorUpdate?.Invoke();
-        }
-
-        public void CloseArchiveEditor()
-        {
-            if (AssetListDocked)
-                Program.MainForm.UndockAssetList();
-
-            if (verifyResult != null)
-                if (!verifyResult.IsDisposed)
-                    verifyResult.Close();
-
-            archive.autoCompleteSource.Clear();
-            archive.Dispose();
-
-            Program.MainForm.CloseArchiveEditor(this);
-            Program.MainForm.UpdateTitleBar();
-            Close();
+            PopulateAssetListAndComboBox();
             OnEditorUpdate();
-        }
 
-        private bool programIsChangingStuff = false;
-
-        public string GetAssetNameFromID(uint assetID)
-        {
-            return archive.GetFromAssetID(assetID).assetName;
-        }
-
-        public string GetCurrentlyOpenFileName()
-        {
-            if (string.IsNullOrWhiteSpace(archive.currentlyOpenFilePath))
-                return "Empty";
-            return archive.currentlyOpenFilePath;
-        }
-
-        public void PopulateLayerComboBox()
-        {
-            if (archive.NoLayers)
-                return;
-
-            programIsChangingStuff = true;
-
-            comboBoxLayers.BeginUpdate();
-            comboBoxLayers.Items.Clear();
-            for (int i = 0; i < archive.LayerCount; i++)
-                comboBoxLayers.Items.Add(archive.LayerToString(i));
-            comboBoxLayers.EndUpdate();
-
-            programIsChangingStuff = false;
-        }
-
-        private void comboBoxLayers_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (programIsChangingStuff || archive.NoLayers)
-                return;
-
-            programIsChangingStuff = true;
-
-            if (SelectedLayerIndex == -1 && !archive.NoLayers)
+            if (unconvertable != null && unconvertable.Any())
             {
-                comboBoxLayerTypes.SelectedItem = null;
-
-                comboBoxAssetTypes.Items.Clear();
-                comboBoxAssetTypes.SelectedIndex = -1;
-                PopulateAssetList();
+                var text = "The following asset types could not be converted. You might need to re-create them or replace them with the appropriate version on the game and/or platform.\n\n" + string.Join("\n", unconvertable.OrderBy(x => x));
+                new ScrollableMessageBox($"[{Path.GetFileName(archive.CurrentFilePath)}] Unconvertable assets", text).Show(this);
             }
-            else
+        }
+    }
+
+    private void autoLayersToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        BeginTransaction();
+        archive.Transformer.SetAutoLayers(!autoLayersToolStripMenuItem.Checked);
+        EndTransaction();
+        SetAutoLayers();
+    }
+
+    private void buildLayersToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        BuildLayersClick(false);
+    }
+
+    private void buildLegacyToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        BuildLayersClick(true);
+    }
+
+    private void renameLayerToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (SelectedLayerIndex == -1)
+            return;
+
+        var index = SelectedLayerIndex;
+        var renameLayer = new RenameLayer(archive.GetLayerName(index));
+        if (renameLayer.ShowDialog() == DialogResult.OK)
+        {
+            var name = string.IsNullOrWhiteSpace(renameLayer.LayerName) ? null : renameLayer.LayerName;
+            BeginTransaction();
+            if (archive.RenameLayer(index, name))
             {
-                ShowSelectedLayerType();
+                EndTransaction();
+                PopulateLayerComboBox();
+                SelectedLayerIndex = index;
                 PopulateAssetListAndComboBox();
             }
-
-            programIsChangingStuff = false;
         }
+    }
 
-        private void ShowSelectedLayerType()
+    private void legacySaveToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        bool isLegacy = ((ToolStripMenuItem)sender).Checked;
+        archive.LegacySave = isLegacy;
+
+        BeginTransaction();
+        if (isLegacy && archive.AutoLayers)
         {
-            if (archive.game >= Game.Incredibles)
-                comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(SelectedLayerIndex);
-            else
-                comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(SelectedLayerIndex);
-            if (!archive.LegacySave)
-                renameLayerToolStripMenuItem.Enabled = true;
+            archive.Transformer.SetAutoLayers(false);
+            SetAutoLayers();
         }
+        EndTransaction();
 
-        private void comboBoxLayerTypes_SelectedIndexChanged(object sender, EventArgs e)
+        autoLayersToolStripMenuItem.Enabled = !isLegacy;
+        renameLayerToolStripMenuItem.Enabled = !isLegacy;
+    }
+
+    private void importHIPArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        OpenFileDialog openFile = new OpenFileDialog()
         {
-            if (programIsChangingStuff || SelectedLayerIndex == -1)
-                return;
+            Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini",
+            Multiselect = true
+        };
 
-            var prev = archive.GetLayerTypeGeneric(SelectedLayerIndex);
-            archive.SetLayerType(SelectedLayerIndex, (int)comboBoxLayerTypes.SelectedItem);
-            comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-            archive.UnsavedChanges = true;
-            Program.UndoBuffer.AddAction(new LayerTypeChangedAction(archive, SelectedLayerIndex, prev, archive.GetLayerTypeGeneric(SelectedLayerIndex)));
+        if (openFile.ShowDialog() == DialogResult.OK)
+        {
+            Enabled = false;
+            BeginTransaction();
+            archive.Transformer.ImportHip(openFile.FileNames, overwriteAssetsOnImportToolStripMenuItem.Checked);
+            EndTransaction();
+            OnEditorUpdate();
+            Enabled = true;
+            PopulateLayerComboBox();
+            SelectFirstLayer();
+            PopulateAssetListAndComboBox();
+        }
+    }
+
+    private void exportAssetsIniToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
+        if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
+            archive.ExportToIni(openFile.FileName);
+    }
+
+    private void importTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        Enabled = false;
+        var (AHDRs, overwrite) = ImportTextures.GetAssets(archive.Game, archive.Platform);
+
+        if (AHDRs != null)
+        {
+            BeginTransaction();
+            List<Asset> assets = archive.ImportAssets(AHDRs, SelectedLayerIndex, overwrite);
+            EndTransaction();
+            if (!archive.AutoLayers)
+                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(SelectedLayerIndex);
+            OnEditorUpdate();
+            SetSelectedAssets(assets);
+            SetMenuItemsEnabled();
+        }
+        Enabled = true;
+    }
+
+    private void exportAllTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+        {
+            IsFolderPicker = true
+        };
+        if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+        {
+            var textures = TextureConverter.GetTexturesAsBitmaps(archive.Assets.OfType<AssetRWTX>(), TextureIOHelper.currentTextureVersion(archive.Game, archive.Platform));
+
+            RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
+
+            foreach ((string textureName, Bitmap texture) in textures)
+                texture.Save(Path.Combine(saveFileDialog.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+        }
+    }
+
+    private void exportRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ExportTXD(CheckState.Checked);
+    }
+
+    private void importRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ImportTXD(true);
+    }
+
+    private void exportNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ExportTXD(CheckState.Unchecked);
+    }
+
+    private void importNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ImportTXD(false);
+    }
+
+    private void importAsSoundToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ImportSounds(false, AssetType.Sound);
+    }
+
+    private void importAsSoundStreamToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ImportSounds(false, AssetType.SoundStream);
+    }
+
+    private void importRawSoundToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ImportSounds(true, AssetType.Sound);
+    }
+
+    private void importRawSoundStreamToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ImportSounds(true, AssetType.SoundStream);
+    }
+
+    private void exportAllWavToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
+            return;
+
+        CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+        {
+            IsFolderPicker = true
+        };
+        if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+        {
+            ProgressBar progressBar = new ProgressBar("Export All (Wav)");
+            progressBar.SetProgressBar(0, archive.Assets.OfType<AssetSound>().Count(), 1);
+            progressBar.Show(this);
+            foreach (var asset in archive.Assets.OfType<AssetSound>())
+            {
+                SoundUtility_vgmstream.ExportToFile(asset, archive, Path.Combine(saveFileDialog.FileName, asset.assetName + ".wav"));
+                progressBar.PerformStep(asset.assetName);
+            }
+            progressBar.Close();
+        }
+    }
+
+    private void exportAllRawToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
+            return;
+
+        CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+        {
+            IsFolderPicker = true
+        };
+        if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+        {
+            foreach (var asset in archive.Assets.OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.SoundStream))
+                try
+                {
+                    string extension =
+                        (archive.Platform == Platform.GameCube && asset.game < Game.Incredibles) ? ".DSP" :
+                        (archive.Platform == Platform.Xbox) ? ".WAV" :
+                        (archive.Platform == Platform.PS2) ? ".VAG" :
+                        "";
+
+                    string filename = (extension != "" && asset.assetName.ToLower().Contains(extension.ToLower())) ?
+                        asset.assetName :
+                        asset.assetName + extension;
+
+                    File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
+                        archive.GetSoundData(asset.assetID, asset.Data));
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
+                }
+        }
+    }
+
+    private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ImportModelResult result = ImportModel.GetImportData(archive.Game, archive.Platform);
+
+        if (result == null)
+            return;
+
+        List<Asset> assets;
+        BeginTransaction();
+
+        if (result.AssetType == AssetType.JSP)
+        {
+            if (archive.Game == Game.BFBB)
+            {
+                var assetsToRemove = archive.Assets
+                    .Where(a => a.assetType is AssetType.BSP or AssetType.JSP or AssetType.JSPInfo)
+                    .Select(a => a.assetID);
+                RemoveAssets(assetsToRemove);
+                if (!archive.AutoLayers)
+                {
+                    archive.RemoveLayerOfType(LayerType.BSP);
+                    archive.RemoveLayerOfType(LayerType.JSPINFO);
+                }
+            }
+            assets = archive.Transformer.CreateJSPInfoAndBSPLayers(result.AHDRCollections, result.Overwrite, archive.ContainsAsset);
+        }
+        else
+        {
+            assets = archive.ImportAssets([.. result.AHDRCollections.SelectMany(list => list)], SelectedLayerIndex, result.Overwrite);
+
+            if (result.AssetType == AssetType.Model)
+            {
+                if (result.PiptVColors)
+                    archive.Transformer.MakePiptVcolors(assets);
+                if (result.GenerateSimps)
+                    assets.AddRange(archive.Transformer.MakeSimps(assets, result.SolidSimps, result.LedgeGrabSimps));
+            }
         }
 
-        private void buttonAddLayer_Click(object sender, EventArgs e)
+        EndTransaction();
+
+        PopulateLayerComboBox();
+        SetSelectedAssets(assets);
+        SetMenuItemsEnabled();
+        OnEditorUpdate();
+    }
+
+    private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        (List<Section_AHDR> AHDRs, bool overwrite) = IndustrialPark.AddMultipleAssets.GetAssets();
+
+        if (AHDRs != null)
+        {
+            BeginTransaction();
+            var assets = archive.ImportAssets(AHDRs, SelectedLayerIndex, overwrite);
+            EndTransaction();
+
+            if (!archive.AutoLayers)
+                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+            OnEditorUpdate();
+            SetSelectedAssets(assets);
+            SetMenuItemsEnabled();
+        }
+    }
+
+    private void generateToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ArchiveTransformer.GenerateReportTxt(archive, UnsavedChanges);
+    }
+
+    private void verifyArchiveToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (verifyResult != null)
+            if (!verifyResult.IsDisposed)
+                verifyResult.Close();
+
+        ProgressBar progressBar = new ProgressBar("Verify Archive");
+        progressBar.Show(this);
+
+        verifyResult = new ScrollableMessageBox("Verify results on " + Text, archive.Transformer.VerifyArchive(progressBar));
+        verifyResult.Show(this);
+
+        progressBar.Close();
+    }
+
+    private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var assetTypes = ArchiveModelTransformer.ScalableAssetTypesOnArchive(archive).Select(a => new AssetTypeContainer(a)).OrderBy(t => t.ToString());
+        var applyScale = ApplyScale.GetScaleWithAssets(assetTypes);
+        if (applyScale.HasValue)
+        {
+            BeginTransaction();
+            ArchiveModelTransformer.ApplyScale(archive, applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
+            EndTransaction();
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
+        }
+    }
+
+    private void mergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        BeginTransaction();
+        archive.TableManager.MergeTableAssets();
+        EndTransaction();
+        comboBoxLayers_SelectedIndexChanged(sender, e);
+    }
+
+    private void BuildCollTree(object sender, EventArgs e)
+    {
+        Enum.TryParse(((ToolStripMenuItem)sender).Tag.ToString(), out CollTreeVersion collVer);
+        List<string> skipped = new List<string>();
+
+        ProgressBar progressBar = new ProgressBar("Building Collision PLG...");
+        progressBar.Show(this);
+        progressBar.SetProgressBar(0, archive.Assets.OfType<AssetMODL>().Count(), 1);
+
+        BeginTransaction();
+
+        foreach (var modl in archive.Assets.OfType<AssetMODL>())
         {
             try
             {
-                int index = archive.AddLayer();
-                comboBoxLayers.Items.Add(archive.LayerToString(index));
-                comboBoxLayers.SelectedIndex = index;
-                archive.UnsavedChanges = true;
-                Program.UndoBuffer.AddAction(new LayerAddedAction(archive, LayerType.DEFAULT, index));
+                modl.BuildCollisionTree(collVer);
+                modl.InvokePropertyChanged(false);
+            }
+            catch (NotSupportedException ex)
+            {
+                progressBar.Close();
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Unable to add layer: " + ex.Message);
+                skipped.Add($"{modl.assetName} | Reason: {ex.Message}");
+            }
+            finally
+            {
+                progressBar.PerformStep(modl.assetName);
             }
         }
 
-        private void buttonRemoveLayer_Click(object sender, EventArgs e)
+        EndTransaction();
+
+        PopulateAssetListAndComboBox();
+        if (skipped.Any())
+            MessageBox.Show($"Following models were skipped:\n{string.Join("\n", skipped)}", $"{skipped.Count} models skipped", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+    }
+
+    private void hideButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        hideButtonsToolStripMenuItem.Checked = !hideButtonsToolStripMenuItem.Checked;
+
+        buttonImportAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonDuplicateAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonCopyAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonPasteAssets.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonRemoveAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonView.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonExportRawAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonEditDataAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+        buttonMultiEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
+
+        if (hideButtonsToolStripMenuItem.Checked)
         {
-            if (SelectedLayerIndex < 0 || SelectedLayerIndex >= archive.LayerCount)
-                return;
+            listViewAssets.Size = new System.Drawing.Size(listViewAssets.Size.Width + 81, listViewAssets.Size.Height);
+        }
+        else
+        {
+            listViewAssets.Size = new System.Drawing.Size(listViewAssets.Size.Width - 81, listViewAssets.Size.Height);
+        }
+    }
 
-            int cnt = archive.GetAssetIDsOnLayer(SelectedLayerIndex).Count;
-            if (cnt > 0 &&
-                MessageBox.Show($"Are you sure you want to delete this layer with {cnt} assets?", "Warning",
-                MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
-                return;
+    private void comboBoxLayers_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (programIsChangingStuff || archive.AutoLayers)
+            return;
 
-            int previndex = SelectedLayerIndex;
+        programIsChangingStuff = true;
 
-            var actions = new List<IReversibleAction>();
+        if (SelectedLayerIndex == -1 && !archive.AutoLayers)
+        {
+            comboBoxLayerTypes.SelectedItem = null;
 
-            foreach (uint u in archive.GetAssetIDsOnLayer(SelectedLayerIndex))
-                actions.Add(archive.GetAssetRemovedAction(u));
-            actions.Add(new LayerRemovedAction(archive, archive.GetLayerTypeGeneric(SelectedLayerIndex), SelectedLayerIndex));
+            comboBoxAssetTypes.Items.Clear();
+            comboBoxAssetTypes.SelectedIndex = -1;
+            PopulateAssetList();
+        }
+        else
+        {
+            ShowSelectedLayerType();
+            PopulateAssetListAndComboBox();
+        }
 
-            archive.RemoveLayer(SelectedLayerIndex);
+        programIsChangingStuff = false;
+    }
 
+    private void comboBoxLayerTypes_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (programIsChangingStuff || SelectedLayerIndex == -1)
+            return;
+
+        BeginTransaction();
+
+        archive.SetGameSpecificLayerType(SelectedLayerIndex, (int)comboBoxLayerTypes.SelectedItem);
+        comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+
+        EndTransaction();
+    }
+
+    private void buttonAddLayer_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            BeginTransaction();
+
+            int index = archive.AddLayer();
+            comboBoxLayers.Items.Add(archive.LayerToString(index));
+            comboBoxLayers.SelectedIndex = index;
+
+            EndTransaction();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Unable to add layer: " + ex.Message);
+        }
+    }
+
+    private void buttonRemoveLayer_Click(object sender, EventArgs e)
+    {
+        if (SelectedLayerIndex < 0 || SelectedLayerIndex >= archive.LayerCount)
+            return;
+
+        int cnt = archive.GetLayerAssetIDs(SelectedLayerIndex).Count();
+        if (cnt > 0 &&
+            MessageBox.Show($"Are you sure you want to delete this layer with {cnt} assets?", "Warning",
+            MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
+            return;
+
+        int previndex = SelectedLayerIndex;
+
+        BeginTransaction();
+
+        archive.RemoveLayer(SelectedLayerIndex);
+
+        EndTransaction();
+
+        PopulateLayerComboBox();
+
+        if (comboBoxLayers.Items.Count > 0)
+            comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
+        else
+        {
+            comboBoxLayers.SelectedItem = null;
+            comboBoxLayerTypes.SelectedItem = null;
+
+            comboBoxAssetTypes.Items.Clear();
+            listViewAssets.Items.Clear();
+        }
+        PopulateAssetList();
+        SetMenuItemsEnabled();
+        SetupAssetVisibilityButtons();
+    }
+
+    private void buttonArrowUp_Click(object sender, EventArgs e)
+    {
+        BeginTransaction();
+
+        int previndex = SelectedLayerIndex;
+        if (archive.MoveLayerUp(SelectedLayerIndex))
+        {
             PopulateLayerComboBox();
+            comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
+            SetMenuItemsEnabled();
 
-            if (comboBoxLayers.Items.Count > 0)
-                comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
+            EndTransaction();
+        }
+    }
+
+    private void buttonArrowDown_Click(object sender, EventArgs e)
+    {
+        BeginTransaction();
+
+        int previndex = SelectedLayerIndex;
+        if (archive.MoveLayerDown(SelectedLayerIndex))
+        {
+            PopulateLayerComboBox();
+            comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
+            SetMenuItemsEnabled();
+
+            EndTransaction();
+        }
+    }
+
+    private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (!programIsChangingStuff && comboBoxAssetTypes.SelectedIndex != -1)
+            PopulateAssetList(((AssetTypeContainer)comboBoxAssetTypes.SelectedItem).assetType);
+    }
+
+    private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
+    {
+        uint assetID = 0;
+        if (textBoxFindAsset.Text == "")
+        {
+            PopulateAssetList();
+            return;
+        }
+        try
+        {
+            textBoxFindAsset.BackColor = defaultColor;
+            assetID = HexUIntTypeConverter.AssetIDFromString(textBoxFindAsset.Text);
+        }
+        catch
+        {
+            textBoxFindAsset.BackColor = System.Drawing.Color.Red;
+        }
+
+        var assets = new List<Asset>();
+
+        foreach (Asset a in archive.Assets)
+            if (a.assetName.Contains(textBoxFindAsset.Text, StringComparison.CurrentCultureIgnoreCase) || a.assetType.ToString().Contains(textBoxFindAsset.Text, StringComparison.CurrentCultureIgnoreCase))
+                assets.Add(a);
+        if (assetID != 0 && archive.ContainsAsset(assetID) && !assets.Any(a => a.assetID == assetID))
+            assets.Add(archive.GetAsset(assetID));
+
+        if (!archive.AutoLayers && assets.Count != 0)
+            comboBoxLayers.SelectedIndex = -1;
+
+        if (comboBoxAssetTypes.Items.Count > 0)
+            comboBoxAssetTypes.SelectedIndex = 0;
+        PopulateAssetList(AssetType.Null, assets);
+    }
+
+    private void checkBoxTemplateFocus_Click(object sender, EventArgs e)
+    {
+        SetTargetedOn();
+    }
+
+    private void checkBoxTemplateFocus_CheckedChanged(object sender, EventArgs e)
+    {
+        if (checkBoxTemplateFocus.Checked)
+        {
+            if (Program.IsDarkMode)
+            {
+                checkBoxTemplateFocus.BackColor = System.Drawing.Color.DarkGreen;
+            }
             else
             {
-                comboBoxLayers.SelectedItem = null;
-                comboBoxLayerTypes.SelectedItem = null;
-
-                comboBoxAssetTypes.Items.Clear();
-                listViewAssets.Items.Clear();
+                checkBoxTemplateFocus.BackColor = System.Drawing.Color.LightGreen;
             }
-            PopulateAssetList();
-            SetMenuItemsEnabled();
+        }
+        else
+        {
+            if (Program.IsDarkMode)
+            {
+                checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.Control;
+            }
+            else
+            {
+                checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.ActiveBorder;
+            }
+        }
+    }
+
+    private void buttonImportAsset_Click(object sender, EventArgs e)
+    {
+        var layerIndex = SelectedLayerIndex;
+
+        if (!archive.AutoLayers && SelectedLayerIndex == -1)
+            return;
+
+        Section_AHDR AHDR = AssetHeader.GetAsset();
+
+        if (AHDR != null)
+        {
+            while (archive.ContainsAsset(AHDR.assetID))
+            {
+                var result = MessageBox.Show($"Archive already contains asset with id [{AHDR.assetID:X8}]. Do you wish to overwrite it? Select 'No' to try again, or 'Cancel' to discard.", "Asset already exists", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (result == DialogResult.Yes)
+                    break;
+                else if (result == DialogResult.No)
+                    AHDR = AssetHeader.GetAsset(AHDR);
+                else if (result == DialogResult.Cancel)
+                    return;
+            }
+
+            BeginTransaction();
+
+            var asset = archive.AddNewAsset(AHDR, archive.Game, archive.Platform, layerIndex);
+            AssetTransformer.SetAssetPositionToView(asset);
+
+            EndTransaction();
+
+            if (!archive.AutoLayers)
+                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+            AddToAssetList(asset);
+            SetSelectedAsset(asset);
             SetupAssetVisibilityButtons();
-
-            Program.UndoBuffer.AddAction(actions);
+            SetMenuItemsEnabled();
         }
+    }
 
-        private void buttonArrowUp_Click(object sender, EventArgs e)
-        {
-            int previndex = SelectedLayerIndex;
-            if (archive.MoveLayerUp(SelectedLayerIndex))
-            {
-                PopulateLayerComboBox();
-                comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
-                Program.UndoBuffer.AddAction(new LayerMovedAction(archive, SelectedLayerIndex, false));
-                SetMenuItemsEnabled();
-            }
-        }
+    private void buttonDuplicate_Click(object sender, EventArgs e)
+    {
+        if (selectionManager.SelectedAssetCount == 0)
+            return;
 
-        private void buttonArrowDown_Click(object sender, EventArgs e)
-        {
-            int previndex = SelectedLayerIndex;
-            if (archive.MoveLayerDown(SelectedLayerIndex))
-            {
-                PopulateLayerComboBox();
-                comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
-                Program.UndoBuffer.AddAction(new LayerMovedAction(archive, SelectedLayerIndex, true));
-                SetMenuItemsEnabled();
-            }
-        }
+        var duplicated = AssetService.DuplicateAssets(
+            selectionManager.SelectedAssets,
+            archive.Platform,
+            archive.GetLayerFromAssetID,
+            archive.ContainsAsset,
+            UpdateReferencesOnCopy);
 
-        public void PopulateAssetListAndComboBox()
+        BeginTransaction();
+
+        foreach (var (asset, layerIndex) in duplicated)
+            archive.AddNewAsset(asset, layerIndex);
+
+        EndTransaction();
+
+        if (!archive.AutoLayers)
         {
             programIsChangingStuff = true;
-
-            PopulateAssetTypeComboBox(true);
-            PopulateAssetList();
-
+            comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
             programIsChangingStuff = false;
         }
 
-        private void PopulateAssetTypeComboBox(bool selectAllOption)
+        AddToAssetList(duplicated.Select(d => d.asset));
+        SetSelectedAssets(duplicated.Select(d => d.asset));
+        SetMenuItemsEnabled();
+    }
+
+    private void buttonCopy_Click(object sender, EventArgs e)
+    {
+        if (!HasSelectedAssets)
+            return;
+
+        var assets = selectionManager.SelectedAssets.ToList();
+
+        if (PressedKeys.Contains(Keys.ShiftKey))
+            assets = [.. AssetService.GetAssetsAndHierarchy(assets)];
+
+        var clipboard = AssetService.AssetsToClipboard(assets, archive.Platform, archive.GetSoundData);
+
+        Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
+    }
+
+    private void buttonPaste_Click(object sender, EventArgs e)
+    {
+        PasteAssets();
+    }
+
+    private void ButtonRemoveAsset_Click(object sender, EventArgs e)
+    {
+        BeginTransaction();
+        RemoveAssets(selectionManager.SelectedAssetIDs);
+        EndTransaction();
+    }
+
+    private int currentView = -1;
+
+    private void buttonView_Click(object sender, EventArgs e)
+    {
+        var assets = selectionManager.SelectedAssets.OfType<IClickableAsset>().ToArray();
+        if (assets.Length == 0)
+            return;
+        currentView++;
+        if (currentView >= assets.Length)
+            currentView = 0;
+        Program.Renderer.Camera.ShowAssetOnViewport(assets[currentView]);
+    }
+
+    private void buttonExportRaw_Click(object sender, EventArgs e)
+    {
+        if (listViewAssets.SelectedItems.Count == 0)
+            return;
+
+        var selected = selectionManager.SelectedAssets;
+        if (selected.Count == 1)
         {
-            comboBoxAssetTypes.Items.Clear();
-            comboBoxAssetTypes.SelectedIndex = -1;
-            if (archive.NoLayers || SelectedLayerIndex != -1)
+            var asset = selected[0];
+            var assetFileName = asset.assetName;
+
+            // Check to see if the extension is '.anm' and use 'assetFileName'
+            if (Path.GetExtension(asset.assetFileName).ToLower().Equals(".anm") && !string.IsNullOrWhiteSpace(asset.assetFileName))
+                assetFileName = Path.GetFileName(asset.assetFileName);
+
+            SaveFileDialog saveFileDialog = new SaveFileDialog()
             {
-                comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Null));
-                comboBoxAssetTypes.Items.AddRange([.. archive.AssetTypesOnLayer(SelectedLayerIndex).Select(f => new AssetTypeContainer(f)).OrderBy(f => f.ToString())]);
-                if (selectAllOption)
-                    comboBoxAssetTypes.SelectedIndex = 0;
-            }
-        }
-
-        private AssetType curType = AssetType.Null;
-
-        private void PopulateAssetList(AssetType type = AssetType.Null, List<Asset> assets = null, bool select = false, List<uint> selectionAssetIDs = null)
-        {
-            curType = type;
-            listViewAssets.BeginUpdate();
-            listViewAssets.ListViewItemSorter = null;
-            listViewAssets.Items.Clear();
-
-            assets ??= (archive.NoLayers || comboBoxLayers.SelectedItem != null) ?
-                [.. archive.GetAssetIDsOnLayer(SelectedLayerIndex).Select(archive.GetFromAssetID)] :
-                [];
-
-            var items = new List<ListViewItem>(assets.Count);
-            foreach (var asset in assets)
-                if (type == AssetType.Null || asset.assetType == type)
-                    items.Add(ListViewItemFromAsset(asset, select && selectionAssetIDs.Contains(asset.assetID)));
-
-            listViewAssets.Items.AddRange([.. items]);
-
-            listViewAssets.EndUpdate();
-
-            if (select)
-            {
-                programIsChangingStuff = true;
-                int ensureVisible = -1;
-                for (int i = 0; i < listViewAssets.Items.Count; i++)
-                    if (listViewAssets.Items[i].Selected)
-                        ensureVisible = i;
-                if (ensureVisible != -1)
-                    listViewAssets.EnsureVisible(ensureVisible);
-                programIsChangingStuff = false;
-            }
-
-            archive.SelectAssets(selectionAssetIDs ?? []);
-
-            toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
-
-            SetMenuItemsEnabled();
-        }
-
-        private ListViewItem ListViewItemFromAsset(Asset asset, bool selected)
-        {
-            ListViewItem item = new ListViewItem(asset.assetName)
-            {
-                Checked = !asset.isInvisible,
-                Selected = selected,
-                Tag = asset.assetID
+                FileName = assetFileName
             };
-
-            item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
-            {
-                new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
-                new ListViewItem.ListViewSubItem(item, asset.TypeString),
-                new ListViewItem.ListViewSubItem(item, TreatInfo(asset.AssetInfo)),
-                new ListViewItem.ListViewSubItem(item, asset.AssetInfoLinks),
-            });
-            return item;
-        }
-
-        private string TreatInfo(string info)
-        {
-            if (info.Length > 50)
-                info = info.Substring(0, 47) + "...";
-            return info;
-        }
-
-        public void UpdateCurrentListView(Asset asset)
-        {
-            foreach (ListViewItem item in listViewAssets.Items)
-            {
-                if ((uint)item.Tag == asset.assetID)
+            if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                try
                 {
-                    item.SubItems[3].Text = TreatInfo(asset.AssetInfo);
-                    item.SubItems[4].Text = asset.AssetInfoLinks;
-                    return;
+                    var AHDR = asset.BuildAHDR(archive.Platform.Endianness());
+                    File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                 }
-            }
-        }
-
-        private void checkedListBoxAssets_ItemCheck(object sender, ItemCheckEventArgs e)
-        {
-            archive.GetFromAssetID((uint)listViewAssets.Items[e.Index].Tag).isInvisible = e.NewValue != CheckState.Checked;
-        }
-
-        private class AssetListViewSorter : System.Collections.IComparer
-        {
-            public int Column { get; set; }
-            public bool reverseSorting { get; set; }
-
-            public AssetListViewSorter(int Column, bool reverseSorting)
-            {
-                this.Column = Column;
-                this.reverseSorting = reverseSorting;
-            }
-
-            public int Compare(ListViewItem x, ListViewItem y)
-            {
-                if (Column == 1)
-                    return ((uint)x.Tag).CompareTo((uint)y.Tag);
-
-                if (Column == 4)
+                catch (Exception ex)
                 {
-                    int links1 = (x.SubItems[Column].Text == "-") ? -1 : Convert.ToInt32(x.SubItems[Column].Text);
-                    int links2 = (y.SubItems[Column].Text == "-") ? -1 : Convert.ToInt32(y.SubItems[Column].Text);
-                    return links1.CompareTo(links2);
+                    MessageBox.Show("Unable to export asset raw data: " + ex.Message);
                 }
-
-                return x.SubItems[Column].Text.CompareTo(y.SubItems[Column].Text);
-            }
-
-            public int Compare(object x, object y)
-            {
-                var comp = Compare((ListViewItem)x, (ListViewItem)y);
-                if (reverseSorting)
-                    return -comp;
-                return comp;
-            }
         }
-
-        private bool reverseSorting = false;
-        private int prevColumn = -1;
-
-        private void listViewAssets_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            reverseSorting = (e.Column == prevColumn) && !reverseSorting;
-
-            prevColumn = e.Column;
-
-            listViewAssets.ListViewItemSorter = new AssetListViewSorter(e.Column, reverseSorting);
-            listViewAssets.Sort();
-
-            foreach (ColumnHeader col in listViewAssets.Columns)
-                col.Text = TreatColumnName(col.Text);
-            listViewAssets.Columns[prevColumn].Text = TreatColumnName(listViewAssets.Columns[prevColumn].Text) + (reverseSorting ? " ▼" : " ▲");
-        }
-
-        private string TreatColumnName(string name)
-        {
-            if (name.EndsWith("▲") || name.EndsWith("▼"))
-                return name.Substring(0, name.Length - 2);
-            return name;
-        }
-
-        private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (!programIsChangingStuff && comboBoxAssetTypes.SelectedIndex != -1)
-                PopulateAssetList(((AssetTypeContainer)comboBoxAssetTypes.SelectedItem).assetType);
-        }
-
-        private void buttonAddAsset_Click(object sender, EventArgs e)
-        {
-            uint? assetID = archive.CreateNewAsset(SelectedLayerIndex);
-
-            if (assetID.HasValue)
-            {
-                if (!archive.NoLayers)
-                    comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-                AddToAssetList(assetID.Value);
-                SetSelectedIndex(assetID.Value);
-                SetupAssetVisibilityButtons();
-                SetMenuItemsEnabled();
-                Program.UndoBuffer.AddAction([archive.GetAssetAddedAction(assetID.Value), new SelectionAction(assetID.Value)]);
-            }
-        }
-
-        private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            (List<Section_AHDR> AHDRs, bool overwrite) = AddMultipleAssets.GetAssets();
-
-            if (AHDRs != null)
-            {
-                var actions = new List<IReversibleAction>();
-                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, SelectedLayerIndex, overwrite, actions);
-                if (!archive.NoLayers)
-                    comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-                OnEditorUpdate();
-                SetSelectedIndices(assetIDs);
-                SetMenuItemsEnabled();
-                Program.UndoBuffer.AddAction(actions);
-            }
-        }
-
-        private void importModelsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportModelResult result = ImportModel.GetImportData(archive.game, archive.platform);
-
-            if (result == null)
-                return;
-
-            List<uint> assetIDs = new List<uint>();
-            var actions = new List<IReversibleAction>();
-
-            if (result.AssetType == AssetType.JSP)
-            {
-                if (archive.game == Game.BFBB)
-                {
-                    var assetsToRemove = archive.GetAllAssets()
-                        .Where(a => a.assetType is AssetType.BSP or AssetType.JSP or AssetType.JSPInfo)
-                        .Select(a => a.assetID);
-                    RemoveAssets(assetsToRemove, actions);
-                    if (!archive.NoLayers)
-                    {
-                        archive.RemoveLayerOfType(LayerType.BSP, actions);
-                        archive.RemoveLayerOfType(LayerType.JSPINFO, actions);
-                    }
-                }
-
-                assetIDs.AddRange(archive.CreateJSPInfoAndBSPLayers(result.AHDRCollections, result.Overwrite, actions));
-            }
-            else
-            {
-                assetIDs = archive.ImportMultipleAssets([.. result.AHDRCollections.SelectMany(list => list)], SelectedLayerIndex, result.Overwrite, actions);
-
-                if (result.AssetType == AssetType.Model)
-                {
-                    if (result.PiptVColors)
-                        archive.MakePiptVcolors(assetIDs, actions);
-                    if (result.GenerateSimps)
-                        assetIDs.AddRange(archive.MakeSimps(assetIDs, result.SolidSimps, result.LedgeGrabSimps, actions));
-                }
-            }
-
-            Program.UndoBuffer.AddAction(actions);
-
-            PopulateLayerComboBox();
-            SetSelectedIndices(assetIDs);
-            SetMenuItemsEnabled();
-            OnEditorUpdate();
-        }
-
-        private void importTexturesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Enabled = false;
-            var (AHDRs, overwrite) = ImportTextures.GetAssets(archive.game, archive.platform);
-
-            if (AHDRs != null)
-            {
-                var actions = new List<IReversibleAction>();
-                List<uint> assetIDs = archive.ImportMultipleAssets(AHDRs, SelectedLayerIndex, overwrite, actions);
-                Program.UndoBuffer.AddAction(actions);
-                if (!archive.NoLayers)
-                    comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(SelectedLayerIndex);
-                OnEditorUpdate();
-                SetSelectedIndices(assetIDs);
-                SetMenuItemsEnabled();
-            }
-            Enabled = true;
-        }
-
-        private void exportAllTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        else
         {
             CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
             {
                 IsFolderPicker = true
             };
             if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                var textures = archive.GetAllTexturesAsBitmaps();
-
-                RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
-
-                foreach ((string textureName, Bitmap texture) in textures)
-                    texture.Save(Path.Combine(saveFileDialog.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
-            }
-        }
-
-        private void buttonDuplicate_Click(object sender, EventArgs e)
-        {
-            if (listViewAssets.SelectedItems.Count == 0)
-                return;
-
-            archive.DuplicateSelectedAssets(out List<uint> finalIndices);
-
-            if (!archive.NoLayers)
-            {
-                programIsChangingStuff = true;
-                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-                programIsChangingStuff = false;
-            }
-
-            AddToAssetList(finalIndices);
-            SetSelectedIndices(finalIndices);
-            SetMenuItemsEnabled();
-
-            Program.UndoBuffer.AddAction([.. finalIndices.Select(archive.GetAssetAddedAction), new SelectionAction(finalIndices)]);
-        }
-
-        private void buttonCopy_Click(object sender, EventArgs e)
-        {
-            if (listViewAssets.SelectedItems.Count == 0)
-                return;
-
-            archive.CopyAssetsToClipboard(copyHierarchy: PressedKeys.Contains(Keys.ShiftKey));
-        }
-
-        private void buttonPaste_Click(object sender, EventArgs e)
-        {
-            (bool success, List<uint> finalIndices, List<IReversibleAction> actions) = archive.PasteAssetsFromClipboard(SelectedLayerIndex);
-            if (!success)
-                return;
-
-            if (!archive.NoLayers)
-            {
-                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-            }
-
-            if (archive.ContainsNewlyAddedAssetType(finalIndices))
-            {
-                SetupAssetVisibilityButtons();
-                PopulateAssetListAndComboBox();
-            }
-            else
-            {
-                AddToAssetList(finalIndices);
-            }
-
-            SetSelectedIndices(finalIndices);
-
-            actions.Add(new SelectionAction(finalIndices));
-            Program.UndoBuffer.AddAction(actions);
-        }
-
-        private void ButtonRemoveAsset_Click(object sender, EventArgs e)
-        {
-            if (listViewAssets.SelectedItems.Count == 0)
-                return;
-
-            var actions = new List<IReversibleAction>();
-            RemoveAssets(archive.CurrentlySelectedAssetIDs, actions);
-            Program.UndoBuffer.AddAction(actions);
-        }
-
-        public void RemoveAssets(IEnumerable<uint> assetIDs, List<IReversibleAction> actions)
-        {
-            programIsChangingStuff = true;
-            var types = assetIDs.Select(u => archive.GetFromAssetID(u).assetType).ToHashSet();
-            actions.AddRange(assetIDs.Select(archive.GetAssetRemovedAction));
-            actions.Add(new SelectionAction(assetIDs));
-
-            archive.RemoveAsset(assetIDs);
-
-            if (!archive.NoLayers && SelectedLayerIndex != -1)
-                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-
-            archive.UnsavedChanges = true;
-            listViewAssets.BeginUpdate();
-            foreach (ListViewItem v in listViewAssets.SelectedItems)
-                listViewAssets.Items.Remove(v);
-            listViewAssets.EndUpdate();
-            programIsChangingStuff = false;
-
-            if (types.Any(t => !archive.ContainsAssetWithType(t)))
-            {
-                SetupAssetVisibilityButtons();
-                PopulateAssetListAndComboBox();
-            }
-            else
-                SetMenuItemsEnabled();
-        }
-
-        private int currentView = -1;
-
-        private void buttonView_Click(object sender, EventArgs e)
-        {
-            var assets = archive.CurrentlySelectedAssetIDs.Select(archive.GetFromAssetID).OfType<IClickableAsset>().ToArray();
-            if (assets.Length == 0)
-                return;
-            currentView++;
-            if (currentView >= assets.Length)
-                currentView = 0;
-            var asset = assets[currentView];
-            Program.Renderer.Camera.ShowAssetOnViewport(asset);
-        }
-
-        private void buttonEditAsset_Click(object sender, EventArgs e)
-        {
-            var assetIDs = archive.CurrentlySelectedAssetIDs;
-            if (assetIDs.Count() == 1)
-                EditHeader(assetIDs.First(), out _);
-        }
-
-        public bool EditHeader(uint oldAssetID, out uint newAssetID)
-        {
-            newAssetID = 0;
-            try
-            {
-                archive.TryGetAsset(oldAssetID, out Asset asset);
-                if (asset == null)
-                    return false;
-
-                var oldLayer = archive.GetLayerFromAssetID(oldAssetID);
-
-                Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR(archive.platform.Endianness()));
-
-                if (AHDR != null)
-                {
-                    if (AHDR.assetID != oldAssetID && archive.ContainsAsset(AHDR.assetID))
-                    {
-                        MessageBox.Show($"Archive {archive.LevelName} already contains asset with ID [{AHDR.assetID:X8}] {AHDR.ADBG.assetName}. Please choose a new name/ID.", "Unable to create asset", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return false;
-                    }
-
-                    archive.UnsavedChanges = true;
-
-                    var actions = new List<IReversibleAction>
-                    {
-                        archive.GetAssetRemovedAction(oldAssetID),
-                        new SelectionAction(oldAssetID)
-                    };
-
-                    archive.RemoveAsset(oldAssetID, false);
-
-                    archive.AddAsset(AHDR, asset.game, archive.platform.Endianness(), oldLayer, true);
-
-                    if (ArchiveEditorFunctions.updateReferencesOnCopy)
-                        foreach (var ae in Program.MainForm.archiveEditors)
-                            ae.archive.ReplaceReferences(oldAssetID, AHDR.assetID);
-
-                    for (int i = 0; i < listViewAssets.Items.Count; i++)
-                        if ((uint)listViewAssets.Items[i].Tag == oldAssetID)
-                        {
-                            listViewAssets.Items.RemoveAt(i);
-                            break;
-                        }
-
-                    AddToAssetList(AHDR.assetID);
-                    SetSelectedIndex(AHDR.assetID);
-
-                    actions.Add(archive.GetAssetAddedAction(AHDR.assetID));
-                    actions.Add(new SelectionAction(AHDR.assetID));
-                    Program.UndoBuffer.AddAction(actions);
-
-                    newAssetID = AHDR.assetID;
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to edit asset: " + ex.Message);
-            }
-
-            return false;
-        }
-
-        private void buttonInternalEdit_Click(object sender, EventArgs e)
-        {
-            OpenInternalEditors();
-        }
-
-        private void buttonMultiEdit_Click(object sender, EventArgs e)
-        {
-            archive.OpenInternalEditorMulti(archive.CurrentlySelectedAssetIDs, MousePosition, UpdateCurrentListView);
-        }
-
-        public void OpenInternalEditors()
-        {
-            archive.OpenInternalEditor(archive.CurrentlySelectedAssetIDs, false, MousePosition, UpdateCurrentListView);
-        }
-
-        public void OpenInternalEditors(List<uint> whoTargets, bool openAnyway)
-        {
-            archive.OpenInternalEditor(whoTargets, openAnyway, MousePosition, UpdateCurrentListView);
-        }
-
-        public void OpenInternalEditor(uint assetID)
-        {
-            if (archive.ContainsAsset(assetID))
-                archive.OpenInternalEditor([assetID], true, MousePosition, UpdateCurrentListView);
-        }
-
-        public void DeleteSelectedAssets()
-        {
-            ButtonRemoveAsset_Click(null, null);
-            foreach (ListViewItem v in listViewAssets.Items)
-                v.Selected = false;
-        }
-
-        private void buttonExportRaw_Click(object sender, EventArgs e)
-        {
-            if (listViewAssets.SelectedItems.Count == 0)
-                return;
-
-            var selected = archive.CurrentlySelectedAssets;
-            if (selected.Count == 1)
-            {
-                var asset = selected[0];
-                var assetFileName = asset.assetName;
-
-                // Check to see if the extension is '.anm' and use 'assetFileName'
-                if (Path.GetExtension(asset.assetFileName).ToLower().Equals(".anm") && !string.IsNullOrWhiteSpace(asset.assetFileName))
-                    assetFileName = Path.GetFileName(asset.assetFileName);
-
-                SaveFileDialog saveFileDialog = new SaveFileDialog()
-                {
-                    FileName = assetFileName
-                };
-                if (saveFileDialog.ShowDialog() == DialogResult.OK)
+                foreach (var asset in selected)
                     try
                     {
-                        var AHDR = asset.BuildAHDR(archive.platform.Endianness());
-                        File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
+                        var assetFileName = asset.assetName;
+
+                        // Check to see if the extension is '.anm' and use 'assetFileName'
+                        if (Path.GetExtension(asset.assetFileName).ToLower().Equals(".anm") && !string.IsNullOrWhiteSpace(asset.assetFileName))
+                            assetFileName = Path.GetFileName(asset.assetFileName);
+
+                        var AHDR = asset.BuildAHDR(archive.Platform.Endianness());
+                        File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, assetFileName), AHDR.data);
                     }
                     catch (Exception ex)
                     {
                         MessageBox.Show("Unable to export asset raw data: " + ex.Message);
                     }
+        }
+    }
+
+    private void buttonEditHeader_Click(object sender, EventArgs e)
+    {
+        var asset = selectionManager.SelectedAssets.FirstOrDefault();
+        if (asset != null)
+            EditHeader(asset);
+    }
+
+    private void buttonEditData_Click(object sender, EventArgs e)
+    {
+        OpenInternalEditors();
+    }
+
+    private void buttonMultiEdit_Click(object sender, EventArgs e)
+    {
+        Program.EditorManager.OpenMultiAssetEditor(selectionManager.SelectedAssets, MousePosition);
+    }
+
+    private void listViewAssets_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        if (programIsChangingStuff)
+            return;
+
+        toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
+
+        if (!PressedKeys.Contains(Keys.ControlKey) && !PressedKeys.Contains(Keys.ShiftKey))
+            foreach (var ae in Program.ArchiveEditors.Where(ae => ae != this))
+                ae.ClearSelectedAssets();
+
+        selectionManager.SetSelected(listViewAssets.SelectedItems.Cast<ListViewItem>().Select(item => archive.GetAsset((uint)item.Tag)));
+
+        SetMenuItemsEnabled();
+    }
+
+    private void listViewAssets_ItemCheck(object sender, ItemCheckEventArgs e)
+    {
+        if (archive.TryGetAsset((uint)listViewAssets.Items[e.Index].Tag, out Asset asset))
+            asset.isInvisible = e.NewValue != CheckState.Checked;
+    }
+
+    private void listViewAssets_ColumnClick(object sender, ColumnClickEventArgs e)
+    {
+        reverseSorting = (e.Column == prevColumn) && !reverseSorting;
+
+        prevColumn = e.Column;
+
+        listViewAssets.ListViewItemSorter = new AssetListViewSorter(e.Column, reverseSorting);
+        listViewAssets.Sort();
+
+        foreach (ColumnHeader col in listViewAssets.Columns)
+            col.Text = TreatColumnName(col.Text);
+        listViewAssets.Columns[prevColumn].Text = TreatColumnName(listViewAssets.Columns[prevColumn].Text) + (reverseSorting ? " ▼" : " ▲");
+    }
+
+    private void listViewAssets_MouseDown(object sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Right)
+        {
+            contextMenuStrip_ListBoxAssets.Show(listViewAssets.PointToScreen(e.Location));
+        }
+    }
+
+    private void TemplateToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var template = (AssetTemplate)((ToolStripItem)sender).Tag;
+        Vector3 Position = Program.Renderer.Camera.Position + 3 * Program.Renderer.Camera.Forward;
+        PlaceTemplate(template, Position);
+        SetupAssetVisibilityButtons();
+    }
+
+    private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
+    {
+        BeginTransaction();
+        var ids = selectionManager.SelectedAssetIDs.ToList();
+        var group = (AssetGRUP)GenerateTemplateForArchive(AssetTemplate.Group, new Vector3())[0];
+        group.AddItems([.. ids]);
+        archive.AddNewAsset(group, SelectedLayerIndex);
+        EndTransaction();
+
+        if (archive.ContainsNewlyAddedAssetType([group.assetID]))
+            PopulateAssetListAndComboBox();
+        SetSelectedAsset(group);
+        UpdateListView(group);
+    }
+
+    private void copyAssetNamesToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var names = SelectedAssets.Select(a => a.assetName);
+        Clipboard.SetText($"\"{string.Join("\", \"", names)}\"");
+    }
+
+    private void AddToCustomSource(Asset asset) => textBoxFindAsset.AutoCompleteCustomSource.Add(asset.assetName);
+
+    private void RemoveFromCustomSource(Asset asset) => textBoxFindAsset.AutoCompleteCustomSource.Remove(asset.assetName);
+
+    /// <summary>
+    /// Opens a HIP file from the specified path.
+    /// </summary>
+    /// <param name="fileName">The HIP file to open</param>
+    /// <param name="knownPlatform">The plataform which should be used in case one cannot be detected from the HIP file</param>
+    private void OpenFile(string fileName, Platform knownPlatform = Platform.Unknown)
+    {
+        DisposeArchive(true);
+        var progressBar = new ProgressBar("Opening " + Path.GetFileName(fileName));
+        try
+        {
+            progressBar.Show(this);
+
+            Program.Renderer.Assets.PauseMatrixRecalculation = true;
+
+            HipFile hipFile = HipFile.FromPath(fileName);
+
+            if (hipFile.HIPB.VersionMismatch)
+                MessageBox.Show($"Expected: {Section_HIPB.CurrentVersion}\nGot: {hipFile.HIPB.Version}\nAdditional data will be skipped", "Newer HIPB version detected", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+
+            while (hipFile.game == Game.Unknown)
+                hipFile.game = ChooseGame.GetGame();
+
+            if (hipFile.platform == Platform.Unknown && knownPlatform != Platform.Unknown)
+                hipFile.platform = knownPlatform;
+            while (hipFile.platform == Platform.Unknown)
+                hipFile.platform = ChoosePlatformDialog.GetPlatform();
+
+            progressBar.SetProgressBar(0, hipFile.DICT.ATOC.AHDRList.Count, 1);
+
+            archive = new Archive.Archive(hipFile, fileName, true, out List<AssetError> errors, progressBar);
+
+            if (errors.Count != 0)
+                MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", errors),
+                    $"{errors.Count} Asset(s) with errors",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+            historyManager = new AssetHistoryManager(archive);
+            foreach (var (assetID, data) in hipFile.DICT.ATOC.AHDRList.Select(ahdr => (ahdr.assetID, ahdr.data)))
+                historyManager.AddAsset(assetID, data);
+
+            ArchiveSubscriptions();
+
+            toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
+            Text = Path.GetFileName(fileName);
+
+            SetMenuItemsEnabled();
+            SetAutoLayers();
+            SelectFirstLayer();
+
+            Program.MainForm.SetToolStripItemName(this, Text);
+            Program.MainForm.SetRecentOpenedArchives(fileName);
+        }
+        catch (Exception e)
+        {
+            MessageBox.Show($"There was an error opening the archive: {e.Message}");
+        }
+        finally
+        {
+            Program.Renderer.Assets.PauseMatrixRecalculation = false;
+            OnEditorUpdate();
+            progressBar.Close();
+        }
+    }
+
+    private void ArchiveSubscriptions()
+    {
+        textBoxFindAsset.AutoCompleteCustomSource.Clear();
+        textBoxFindAsset.AutoCompleteCustomSource.AddRange([.. archive.Assets.Select(a => a.assetName)]);
+
+        archive.Subscriber.SubscribeToArchiveHeaderSet((_, _, _, _) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToModDateSet((_) => UnsavedChanges = true);
+
+        archive.Subscriber.SubscribeToAutoLayersChanged((_) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerAdded((_) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerRemoved((_) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerSwapped((_, _) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerTypeChanged((_, _) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerRenamed((_, _) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerIndicesSet((_) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerAssetAdded((_, _) => UnsavedChanges = true);
+        archive.Subscriber.SubscribeToLayerAssetRemoved((_, _) => UnsavedChanges = true);
+
+        archive.Subscriber.SubscribeToAssetAdded((asset) =>
+        {
+            UnsavedChanges = true;
+            historyManager.AddAsset(asset);
+            AddToCustomSource(asset);
+            if (asset is AssetRWTX rwtx)
+                TextureConverter.EnableTextureForDisplay(rwtx);
+            asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
+        });
+
+        archive.Subscriber.SubscribeToAssetRemoved((asset) =>
+        {
+            UnsavedChanges = true;
+            historyManager.RemoveAsset(asset.assetID);
+            RemoveFromCustomSource(asset);
+            if (asset is AssetRWTX rwtx)
+                Program.TextureManager.RemoveTexture(rwtx.Name, archive, rwtx.assetID);
+            selectionManager.Unselect(asset);
+            Program.EditorManager.CloseEditor(asset);
+        });
+
+        foreach (var asset in archive.Assets)
+            asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
+
+        TransactionBegin = null;
+        TransactionEnd = null;
+        TransactionBegin += () => Program.UndoBuffer.BeginTransaction(this);
+        TransactionEnd += () => Program.UndoBuffer.EndTransaction(this);
+
+        archive.Subscriber.SetupUndoBuffer(this, Program.UndoBuffer);
+    }
+
+    public void Save()
+    {
+        SoundUtility_vgmstream.StopSound();
+
+        if (archive.CurrentFilePath == null)
+            SaveAs();
+        else
+            new Thread(() => {
+                archive.Save();
+                UnsavedChanges = false;
+                _updateFilesizeStatusBarItem();
+            }).Start();
+    }
+
+    /// <summary>
+    /// Saves on the calling thread (unlike Save, which writes the file in the background).
+    /// </summary>
+    /// <returns>Whether the archive is saved</returns>
+    public bool SaveAndWait()
+    {
+        SoundUtility_vgmstream.StopSound();
+
+        if (archive.CurrentFilePath == null)
+            SaveAs();
+        else
+        {
+            archive.Save();
+            UnsavedChanges = false;
+            _updateFilesizeStatusBarItem();
+        }
+
+        return !UnsavedChanges;
+    }
+
+    private void SaveAs()
+    {
+        SaveFileDialog saveFileDialog = new SaveFileDialog()
+        {
+            FileName = archive.CurrentFilePath,
+            Filter = "HIP/HOP Files|*.hip;*.hop",
+            Title = "Please choose a HIP or HOP file to save as"
+        };
+        if (saveFileDialog.ShowDialog() == DialogResult.OK)
+        {
+            archive.Save(saveFileDialog.FileName);
+            UnsavedChanges = false;
+
+            Text = Path.GetFileName(saveFileDialog.FileName);
+            Program.MainForm.SetToolStripItemName(this, Text);
+            Program.MainForm.SetRecentOpenedArchives(saveFileDialog.FileName);
+            toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
+        }
+
+        _updateFilesizeStatusBarItem();
+    }
+
+    public void DisposeArchive(bool showProgressBar = false)
+    {
+        if (archive == null)
+            return;
+        ProgressBar progressBar = null;
+        if (showProgressBar)
+        {
+            progressBar = new ProgressBar("Closing Archive");
+            progressBar.SetProgressBar(0, archive.AssetCount, 1);
+            progressBar.Show();
+            archive.Subscriber.SubscribeToAssetRemoved((assetID) => progressBar.PerformStep());
+        }
+
+        archive.Subscriber.UnsubscribeFromAssetAdded(AddToCustomSource);
+        archive.Subscriber.UnsubscribeFromAssetRemoved(RemoveFromCustomSource);
+        textBoxFindAsset.AutoCompleteCustomSource.Clear();
+
+        Program.UndoBuffer.RemoveActionsOfArchive(this);
+
+        archive.Dispose();
+        archive = null;
+        progressBar?.Close();
+    }
+
+    public void CloseArchiveEditor()
+    {
+        if (AssetListDocked)
+            Program.MainForm.UndockAssetList();
+
+        if (verifyResult != null)
+            if (!verifyResult.IsDisposed)
+                verifyResult.Close();
+
+        DisposeArchive(true);
+
+        Program.MainForm.CloseArchiveEditor(this);
+        Program.MainForm.UpdateTitleBar();
+        Close();
+        OnEditorUpdate();
+    }
+
+    public void AssetPropertyChanged(Asset asset, bool hard)
+    {
+        historyManager.FlushChangesToUndoBuffer(this, asset, hard);
+        UnsavedChanges = true;
+        if (asset is IRenderableAsset ira)
+            ira.CreateTransformMatrix(Program.Renderer);
+        UpdateListView(asset);
+    }
+
+    public void SubscribeToSelectedAssetsCollectionChanged(Action action) =>
+        selectionManager.SelectedAssets.CollectionChanged += (_, _) => action();
+
+    public string GetCurrentFilePath()
+    {
+        if (string.IsNullOrWhiteSpace(archive?.CurrentFilePath))
+            return "Empty";
+        return archive.CurrentFilePath;
+    }
+
+    /// <summary>
+    /// Updates the status bar to display the archive's filsize.
+    /// </summary>
+    private void _updateFilesizeStatusBarItem()
+    {
+        if (GetCurrentFilePath() == "Empty")
+            return;
+
+        long filesizeBytes = new FileInfo(GetCurrentFilePath()).Length;
+
+        toolStripStatusLabelFileSize.Text = ConvertSize((int)filesizeBytes);
+    }
+
+    public static string ConvertSize(int size)
+    {
+        if (size <= 1024)
+            return $"{size} B";
+
+        string[] name = new string[] { "B", "KiB", "MiB", "GiB" };
+
+        double i = Math.Floor(Math.Log(size, 1024));
+        double s = Math.Round(size / Math.Pow(1024, i), 2);
+
+        return $"{s} {name[(int)i]}";
+    }
+
+    private void SetMenuItemsEnabled()
+    {
+        if (archive == null)
+            return;
+
+        saveToolStripMenuItem.Enabled = true;
+        saveAsToolStripMenuItem.Enabled = true;
+        convertArchiveToolStripMenuItem.Enabled = true;
+        layersToolStripMenuItem.Enabled = true;
+        autoLayersToolStripMenuItem.Enabled = true;
+        buildLayersToolStripMenuItem.Enabled = true;
+        buildLegacyToolStripMenuItem.Enabled = true;
+        mergeSimilarAssetsToolStripMenuItem.Enabled = true;
+        applyScaleToolStripMenuItem.Enabled = true;
+        verifyArchiveToolStripMenuItem.Enabled = true;
+        hipHopFileToolStripMenuItem.Enabled = true;
+        importHipArchiveToolStripMenuItem.Enabled = true;
+        exportAssetsIniToolStripMenuItem.Enabled = true;
+        texturesToolStripMenuItem.Enabled = true;
+        soundsToolStripMenuItem.Enabled = true;
+        addLayerToolStripMenuItem.Enabled = buttonAddLayer.Enabled = true;
+        importSoundsToolStripMenuItem.Enabled = true;
+        importRawSoundsToolStripMenuItem.Enabled = true;
+
+        var canImportAssetsToLayer = archive.AutoLayers || (SelectedLayerIndex != -1);
+        importTexturesToolStripMenuItem.Enabled = canImportAssetsToLayer;
+        importRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
+        importNoRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
+        importModelsToolStripMenuItem.Enabled = canImportAssetsToLayer;
+        importMultipleAssetsToolStripMenuItem.Enabled = canImportAssetsToLayer;
+
+        toolStripMenuItem_Import.Enabled = buttonImportAsset.Enabled = canImportAssetsToLayer;
+        toolStripMenuItem_Paste.Enabled = buttonPasteAssets.Enabled = canImportAssetsToLayer;
+        addTemplateToolStripMenuItem.Enabled = canImportAssetsToLayer;
+
+        var canExportTextures = archive.ContainsAssetWithType(AssetType.Texture);
+        exportAllTexturesToolStripMenuItem.Enabled = canExportTextures;
+        exportRW3ToolStripMenuItem.Enabled = canExportTextures;
+        exportNoRW3ToolStripMenuItem.Enabled = canExportTextures;
+
+        var canExportSounds = archive.ContainsAssetWithType(AssetType.Sound) || archive.ContainsAssetWithType(AssetType.SoundStream);
+        exportAllSoundsToolStripMenuItem.Enabled = canExportSounds;
+        exportAllSoundsRawToolStripMenuItem.Enabled = canExportSounds;
+
+        removeLayerToolStripMenuItem.Enabled = buttonRemoveLayer.Enabled = !archive.AutoLayers && SelectedLayerIndex != -1;
+        moveLayerUpToolStripMenuItem.Enabled = buttonArrowUp.Enabled = !archive.AutoLayers && archive.LayerCount > 1 && SelectedLayerIndex > 0;
+        moveLayerDownToolStripMenuItem.Enabled = buttonArrowDown.Enabled = !archive.AutoLayers && archive.LayerCount > 1 && SelectedLayerIndex != -1 && SelectedLayerIndex < archive.LayerCount - 1;
+
+        var canEditAsset = listViewAssets.SelectedItems.Count != 0;
+        toolStripMenuItem_Duplicate.Enabled = buttonDuplicateAsset.Enabled = canEditAsset;
+        toolStripMenuItem_Copy.Enabled = buttonCopyAsset.Enabled = canEditAsset;
+        toolStripMenuItem_Remove.Enabled = buttonRemoveAsset.Enabled = canEditAsset;
+        toolStripMenuItem_ExportRaw.Enabled = buttonExportRawAsset.Enabled = canEditAsset;
+        toolStripMenuItem_EditData.Enabled = buttonEditDataAsset.Enabled = canEditAsset;
+        toolStripMenuItem_MultiEdit.Enabled = buttonMultiEditAsset.Enabled = canEditAsset;
+        toolStripMenuItem_CreateGroup.Enabled = canEditAsset;
+        toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && selectionManager.SelectedAssets.Any(asset => asset is IClickableAsset);
+
+        var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
+        toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
+
+        buildCollisionTreeForAllModelsToolStripMenuItem.Enabled = archive.ContainsAssetWithType(AssetType.Model);
+        coll36toolStripMenuItem.Enabled = archive.Game >= Game.Incredibles;
+        coll36sortTrianglesToolStripMenuItem.Enabled = archive.Game >= Game.Incredibles;
+    }
+
+    private void SetupAssetVisibilityButtons()
+    {
+        Program.MainForm.SetupAssetVisibilityButtons();
+    }
+
+    private void PopulateLayerTypeComboBox()
+    {
+        if (archive.AutoLayers)
+            return;
+
+        programIsChangingStuff = true;
+
+        comboBoxLayerTypes.Items.Clear();
+        if (archive.Game >= Game.Incredibles)
+            comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_TSSM)).Cast<object>().ToArray());
+        else
+            comboBoxLayerTypes.Items.AddRange(Enum.GetValues(typeof(LayerType_BFBB)).Cast<object>().ToArray());
+
+        programIsChangingStuff = false;
+    }
+
+    public void PopulateLayerComboBox()
+    {
+        if (archive.AutoLayers)
+            return;
+
+        programIsChangingStuff = true;
+
+        comboBoxLayers.BeginUpdate();
+        comboBoxLayers.Items.Clear();
+        for (int i = 0; i < archive.LayerCount; i++)
+            comboBoxLayers.Items.Add(archive.LayerToString(i));
+        comboBoxLayers.EndUpdate();
+
+        programIsChangingStuff = false;
+    }
+
+    private void ShowSelectedLayerType()
+    {
+        if (archive.Game >= Game.Incredibles)
+            comboBoxLayerTypes.SelectedItem = (LayerType_TSSM)archive.GetLayerType(SelectedLayerIndex);
+        else
+            comboBoxLayerTypes.SelectedItem = (LayerType_BFBB)archive.GetLayerType(SelectedLayerIndex);
+        if (!archive.LegacySave)
+            renameLayerToolStripMenuItem.Enabled = true;
+    }
+
+    private void SelectFirstLayer()
+    {
+        comboBoxLayers.SelectedIndex = archive.GetFirstActiveLayerIndex();
+    }
+
+    public void PopulateAssetListAndComboBox()
+    {
+        programIsChangingStuff = true;
+
+        PopulateAssetTypeComboBox(true);
+        PopulateAssetList();
+
+        programIsChangingStuff = false;
+    }
+
+    private void PopulateAssetTypeComboBox(bool selectAllOption)
+    {
+        comboBoxAssetTypes.Items.Clear();
+        comboBoxAssetTypes.SelectedIndex = -1;
+        if (archive.AutoLayers || SelectedLayerIndex != -1)
+        {
+            comboBoxAssetTypes.Items.Add(new AssetTypeContainer(AssetType.Null));
+            comboBoxAssetTypes.Items.AddRange([.. archive.AssetTypesOnLayer(SelectedLayerIndex).Select(f => new AssetTypeContainer(f)).OrderBy(f => f.ToString())]);
+            if (selectAllOption)
+                comboBoxAssetTypes.SelectedIndex = 0;
+        }
+    }
+
+    private void PopulateAssetList(AssetType type = AssetType.Null, IEnumerable<Asset> assets = null, bool select = false, IEnumerable<Asset> selectionAssets = null)
+    {
+        curSelectedType = type;
+        listViewAssets.BeginUpdate();
+        listViewAssets.ListViewItemSorter = null;
+        listViewAssets.Items.Clear();
+
+        assets ??= (archive.AutoLayers || comboBoxLayers.SelectedItem != null) ?
+            [.. archive.GetLayerAssetIDs(SelectedLayerIndex).Select(archive.GetAsset)] :
+            [];
+
+        var items = new List<ListViewItem>(assets.Count());
+        foreach (var asset in assets)
+            if (type == AssetType.Null || asset.assetType == type)
+                items.Add(ListViewItemFromAsset(asset, select && selectionAssets.Contains(asset)));
+
+        listViewAssets.Items.AddRange([.. items]);
+
+        listViewAssets.EndUpdate();
+
+        if (select)
+        {
+            programIsChangingStuff = true;
+            int ensureVisible = -1;
+            for (int i = 0; i < listViewAssets.Items.Count; i++)
+                if (listViewAssets.Items[i].Selected)
+                    ensureVisible = i;
+            if (ensureVisible != -1)
+                listViewAssets.EnsureVisible(ensureVisible);
+            programIsChangingStuff = false;
+
+            selectionManager.SetSelected(selectionAssets);
+            Program.EditorManager.OpenAutoDockedEditors(assets, this);
+        }
+
+        toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
+
+        SetMenuItemsEnabled();
+    }
+
+    private ListViewItem ListViewItemFromAsset(Asset asset, bool selected)
+    {
+        ListViewItem item = new ListViewItem(asset.assetName)
+        {
+            Checked = !asset.isInvisible,
+            Selected = selected,
+            Tag = asset.assetID
+        };
+
+        item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
+        {
+            new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
+            new ListViewItem.ListViewSubItem(item, asset.TypeString),
+            new ListViewItem.ListViewSubItem(item, TreatInfo(asset.AssetInfo)),
+            new ListViewItem.ListViewSubItem(item, asset.AssetInfoLinks),
+        });
+        return item;
+    }
+
+    private string TreatInfo(string info)
+    {
+        if (info.Length > 50)
+            info = info.Substring(0, 47) + "...";
+        return info;
+    }
+
+    public void UpdateListView(Asset asset)
+    {
+        foreach (ListViewItem item in listViewAssets.Items)
+        {
+            if ((uint)item.Tag == asset.assetID)
+            {
+                item.SubItems[3].Text = TreatInfo(asset.AssetInfo);
+                item.SubItems[4].Text = asset.AssetInfoLinks;
+                return;
+            }
+        }
+    }
+
+    private class AssetListViewSorter : System.Collections.IComparer
+    {
+        public int Column { get; set; }
+        public bool reverseSorting { get; set; }
+
+        public AssetListViewSorter(int Column, bool reverseSorting)
+        {
+            this.Column = Column;
+            this.reverseSorting = reverseSorting;
+        }
+
+        public int Compare(ListViewItem x, ListViewItem y)
+        {
+            if (Column == 1)
+                return ((uint)x.Tag).CompareTo((uint)y.Tag);
+
+            if (Column == 4)
+            {
+                int links1 = (x.SubItems[Column].Text == "-") ? -1 : Convert.ToInt32(x.SubItems[Column].Text);
+                int links2 = (y.SubItems[Column].Text == "-") ? -1 : Convert.ToInt32(y.SubItems[Column].Text);
+                return links1.CompareTo(links2);
+            }
+
+            return x.SubItems[Column].Text.CompareTo(y.SubItems[Column].Text);
+        }
+
+        public int Compare(object x, object y)
+        {
+            var comp = Compare((ListViewItem)x, (ListViewItem)y);
+            if (reverseSorting)
+                return -comp;
+            return comp;
+        }
+    }
+
+    private bool reverseSorting = false;
+    private int prevColumn = -1;
+
+    private string TreatColumnName(string name)
+    {
+        if (name.EndsWith("▲") || name.EndsWith("▼"))
+            return name.Substring(0, name.Length - 2);
+        return name;
+    }
+
+    public static bool UpdateReferencesOnCopy = true;
+    public static bool ReplaceAssetsOnPaste = false;
+
+    public void PasteAssets()
+    {
+        if (!archive.AutoLayers && SelectedLayerIndex == -1)
+        {
+            MessageBox.Show("Please select a layer to paste your asset in!");
+            return;
+        }
+
+        List<AssetClipboard> clipboard;
+        try
+        {
+            clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(Clipboard.GetText());
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error pasting assets from clipboard: {ex.Message}. Are you sure you have assets copied?");
+            return;
+        }
+
+        var assets = AssetService.ClipboardToAssets(archive.Platform, archive.Game, UpdateReferencesOnCopy, ReplaceAssetsOnPaste, archive.ContainsAsset, false, clipboard);
+        AddMultipleAssets(assets);
+    }
+
+    private void AddMultipleAssets(IEnumerable<Asset> assets, bool isTemplate = false)
+    {
+        var containsNewlyAddedAssetType = !assets.Select(a => a.assetType).Distinct().All(archive.ContainsAssetWithType);
+
+        BeginTransaction();
+
+        var result = archive.AddMultipleAssets(assets, SelectedLayerIndex, !isTemplate && ReplaceAssetsOnPaste);
+
+        EndTransaction();
+
+        if (containsNewlyAddedAssetType)
+        {
+            SetupAssetVisibilityButtons();
+            PopulateAssetListAndComboBox();
+        }
+        else
+        {
+            AddToAssetList(assets);
+        }
+
+        SetSelectedAssets(assets);
+    }
+
+    public void RemoveAssets(IEnumerable<uint> assetIDs)
+    {
+        programIsChangingStuff = true;
+        var types = assetIDs.Select(u => archive.GetAsset(u).assetType).ToHashSet();
+
+        archive.RemoveAssets(assetIDs);
+
+        if (!archive.AutoLayers && SelectedLayerIndex != -1)
+            comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+
+        listViewAssets.BeginUpdate();
+        foreach (ListViewItem v in listViewAssets.SelectedItems)
+            listViewAssets.Items.Remove(v);
+        listViewAssets.EndUpdate();
+        programIsChangingStuff = false;
+
+        if (types.Any(t => !archive.ContainsAssetWithType(t)))
+        {
+            SetupAssetVisibilityButtons();
+            PopulateAssetListAndComboBox();
+        }
+        else
+            SetMenuItemsEnabled();
+    }
+
+    public void ClearListItems(IEnumerable<uint> assetIDs)
+    {
+        foreach (ListViewItem v in listViewAssets.Items)
+            if (assetIDs.Contains((uint)v.Tag))
+                listViewAssets.Items.Remove(v);
+    }
+
+    public Asset EditHeader(Asset asset)
+    {
+        try
+        {
+            var oldLayer = archive.GetLayerFromAssetID(asset.assetID);
+            var oldAssetID = asset.assetID;
+
+            Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR(archive.Platform.Endianness()));
+
+            if (AHDR == null)
+                return null;
+
+            while (oldAssetID != AHDR.assetID && archive.ContainsAsset(AHDR.assetID))
+            {
+                var dr = MessageBox.Show($"Archive already contains asset with id [{AHDR.assetID:X8}]: {archive.GetAsset(AHDR.assetID).assetName}. Do you wish to overwrite it? Select 'Yes' to overwrite, 'No' to return to the previous dialog, or 'Cancel' to discard the change.", "Asset already exists", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                if (dr == DialogResult.Yes)
+                    break;
+                else if (dr == DialogResult.No)
+                    AHDR = AssetHeader.GetAsset(AHDR);
+                else if (dr == DialogResult.Cancel)
+                    return null;
+            }
+
+            BeginTransaction();
+
+            archive.RemoveAsset(oldAssetID, false);
+
+            var result = archive.AddNewAsset(AHDR, asset.game, archive.Platform, oldLayer);
+
+            if (UpdateReferencesOnCopy && oldAssetID != result.assetID)
+                foreach (var ae in Program.ArchiveEditors)
+                    ae.archive.Transformer.ReplaceReferences(oldAssetID, result.assetID);
+
+            EndTransaction();
+
+            for (int i = 0; i < listViewAssets.Items.Count; i++)
+                if ((uint)listViewAssets.Items[i].Tag == oldAssetID)
+                {
+                    listViewAssets.Items.RemoveAt(i);
+                    break;
+                }
+
+            AddToAssetList(result);
+            SetSelectedAsset(result);
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show("Unable to edit asset: " + ex.Message);
+        }
+
+        return null;
+    }
+
+    public void OpenInternalEditors()
+    {
+        Program.EditorManager.OpenAssetEditors(selectionManager.SelectedAssets, false, MousePosition);
+    }
+
+    public void OpenInternalEditors(IEnumerable<Asset> assets, bool openAnyway)
+    {
+        Program.EditorManager.OpenAssetEditors(assets, openAnyway, MousePosition);
+    }
+
+    public void DeleteSelectedAssets()
+    {
+        ButtonRemoveAsset_Click(null, null);
+        foreach (ListViewItem v in listViewAssets.Items)
+            v.Selected = false;
+    }
+
+    public void ClearSelectedAssets()
+    {
+        programIsChangingStuff = true;
+        listViewAssets.SelectedIndices.Clear();
+        selectionManager.UnselectAll();
+        programIsChangingStuff = false;
+    }
+
+    public bool HasSelectedAssets => selectionManager.SelectedAssets.Any();
+
+    public void SetSelectedAsset(Asset asset, bool addToSelection = false, bool toggleSelection = false)
+    {
+        var selected = new List<Asset>();
+        if (addToSelection || toggleSelection)
+            selected.AddRange(selectionManager.SelectedAssets);
+        if (asset != null)
+        {
+            if (toggleSelection && selected.Contains(asset))
+                selected.Remove(asset);
+            else
+                selected.Add(asset);
+        }
+        SetSelectedAssets(selected);
+    }
+
+    public void RemoveFromSelection(uint? assetID)
+    {
+        if (!assetID.HasValue || !archive.ContainsAsset(assetID.Value))
+            return;
+        var assets = selectionManager.SelectedAssets.ToList();
+        if (assets.RemoveAll(a => a.assetID == assetID.Value) > 0)
+            SetSelectedAssets(assets);
+    }
+
+    public void AddToAssetList(Asset asset)
+    {
+        AddToAssetList([asset]);
+    }
+
+    public void AddToAssetList(IEnumerable<Asset> assets)
+    {
+        listViewAssets.BeginUpdate();
+        listViewAssets.Items.AddRange([.. assets.Select(asset => ListViewItemFromAsset(asset, true))]);
+        listViewAssets.EndUpdate();
+    }
+
+    public static bool AlwaysListAllAssets { get; internal set; }
+
+    public void SetSelectedAssets(IEnumerable<Asset> assets, bool clearIfEmpty = true)
+    {
+        programIsChangingStuff = true;
+        if (clearIfEmpty && (!assets.Any() || assets.Any(a => !archive.ContainsAsset(a.assetID))))
+        {
+            selectionManager.UnselectAll();
+            listViewAssets.SelectedIndices.Clear();
+            programIsChangingStuff = false;
+            SetMenuItemsEnabled();
+            return;
+        }
+
+        AssetType assetType = AssetType.Null;
+        var first = assets.First();
+
+        if (!AlwaysListAllAssets && assets.All(a => a.assetType == first.assetType))
+            assetType = first.assetType;
+
+        int layerIndex = archive.AutoLayers ? -1 : archive.GetLayerFromAssetID(first.assetID);
+        bool layerChanged = !archive.AutoLayers && layerIndex != SelectedLayerIndex;
+
+        if (!layerChanged && curSelectedType == assetType && SelectListedAssets(assets))
+            return;
+
+        if (layerChanged)
+        {
+            comboBoxLayers.SelectedIndex = layerIndex;
+            ShowSelectedLayerType();
+            PopulateAssetTypeComboBox(false);
+        }
+
+        comboBoxAssetTypes.SelectedItem = comboBoxAssetTypes.Items.Cast<AssetTypeContainer>().FirstOrDefault(atc => atc.assetType == assetType);
+
+        PopulateAssetList(assetType, null, true, assets);
+        SetMenuItemsEnabled();
+        programIsChangingStuff = false;
+    }
+
+    public void SetSelectedAssets(IEnumerable<uint> assetIDs)
+    {
+        var assets = assetIDs.Where(archive.ContainsAsset).Select(archive.GetAsset);
+        SetSelectedAssets(assets);
+    }
+
+    /// <summary>
+    /// Selects <paramref name="assets"/> among the rows already in the asset list.
+    /// </summary>
+    /// <returns>False, leaving the selection untouched, if any of them has no row in the list.</returns>
+    private bool SelectListedAssets(IEnumerable<Asset> assets)
+    {
+        var wanted = assets.Select(a => a.assetID).ToHashSet();
+        var indices = new List<int>();
+        for (int i = 0; i < listViewAssets.Items.Count; i++)
+            if (wanted.Contains((uint)listViewAssets.Items[i].Tag))
+                indices.Add(i);
+
+        if (indices.Count != wanted.Count)
+            return false;
+
+        programIsChangingStuff = true;
+
+        listViewAssets.BeginUpdate();
+        listViewAssets.SelectedIndices.Clear();
+        foreach (int i in indices)
+            listViewAssets.SelectedIndices.Add(i);
+        listViewAssets.EndUpdate();
+        listViewAssets.EnsureVisible(indices[0]);
+
+        programIsChangingStuff = false;
+        selectionManager.SetSelected(assets);
+        SetMenuItemsEnabled();
+
+        return true;
+    }
+
+    private void BuildLayersClick(bool legacy)
+    {
+        if (archive.AutoLayers)
+            return;
+
+        BeginTransaction();
+        if (archive.Transformer.BuildLayers(legacy))
+        {
+            EndTransaction();
+            PopulateLayerComboBox();
+            SelectFirstLayer();
+            PopulateAssetListAndComboBox();
+        }
+    }
+
+    public List<Asset> PlaceTemplate(AssetTemplate template, Vector3 position)
+    {
+        if (!archive.AutoLayers && comboBoxLayers.SelectedIndex == -1)
+        {
+            MessageBox.Show("Please select a layer to place your asset in!");
+            return null;
+        }
+
+        var assets = GenerateTemplateForArchive(template, position);
+
+        AddMultipleAssets(assets, true);
+
+        if (assets != null && assets.Count != 0)
+        {
+            programIsChangingStuff = true;
+            if (!archive.AutoLayers)
+                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
+            programIsChangingStuff = false;
+            if (archive.ContainsNewlyAddedAssetType(assets.Select(a => a.assetID)))
+            {
+                SetupAssetVisibilityButtons();
+                PopulateAssetListAndComboBox();
             }
             else
             {
-                CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
-                {
-                    IsFolderPicker = true
-                };
-                if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
-                    foreach (var asset in archive.CurrentlySelectedAssets)
-                        try
-                        {
-                            var assetFileName = asset.assetName;
-
-                            // Check to see if the extension is '.anm' and use 'assetFileName'
-                            if (Path.GetExtension(asset.assetFileName).ToLower().Equals(".anm") && !string.IsNullOrWhiteSpace(asset.assetFileName))
-                                assetFileName = Path.GetFileName(asset.assetFileName);
-
-                            var AHDR = asset.BuildAHDR(archive.platform.Endianness());
-                            File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, assetFileName), AHDR.data);
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show("Unable to export asset raw data: " + ex.Message);
-                        }
+                AddToAssetList(assets);
             }
+            SetSelectedAssets(assets);
         }
 
-        private void checkedListBoxAssets_SelectedIndexChanged(object sender, EventArgs e)
+        return assets;
+    }
+
+    private List<Asset> GenerateTemplateForArchive(AssetTemplate template, Vector3 position)
+    {
+        List<Asset> assets;
+
+        if (template == AssetTemplate.Paste_Clipboard || template == AssetTemplate.User_Template)
         {
-            if (programIsChangingStuff)
-                return;
-
-            toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
-
-            if (!PressedKeys.Contains(Keys.ControlKey) && !PressedKeys.Contains(Keys.ShiftKey))
-                foreach (var ae in Program.MainForm.archiveEditors.Where(ae => ae != this))
-                    ae.ClearSelectedAssets();
-
-            archive.SelectAssets(listViewAssets.SelectedItems.Cast<ListViewItem>().Select(item => (uint)item.Tag));
-
-            SetMenuItemsEnabled();
-        }
-
-        public void ClearSelectedAssets()
-        {
-            programIsChangingStuff = true;
-            listViewAssets.SelectedIndices.Clear();
-            archive.ClearSelectedAssets();
-            programIsChangingStuff = false;
-        }
-
-        public void SetSelectedIndex(uint? assetID, bool addToSelection = false, bool toggleSelection = false)
-        {
-            var selected = new List<uint>();
-            if (addToSelection || toggleSelection)
-                selected.AddRange(archive.CurrentlySelectedAssetIDs);
-            if (assetID.HasValue)
-            {
-                if (toggleSelection && selected.Contains(assetID.Value))
-                    selected.Remove(assetID.Value);
-                else
-                    selected.Add(assetID.Value);
-            }
-            SetSelectedIndices(selected);
-        }
-
-        public void RemoveFromSelection(uint? assetID)
-        {
-            if (!assetID.HasValue || !archive.ContainsAsset(assetID.Value))
-                return;
-            var assetIDs = archive.CurrentlySelectedAssetIDs.ToList();
-            if (!assetIDs.Contains(assetID.Value))
-                return;
-            assetIDs.Remove(assetID.Value);
-            SetSelectedIndices(assetIDs);
-        }
-
-        public void AddToAssetList(uint assetId)
-        {
-            AddToAssetList(new List<uint>() { assetId });
-        }
-
-        public void AddToAssetList(List<uint> assetIds)
-        {
-            listViewAssets.BeginUpdate();
-            ListViewItem[] items = new ListViewItem[assetIds.Count];
-            for (int i = 0; i < assetIds.Count; i++)
-                items[i] = ListViewItemFromAsset(archive.GetFromAssetID(assetIds[i]), true);
-            listViewAssets.Items.AddRange(items);
-            listViewAssets.EndUpdate();
-        }
-
-        public static bool AlwaysListAllAssets { get; internal set; }
-
-        public void SetSelectedIndices(List<uint> assetIDs, bool clearIfEmpty = true)
-        {
-            programIsChangingStuff = true;
-            if (assetIDs.Count == 0 && clearIfEmpty)
-            {
-                archive.ClearSelectedAssets();
-                listViewAssets.SelectedIndices.Clear();
-                programIsChangingStuff = false;
-                SetMenuItemsEnabled();
-                return;
-            }
-
-            var assets = new List<Asset>(assetIDs.Count);
-            foreach (uint u in assetIDs)
-            {
-                if (archive.TryGetAsset(u, out Asset asset))
-                    assets.Add(asset);
-                else if (clearIfEmpty)
-                {
-                    archive.ClearSelectedAssets();
-                    listViewAssets.SelectedIndices.Clear();
-                    programIsChangingStuff = false;
-                    SetMenuItemsEnabled();
-                    return;
-                }
-            }
-
-            if (assets.Count == 0)
-                return;
-
-            AssetType assetType = AssetType.Null;
-
-            if (!AlwaysListAllAssets && assets.All(a => a.assetType == assets[0].assetType))
-                assetType = assets[0].assetType;
-
-            int layerIndex = archive.NoLayers ? -1 : archive.GetLayerFromAssetID(assets[0].assetID);
-            bool layerChanged = !archive.NoLayers && layerIndex != SelectedLayerIndex;
-
-            if (!layerChanged && curType == assetType && SelectListedAssets(assetIDs))
-                return;
-
-            if (layerChanged)
-            {
-                comboBoxLayers.SelectedIndex = layerIndex;
-                ShowSelectedLayerType();
-                PopulateAssetTypeComboBox(false);
-            }
-
-            comboBoxAssetTypes.SelectedItem = comboBoxAssetTypes.Items.Cast<AssetTypeContainer>().FirstOrDefault(atc => atc.assetType == assetType);
-
-            PopulateAssetList(assetType, null, true, assetIDs);
-            SetMenuItemsEnabled();
-            programIsChangingStuff = false;
-        }
-
-        /// <summary>
-        /// Selects <paramref name="assetIDs"/> among the rows already in the asset list.
-        /// </summary>
-        /// <returns>False, leaving the selection untouched, if any of them has no row in the list.</returns>
-        private bool SelectListedAssets(List<uint> assetIDs)
-        {
-            var wanted = new HashSet<uint>(assetIDs);
-            var indices = new List<int>();
-            for (int i = 0; i < listViewAssets.Items.Count; i++)
-                if (wanted.Contains((uint)listViewAssets.Items[i].Tag))
-                    indices.Add(i);
-
-            if (indices.Count != wanted.Count)
-                return false;
-
-            programIsChangingStuff = true;
-
-            listViewAssets.SelectedIndices.Clear();
-            foreach (int i in indices)
-                listViewAssets.SelectedIndices.Add(i);
-            listViewAssets.EnsureVisible(indices[0]);
-
-            programIsChangingStuff = false;
-            archive.SelectAssets(assetIDs);
-            SetMenuItemsEnabled();
-
-            return true;
-        }
-
-        private readonly System.Drawing.Color defaultColor;
-
-        private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
-        {
-            uint assetID = 0;
-            if (textBoxFindAsset.Text == "")
-            {
-                PopulateAssetList();
-                return;
-            }
+            List<AssetClipboard> clipboard;
             try
             {
-                textBoxFindAsset.BackColor = defaultColor;
-                assetID = HexUIntTypeConverter.AssetIDFromString(textBoxFindAsset.Text);
+                string text = template switch
+                {
+                    AssetTemplate.Paste_Clipboard => Clipboard.GetText(),
+                    AssetTemplate.User_Template => File.ReadAllText(Path.Combine(UserTemplateManager.userTemplatesFolder, Program.MainForm.CurrentUserTemplate)),
+                };
+                clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(text);
             }
-            catch
+            catch (Exception ex)
             {
-                textBoxFindAsset.BackColor = System.Drawing.Color.Red;
-            }
-
-            var assets = new List<Asset>();
-
-            foreach (Asset a in archive.GetAllAssets())
-                if (a.assetName.Contains(textBoxFindAsset.Text, StringComparison.CurrentCultureIgnoreCase))
-                    assets.Add(a);
-            if (assetID != 0 && archive.ContainsAsset(assetID) && !assets.Any(a => a.assetID == assetID))
-                assets.Add(archive.GetFromAssetID(assetID));
-
-            if (!archive.NoLayers && assets.Count != 0)
-                comboBoxLayers.SelectedIndex = -1;
-
-            if (comboBoxAssetTypes.Items.Count > 0)
-                comboBoxAssetTypes.SelectedIndex = 0;
-            PopulateAssetList(AssetType.Null, assets);
-        }
-
-        private void convertArchiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (archive.EditPack())
-            {
-                PopulateLayerTypeComboBox();
-                PopulateLayerComboBox();
-                SelectFirstLayer();
-                PopulateAssetListAndComboBox();
-                OnEditorUpdate();
-            }
-        }
-
-        private void organizeLayersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OrganizeLayersClick(false, sender, e);
-        }
-
-        private void organizeLegacyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OrganizeLayersClick(true, sender, e);
-        }
-
-        private void OrganizeLayersClick(bool legacy, object sender, EventArgs e)
-        {
-            if (archive.NoLayers)
-                return;
-
-            if (archive.OrganizeLayers(legacy))
-            {
-                PopulateLayerComboBox();
-                SelectFirstLayer();
-                PopulateAssetListAndComboBox();
-            }
-        }
-
-        private ScrollableMessageBox verifyResult;
-
-        private void verifyArchiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (verifyResult != null)
-                if (!verifyResult.IsDisposed)
-                    verifyResult.Close();
-
-            verifyResult = new ScrollableMessageBox("Verify results on " + Text, archive.VerifyArchive());
-            verifyResult.Show(this);
-        }
-
-        private void applyScaleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var applyScale = ApplyScale.GetScaleWithAssets(archive.ScalableAssetTypesOnArchive().Select(a => new AssetTypeContainer(a)).OrderBy(t => t.ToString()));
-            if (applyScale.HasValue)
-            {
-                var actions = archive.ApplyScale(applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
-                if (actions != null && actions.Any())
-                    Program.UndoBuffer.AddAction(actions);
-            }
-        }
-
-        private void mergeSimilarAssetsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            archive.MergeSimilar();
-            comboBoxLayers_SelectedIndexChanged(sender, e);
-        }
-
-        private void exportAssetsIniToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
-            if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-                archive.ExportHip(openFile.FileName);
-        }
-
-        private void importHIPArchiveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFile = new OpenFileDialog()
-            {
-                Filter = "All supported file types|*.hip;*.hop;*.ini|HIP archives|*.hip|HOP archives|*.hop|HipHopTool INI|*.ini",
-                Multiselect = true
-            };
-
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                Enabled = false;
-                archive.ImportHip(openFile.FileNames, overwriteAssetsOnImportToolStripMenuItem.Checked);
-                OnEditorUpdate();
-                Enabled = true;
-                PopulateLayerComboBox();
-                SelectFirstLayer();
-                PopulateAssetListAndComboBox();
-            }
-        }
-
-        private void checkedListBoxAssets_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.I && e.Modifiers == Keys.Control)
-            {
-                if (buttonImportAsset.Enabled)
-                    buttonAddAsset_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.D && e.Modifiers == Keys.Control)
-            {
-                if (buttonDuplicateAsset.Enabled)
-                    buttonDuplicate_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.C && e.Modifiers == Keys.Control)
-            {
-                if (buttonCopyAsset.Enabled)
-                    buttonCopy_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.V && e.Modifiers == Keys.Control)
-            {
-                if (buttonPasteAssets.Enabled)
-                    buttonPaste_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.G && e.Modifiers == Keys.Control)
-            {
-                if (buttonEditDataAsset.Enabled)
-                    buttonInternalEdit_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.H && e.Modifiers == Keys.Control)
-            {
-                if (buttonEditAsset.Enabled)
-                    buttonEditAsset_Click(null, null);
-            }
-            else if (e.KeyCode == Keys.A && e.Modifiers == Keys.Control)
-            {
-                listViewAssets.BeginUpdate();
-                for (int i = 0; i < listViewAssets.Items.Count; i++)
-                    listViewAssets.Items[i].Selected = true;
-                listViewAssets.EndUpdate();
-            }
-            else if (e.KeyCode == Keys.Delete)
-            {
-                if (buttonRemoveAsset.Enabled)
-                    ButtonRemoveAsset_Click(null, null);
-            }
-        }
-
-        private void checkedListBoxAssets_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Right)
-            {
-                contextMenuStrip_ListBoxAssets.Show(listViewAssets.PointToScreen(e.Location));
-            }
-        }
-
-        private void TemplateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var template = (AssetTemplate)((ToolStripItem)sender).Tag;
-            Vector3 Position = Program.MainForm.renderer.Camera.Position + 3 * Program.MainForm.renderer.Camera.Forward;
-            PlaceTemplate(Position, template);
-            SetupAssetVisibilityButtons();
-        }
-
-        public List<uint> PlaceTemplate(Vector3 position, AssetTemplate template = AssetTemplate.Null)
-        {
-            if (!archive.NoLayers && comboBoxLayers.SelectedIndex == -1)
-            {
-                MessageBox.Show("Please select a layer to place your asset in!");
+                var errorMessage = template switch
+                {
+                    AssetTemplate.Paste_Clipboard => $"Error pasting assets from clipboard: {ex.Message}",
+                    AssetTemplate.User_Template => $"Error placing user template: {ex.Message}",
+                };
+                MessageBox.Show(errorMessage);
                 return null;
             }
 
-            List<uint> assetIDs = new List<uint>();
-
-            archive.PlaceTemplate(SelectedLayerIndex, position, ref assetIDs, template: template);
-
-            if (assetIDs.Count != 0)
-            {
-                archive.UnsavedChanges = true;
-                programIsChangingStuff = true;
-                if (!archive.NoLayers)
-                    comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-                programIsChangingStuff = false;
-                if (archive.ContainsNewlyAddedAssetType(assetIDs))
-                {
-                    SetupAssetVisibilityButtons();
-                    PopulateAssetListAndComboBox();
-                }
-                else
-                {
-                    AddToAssetList(assetIDs);
-                }
-                SetSelectedIndices(assetIDs);
-                Program.UndoBuffer.AddAction([.. assetIDs.Select(archive.GetAssetAddedAction), new SelectionAction(assetIDs)]);
-            }
-
-            return assetIDs;
+            assets = AssetService.ClipboardToAssets(archive.Platform, archive.Game, true, false, archive.ContainsAsset, true, clipboard);
+            AssetTransformer.SetAssetPositionsPreserveRelative(assets.OfType<IClickableAsset>(), position);
         }
-
-        private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
+        else
         {
-            var ids = archive.CurrentlySelectedAssetIDs.ToList();
-            var assetIDs = PlaceTemplate(new Vector3(), AssetTemplate.Group);
-            if (assetIDs != null && assetIDs.Count > 0)
-            {
-                var asset = (AssetGRUP)archive.GetFromAssetID(assetIDs[0]);
-                asset.AddItems([.. ids]);
-                if (archive.ContainsNewlyAddedAssetType([asset.assetID]))
-                    PopulateAssetListAndComboBox();
-                SetSelectedIndex(asset.assetID);
-                UpdateCurrentListView(asset);
-                Program.UndoBuffer.AddAction([archive.GetAssetAddedAction(asset), new SelectionAction(asset.assetID)]);
-            }
+            assets = AssetFactory.GenerateTemplate(archive.Game, archive.Platform, archive.ContainsAsset, template, position: position);
         }
+        return assets;
+    }
 
-        public bool Targeted => checkBoxTemplateFocus.Checked;
+    public void SetTargetedOff()
+    {
+        checkBoxTemplateFocus.Checked = false;
+    }
 
-        public void ClearTemplateFocus()
+    public void SetTargetedOn()
+    {
+        Program.ArchiveManager.ClearTemplateFocus();
+        checkBoxTemplateFocus.Checked = true;
+        if (Program.MainForm.AutoDockArchiveEditors && Program.MainForm.ShowToolbar)
+            Program.MainForm.DockAssetList(this);
+    }
+
+    private void ImportTXD(bool RW3)
+    {
+        OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
+
+        if (openTXD.ShowDialog() == DialogResult.OK)
         {
-            checkBoxTemplateFocus.Checked = false;
-        }
+            BeginTransaction();
 
-        public void SetTemplateFocus()
-        {
-            Program.MainForm.ClearTemplateFocus();
-            checkBoxTemplateFocus.Checked = true;
-            if (Program.MainForm.AutoDockArchiveEditors && Program.MainForm.ShowToolbar)
-                Program.MainForm.DockAssetList(this);
-        }
+            var AHDRs = TextureConverter.GetAssetsFromTextureDictionary(openTXD.FileName, RW3, archive.Game);
+            archive.ImportAssets(AHDRs, SelectedLayerIndex, true);
 
-        public IEnumerable<string> LayerNames => comboBoxLayers.Items.Cast<object>().Select(o => o.ToString());
+            EndTransaction();
 
-        private void checkBoxTemplateFocus_Click(object sender, EventArgs e)
-        {
-            SetTemplateFocus();
-        }
-
-        private void hideButtonsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            hideButtonsToolStripMenuItem.Checked = !hideButtonsToolStripMenuItem.Checked;
-
-            buttonImportAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonDuplicateAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonCopyAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonPasteAssets.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonRemoveAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonView.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonExportRawAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonEditDataAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-            buttonMultiEditAsset.Visible = !hideButtonsToolStripMenuItem.Checked;
-
-            if (hideButtonsToolStripMenuItem.Checked)
-            {
-                listViewAssets.Size = new System.Drawing.Size(listViewAssets.Size.Width + 81, listViewAssets.Size.Height);
-            }
-            else
-            {
-                listViewAssets.Size = new System.Drawing.Size(listViewAssets.Size.Width - 81, listViewAssets.Size.Height);
-            }
-        }
-
-        private void exportRW3ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ExportTXD(CheckState.Checked);
-        }
-
-        private void importRW3ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportTXD(true);
-        }
-
-        private void exportNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ExportTXD(CheckState.Unchecked);
-        }
-
-        private void importNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportTXD(false);
-        }
-
-        private void ImportTXD(bool RW3)
-        {
-            Enabled = false;
-            OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
-
-            if (openTXD.ShowDialog() == DialogResult.OK)
-            {
-                var actions = new List<IReversibleAction>();
-                archive.ImportTextureDictionary(openTXD.FileName, RW3, SelectedLayerIndex, actions);
-                Program.UndoBuffer.AddAction(actions);
-                PopulateLayerComboBox();
-                SelectFirstLayer();
-                PopulateAssetListAndComboBox();
-                OnEditorUpdate();
-            }
-            Enabled = true;
-        }
-
-        private void ExportTXD(CheckState RW3)
-        {
-            SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };
-
-            if (saveTXD.ShowDialog() == DialogResult.OK)
-                archive.ExportTextureDictionary(saveTXD.FileName, RW3);
-        }
-
-        internal void RefreshHop(SharpRenderer renderer)
-        {
-            archive.SetupTextureDisplay();
-            archive.ResetModels(renderer);
-        }
-
-        private HashSet<Keys> PressedKeys = new HashSet<Keys>();
-
-        private void ArchiveEditor_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (!PressedKeys.Contains(e.KeyCode))
-                PressedKeys.Add(e.KeyCode);
-
-            if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
-                (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
-                Program.UndoBuffer.Redo();
-            else if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
-                Program.UndoBuffer.Undo();
-
-            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.S))
-                Save();
-
-            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.N))
-                newToolStripMenuItem_Click(sender, e);
-
-            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.O))
-                openToolStripMenuItem_Click(sender, e);
-
-            if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.W))
-                closeToolStripMenuItem_Click(sender, e);
-        }
-
-        private void ArchiveEditor_KeyUp(object sender, KeyEventArgs e)
-        {
-            PressedKeys.Remove(e.KeyCode);
-        }
-
-        private void ArchiveEditor_Deactivate(object sender, EventArgs e)
-        {
-            PressedKeys.Clear();
-            if (Program.MainForm.TranslucentWhenOutOfFocus && CanFocus && !OwnedForms.Any())
-                Opacity = 0.5f;
-        }
-
-        /// <summary>
-        /// Given the filepath to a hip file, returns an integer representing the game the file is for, 
-        /// based on the filename of the configuration ini.
-        /// <para>
-        /// This method checks the same directory, and then the parent directory. This assumes 
-        /// the filename has not been changed. Note this cannot guarantee which game the file is for.
-        /// </para>
-        /// </summary>
-        /// <param name="filepath">The filepath of the HIP file</param>
-        /// <returns>0: Unknown, 1: Scooby, 2: BFBB , 3: TSSM, 4: Incredibles, 5: ROTU, 6: Ratatouille Prototype</returns>
-        public static int GetGameFromGameConfigIni(string filepath)
-        {
-            const string scoobyIniFilename = "sd2.ini";
-            const string bfbbIniFilename = "sb.ini";
-            const string tssmIniFilename = "sb04.ini";
-            const string incrediblesIniFilename = "in.ini";
-            const string rotuIniFilename = "in2.ini";
-            const string ratProtoIniFilename = "rats.ini";
-
-            // Checks in same directory for a specific ini and then checks the parent directory
-            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), scoobyIniFilename))
-                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, scoobyIniFilename)))
-                return 1;
-
-            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), bfbbIniFilename))
-                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, bfbbIniFilename)))
-                return 2;
-
-            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), tssmIniFilename))
-                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, tssmIniFilename)))
-                return 3;
-
-            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), incrediblesIniFilename))
-                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, incrediblesIniFilename)))
-                return 4;
-
-            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), rotuIniFilename))
-                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, rotuIniFilename)))
-                return 5;
-
-            if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), ratProtoIniFilename))
-                || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, ratProtoIniFilename)))
-                return 6;
-
-            return 0;
-        }
-
-        /// <summary>
-        /// Generates a report for the HIP/HOP archive to a .txt in the same directory.
-        /// </summary>
-        /// 
-        private void _generateReportTxt()
-        {
-            if (GetCurrentlyOpenFileName().Equals("Empty"))
-            {
-                // TODO: Disable the menu button if no file is open
-                MessageBox.Show("No file is currently open.");
-                return;
-            }
-
-            bool generationWasSuccessful = true;
-            bool isDebug;
-            var timeOfGeneration = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss zzz");
-            string currentFilepath = GetCurrentlyOpenFileName();
-            var stopwatch = new Stopwatch();
-
-            // TODO: Change filetype to LIP or LOP
-            string filepath = Path.Combine(
-                Path.GetDirectoryName(currentFilepath),
-                Path.GetFileName(currentFilepath) + "_IP_Report.txt");
-
-#if DEBUG
-            HipFile hip = HipFile.FromPath(currentFilepath);
-            if (!File.Exists(currentFilepath))
-            {
-                MessageBox.Show($"HIP File \"{currentFilepath}\" not found");
-                return;
-            }
-#endif
-
-            using (StreamWriter output = new StreamWriter(filepath))
-            {
-                stopwatch.Start();
-                output.WriteLine("This report file was generated by Industrial Park.");
-                output.WriteLine("Please visit https://github.com/igorseabra4/IndustrialPark for more information.");
-                output.WriteLine("---------------------------");
-                output.WriteLine("#### START OF REPORT ####\n");
-                output.WriteLine($"Industrial Park Version: {new IPversion().version}");
-#if DEBUG
-                isDebug = true;
-#else
-                isDebug = false;
-#endif
-                output.WriteLine($"Is Debug Build: {isDebug}");
-                output.WriteLine($"Time of Report Generation: {timeOfGeneration}");
-
-                output.WriteLine("\nFILE INFORMATION");
-                output.WriteLine("----------------");
-                output.WriteLine($"File path: {currentFilepath}");
-                output.WriteLine($"File size: {new FileInfo(currentFilepath).Length} Bytes");
-                output.WriteLine($"Platform: {archive.platform}");
-                string game = archive.game == Game.Incredibles ? "Incredibles/TSSM" : archive.game.ToString();
-                output.WriteLine($"Game: {game}");
-                output.WriteLine($"Number of Layers: {archive.LayerCount}");
-                output.WriteLine($"Number of Assets: {archive.AssetCount}");
-                output.WriteLine($"Has unsaved changes: {archive.UnsavedChanges}");
-                output.WriteLine($"Environment Name: {archive.environmentName}");
-
-                Dictionary<uint, Asset>.ValueCollection allAssets = archive.GetAllAssets();
-                Dictionary<AssetType, int> assetCount = new Dictionary<AssetType, int>();
-
-                output.WriteLine("\nTYPE TOTALS");
-                output.WriteLine("-------------");
-
-                foreach (AssetType assetType in Enum.GetValues(typeof(AssetType)))
-                {
-                    assetCount[assetType] = 0;
-                }
-
-                foreach (var asset in allAssets)
-                {
-                    assetCount[asset.assetType] += 1;
-                }
-
-                foreach (KeyValuePair<AssetType, int> entry in assetCount)
-                {
-                    if (entry.Value != 0)
-                    {
-                        output.WriteLine($"{entry.Key.ToString().PadRight(30, '.')}{entry.Value}");
-                    }
-                }
-
-#if DEBUG
-                Dictionary<uint, Section_AHDR> ahdrList = new Dictionary<uint, Section_AHDR>();
-                foreach (var ahdr in hip.DICT.ATOC.AHDRList)
-                    ahdrList.Add(ahdr.assetID, ahdr);
-
-                int padding = archive.platform == Platform.GameCube ? 0x20 : 0x800;
-
-                output.WriteLine("\n\nVerbose Layer Information\n------------------\n");
-                int i = 0;
-                foreach (var lhdr in hip.DICT.LTOC.LHDRList)
-                {
-                    LayerType type = (archive.game >= Game.Incredibles || lhdr.layerType < 2) ? (LayerType)lhdr.layerType : (LayerType)(lhdr.layerType + 1);
-
-                    output.WriteLine($"Layer #{i} is Type {lhdr.layerType} ({type})");
-                    output.WriteLine("-------------------");
-                    output.WriteLine("AssetName                       AssetID  Checksum Type Offset   Size     Plus Align");
-                    output.WriteLine("---------                       -------  -------- ---- ------   ----     ---- -----");
-
-                    int layerSizeTotal = 0, layerSizeDataAsset = 0, layerSizeDataLayer = 0, layerSizePaddingAsset = 0, layerSizePaddingLayer = 0;
-                    int sndSize = 0, sndsSize = 0;
-
-                    foreach (uint aid in lhdr.assetIDlist)
-                    {
-                        Section_AHDR ahdr = ahdrList[aid];
-                        output.Write(ahdr.ADBG.assetName.PadRight(32, ' '));
-                        output.Write(ahdr.assetID.ToString("X8") + ' ');
-                        output.Write(ahdr.ADBG.checksum.ToString("X8") + ' ');
-                        output.Write(Functions.GetCode(ahdr.assetType).PadRight(5, ' '));
-                        output.Write(ahdr.fileOffset.ToString("X8").PadRight(9, ' '));
-                        output.Write(ahdr.fileSize.ToString("X").PadRight(9, ' '));
-                        output.Write(ahdr.plusValue.ToString().PadRight(5, ' '));
-                        output.Write(ahdr.ADBG.alignment.ToString().PadRight(6, ' ') + "\n");
-
-                        if (ahdr.assetType == AssetType.Sound)
-                            sndSize += ahdr.fileSize + ahdr.plusValue;
-                        else if (ahdr.assetType == AssetType.SoundStream)
-                            sndsSize += ahdr.fileSize + ahdr.plusValue;
-
-                        layerSizeTotal += ahdr.fileSize + ahdr.plusValue;
-                        layerSizeDataAsset += ahdr.fileSize;
-                        layerSizePaddingAsset += ahdr.plusValue;
-                        layerSizeDataLayer += ahdr.fileSize + ahdr.plusValue;
-                    }
-
-                    layerSizePaddingLayer = (padding - (layerSizeTotal % padding)) % padding;
-                    layerSizeTotal += layerSizePaddingLayer;
-
-                    if (archive.game <= Game.BFBB && lhdr.layerType == 6 || archive.game >= Game.Incredibles && lhdr.layerType == 7) // SRAM
-                    {
-                        output.WriteLine($"\nSND Size (bytes): {sndSize} ({ConvertSize(sndSize)})");
-                        output.WriteLine($"SNDS Size (bytes): {sndsSize} ({ConvertSize(sndsSize)})");
-                    }
-
-                    output.WriteLine($"\nLayer Size (Total):         {layerSizeTotal} ({ConvertSize(layerSizeTotal)})");
-                    output.WriteLine($"Layer Size (Data_Layer):    {layerSizeDataLayer} ({ConvertSize(layerSizeDataLayer)})");
-                    output.WriteLine($"Layer Size (Data_Asset):    {layerSizeDataAsset} ({ConvertSize(layerSizeDataAsset)})");
-                    output.WriteLine($"Layer Size (Padding_Asset): {layerSizePaddingAsset} ({ConvertSize(layerSizePaddingAsset)})");
-                    output.WriteLine($"Layer Size (Padding_Layer): {layerSizePaddingLayer} ({ConvertSize(layerSizePaddingLayer)})\n\n");
-                    i++;
-                }
-#else
-                output.WriteLine("\nLAYER INFORMATION");
-                output.WriteLine("-------------");
-
-                List<uint> assetIDsOnLayer;
-                List<AssetType> assetTypesOnLayer;
-                int numOfInvisibleAssets = 0;
-
-
-                for (int i = 0; i < archive.LayerCount; i++)
-                {
-                    assetTypesOnLayer = archive.AssetTypesOnLayer(i);
-                    output.WriteLine($"{archive.LayerToString(i)}");
-                    output.Write($"{assetTypesOnLayer.Count} asset type(s) [");
-                    foreach (var assetType in assetTypesOnLayer)
-                    {
-                        output.Write($"{assetType} ");
-                    }
-                    output.WriteLine("]");
-
-                    assetIDsOnLayer = archive.GetAssetIDsOnLayer(i);
-
-                    for (int j = 0; j < assetIDsOnLayer.Count(); j++)
-                    {
-                        Asset asset = archive.GetFromAssetID(assetIDsOnLayer[j]);
-
-                        output.WriteLine($"    {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
-                        if (asset.isInvisible)
-                            numOfInvisibleAssets++;
-                    }
-                    output.WriteLine("");
-                }
-                output.WriteLine($"Number of invisible assets: {numOfInvisibleAssets}");
-                output.WriteLine("");
-#endif
-
-                output.WriteLine("\nASSET LINKING INFO");
-                output.WriteLine("-------------");
-
-
-                foreach (var asset in allAssets)
-                {
-                    // If Base asset, get list of links.
-                    if (asset is BaseAsset baseAsset)
-                    {
-                        Link[] links = baseAsset.Links;
-                        if (links.Length > 0)
-                        {
-                            output.WriteLine($"{asset.assetName}: {links.Length} links");
-
-                            foreach (var link in links)
-                            {
-                                string eventSendIDName = "";
-                                string eventReceiveIDName = "";
-
-                                if (archive.game == Game.BFBB)
-                                {
-                                    eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
-                                    eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
-                                }
-                                else if (archive.game == Game.Scooby)
-                                {
-                                    eventSendIDName = ((EventScooby)link.EventSendID).ToString();
-                                    eventReceiveIDName = ((EventScooby)link.EventReceiveID).ToString();
-                                }
-                                else if (archive.game == Game.Incredibles) // TSSM/Incredibles
-                                {
-                                    eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
-                                    eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
-                                }
-                                else if (archive.game == Game.ROTU)
-                                {
-                                    eventSendIDName = ((EventROTU)link.EventSendID).ToString();
-                                    eventReceiveIDName = ((EventROTU)link.EventReceiveID).ToString();
-                                }
-                                else if (archive.game == Game.RatProto)
-                                {
-                                    eventSendIDName = ((EventRatProto)link.EventSendID).ToString();
-                                    eventReceiveIDName = ((EventRatProto)link.EventReceiveID).ToString();
-                                }
-
-                                // If event name not supplied, event ID used instead.
-                                eventSendIDName = eventSendIDName == "" ? link.EventSendID.ToString() : eventSendIDName;
-                                eventReceiveIDName = eventReceiveIDName == "" ? link.EventReceiveID.ToString() : eventReceiveIDName;
-
-                                string targetAssetName = "";
-                                try
-                                {
-                                    // FIXME: Only searches current archive
-                                    targetAssetName = archive.GetFromAssetID(link.TargetAsset).assetName;
-                                }
-                                catch
-                                {
-                                    targetAssetName = link.TargetAsset.ToString();
-                                }
-
-                                output.WriteLine($"  {eventSendIDName} => {eventReceiveIDName} => {targetAssetName}");
-                            }
-                        }
-                    }
-                }
-
-                output.WriteLine("\nUNUSED MODELS");
-                output.WriteLine("-------------");
-
-                int numOfModels = 0;
-                int numOfUnusedModels = 0;
-
-                foreach (var asset in allAssets)
-                {
-                    if (asset.assetType == AssetType.Model)
-                    {
-                        numOfModels++;
-
-                        List<uint> whoTargets = archive.FindWhoTargets(asset.assetID);
-                        if (whoTargets.Count == 0)
-                        {
-                            output.WriteLine($"  {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
-                            numOfUnusedModels++;
-                        }
-                    }
-                }
-
-                output.WriteLine($"{numOfUnusedModels} unused models out of {numOfModels} total.");
-
-                // Find who Targets Me throws an exception sometimes :(
-
-                output.WriteLine("\n#### END OF REPORT ####");
-                stopwatch.Stop();
-                output.WriteLine($"Report generated in {Math.Round(stopwatch.Elapsed.TotalMilliseconds, 2)} ms.");
-            }
-
-            if (generationWasSuccessful)
-            {
-                if (MessageBox.Show($"Report \"{Path.GetFileName(filepath)}\" generated. Open file?",
-                    "Report generated",
-                    MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Information) == DialogResult.Yes)
-                {
-                    Process.Start(new ProcessStartInfo { FileName = filepath, UseShellExecute = true });
-                }
-            }
-            else
-            {
-                MessageBox.Show("File could not be generated successfully.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void generateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            _generateReportTxt();
-        }
-
-        private void noLayersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            archive.NoLayers = !noLayersToolStripMenuItem.Checked;
-            SetNoLayers();
-        }
-
-        private bool noLayersForGroupBox = false;
-
-        private void SetNoLayers()
-        {
-            if (archive.NoLayers)
-            {
-                noLayersToolStripMenuItem.Checked = true;
-                renameLayerToolStripMenuItem.Enabled = false;
-
-                groupBoxLayers.Visible = false;
-
-                if (!noLayersForGroupBox)
-                {
-                    groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y - 53);
-                    groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height + 53);
-                    noLayersForGroupBox = true;
-                }
-            }
-            else
-            {
-                noLayersToolStripMenuItem.Checked = false;
-
-                groupBoxLayers.Visible = true;
-
-                if (noLayersForGroupBox)
-                {
-                    groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y + 53);
-                    groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height - 53);
-                    noLayersForGroupBox = false;
-                }
-
-                PopulateLayerTypeComboBox();
-                PopulateLayerComboBox();
-                SelectFirstLayer();
-            }
-
+            PopulateLayerComboBox();
+            SelectFirstLayer();
             PopulateAssetListAndComboBox();
+            OnEditorUpdate();
         }
+    }
 
-        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
+    private void ExportTXD(CheckState RW3)
+    {
+        SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };
+
+        if (saveTXD.ShowDialog() == DialogResult.OK)
+            TextureConverter.ExportTextureDictionary(archive.Assets.OfType<AssetRWTX>(), saveTXD.FileName, RW3);
+    }
+
+    /// <summary>
+    /// Given the filepath to a hip file, returns an integer representing the game the file is for, 
+    /// based on the filename of the configuration ini.
+    /// <para>
+    /// This method checks the same directory, and then the parent directory. This assumes 
+    /// the filename has not been changed. Note this cannot guarantee which game the file is for.
+    /// </para>
+    /// </summary>
+    /// <param name="filepath">The filepath of the HIP file</param>
+    /// <returns>0: Unknown, 1: Scooby, 2: BFBB , 3: TSSM, 4: Incredibles, 5: ROTU, 6: Ratatouille Prototype</returns>
+    public static int GetGameFromGameConfigIni(string filepath)
+    {
+        const string scoobyIniFilename = "sd2.ini";
+        const string bfbbIniFilename = "sb.ini";
+        const string tssmIniFilename = "sb04.ini";
+        const string incrediblesIniFilename = "in.ini";
+        const string rotuIniFilename = "in2.ini";
+        const string ratProtoIniFilename = "rats.ini";
+
+        // Checks in same directory for a specific ini and then checks the parent directory
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), scoobyIniFilename))
+            || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, scoobyIniFilename)))
+            return 1;
+
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), bfbbIniFilename))
+            || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, bfbbIniFilename)))
+            return 2;
+
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), tssmIniFilename))
+            || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, tssmIniFilename)))
+            return 3;
+
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), incrediblesIniFilename))
+            || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, incrediblesIniFilename)))
+            return 4;
+
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), rotuIniFilename))
+            || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, rotuIniFilename)))
+            return 5;
+
+        if (File.Exists(Path.Combine(Path.GetDirectoryName(filepath), ratProtoIniFilename))
+            || File.Exists(Path.Combine(Directory.GetParent(Path.GetDirectoryName(filepath)).FullName, ratProtoIniFilename)))
+            return 6;
+
+        return 0;
+    }
+
+    private bool autoLayersForGroupBox = false;
+
+    private void SetAutoLayers()
+    {
+        if (archive.AutoLayers)
         {
-            if (SelectedLayerIndex != -1)
+            autoLayersToolStripMenuItem.Checked = true;
+            renameLayerToolStripMenuItem.Enabled = false;
+
+            groupBoxLayers.Visible = false;
+
+            if (!autoLayersForGroupBox)
             {
-                var layerIndex = SelectedLayerIndex;
-                if (archive.RenameLayer(comboBoxLayers.SelectedIndex))
-                {
-                    PopulateLayerComboBox();
-                    SelectedLayerIndex = layerIndex;
-                    PopulateAssetListAndComboBox();
-                }
+                groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y - 53);
+                groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height + 53);
+                autoLayersForGroupBox = true;
             }
         }
-
-        private void exportAllWavToolStripMenuItem_Click(object sender, EventArgs e)
+        else
         {
-            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
-                return;
+            autoLayersToolStripMenuItem.Checked = false;
 
-            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
+            groupBoxLayers.Visible = true;
+
+            if (autoLayersForGroupBox)
             {
-                IsFolderPicker = true
-            };
-            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                ProgressBar progressBar = new ProgressBar("Export All (Wav)");
-                progressBar.SetProgressBar(0, archive.GetAllAssets().OfType<AssetSound>().Count(), 1);
-                progressBar.Show(this);
-                foreach (var asset in archive.GetAllAssets().OfType<AssetSound>())
-                {
-                    SoundUtility_vgmstream.ExportToFile(asset, archive, Path.Combine(saveFileDialog.FileName, asset.assetName + ".wav"));
-                    progressBar.PerformStep(asset.assetName);
-                }
-                progressBar.Close();
+                groupBoxAssets.Location = new System.Drawing.Point(groupBoxAssets.Location.X, groupBoxAssets.Location.Y + 53);
+                groupBoxAssets.Size = new System.Drawing.Size(groupBoxAssets.Size.Width, groupBoxAssets.Size.Height - 53);
+                autoLayersForGroupBox = false;
             }
+
+            PopulateLayerTypeComboBox();
+            PopulateLayerComboBox();
+            SelectFirstLayer();
         }
 
-        private void exportAllRawToolStripMenuItem_Click(object sender, EventArgs e)
+        PopulateAssetListAndComboBox();
+    }
+
+    private void ImportSounds(bool raw, AssetType assetType)
+    {
+        Enabled = false;
+        OpenFileDialog openFile = new OpenFileDialog()
         {
-            if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
-                return;
+            Filter = "Audio files|*",
+            Multiselect = true
+        };
 
-            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
-            {
-                IsFolderPicker = true
-            };
-            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                foreach (var asset in archive.GetAllAssets().OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.SoundStream))
-                    try
-                    {
-                        string extension =
-                            (archive.platform == Platform.GameCube && asset.game < Game.Incredibles) ? ".DSP" :
-                            (archive.platform == Platform.Xbox) ? ".WAV" :
-                            (archive.platform == Platform.PS2) ? ".VAG" :
-                            "";
-
-                        string filename = (extension != "" && asset.assetName.ToLower().Contains(extension.ToLower())) ?
-                            asset.assetName :
-                            asset.assetName + extension;
-
-                        File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
-                            archive.GetSoundData(asset.assetID, asset.Data));
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Unable to export " + asset + ": " + ex.Message);
-                    }
-            }
-        }
-
-        private void ImportSounds(bool raw, AssetType assetType)
+        if (openFile.ShowDialog() == DialogResult.OK)
         {
-            Enabled = false;
-            OpenFileDialog openFile = new OpenFileDialog()
-            {
-                Filter = "Audio files|*",
-                Multiselect = true
-            };
+            var progressBar = new ProgressBar("Import Sounds");
+            progressBar.SetProgressBar(0, openFile.FileNames.Count(), 1);
+            progressBar.Show(this);
 
-            if (openFile.ShowDialog() == DialogResult.OK)
+            try
             {
-                archive.ImportSounds(raw, openFile.FileNames, assetType, overwriteSoundsOnImportToolStripMenuItem.Checked, out List<uint> assetIDs);
-                if (assetIDs.Any())
+                BeginTransaction();
+                var assets = archive.ImportSounds(raw, openFile.FileNames, assetType, overwriteSoundsOnImportToolStripMenuItem.Checked, progressBar.PerformStep);
+                if (assets.Any())
                 {
+                    EndTransaction();
                     OnEditorUpdate();
                     PopulateLayerComboBox();
-                    comboBoxLayers.SelectedIndex = archive.IndexOfLayerOfType(LayerType.SRAM);
-                    SetSelectedIndices(assetIDs);
+                    comboBoxLayers.SelectedIndex = archive.GetOrCreateLayerOfType(LayerType.SRAM);
+                    SetSelectedAssets(assets);
                     SetMenuItemsEnabled();
                 }
             }
-            Enabled = true;
-        }
-
-        private void importAsSoundToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportSounds(false, AssetType.Sound);
-        }
-
-        private void importAsSoundStreamToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportSounds(false, AssetType.SoundStream);
-        }
-
-        private void importRawSoundToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportSounds(true, AssetType.Sound);
-        }
-
-        private void importRawSoundStreamToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ImportSounds(true, AssetType.SoundStream);
-        }
-
-        private void legacySaveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            bool isLegacy = ((ToolStripMenuItem)sender).Checked;
-            archive.LegacySave = isLegacy;
-
-            if (isLegacy && archive.NoLayers)
+            catch (Exception e)
             {
-                archive.NoLayers = false;
-                SetNoLayers();
+                MessageBox.Show($"Error importing sounds: {e.Message}");
             }
-
-            noLayersToolStripMenuItem.Enabled = !isLegacy;
-            renameLayerToolStripMenuItem.Enabled = !isLegacy;
-        }
-
-        private void BuildCollTree(object sender, EventArgs e)
-        {
-            Enum.TryParse(((ToolStripMenuItem)sender).Tag.ToString(), out CollTreeVersion collVer);
-            List<string> skipped = new List<string>();
-
-            ProgressBar progressBar = new ProgressBar("Building Collision PLG...");
-            progressBar.Show(this);
-            progressBar.SetProgressBar(0, archive.GetAllAssets().OfType<AssetMODL>().Count(), 1);
-
-            foreach (var modl in archive.GetAllAssets().OfType<AssetMODL>())
+            finally
             {
-                try
-                {
-                    modl.BuildCollisionTree(collVer);
-                }
-                catch (NotSupportedException ex)
-                {
-                    progressBar.Close();
-                    MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-                    return;
-                }
-                catch (Exception ex)
-                {
-                    skipped.Add($"{modl.assetName} | Reason: {ex.Message}");
-                }
-                finally
-                {
-                    progressBar.PerformStep(modl.assetName);
-                }
-            }
-
-            archive.UnsavedChanges = true;
-            PopulateAssetListAndComboBox();
-            if (skipped.Any())
-                MessageBox.Show($"Following models were skipped:\n{string.Join("\n", skipped)}", $"{skipped.Count} models skipped", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-        }
-
-        private void copyAssetNamesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var names = archive.CurrentlySelectedAssets.Select(a => a.assetName);
-            Clipboard.SetText($"\"{string.Join("\", \"", names)}\"");
-        }
-
-        private void ArchiveEditor_Activated(object sender, EventArgs e)
-        {
-            Opacity = 1f;
-            foreach (var child in OwnedForms)
-                child.SendToBack();
-            BringToFront();
-        }
-
-        public void HideSelectedAssets()
-        {
-            foreach (ListViewItem item in listViewAssets.SelectedItems)
-                if (item.Checked)
-                {
-                    item.Checked = false;
-                    item.Selected = false;
-                }
-        }
-
-        public bool UnhideAllAssets()
-        {
-            bool unhid = false;
-            foreach (var asset in archive.GetAllAssets())
-                if (asset.isInvisible)
-                {
-                    asset.isInvisible = false;
-                    unhid = true;
-                }
-            foreach (ListViewItem item in listViewAssets.Items)
-                if (!item.Checked)
-                    item.Checked = true;
-            return unhid;
-        }
-
-        private void checkBoxTemplateFocus_CheckedChanged(object sender, EventArgs e)
-        {
-            if (checkBoxTemplateFocus.Checked)
-            {
-                if (Program.IsDarkMode)
-                {
-                    checkBoxTemplateFocus.BackColor = System.Drawing.Color.DarkGreen;
-                }
-                else
-                {
-                    checkBoxTemplateFocus.BackColor = System.Drawing.Color.LightGreen;
-                }
-            }
-            else
-            {
-                if (Program.IsDarkMode)
-                {
-                    checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.Control;
-                }
-                else
-                {
-                    checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.ActiveBorder;
-                }
+                progressBar.Close();
             }
         }
+        Enabled = true;
+    }
 
-        private sealed class ControlLayout
-        {
-            public required Control Parent { get; init; }
-            public required int Index { get; init; }
-            public required DockStyle Dock { get; init; }
-            public required System.Drawing.Rectangle Bounds { get; init; }
-            public required AnchorStyles Anchor { get; init; }
-            public required Padding Margin { get; init; }
-        }
-
-        private readonly Dictionary<Control, ControlLayout> originalLayouts = new();
-        private TableLayoutPanel assetListContainer = new TableLayoutPanel
-        {
-            Dock = DockStyle.Fill,
-            ColumnCount = 1,
-            RowCount = 3,
-            Margin = Padding.Empty,
-            Padding = Padding.Empty
-        };
-
-        public void MoveAssetListToControl(Panel destination)
-        {
-            if (AssetListDocked)
-                return;
-
-            Control[] controls = [comboBoxAssetTypes, textBoxFindAsset, listViewAssets];
-
-            originalLayouts.Clear();
-
-            foreach (Control control in controls)
-                originalLayouts[control] = new ControlLayout
-                {
-                    Parent = control.Parent,
-                    Index = control.Parent.Controls.GetChildIndex(control),
-                    Dock = control.Dock,
-                    Bounds = control.Bounds,
-                    Anchor = control.Anchor,
-                    Margin = control.Margin
-                };
-
-            assetListContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
-            assetListContainer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            assetListContainer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
-            assetListContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
-
-            foreach (Control control in controls)
-                control.Parent.Controls.Remove(control);
-
-            destination.Controls.Add(assetListContainer);
-
-            comboBoxAssetTypes.Dock = DockStyle.Fill;
-            textBoxFindAsset.Dock = DockStyle.Fill;
-            listViewAssets.Dock = DockStyle.Fill;
-
-            comboBoxAssetTypes.Margin = new Padding(0);
-            textBoxFindAsset.Margin = new Padding(0);
-            listViewAssets.Margin = new Padding(0);
-
-            assetListContainer.Controls.Add(comboBoxAssetTypes, 0, 0);
-            assetListContainer.Controls.Add(textBoxFindAsset, 0, 1);
-            assetListContainer.Controls.Add(listViewAssets, 0, 2);
-
-            listViewAssets.KeyDown += ArchiveEditor_KeyDown;
-            listViewAssets.KeyUp += ArchiveEditor_KeyUp;
-            listViewAssets.LostFocus += ArchiveEditor_Deactivate;
-
-            AssetListDocked = true;
-            Hide();
-        }
-
-        public void MoveAssetListBack(Control origin)
-        {
-            if (!AssetListDocked)
-                return;
-
-            Control[] controls = [comboBoxAssetTypes, textBoxFindAsset, listViewAssets];
-
-            foreach (Control control in controls)
-                assetListContainer.Controls.Remove(control);
-
-            origin.Controls.Remove(assetListContainer);
-
-            foreach (Control control in controls)
+    public void HideSelectedAssets()
+    {
+        foreach (ListViewItem item in listViewAssets.SelectedItems)
+            if (item.Checked)
             {
-                ControlLayout layout = originalLayouts[control];
-                layout.Parent.Controls.Add(control);
-                control.Dock = layout.Dock;
-                control.Anchor = layout.Anchor;
-                control.Margin = layout.Margin;
-                control.Bounds = layout.Bounds;
+                item.Checked = false;
+                item.Selected = false;
             }
+    }
 
-            foreach (Control control in controls.OrderBy(c => originalLayouts[c].Index))
+    public void HideAssets(IEnumerable<uint> assetIDs)
+    {
+        foreach (var u in assetIDs)
+            if (archive.TryGetAsset(u, out Asset asset) && !asset.isInvisible)
+                asset.isInvisible = true;
+    }
+
+    public bool UnhideAllAssets()
+    {
+        bool unhid = false;
+        foreach (var asset in archive.Assets)
+            if (asset.isInvisible)
             {
-                ControlLayout layout = originalLayouts[control];
-                layout.Parent.Controls.SetChildIndex(control, layout.Index);
+                asset.isInvisible = false;
+                unhid = true;
             }
+        foreach (ListViewItem item in listViewAssets.Items)
+            if (!item.Checked)
+                item.Checked = true;
+        return unhid;
+    }
 
-            originalLayouts.Clear();
+    private sealed class ControlLayout
+    {
+        public required Control Parent { get; init; }
+        public required int Index { get; init; }
+        public required DockStyle Dock { get; init; }
+        public required System.Drawing.Rectangle Bounds { get; init; }
+        public required AnchorStyles Anchor { get; init; }
+        public required Padding Margin { get; init; }
+    }
 
-            listViewAssets.KeyDown -= ArchiveEditor_KeyDown;
-            listViewAssets.KeyUp -= ArchiveEditor_KeyUp;
-            listViewAssets.LostFocus -= ArchiveEditor_Deactivate;
+    private readonly Dictionary<Control, ControlLayout> originalLayouts = new();
+    private TableLayoutPanel assetListContainer = new TableLayoutPanel
+    {
+        Dock = DockStyle.Fill,
+        ColumnCount = 1,
+        RowCount = 3,
+        Margin = Padding.Empty,
+        Padding = Padding.Empty
+    };
 
-            AssetListDocked = false;
+    public void MoveAssetListToControl(Panel destination)
+    {
+        if (AssetListDocked)
+            return;
+
+        Control[] controls = [comboBoxAssetTypes, textBoxFindAsset, listViewAssets];
+
+        originalLayouts.Clear();
+
+        foreach (Control control in controls)
+            originalLayouts[control] = new ControlLayout
+            {
+                Parent = control.Parent,
+                Index = control.Parent.Controls.GetChildIndex(control),
+                Dock = control.Dock,
+                Bounds = control.Bounds,
+                Anchor = control.Anchor,
+                Margin = control.Margin
+            };
+
+        assetListContainer.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 100));
+        assetListContainer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        assetListContainer.RowStyles.Add(new RowStyle(SizeType.AutoSize));
+        assetListContainer.RowStyles.Add(new RowStyle(SizeType.Percent, 100));
+
+        foreach (Control control in controls)
+            control.Parent.Controls.Remove(control);
+
+        destination.Controls.Add(assetListContainer);
+
+        comboBoxAssetTypes.Dock = DockStyle.Fill;
+        textBoxFindAsset.Dock = DockStyle.Fill;
+        listViewAssets.Dock = DockStyle.Fill;
+
+        comboBoxAssetTypes.Margin = new Padding(0);
+        textBoxFindAsset.Margin = new Padding(0);
+        listViewAssets.Margin = new Padding(0);
+
+        assetListContainer.Controls.Add(comboBoxAssetTypes, 0, 0);
+        assetListContainer.Controls.Add(textBoxFindAsset, 0, 1);
+        assetListContainer.Controls.Add(listViewAssets, 0, 2);
+
+        listViewAssets.KeyDown += ArchiveEditor_KeyDown;
+        listViewAssets.KeyUp += ArchiveEditor_KeyUp;
+        listViewAssets.LostFocus += ArchiveEditor_Deactivate;
+
+        AssetListDocked = true;
+        Hide();
+    }
+
+    public void MoveAssetListBack(Control origin)
+    {
+        if (!AssetListDocked)
+            return;
+
+        Control[] controls = [comboBoxAssetTypes, textBoxFindAsset, listViewAssets];
+
+        foreach (Control control in controls)
+            assetListContainer.Controls.Remove(control);
+
+        origin.Controls.Remove(assetListContainer);
+
+        foreach (Control control in controls)
+        {
+            ControlLayout layout = originalLayouts[control];
+            layout.Parent.Controls.Add(control);
+            control.Dock = layout.Dock;
+            control.Anchor = layout.Anchor;
+            control.Margin = layout.Margin;
+            control.Bounds = layout.Bounds;
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool AssetListDocked
+        foreach (Control control in controls.OrderBy(c => originalLayouts[c].Index))
         {
-            get;
-            set
-            {
-                field = value;
-                SetDockedMenuItemsVisibility(value);
-            }
-        } = false;
-
-        private void SetDockedMenuItemsVisibility(bool value)
-        {
-            fileToolStripMenuItem1.Visible = value;
-            editToolStripMenuItem1.Visible = value;
-            toolsToolStripMenuItem1.Visible = value;
-            toolStripSeparatorExtra1.Visible = value;
-
-            addLayerToolStripMenuItem.Visible = value;
-            removeLayerToolStripMenuItem.Visible = value;
-            moveLayerUpToolStripMenuItem.Visible = value;
-            moveLayerDownToolStripMenuItem.Visible = value;
-            toolStripSeparatorLayerEditBox.Visible = value;
+            ControlLayout layout = originalLayouts[control];
+            layout.Parent.Controls.SetChildIndex(control, layout.Index);
         }
+
+        originalLayouts.Clear();
+
+        listViewAssets.KeyDown -= ArchiveEditor_KeyDown;
+        listViewAssets.KeyUp -= ArchiveEditor_KeyUp;
+        listViewAssets.LostFocus -= ArchiveEditor_Deactivate;
+
+        AssetListDocked = false;
+    }
+
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool AssetListDocked
+    {
+        get;
+        set
+        {
+            field = value;
+            SetDockedMenuItemsVisibility(value);
+        }
+    } = false;
+
+    private void SetDockedMenuItemsVisibility(bool value)
+    {
+        fileToolStripMenuItem1.Visible = value;
+        editToolStripMenuItem1.Visible = value;
+        toolsToolStripMenuItem1.Visible = value;
+        toolStripSeparatorExtra1.Visible = value;
+
+        addLayerToolStripMenuItem.Visible = value;
+        removeLayerToolStripMenuItem.Visible = value;
+        moveLayerUpToolStripMenuItem.Visible = value;
+        moveLayerDownToolStripMenuItem.Visible = value;
+        toolStripSeparatorLayerEditBox.Visible = value;
     }
 }

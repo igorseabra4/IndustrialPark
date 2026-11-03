@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using IndustrialPark.AssetEditorColors;
 using System.ComponentModel;
-using System.Linq;
 
 namespace IndustrialPark
 {
@@ -19,8 +18,8 @@ namespace IndustrialPark
             set
             {
                 _backgroundColor = value;
-                if (SharpRenderer.Fog == this)
-                    SharpRenderer.backgroundColor = new SharpDX.Color4(value.ToVector4());
+                if (Program.Renderer.Fog == this)
+                    Program.Renderer.backgroundColor = new SharpDX.Color4(value.ToVector4());
             }
         }
         [Category(categoryName)]
@@ -36,7 +35,7 @@ namespace IndustrialPark
 
         public AssetFOG(string assetName) : base(assetName, AssetType.Fog, BaseAssetType.Fog)
         {
-            BackgroundColor = new AssetColor();
+            _backgroundColor = new AssetColor();
             FogColor = new AssetColor();
             FogDensity = 1;
             StartDistance = 100;
@@ -45,20 +44,16 @@ namespace IndustrialPark
 
         public AssetFOG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-                BackgroundColor = reader.ReadColor();
-                FogColor = reader.ReadColor();
-                FogDensity = reader.ReadSingle();
-                StartDistance = reader.ReadSingle();
-                EndDistance = reader.ReadSingle();
-                TransitionTime = reader.ReadSingle();
-                FogType = reader.ReadByte();
-            }
-            if (Links.Any(l => (EventBFBB)l.EventSendID == EventBFBB.On))
-                ArchiveEditorFunctions.AddToRenderableFOGs(this);
+            _backgroundColor = reader.ReadColor();
+            FogColor = reader.ReadColor();
+            FogDensity = reader.ReadSingle();
+            StartDistance = reader.ReadSingle();
+            EndDistance = reader.ReadSingle();
+            TransitionTime = reader.ReadSingle();
+            FogType = reader.ReadByte();
         }
 
         [Browsable(false)]
@@ -68,7 +63,7 @@ namespace IndustrialPark
         {
             base.Serialize(writer);
 
-            writer.Write(BackgroundColor);
+            writer.Write(_backgroundColor);
             writer.Write(FogColor);
             writer.Write(FogDensity);
             writer.Write(StartDistance);

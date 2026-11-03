@@ -1,6 +1,8 @@
-﻿using HipHopFile;
+﻿using DiscordRPC;
+using HipHopFile;
 using SharpDX;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 
 namespace IndustrialPark
@@ -347,13 +349,12 @@ namespace IndustrialPark
 
         private AssetMVPT FindMVPT(uint assetID)
         {
-            if (Program.MainForm != null && assetID != 0)
-                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.TryGetAsset(assetID, out Asset asset))
-                    {
-                        if (asset is AssetMVPT MVPT)
-                            return MVPT;
-                    }
+            if (assetID != 0)
+            {
+                var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(assetID);
+                if (ae != null && ae.archive.GetAsset(assetID) is AssetMVPT MVPT)
+                    return MVPT;
+            }
             return null;
         }
 

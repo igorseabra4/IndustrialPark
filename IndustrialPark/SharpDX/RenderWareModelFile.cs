@@ -191,7 +191,7 @@ namespace IndustrialPark
                 if (indexList.Count - previousIndexCount > 0)
                 {
                     SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount,
-                        TextureManager.GetTextureFromDictionary(MaterialList[i]), MaterialList[i] != null ? ((AssetColor)MaterialList[i]?.materialStruct.color).ToVector4() : Vector4.One, 
+                        Program.TextureManager.GetTextureFromDictionary(MaterialList[i]), MaterialList[i] != null ? ((AssetColor)MaterialList[i]?.materialStruct.color).ToVector4() : Vector4.One, 
                         MaterialList[i]?.texture?.DiffuseTextureName ?? DefaultTexture,
                         EnablePrelight: (world.worldStruct.worldFlags & WorldFlags.HasVertexColors) != 0, EnableLights: (world.worldStruct.worldFlags & WorldFlags.UseLighting) != 0));
                 }
@@ -289,7 +289,7 @@ namespace IndustrialPark
                 if (indexList.Count - previousIndexCount > 0)
                 {
                     SubsetList.Add(new SharpSubSet(previousIndexCount, indexList.Count - previousIndexCount,
-                        TextureManager.GetTextureFromDictionary(materialList[i]), 
+                        Program.TextureManager.GetTextureFromDictionary(materialList[i]), 
                         materialList[i] != null && (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYMODULATEMATERIALCOLOR) != 0 ? ((AssetColor)materialList[i]?.materialStruct.color).ToVector4() : Vector4.One,
                         materialList[i]?.texture?.DiffuseTextureName ?? DefaultTexture, materialList[i]?.materialStruct.diffuse ?? 1f, materialList[i]?.materialStruct.ambient ?? 1f,
                         (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPRELIT) != 0, (g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYLIGHTS) != 0));
@@ -400,7 +400,7 @@ namespace IndustrialPark
                 }
             }
 
-            subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount, TextureManager.GetTextureFromDictionary(MaterialStream[0]),
+            subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount, Program.TextureManager.GetTextureFromDictionary(MaterialStream[0]),
                 modulateMaterialColor ? ((AssetColor)MaterialStream[0]?.materialStruct.color).ToVector4() : Vector4.One,
                 MaterialStream[0]?.texture?.DiffuseTextureName ?? DefaultTexture,
                 MaterialStream[0]?.materialStruct.diffuse ?? 1f, MaterialStream[0]?.materialStruct.ambient ?? 1f, usePrelight, useLights));
@@ -516,7 +516,7 @@ namespace IndustrialPark
                     }
 
                     subSetList.Add(new SharpSubSet(previousAmount, vertexList.Count() - previousAmount,
-                        TextureManager.GetTextureFromDictionary(MaterialStream[td.MaterialIndex]),
+                        Program.TextureManager.GetTextureFromDictionary(MaterialStream[td.MaterialIndex]),
                         MaterialStream[td.MaterialIndex] != null && modulateMaterialColor ? ((AssetColor)MaterialStream[td.MaterialIndex]?.materialStruct.color).ToVector4() : Vector4.One,
                         MaterialStream[td.MaterialIndex]?.texture?.DiffuseTextureName ?? DefaultTexture,
                         MaterialStream[td.MaterialIndex]?.materialStruct.diffuse ?? 1f, MaterialStream[td.MaterialIndex]?.materialStruct.ambient ?? 1f,
@@ -546,10 +546,10 @@ namespace IndustrialPark
             renderData.world = world;
             renderData.ColorMultiplier = color;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
-            renderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
-            renderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
-            renderData.FogEnd = SharpRenderer.Fog?.EndDistance ?? 0f;
-            renderData.FogEnable = SharpRenderer.Fog != null && !AssetFOG.DontRender;
+            renderData.FogColor = renderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
+            renderData.FogStart = renderer.Fog?.StartDistance ?? 0f;
+            renderData.FogEnd = renderer.Fog?.EndDistance ?? 0f;
+            renderData.FogEnable = renderer.Fog != null && !AssetFOG.DontRender;
             renderData.VertexColorEnable = false;
             renderData.AlphaDiscard = 0;
             renderData.DirectionalLights = new DirectionalLight[8];
@@ -598,7 +598,7 @@ namespace IndustrialPark
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                 {
-                    renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
+                    renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || Program.TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
 
                     renderData.LightingEnable = !AssetLKIT.DontRender && AssetLKIT.SceneLightKit != null && meshList[i].SubSets[j].EnableLights;
                     renderData.DiffuseMult = meshList[i].SubSets[j].DiffuseMult;
@@ -624,10 +624,10 @@ namespace IndustrialPark
         public void RenderJsp(SharpRenderer renderer, Matrix world, bool isSelected, bool[] atomicFlags, xJSPNodeInfo[] nodeinfos)
         {
             jspRenderData.worldViewProjection = world * renderer.viewProjection;
-            jspRenderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
-            jspRenderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
-            jspRenderData.FogEnd = SharpRenderer.Fog?.EndDistance ?? 0f;
-            jspRenderData.FogEnable = SharpRenderer.Fog != null && !AssetFOG.DontRender;
+            jspRenderData.FogColor = renderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
+            jspRenderData.FogStart = renderer.Fog?.StartDistance ?? 0f;
+            jspRenderData.FogEnd = renderer.Fog?.EndDistance ?? 0f;
+            jspRenderData.FogEnable = renderer.Fog != null && !AssetFOG.DontRender;
 
             renderer.device.SetBlendStateAlphaBlend();
 
@@ -659,8 +659,8 @@ namespace IndustrialPark
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                 {
-                    jspRenderData.SelectedObjectColor = (isSelected || highlightAtomic == i || TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
-                    jspRenderData.VertexColorEnable = SharpRenderer.RenderVertexColors && meshList[i].SubSets[j].EnablePrelight;
+                    jspRenderData.SelectedObjectColor = (isSelected || highlightAtomic == i || Program.TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
+                    jspRenderData.VertexColorEnable = renderer.RenderVertexColors && meshList[i].SubSets[j].EnablePrelight;
                     jspRenderData.MaterialColor = meshList[i].SubSets[j].DiffuseColor;
 
                     renderer.jspBuffer.UpdateValue(jspRenderData);
@@ -681,10 +681,10 @@ namespace IndustrialPark
             renderData.world = world;
             renderData.ColorMultiplier = color;
             renderData.UvAnimOffset = (Vector4)uvAnimOffset;
-            renderData.FogColor = SharpRenderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
-            renderData.FogStart = SharpRenderer.Fog?.StartDistance ?? 0f;
-            renderData.FogEnd = SharpRenderer.Fog?.EndDistance ?? 0f;
-            renderData.FogEnable = SharpRenderer.Fog != null && !AssetFOG.DontRender;
+            renderData.FogColor = renderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
+            renderData.FogStart = renderer.Fog?.StartDistance ?? 0f;
+            renderData.FogEnd = renderer.Fog?.EndDistance ?? 0f;
+            renderData.FogEnable = renderer.Fog != null && !AssetFOG.DontRender;
 
             renderData.DirectionalLights = new DirectionalLight[8];
             Vector4 ambientColor = new Vector4(0f, 0f, 0f, 1f);
@@ -762,8 +762,8 @@ namespace IndustrialPark
                 meshList[i].Begin(renderer.device);
                 for (int j = 0; j < meshList[i].SubSets.Count; j++)
                 {
-                    renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
-                    renderData.VertexColorEnable = SharpRenderer.RenderVertexColors &&
+                    renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || Program.TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
+                    renderData.VertexColorEnable = renderer.RenderVertexColors &&
                         meshList[i].SubSets[j].EnablePrelight &&
                         ((pipe?.LightingMode == LightingMode.Prelight || pipe?.LightingMode == LightingMode.Both) |
                         (pipe?.LightingMode == LightingMode.LightKit && AssetLKIT.SceneLightKit == null));

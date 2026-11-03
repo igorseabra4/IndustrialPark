@@ -1,11 +1,12 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows.Forms;
-using static IndustrialPark.TextureIOHelper;
+using static IndustrialPark.Archive.TextureIOHelper;
 
 namespace IndustrialPark
 {
@@ -86,7 +87,7 @@ namespace IndustrialPark
                         string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
 
                         Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);
-                        Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(assetName), AssetType.Texture, ArchiveEditorFunctions.AHDRFlagsFromAssetType(AssetType.Texture), ADBG, data);
+                        Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(assetName), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture), ADBG, data);
 
                         AHDRs.Add(AHDR);
                     }

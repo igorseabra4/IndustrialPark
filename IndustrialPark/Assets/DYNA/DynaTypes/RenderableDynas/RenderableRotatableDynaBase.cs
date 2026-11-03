@@ -24,7 +24,6 @@ namespace IndustrialPark
                     _yaw = MathUtil.DegreesToRadians(value);
                 else
                     _yaw = value;
-                CreateTransformMatrix();
             }
         }
 
@@ -39,7 +38,6 @@ namespace IndustrialPark
                     _pitch = MathUtil.DegreesToRadians(value);
                 else
                     _pitch = value;
-                CreateTransformMatrix();
             }
         }
 
@@ -54,14 +52,13 @@ namespace IndustrialPark
                     _roll = MathUtil.DegreesToRadians(value);
                 else
                     _roll = value;
-                CreateTransformMatrix();
             }
         }
 
         public RenderableRotatableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType, position) { }
         public RenderableRotatableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             if (inRadians)
                 world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
@@ -71,7 +68,7 @@ namespace IndustrialPark
                     MathUtil.DegreesToRadians(_pitch),
                     MathUtil.DegreesToRadians(_roll)) * Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
         public override void CopyTransformation()
@@ -99,7 +96,6 @@ namespace IndustrialPark
                 _yaw = transformation._yaw;
                 _pitch = transformation._pitch;
                 _roll = transformation._roll;
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

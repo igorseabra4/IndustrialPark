@@ -163,21 +163,23 @@ namespace IndustrialPark
                 Directory.Delete(directory);
         }
 
+        public static string editorFilesFolder => Application.StartupPath + "/Resources/IndustrialPark-EditorFiles/IndustrialPark-EditorFiles-master/";
+
         public static bool VerifyEditorFiles()
         {
             bool mustUpdate = false;
 
             try
             {
-                if (!Directory.Exists(ArchiveEditorFunctions.editorFilesFolder))
+                if (!Directory.Exists(editorFilesFolder))
                 {
                     mustUpdate = true;
                 }
                 else
                 {
-                    if (File.Exists(ArchiveEditorFunctions.editorFilesFolder + "version.json"))
+                    if (File.Exists(editorFilesFolder + "version.json"))
                     {
-                        string localVersion = JsonConvert.DeserializeObject<IPversion>(File.ReadAllText(ArchiveEditorFunctions.editorFilesFolder + "version.json")).version;
+                        string localVersion = JsonConvert.DeserializeObject<IPversion>(File.ReadAllText(editorFilesFolder + "version.json")).version;
 
                         string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark-EditorFiles/master/version.json";
 

@@ -112,7 +112,7 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_XBOX[0];
         }
 
-        public AssetSNDI_XBOX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetSNDI_XBOX(Section_AHDR AHDR, Game game) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
             {

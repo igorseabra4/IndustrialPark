@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace IndustrialPark
 {
@@ -23,5 +24,8 @@ namespace IndustrialPark
 
             return new string(charList.ToArray());
         }
+
+        public static System.Drawing.Color ToColor(this SharpDX.Vector4 color) =>
+            System.Drawing.Color.FromArgb((int)(color.W * 255), (int)(color.X * 255), (int)(color.Y * 255), (int)(color.Z * 255));
     }
 }

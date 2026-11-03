@@ -3,7 +3,6 @@ using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -44,32 +43,27 @@ namespace IndustrialPark
 
         public DynaGObjectVent(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Vent, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = dynaDataStartPosition;
 
-                VentType = reader.ReadUInt32();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _yaw = reader.ReadSingle();
-                _pitch = reader.ReadSingle();
-                _roll = reader.ReadSingle();
-                DamageBoxLowerLeftX = reader.ReadSingle();
-                DamageBoxLowerLeftY = reader.ReadSingle();
-                DamageBoxLowerLeftZ = reader.ReadSingle();
-                DamageBoxUpperRightX = reader.ReadSingle();
-                DamageBoxUpperRightY = reader.ReadSingle();
-                DamageBoxUpperRightZ = reader.ReadSingle();
-                BoulderInfluence = reader.ReadSingle();
-                VentFlags.FlagValueInt = reader.ReadUInt32();
-                IdleTime = reader.ReadSingle();
-                WarnTime = reader.ReadSingle();
-                DamageTime = reader.ReadSingle();
-                if (game >= Game.ROTU)
-                    DamagePoints = reader.ReadInt32();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            VentType = reader.ReadUInt32();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _yaw = reader.ReadSingle();
+            _pitch = reader.ReadSingle();
+            _roll = reader.ReadSingle();
+            DamageBoxLowerLeftX = reader.ReadSingle();
+            DamageBoxLowerLeftY = reader.ReadSingle();
+            DamageBoxLowerLeftZ = reader.ReadSingle();
+            DamageBoxUpperRightX = reader.ReadSingle();
+            DamageBoxUpperRightY = reader.ReadSingle();
+            DamageBoxUpperRightZ = reader.ReadSingle();
+            BoulderInfluence = reader.ReadSingle();
+            VentFlags.FlagValueInt = reader.ReadUInt32();
+            IdleTime = reader.ReadSingle();
+            WarnTime = reader.ReadSingle();
+            DamageTime = reader.ReadSingle();
+            if (game >= Game.ROTU)
+                DamagePoints = reader.ReadInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
@@ -104,17 +98,17 @@ namespace IndustrialPark
                 dt.RemoveProperty("DamagePoints");
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.RotationX(-MathUtil.PiOverTwo)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            base.CreateBoundingBox();
+            base.CreateBoundingBox(renderer);
         }
 
         public override void Draw(SharpRenderer renderer)

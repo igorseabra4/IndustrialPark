@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -67,7 +68,7 @@ namespace IndustrialPark
         private void comboBoxAssetTypes_SelectedIndexChanged(object sender, EventArgs e)
         {
             assetType = (AssetType)comboBoxAssetTypes.SelectedItem;
-            AHDRflags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
+            AHDRflags = AssetService.AHDRFlagsFromAssetType(assetType);
 
             label1.Visible = AHDRflags == 0;
         }

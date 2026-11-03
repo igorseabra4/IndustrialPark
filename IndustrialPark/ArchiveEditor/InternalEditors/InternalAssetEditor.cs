@@ -1,23 +1,21 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using IndustrialPark.Properties;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark;
 
 public partial class InternalAssetEditor : InternalEditor
 {
-    public InternalAssetEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
+    public InternalAssetEditor(Asset asset, ArchiveEditor archive) : base(asset, archive)
     {
         InitializeComponent();
 
-        propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
-
-        viewToolStripMenuItem.Visible = asset is IClickableAsset;
+        SetAsset(asset);
 
         switch (asset)
         {
@@ -58,12 +56,8 @@ public partial class InternalAssetEditor : InternalEditor
 
         AddRow();
 
-        AddTool("Find who targets me", (object sender, EventArgs e) => Program.MainForm.FindWhoTargets(GetAssetID()));
-
-        AddTool("Open wiki page", (object sender, EventArgs e) =>
-        {
-            ArchiveEditorFunctions.OpenWikiPage(asset);
-        });
+        AddTool("Find who targets me", (_, _) => Program.EditorManager.OpenWhoTargetsAssetEditors(GetAssetID()));
+        AddTool("Open wiki page", (_, _) => OpenWikiPage());
 
         for (int i = 1; i < tableLayoutPanel1.RowCount; i++)
         {
@@ -74,60 +68,28 @@ public partial class InternalAssetEditor : InternalEditor
                 tableLayoutPanel1.RowStyles.Add(rs);
         }
 
+        viewToolStripMenuItem.Visible = asset is IClickableAsset;
+
         SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
-    private void InternalAssetEditor_FormClosing(object sender, FormClosingEventArgs e)
+    public void SetAsset(Asset asset)
     {
-        archive.CloseInternalEditor(this);
+        if (this.asset != null && this.asset.assetType != asset.assetType)
+            throw new ArgumentException("Cannot change the asset type of an InternalAssetEditor.");
+
+        this.asset = asset;
+        propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
     }
 
     public override void RefreshPropertyGrid()
     {
-        Task.Run(() =>
-        {
-            Invoke(() =>
-            {
-                propertyGridAsset.Refresh();
-                updateListView(asset);
-            });
-        });
+        Invoke(propertyGridAsset.Refresh);
     }
 
     private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
     {
-        archive.UnsavedChanges = true;
-        RefreshPropertyGrid();
-        Program.UndoBuffer.AddAction(GetPropertyChangedAction(archive, asset, e.OldValue, e.ChangedItem.Value, e.ChangedItem));
-    }
-
-    private void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        var ae = archive.GetArchiveEditor();
-        if (ae.EditHeader(asset.assetID, out uint newAssetID))
-            ae.OpenInternalEditor(newAssetID);
-    }
-
-    private void viewToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        if (asset is IClickableAsset ica)
-            Program.Renderer.Camera.ShowAssetOnViewport(ica);
-    }
-
-    private void copyToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        archive.CopyAssetsToClipboard(asset.assetID);
-    }
-
-    private void removeToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        var result = MessageBox.Show($"Are you sure you want to delete asset [{asset.assetID:X8}] {asset.assetName} ({AssetTypeContainer.AssetTypeToString(asset.assetType)})?", "Confirm asset removal", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-        if (result == DialogResult.Yes)
-        {
-            var actions = new List<IReversibleAction>();
-            archive.GetArchiveEditor().RemoveAssets([asset.assetID], actions);
-            Program.UndoBuffer.AddAction(actions);
-        }
+        asset.InvokePropertyChanged(true);
     }
 
     private readonly List<int> RowSizes = new List<int>() { -1 };
@@ -164,11 +126,11 @@ public partial class InternalAssetEditor : InternalEditor
     private void SetupForJSPInfo(AssetJSP_INFO asset)
     {
         AddRow();
-        AddTool("Generate JSPINFO", (s, e) =>
+        AddTool("Generate JSPInfo", (s, e) =>
         {
-            archive.GenerateJSPInfo(asset);
-            RefreshPropertyGrid();
-            archive.UnsavedChanges = true;
+            var jsps = archiveEditor.archive.Assets.OfType<AssetJSP>().Where(a => asset.JSP_AssetIDs.Contains(a.assetID)).ToList();
+            JSPService.GenerateJSPInfo(archiveEditor.archive.Game, archiveEditor.archive.Platform, asset, jsps);
+            asset.InvokePropertyChanged(true);
         });
     }
 
@@ -176,69 +138,68 @@ public partial class InternalAssetEditor : InternalEditor
     {
         AddRow();
 
-        AddTool("Get View Position", (object sender, EventArgs e) =>
+        AddTool("Get View Position", (_, _) =>
         {
-            asset.SetPosition(Program.MainForm.renderer.Camera.Position);
-            asset.CreateTransformMatrix();
-            RefreshPropertyGrid();
-            archive.UnsavedChanges = true;
+            asset.SetPosition(Program.Renderer.Camera.Position);
+            asset.InvokePropertyChanged(true);
         });
 
-        AddTool("Get View Direction", (object sender, EventArgs e) =>
+        AddTool("Get View Direction", (_, _) =>
         {
-            asset.SetNormalizedForward(Program.MainForm.renderer.Camera.Forward);
-            asset.SetNormalizedUp(Program.MainForm.renderer.Camera.Up);
-            asset.SetNormalizedLeft(Program.MainForm.renderer.Camera.Right);
-            asset.CreateTransformMatrix();
-
-            RefreshPropertyGrid();
-            archive.UnsavedChanges = true;
+            asset.SetNormalizedForward(Program.Renderer.Camera.Forward);
+            asset.SetNormalizedUp(Program.Renderer.Camera.Up);
+            asset.SetNormalizedLeft(Program.Renderer.Camera.Right);
+            asset.InvokePropertyChanged(true);
         });
     }
 
     private void SetupForAddSelected(IAssetAddSelected asset)
     {
         AddRow();
-        AddTool($"Select {asset.GetItemsText} assets", (object sender, EventArgs e) =>
+        AddTool($"Select {asset.GetItemsText} assets", (_, _) =>
         {
-            Program.MainForm.SetSelectedIndices(asset.GetItems(), false);
+            Program.ArchiveManager.SetSelectedAssets(asset.GetItems(), false);
         });
-        AddTool($"Add selected to {asset.GetItemsText}", (object sender, EventArgs e) =>
+        AddTool($"Add selected to {asset.GetItemsText}", (_, _) =>
         {
-            asset.AddItems([.. archive.CurrentlySelectedAssetIDs]);
-            RefreshPropertyGrid();
-            archive.UnsavedChanges = true;
+            asset.AddItems([.. archiveEditor.SelectedAssetIDs]);
+            (asset as Asset).InvokePropertyChanged(true);
         });
     }
 
     private void SetupForFog(AssetFOG asset)
     {
         AddRow();
-        AddTool("Preview Fog", (object sender, EventArgs e) =>
+        AddTool("Preview Fog", (_, _) =>
         {
-            SharpRenderer.Fog = asset;
+            Program.Renderer.Fog = asset;
         }, true);
     }
 
     private void SetupForScrp(AssetSCRP asset)
     {
         AddRow();
-        AddTool("Convert to group of timers", (object sender, EventArgs e) =>
+        AddTool("Convert to group of timers", (_, _) =>
         {
-            var newAssets = archive.ConvertScriptToGroupOfTimers(asset);
-            archive.UnsavedChanges = true;
-            Program.MainForm.SetSelectedIndices(newAssets);
+            var newAssets = AssetFactory.ConvertScriptToGroupOfTimers(archiveEditor.archive.Platform, asset, archiveEditor.archive.ContainsAsset);
+
+            archiveEditor.BeginTransaction();
+            var layer = archiveEditor.archive.GetOrCreateLayerOfType(LayerType.DEFAULT);
+            archiveEditor.archive.AddMultipleAssets(newAssets, layer, false);
+            archiveEditor.EndTransaction();
+
+            Program.ArchiveManager.SetSelectedAssets(newAssets);
         }, true);
     }
 
     private void SetupForCsn(AssetCSN asset)
     {
         AddRow();
-        AddTool("Export All", (object sender, EventArgs e) =>
+        AddTool("Export All", (_, _) =>
         {
             using var openFolder = new CommonOpenFileDialog() { IsFolderPicker = true };
             if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
-                asset.ExtractToFolder(openFolder.FileName, archive.platform.Endianness());
+                asset.ExtractToFolder(openFolder.FileName, archiveEditor.archive.Platform.Endianness());
         }, true);
     }
 
@@ -246,7 +207,7 @@ public partial class InternalAssetEditor : InternalEditor
     {
         AddRow();
 
-        AddTool("Import", (object sender, EventArgs e) =>
+        AddTool("Import", (_, _) =>
         {
             OpenFileDialog openFile = new OpenFileDialog
             {
@@ -256,11 +217,11 @@ public partial class InternalAssetEditor : InternalEditor
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 asset.FromObj(openFile.FileName);
-                archive.UnsavedChanges = true;
+                asset.InvokePropertyChanged(true);
             }
         });
 
-        AddTool("Export", (object sender, EventArgs e) =>
+        AddTool("Export", (_, _) =>
         {
             SaveFileDialog saveFile = new SaveFileDialog()
             {
@@ -277,15 +238,15 @@ public partial class InternalAssetEditor : InternalEditor
     {
         AddRow();
 
-        AddTool("Copy Transformation", (object sender, EventArgs e) =>
+        AddTool("Copy Transformation", (_, _) =>
         {
             asset.CopyTransformation();
         });
 
-        AddTool("Paste Transformation", (object sender, EventArgs e) =>
+        AddTool("Paste Transformation", (_, _) =>
         {
             asset.PasteTransformation();
-            propertyGridAsset.Refresh();
+            (asset as Asset).InvokePropertyChanged(true);
         });
     }
 
@@ -294,30 +255,28 @@ public partial class InternalAssetEditor : InternalEditor
         AddRow();
 
         var toolTip = new ToolTip();
-        (var button, var menuItem) = AddTool("Bake Rotation", (object sender, EventArgs e) =>
+        (var button, var menuItem) = AddTool("Bake Rotation", (_, _) =>
         {
             var result = MessageBox.Show(Resources.BakeRotationDescription, "Bake Rotation", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
             {
                 asset.ApplyBakeRotation();
-                propertyGridAsset.Refresh();
+                asset.InvokePropertyChanged(true);
             }
         });
-        void showToolTipBakeRotation(object sender, EventArgs e) => toolTip.Show(Resources.BakeRotationDescription, button);
-        button?.MouseHover += showToolTipBakeRotation;
-        menuItem?.MouseHover += showToolTipBakeRotation;
+        button?.MouseHover += (_, _) => toolTip.Show(Resources.BakeRotationDescription, button);
+        menuItem?.MouseHover += (_, _) => toolTip.Show(Resources.BakeRotationDescription, button);
 
-        (button, menuItem) = AddTool("Bake Scale", (object sender, EventArgs e) =>
+        (button, menuItem) = AddTool("Bake Scale", (_, _) =>
         {
             var result = MessageBox.Show(Resources.BakeScaleDescription, "Bake Scale", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
             {
                 asset.ApplyBakeScale();
-                propertyGridAsset.Refresh();
+                asset.InvokePropertyChanged(true);
             }
         });
-        void showToolTipBakeScale(object sender, EventArgs e) => toolTip.Show(Resources.BakeScaleDescription, button);
-        button?.MouseHover += showToolTipBakeScale;
-        menuItem?.MouseHover += showToolTipBakeScale;
+        button?.MouseHover += (_, _) => toolTip.Show(Resources.BakeScaleDescription, button);
+        menuItem?.MouseHover += (_, _) => toolTip.Show(Resources.BakeScaleDescription, button);
     }
 }

@@ -4,7 +4,7 @@ namespace IndustrialPark
 {
     public interface IRenderableAsset
     {
-        void CreateTransformMatrix();
+        void CreateTransformMatrix(SharpRenderer renderer);
 
         float GetDistanceFrom(Vector3 position);
 
@@ -14,6 +14,6 @@ namespace IndustrialPark
 
         float? GetIntersectionPosition(SharpRenderer renderer, SharpDX.Ray ray);
 
-        bool SpecialBlendMode { get; }
+        bool SpecialBlendMode(SharpRenderer renderer);
     }
 }

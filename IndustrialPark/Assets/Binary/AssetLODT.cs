@@ -77,7 +77,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetLODT : Asset, IAssetAddSelected, IDictionaryAsset, ITableAsset<AssetLODT, EntryLODT>
+    public class AssetLODT : Asset, IAssetAddSelected, IDisposableAsset, ITableAsset<AssetLODT, EntryLODT>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
@@ -127,10 +127,11 @@ namespace IndustrialPark
                 maxDistances[entry.BaseModel] = entry.MaxDistance;
         }
 
-        public void ClearDictionary()
+        public void Dispose()
         {
             foreach (var entry in Entries)
-                maxDistances.Remove(entry.BaseModel);
+                if (maxDistances.TryGetValue(entry.BaseModel, out var distance) && distance == entry.MaxDistance)
+                    maxDistances.Remove(entry.BaseModel);
         }
 
         public void Merge(AssetLODT asset)

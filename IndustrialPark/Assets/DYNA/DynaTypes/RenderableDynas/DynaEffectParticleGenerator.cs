@@ -1,12 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
 using IndustrialPark.Models;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -165,119 +163,113 @@ namespace IndustrialPark
 
         public DynaEffectParticleGenerator(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Effect__particle_generator, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = dynaDataStartPosition;
+
+            ParticleGeneratorFlags.FlagValueByte = reader.ReadByte();
+            AttachFlags.FlagValueByte = reader.ReadByte();
+            MotionFlags.FlagValueByte = reader.ReadByte();
+            VolumeFlags.FlagValueByte = reader.ReadByte();
+            Rate = reader.ReadSingle();
+            Texture = reader.ReadUInt32();
+            if (game >= Game.ROTU)
+                EmitDistance = reader.ReadSingle();
+            AttachType = (DynaEffectParticleGeneratorAttachType)reader.ReadByte();
+            MotionType = (DynaEffectParticleGeneratorMotionType)reader.ReadByte();
+            VolumeType = (DynaEffectParticleGeneratorVolumeType)reader.ReadByte();
+            SystemType = (ParticleSystemType)reader.ReadByte();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _yaw = reader.ReadSingle();
+            _pitch = reader.ReadSingle();
+            _roll = reader.ReadSingle();
+
+            Entity = reader.ReadUInt32();
+            if (AttachType == DynaEffectParticleGeneratorAttachType.attach_entity_tag)
             {
-                reader.BaseStream.Position = dynaDataStartPosition;
+                AttachEntityTagX = reader.ReadSingle();
+                AttachEntityTagY = reader.ReadSingle();
+                AttachEntityTagZ = reader.ReadSingle();
+            }
+            else
+            {
+                Bone = reader.ReadByte();
+                reader.BaseStream.Position += 11;
+            }
 
-                ParticleGeneratorFlags.FlagValueByte = reader.ReadByte();
-                AttachFlags.FlagValueByte = reader.ReadByte();
-                MotionFlags.FlagValueByte = reader.ReadByte();
-                VolumeFlags.FlagValueByte = reader.ReadByte();
-                Rate = reader.ReadSingle();
-                Texture = reader.ReadUInt32();
+            MotionSpiralFlags.FlagValueByte = reader.ReadByte();
+            Points = reader.ReadByte();
+            reader.BaseStream.Position += 2;
+            RadiusInner = reader.ReadSingle();
+            RadiusOuter = reader.ReadSingle();
+            Duration = reader.ReadSingle();
+            Frequency = reader.ReadSingle();
+
+            if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_point)
+            {
+                reader.BaseStream.Position += 12;
+            }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_sphere || VolumeType == DynaEffectParticleGeneratorVolumeType.volume_circle)
+            {
+                Radius = reader.ReadSingle();
+                CircleArcLength = reader.ReadSingle();
                 if (game >= Game.ROTU)
-                    EmitDistance = reader.ReadSingle();
-                AttachType = (DynaEffectParticleGeneratorAttachType)reader.ReadByte();
-                MotionType = (DynaEffectParticleGeneratorMotionType)reader.ReadByte();
-                VolumeType = (DynaEffectParticleGeneratorVolumeType)reader.ReadByte();
-                SystemType = (ParticleSystemType)reader.ReadByte();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _yaw = reader.ReadSingle();
-                _pitch = reader.ReadSingle();
-                _roll = reader.ReadSingle();
-
-                Entity = reader.ReadUInt32();
-                if (AttachType == DynaEffectParticleGeneratorAttachType.attach_entity_tag)
-                {
-                    AttachEntityTagX = reader.ReadSingle();
-                    AttachEntityTagY = reader.ReadSingle();
-                    AttachEntityTagZ = reader.ReadSingle();
-                }
+                    Height = reader.ReadSingle();
                 else
-                {
-                    Bone = reader.ReadByte();
-                    reader.BaseStream.Position += 11;
-                }
-
-                MotionSpiralFlags.FlagValueByte = reader.ReadByte();
-                Points = reader.ReadByte();
-                reader.BaseStream.Position += 2;
-                RadiusInner = reader.ReadSingle();
-                RadiusOuter = reader.ReadSingle();
-                Duration = reader.ReadSingle();
-                Frequency = reader.ReadSingle();
-
-                if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_point)
-                {
-                    reader.BaseStream.Position += 12;
-                }
-                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_sphere || VolumeType == DynaEffectParticleGeneratorVolumeType.volume_circle)
-                {
-                    Radius = reader.ReadSingle();
-                    CircleArcLength = reader.ReadSingle();
-                    if (game >= Game.ROTU)
-                        Height = reader.ReadSingle();
-                    else
-                        reader.BaseStream.Position += 4;
-                }
-                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_line)
-                {
-                    LineFlags.FlagValueByte = reader.ReadByte();
-                    reader.BaseStream.Position += 3;
-                    LineRadius = reader.ReadSingle();
-                    LineLength = reader.ReadSingle();
-                }
-                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_model)
-                {
-                    ModelFlags.FlagValueByte = reader.ReadByte();
-                    ModelExclude = reader.ReadByte();
-                    reader.BaseStream.Position += 2;
-                    ModelExpand = reader.ReadSingle();
                     reader.BaseStream.Position += 4;
-                }
-                else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_box)
-                {
-                    DimensionsX = reader.ReadSingle();
-                    DimensionsY = reader.ReadSingle();
-                    DimensionsZ = reader.ReadSingle();
-                }
+            }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_line)
+            {
+                LineFlags.FlagValueByte = reader.ReadByte();
+                reader.BaseStream.Position += 3;
+                LineRadius = reader.ReadSingle();
+                LineLength = reader.ReadSingle();
+            }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_model)
+            {
+                ModelFlags.FlagValueByte = reader.ReadByte();
+                ModelExclude = reader.ReadByte();
+                reader.BaseStream.Position += 2;
+                ModelExpand = reader.ReadSingle();
+                reader.BaseStream.Position += 4;
+            }
+            else if (VolumeType == DynaEffectParticleGeneratorVolumeType.volume_box)
+            {
+                DimensionsX = reader.ReadSingle();
+                DimensionsY = reader.ReadSingle();
+                DimensionsZ = reader.ReadSingle();
+            }
 
-                switch (SystemType)
-                {
-                    case ParticleSystemType.Waterfall:
-                        ParticleSystem = new ParticleSystem_Waterfall(reader);
-                        break;
-                    case ParticleSystemType.WaterfallMist:
-                        ParticleSystem = new ParticleSystem_WaterfallMist(reader);
-                        break;
-                    case ParticleSystemType.WaterfallSplash:
-                        ParticleSystem = new ParticleSystem_WaterfallSplash(reader);
-                        break;
-                    case ParticleSystemType.Snow:
-                        ParticleSystem = new ParticleSystem_Snow(reader);
-                        break;
-                    case ParticleSystemType.Rain:
-                        ParticleSystem = new ParticleSystem_Rain(reader);
-                        break;
-                    case ParticleSystemType.EarthDust:
-                        ParticleSystem = new ParticleSystem_EarthDust(reader);
-                        break;
-                    case ParticleSystemType.Pop:
-                        ParticleSystem = new ParticleSystem_Pop(reader);
-                        break;
-                    case ParticleSystemType.BurrowKickup:
-                        ParticleSystem = new ParticleSystem_BurrowKick(reader);
-                        break;
-                    case ParticleSystemType.Puffer:
-                        ParticleSystem = new ParticleSystem_Puffer(reader);
-                        break;
-                    default:
-                        throw new Exception($"Unknown particle system type: {SystemType}");
-                }
-
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
+            switch (SystemType)
+            {
+                case ParticleSystemType.Waterfall:
+                    ParticleSystem = new ParticleSystem_Waterfall(reader);
+                    break;
+                case ParticleSystemType.WaterfallMist:
+                    ParticleSystem = new ParticleSystem_WaterfallMist(reader);
+                    break;
+                case ParticleSystemType.WaterfallSplash:
+                    ParticleSystem = new ParticleSystem_WaterfallSplash(reader);
+                    break;
+                case ParticleSystemType.Snow:
+                    ParticleSystem = new ParticleSystem_Snow(reader);
+                    break;
+                case ParticleSystemType.Rain:
+                    ParticleSystem = new ParticleSystem_Rain(reader);
+                    break;
+                case ParticleSystemType.EarthDust:
+                    ParticleSystem = new ParticleSystem_EarthDust(reader);
+                    break;
+                case ParticleSystemType.Pop:
+                    ParticleSystem = new ParticleSystem_Pop(reader);
+                    break;
+                case ParticleSystemType.BurrowKickup:
+                    ParticleSystem = new ParticleSystem_BurrowKick(reader);
+                    break;
+                case ParticleSystemType.Puffer:
+                    ParticleSystem = new ParticleSystem_Puffer(reader);
+                    break;
+                default:
+                    throw new Exception($"Unknown particle system type: {SystemType}");
             }
         }
 
@@ -361,17 +353,17 @@ namespace IndustrialPark
 
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.RotationX(-MathUtil.PiOverTwo)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            base.CreateBoundingBox();
+            base.CreateBoundingBox(renderer);
         }
 
         public override void Draw(SharpRenderer renderer)

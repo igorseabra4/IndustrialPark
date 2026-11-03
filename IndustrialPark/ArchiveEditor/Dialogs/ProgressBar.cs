@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public partial class ProgressBar : Form
+    public partial class ProgressBar : Form, IProgressBar
     {
         public ProgressBar(string text)
         {

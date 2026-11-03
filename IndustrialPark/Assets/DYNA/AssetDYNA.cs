@@ -28,14 +28,12 @@ namespace IndustrialPark
 
         public AssetDYNA(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition + 4;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition + 4;
 
-                Type = type;
-                Version = reader.ReadInt16();
-                Handle = reader.ReadInt16();
-            }
+            Type = type;
+            Version = reader.ReadInt16();
+            Handle = reader.ReadInt16();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

@@ -1,98 +1,104 @@
+using IndustrialPark.Archive;
+using IndustrialPark.SaveFile;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using IndustrialPark.SaveFile;
 
-namespace IndustrialPark
+namespace IndustrialPark;
+
+public static class Program
 {
-    public static class Program
+    public static MainForm MainForm;
+    public static ArchiveEditorManager ArchiveManager;
+    public static List<ArchiveEditor> ArchiveEditors => ArchiveManager.ArchiveEditors;
+    public static AssetEditorManager EditorManager;
+    public static NameRepository NameRepository;
+    public static SharpRenderer Renderer;
+    public static TextureManager TextureManager;
+    public static ViewConfig ViewConfig;
+    public static ViewControls ViewControls;
+    public static AboutBox AboutBox;
+    public static UserTemplateManager UserTemplateManager;
+    public static UndoBuffer UndoBuffer;
+    public static BuildISO BuildISO;
+    public static HansMainForm HansMainForm;
+    public static EventSearch EventSearch;
+    public static DynaSearch DynaSearch;
+    public static AssetIDGenerator AssetIDGenerator;
+    public static PickupSearch PickupSearch;
+
+    public static bool IsDarkMode;
+
+    [STAThread]
+    static void Main()
     {
-        public static MainForm MainForm;
-        public static ViewConfig ViewConfig;
-        public static ViewControls ViewControls;
-        public static AboutBox AboutBox;
-        public static UserTemplateManager UserTemplateManager;
-        public static HansMainForm HansMainForm;
+        System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-us");
 
-        public static EventSearch EventSearch;
-        public static DynaSearch DynaSearch;
-        public static AssetIDGenerator AssetIDGenerator;
-        public static PickupSearch PickupSearch;
+        Application.EnableVisualStyles();
+        Application.SetCompatibleTextRenderingDefault(false);
 
-        public static UndoBuffer UndoBuffer;
-        public static BuildISO BuildISO;
-        public static bool IsDarkMode;
-
-        public static SharpRenderer Renderer => MainForm != null && MainForm.renderer != null ? MainForm.renderer : null;
-        
-        [STAThread]
-        static void Main()
+        if (!SharpDevice.IsDirectX11Supported())
         {
-            System.Threading.Thread.CurrentThread.CurrentCulture = new System.Globalization.CultureInfo("en-us");
+            MessageBox.Show("DirectX11 feature level 11.0 is required to run Industrial Park. Maximum supported feature level is " + SharpDevice.GetSupportedFeatureLevel().ToString() + ". Please update your DirectX.");
+            return;
+        }
 
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+        Application.SetDefaultFont(new System.Drawing.Font(new FontFamily("Microsoft Sans Serif"), 8.25f));
 
-            if (!SharpDevice.IsDirectX11Supported())
+        IPSettings ipSettings = LoadSettingsFile();
+
+        UndoBuffer = new UndoBuffer();
+
+        Application.SetColorMode(ipSettings.ColorMode);
+        IsDarkMode = GetIsDarkMode();
+
+        ArchiveManager = new ArchiveEditorManager();
+        TextureManager = new TextureManager();
+        EditorManager = new AssetEditorManager();
+        NameRepository = new NameRepository();
+
+
+        MainForm = new MainForm(ipSettings);
+
+        ViewConfig = new ViewConfig();
+        ViewControls = new ViewControls();
+        AboutBox = new AboutBox();
+        UserTemplateManager = new UserTemplateManager();
+        Application.Run(MainForm);
+    }
+
+    private static IPSettings LoadSettingsFile()
+    {
+        if (File.Exists(MainForm.pathToSettings))
+        {
+            try
             {
-                MessageBox.Show("DirectX11 feature level 11.0 is required to run Industrial Park. Maximum supported feature level is " + SharpDevice.GetSupportedFeatureLevel().ToString() + ". Please update your DirectX.");
-                return;
+                return JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings));
             }
-
-            Application.SetDefaultFont(new System.Drawing.Font(new FontFamily("Microsoft Sans Serif"), 8.25f));
-
-            IPSettings ipSettings = LoadSettingsFile();
-
-            UndoBuffer = new UndoBuffer();
-
-            Application.SetColorMode(ipSettings.ColorMode);
-            IsDarkMode = GetIsDarkMode();
-
-            MainForm = new MainForm(ipSettings);
-
-            if (!Directory.Exists(MainForm.userTemplatesFolder))
-                Directory.CreateDirectory(MainForm.userTemplatesFolder);
-
-            ViewConfig = new ViewConfig();
-            ViewControls = new ViewControls();
-            AboutBox = new AboutBox();
-            UserTemplateManager = new UserTemplateManager();
-
-            Application.Run(MainForm);
-        }
-
-        private static IPSettings LoadSettingsFile()
-        {
-            if (File.Exists(MainForm.pathToSettings))
+            catch
             {
-                try
-                {
-                    return JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings));
-                }
-                catch
-                {
-                }
             }
-            return new IPSettings();
         }
+        return new IPSettings();
+    }
 
-        static bool GetIsDarkMode()
-        {
-            if (Application.ColorMode == SystemColorMode.Dark)
-                return true;
+    static bool GetIsDarkMode()
+    {
+        if (Application.ColorMode == SystemColorMode.Dark)
+            return true;
 
-            if (Application.ColorMode == SystemColorMode.Classic)
-                return false;
+        if (Application.ColorMode == SystemColorMode.Classic)
+            return false;
 
-            object value = Registry.GetValue(
-                @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
-                "AppsUseLightTheme",
-                1);
+        object value = Registry.GetValue(
+            @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
+            "AppsUseLightTheme",
+            1);
 
-            return Convert.ToInt32(value) == 0;
-        }
+        return Convert.ToInt32(value) == 0;
     }
 }

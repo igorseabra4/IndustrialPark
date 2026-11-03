@@ -16,12 +16,12 @@ namespace IndustrialPark
     [JsonObject]
     public class Link : GenericAssetDataContainer
     {
-        public static int sizeOfStruct => 32;
+        public const int sizeOfStruct = 32;
 
         [ValidReferenceRequired]
         public AssetID TargetAsset { get; set; }
-        public ushort EventReceiveID;
-        public ushort EventSendID;
+        public ushort EventReceiveID { get; set; }
+        public ushort EventSendID { get; set; }
         [IgnoreVerification]
         public AssetID Parameter1 { get; set; }
         [IgnoreVerification]

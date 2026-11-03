@@ -1,30 +1,45 @@
-﻿using System;
+﻿using IndustrialPark.Archive;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
+using static HipHopFile.Functions;
 
 namespace IndustrialPark;
 
 public abstract class InternalEditor : Form
 {
-    protected readonly ArchiveEditorFunctions archive;
-    protected readonly Asset asset;
-    protected readonly Action<Asset> updateListView;
+    public static bool EnableAssetToolButtons = false;
+
+    protected readonly ArchiveEditor archiveEditor;
+    protected Asset asset;
 
     public bool IsDocked = false;
     public bool CanBeDocked => CanDockAssetEditor(asset);
     public static bool CanDockAssetEditor(Asset asset) => asset is not (AssetSound or AssetRenderWareModel);
 
-    public InternalEditor(Asset asset, ArchiveEditorFunctions archive, Action<Asset> updateListView)
+    public InternalEditor(Asset asset, ArchiveEditor archiveEditor)
     {
         this.asset = asset;
-        this.archive = archive;
-        this.updateListView = updateListView;
+        this.archiveEditor = archiveEditor;
+
+        asset.PropertyChanged += RefreshPropertyGridDelegate;
     }
 
+    public Asset GetAsset() => asset;
     public uint GetAssetID() => asset.assetID;
 
-    public abstract void RefreshPropertyGrid();
+    public virtual void RefreshPropertyGrid()
+    {
+    }
+
+    protected void RefreshPropertyGridDelegate(bool propertyChanged) => RefreshPropertyGrid();
+
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+        asset.PropertyChanged -= RefreshPropertyGridDelegate;
+        base.OnFormClosing(e);
+    }
 
     public event EventHandler FormDropped;
     private const int WM_MOVING = 0x0216;
@@ -51,8 +66,6 @@ public abstract class InternalEditor : Form
         }
     }
 
-    public static bool EnableAssetToolButtons = false;
-
     public static string[] GetPropertyPath(GridItem item)
     {
         var path = new List<string>();
@@ -64,24 +77,6 @@ public abstract class InternalEditor : Form
         }
         path.Reverse();
         return path.ToArray();
-    }
-
-    public static AssetPropertyChangedAction GetPropertyChangedAction(ArchiveEditorFunctions archive, Asset asset, object oldValue, object newValue, GridItem changedItem)
-    {
-        var propertyPath = GetPropertyPath(changedItem);
-
-        if (changedItem.Parent != null && changedItem.Parent.Value is FlagBitmask flags && !changedItem.PropertyDescriptor.Name.Equals("FlagsValue"))
-        {
-            var flagBit = int.Parse(changedItem.PropertyDescriptor.Name.Split('_')[1]);
-            var flagsValue = flags.FlagValueInt;
-
-            oldValue = flagsValue ^ (1 << flagBit);
-            newValue = flagsValue;
-            propertyPath = [.. propertyPath.SkipLast(1), "FlagsValue"];
-        }
-
-        var action = new AssetPropertyChangedAction(archive, asset, propertyPath, oldValue, newValue);
-        return action;
     }
 
     public static void SelectFirstProperty(GridItem gridItem)
@@ -106,5 +101,61 @@ public abstract class InternalEditor : Form
             }
         }
         return null;
+    }
+
+    public void OpenWikiPage()
+    {
+        // todo: add more options of wiki pages
+        var code = asset.assetType.GetCode();
+        if (asset.assetType.IsDyna())
+            code += $"/{asset.TypeString}";
+        System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = AboutBox.WikiLink + code, UseShellExecute = true });
+    }
+
+    protected void buttonFindCallers_Click(object sender, EventArgs e)
+    {
+        Program.EditorManager.OpenWhoTargetsAssetEditors(GetAssetID());
+    }
+
+    protected void buttonHelp_Click(object sender, EventArgs e)
+    {
+        OpenWikiPage();
+    }
+
+    protected void editHeaderToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (archiveEditor.EditHeader(asset) is Asset newAsset)
+            Program.EditorManager.OpenAssetEditor(newAsset, MousePosition);
+    }
+
+    protected void viewToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        if (asset is IClickableAsset ica)
+            Program.Renderer.Camera.ShowAssetOnViewport(ica);
+    }
+
+    protected void copyToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var clipboard = AssetService.AssetsToClipboard([asset], archiveEditor.archive.Platform, archiveEditor.archive.GetSoundData);
+        Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
+    }
+
+    protected void copyHierarchyToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        List<Asset> assets = [asset];
+        assets = [.. AssetService.GetAssetsAndHierarchy(assets)];
+        var clipboard = AssetService.AssetsToClipboard(assets, archiveEditor.archive.Platform, archiveEditor.archive.GetSoundData);
+        Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
+    }
+
+    protected void removeToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        var result = MessageBox.Show($"Are you sure you want to delete asset [{asset.assetID:X8}] {asset.assetName} ({AssetTypeContainer.AssetTypeToString(asset.assetType)})?", "Confirm asset removal", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        if (result == DialogResult.Yes)
+        {
+            archiveEditor.BeginTransaction();
+            archiveEditor.RemoveAssets([asset.assetID]);
+            archiveEditor.EndTransaction();
+        }
     }
 }

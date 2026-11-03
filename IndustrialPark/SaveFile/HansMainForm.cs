@@ -298,7 +298,7 @@ namespace IndustrialPark.SaveFile
             }
             if (saveFileManager.Blocks[listBoxBlocks.SelectedIndex] is Section_Scene scene)
             {
-                var archive = Program.MainForm.archiveEditors.First(ae => scene.SceneID.ToUpper().Equals(ae.archive.LevelName.ToUpper())).archive;
+                var archive = Program.ArchiveEditors.FirstOrDefault(ae => scene.SceneID.ToUpper().Equals(ae.archive?.LevelName.ToUpper()))?.archive;
                 if (archive != null)
                 {
                     var result = SaveFileScene.GenerateReport(archive, currentPlatform, scene.Data);

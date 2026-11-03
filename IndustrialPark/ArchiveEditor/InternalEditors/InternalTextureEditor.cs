@@ -1,17 +1,18 @@
-﻿using RenderWareFile;
+﻿using IndustrialPark.Archive;
+using RenderWareFile;
 using RenderWareFile.Sections;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
-using static IndustrialPark.TextureIOHelper;
+using static IndustrialPark.Archive.TextureIOHelper;
 
 namespace IndustrialPark
 {
     public partial class InternalTextureEditor : InternalEditor
     {
-        public InternalTextureEditor(AssetRWTX asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
+        public InternalTextureEditor(AssetRWTX asset, ArchiveEditor archive) : base(asset, archive)
         {
             InitializeComponent();
 
@@ -23,7 +24,8 @@ namespace IndustrialPark
         public override void RefreshPropertyGrid()
         {
             b?.Dispose();
-            foreach (Bitmap bitmap in archive.ExportTXDToBitmap(asset.Data).Values)
+
+            foreach (Bitmap bitmap in TextureConverter.ExportTXDToBitmaps(asset.Data, false).Values)
                 b = bitmap;
             pictureBox1.Image = b;
 
@@ -32,32 +34,20 @@ namespace IndustrialPark
                 tableLayoutPanel1.RowStyles[1].SizeType = SizeType.Absolute;
                 tableLayoutPanel1.RowStyles[1].Height = b.Height + 16;
             }
-
-            updateListView(asset);
+            propertyGridAsset.Refresh();
         }
 
         private void InternalTextureEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             b.Dispose();
-            archive.CloseInternalEditor(this);
         }
 
         private new AssetRWTX asset => (AssetRWTX)base.asset;
         private Bitmap b;
 
-        private void buttonFindCallers_Click(object sender, EventArgs e)
-        {
-            Program.MainForm.FindWhoTargets(GetAssetID());
-        }
-
         private void propertyGridAsset_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            archive.UnsavedChanges = true;
-        }
-
-        private void buttonHelp_Click(object sender, EventArgs e)
-        {
-            ArchiveEditorFunctions.OpenWikiPage(asset);
+            asset.InvokePropertyChanged(true);
         }
 
         private void buttonExport_Click(object sender, EventArgs e)
@@ -113,18 +103,17 @@ namespace IndustrialPark
 
             if (a.ShowDialog() == DialogResult.OK)
             {
-                archive.UnsavedChanges = true;
-
                 string i = a.FileName;
 
                 if (Path.GetExtension(i).ToLower().Equals(".rwtex"))
                 {
                     asset.Data = ReadFileMethods.ExportRenderWareFile(
-                        new TextureDictionary_0016(new TextureNative_0015(File.ReadAllBytes(i))), currentTextureVersion(archive.game, archive.platform));
+                        new TextureDictionary_0016(new TextureNative_0015(File.ReadAllBytes(i))),
+                        currentTextureVersion(archiveEditor.archive.Game, archiveEditor.archive.Platform));
                 }
                 else
                 {
-                    asset.Data = CreateRWTXFromBitmap(archive.game, archive.platform, i, false, checkBoxFlipTextures.Checked,
+                    asset.Data = CreateRWTXFromBitmap(archiveEditor.archive.Game, archiveEditor.archive.Platform, i, false, checkBoxFlipTextures.Checked,
                         checkBoxMipmaps.Checked, checkBoxCompress.Checked, checkBoxTransFix.Checked).data;
                 }
 
@@ -135,8 +124,8 @@ namespace IndustrialPark
                     asset.Data = data;
                 }
 
-                RefreshPropertyGrid();
-                archive.EnableTextureForDisplay(asset);
+                asset.InvokePropertyChanged(true);
+                TextureConverter.EnableTextureForDisplay(asset);
             }
         }
 

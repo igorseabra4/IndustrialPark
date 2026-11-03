@@ -33,6 +33,11 @@ namespace IndustrialPark
                 return;
 
             e.Cancel = true;
+
+            Positions.Clear();
+            ConnectingMarkerA = null;
+            ConnectingMarkerB = null;
+            Hide();
         }
 
         private void Setup()
@@ -78,8 +83,6 @@ namespace IndustrialPark
                 ConnectingMarkerB = markers.Last();
                 return true;
             }
-
-            MessageBox.Show("You must have exactly 2 markers selected to use Connect Markers.");
 
             return false;
         }
@@ -177,8 +180,11 @@ namespace IndustrialPark
 
         private void buttonCreate_Click(object sender, EventArgs e)
         {
-            if (Program.MainForm.PlaceTemplatesAt(Positions, checkDeleteMarkers.Checked, ConnectingMarkerA, ConnectingMarkerB))
+            if (Program.ArchiveManager.PlaceTemplatesAt(Program.MainForm.CurrentAssetTemplate, Positions))
             {
+                if (checkDeleteMarkers.Checked)
+                    Program.ArchiveManager.DeleteAssets([ConnectingMarkerA, ConnectingMarkerB]);
+
                 Positions.Clear();
                 ConnectingMarkerA = null;
                 ConnectingMarkerB = null;
@@ -186,12 +192,9 @@ namespace IndustrialPark
             }
         }
 
-        private void buttonCancel_Click(object sender, EventArgs e)
+        private void button1_Click(object sender, EventArgs e)
         {
-            Positions.Clear();
-            ConnectingMarkerA = null;
-            ConnectingMarkerB = null;
-            Hide();
+            (ConnectingMarkerA, ConnectingMarkerB) = (ConnectingMarkerB, ConnectingMarkerA);
         }
     }
 }

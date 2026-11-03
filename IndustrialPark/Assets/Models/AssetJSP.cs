@@ -11,19 +11,13 @@ namespace IndustrialPark
 
         public static bool dontRender = false;
 
-        public AssetJSP(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data, renderer) { }
+        public AssetJSP(string assetName, AssetType assetType, byte[] data) : base(assetName, assetType, data) { }
 
-        public AssetJSP(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness, renderer) { }
+        public AssetJSP(Section_AHDR AHDR, Game game) : base(AHDR, game) { }
 
-        public override void Setup(SharpRenderer renderer)
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
-            base.Setup(renderer);
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableJSPs(this);
-        }
-
-        public void CreateTransformMatrix()
-        {
+            base.SetupModel(renderer);
             if (model != null)
                 boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());
         }
@@ -44,8 +38,8 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            ArchiveEditorFunctions.jspInfoNodeInfo.TryGetValue(assetID, out xJSPNodeInfo[] nodeFlags);
-            model.RenderJsp(renderer, Matrix.Identity, isSelected, _dontDrawMeshNumber, nodeFlags);
+            xJSPNodeInfo[] nodeInfos = renderer.Assets.GetFromJspNodeInfos(assetID);
+            model.RenderJsp(renderer, Matrix.Identity, isSelected, _dontDrawMeshNumber, nodeInfos);
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
@@ -70,13 +64,6 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => false;
-
-        public override void ApplyScale(Vector3 factor)
-        {
-            base.ApplyScale(factor);
-            if (model != null)
-                CreateTransformMatrix();
-        }
+        public bool SpecialBlendMode(SharpRenderer renderer) => false;
     }
 }

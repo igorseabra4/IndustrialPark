@@ -165,7 +165,7 @@ namespace IndustrialPark
             Entries_SNDS = new EntrySoundInfo_PS2[0];
         }
 
-        public AssetSNDI_PS2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetSNDI_PS2(Section_AHDR AHDR, Game game) : base(AHDR, game)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
             {

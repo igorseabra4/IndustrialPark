@@ -22,9 +22,9 @@ namespace IndustrialPark
             ResetBounds(Rotation);
         }
 
-        public override SharpMesh Mesh => SharpRenderer.Torus;
-        protected override List<Models.Triangle> triangleList => SharpRenderer.torusTriangles;
-        protected override List<Vector3> vertexList => SharpRenderer.torusVertices;
+        public override SharpMesh Mesh => Program.Renderer.Torus;
+        protected override List<Models.Triangle> triangleList => Program.Renderer.torusTriangles;
+        protected override List<Vector3> vertexList => Program.Renderer.torusVertices;
         protected override bool drawLine => false;
     }
 }

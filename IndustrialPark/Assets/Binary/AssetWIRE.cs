@@ -76,7 +76,6 @@ namespace IndustrialPark
                     Lines[i] = new Line(reader);
 
                 Setup(renderer);
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
             }
         }
 
@@ -195,13 +194,13 @@ namespace IndustrialPark
             vertexBuffer.Dispose();
         }
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => null;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => false;
+        public bool SpecialBlendMode(SharpRenderer renderer) => false;
     }
 }

@@ -1,13 +1,8 @@
 ﻿using HipHopFile;
 using IndustrialPark.Models;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -40,9 +35,8 @@ namespace IndustrialPark
 
         public DynaCObjectSpringBoard(string assetName, Vector3 position) : base(assetName, DynaType.ContextObject_Springboard, position)
         {
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
         }
+
         public DynaCObjectSpringBoard(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ContextObject_Springboard, game, endianness)
         {
             using (var reader = new EndianBinaryReader(AHDR.data, endianness))
@@ -60,9 +54,6 @@ namespace IndustrialPark
                 Size = reader.ReadByte();
 
                 reader.BaseStream.Position += 1;
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
             }
         }
 
@@ -81,26 +72,26 @@ namespace IndustrialPark
             writer.Write(Size);
             writer.Write((byte)0);
         }
-        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
-            world = (renderingDictionary.TryGetValue(ModelID, out IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
+            world = ((renderer.Assets.GetFromRenderingDictionary(ModelID) is IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected override void CreateBoundingBox()
+        protected override void CreateBoundingBox(SharpRenderer renderer)
         {
-            var model = GetFromRenderingDictionary(ModelID);
+            var model = renderer.Assets.GetModelFromRenderingDictionary(ModelID);
             if (model != null)
                 CreateBoundingBox(model.vertexListG, model.triangleList);
             else
-                base.CreateBoundingBox();
+                base.CreateBoundingBox(renderer);
         }
 
         private void CreateBoundingBox(List<Vector3> vertexList, List<RenderWareFile.Triangle> triangleList)
@@ -131,7 +122,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (renderingDictionary.TryGetValue(ModelID, out IAssetWithModel value))
+            if (renderer.Assets.GetFromRenderingDictionary(ModelID) is IAssetWithModel value)
                 value.Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
             else
                 renderer.DrawCube(world, isSelected);

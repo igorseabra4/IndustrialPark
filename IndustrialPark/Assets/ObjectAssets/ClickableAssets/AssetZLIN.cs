@@ -20,19 +20,19 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
         [Category(categoryName)]
@@ -53,29 +53,21 @@ namespace IndustrialPark
         public AssetZLIN(string assetName, Vector3 position) : base(assetName, AssetType.ZipLine, BaseAssetType.ZipLine)
         {
             _position = position;
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
         public AssetZLIN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-                DismountType = reader.ReadByte();
-                reader.BaseStream.Position += 3;
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                HangLength = reader.ReadSingle();
-                Spline = reader.ReadUInt32();
-                Entity = reader.ReadUInt32();
-                Speed = reader.ReadSingle();
-                ZipLineFlags.FlagValueInt = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            DismountType = reader.ReadByte();
+            reader.BaseStream.Position += 3;
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            HangLength = reader.ReadSingle();
+            Spline = reader.ReadUInt32();
+            Entity = reader.ReadUInt32();
+            Speed = reader.ReadSingle();
+            ZipLineFlags.FlagValueInt = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -102,20 +94,20 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.Translation(_position);
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(SharpRenderer renderer)
         {
-            var vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            var vertices = new Vector3[renderer.cubeVertices.Count];
 
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+            for (int i = 0; i < renderer.cubeVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(renderer.cubeVertices[i] * 0.5f, world);
 
             boundingBox = BoundingBox.FromPoints(vertices);
         }
@@ -123,7 +115,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
+                return TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world);
             return null;
         }
 
@@ -166,8 +158,6 @@ namespace IndustrialPark
                 _position.X = transformation._positionX;
                 _position.Y = transformation._positionY;
                 _position.Z = transformation._positionZ;
-
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

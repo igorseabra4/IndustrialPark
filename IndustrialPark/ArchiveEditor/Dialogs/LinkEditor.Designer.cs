@@ -432,7 +432,7 @@
             // 
             // comboSendEvent
             // 
-            comboSendEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            comboSendEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             comboSendEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             comboSendEvent.FormattingEnabled = true;
             comboSendEvent.Location = new System.Drawing.Point(6, 19);
@@ -457,7 +457,7 @@
             // 
             // comboRecieveEvent
             // 
-            comboRecieveEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.SuggestAppend;
+            comboRecieveEvent.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             comboRecieveEvent.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.CustomSource;
             comboRecieveEvent.FormattingEnabled = true;
             comboRecieveEvent.Location = new System.Drawing.Point(6, 19);

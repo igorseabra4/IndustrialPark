@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -57,19 +56,19 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(dynaCategoryName + " Entity Placement")]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(dynaCategoryName + " Entity Placement")]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
         protected float _yaw;
@@ -77,7 +76,7 @@ namespace IndustrialPark
         public AssetSingle Yaw
         {
             get => MathUtil.RadiansToDegrees(_yaw);
-            set { _yaw = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            set => _yaw = MathUtil.DegreesToRadians(value);
         }
 
         protected float _pitch;
@@ -85,7 +84,7 @@ namespace IndustrialPark
         public AssetSingle Pitch
         {
             get => MathUtil.RadiansToDegrees(_pitch);
-            set { _pitch = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            set => _pitch = MathUtil.DegreesToRadians(value);
         }
 
         protected float _roll;
@@ -93,7 +92,7 @@ namespace IndustrialPark
         public AssetSingle Roll
         {
             get => MathUtil.RadiansToDegrees(_roll);
-            set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            set => _roll = MathUtil.DegreesToRadians(value);
         }
 
         protected Vector3 _scale;
@@ -101,19 +100,19 @@ namespace IndustrialPark
         public AssetSingle ScaleX
         {
             get => _scale.X;
-            set { _scale.X = value; CreateTransformMatrix(); }
+            set => _scale.X = value;
         }
         [Category(dynaCategoryName + " Entity Placement")]
         public AssetSingle ScaleY
         {
             get => _scale.Y;
-            set { _scale.Y = value; CreateTransformMatrix(); }
+            set => _scale.Y = value;
         }
         [Category(dynaCategoryName + " Entity Placement")]
         public AssetSingle ScaleZ
         {
             get => _scale.Z;
-            set { _scale.Z = value; CreateTransformMatrix(); }
+            set => _scale.Z = value;
         }
 
         protected Vector4 _color;
@@ -162,7 +161,7 @@ namespace IndustrialPark
         public AssetID Model
         {
             get => _model;
-            set { _model = value; CreateTransformMatrix(); }
+            set => _model = value;
         }
 
         [Category(dynaCategoryName + " Entity References")]
@@ -182,39 +181,31 @@ namespace IndustrialPark
             _position = position;
             _scale = new Vector3(1f);
             _color = new Vector4(1f);
-
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
         }
 
         public DynaEnemy(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = dynaDataStartPosition;
 
-                PseudoAssetID = reader.ReadUInt32();
-                PseudoAssetType = reader.ReadByte();
-                PseudoLinkCount = reader.ReadByte();
-                PseudoBaseFlags.FlagValueShort = reader.ReadUInt16();
-                PseudoVisibilityFlags.FlagValueByte = reader.ReadByte();
-                PseudoTypeFlag = reader.ReadByte();
-                PseudoFlag0A.FlagValueByte = reader.ReadByte();
-                PseudoSolidityFlags.FlagValueByte = reader.ReadByte();
-                Surface = reader.ReadUInt32();
-                _yaw = reader.ReadSingle();
-                _pitch = reader.ReadSingle();
-                _roll = reader.ReadSingle();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                PseudoColorAlphaSpeed = reader.ReadSingle();
-                _model = reader.ReadUInt32();
-                Animation = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            PseudoAssetID = reader.ReadUInt32();
+            PseudoAssetType = reader.ReadByte();
+            PseudoLinkCount = reader.ReadByte();
+            PseudoBaseFlags.FlagValueShort = reader.ReadUInt16();
+            PseudoVisibilityFlags.FlagValueByte = reader.ReadByte();
+            PseudoTypeFlag = reader.ReadByte();
+            PseudoFlag0A.FlagValueByte = reader.ReadByte();
+            PseudoSolidityFlags.FlagValueByte = reader.ReadByte();
+            Surface = reader.ReadUInt32();
+            _yaw = reader.ReadSingle();
+            _pitch = reader.ReadSingle();
+            _roll = reader.ReadSingle();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            PseudoColorAlphaSpeed = reader.ReadSingle();
+            _model = reader.ReadUInt32();
+            Animation = reader.ReadUInt32();
         }
 
         protected void SerializeEntityDyna(EndianBinaryWriter writer)
@@ -250,19 +241,19 @@ namespace IndustrialPark
         public Matrix world { get; private set; }
         private BoundingBox boundingBox;
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
-            world = (renderingDictionary.TryGetValue(_model, out IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
+            world = ((renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(SharpRenderer renderer)
         {
-            var model = GetFromRenderingDictionary(Model);
+            var model = renderer.Assets.GetModelFromRenderingDictionary(Model);
             if (model != null)
             {
                 triangles = model.triangleList;
@@ -271,7 +262,7 @@ namespace IndustrialPark
             else
             {
                 triangles = null;
-                CreateBoundingBox(SharpRenderer.cubeVertices, 0.5f);
+                CreateBoundingBox(renderer.cubeVertices, 0.5f);
             }
         }
 
@@ -304,12 +295,12 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => !renderingDictionary.TryGetValue(_model, out IAssetWithModel value) || value.SpecialBlendMode;
+        public bool SpecialBlendMode(SharpRenderer renderer) => renderer.Assets.GetFromRenderingDictionary(_model) is not IAssetWithModel value || value.SpecialBlendMode(renderer);
 
         public void Draw(SharpRenderer renderer)
         {
             Vector4 Color = new Vector4(ColorRed, ColorGreen, ColorBlue, ColorAlpha);
-            if (renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+            if (renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value)
                 value.Draw(renderer, world, Color, Vector3.Zero, isSelected);
             else
                 renderer.DrawCube(world, isSelected);
@@ -318,7 +309,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world) : TriangleIntersection(ray);
+                return triangles == null ? TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world) : TriangleIntersection(ray);
             return null;
         }
 
@@ -375,7 +366,6 @@ namespace IndustrialPark
                 _scale.X = transformation._scaleX;
                 _scale.Y = transformation._scaleY;
                 _scale.Z = transformation._scaleZ;
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

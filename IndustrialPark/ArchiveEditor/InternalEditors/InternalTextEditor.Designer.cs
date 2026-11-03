@@ -128,14 +128,14 @@
             copyAssetToolStripMenuItem.Name = "copyAssetToolStripMenuItem";
             copyAssetToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             copyAssetToolStripMenuItem.Text = "Copy Asset";
-            copyAssetToolStripMenuItem.Click += copyAssetToolStripMenuItem_Click;
+            copyAssetToolStripMenuItem.Click += copyToolStripMenuItem_Click;
             // 
             // deleteAssetToolStripMenuItem
             // 
             deleteAssetToolStripMenuItem.Name = "deleteAssetToolStripMenuItem";
             deleteAssetToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
             deleteAssetToolStripMenuItem.Text = "Delete Asset";
-            deleteAssetToolStripMenuItem.Click += deleteAssetToolStripMenuItem_Click;
+            deleteAssetToolStripMenuItem.Click += removeToolStripMenuItem_Click;
             // 
             // toolsToolStripMenuItem
             // 
@@ -171,7 +171,6 @@
             ShowIcon = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Asset Data Editor";
-            FormClosing += InternalTextEditor_FormClosing;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             menuStrip1.ResumeLayout(false);

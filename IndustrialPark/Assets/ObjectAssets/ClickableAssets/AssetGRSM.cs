@@ -69,35 +69,30 @@ namespace IndustrialPark
         public DashTrackPortal[] Triangles { get; set; }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         public AssetGRSM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-                var numVertices = reader.ReadUInt32();
-                var numTriangles = reader.ReadUInt32();
+            var numVertices = reader.ReadUInt32();
+            var numTriangles = reader.ReadUInt32();
 
-                MinX = reader.ReadSingle();
-                MinY = reader.ReadSingle();
-                MinZ = reader.ReadSingle();
-                MaxX = reader.ReadSingle();
-                MaxY = reader.ReadSingle();
-                MaxZ = reader.ReadSingle();
+            MinX = reader.ReadSingle();
+            MinY = reader.ReadSingle();
+            MinZ = reader.ReadSingle();
+            MaxX = reader.ReadSingle();
+            MaxY = reader.ReadSingle();
+            MaxZ = reader.ReadSingle();
 
-                Vertices = new GrassMeshVertex[numVertices];
-                for (int i = 0; i < Vertices.Length; i++)
-                    Vertices[i] = new GrassMeshVertex(reader);
+            Vertices = new GrassMeshVertex[numVertices];
+            for (int i = 0; i < Vertices.Length; i++)
+                Vertices[i] = new GrassMeshVertex(reader);
 
-                Triangles = new DashTrackPortal[numTriangles];
-                for (int i = 0; i < Triangles.Length; i++)
-                    Triangles[i] = new DashTrackPortal(reader);
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            Triangles = new DashTrackPortal[numTriangles];
+            for (int i = 0; i < Triangles.Length; i++)
+                Triangles[i] = new DashTrackPortal(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -122,7 +117,7 @@ namespace IndustrialPark
             SerializeLinks(writer);
         }
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
             if (Vertices.Length == 0)
                 boundingBox = new BoundingBox();
@@ -177,7 +172,7 @@ namespace IndustrialPark
             foreach (var v in verticesCT)
                 vertices.Add((Vector3)v.Position);
 
-            Setup(Program.MainForm.renderer, verticesCT);
+            Setup(Program.Renderer, verticesCT);
         }
 
         private void Setup(SharpRenderer renderer, List<VertexColoredTextured> vertices)
@@ -193,7 +188,7 @@ namespace IndustrialPark
             }
 
             mesh = SharpMesh.Create(renderer.device, vertices.ToArray(), indices.ToArray(),
-                new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, SharpRenderer.whiteDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
+                new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, renderer.whiteDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
         }
 
         public float GetDistanceFrom(Vector3 position) => Vector3.Distance(position, boundingBox.Center);

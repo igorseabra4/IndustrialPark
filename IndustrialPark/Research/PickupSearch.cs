@@ -89,8 +89,6 @@ namespace IndustrialPark
 
             var scoobyPlatform = Platform.Unknown;
 
-            ArchiveEditorFunctions.errorDisplay = false;
-
             pickEntries = [];
             foreach ((uint a, uint b) in AssetPICK.pickEntries)
                 pickEntries[a] = b;
@@ -99,14 +97,14 @@ namespace IndustrialPark
             {
                 progressBar1.PerformStep();
 
-                ArchiveEditorFunctions archive = new ArchiveEditorFunctions(null) { SkipTextureDisplay = true };
-                archive.OpenFile(s, false, scoobyPlatform);
-                scoobyPlatform = archive.platform;
+                HipFile hipFile = HipFile.FromPath(s);
+                if (hipFile.platform == Platform.Unknown && scoobyPlatform != Platform.Unknown)
+                    hipFile.platform = scoobyPlatform;
+                var archive = new Archive.Archive(hipFile, s, true, out _);
+                scoobyPlatform = archive.Platform;
                 Check(archive, result, pickEntries);
-                archive.Dispose(false);
+                archive.Dispose();
             }
-
-            ArchiveEditorFunctions.errorDisplay = true;
 
             List<string> output = new List<string>();
 
@@ -129,9 +127,9 @@ namespace IndustrialPark
                 AddFolder(s, ref fileList);
         }
 
-        private void Check(ArchiveEditorFunctions archive, Dictionary<uint, PickupTypeResult> result, Dictionary<uint, uint> pickEntries)
+        private void Check(Archive.Archive archive, Dictionary<uint, PickupTypeResult> result, Dictionary<uint, uint> pickEntries)
         {
-            foreach (AssetPKUP pickup in archive.GetAllAssets().OfType<AssetPKUP>())
+            foreach (AssetPKUP pickup in archive.Assets.OfType<AssetPKUP>())
             {
                 if (!result.ContainsKey(pickup.PickReferenceID))
                     result[pickup.PickReferenceID] = new PickupTypeResult(pickup.PickReferenceID, pickEntries[pickup.PickReferenceID]);
@@ -142,7 +140,7 @@ namespace IndustrialPark
                 ptr.names.Add(pickup.assetName);
                 ptr.values.Add(pickup.PickupValue.ToString());
                 ptr.flags.Add(pickup.PickupFlags.ToString());
-                ptr.files.Add(Path.GetFileNameWithoutExtension(archive.currentlyOpenFilePath));
+                ptr.files.Add(Path.GetFileNameWithoutExtension(archive.CurrentFilePath));
 
                 if (archive.TryGetAsset(ptr.model, out Asset asset) && asset is AssetMODL model)
                     ptr.modelName = model.assetName;

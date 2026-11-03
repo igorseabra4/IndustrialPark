@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using IndustrialPark.RenderData;
+using IndustrialPark.Archive;
 using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 
 namespace IndustrialPark
@@ -17,6 +18,8 @@ namespace IndustrialPark
         public SharpDevice device;
         public SharpCamera Camera = new SharpCamera();
         public SharpFPS sharpFPS;
+
+        public AssetRenderer Assets = new AssetRenderer();
 
         public SharpRenderer(Control control)
         {
@@ -140,16 +143,10 @@ namespace IndustrialPark
         /// </summary>
         private void DrawSelectionOutline()
         {
-            var selectedAssets = new List<IRenderableAsset>();
-
-            lock (ArchiveEditorFunctions.renderableJSPs)
-                foreach (var jsp in ArchiveEditorFunctions.renderableJSPs)
-                    if (jsp.isSelected && jsp.ShouldDraw(this))
-                        selectedAssets.Add(jsp);
-
-            foreach (IRenderableAsset a in renderableAssets)
-                if (a is Asset asset && asset.isSelected)
-                    selectedAssets.Add(a);
+            List<IRenderableAsset> selectedAssets = [
+                .. Assets.GetSelectedJSPs(),
+                .. renderableAssets.Where(a => ((Asset)a).isSelected),
+            ];
 
             if (selectedAssets.Count == 0)
                 return;
@@ -174,6 +171,7 @@ namespace IndustrialPark
 
             device.SetCullModeNone();
             device.SetFillModeDefault();
+            
             device.ApplyRasterState();
             device.SetDepthStateNone();
             device.SetBlendStateAlphaBlend();
@@ -204,9 +202,8 @@ namespace IndustrialPark
             device.UpdateAllStates();
         }
 
-
-        public static ShaderResourceView whiteDefault;
-        public static ShaderResourceView arrowDefault;
+        public ShaderResourceView whiteDefault;
+        public ShaderResourceView arrowDefault;
 
         public void LoadTexture()
         {
@@ -216,32 +213,32 @@ namespace IndustrialPark
                 arrowDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/ArrowDefault.png");
         }
 
-        public static SharpMesh Cube { get; private set; }
-        public static SharpMesh Cylinder { get; private set; }
-        public static SharpMesh Pyramid { get; private set; }
-        public static SharpMesh Sphere { get; private set; }
-        public static SharpMesh Plane { get; private set; }
-        public static SharpMesh Torus { get; private set; }
-        public static SharpMesh Cone { get; private set; }
+        public SharpMesh Cube { get; private set; }
+        public SharpMesh Cylinder { get; private set; }
+        public SharpMesh Pyramid { get; private set; }
+        public SharpMesh Sphere { get; private set; }
+        public SharpMesh Plane { get; private set; }
+        public SharpMesh Torus { get; private set; }
+        public SharpMesh Cone { get; private set; }
 #if DEBUG
-        public static SharpMesh BoundingBox { get; private set; }
-        public static List<Vector3> boundingBoxVertices;
+        public SharpMesh BoundingBox { get; private set; }
+        public List<Vector3> boundingBoxVertices;
 #endif
 
-        public static List<Vector3> cubeVertices;
-        public static List<Models.Triangle> cubeTriangles;
-        public static List<Vector3> cylinderVertices;
-        public static List<Models.Triangle> cylinderTriangles;
-        public static List<Vector3> pyramidVertices;
-        public static List<Models.Triangle> pyramidTriangles;
-        public static List<Vector3> sphereVertices;
-        public static List<Models.Triangle> sphereTriangles;
-        public static List<Vector3> planeVertices;
-        public static List<Models.Triangle> planeTriangles;
-        public static List<Vector3> torusVertices;
-        public static List<Models.Triangle> torusTriangles;
-        public static List<Vector3> coneVertices;
-        public static List<Models.Triangle> coneTriangles;
+        public List<Vector3> cubeVertices;
+        public List<Models.Triangle> cubeTriangles;
+        public List<Vector3> cylinderVertices;
+        public List<Models.Triangle> cylinderTriangles;
+        public List<Vector3> pyramidVertices;
+        public List<Models.Triangle> pyramidTriangles;
+        public List<Vector3> sphereVertices;
+        public List<Models.Triangle> sphereTriangles;
+        public List<Vector3> planeVertices;
+        public List<Models.Triangle> planeTriangles;
+        public List<Vector3> torusVertices;
+        public List<Models.Triangle> torusTriangles;
+        public List<Vector3> coneVertices;
+        public List<Models.Triangle> coneTriangles;
 
         public void LoadModels(bool tiny = false)
         {
@@ -525,7 +522,7 @@ namespace IndustrialPark
             device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer.Buffer);
             tintedShader.Apply();
 
-            device.DeviceContext.PixelShader.SetShaderResource(0, TextureManager.GetTextureFromDictionary(textureAssetID));
+            device.DeviceContext.PixelShader.SetShaderResource(0, Program.TextureManager.GetTextureFromDictionary(textureAssetID));
 
             Plane.Draw(device);
         }
@@ -590,7 +587,7 @@ namespace IndustrialPark
         }
 
         public Matrix viewProjection;
-        public static Color4 backgroundColor;
+        public Color4 backgroundColor;
         public static Color4 defaultBackgroundColor => new Color4(0.05f, 0.05f, 0.15f, 1f);
 
         public BoundingFrustum frustum;
@@ -598,12 +595,12 @@ namespace IndustrialPark
         public bool isDrawingUI = false;
         public HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
         public const float DefaultLODTDistance = 10000f;
-        public static bool RenderVertexColors = true;
+        public bool RenderVertexColors = true;
 
         public bool allowRender = true;
 
-        private static AssetFOG _fog;
-        public static AssetFOG Fog
+        private AssetFOG _fog;
+        public AssetFOG Fog
         {
             get => _fog;
             set
@@ -668,7 +665,7 @@ namespace IndustrialPark
             debugSelectedObjects.Clear();
 #endif
 
-            if (!AssetFOG.DontRender && SharpRenderer.Fog != null)
+            if (!AssetFOG.DontRender && Fog != null)
                 Camera.FarPlane = (float)Fog.EndDistance;
 
             if (allowRender)
@@ -684,12 +681,14 @@ namespace IndustrialPark
                         device.SetDefaultDepthState();
                         device.UpdateAllStates();
 
-                        lock (ArchiveEditorFunctions.renderableAssets)
+                        lock (Assets.GetRenderableAssets())
+                        {
                             foreach (IRenderableAsset a in
-                            (from IRenderableAsset asset in ArchiveEditorFunctions.renderableAssets
+                            (from IRenderableAsset asset in Assets.GetRenderableAssets()
                              where (asset is AssetUI || asset is AssetUIFT) && asset.ShouldDraw(this)
                              select (IClickableAsset)asset).OrderBy(f => -f.PositionZ))
                                 a.Draw(this);
+                        }
                     }
                     else
                     {
@@ -706,13 +705,13 @@ namespace IndustrialPark
 
                         device.SetFillModeDefault();
 
-                        lock (ArchiveEditorFunctions.renderableJSPs)
-                            foreach (var a in ArchiveEditorFunctions.renderableJSPs)
+                        lock (Assets.GetRenderableJSPs())
+                            foreach (var a in Assets.GetRenderableJSPs().ToList())
                                 if (a.ShouldDraw(this))
                                     a.Draw(this);
 
-                        lock (ArchiveEditorFunctions.renderableAssets)
-                            foreach (IRenderableAsset a in ArchiveEditorFunctions.renderableAssets)
+                        lock (Assets.GetRenderableAssets())
+                            foreach (IRenderableAsset a in Assets.GetRenderableAssets().ToList())
                             {
                                 if (a.ShouldDraw(this))
                                     renderableAssets.Add(a);
@@ -725,7 +724,7 @@ namespace IndustrialPark
                         var renderableAssetsTrans = new HashSet<IRenderableAsset>();
 
                         foreach (IRenderableAsset a in renderableAssets)
-                            if (a.SpecialBlendMode)
+                            if (a.SpecialBlendMode(this))
                                 renderableAssetsTrans.Add(a);
                             else
                                 a.Draw(this);
@@ -770,7 +769,7 @@ namespace IndustrialPark
 
             arrowDefault.Dispose();
             whiteDefault.Dispose();
-            TextureManager.DisposeTextures();
+            Program.TextureManager.DisposeTextures();
 
             GizmoBase.VertexBuffer.Dispose();
             AssetCAM.CamVertexBuffer.Dispose();
@@ -780,6 +779,7 @@ namespace IndustrialPark
             Cylinder.Dispose();
             Sphere.Dispose();
             Plane.Dispose();
+            Cone.Dispose();
 
             basicBuffer.Dispose();
             basicShader.Dispose();
@@ -801,12 +801,10 @@ namespace IndustrialPark
             outlinePixelShader.Dispose();
 
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
-                if (mesh != null)
-                    mesh.Dispose();
+                mesh?.Dispose();
 
             foreach (var bf in completeVertexBufferList)
-                if (bf != null)
-                    bf.Dispose();
+                bf?.Dispose();
 
             device.Dispose();
         }

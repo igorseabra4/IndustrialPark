@@ -142,19 +142,17 @@ namespace IndustrialPark
 
         private void Read(byte[] data, Endianness endianness)
         {
-            using (var reader = new EndianBinaryReader(data, endianness))
-            {
-                reader.BaseStream.Position = 0x04;
-                Group = reader.ReadUInt32();
-                int lightCount = reader.ReadInt32();
-                reader.ReadInt32();
-                if (game >= Game.ROTU)
-                    Blended = reader.ReadInt32();
-                Lights = new LightKitLight[lightCount];
+            using var reader = new EndianBinaryReader(data, endianness);
+            reader.BaseStream.Position = 0x04;
+            Group = reader.ReadUInt32();
+            int lightCount = reader.ReadInt32();
+            reader.ReadInt32();
+            if (game >= Game.ROTU)
+                Blended = reader.ReadInt32();
+            Lights = new LightKitLight[lightCount];
 
-                for (int i = 0; i < lightCount; i++)
-                    Lights[i] = new LightKitLight(reader);
-            }
+            for (int i = 0; i < lightCount; i++)
+                Lights[i] = new LightKitLight(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

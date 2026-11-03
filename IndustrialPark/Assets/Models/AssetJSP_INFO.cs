@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
 using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
@@ -24,36 +25,20 @@ namespace IndustrialPark
         [Category(categoryName)]
         public HI_Tags_BEEF04 Section4 { get; set; }
 
-        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Endianness endianness, AssetJSP[] jspAssets) : base(AHDR, game)
+        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
         {
-            JSP_AssetIDs = jspAssets.Select(j => (AssetID)j.assetID).ToArray();
+            using var reader = new EndianBinaryReader(AHDR.data, Endianness.Little);
+            Section1 = new HI_Tags_BEEF01(reader, game);
 
-            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
-            {
-                Section1 = new HI_Tags_BEEF01(reader, game);
+            renderWareVersion = Section1.RenderWareVersion;
 
-                renderWareVersion = Section1.RenderWareVersion;
+            Section2 = new HI_Tags_BEEF02(reader, endianness);
 
-                Section2 = new HI_Tags_BEEF02(reader, endianness);
-                int done = 0;
-                if (jspAssets.Sum(j => j.AtomicFlags.Length) == Section2.jspNodeList.Length)
-                {
-                    foreach (AssetJSP jsp in jspAssets.Reverse())
-                    {
-                        xJSPNodeInfo[] entries = new xJSPNodeInfo[jsp.AtomicFlags.Length];
-                        for (int i = 0; i < entries.Length; i++)
-                            entries[i] = Section2.jspNodeList[done + i];
-                        done += entries.Length;
-                        ArchiveEditorFunctions.AddToJspNodeInfo(jsp.assetID, entries.Reverse().ToArray());
-                    }
-                }
+            if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF03)
+                Section3 = new HI_Tags_BEEF03(reader);
 
-                if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF03)
-                    Section3 = new HI_Tags_BEEF03(reader);
-
-                if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF04)
-                    Section4 = new HI_Tags_BEEF04(reader, endianness);
-            }
+            if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF04)
+                Section4 = new HI_Tags_BEEF04(reader, endianness);
         }
 
         public AssetJSP_INFO(string assetName, Game game, Platform platform) : base(assetName, AssetType.JSPInfo)
@@ -67,6 +52,24 @@ namespace IndustrialPark
 
             if (game >= Game.Incredibles)
                 Section4 = new HI_Tags_BEEF04(platform);
+        }
+
+        public IEnumerable<(uint jspAssetID, xJSPNodeInfo[] nodeInfo)> SetJspAssets(AssetJSP[] jspAssets)
+        {
+            JSP_AssetIDs = [.. jspAssets.Select(j => (AssetID)j.assetID)];
+
+            int done = 0;
+            if (jspAssets.Sum(j => j.AtomicFlags.Length) == Section2.jspNodeList.Length)
+            {
+                foreach (AssetJSP jsp in jspAssets.Reverse())
+                {
+                    xJSPNodeInfo[] entries = new xJSPNodeInfo[jsp.AtomicFlags.Length];
+                    for (int i = 0; i < entries.Length; i++)
+                        entries[i] = Section2.jspNodeList[done + i];
+                    done += entries.Length;
+                    yield return (jsp.assetID, entries.Reverse().ToArray());
+                }
+            }
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

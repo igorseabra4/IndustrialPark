@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -37,19 +38,19 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
         [Category(categoryName)]
         public AssetSingle NormalizedForwardX { get; set; }
@@ -166,59 +167,51 @@ namespace IndustrialPark
                 ValidFlags.FlagValueInt = 0x0001018F;
                 CamType = CamType.Static;
             }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
         public AssetCAM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
+
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            NormalizedForwardX = reader.ReadSingle();
+            NormalizedForwardY = reader.ReadSingle();
+            NormalizedForwardZ = reader.ReadSingle();
+            NormalizedUpX = reader.ReadSingle();
+            NormalizedUpY = reader.ReadSingle();
+            NormalizedUpZ = reader.ReadSingle();
+            NormalizedLeftX = reader.ReadSingle();
+            NormalizedLeftY = reader.ReadSingle();
+            NormalizedLeftZ = reader.ReadSingle();
+            ViewOffsetX = reader.ReadSingle();
+            ViewOffsetY = reader.ReadSingle();
+            ViewOffsetZ = reader.ReadSingle();
+            OffsetStartFrames = reader.ReadInt16();
+            OffsetEndFrames = reader.ReadInt16();
+            FieldOfView = reader.ReadSingle();
+            TransitionTime = reader.ReadSingle();
+            TransitionType = (CamTransitionType)reader.ReadInt32();
+            CamFlags.FlagValueInt = reader.ReadUInt32();
+            FadeUp = reader.ReadSingle();
+            FadeDown = reader.ReadSingle();
+
+            reader.BaseStream.Position = 0x78;
+            ValidFlags.FlagValueInt = reader.ReadUInt32();
+            Marker1 = reader.ReadUInt32();
+            Marker2 = reader.ReadUInt32();
+            _camType = (CamType)reader.ReadByte();
+
+            reader.BaseStream.Position = 0x60;
+            CamSpecific = _camType switch
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                NormalizedForwardX = reader.ReadSingle();
-                NormalizedForwardY = reader.ReadSingle();
-                NormalizedForwardZ = reader.ReadSingle();
-                NormalizedUpX = reader.ReadSingle();
-                NormalizedUpY = reader.ReadSingle();
-                NormalizedUpZ = reader.ReadSingle();
-                NormalizedLeftX = reader.ReadSingle();
-                NormalizedLeftY = reader.ReadSingle();
-                NormalizedLeftZ = reader.ReadSingle();
-                ViewOffsetX = reader.ReadSingle();
-                ViewOffsetY = reader.ReadSingle();
-                ViewOffsetZ = reader.ReadSingle();
-                OffsetStartFrames = reader.ReadInt16();
-                OffsetEndFrames = reader.ReadInt16();
-                FieldOfView = reader.ReadSingle();
-                TransitionTime = reader.ReadSingle();
-                TransitionType = (CamTransitionType)reader.ReadInt32();
-                CamFlags.FlagValueInt = reader.ReadUInt32();
-                FadeUp = reader.ReadSingle();
-                FadeDown = reader.ReadSingle();
-
-                reader.BaseStream.Position = 0x78;
-                ValidFlags.FlagValueInt = reader.ReadUInt32();
-                Marker1 = reader.ReadUInt32();
-                Marker2 = reader.ReadUInt32();
-                _camType = (CamType)reader.ReadByte();
-
-                reader.BaseStream.Position = 0x60;
-                CamSpecific = _camType switch
-                {
-                    CamType.Follow => new CamSpecific_Follow(reader),
-                    CamType.Shoulder => new CamSpecific_Shoulder(reader),
-                    CamType.Static => new CamSpecific_Static(reader),
-                    CamType.Path => new CamSpecific_Path(reader),
-                    CamType.StaticFollow => new CamSpecific_StaticFollow(reader),
-                    _ => new CamSpecific_Other(reader),
-                };
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+                CamType.Follow => new CamSpecific_Follow(reader),
+                CamType.Shoulder => new CamSpecific_Shoulder(reader),
+                CamType.Static => new CamSpecific_Static(reader),
+                CamType.Path => new CamSpecific_Path(reader),
+                CamType.StaticFollow => new CamSpecific_StaticFollow(reader),
+                _ => new CamSpecific_Other(reader),
+            };
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -267,7 +260,7 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         public override void Verify(ref List<string> result)
         {
@@ -299,7 +292,7 @@ namespace IndustrialPark
                 0f, 0f, 0f, 1f);
         }
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
             var left = new Vector3(NormalizedLeftX, NormalizedLeftY, NormalizedLeftZ);
             left.Normalize();
@@ -319,15 +312,15 @@ namespace IndustrialPark
                 Matrix.Scaling(new Vector3(4f, 3f, 3f) / 8f) *
                 rotation *
                 Matrix.Translation(_position);
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(SharpRenderer renderer)
         {
-            var vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+            var vertices = new Vector3[renderer.pyramidVertices.Count];
 
-            for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
+            for (int i = 0; i < renderer.pyramidVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(renderer.pyramidVertices[i], world);
 
             boundingBox = BoundingBox.FromPoints(vertices);
         }
@@ -335,7 +328,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
+                return TriangleIntersection(ray, renderer.pyramidTriangles, renderer.pyramidVertices, world);
             return null;
         }
 
@@ -422,8 +415,6 @@ namespace IndustrialPark
             NormalizedLeftX = left.X;
             NormalizedLeftY = left.Y;
             NormalizedLeftZ = left.Z;
-
-            CreateTransformMatrix();
         }
     }
 }

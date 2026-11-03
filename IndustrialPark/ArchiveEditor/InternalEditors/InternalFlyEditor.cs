@@ -6,10 +6,9 @@ namespace IndustrialPark
 {
     public partial class InternalFlyEditor : InternalEditor
     {
-        public InternalFlyEditor(AssetFLY asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
+        public InternalFlyEditor(AssetFLY asset, ArchiveEditor archive) : base(asset, archive)
         {
             InitializeComponent();
-
             UpdateListbox();
         }
 
@@ -21,7 +20,7 @@ namespace IndustrialPark
 
         private new AssetFLY asset => (AssetFLY)base.asset;
 
-        private void InternalDynaEditor_FormClosing(object sender, FormClosingEventArgs e)
+        private void InternalFlyEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (recording || playing)
             {
@@ -29,14 +28,8 @@ namespace IndustrialPark
             }
             else
             {
-                Program.MainForm.renderer.StopFly();
-                archive.CloseInternalEditor(this);
+                Program.Renderer.StopFly();
             }
-        }
-
-        private void buttonFindCallers_Click(object sender, EventArgs e)
-        {
-            Program.MainForm.FindWhoTargets(GetAssetID());
         }
 
         private void UpdateListbox()
@@ -64,7 +57,7 @@ namespace IndustrialPark
                     maxFrame = entry.FrameNumber;
             }
             asset.Frames = entries.ToArray();
-            archive.UnsavedChanges = true;
+            asset.InvokePropertyChanged(true);
 
             UpdateListbox();
 
@@ -90,9 +83,9 @@ namespace IndustrialPark
         private void buttonAdd_Click(object sender, EventArgs e)
         {
             var entry = new FlyFrame() { FrameNumber = listBoxFlyEntries.Items.Count };
-            SetViewToFly(entry);
+            SetFlyToView(entry);
             listBoxFlyEntries.Items.Add(entry);
-            updateListView(asset);
+            UpdateAssetEntries();
         }
 
         private void buttonRemove_Click(object sender, EventArgs e)
@@ -102,33 +95,32 @@ namespace IndustrialPark
                 listBoxFlyEntries.Items.RemoveAt(listBoxFlyEntries.SelectedIndex);
                 UpdateAssetEntries();
             }
-            updateListView(asset);
         }
 
         private void propertyGridSpecific_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
-            RefreshPropertyGrid();
+            asset.InvokePropertyChanged(true);
         }
 
         private void buttonGetView_Click(object sender, EventArgs e)
         {
             if (listBoxFlyEntries.SelectedIndex != -1)
-                SetViewToFly((FlyFrame)propertyGridSpecific.SelectedObject);
-            RefreshPropertyGrid();
+                SetFlyToView((FlyFrame)propertyGridSpecific.SelectedObject);
+            asset.InvokePropertyChanged(true);
         }
 
-        private void SetViewToFly(FlyFrame entry)
+        private void SetFlyToView(FlyFrame entry)
         {
-            entry.CameraPosition = Program.MainForm.renderer.Camera.Position;
-            entry.CameraNormalizedRight = Program.MainForm.renderer.Camera.Right;
-            entry.CameraNormalizedUp = Program.MainForm.renderer.Camera.Up;
-            entry.CameraNormalizedBackward = -Program.MainForm.renderer.Camera.Forward;
+            entry.CameraPosition = Program.Renderer.Camera.Position;
+            entry.CameraNormalizedRight = Program.Renderer.Camera.Right;
+            entry.CameraNormalizedUp = Program.Renderer.Camera.Up;
+            entry.CameraNormalizedBackward = -Program.Renderer.Camera.Forward;
         }
 
         private void buttonView_Click(object sender, EventArgs e)
         {
             if (propertyGridSpecific.SelectedObject is FlyFrame flyEntry)
-                Program.MainForm.renderer.Camera.SetPositionFlyEntry(flyEntry);
+                Program.Renderer.Camera.SetPositionFlyEntry(flyEntry);
         }
 
         private bool playing = false;
@@ -159,7 +151,7 @@ namespace IndustrialPark
                 buttonGetPos.Enabled = false;
                 buttonView.Enabled = false;
 
-                Program.MainForm.renderer.PlayFly(this);
+                Program.Renderer.PlayFly(this);
             }
         }
 
@@ -187,7 +179,7 @@ namespace IndustrialPark
                 buttonView.Enabled = false;
 
                 recording = true;
-                Program.MainForm.renderer.RecordFly(this);
+                Program.Renderer.RecordFly(this);
                 buttonRecord.Text = "Stop Recording";
             }
         }
@@ -199,7 +191,7 @@ namespace IndustrialPark
 
             currentFrame = 0;
             labelFrame.Text = "";
-            Program.MainForm.renderer.StopFly();
+            Program.Renderer.StopFly();
         }
 
         private int currentFrame = 0;
@@ -212,7 +204,7 @@ namespace IndustrialPark
             {
                 if (entry.FrameNumber == currentFrame)
                 {
-                    Program.MainForm.renderer.Camera.SetPositionFlyEntry(entry);
+                    Program.Renderer.Camera.SetPositionFlyEntry(entry);
                     break;
                 }
             }
@@ -236,7 +228,7 @@ namespace IndustrialPark
                 ApertureY = 0.735f,
                 Focal = 26.69057f
             };
-            SetViewToFly(newFly);
+            SetFlyToView(newFly);
 
             var lastIndex = listBoxFlyEntries.Items.Count - 1;
 
@@ -247,11 +239,6 @@ namespace IndustrialPark
                     listBoxFlyEntries.Items.Add(newFly);
                 labelFrame.Text = "Frame: " + newFly.FrameNumber;
             }
-        }
-
-        private void buttonHelp_Click(object sender, EventArgs e)
-        {
-            ArchiveEditorFunctions.OpenWikiPage(asset);
         }
     }
 }

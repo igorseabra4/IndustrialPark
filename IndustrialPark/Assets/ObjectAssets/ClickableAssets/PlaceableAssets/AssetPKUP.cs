@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using SharpDX;
 using System;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -34,12 +34,14 @@ namespace IndustrialPark
         [Category(categoryName)]
         public short PickupValue { get; set; }
 
+        public static bool persistentShinies = true;
+
         public AssetPKUP(string assetName, Game game, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Pickup, BaseAssetType.Pickup, position)
         {
             if (game >= Game.Incredibles)
                 Model = 0x94E25463;
             else
-                Model = pkupsMinfName;
+                Model = AssetFactory.pkupsMinfName;
 
             if (game != Game.Scooby)
                 PickupFlags = EPickupFlags.InitiallyVisible;
@@ -263,8 +265,6 @@ namespace IndustrialPark
             }
 
             Shape = BitConverter.GetBytes(PickReferenceID)[3];
-
-            CreateTransformMatrix();
         }
 
         public AssetPKUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
@@ -295,9 +295,9 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID PickupModel => AssetPICK.pickEntries.TryGetValue(PickReferenceID, out uint value) ? value : PickReferenceID;
 
-        protected override void CreateBoundingBox()
+        protected override void CreateBoundingBox(SharpRenderer renderer)
         {
-            var model = GetFromRenderingDictionary(PickupModel);
+            var model = renderer.Assets.GetModelFromRenderingDictionary(PickupModel);
             if (model != null)
             {
                 var vertexList = model.vertexListG;
@@ -311,9 +311,9 @@ namespace IndustrialPark
                 return;
             }
 
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = Vector3.TransformCoordinate(SharpRenderer.cubeVertices[i] * 0.5f, world);
+            vertices = new Vector3[renderer.cubeVertices.Count];
+            for (int i = 0; i < renderer.cubeVertices.Count; i++)
+                vertices[i] = Vector3.TransformCoordinate(renderer.cubeVertices[i] * 0.5f, world);
             boundingBox = BoundingBox.FromPoints(vertices);
 
             triangles = null;
@@ -321,17 +321,17 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (renderingDictionary.TryGetValue(PickupModel, out IAssetWithModel value))
+            if (renderer.Assets.GetFromRenderingDictionary(PickupModel) is IAssetWithModel value)
                 value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Browsable(false)]
-        public override bool SpecialBlendMode =>
+        public override bool SpecialBlendMode(SharpRenderer renderer) =>
             !AssetPICK.pickEntries.TryGetValue(PickReferenceID, out uint modelID) ||
-            !renderingDictionary.TryGetValue(modelID, out IAssetWithModel value) ||
-            value.SpecialBlendMode;
+            renderer.Assets.GetFromRenderingDictionary(modelID) is not IAssetWithModel value ||
+            value.SpecialBlendMode(renderer);
 
         public override Matrix PlatLocalRotation()
         {

@@ -54,11 +54,10 @@ namespace IndustrialPark
             foreach (string s in fileList)
             {
                 progressBar1.PerformStep();
-
-                ArchiveEditorFunctions archive = new ArchiveEditorFunctions(null) { SkipTextureDisplay = true };
-                archive.OpenFile(s, false, Platform.Unknown);
+                HipFile hipFile = HipFile.FromPath(s);
+                var archive = new Archive.Archive(hipFile, s, true, out _);
                 Check(archive, ref dynas);
-                archive.Dispose(false);
+                archive.Dispose();
             }
 
             List<string> output = new List<string>();
@@ -80,9 +79,9 @@ namespace IndustrialPark
                 AddFolder(s, ref fileList);
         }
 
-        private void Check(ArchiveEditorFunctions archive, ref Dictionary<(DynaType, int), int> dynas)
+        private void Check(Archive.Archive archive, ref Dictionary<(DynaType, int), int> dynas)
         {
-            foreach (Asset asset in archive.GetAllAssets())
+            foreach (Asset asset in archive.Assets)
                 if (asset is AssetDYNA dyna)
                     try
                     {

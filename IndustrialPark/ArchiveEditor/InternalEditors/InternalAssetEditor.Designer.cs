@@ -37,6 +37,7 @@
             copyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            copyHierarchyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             tableLayoutPanel1.SuspendLayout();
             menuStrip1.SuspendLayout();
             SuspendLayout();
@@ -83,7 +84,7 @@
             // 
             // assetToolStripMenuItem
             // 
-            assetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { editHeaderToolStripMenuItem, viewToolStripMenuItem, copyToolStripMenuItem, removeToolStripMenuItem });
+            assetToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { editHeaderToolStripMenuItem, viewToolStripMenuItem, copyToolStripMenuItem, copyHierarchyToolStripMenuItem, removeToolStripMenuItem });
             assetToolStripMenuItem.Name = "assetToolStripMenuItem";
             assetToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
             assetToolStripMenuItem.Text = "Edit";
@@ -91,28 +92,28 @@
             // editHeaderToolStripMenuItem
             // 
             editHeaderToolStripMenuItem.Name = "editHeaderToolStripMenuItem";
-            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            editHeaderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             editHeaderToolStripMenuItem.Text = "Edit Header";
             editHeaderToolStripMenuItem.Click += editHeaderToolStripMenuItem_Click;
             // 
             // viewToolStripMenuItem
             // 
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            viewToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            viewToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             viewToolStripMenuItem.Text = "View Asset";
             viewToolStripMenuItem.Click += viewToolStripMenuItem_Click;
             // 
             // copyToolStripMenuItem
             // 
             copyToolStripMenuItem.Name = "copyToolStripMenuItem";
-            copyToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            copyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             copyToolStripMenuItem.Text = "Copy Asset";
             copyToolStripMenuItem.Click += copyToolStripMenuItem_Click;
             // 
             // removeToolStripMenuItem
             // 
             removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            removeToolStripMenuItem.Size = new System.Drawing.Size(138, 22);
+            removeToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             removeToolStripMenuItem.Text = "Delete Asset";
             removeToolStripMenuItem.Click += removeToolStripMenuItem_Click;
             // 
@@ -121,6 +122,13 @@
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 20);
             toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // copyHierarchyToolStripMenuItem
+            // 
+            copyHierarchyToolStripMenuItem.Name = "copyHierarchyToolStripMenuItem";
+            copyHierarchyToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            copyHierarchyToolStripMenuItem.Text = "Copy + Hierarchy";
+            copyHierarchyToolStripMenuItem.Click += copyHierarchyToolStripMenuItem_Click;
             // 
             // InternalAssetEditor
             // 
@@ -135,7 +143,6 @@
             ShowIcon = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Asset Data Editor";
-            FormClosing += InternalAssetEditor_FormClosing;
             tableLayoutPanel1.ResumeLayout(false);
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
@@ -154,5 +161,6 @@
         private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editHeaderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyHierarchyToolStripMenuItem;
     }
 }

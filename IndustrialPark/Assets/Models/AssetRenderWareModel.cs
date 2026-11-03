@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using IndustrialPark.Models.CollisionTree;
 using RenderWareFile;
 using RenderWareFile.Sections;
@@ -8,30 +9,26 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace IndustrialPark
 {
-    public class AssetRenderWareModel : AssetWithData
+    public abstract class AssetRenderWareModel : AssetWithData, IDisposableAsset
     {
         protected RenderWareModelFile model;
 
         public override string AssetInfo => $"{renderWareVersion} {(IsNativeData ? "native" : "")} {base.AssetInfo}";
 
-        public AssetRenderWareModel(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data)
+        protected AssetRenderWareModel(string assetName, AssetType assetType, byte[] data) : base(assetName, assetType, data)
         {
-            Setup(renderer);
         }
 
-        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game)
+        protected AssetRenderWareModel(Section_AHDR AHDR, Game game) : base(AHDR, game)
         {
-            Setup(renderer);
         }
 
-        public virtual void Setup(SharpRenderer renderer)
+        public virtual void SetupModel(SharpRenderer renderer)
         {
-            if (model != null)
-                model.Dispose();
+            model?.Dispose();
             if (renderer == null)
                 return;
 
@@ -57,7 +54,12 @@ namespace IndustrialPark
 #endif
         }
 
-        public RenderWareModelFile GetRenderWareModelFile() => model;
+        public void Dispose()
+        {
+            model?.Dispose();
+        }
+
+        public RenderWareModelFile GetRenderWareModelFile(AssetRenderer rendererA) => model;
 
         [Browsable(false)]
         public bool IsNativeData => model != null && model.isNativeData;
@@ -140,10 +142,10 @@ namespace IndustrialPark
                 result.Add("Failed to read MODL asset. This might be just a library error and does not necessarily mean the model is broken.");
 
             foreach (string s in Textures)
-                if (!(Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3")) || Program.MainForm.AssetExists(Functions.BKDRHash(s))))
+                if (!(Program.NameRepository.AssetExists(new AssetID(s)) || Program.NameRepository.AssetExists(new AssetID(s + ".RW3"))))
                     result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
 
-            if (Program.MainForm.WhoTargets(assetID).Count == 0)
+            if (!AssetService.WhoTargets(assetID).Any())
                 result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
         }
 
@@ -156,10 +158,7 @@ namespace IndustrialPark
         }
 
         private RWVersion renderWareVersion;
-        public RWVersion RenderWareVersion
-        {
-            get { return renderWareVersion; }
-        }
+        public RWVersion RenderWareVersion => renderWareVersion;
 
         public RWSection[] ModelAsRWSections
         {
@@ -183,7 +182,7 @@ namespace IndustrialPark
                 Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
 
                 model.Dispose();
-                Setup(Program.MainForm.renderer);
+                SetupModel(Program.Renderer);
             }
         }
 
@@ -257,7 +256,7 @@ namespace IndustrialPark
                     }
 
                 ModelAsRWSections = sections;
-                Setup(Program.MainForm.renderer);
+                SetupModel(Program.Renderer);
             }
         }
 
@@ -336,7 +335,7 @@ namespace IndustrialPark
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
             if (Program.MainForm != null)
-                Setup(Program.MainForm.renderer);
+                SetupModel(Program.Renderer);
         }
 
         public void RemoveCollisionTree()
@@ -479,7 +478,7 @@ namespace IndustrialPark
                 }
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            Setup(Program.Renderer);
+            SetupModel(Program.Renderer);
         }
 
         private void StripClump(Clump_0010 clump)

@@ -394,161 +394,55 @@ namespace IndustrialPark
 
             IsMovingGizmo = false;
 
-            // deselect all gizmos, save new positions to undo buffer, clear caches
+            // deselect all gizmos, call asset property changed, clear caches
 
             totalDistanceMoved = Vector3.Zero;
 
-            var actions = new List<IReversibleAction>();
+            var archives = Program.ArchiveEditors.Where(ae => ae.HasSelectedAssets);
+            foreach (var ae in archives)
+                ae.BeginTransaction();
 
             switch (CurrentGizmoMode)
             {
                 case GizmoMode.Position:
-                    foreach (PositionGizmo g in positionGizmos)
+                case GizmoMode.PositionLocal:
+                    var posGizmo = positionGizmos.FirstOrDefault(g => g.isSelected);
+                    if (posGizmo != null)
                     {
-                        if (!g.isSelected)
-                            continue;
-                        g.isSelected = false;
-                        foreach (var a in currentlyMoving)
+                        posGizmo.isSelected = false;
+                        foreach (Asset a in currentlyMoving.Cast<Asset>())
+                            a.InvokePropertyChanged(false);
+                    }
+                    if (CurrentGizmoMode == GizmoMode.PositionLocal)
+                    {
+                        var trgPosGizmo = triggerPositionGizmos.FirstOrDefault(g => g.isSelected);
+                        if (trgPosGizmo != null)
                         {
-                            var archive = ArchiveEditorFunctions.ArchiveContainingAsset((Asset)a);
-                            archive.RefreshAssetEditor(a.assetID);
-                            switch (g.Type)
-                            {
-                                case GizmoType.X:
-                                    actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionX", originalPositions[a.assetID].X, a.PositionX));
-                                    break;
-                                case GizmoType.Y:
-                                    actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionY", originalPositions[a.assetID].Y, a.PositionY));
-                                    break;
-                                case GizmoType.Z:
-                                    actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionZ", originalPositions[a.assetID].Z, a.PositionZ));
-                                    break;
-                            }
-                            if (a is AssetTRIG trig)
-                            {
-                                if (trig.Shape == TriggerShape.Box)
-                                {
-                                    AddToActionsBoxMovement(archive, trig, g.Type, actions);
-                                }
-                                else
-                                {
-                                    switch (g.Type)
-                                    {
-                                        case GizmoType.X:
-                                            actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumX", originalPositions[a.assetID].X, a.PositionX));
-                                            break;
-                                        case GizmoType.Y:
-                                            actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumY", originalPositions[a.assetID].Y, a.PositionY));
-                                            break;
-                                        case GizmoType.Z:
-                                            actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumZ", originalPositions[a.assetID].Z, a.PositionZ));
-                                            break;
-                                    }
-                                }
-                            }
-                            else if (a is AssetVOLU volu)
-                            {
-                                AddToActionsBoxMovement(archive, volu, g.Type, actions);
-                            }
-                            archive.UnsavedChanges = true;
+                            trgPosGizmo.isSelected = false;
+                            foreach (Asset a in currentlyMovingBoxes.Cast<Asset>())
+                                a.InvokePropertyChanged(false);
                         }
                     }
                     break;
                 case GizmoMode.Rotation:
-                    foreach (RotationGizmo g in rotationGizmos)
-                    {
-                        if (!g.isSelected)
-                            continue;
-                        g.isSelected = false;
-                        foreach (var a in currentlyRotating)
-                        {
-                            var archive = ArchiveEditorFunctions.ArchiveContainingAsset((Asset)a);
-                            archive.RefreshAssetEditor(((Asset)a).assetID);
-                            var og = originalPositions[((Asset)a).assetID];
-                            if (og.X != a.Yaw)
-                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "Yaw", og.X, a.Yaw));
-                            if (og.Y != a.Pitch)
-                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "Pitch", og.Y, a.Pitch));
-                            if (og.Z != a.Roll)
-                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "Roll", og.Z, a.Roll));
-                            archive.UnsavedChanges = true;
-                        }
-                        foreach (var cam in currentlyRotatingCameras)
-                        {
-                            var archive = ArchiveEditorFunctions.ArchiveContainingAsset(cam);
-                            archive.RefreshAssetEditor(cam.assetID);
-                            var (Forward, Up, Left) = originalRotationsCameras[cam.assetID];
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedForwardX", Forward.X, cam.NormalizedForwardX));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedForwardY", Forward.Y, cam.NormalizedForwardY));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedForwardZ", Forward.Z, cam.NormalizedForwardZ));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedLeftX", Left.X, cam.NormalizedLeftX));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedLeftY", Left.Y, cam.NormalizedLeftY));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedLeftZ", Left.Z, cam.NormalizedLeftZ));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedUpX", Up.X, cam.NormalizedUpX));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedUpY", Up.Y, cam.NormalizedUpY));
-                            actions.Add(new AssetPropertyChangedAction(archive, cam, "NormalizedUpZ", Up.Z, cam.NormalizedUpZ));
-                            archive.UnsavedChanges = true;
-                        }
-                    }
+                    var rotGizmo = rotationGizmos.FirstOrDefault(g => g.isSelected);
+                    if (rotGizmo == null)
+                        break;
+                    rotGizmo.isSelected = false;
+                    foreach (Asset a in currentlyRotating.Cast<Asset>())
+                        a.InvokePropertyChanged(false);
+                    foreach (var cam in currentlyRotatingCameras)
+                        cam.InvokePropertyChanged(false);
                     break;
                 case GizmoMode.Scale:
-                    foreach (ScaleGizmo g in scaleGizmos)
-                    {
-                        if (!g.isSelected)
-                            continue;
-                        g.isSelected = false;
-
-                        foreach (var a in currentlyScaling)
-                        {
-                            var archive = ArchiveEditorFunctions.ArchiveContainingAsset((Asset)a);
-                            archive.RefreshAssetEditor(((Asset)a).assetID);
-                            if (g.Type == GizmoType.ScaleX || g.Type == GizmoType.ScaleAll)
-                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "ScaleX", originalPositions[((Asset)a).assetID].X, a.ScaleX));
-                            if (g.Type == GizmoType.ScaleY || g.Type == GizmoType.ScaleAll)
-                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "ScaleY", originalPositions[((Asset)a).assetID].Y, a.ScaleY));
-                            if (g.Type == GizmoType.ScaleZ || g.Type == GizmoType.ScaleAll)
-                                actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "ScaleZ", originalPositions[((Asset)a).assetID].Z, a.ScaleZ));
-                            archive.UnsavedChanges = true;
-                        }
-                        foreach (var a in currentlyMovingBoxes)
-                        {
-                            var archive = ArchiveEditorFunctions.ArchiveContainingAsset(a);
-                            archive.RefreshAssetEditor(a.assetID);
-                            AddToActionsBoxMovement(archive, a, g.Type, actions);
-                            archive.UnsavedChanges = true;
-                        }
-                    }
-                    break;
-                case GizmoMode.PositionLocal:
-                    foreach (PositionGizmo g in positionGizmos)
-                    {
-                        if (!g.isSelected)
-                            continue;
-                        g.isSelected = false;
-                        foreach (var a in currentlyMoving)
-                        {
-                            var archive = ArchiveEditorFunctions.ArchiveContainingAsset((Asset)a);
-                            archive.RefreshAssetEditor(((Asset)a).assetID);
-                            actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionX", originalPositions[((Asset)a).assetID].X, a.PositionX));
-                            actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionY", originalPositions[((Asset)a).assetID].Y, a.PositionY));
-                            actions.Add(new AssetPropertyChangedAction(archive, (Asset)a, "PositionZ", originalPositions[((Asset)a).assetID].Z, a.PositionZ));
-                            archive.UnsavedChanges = true;
-                        }
-                    }
-                    foreach (BoxTrigPositionGizmo g in triggerPositionGizmos)
-                    {
-                        if (!g.isSelected)
-                            continue;
-                        g.isSelected = false;
-
-                        foreach (var a in currentlyMovingBoxes)
-                        {
-                            var archive = ArchiveEditorFunctions.ArchiveContainingAsset(a);
-                            archive.RefreshAssetEditor(a.assetID);
-                            AddToActionsBoxMovement(archive, a, g.Type, actions);
-                            archive.UnsavedChanges = true;
-                        }
-                    }
+                    var scaleGizmo = scaleGizmos.FirstOrDefault(g => g.isSelected);
+                    if (scaleGizmo == null)
+                        break;
+                    scaleGizmo.isSelected = false;
+                    foreach (Asset a in currentlyScaling.Cast<Asset>())
+                        a.InvokePropertyChanged(false);
+                    foreach (var a in currentlyMovingBoxes)
+                        a.InvokePropertyChanged(false);
                     break;
             }
 
@@ -561,55 +455,8 @@ namespace IndustrialPark
             originalRotationsCameras.Clear();
             currentlyRotatingCameras.Clear();
 
-            actions.Add(new SelectionAction(GetSelectedAssets().Select(asset => asset.assetID)));
-            Program.UndoBuffer.AddAction(actions);
-        }
-
-        private void AddToActionsBoxMovement(ArchiveEditorFunctions archive, Asset boxAsset, GizmoType type, List<IReversibleAction> actions)
-        {
-            (Vector3 ogMaximum, Vector3 ogMinimum) = originalPositionsBoxes[boxAsset.assetID];
-            if (boxAsset is AssetTRIG trig)
-            {
-                switch (type)
-                {
-                    case GizmoType.X:
-                    case GizmoType.MinX:
-                        actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumX", ogMinimum.X, trig.MinimumX));
-                        actions.Add(new AssetPropertyChangedAction(archive, trig, "MaximumX", ogMaximum.X, trig.MaximumX));
-                        break;
-                    case GizmoType.Y:
-                    case GizmoType.MinY:
-                        actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumY", ogMinimum.Y, trig.MinimumY));
-                        actions.Add(new AssetPropertyChangedAction(archive, trig, "MaximumY", ogMaximum.Y, trig.MaximumY));
-                        break;
-                    case GizmoType.Z:
-                    case GizmoType.MinZ:
-                        actions.Add(new AssetPropertyChangedAction(archive, trig, "MinimumZ", ogMinimum.Z, trig.MinimumZ));
-                        actions.Add(new AssetPropertyChangedAction(archive, trig, "MaximumZ", ogMaximum.Z, trig.MaximumZ));
-                        break;
-                }
-            }
-            else if (boxAsset is AssetVOLU volume && volume.VolumeShape is VolumeBox box)
-            {
-                switch (type)
-                {
-                    case GizmoType.X:
-                    case GizmoType.MinX:
-                        actions.Add(new AssetPropertyChangedAction(archive, volume, ["VolumeShape", "MinimumX"], ogMinimum.X, box.MinimumX));
-                        actions.Add(new AssetPropertyChangedAction(archive, volume, ["VolumeShape", "MaximumX"], ogMaximum.X, box.MaximumX));
-                        break;
-                    case GizmoType.Y:
-                    case GizmoType.MinY:
-                        actions.Add(new AssetPropertyChangedAction(archive, volume, ["VolumeShape", "MinimumY"], ogMinimum.Y, box.MinimumY));
-                        actions.Add(new AssetPropertyChangedAction(archive, volume, ["VolumeShape", "MaximumY"], ogMaximum.Y, box.MaximumY));
-                        break;
-                    case GizmoType.Z:
-                    case GizmoType.MinZ:
-                        actions.Add(new AssetPropertyChangedAction(archive, volume, ["VolumeShape", "MinimumZ"], ogMinimum.Z, box.MinimumZ));
-                        actions.Add(new AssetPropertyChangedAction(archive, volume, ["VolumeShape", "MaximumZ"], ogMaximum.Z, box.MaximumZ));
-                        break;
-                }
-            }
+            foreach (var ae in archives)
+                ae.EndTransaction();
         }
 
         public void MouseMoveGizmos(Matrix viewProjection, int deltaX, int deltaY, bool grid)
@@ -802,6 +649,9 @@ namespace IndustrialPark
                     if (asset is AssetTRIG roundTrig)
                         SetTriggerMinimum(roundTrig, gizmo.Type, newPosition);
                 }
+
+                if (asset is IRenderableAsset ra)
+                    ra.CreateTransformMatrix(Program.Renderer);
             }
         }
 
@@ -939,6 +789,9 @@ namespace IndustrialPark
                         box.MinimumZ = newBound;
                         break;
                 }
+
+                if (asset is IRenderableAsset ra)
+                    ra.CreateTransformMatrix(Program.Renderer);
             }
         }
 
@@ -1012,6 +865,9 @@ namespace IndustrialPark
                     ra.Pitch = MathUtil.RadiansToDegrees(pitch);
                     ra.Roll = MathUtil.RadiansToDegrees(roll);
                 }
+
+                if (ra is IRenderableAsset ira)
+                    ira.CreateTransformMatrix(Program.Renderer);
             }
         }
 
@@ -1047,6 +903,9 @@ namespace IndustrialPark
                             ra.Roll += distanceX;
                         break;
                 }
+
+                if (ra is IRenderableAsset ira)
+                    ira.CreateTransformMatrix(Program.Renderer);
             }
         }
 
@@ -1107,6 +966,9 @@ namespace IndustrialPark
                         continue;
                     }
                 }
+
+                if (asset is IRenderableAsset ira)
+                    ira.CreateTransformMatrix(Program.Renderer);
             }
         }
 
@@ -1233,6 +1095,9 @@ namespace IndustrialPark
                             break;
                     }
                 }
+
+                if (asset is IRenderableAsset ira)
+                    ira.CreateTransformMatrix(Program.Renderer);
             }
         }
 
@@ -1272,6 +1137,9 @@ namespace IndustrialPark
                     trig.MinimumY = trig.PositionY;
                     trig.MinimumZ = trig.PositionZ;
                 }
+
+                if (asset is IRenderableAsset ira)
+                    ira.CreateTransformMatrix(Program.Renderer);
             }
         }
 
@@ -1324,6 +1192,8 @@ namespace IndustrialPark
                 }
 
                 cam.ApplyRotation(Forward, Up, rotationAxis, angle);
+                
+                cam.CreateTransformMatrix(Program.Renderer);
             }
         }
 

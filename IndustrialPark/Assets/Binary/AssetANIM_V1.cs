@@ -67,14 +67,14 @@ namespace IndustrialPark
         [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public short[][] Offsets { get; set; }
 
-        public AssetANIM_V1()
+        public AssetANIM_V1() : base("", AssetType.Animation)
         {
             KeyFrames = new AssetANIM_KeyFrame[0];
             Times = new AssetSingle[0];
             Offsets = new short[0][];
         }
 
-        public AssetANIM_V1(EndianBinaryReader reader)
+        public AssetANIM_V1(EndianBinaryReader reader) : base("", AssetType.Animation)
         {
             ReadAnim(reader);
         }

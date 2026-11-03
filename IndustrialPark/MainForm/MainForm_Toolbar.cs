@@ -1,4 +1,5 @@
 using HipHopFile;
+using IndustrialPark.Archive;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,12 +37,12 @@ namespace IndustrialPark
             UpdateToolbarArchives();
             UpdateToolbarGizmoButtons(gizmoManager.CurrentGizmoMode);
             UpdateToolbarVisibilityButtons();
-            toolStripButtonWireframe.Checked = wireframeFToolStripMenuItem.Checked;
+            toolStripButtonWireframe.Checked = wireframeToolStripMenuItem.Checked;
 
             // The menu item is toggled by its click, the L key and project loading, so follow its checked state
-            useLightKitsForRenderingToolStripMenuItem.CheckedChanged += (sender, e) =>
-                toolStripButtonLightKit.Checked = useLightKitsForRenderingToolStripMenuItem.Checked;
-            toolStripButtonLightKit.Checked = useLightKitsForRenderingToolStripMenuItem.Checked;
+            lightKitToolStripMenuItem.CheckedChanged += (sender, e) =>
+                toolStripButtonLightKit.Checked = lightKitToolStripMenuItem.Checked;
+            toolStripButtonLightKit.Checked = lightKitToolStripMenuItem.Checked;
         }
 
         private void showToolbarToolStripMenuItem_Click(object sender, EventArgs e)
@@ -54,8 +55,8 @@ namespace IndustrialPark
             showToolbarToolStripMenuItem.Checked = visible;
             toolStripMain.Visible = visible;
             
-            autoDockArchiveEditorToolStripMenuItem.Enabled = ShowToolbar;
-            autoDockArchiveEditorToolStripMenuItem.Checked = ShowToolbar && AutoDockArchiveEditors;
+            dockTargetArchiveEditorToolStripMenuItem.Enabled = ShowToolbar;
+            dockTargetArchiveEditorToolStripMenuItem.Checked = ShowToolbar && AutoDockArchiveEditors;
 
             RefreshAssetListDock();
         }
@@ -89,11 +90,11 @@ namespace IndustrialPark
             updatingToolbar = true;
 
             toolStripComboBoxArchive.Items.Clear();
-            foreach (var ae in archiveEditors)
-                toolStripComboBoxArchive.Items.Add(Path.GetFileName(ae.GetCurrentlyOpenFileName()));
+            foreach (var ae in ArchiveEditors)
+                toolStripComboBoxArchive.Items.Add(Path.GetFileName(ae.GetCurrentFilePath()));
 
-            toolStripComboBoxArchive.SelectedIndex = archiveEditors.FindIndex(ae => ae.Targeted);
-            toolStripComboBoxArchive.Enabled = archiveEditors.Count > 0;
+            toolStripComboBoxArchive.SelectedIndex = ArchiveEditors.FindIndex(ae => ae.Targeted);
+            toolStripComboBoxArchive.Enabled = ArchiveEditors.Count > 0;
 
             updatingToolbar = false;
 
@@ -101,7 +102,7 @@ namespace IndustrialPark
         }
 
         private ArchiveEditor ToolbarActiveArchiveEditor =>
-            toolStripComboBoxArchive.SelectedIndex == -1 ? null : archiveEditors[toolStripComboBoxArchive.SelectedIndex];
+            toolStripComboBoxArchive.SelectedIndex == -1 ? null : ArchiveEditors[toolStripComboBoxArchive.SelectedIndex];
 
         /// <summary>
         /// Rebuilds the layer dropdown from the active archive. Disabled when there is no active archive or it has no layers.
@@ -116,7 +117,7 @@ namespace IndustrialPark
             toolStripComboBoxLayer.Items.Clear();
 
             var ae = ToolbarActiveArchiveEditor;
-            if (ae == null || ae.archive.NoLayers)
+            if (ae == null || ae.archive.AutoLayers)
             {
                 toolStripComboBoxLayer.Enabled = false;
                 toolStripComboBoxLayer.ToolTipText = ae == null ? "No active archive" : "This archive has no layers";
@@ -137,7 +138,7 @@ namespace IndustrialPark
             if (updatingToolbar)
                 return;
 
-            ToolbarActiveArchiveEditor?.SetTemplateFocus();
+            ToolbarActiveArchiveEditor?.SetTargetedOn();
             UpdateToolbarLayers();
             renderPanel.Focus();
         }
@@ -154,7 +155,7 @@ namespace IndustrialPark
                 return;
 
             var ae = ToolbarActiveArchiveEditor;
-            if (ae != null && !ae.archive.NoLayers)
+            if (ae != null && !ae.archive.AutoLayers)
             {
                 updatingToolbar = true;
                 ae.SelectedLayerIndex = toolStripComboBoxLayer.SelectedIndex;
@@ -399,28 +400,28 @@ namespace IndustrialPark
 
         #region Editing and testing
 
-        private void toolStripButtonDropToGround_Click(object sender, EventArgs e) => DropSelectedAssets();
+        private void toolStripButtonDropToGround_Click(object sender, EventArgs e) => Program.ArchiveManager.DropSelectedAssets();
 
-        private void toolStripButtonWireframe_Click(object sender, EventArgs e) => wireframeFToolStripMenuItem.PerformClick();
+        private void toolStripButtonWireframe_Click(object sender, EventArgs e) => wireframeToolStripMenuItem.PerformClick();
 
-        private void toolStripButtonLightKit_Click(object sender, EventArgs e) => useLightKitsForRenderingToolStripMenuItem.PerformClick();
+        private void toolStripButtonLightKit_Click(object sender, EventArgs e) => lightKitToolStripMenuItem.PerformClick();
 
         private void toolStripButtonSaveAll_Click(object sender, EventArgs e) => saveAllOpenHIPsToolStripMenuItem_Click(sender, e);
 
-        private void toolStripButtonRunGame_Click(object sender, EventArgs e) => runGameF5ToolStripMenuItem_Click(sender, e);
+        private void toolStripButtonRunGame_Click(object sender, EventArgs e) => launchGameToolStripMenuItem_Click(sender, e);
 
         private void toolStripButtonSaveAllAndRun_Click(object sender, EventArgs e)
         {
             // Save on this thread so the files are written before the game starts
-            foreach (var ae in archiveEditors)
-                if (ae.archive.UnsavedChanges && !ae.SaveAndWait())
+            foreach (var ae in ArchiveEditors)
+                if (ae.UnsavedChanges && !ae.SaveAndWait())
                 {
-                    MessageBox.Show($"{Path.GetFileName(ae.GetCurrentlyOpenFileName())} was not saved, so the game was not started.",
+                    MessageBox.Show($"{Path.GetFileName(ae.GetCurrentFilePath())} was not saved, so the game was not started.",
                         "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-            runGameF5ToolStripMenuItem_Click(sender, e);
+            launchGameToolStripMenuItem_Click(sender, e);
         }
 
         #endregion

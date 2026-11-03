@@ -1,65 +1,73 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using IndustrialPark.Archive;
+using System;
 
-namespace IndustrialPark
+namespace IndustrialPark;
+
+public abstract class Asset : GenericAssetDataContainer
 {
-    public abstract class Asset : GenericAssetDataContainer
+    [Browsable(false)]
+    public bool isSelected { get; set; }
+    public bool isInvisible = false;
+
+    [Browsable(false)]
+    public virtual bool SkipBuildTesting => false;
+
+    [Browsable(false)]
+    public uint assetID { get; set; }
+    public string assetName;
+    public string assetFileName;
+    public AssetType assetType;
+    public AHDRFlags flags;
+    public int checksum;
+
+    [Browsable(false)]
+    public virtual string AssetInfo => "";
+    [Browsable(false)]
+    public virtual string AssetInfoLinks => "-";
+    [Browsable(false)]
+    public virtual string TypeString => AssetTypeContainer.AssetTypeToString(assetType);
+
+    public Asset(string assetName, AssetType assetType)
     {
-        [Browsable(false)]
-        public bool isSelected { get; set; }
-        public bool isInvisible = false;
+        _game = Game.Unknown;
 
-        [Browsable(false)]
-        public virtual bool SkipBuildTesting => false;
+        this.assetType = assetType;
+        this.assetName = assetName;
+        assetID = new AssetID(assetName);
+        assetFileName = "";
+        flags = AssetService.AHDRFlagsFromAssetType(assetType);
+    }
 
-        [Browsable(false)]
-        public uint assetID { get; set; }
-        public string assetName;
-        public string assetFileName;
-        public AssetType assetType;
-        public AHDRFlags flags;
-        public int checksum;
+    public Asset(Section_AHDR AHDR, Game game)
+    {
+        _game = game;
 
-        [Browsable(false)]
-        public virtual string AssetInfo => "";
-        [Browsable(false)]
-        public virtual string AssetInfoLinks => "-";
-        [Browsable(false)]
-        public virtual string TypeString => AssetTypeContainer.AssetTypeToString(assetType);
+        assetID = AHDR.assetID;
+        assetName = AHDR.ADBG.assetName;
+        assetFileName = AHDR.ADBG.assetFileName;
+        assetType = AHDR.assetType;
+        flags = AHDR.flags;
+        checksum = AHDR.ADBG.checksum;
+    }
 
-        public Asset(string assetName, AssetType assetType)
-        {
-            _game = Game.Unknown;
+    // use with DUPC VIL only
+    protected Asset() { }
 
-            this.assetType = assetType;
-            this.assetName = assetName;
-            assetID = new AssetID(assetName);
-            assetFileName = "";
-            flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
-        }
+    public Section_AHDR BuildAHDR(Endianness endianness)
+    {
+        return new Section_AHDR(assetID, assetType, flags,
+            new Section_ADBG(0, assetName, assetFileName, checksum),
+            Serialize(endianness));
+    }
 
-        public Asset(Section_AHDR AHDR, Game game)
-        {
-            _game = game;
+    public override string ToString() => $"{assetName} [{assetID:X8}]";
 
-            assetID = AHDR.assetID;
-            assetName = AHDR.ADBG.assetName;
-            assetFileName = AHDR.ADBG.assetFileName;
-            assetType = AHDR.assetType;
-            flags = AHDR.flags;
-            checksum = AHDR.ADBG.checksum;
-        }
+    public event Action<bool> PropertyChanged;
 
-        // use with DUPC VIL only
-        protected Asset() { }
-
-        public Section_AHDR BuildAHDR(Endianness endianness)
-        {
-            return new Section_AHDR(assetID, assetType, flags,
-                new Section_ADBG(0, assetName, assetFileName, checksum),
-                Serialize(endianness));
-        }
-
-        public override string ToString() => $"{assetName} [{assetID:X8}]";
+    public void InvokePropertyChanged(bool hard)
+    {
+        PropertyChanged?.Invoke(hard);
     }
 }

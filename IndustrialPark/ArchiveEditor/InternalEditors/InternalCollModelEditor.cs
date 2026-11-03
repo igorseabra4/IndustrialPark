@@ -11,17 +11,13 @@ namespace IndustrialPark
 {
     public partial class InternalCollModelEditor : InternalEditor
     {
-        public InternalCollModelEditor(AssetRenderWareModel asset, ArchiveEditorFunctions archive, Action<Asset> updateListView) : base(asset, archive, updateListView)
+        public InternalCollModelEditor(AssetRenderWareModel asset, ArchiveEditor archive) : base(asset, archive)
         {
             InitializeComponent();
             UpdateStats();
         }
 
         private new AssetRenderWareModel asset => (AssetRenderWareModel)base.asset;
-
-        public override void RefreshPropertyGrid()
-        {
-        }
 
         private void exportButton_Click(object sender, EventArgs e)
         {
@@ -55,26 +51,27 @@ namespace IndustrialPark
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 asset.Data = ReadFileMethods.ExportRenderWareFile(CreateCollDFFFromAssimp(openFile.FileName), asset.RenderWareVersion);
-                archive.UnsavedChanges = true;
-                asset.Setup(Program.MainForm.renderer);
+                asset.SetupModel(Program.Renderer);
                 UpdateStats();
-                updateListView(asset);
+                asset.InvokePropertyChanged(true);
             }
         }
 
         private void buildCollTreeButton_Click(object sender, EventArgs e)
         {
             asset.BuildCollisionTree();
+            asset.InvokePropertyChanged(true);
         }
 
         private void removeCollTreeButton_Click(object sender, EventArgs e)
         {
             asset.RemoveCollisionTree();
+            asset.InvokePropertyChanged(true);
         }
 
         private void UpdateStats()
         {
-            var model = asset.GetRenderWareModelFile();
+            var model = asset.GetRenderWareModelFile(Program.Renderer.Assets);
             numVertsLabel.Text = model.vertexAmount.ToString();
             numTrisLabel.Text = model.triangleAmount.ToString();
         }

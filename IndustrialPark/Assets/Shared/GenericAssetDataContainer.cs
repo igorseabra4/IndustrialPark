@@ -21,33 +21,21 @@ namespace IndustrialPark
         {
             _game = game;
 
-            var properties = GetType().GetProperties();
-
-            foreach (var prop in properties)
+            foreach (var prop in GetType().GetProperties())
             {
-                var propValue = prop.GetValue(this);
+                var type = prop.PropertyType;
 
-                if (propValue == null)
-                    continue;
-
-                if (typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType))
-                    ((GenericAssetDataContainer)propValue).SetGame(game);
-                else if (prop.PropertyType.GetInterfaces().Any(i =>
-                    i.IsGenericType &&
-                    i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) &&
-                    typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0])))
+                if (typeof(GenericAssetDataContainer).IsAssignableFrom(type))
                 {
-                    var gadcs = (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this);
-                    if (gadcs != null)
-                    {
-                        foreach (var gadc in gadcs)
-                        {
-                            if (gadc != null)
-                                gadc.SetGame(game);
-                        }
-                    }
+                    if (prop.GetValue(this) is GenericAssetDataContainer gadc)
+                        gadc.SetGame(game);
                 }
-                
+                else if (typeof(IEnumerable<GenericAssetDataContainer>).IsAssignableFrom(type))
+                {
+                    if (prop.GetValue(this) is IEnumerable<GenericAssetDataContainer> gadcs)
+                        foreach (var gadc in gadcs)
+                            gadc?.SetGame(game);
+                }
             }
         }
 
@@ -55,11 +43,9 @@ namespace IndustrialPark
 
         public byte[] Serialize(Endianness endianness)
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                Serialize(writer);
-                return writer.ToArray();
-            }
+            using var writer = new EndianBinaryWriter(endianness);
+            Serialize(writer);
+            return writer.ToArray();
         }
 
         public virtual bool HasReference(uint assetID)
@@ -149,27 +135,37 @@ namespace IndustrialPark
             return hierarchy;
         }
 
-        public virtual void ReplaceReferences(uint oldAssetId, uint newAssetId)
+        public virtual bool ReplaceReferences(uint oldAssetId, uint newAssetId)
         {
             if (oldAssetId == 0)
-                return;
+                return false;
+
+            var result = false;
 
             var typeProperties = GetType().GetProperties();
 
             foreach (var prop in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID)) && ((AssetID)prop.GetValue(this)).Equals(oldAssetId)))
+            {
+                result = true;
                 prop.SetValue(this, new AssetID(newAssetId));
-
+            }
+            
             foreach (var gadc in typeProperties.Where(prop => typeof(GenericAssetDataContainer).IsAssignableFrom(prop.PropertyType)).Select(prop => (GenericAssetDataContainer)prop.GetValue(this)))
-                gadc?.ReplaceReferences(oldAssetId, newAssetId);
-
+                result |= gadc?.ReplaceReferences(oldAssetId, newAssetId) ?? false;
+            
             foreach (var array in typeProperties.Where(prop => prop.PropertyType.Equals(typeof(AssetID[]))).Select(prop => (AssetID[])prop.GetValue(this)))
                 for (int i = 0; i < array.Length; i++)
                     if (array[i] == oldAssetId)
+                    {
+                        result = true;
                         array[i] = newAssetId;
+                    }
 
             foreach (var gadcs in typeProperties.Where(prop => prop.PropertyType.GetInterfaces().Any(i => i.IsGenericType && i.GetGenericTypeDefinition().Equals(typeof(IEnumerable<>)) && typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))).Select(prop => (IEnumerable<GenericAssetDataContainer>)prop.GetValue(this)))
                 foreach (var gadc in gadcs)
-                    gadc.ReplaceReferences(oldAssetId, newAssetId);
+                    result |= gadc?.ReplaceReferences(oldAssetId, newAssetId) ?? false;
+
+            return result;
         }
 
         public virtual void Verify(ref List<string> result)
@@ -198,7 +194,7 @@ namespace IndustrialPark
 
         protected static void Verify(uint assetID, string propName, bool validReferenceRequired, ref List<string> result)
         {
-            if (assetID != 0 && !Program.MainForm.AssetExists(assetID))
+            if (assetID != 0 && !Program.NameRepository.AssetExists(assetID))
                 result.Add($"Asset 0x{assetID:X8} referenced in {propName} was not found in any open archive.");
             if (validReferenceRequired && assetID == 0)
                 result.Add($"{propName} is 0");

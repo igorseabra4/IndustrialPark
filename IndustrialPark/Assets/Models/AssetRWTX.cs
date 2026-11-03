@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using RenderWareFile;
 using RenderWareFile.Enums;
 using RenderWareFile.Sections;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 
 namespace IndustrialPark
 {
@@ -37,8 +39,8 @@ namespace IndustrialPark
             if (TextureAsRWSections.Length == 0)
                 result.Add("Failed to read RWTX asset. This might be just a library error and does not necessarily mean the texture is broken.");
 
-            if (Program.MainForm.WhoTargets(assetID).Count == 0)
-                result.Add("Texture appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
+            if (!AssetService.WhoTargets(assetID).Any())
+                result.Add("Texture appears to be unused, as I could not find another asset that references it.");
         }
 
         [Category(categoryName)]

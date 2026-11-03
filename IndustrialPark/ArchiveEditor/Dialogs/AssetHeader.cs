@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using System;
 using System.IO;
 using System.Linq;
@@ -76,8 +77,9 @@ namespace IndustrialPark
             programIsChangingStuff = false;
         }
 
-        private static Section_AHDR GetAsset(AssetHeader a)
+        public static Section_AHDR GetAsset(Section_AHDR existing = null)
         {
+            var a = existing == null ? new AssetHeader() : new AssetHeader(existing);
             if (a.ShowDialog() == DialogResult.OK)
             {
                 AHDRFlags flags =
@@ -99,16 +101,6 @@ namespace IndustrialPark
             return null;
         }
 
-        public static Section_AHDR GetAsset(Section_AHDR AHDR)
-        {
-            return GetAsset(new AssetHeader(AHDR));
-        }
-
-        public static Section_AHDR GetAsset()
-        {
-            return GetAsset(new AssetHeader());
-        }
-
         uint assetID = 0;
         AssetType assetType = 0;
         string assetName = "";
@@ -125,7 +117,7 @@ namespace IndustrialPark
             var container = (AssetTypeContainer)comboBoxAssetTypes.SelectedItem;
             assetType = container.assetType;
 
-            AHDRFlags flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
+            AHDRFlags flags = AssetService.AHDRFlagsFromAssetType(assetType);
 
             checkSourceFile.Checked = (flags & AHDRFlags.SOURCE_FILE) != 0;
             checkSourceVirtual.Checked = (flags & AHDRFlags.SOURCE_VIRTUAL) != 0;

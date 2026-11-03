@@ -27,8 +27,8 @@ namespace IndustrialPark
             AutoCompleteStringCollection sourceAll = new AutoCompleteStringCollection();
 
             if (!HexUIntTypeConverter.Legacy)
-                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    foreach (Asset a in ae.archive.GetAllAssets())
+                foreach (ArchiveEditor ae in Program.ArchiveEditors)
+                    foreach (Asset a in ae.archive?.Assets ?? [])
                     {
                         sourceAll.Add(a.assetName);
 

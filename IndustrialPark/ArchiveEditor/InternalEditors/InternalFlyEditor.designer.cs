@@ -216,7 +216,7 @@
             ShowIcon = false;
             StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             Text = "Asset Data Editor";
-            FormClosing += InternalDynaEditor_FormClosing;
+            FormClosing += InternalFlyEditor_FormClosing;
             tableLayoutPanel1.ResumeLayout(false);
             tableLayoutPanel1.PerformLayout();
             ResumeLayout(false);

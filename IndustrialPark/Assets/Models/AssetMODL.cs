@@ -1,11 +1,7 @@
-﻿using Assimp;
-using HipHopFile;
+﻿using HipHopFile;
 using SharpDX;
-using SharpDX.Direct3D11;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -14,42 +10,25 @@ namespace IndustrialPark
         public static bool renderBasedOnLodt = false;
         public static bool renderBasedOnPipt = true;
 
-        public AssetMODL(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness, renderer) { }
+        public AssetMODL(Section_AHDR AHDR, Game game) : base(AHDR, game) { }
 
-        public override void Setup(SharpRenderer renderer)
-        {
-            base.Setup(renderer);
-            AddToRenderingDictionary(assetID, this);
-
-            if (game >= Game.Incredibles)
-            {
-                AddToRenderingDictionary(Functions.BKDRHash(newName), this);
-                AddToNameDictionary(Functions.BKDRHash(newName), newName);
-            }
-        }
-
-        private string newName => assetName.Replace(".dff", "");
-
-        public void RemoveFromDictionary()
-        {
-            RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
-            RemoveFromNameDictionary(Functions.BKDRHash(newName));
-        }
+        public string fileNameWithoutExtension => assetName.Replace(".dff", "");
 
         private Dictionary<uint, PipeInfo> pipeEntries;
+        private bool _specialBlendMode;
         [Browsable(false)]
-        public bool SpecialBlendMode { get; private set; }
+        public bool SpecialBlendMode(SharpRenderer renderer) => _specialBlendMode;
 
         [Browsable(false)]
         public Matrix TransformMatrix => Matrix.Identity;
 
-        public void SetPipeline(PipeInfo[] piptEntries)
+        public void SetPipeline(IEnumerable<PipeInfo> piptEntries)
         {
             pipeEntries = new Dictionary<uint, PipeInfo>();
-            SpecialBlendMode = false;
+            _specialBlendMode = false;
             foreach (var p in piptEntries)
             {
-                SpecialBlendMode |= p.SourceBlend != BlendFactorType.None || p.DestinationBlend != BlendFactorType.None;
+                _specialBlendMode |= p.SourceBlend != BlendFactorType.None || p.DestinationBlend != BlendFactorType.None;
                 if (p.SubObjectBits.FlagValueInt == uint.MaxValue)
                     pipeEntries[uint.MaxValue] = p;
                 else
@@ -68,7 +47,7 @@ namespace IndustrialPark
 
         public void ResetPipeline()
         {
-            SpecialBlendMode = false;
+            _specialBlendMode = false;
             pipeEntries = null;
         }
 

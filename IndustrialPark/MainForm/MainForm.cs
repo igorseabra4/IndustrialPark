@@ -1,11 +1,12 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
+using IndustrialPark.AssetEditorColors;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
-using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -17,14 +18,19 @@ namespace IndustrialPark
 {
     public partial class MainForm : Form
     {
-        public enum FlyModeCursor
-        {
-            Default = 0,
-            Crosshair = 1,
-            Hide = 2
-        }
+        public static string pathToSettings => Application.StartupPath + "/ip_settings.json";
 
         private readonly IPSettings settings;
+        private ScrollableMessageBox undoBox;
+        private string currentProjectPath;
+        public SharpRenderer renderer => Program.Renderer;
+        public readonly GizmoManager gizmoManager;
+        private List<ArchiveEditor> ArchiveEditors => Program.ArchiveManager.ArchiveEditors;
+        private List<ToolStripMenuItem> templateButtons;
+        public AssetTemplate CurrentAssetTemplate = AssetTemplate.Null;
+        public string CurrentUserTemplate = "";
+        public ConnectMarkers markerConnector;
+        private bool ConfirmBeforeDelete = true;
 
         public MainForm(IPSettings settings)
         {
@@ -40,14 +46,963 @@ namespace IndustrialPark
 
             SetUiAssetsVisibility(false);
 
-            templateButtons = ArchiveEditorFunctions.PopulateTemplateMenusAt(toolStripMenuItem_Templates, TemplateToolStripItemClick);
+            templateButtons = AssetFactoryService.PopulateTemplateMenusAt(contextTemplatesToolStripMenuItem, TemplateToolStripItemClick);
 
-            renderer = new SharpRenderer(renderPanel);
+            Program.Renderer = new SharpRenderer(renderPanel);
 
-            gizmoManager = new GizmoManager(() => archiveEditors.SelectMany(ae => ae.archive.CurrentlySelectedAssets));
-            markerConnector = new ConnectMarkers(() => archiveEditors.SelectMany(ae => ae.archive.CurrentlySelectedAssets).OfType<AssetMRKR>());
+            gizmoManager = new GizmoManager(() => ArchiveEditors.SelectMany(ae => ae.SelectedAssets));
+            markerConnector = new ConnectMarkers(() => ArchiveEditors.SelectMany(ae => ae.SelectedAssets).OfType<AssetMRKR>());
 
             SetupToolbar();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            UpdateUserTemplateComboBox();
+
+            if (settings.FirstTime)
+            {
+                if (AutomaticUpdater.UpdateIndustrialPark(out _))
+                {
+                    Close();
+                    System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
+                    return;
+                }
+                // todo: change this message
+                MessageBox.Show(
+                    "It appears this is your first time using Industrial Park.\nPlease consult the documentation and user guide on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.",
+                    "Welcome!",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+                Program.AboutBox.Show(this);
+            }
+
+            ApplyIPSettings(settings);
+
+            SetProjectToolStripStatusLabel();
+            StartRenderer();
+            UpdateTitleBar();
+            ResetMouseCenter(null, null);
+            UpdateInitialDockingArea();
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show(
+                    "You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?",
+                    "Warning",
+                    MessageBoxButtons.YesNoCancel,
+                    MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
+                {
+                    e.Cancel = true;
+                    return;
+                }
+            }
+
+            TextureIOHelper.closeConverter();
+
+            if (projectAutoSaveOnClosingToolStripMenuItem.Checked)
+                SaveProject(currentProjectPath);
+            IPSettings settings = SettingsFromCurrentInstance();
+
+            File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
+        }
+
+        private void MainForm_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+        }
+
+        private void MainForm_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+            foreach (string file in files)
+#if !DEBUG
+                try
+                {
+#endif
+                    AddArchiveEditor(file);
+#if !DEBUG
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Error opening file: " + ex.Message);
+                }
+#endif
+        }
+
+        private void MainForm_Resize(object sender, EventArgs e)
+        {
+            if (renderer == null)
+                return;
+
+            try
+            {
+                if (WindowState == FormWindowState.Minimized)
+                {
+                    renderer.allowRender = false;
+                }
+                else
+                {
+                    renderer.allowRender = true;
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                if (form.GetType() == typeof(CreateGameCubeBanner))
+                {
+                    form.BringToFront();
+                    form.Focus();
+                }
+            }
+        }
+
+        private void MenuStrip_DropDownOpened(object sender, EventArgs e)
+        {
+            if (sender is ToolStripMenuItem menuItem && menuItem.DropDown != null)
+            {
+                if (typeof(ToolStrip)
+                    .GetProperty("ToolTip", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
+                    .GetValue(menuItem.DropDown) is ToolTip dropDownToolTip)
+                {
+                    dropDownToolTip.AutoPopDelay = 20000;
+                }
+            }
+        }
+
+        private void newEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AddArchiveEditor(refreshTexturesModels: false);
+        }
+
+        private void openLevelToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new OpenLevel().Show(this);
+        }
+
+        private void closeAllEditorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
+                    return;
+            }
+
+            ArchiveEditor[] editorsToClose = ArchiveEditors.ToArray();
+
+            // close all editors
+            foreach (var editor in editorsToClose)
+            {
+                editor.CloseArchiveEditor();
+            }
+
+            closeAllEditorsToolStripMenuItem.Enabled = false;
+            SetAllAssetTypesVisible();
+        }
+
+        private void projectNewToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
+                    return;
+            }
+
+            // updates presence so that it doesn't get stuck on the previously focused window name
+            DiscordRPCController.SetPresence(idling: true);
+
+            currentProjectPath = null;
+            ApplyProject(new ProjectJson());
+            SetProjectToolStripStatusLabel();
+            SetAllAssetTypesVisible();
+        }
+
+        private void projectOpenToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (UnsavedChanges())
+            {
+                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+
+                if (result == DialogResult.Yes)
+                    SaveAllChanges();
+                else if (result == DialogResult.Cancel)
+                    return;
+            }
+
+            // updates presence so that it doesn't get stuck on the previously focused window name
+            DiscordRPCController.SetPresence(idling: true);
+
+            OpenFileDialog openFile = new OpenFileDialog()
+            { Filter = "JSON files|*.json" };
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+                ApplyProject(openFile.FileName, projectShowEditorsWhenLoadingToolStripMenuItem.Checked);
+        }
+
+        private void projectSaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrWhiteSpace(currentProjectPath))
+                SaveProject();
+            else
+                projectSaveAsToolStripMenuItem_Click(null, null);
+        }
+
+        private void projectSaveAsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFile = new SaveFileDialog()
+            { Filter = "JSON files|*.json" };
+
+            if (saveFile.ShowDialog() == DialogResult.OK)
+                SaveProject(saveFile.FileName);
+        }
+
+        private void updateReferencesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            updateReferencesToolStripMenuItem.Checked = !updateReferencesToolStripMenuItem.Checked;
+            ArchiveEditor.UpdateReferencesOnCopy = updateReferencesToolStripMenuItem.Checked;
+        }
+
+        private void replaceAssetsOnPasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            replaceAssetsOnPasteToolStripMenuItem.Checked = !replaceAssetsOnPasteToolStripMenuItem.Checked;
+            ArchiveEditor.ReplaceAssetsOnPaste = replaceAssetsOnPasteToolStripMenuItem.Checked;
+        }
+
+        private void useLegacyAssetTypeFormatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useLegacyAssetTypeFormatToolStripMenuItem.Checked = !useLegacyAssetTypeFormatToolStripMenuItem.Checked;
+            AssetTypeContainer.LegacyAssetNameFormat = useLegacyAssetTypeFormatToolStripMenuItem.Checked;
+            SetupAssetVisibilityButtons();
+            UpdateToolbarVisibilityButtons();
+            foreach (var ae in ArchiveEditors)
+                ae.PopulateAssetListAndComboBox();
+        }
+
+        private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
+            HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
+        }
+
+        private void defaultToAllAssetsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            defaultToAllAssetsToolStripMenuItem.Checked = !defaultToAllAssetsToolStripMenuItem.Checked;
+            ArchiveEditor.AlwaysListAllAssets = defaultToAllAssetsToolStripMenuItem.Checked;
+        }
+
+        private void dockTargetArchiveEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dockTargetArchiveEditorToolStripMenuItem.Checked = !dockTargetArchiveEditorToolStripMenuItem.Checked;
+            AutoDockArchiveEditors = dockTargetArchiveEditorToolStripMenuItem.Checked;
+
+            RefreshAssetListDock();
+        }
+
+        private void dockNewAssetEditorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            dockNewAssetEditorsToolStripMenuItem.Checked = !dockNewAssetEditorsToolStripMenuItem.Checked;
+            Program.EditorManager.AutoDockAssetEditors = dockNewAssetEditorsToolStripMenuItem.Checked;
+        }
+
+        private void openDockedEditorOnSelectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            openDockedEditorOnSelectionToolStripMenuItem.Checked = !openDockedEditorOnSelectionToolStripMenuItem.Checked;
+            Program.EditorManager.AutoDockSelectedAssetEditors = openDockedEditorOnSelectionToolStripMenuItem.Checked;
+        }
+
+        private void enableAssetToolButtonsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            enableAssetToolButtonsToolStripMenuItem.Checked = !enableAssetToolButtonsToolStripMenuItem.Checked;
+            InternalEditor.EnableAssetToolButtons = enableAssetToolButtonsToolStripMenuItem.Checked;
+        }
+
+        private void translucentToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            translucentToolStripMenuItem.Checked = !translucentToolStripMenuItem.Checked;
+            TranslucentWhenOutOfFocus = translucentToolStripMenuItem.Checked;
+
+            foreach (var ae in ArchiveEditors)
+            {
+                ae.Opacity = (TranslucentWhenOutOfFocus && !ae.OwnedForms.Any() && !ae.Focused) ? 0.5f : 1f;
+            }
+            Program.EditorManager.SetAllOpacity(TranslucentWhenOutOfFocus);
+        }
+
+        private void rotationGizmoLocalAxisToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            rotationGizmoLocalAxisToolStripMenuItem.Checked = !rotationGizmoLocalAxisToolStripMenuItem.Checked;
+            gizmoManager.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
+        }
+
+        private void templatesPersistentShiniesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            templatesPersistentShiniesToolStripMenuItem.Checked = !templatesPersistentShiniesToolStripMenuItem.Checked;
+            AssetPKUP.persistentShinies = templatesPersistentShiniesToolStripMenuItem.Checked;
+        }
+
+        private void templatesChainPointMVPTsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            templatesChainPointMVPTsToolStripMenuItem.Checked = !templatesChainPointMVPTsToolStripMenuItem.Checked;
+            AssetMVPT.chainPointMVPTs = templatesChainPointMVPTsToolStripMenuItem.Checked;
+        }
+
+        private void manageUserTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!Program.UserTemplateManager.Visible)
+                Program.UserTemplateManager.Show(this);
+            Program.UserTemplateManager.Activate();
+        }
+
+        public void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
+            DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
+        }
+
+        #region Color Mode
+        private SystemColorMode SystemColorMode
+        {
+            get;
+            set
+            {
+                field = value;
+                systemDefaultToolStripMenuItem.Checked = value == SystemColorMode.System;
+                darkModeToolStripMenuItem.Checked = value == SystemColorMode.Dark;
+                lightModeToolStripMenuItem.Checked = value == SystemColorMode.Classic;
+            }
+        }
+
+        private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SystemColorMode = SystemColorMode.Dark;
+        }
+
+        private void systemDefaultToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SystemColorMode = SystemColorMode.System;
+        }
+
+        private void lightModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SystemColorMode = SystemColorMode.Classic;
+        }
+        #endregion
+
+        private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoShowDropDowns = false;
+            if (assetViewToolStripMenuItems != null)
+                foreach (var item in assetViewToolStripMenuItems)
+                    if (!item.Checked)
+                        item.PerformClick();
+            autoShowDropDowns = true;
+            ShowDropDowns();
+        }
+
+        private void disableAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            autoShowDropDowns = false;
+            if (assetViewToolStripMenuItems != null)
+                foreach (var item in assetViewToolStripMenuItems)
+                    if (item.Checked)
+                        item.PerformClick();
+            autoShowDropDowns = true;
+            ShowDropDowns();
+        }
+
+        private void viewConfigToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.ViewConfig.WindowState == FormWindowState.Minimized)
+                Program.ViewConfig.WindowState = FormWindowState.Normal;
+
+            if (!Program.ViewConfig.Visible)
+                Program.ViewConfig.Show(this);
+            Program.ViewConfig.Activate();
+        }
+
+        private void refreshTexturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            RefreshTexturesAndModels();
+        }
+
+        private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
+            renderer.isDrawingUI = uIModeToolStripMenuItem.Checked;
+            SetUiAssetsVisibility(renderer.isDrawingUI);
+            renderer.Camera.Reset();
+            mouseMode = false;
+        }
+
+        private void toolStripMenuItem116_Click(object sender, EventArgs e)
+        {
+            SetViewAspect(656f / 565f);
+        }
+
+        private void toolStripMenuItem43_Click(object sender, EventArgs e)
+        {
+            SetViewAspect(4f / 3f);
+        }
+
+        private void toolStripMenuItem169_Click(object sender, EventArgs e)
+        {
+            SetViewAspect(16f / 9f);
+        }
+
+        private void changeFlyModeCursor(object sender, EventArgs e)
+        {
+            setFlyCursor(Convert.ToInt32(((ToolStripMenuItem)sender).Tag));
+        }
+
+        private void resetColorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.ResetColors();
+            if (PressedKeys.Contains(Keys.ShiftKey))
+                renderer.colors = RendererColors.Classic;
+        }
+
+        private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            var colorDialog = AssetColorEditor.GetColorFromDialog(renderer.backgroundColor.ToVector4());
+            if (colorDialog.Result == DialogResult.OK)
+                renderer.backgroundColor = new SharpDX.Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
+        }
+
+        private void selectionColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var colorDialog = AssetColorEditor.GetColorFromDialog(renderer.selectedColor);
+            if (colorDialog.Result == DialogResult.OK)
+                renderer.SetSelectionColor(colorDialog.Color);
+        }
+
+        private void widgetColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var colorDialog = AssetColorEditor.GetColorFromDialog(renderer.normalColor);
+            if (colorDialog.Result == DialogResult.OK)
+                renderer.SetWidgetColor(colorDialog.Color);
+        }
+
+        private void mVPTColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var colorDialog = AssetColorEditor.GetColorFromDialog(renderer.mvptColor);
+            if (colorDialog.Result == DialogResult.OK)
+                renderer.SetMvptColor(colorDialog.Color);
+        }
+
+        private void tRIGColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var colorDialog = AssetColorEditor.GetColorFromDialog(renderer.trigColor);
+            if (colorDialog.Result == DialogResult.OK)
+                renderer.SetTrigColor(colorDialog.Color);
+        }
+
+        private void sFXColorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var colorDialog = AssetColorEditor.GetColorFromDialog(renderer.sfxColor);
+            if (colorDialog.Result == DialogResult.OK)
+                renderer.SetSfxColor(colorDialog.Color);
+        }
+
+        private void backfaceCullingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            backfaceCullingToolStripMenuItem.Checked = !backfaceCullingToolStripMenuItem.Checked;
+            renderer.device.SetNormalCullMode(backfaceCullingToolStripMenuItem.Checked ? CullMode.None : CullMode.Back);
+        }
+
+        private void wireframeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            wireframeToolStripMenuItem.Checked = !wireframeToolStripMenuItem.Checked;
+            renderer.device.SetNormalFillMode(wireframeToolStripMenuItem.Checked ? FillMode.Wireframe : FillMode.Solid);
+            toolStripButtonWireframe.Checked = wireframeToolStripMenuItem.Checked;
+        }
+
+        private void lowerQualityGraphicsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.device.SetGraphicsMode(!renderer.device.currentMode);
+            lowerQualityGraphicsToolStripMenuItem.Checked = !renderer.device.currentMode;
+        }
+
+        private void vSyncToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.device.VSync = !renderer.device.VSync;
+            vSyncToolStripMenuItem.Checked = renderer.device.VSync;
+        }
+
+        private void vertexColorsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.RenderVertexColors = vertexColorsToolStripMenuItem.Checked;
+        }
+
+        private void lightKitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AssetLKIT.DontRender = !lightKitToolStripMenuItem.Checked;
+        }
+
+        private void fogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AssetFOG.DontRender = !fogToolStripMenuItem.Checked;
+            if (AssetFOG.DontRender)
+                renderer.Camera.FarPlane = SharpCamera.DEFAULT_FAR_PLANE;
+        }
+
+        private void movementPreviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            movementPreviewToolStripMenuItem.Checked = !movementPreviewToolStripMenuItem.Checked;
+            EntityAsset.movementPreview = movementPreviewToolStripMenuItem.Checked;
+            Program.ArchiveManager.ResetMovementPreview();
+        }
+
+        private void hideInvisibleGeometryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            hideInvisibleGeometryToolStripMenuItem.Checked = !hideInvisibleGeometryToolStripMenuItem.Checked;
+            RenderWareModelFile.dontDrawInvisible = hideInvisibleGeometryToolStripMenuItem.Checked;
+        }
+
+        private void useLODTForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            useLODTForRenderingToolStripMenuItem.Checked = !useLODTForRenderingToolStripMenuItem.Checked;
+            AssetMODL.renderBasedOnLodt = useLODTForRenderingToolStripMenuItem.Checked;
+        }
+
+        private void UsePIPTForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            usePIPTForRenderingToolStripMenuItem.Checked = !usePIPTForRenderingToolStripMenuItem.Checked;
+            AssetMODL.renderBasedOnPipt = usePIPTForRenderingToolStripMenuItem.Checked;
+        }
+
+        private void drawOnlyFirstMINFReferenceToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            drawOnlyFirstMINFReferenceToolStripMenuItem.Checked = !drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
+            AssetMINF.drawOnlyFirst = drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
+        }
+
+        private void allMovePointsArePointsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            allMovePointsArePointsToolStripMenuItem.Checked = !allMovePointsArePointsToolStripMenuItem.Checked;
+            AssetMVPT.DrawAllAsPoints = allMovePointsArePointsToolStripMenuItem.Checked;
+            Program.Renderer.Assets.RecalculateAllMatrices(renderer);
+        }
+
+        private void gizmoConeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            gizmoConesToolStripMenuItem.Checked = !gizmoConesToolStripMenuItem.Checked;
+            GizmoBase.UseCones = gizmoConesToolStripMenuItem.Checked;
+        }
+
+        private void saveAllOpenHIPsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveAllChanges();
+        }
+
+        private void launchGameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ae = ArchiveEditors.FirstOrDefault(ae => ae.archive?.LevelName.Length == 4 && ae.archive?.LevelName is not ("boot" or "font" or "plat"));
+            try
+            {
+                if (ae == null)
+                    throw new Exception("No Archive Editor containing a stage found.");
+                RemoteControl.RunGame(ae.archive.Game, ae.GetCurrentFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Failed to run game:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void buildAndRunPS2ISOToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.BuildISO ??= new BuildISO();
+            if (!Program.BuildISO.Visible)
+                Program.BuildISO.Show(this);
+        }
+
+        private void createGameCubeBannerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var bannerCreator = new CreateGameCubeBanner();
+            bannerCreator.Show(this);
+        }
+
+        private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SoundUtility_vgmstream.StopSound();
+        }
+
+        private void exportSceneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Assimp.ExportFormatDescription format = null;
+
+            string textureExtension = null;
+            while (format == null)
+            {
+                bool ok;
+                (ok, format, textureExtension) = Models.ChooseTarget.GetTarget();
+
+                if (!ok)
+                {
+                    format = null;
+                    break;
+                }
+
+                if (format == null || textureExtension == null)
+                    MessageBox.Show("Unsupported format for exporting scene");
+            }
+
+            if (format != null)
+                using (CommonOpenFileDialog a = new CommonOpenFileDialog() { IsFolderPicker = true })
+                    if (a.ShowDialog() == CommonFileDialogResult.Ok)
+                    {
+                        Program.Renderer.Assets.ExportScene(a.FileName, format, textureExtension, out string[] textureNames);
+
+                        if (MessageBox.Show("Do you also wish to export textures?", "Export Textures", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
+
+                            foreach (var ae in ArchiveEditors.Where(ae => ae.archive != null))
+                            {
+                                var d = TextureConverter.GetTexturesAsBitmaps(ae.archive, textureNames);
+                                foreach (var key in d)
+                                    bitmaps.Add(key.Key, key.Value);
+                            }
+
+                            RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
+
+                            foreach (string textureName in bitmaps.Keys)
+                                bitmaps[textureName].Save(Path.Combine(a.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                        }
+                    }
+        }
+
+        private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (AutomaticUpdater.UpdateIndustrialPark(out bool hasChecked, true))
+            {
+                Close();
+                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
+            }
+            else if (hasChecked)
+                MessageBox.Show("No update found.");
+            else
+                MessageBox.Show("Unable to check for updates.");
+        }
+
+        private void DownloadIndustrialParkEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AutomaticUpdater.DownloadEditorFiles();
+        }
+
+        private void CheckForUpdatesOnEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!AutomaticUpdater.VerifyEditorFiles())
+                MessageBox.Show("No update found.");
+        }
+
+        private void downloadVgmstreamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SoundUtility_vgmstream.DownloadVgmstream();
+        }
+
+        private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (DialogResult.OK == MessageBox.Show(
+                "Will set Industrial Park as default application for HIP, HOP and BNR (GameCube banner) file formats on registry.",
+                "Associate HIP/HOP files",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Information))
+                FileAssociations.FileAssociations.EnsureAssociationsSet();
+        }
+
+        private void setDolphinPathToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var openFile = new OpenFileDialog()
+            {
+                Filter = "Executables|*.exe",
+                Title = "Please select your Dolphin executable or a shortcut"
+            };
+
+            if (openFile.ShowDialog() == DialogResult.OK)
+            {
+                RemoteControl.DolphinPath = openFile.FileName;
+                MessageBox.Show($"Dolphin path set successfully:\n{RemoteControl.DolphinPath}", "Dolphin path set", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void viewControlsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (Program.ViewControls.WindowState == FormWindowState.Minimized)
+                Program.ViewControls.WindowState = FormWindowState.Normal;
+
+            if (!Program.ViewControls.Visible)
+                Program.ViewControls.Show(this);
+            Program.ViewControls.Activate();
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!Program.AboutBox.Visible)
+                Program.AboutBox.Show(this);
+            Program.AboutBox.Activate();
+        }
+
+        private void viewUndoBufferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (undoBox == null)
+            {
+                undoBox = new ScrollableMessageBox("Undo Buffer", Program.UndoBuffer.ToString(), true);
+                Program.UndoBuffer.Changed += () => undoBox.richTextBox1.Text = Program.UndoBuffer.ToString();
+            }
+            if (!undoBox.Visible)
+                undoBox.Show(this);
+            undoBox.Activate();
+            undoBox.richTextBox1.Text = Program.UndoBuffer.ToString();
+        }
+
+        private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.AssetIDGenerator ??= new AssetIDGenerator();
+            if (!Program.AssetIDGenerator.Visible)
+                Program.AssetIDGenerator.Show(this);
+        }
+
+        private void hansToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.HansMainForm ??= new IndustrialPark.SaveFile.HansMainForm();
+            if (!Program.HansMainForm.Visible)
+                Program.HansMainForm.Show(this);
+        }
+
+        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var chooseFolder = new CommonOpenFileDialog()
+            {
+                IsFolderPicker = true
+            };
+            if (chooseFolder.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                var dirList = new List<string> { chooseFolder.FileName };
+                foreach (var s in Directory.GetDirectories(chooseFolder.FileName))
+                    dirList.Add(s);
+
+                var hipList = new List<string>();
+                foreach (var s in dirList)
+                    foreach (var ss in Directory.GetFiles(s))
+                    {
+                        var extensionToLower = Path.GetExtension(ss).ToLower();
+                        if (extensionToLower.Equals(".hip") || extensionToLower.Equals(".hop"))
+                            hipList.Add(ss);
+                    }
+
+                var scoobyPlat = Platform.Unknown;
+
+                var p = new ProgressBar("Opening files...");
+                p.SetProgressBar(0, hipList.Count, 1);
+                p.Show(this);
+
+                var layerLogs = new List<string>();
+                var layerTypes = new Dictionary<LayerType, HashSet<AssetType>>();
+
+                foreach (var hip in hipList)
+                {
+                    p.Text = Path.GetFileName(hip);
+                    HipFile hipFile = HipFile.FromPath(hip);
+                    if (hipFile.platform == Platform.Unknown && scoobyPlat != Platform.Unknown)
+                        hipFile.platform = scoobyPlat;
+                    var archive = new Archive.Archive(hipFile, hip, true, out _);
+                    scoobyPlat = archive.Platform;
+
+                    for (int i = 0; i < archive.LayerCount; i++)
+                    {
+                        var lType = archive.GetLayerTypeGeneric(i);
+                        if (!layerTypes.ContainsKey(lType))
+                            layerTypes[lType] = new HashSet<AssetType>();
+                        foreach (var t in archive.GetLayerAssetIDs(i).Select(a => archive.GetAsset(a).assetType).ToHashSet())
+                            layerTypes[lType].Add(t);
+                    }
+
+                    archive.Dispose();
+                    p.PerformStep();
+                }
+
+                File.WriteAllText("layerslogs.txt", string.Join("\n", layerTypes.OrderBy(l => (int)l.Key).Select(k => $"{k.Key}: {string.Join(", ", k.Value.Select(v => v.ToString()).OrderBy(f => f))}")));
+
+                p.Close();
+            }
+        }
+
+        private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.EventSearch ??= new EventSearch();
+            if (!Program.EventSearch.Visible)
+                Program.EventSearch.Show(this);
+        }
+
+        private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.DynaSearch ??= new DynaSearch();
+            if (!Program.DynaSearch.Visible)
+                Program.DynaSearch.Show(this);
+        }
+
+        private void dynaNameSearcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                var unkDtypes = new uint[] {
+                    0xEBC04E7B,
+                };
+
+                string ReadZeroTerminatedString(EndianBinaryReader r)
+                {
+                    var bytes = new List<char>();
+                    while (!r.EndOfStream)
+                    {
+                        var b = r.ReadByte();
+                        if (b != 0)
+                            bytes.Add((char)b);
+                        else
+                            break;
+                    }
+
+                    return new string(bytes.ToArray());
+                }
+
+                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
+                EndianBinaryReader reader = new EndianBinaryReader(file, Endianness.Little);
+                while (!reader.EndOfStream)
+                {
+                    var str = ReadZeroTerminatedString(reader);
+                    var hash = Functions.BKDRHash(str);
+                    if (unkDtypes.Contains(hash))
+                        MessageBox.Show("Found: [" + str + "] " + hash.ToString("X8"));
+                }
+                MessageBox.Show("Finished");
+            }
+        }
+
+        private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.PickupSearch ??= new PickupSearch();
+            if (!Program.PickupSearch.Visible)
+                Program.PickupSearch.Show(this);
+        }
+
+        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
+        {
+            viewConfigToolStripMenuItem.PerformClick();
+        }
+
+        private void positionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetGizmoMode(GizmoMode.Position);
+        }
+
+        private void rotationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetGizmoMode(GizmoMode.Rotation);
+        }
+
+        private void scaleToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetGizmoMode(GizmoMode.Scale);
+        }
+
+        private void positionLocalToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetGizmoMode(GizmoMode.PositionLocal);
+        }
+
+        private void noneToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetGizmoMode(GizmoMode.None);
+        }
+
+        private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UpdateUserTemplateComboBox();
+        }
+
+        private void toolStripComboBoxUserTemplate_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (toolStripComboBoxUserTemplate.SelectedIndex != -1)
+            {
+                UnselectTemplateButtons();
+                CurrentAssetTemplate = AssetTemplate.User_Template;
+                CurrentUserTemplate = toolStripComboBoxUserTemplate.SelectedItem.ToString();
+                toolStripStatusLabelTemplate.Text = $"Template: {toolStripComboBoxUserTemplate.SelectedItem} (User)";
+            }
+        }
+
+        private void contextUndoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.UndoBuffer.Undo();
+        }
+
+        private void contextRedoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.UndoBuffer.Redo();
+        }
+
+        private void hideToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.ArchiveManager.HideSelectedAssets();
+        }
+
+        private void copyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.ArchiveManager.CopySelectedAssets(PressedKeys.Contains(Keys.ShiftKey));
+        }
+
+        private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.ArchiveManager.PasteAssets();
+        }
+
+        private void contextEditToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.EditorManager.OpenInternalEditors();
+        }
+
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!ConfirmBeforeDelete || MessageBox.Show("Are you sure you want to delete the selected assets?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                Program.ArchiveManager.DeleteSelectedAssets();
+        }
+
+        private void connectMarkersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (markerConnector.SetupConnectMarkers())
+            {
+                if (!markerConnector.Visible)
+                    markerConnector.Show(this);
+                markerConnector.Activate();
+            }
+            else
+            {
+                MessageBox.Show("You must have exactly 2 markers selected to use Connect Markers.");
+                markerConnector.Hide();
+            }
         }
 
         public void UpdateTitleBar()
@@ -62,24 +1017,20 @@ namespace IndustrialPark
 
             StringBuilder builder = new StringBuilder();
 
-            if (archiveEditors.Count > 0)
+            if (ArchiveEditors.Count > 0)
             {
                 builder.Append(startOfArchiveList);
-                for (int i = 0; i < archiveEditors.Count; i++)
+                for (int i = 0; i < ArchiveEditors.Count; i++)
                 {
-                    builder.Append(Path.GetFileName(archiveEditors[i].GetCurrentlyOpenFileName()));
+                    builder.Append(Path.GetFileName(ArchiveEditors[i].GetCurrentFilePath()));
 
                     // Unsaved changes
-                    if (archiveEditors[i].archive.UnsavedChanges)
-                    {
+                    if (ArchiveEditors[i].UnsavedChanges)
                         builder.Append(unsavedChanges);
-                    }
 
                     // Separator
-                    if (i < archiveEditors.Count - 1)
-                    {
+                    if (i < ArchiveEditors.Count - 1)
                         builder.Append(archiveDelimiter + " ");
-                    }
                 }
                 builder.Append(endOfArchiveList);
                 builder.Append(" - ");
@@ -105,6 +1056,11 @@ namespace IndustrialPark
             }
         }
 
+        public void SetToolStripStatusLabel(string Text)
+        {
+            toolStripStatusLabelMain.Text = Text;
+        }
+
         private void StartRenderer()
         {
             new Thread(() =>
@@ -114,39 +1070,6 @@ namespace IndustrialPark
                 else
                     renderer.RunMainLoop(renderPanel);
             }).Start();
-        }
-
-        public static string pathToSettings => Application.StartupPath + "/ip_settings.json";
-        private string currentProjectPath;
-        public string userTemplatesFolder => Application.StartupPath + "/Resources/UserTemplates/";
-
-        private void MainForm_Load(object sender, EventArgs e)
-        {
-            UpdateUserTemplateComboBox();
-
-            if (settings.FirstTime)
-            {
-                if (AutomaticUpdater.UpdateIndustrialPark(out _))
-                {
-                    Close();
-                    System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
-                    return;
-                }
-                MessageBox.Show(
-                    "It appears this is your first time using Industrial Park.\nPlease consult the documentation and user guide on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.",
-                    "Welcome!",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                Program.AboutBox.Show(this);
-            }
-
-            ApplyIPSettings(settings);
-
-            SetProjectToolStripStatusLabel();
-            StartRenderer();
-            UpdateTitleBar();
-            ResetMouseCenter(null, null);
-            UpdateInitialDockingArea();
         }
 
         private void ApplyIPSettings(IPSettings settings)
@@ -159,10 +1082,10 @@ namespace IndustrialPark
                 System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
             }
 
-            autoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
-            autoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
+            projectAutoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
+            projetcAutoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
 
-            checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
+            checkForUpdatesDailyToolStripMenuItem.Checked = settings.CheckForUpdatesOnStartup;
             AutomaticUpdater.LastCheckedForUpdate = settings.LastCheckedForUpdate;
 
             drawOnlyFirstMINFReferenceToolStripMenuItem.Checked = settings.drawOnlyFirstMinf;
@@ -177,7 +1100,7 @@ namespace IndustrialPark
             allMovePointsArePointsToolStripMenuItem.Checked = settings.drawMvptsAsPoints;
             AssetMVPT.DrawAllAsPoints = settings.drawMvptsAsPoints;
 
-            hideInvisibleMeshesToolStripMenuItem.Checked = settings.dontDrawInvisible;
+            hideInvisibleGeometryToolStripMenuItem.Checked = settings.dontDrawInvisible;
             RenderWareModelFile.dontDrawInvisible = settings.dontDrawInvisible;
 
             SetToolbarVisible(settings.showToolbar);
@@ -185,7 +1108,7 @@ namespace IndustrialPark
                 SetToolbarAssetTypes(ParseToolbarAssetTypes(settings.toolbarAssetTypes));
 
             templatesPersistentShiniesToolStripMenuItem.Checked = settings.persistentShinies;
-            ArchiveEditorFunctions.persistentShinies = settings.persistentShinies;
+            AssetPKUP.persistentShinies = settings.persistentShinies;
 
             useLegacyAssetIDFormatToolStripMenuItem.Checked = settings.LegacyAssetIDFormat;
             HexUIntTypeConverter.Legacy = settings.LegacyAssetIDFormat;
@@ -197,7 +1120,7 @@ namespace IndustrialPark
             DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
 
             ArchiveEditor.AlwaysListAllAssets = settings.AlwaysListAllAssets;
-            listAllAssetsToolStripMenuItem.Checked = settings.AlwaysListAllAssets;
+            defaultToAllAssetsToolStripMenuItem.Checked = settings.AlwaysListAllAssets;
 
             gizmoManager.RotationGizmoLocalAxis = settings.RotationGizmoLocalAxis;
             rotationGizmoLocalAxisToolStripMenuItem.Checked = settings.RotationGizmoLocalAxis;
@@ -206,13 +1129,13 @@ namespace IndustrialPark
             InternalEditor.EnableAssetToolButtons = settings.EnableAssetToolButtons;
 
             AutoDockArchiveEditors = settings.AutoDockArchiveEditor;
-            autoDockArchiveEditorToolStripMenuItem.Checked = ShowToolbar && AutoDockArchiveEditors;
+            dockTargetArchiveEditorToolStripMenuItem.Checked = ShowToolbar && AutoDockArchiveEditors;
 
-            autoDockAssetEditorsToolStripMenuItem.Checked = settings.AutoDockAssetEditors;
-            ArchiveEditorFunctions.AutoDockAssetEditors = settings.AutoDockAssetEditors;
+            dockNewAssetEditorsToolStripMenuItem.Checked = settings.AutoDockAssetEditors;
+            Program.EditorManager.AutoDockAssetEditors = settings.AutoDockAssetEditors;
 
             openDockedEditorOnSelectionToolStripMenuItem.Checked = settings.AutoDockSelectedAssetEditors;
-            ArchiveEditorFunctions.AutoDockSelectedAssetEditors = settings.AutoDockSelectedAssetEditors;
+            Program.EditorManager.AutoDockSelectedAssetEditors = settings.AutoDockSelectedAssetEditors;
 
             gizmoConesToolStripMenuItem.Checked = settings.GizmoCones;
             GizmoBase.UseCones = settings.GizmoCones;
@@ -233,7 +1156,7 @@ namespace IndustrialPark
             renderer.Camera.SpeedRot = settings.SpeedRot > 0 ? settings.SpeedRot : SharpCamera.DEFAULT_SPEED_ROT;
 
             bool showEditorsWhenLoadingProject = settings.showEditorsWhenLoadingProject;
-            showEditorsWhenLoadingProjectToolStripMenuItem.Checked = showEditorsWhenLoadingProject;
+            projectShowEditorsWhenLoadingToolStripMenuItem.Checked = showEditorsWhenLoadingProject;
 
             setFlyCursor(settings.flyModeCursor);
             TranslucentWhenOutOfFocus = settings.translucentEditor;
@@ -264,158 +1187,47 @@ namespace IndustrialPark
                 ApplyProject(settings.LastProjectPath, showEditorsWhenLoadingProject);
         }
 
-        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        private IPSettings SettingsFromCurrentInstance() => new IPSettings
         {
-            if (UnsavedChanges())
-            {
-                DialogResult result = MessageBox.Show(
-                    "You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?",
-                    "Warning",
-                    MessageBoxButtons.YesNoCancel,
-                    MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
-                else if (result == DialogResult.Cancel)
-                {
-                    e.Cancel = true;
-                    return;
-                }
-            }
-
-            TextureIOHelper.closeConverter();
-
-            if (autoSaveOnClosingToolStripMenuItem.Checked)
-                SaveProject(currentProjectPath);
-
-            IPSettings settings = new IPSettings
-            {
-                FirstTime = false,
-                AutosaveOnClose = autoSaveOnClosingToolStripMenuItem.Checked,
-                AutoloadOnStartup = autoLoadOnStartupToolStripMenuItem.Checked,
-                LastProjectPath = currentProjectPath,
-                CheckForUpdatesOnStartup = checkForUpdatesOnStartupToolStripMenuItem.Checked,
-                LastCheckedForUpdate = AutomaticUpdater.LastCheckedForUpdate,
-                drawOnlyFirstMinf = AssetMINF.drawOnlyFirst,
-                renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
-                renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
-                drawMvptsAsPoints = AssetMVPT.DrawAllAsPoints,
-                discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
-                dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
-                showToolbar = showToolbarToolStripMenuItem.Checked,
-                toolbarAssetTypes = toolbarAssetTypes.Select(t => t.ToString()).ToArray(),
-                persistentShinies = ArchiveEditorFunctions.persistentShinies,
-                LegacyAssetIDFormat = HexUIntTypeConverter.Legacy,
-                LegacyAssetTypeFormat = AssetTypeContainer.LegacyAssetNameFormat,
-                pcsx2Path = BuildISO.PCSX2Path,
-                recentBuildIsoGamePaths = BuildISO.recentGameDirPaths,
-                recentArchivePaths = openLastToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Text).ToArray(),
-                flyModeCursor = (int)flyModeCursor,
-                translucentEditor = TranslucentWhenOutOfFocus,
-                showEditorsWhenLoadingProject = showEditorsWhenLoadingProjectToolStripMenuItem.Checked,
-                ColorMode = SystemColorMode,
-                AlwaysListAllAssets = ArchiveEditor.AlwaysListAllAssets,
-                RotationGizmoLocalAxis = gizmoManager.RotationGizmoLocalAxis,
-                EnableAssetToolButtons = InternalEditor.EnableAssetToolButtons,
-                AutoDockArchiveEditor = AutoDockArchiveEditors,
-                AutoDockAssetEditors = ArchiveEditorFunctions.AutoDockAssetEditors,
-                AutoDockSelectedAssetEditors = ArchiveEditorFunctions.AutoDockSelectedAssetEditors,
-                GizmoCones = GizmoBase.UseCones,
-                dockLeftSize = dockLeftSizeSave,
-                dockRightSize = dockRightSizeSave,
-                Speed = renderer.Camera.Speed,
-                SpeedRot = renderer.Camera.SpeedRot,
-                fog = !AssetFOG.DontRender,
-                DolphinPath = RemoteControl.DolphinPath,
-                Colors = renderer.colors,
-            };
-
-            File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
-        }
-
-        private void MainForm_DragDrop(object sender, DragEventArgs e)
-        {
-            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-            foreach (string file in files)
-#if !DEBUG
-                try
-                {
-#endif
-                AddArchiveEditor(file);
-#if !DEBUG
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show("Error opening file: " + ex.Message);
-                }
-#endif
-        }
-
-        private void MainForm_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-                e.Effect = DragDropEffects.Copy;
-        }
-
-        private void newToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            if (UnsavedChanges())
-            {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
-                else if (result == DialogResult.Cancel)
-                    return;
-            }
-
-            // updates presence so that it doesn't get stuck on the previously focused window name
-            DiscordRPCController.SetPresence(idling: true);
-
-            currentProjectPath = null;
-            ApplyProject(new ProjectJson());
-            SetProjectToolStripStatusLabel();
-            SetAllAssetTypesVisible();
-        }
-
-        private void openToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (UnsavedChanges())
-            {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
-                else if (result == DialogResult.Cancel)
-                    return;
-            }
-
-            // updates presence so that it doesn't get stuck on the previously focused window name
-            DiscordRPCController.SetPresence(idling: true);
-
-            OpenFileDialog openFile = new OpenFileDialog()
-            { Filter = "JSON files|*.json" };
-
-            if (openFile.ShowDialog() == DialogResult.OK)
-                ApplyProject(openFile.FileName, showEditorsWhenLoadingProjectToolStripMenuItem.Checked);
-        }
-
-        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!string.IsNullOrWhiteSpace(currentProjectPath))
-                SaveProject();
-            else
-                saveAsToolStripMenuItem_Click(null, null);
-        }
-
-        private void saveAsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog saveFile = new SaveFileDialog()
-            { Filter = "JSON files|*.json" };
-
-            if (saveFile.ShowDialog() == DialogResult.OK)
-                SaveProject(saveFile.FileName);
-        }
+            FirstTime = false,
+            AutosaveOnClose = projectAutoSaveOnClosingToolStripMenuItem.Checked,
+            AutoloadOnStartup = projetcAutoLoadOnStartupToolStripMenuItem.Checked,
+            LastProjectPath = currentProjectPath,
+            CheckForUpdatesOnStartup = checkForUpdatesDailyToolStripMenuItem.Checked,
+            LastCheckedForUpdate = AutomaticUpdater.LastCheckedForUpdate,
+            drawOnlyFirstMinf = AssetMINF.drawOnlyFirst,
+            renderBasedOnLodt = AssetMODL.renderBasedOnLodt,
+            renderBasedOnPipt = AssetMODL.renderBasedOnPipt,
+            drawMvptsAsPoints = AssetMVPT.DrawAllAsPoints,
+            discordRichPresence = discordRichPresenceToolStripMenuItem.Checked,
+            dontDrawInvisible = RenderWareModelFile.dontDrawInvisible,
+            showToolbar = showToolbarToolStripMenuItem.Checked,
+            toolbarAssetTypes = toolbarAssetTypes.Select(t => t.ToString()).ToArray(),
+            persistentShinies = AssetPKUP.persistentShinies,
+            LegacyAssetIDFormat = HexUIntTypeConverter.Legacy,
+            LegacyAssetTypeFormat = AssetTypeContainer.LegacyAssetNameFormat,
+            pcsx2Path = BuildISO.PCSX2Path,
+            recentBuildIsoGamePaths = BuildISO.recentGameDirPaths,
+            recentArchivePaths = recentArchivesToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Select(x => x.Text).ToArray(),
+            flyModeCursor = (int)flyModeCursor,
+            translucentEditor = TranslucentWhenOutOfFocus,
+            showEditorsWhenLoadingProject = projectShowEditorsWhenLoadingToolStripMenuItem.Checked,
+            ColorMode = SystemColorMode,
+            AlwaysListAllAssets = ArchiveEditor.AlwaysListAllAssets,
+            RotationGizmoLocalAxis = gizmoManager.RotationGizmoLocalAxis,
+            EnableAssetToolButtons = InternalEditor.EnableAssetToolButtons,
+            AutoDockArchiveEditor = AutoDockArchiveEditors,
+            AutoDockAssetEditors = Program.EditorManager.AutoDockAssetEditors,
+            AutoDockSelectedAssetEditors = Program.EditorManager.AutoDockSelectedAssetEditors,
+            GizmoCones = GizmoBase.UseCones,
+            dockLeftSize = dockLeftSizeSave,
+            dockRightSize = dockRightSizeSave,
+            Speed = renderer.Camera.Speed,
+            SpeedRot = renderer.Camera.SpeedRot,
+            fog = !AssetFOG.DontRender,
+            DolphinPath = RemoteControl.DolphinPath,
+            Colors = renderer.colors,
+        };
 
         private void SaveProject(string fileName)
         {
@@ -431,62 +1243,18 @@ namespace IndustrialPark
             SetProjectToolStripStatusLabel();
         }
 
-        private void autoLoadOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoLoadOnStartupToolStripMenuItem.Checked = !autoLoadOnStartupToolStripMenuItem.Checked;
-        }
-
-        private void autoSaveOnClosingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoSaveOnClosingToolStripMenuItem.Checked = !autoSaveOnClosingToolStripMenuItem.Checked;
-        }
-
-        private void CheckForUpdatesOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            checkForUpdatesOnStartupToolStripMenuItem.Checked = !checkForUpdatesOnStartupToolStripMenuItem.Checked;
-        }
-
-        private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (AutomaticUpdater.UpdateIndustrialPark(out bool hasChecked, true))
-            {
-                Close();
-                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
-            }
-            else if (hasChecked)
-                MessageBox.Show("No update found.");
-            else
-                MessageBox.Show("Unable to check for updates.");
-        }
-
-        private void CheckForUpdatesOnEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!AutomaticUpdater.VerifyEditorFiles())
-                MessageBox.Show("No update found.");
-        }
-
-        private void DownloadIndustrialParkEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AutomaticUpdater.DownloadEditorFiles();
-        }
-
-        private void downloadVgmstreamToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SoundUtility_vgmstream.DownloadVgmstream();
-        }
-
         public ProjectJson FromCurrentInstance()
         {
             List<string> hips = new List<string>();
             List<Platform> platforms = new List<HipHopFile.Platform>();
             List<uint> hiddenAssets = new List<uint>();
 
-            foreach (ArchiveEditor ae in archiveEditors)
-                if (ae.archive != null && !string.IsNullOrEmpty(ae.GetCurrentlyOpenFileName()))
+            foreach (ArchiveEditor ae in ArchiveEditors)
+                if (ae.archive != null && !string.IsNullOrEmpty(ae.GetCurrentFilePath()))
                 {
-                    hips.Add(ae.GetCurrentlyOpenFileName());
-                    platforms.Add(ae.archive.platform);
-                    hiddenAssets.AddRange(ae.archive.GetHiddenAssets());
+                    hips.Add(ae.GetCurrentFilePath());
+                    platforms.Add(ae.archive.Platform);
+                    hiddenAssets.AddRange(ae.archive.Assets.Where(a => a.isInvisible).Select(a => a.assetID));
                 }
 
             var dontRender = new Dictionary<string, bool>();
@@ -501,13 +1269,13 @@ namespace IndustrialPark
             {
                 hipPaths = hips,
                 scoobyPlatforms = platforms,
-                TextureFolderPaths = TextureManager.OpenTextureFolders.ToList(),
+                TextureFolderPaths = Program.TextureManager.OpenTextureFolders.ToList(),
                 CamPos = renderer.Camera.Position,
                 Yaw = renderer.Camera.Yaw,
                 Pitch = renderer.Camera.Pitch,
                 FieldOfView = renderer.Camera.FieldOfView,
                 FarPlane = renderer.Camera.FarPlane,
-                BackgroundColor = SharpRenderer.backgroundColor,
+                BackgroundColor = Program.Renderer.backgroundColor,
                 Colors = renderer.colors,
                 hiddenAssets = hiddenAssets,
                 isDrawingUI = renderer.isDrawingUI,
@@ -528,23 +1296,21 @@ namespace IndustrialPark
             if (project.version != ProjectJson.getCurrentVersion)
                 MessageBox.Show("You are trying to open a project file made with a different version of Industrial Park. The program will attempt to load the project, but there is a chance it will not load properly.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
 
-            TextureManager.ClearTextures();
+            Program.TextureManager.ClearTextures();
 
-            List<ArchiveEditor> archiveEditors = [.. this.archiveEditors];
+            List<ArchiveEditor> archiveEditors = [.. this.ArchiveEditors];
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.CloseArchiveEditor();
 
-            TextureManager.LoadTexturesFromFolder(project.TextureFolderPaths);
-
-            ArchiveEditorFunctions.hiddenAssets = project.hiddenAssets;
+            Program.TextureManager.LoadTexturesFromFolder(project.TextureFolderPaths);
 
             for (int i = 0; i < project.hipPaths.Count; i++)
                 if (project.hipPaths[i] == "Empty")
-                    AddArchiveEditor();
+                    continue;
                 else
                 {
                     if (File.Exists(project.hipPaths[i]))
-                        AddArchiveEditor(project.hipPaths[i], project.scoobyPlatforms[i], showEditors);
+                        AddArchiveEditor(project.hipPaths[i], project.scoobyPlatforms[i], showEditors, false);
                     else
                     {
                         MessageBox.Show("Error opening " + project.hipPaths[i] + ": file not found",
@@ -554,7 +1320,11 @@ namespace IndustrialPark
                     }
                 }
 
-            ArchiveEditorFunctions.hiddenAssets.Clear();
+            RefreshTexturesAndModels();
+
+            if (project.hiddenAssets.Count != 0)
+                foreach (var ae in archiveEditors)
+                    ae.HideAssets(project.hiddenAssets);
 
             renderer.Camera.SetPosition(project.CamPos);
             renderer.Camera.Yaw = project.Yaw;
@@ -563,7 +1333,7 @@ namespace IndustrialPark
             renderer.Camera.FarPlane = project.FarPlane;
             gizmoManager.Grid = project.Grid;
 
-            SharpRenderer.backgroundColor = project.BackgroundColor;
+            renderer.backgroundColor = project.BackgroundColor;
 
             renderer.colors = project.Colors;
 
@@ -582,366 +1352,32 @@ namespace IndustrialPark
 
             UpdateToolbarVisibilityButtons();
         }
-
-        public void SetToolStripStatusLabel(string Text)
-        {
-            toolStripStatusLabelMain.Text = Text;
-        }
-
         private void SetProjectToolStripStatusLabel()
         {
             toolStripStatusLabelProject.Text = "Project: " + (currentProjectPath ?? "None");
         }
 
-        public SharpRenderer renderer;
-
-        private bool mouseMode = false;
-        private bool cursorHidden = false;
-        private FlyModeCursor flyModeCursor = FlyModeCursor.Crosshair;
-        private System.Drawing.Point MouseCenter;
-        private MouseEventArgs oldMousePosition = new MouseEventArgs(MouseButtons.None, 0, 0, 0, 0);
-        public bool TranslucentWhenOutOfFocus;
-
-        private void renderPanel_MouseMove(object sender, MouseEventArgs e)
+        public ArchiveEditor AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown, bool show = true, bool refreshTexturesModels = true)
         {
-            if (e.Button == MouseButtons.None)
-                ScreenUnclicked();
+            var ae = new ArchiveEditor(filePath, scoobyPlatform);
+            ArchiveEditors.Add(ae);
 
-            if (renderer.isDrawingUI)
-            {
-                float x = ((e.X - renderPanel.ClientRectangle.X) * 640f / renderPanel.ClientRectangle.Width);
-                float y = ((e.Y - renderPanel.ClientRectangle.Y) * 480f / renderPanel.ClientRectangle.Height);
-
-                SetToolStripStatusLabel(string.Format("Position: [{0:0.0000}, {1:0.0000}]", x, y)
-                    + " FPS: " + $"{renderer.sharpFPS.FPS:0.0000}");
-            }
-            else
-            {
-                if (mouseMode)
-                {
-                    switch (flyModeCursor)
-                    {
-                        case FlyModeCursor.Default:
-                            if (Cursor.Current != Cursors.Default)
-                                Cursor = Cursors.Default;
-                            break;
-                        case FlyModeCursor.Crosshair:
-                            if (Cursor.Current != Cursors.Cross)
-                                Cursor = Cursors.Cross;
-                            break;
-                        case FlyModeCursor.Hide:
-                            if (!cursorHidden)
-                            {
-                                cursorHidden = true;
-                                Cursor.Hide();
-                            }
-                            break;
-                    }
-
-                    renderer.Camera.AddYaw((Cursor.Position.X - MouseCenter.X) * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-                    renderer.Camera.AddPitch((Cursor.Position.Y - MouseCenter.Y) * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-
-                    Cursor.Position = MouseCenter;
-                }
-                else
-                {
-                    if (cursorHidden)
-                    {
-                        cursorHidden = false;
-                        Cursor.Show();
-                    }
-
-                    if (Cursor.Current != Cursors.Default)
-                        Cursor = Cursors.Default;
-
-                    if (e.Button == MouseButtons.Middle)
-                    {
-                        float deltaX = e.X - oldMousePosition.X;
-                        float deltaY = e.Y - oldMousePosition.Y;
-                        if (PressedKeys.Contains(Keys.ControlKey))
-                        {
-                            renderer.Camera.AddPositionForward(-deltaY * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-                        }
-                        else if (PressedKeys.Contains(Keys.ShiftKey) && !PressedKeys.Contains(Keys.W) && !PressedKeys.Contains(Keys.A) && !PressedKeys.Contains(Keys.S) && !PressedKeys.Contains(Keys.D))
-                        {
-                            renderer.Camera.AddPositionSideways(deltaX * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-                            renderer.Camera.AddPositionUp(deltaY * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-                        }
-                        else
-                        {
-                            float rollRadians = MathUtil.DegreesToRadians(renderer.Camera.Roll);
-                            float adjustedDeltaX = deltaX * (float)Math.Cos(rollRadians) - deltaY * (float)Math.Sin(rollRadians);
-                            float adjustedDeltaY = deltaX * (float)Math.Sin(rollRadians) + deltaY * (float)Math.Cos(rollRadians);
-                            renderer.Camera.AddYaw(adjustedDeltaX * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-                            renderer.Camera.AddPitch(adjustedDeltaY * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-
-                            // Clamp camera pitch so it doesn't loop around
-                            float pitchPadding = 0.01f;
-                            renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
-                                -90 + pitchPadding,
-                                90 - pitchPadding);
-                        }
-                    }
-                }
-
-                if (e.Delta != 0)
-                    renderer.Camera.AddPositionForward(e.Delta * SharpCamera.DEFAULT_MOUSE_SPEED_MULT);
-            }
-
-            gizmoManager.MouseMoveGizmos(renderer.viewProjection, e.X - oldMousePosition.X, e.Y - oldMousePosition.Y, PressedKeys.Contains(Keys.T));
-
-            oldMousePosition = e;
-        }
-
-        private void MouseModeToggle()
-        {
-            mouseMode = !mouseMode;
-        }
-
-        private void ResetMouseCenter(object sender, EventArgs e)
-        {
-            MouseCenter = renderPanel.PointToScreen(new System.Drawing.Point(renderPanel.Width / 2, renderPanel.Height / 2));
-        }
-
-        private readonly HashSet<Keys> PressedKeys = new HashSet<Keys>();
-
-        private void MainForm_KeyDown(object sender, KeyEventArgs e)
-        {
-            PressedKeys.Add(e.KeyCode);
-
-            if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
-                (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
-            {
-                Program.UndoBuffer.Redo();
-                return;
-            }
-            else if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
-            {
-                Program.UndoBuffer.Undo();
-                return;
-            }
-
-            if (!renderPanel.Focused)
-                return;
-
-            switch (e.KeyCode)
-            {
-                case Keys.B:
-                    SelectPreviousTemplate();
-                    break;
-                case Keys.C when PressedKeys.Contains(Keys.ControlKey):
-                    CopySelectedAssets();
-                    break;
-                case Keys.C:
-                    noCullingCToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.F:
-                    fogToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.G when PressedKeys.Contains(Keys.ControlKey):
-                    OpenSelectedAssetArchiveEditor();
-                    break;
-                case Keys.G:
-                    OpenInternalEditors();
-                    break;
-                case Keys.H when PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey):
-                    CloseMostForms();
-                    break;
-                case Keys.H when PressedKeys.Contains(Keys.ControlKey):
-                    UnhideAllAssets();
-                    break;
-                case Keys.H:
-                    HideSelectedAssets();
-                    break;
-                case Keys.J when PressedKeys.Contains(Keys.ControlKey):
-                    DropSelectedAssets();
-                    break;
-                case Keys.J:
-                    hideInvisibleMeshesToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.L:
-                    useLightKitsForRenderingToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.M:
-                    movementPreviewToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.N when PressedKeys.Contains(Keys.ControlKey):
-                    newToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.N:
-                    SelectNextTemplate();
-                    break;
-                case Keys.O when PressedKeys.Contains(Keys.ControlKey):
-                    importLevelToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.P:
-                    showVertexColorsToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.R when PressedKeys.Contains(Keys.ControlKey):
-                    renderer.Camera.ResetRoll();
-                    break;
-                case Keys.R:
-                    renderer.Camera.Reset();
-                    break;
-                case Keys.U:
-                    uIModeToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.V when PressedKeys.Contains(Keys.ControlKey):
-                    PasteSelectedAssets();
-                    break;
-                case Keys.V:
-                    SetGizmoMode(GizmoMode.Cycle);
-                    break;
-                case Keys.Y:
-                    wireframeFToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.Z:
-                    MouseModeToggle();
-                    break;
-                case Keys.Delete:
-                    DeleteSelectedAssets();
-                    break;
-                case Keys.F1:
-                    viewControlsToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.F2:
-                    viewConfigToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.F3:
-                    aboutToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.F4:
-                case Keys.S when PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey):
-                    saveAllOpenHIPsToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.F5:
-                    runGameF5ToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.F6:
-                    buildAndRunPS2ISOToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.F7:
-                    createGameCubeBannerToolStripMenuItem.PerformClick();
-                    break;
-                case Keys.D1:
-                    renderer.Camera.IncreaseCameraSpeed(-SharpCamera.DEFAULT_SPEED_INCREMENT);
-                    break;
-                case Keys.D2:
-                    renderer.Camera.IncreaseCameraSpeed(SharpCamera.DEFAULT_SPEED_INCREMENT);
-                    break;
-                case Keys.D3:
-                    renderer.Camera.IncreaseCameraRotationSpeed(-SharpCamera.DEFAULT_SPEED_ROT_INCREMENT);
-                    break;
-                case Keys.D4:
-                    renderer.Camera.IncreaseCameraRotationSpeed(SharpCamera.DEFAULT_SPEED_ROT_INCREMENT);
-                    break;
-            }
-
-            // Open archive editors with ctrl and 1-9
-            if (PressedKeys.Contains(Keys.ControlKey))
-            {
-                // in enum, Keys.D1 through Keys.D9 are numbers 49 to 57.
-                int numberKeyOffset = 49;
-                var editorsToShow = new List<ArchiveEditor>();
-
-                foreach (var item in PressedKeys)
-                {
-                    if ((int)item >= numberKeyOffset
-                        && (int)item <= numberKeyOffset + 8
-                        && (int)item - numberKeyOffset < archiveEditors.Count)
-                    {
-                        editorsToShow.Add(archiveEditors[(int)item - numberKeyOffset]);
-                    }
-                }
-
-                foreach (var form in editorsToShow)
-                    ShowArchiveEditor(form);
-            }
-        }
-
-        private void MainForm_KeyUp(object sender, KeyEventArgs e)
-        {
-            PressedKeys.Remove(e.KeyCode);
-        }
-
-        private void MainForm_Deactivate(object sender, EventArgs e)
-        {
-            PressedKeys.Clear();
-        }
-
-        public void KeyboardController()
-        {
-            gizmoManager.SkipGizmos = PressedKeys.Contains(Keys.ShiftKey) || PressedKeys.Contains(Keys.ControlKey);
-
-            if (!renderPanel.Focused || renderer.isDrawingUI)
-                return;
-
-            if (PressedKeys.Contains(Keys.A) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddYaw(-renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.A))
-                renderer.Camera.AddPositionSideways(renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.D) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddYaw(renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.D))
-                renderer.Camera.AddPositionSideways(-renderer.TransformScaleFactor);
-
-            if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPitch(-renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.W) & PressedKeys.Contains(Keys.ShiftKey))
-                renderer.Camera.AddPositionUp(renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.W))
-                renderer.Camera.AddPositionForward(renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ControlKey) & !PressedKeys.Contains(Keys.ShiftKey))
-                renderer.Camera.AddPitch(renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.S) & PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPositionUp(-renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.S) & !PressedKeys.Contains(Keys.ShiftKey) & !PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddPositionForward(-renderer.TransformScaleFactor);
-
-            if (PressedKeys.Contains(Keys.Q) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddRoll(renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.Q))
-                renderer.Camera.AddPositionUp(-renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.E) & PressedKeys.Contains(Keys.ControlKey))
-                renderer.Camera.AddRoll(-renderer.TransformScaleFactor);
-            else if (PressedKeys.Contains(Keys.E))
-                renderer.Camera.AddPositionUp(renderer.TransformScaleFactor);
-
-            float pitchPadding = 0.01f;
-            renderer.Camera.Pitch = MathUtil.Clamp(renderer.Camera.Pitch,
-                -90 + pitchPadding,
-                90 - pitchPadding);
-        }
-
-        public readonly GizmoManager gizmoManager;
-
-        public readonly List<ArchiveEditor> archiveEditors = new List<ArchiveEditor>();
-
-        private ArchiveEditor GetTargetArchiveEditor() => archiveEditors.FirstOrDefault(ae => ae.Targeted);
-
-        private void newToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AddArchiveEditor();
-        }
-
-        public ArchiveEditor AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown, bool show = true)
-        {
-            ArchiveEditor ae = new ArchiveEditor(filePath, scoobyPlatform);
-            archiveEditors.Add(ae);
-
-            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(ae.GetCurrentlyOpenFileName()));
+            ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(ae.GetCurrentFilePath()));
             tempMenuItem.Click += new EventHandler((object sender, EventArgs e) =>
             {
-                ShowArchiveEditor(ae);
+                Program.ArchiveManager.ShowArchiveEditor(ae, this);
             });
             archiveEditorToolStripMenuItem.DropDownItems.Add(tempMenuItem);
 
-            ae.archive.ChangesMade += UpdateTitleBar;
-            ae.archive.CurrentlySelectedAssets.CollectionChanged += UpdateSelectedAssetStatusBarItem;
+            ae.ChangesMade += UpdateTitleBar;
+            ae.SubscribeToSelectedAssetsCollectionChanged(UpdateSelectedAssetStatusBarItem);
             ae.EditorUpdate += EditorUpdate;
             ae.ToolbarStateChanged += ArchiveEditor_ToolbarStateChanged;
-            UpdateTitleBar();
-            SetupAssetVisibilityButtons();
+            if (filePath != null)
+            {
+                UpdateTitleBar();
+                SetupAssetVisibilityButtons();
+            }
             closeAllEditorsToolStripMenuItem.Enabled = true;
             UpdateToolbarArchives();
 
@@ -951,50 +1387,53 @@ namespace IndustrialPark
             if (!show)
                 ae.Hide();
 
+            if (refreshTexturesModels)
+                RefreshTexturesAndModels();
+
             return ae;
         }
 
         public void EditorUpdate()
         {
-            closeAllEditorsToolStripMenuItem.Enabled = archiveEditors.Count > 0;
+            closeAllEditorsToolStripMenuItem.Enabled = ArchiveEditors.Count > 0;
             RefreshTexturesAndModels();
             SetupAssetVisibilityButtons();
         }
 
         public void SetToolStripItemName(ArchiveEditor sender, string newName)
         {
-            archiveEditorToolStripMenuItem.DropDownItems[archiveEditors.IndexOf(sender) + 5].Text = newName;
+            archiveEditorToolStripMenuItem.DropDownItems[ArchiveEditors.IndexOf(sender) + 5].Text = newName;
             UpdateToolbarArchives();
         }
 
         public void SetRecentOpenedArchives(string filepath)
         {
-            if (!openLastToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Any(x => x.Text == filepath))
+            if (!recentArchivesToolStripMenuItem.DropDownItems.Cast<ToolStripMenuItem>().Any(x => x.Text == filepath))
             {
                 ToolStripMenuItem item = new ToolStripMenuItem(filepath);
                 item.Click += (s, e) =>
                 {
-                    openLastToolStripMenuItem.DropDownItems.Remove(item);
+                    recentArchivesToolStripMenuItem.DropDownItems.Remove(item);
                     if (File.Exists(filepath))
                     {
-                        openLastToolStripMenuItem.DropDownItems.Add(item);
+                        recentArchivesToolStripMenuItem.DropDownItems.Add(item);
                         AddArchiveEditor(filepath);
                     }
                     else
                         MessageBox.Show("File does not exist", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 };
-                openLastToolStripMenuItem.DropDownItems.Add(item);
+                recentArchivesToolStripMenuItem.DropDownItems.Add(item);
             }
-            while (openLastToolStripMenuItem.DropDownItems.Count > 15)
-                openLastToolStripMenuItem.DropDownItems.RemoveAt(0);
+            while (recentArchivesToolStripMenuItem.DropDownItems.Count > 15)
+                recentArchivesToolStripMenuItem.DropDownItems.RemoveAt(0);
         }
 
         public void CloseArchiveEditor(ArchiveEditor sender)
         {
-            int index = archiveEditors.IndexOf(sender);
+            int index = ArchiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 5);
-            archiveEditors.RemoveAt(index);
-            Program.UndoBuffer.RemoveActionsOfArchive(sender.archive);
+            ArchiveEditors.RemoveAt(index);
+            Program.UndoBuffer.RemoveActionsOfArchive(sender);
             UpdateToolbarArchives();
         }
 
@@ -1005,8 +1444,8 @@ namespace IndustrialPark
 
         private bool UnsavedChanges()
         {
-            foreach (ArchiveEditor ae in archiveEditors)
-                if (ae.archive.UnsavedChanges)
+            foreach (ArchiveEditor ae in ArchiveEditors)
+                if (ae.UnsavedChanges)
                     return true;
 
             return false;
@@ -1014,8 +1453,8 @@ namespace IndustrialPark
 
         private void SaveAllChanges()
         {
-            foreach (ArchiveEditor ae in archiveEditors)
-                if (ae.archive.UnsavedChanges)
+            foreach (var ae in ArchiveEditors)
+                if (ae.UnsavedChanges)
                     ae.Save();
         }
 
@@ -1033,313 +1472,18 @@ namespace IndustrialPark
                 form.Close();
         }
 
-        private void noCullingCToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            noCullingCToolStripMenuItem.Checked = !noCullingCToolStripMenuItem.Checked;
-            renderer.device.SetNormalCullMode(noCullingCToolStripMenuItem.Checked ? CullMode.None : CullMode.Back);
-        }
-
-        private void wireframeFToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            wireframeFToolStripMenuItem.Checked = !wireframeFToolStripMenuItem.Checked;
-            renderer.device.SetNormalFillMode(wireframeFToolStripMenuItem.Checked ? FillMode.Wireframe : FillMode.Solid);
-            toolStripButtonWireframe.Checked = wireframeFToolStripMenuItem.Checked;
-        }
-
-        private void backgroundColorToolStripMenuItem1_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog
-            {
-                Color = System.Drawing.Color.FromArgb(BitConverter.ToInt32(BitConverter.GetBytes(SharpRenderer.backgroundColor.ToBgra()).Reverse().ToArray(), 0))
-            };
-            if (colorDialog.ShowDialog() == DialogResult.OK)
-                SharpRenderer.backgroundColor = new SharpDX.Color(colorDialog.Color.R, colorDialog.Color.G, colorDialog.Color.B, colorDialog.Color.A);
-        }
-
-        private void widgetColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-            if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.SetWidgetColor(colorDialog.Color);
-        }
-
-        private void selectionColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-            if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.SetSelectionColor(colorDialog.Color);
-        }
-
-        private void mVPTColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-            if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.SetMvptColor(colorDialog.Color);
-        }
-
-        private void tRIGColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-            if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.SetTrigColor(colorDialog.Color);
-        }
-
-        private void sFXInColorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            ColorDialog colorDialog = new ColorDialog();
-            if (colorDialog.ShowDialog() == DialogResult.OK)
-                renderer.SetSfxColor(colorDialog.Color);
-        }
-
-        private void resetColorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            renderer.ResetColors();
-            if (PressedKeys.Contains(Keys.ShiftKey))
-                renderer.colors = RendererColors.Classic;
-        }
-
-        private void toolStripStatusLabel1_Click(object sender, EventArgs e)
-        {
-            viewConfigToolStripMenuItem.PerformClick();
-        }
-
-        private void viewConfigToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Program.ViewConfig.WindowState == FormWindowState.Minimized)
-                Program.ViewConfig.WindowState = FormWindowState.Normal;
-
-            if (!Program.ViewConfig.Visible)
-                Program.ViewConfig.Show(this);
-            Program.ViewConfig.Activate();
-        }
-
         private SharpDX.Rectangle ViewRectangle => new SharpDX.Rectangle(
             renderPanel.ClientRectangle.X,
             renderPanel.ClientRectangle.Y,
             renderPanel.ClientRectangle.Width,
             renderPanel.ClientRectangle.Height);
 
-        private void renderPanel_MouseClick(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                ScreenClicked(ViewRectangle, e.X, e.Y, false);
-            }
-            else if (e.Button == MouseButtons.Right && PressedKeys.Contains(Keys.ShiftKey))
-            {
-                Vector3 Position = GetScreenClickedPosition(ViewRectangle, e.X, e.Y);
-
-                if (GetTargetArchiveEditor() is ArchiveEditor archiveEditor)
-                    archiveEditor.PlaceTemplate(Position);
-                else
-                    MessageBox.Show($"The template could not be placed because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else if (e.Button == MouseButtons.Right)
-            {
-                contextMenuStripMain.Show(renderPanel.PointToScreen(e.Location));
-            }
-        }
-
-        private void renderPanel_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-                ScreenClicked(ViewRectangle, e.X, e.Y, true);
-        }
-
-        public void ScreenClicked(SharpDX.Rectangle viewRectangle, int X, int Y, bool isMouseDown)
-        {
-            if (gizmoManager.IsMovingGizmo)
-                return;
-
-            bool addToSelection = PressedKeys.Contains(Keys.ShiftKey);
-            bool toggleSelection = PressedKeys.Contains(Keys.ControlKey);
-
-            Ray ray = Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection);
-
-            if (isMouseDown)
-            {
-                if (!addToSelection && !toggleSelection)
-                    gizmoManager.TrySelectGizmo(ray);
-            }
-            else
-            {
-                // both ctrl and shift
-                var removeFromSelection = addToSelection && toggleSelection;
-
-                // asset previous selection state must be equal to this, ignored if null
-                bool? alreadySelectedFilter = removeFromSelection ? true : addToSelection ? false : null;
-
-                (var archive, var assetID) = ArchiveEditorFunctions.GetClickedAsset(renderer, ray, alreadySelectedFilter);
-
-                if (assetID == null && (addToSelection || toggleSelection))
-                    return;
-
-                foreach (ArchiveEditor ae in archiveEditors)
-                    if (removeFromSelection)
-                        ae.RemoveFromSelection(ae.archive == archive ? assetID : null);
-                    else
-                        ae.SetSelectedIndex(ae.archive == archive ? assetID : null, addToSelection, toggleSelection);
-                if (ArchiveEditorFunctions.AutoDockSelectedAssetEditors)
-                    renderPanel.Focus();
-            }
-        }
-
-        public Vector3 GetScreenClickedPosition(SharpDX.Rectangle viewRectangle, int X, int Y) =>
-            ArchiveEditorFunctions.GetRayIntersectionPosition(renderer,
-                Ray.GetPickRay(X, Y, new Viewport(viewRectangle), renderer.viewProjection));
-
-        private void renderPanel_MouseUp(object sender, MouseEventArgs e)
-        {
-            ScreenUnclicked();
-        }
-
-        private void renderPanel_MouseLeave(object sender, EventArgs e)
-        {
-            ScreenUnclicked();
-        }
-
-        public void ScreenUnclicked()
-        {
-            gizmoManager.FinishGizmoMovement();
-        }
-
-        public void SetSelectedIndices(List<uint> assetIDs, bool clearIfEmpty = true)
-        {
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.SetSelectedIndices(assetIDs, clearIfEmpty);
-        }
-
-        /// <summary>
-        /// Gets the number of currently selected assets across all archive Editors.
-        /// </summary>
-        /// <returns>The number of selected assets</returns>
-        private int GetNumberOfSelectedAssets()
-        {
-            return archiveEditors.Sum(ae => ae.archive.GetNumberOfSelectedAssets);
-        }
-
         /// <summary>
         /// Updates the status bar to show the number of selected assets.
         /// </summary>
-        private void UpdateSelectedAssetStatusBarItem(object sender, NotifyCollectionChangedEventArgs e)
+        private void UpdateSelectedAssetStatusBarItem()
         {
-            toolStripStatusLabelNumSelected.Text = $"{GetNumberOfSelectedAssets()} selected";
-        }
-
-        private void OpenInternalEditors()
-        {
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.OpenInternalEditors();
-        }
-
-        private void OpenSelectedAssetArchiveEditor()
-        {
-            foreach (ArchiveEditor ae in archiveEditors)
-                if (ae.archive.CurrentlySelectedAssets.Count > 0)
-                    ShowArchiveEditor(ae);
-        }
-
-        private void ShowArchiveEditor(ArchiveEditor ae)
-        {
-            if (ae.AssetListDocked)
-                return;
-
-            if (ae.WindowState == FormWindowState.Minimized)
-                ae.WindowState = FormWindowState.Normal;
-
-            if (!ae.Visible)
-                ae.Show(this);
-            ae.Activate();
-            ae.ActiveControl = null;
-        }
-
-        private void DeleteSelectedAssets()
-        {
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.DeleteSelectedAssets();
-        }
-
-        private void movementPreviewToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            movementPreviewToolStripMenuItem.Checked = !movementPreviewToolStripMenuItem.Checked;
-            EntityAsset.movementPreview = movementPreviewToolStripMenuItem.Checked;
-
-            ResetMovementPreview();
-        }
-
-        public void ResetMovementPreview()
-        {
-            foreach (ArchiveEditor ae in archiveEditors)
-                foreach (EntityAsset p in ae.archive.GetAllAssets().OfType<EntityAsset>())
-                    p.Reset();
-        }
-
-        private void drawOnlyFirstMINFReferenceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            drawOnlyFirstMINFReferenceToolStripMenuItem.Checked = !drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
-            AssetMINF.drawOnlyFirst = drawOnlyFirstMINFReferenceToolStripMenuItem.Checked;
-        }
-
-        private void useMaxRenderDistanceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            useLODTForRenderingToolStripMenuItem.Checked = !useLODTForRenderingToolStripMenuItem.Checked;
-            AssetMODL.renderBasedOnLodt = useLODTForRenderingToolStripMenuItem.Checked;
-        }
-
-        private void UsePIPTForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            usePIPTForRenderingToolStripMenuItem.Checked = !usePIPTForRenderingToolStripMenuItem.Checked;
-            AssetMODL.renderBasedOnPipt = usePIPTForRenderingToolStripMenuItem.Checked;
-        }
-
-        private void vSyncToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            renderer.device.VSync = !renderer.device.VSync;
-            vSyncToolStripMenuItem.Checked = renderer.device.VSync;
-        }
-
-        private void lowerQualityGraphicsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            renderer.device.SetGraphicsMode(!renderer.device.currentMode);
-            lowerQualityGraphicsToolStripMenuItem.Checked = !renderer.device.currentMode;
-        }
-
-        private void useLegacyAssetIDFormatToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
-            HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
-        }
-
-        private void useLegacyAssetTypeFormatToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            useLegacyAssetTypeFormatToolStripMenuItem.Checked = !useLegacyAssetTypeFormatToolStripMenuItem.Checked;
-            AssetTypeContainer.LegacyAssetNameFormat = useLegacyAssetTypeFormatToolStripMenuItem.Checked;
-            SetupAssetVisibilityButtons();
-            UpdateToolbarVisibilityButtons();
-            foreach (var ae in archiveEditors)
-                ae.PopulateAssetListAndComboBox();
-        }
-
-        private void enableAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoShowDropDowns = false;
-            if (assetViewToolStripMenuItems != null)
-                foreach (var item in assetViewToolStripMenuItems)
-                    if (!item.Checked)
-                        item.PerformClick();
-            autoShowDropDowns = true;
-            ShowDropDowns();
-        }
-
-        private void disableAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoShowDropDowns = false;
-            if (assetViewToolStripMenuItems != null)
-                foreach (var item in assetViewToolStripMenuItems)
-                    if (item.Checked)
-                        item.PerformClick();
-            autoShowDropDowns = true;
-            ShowDropDowns();
+            toolStripStatusLabelNumSelected.Text = $"{Program.ArchiveManager.GetNumberOfSelectedAssets()} selected";
         }
 
         private bool autoShowDropDowns = true;
@@ -1366,10 +1510,9 @@ namespace IndustrialPark
             });
 
             var assetTypes = new HashSet<AssetType>();
-            foreach (var ae in archiveEditors)
-                foreach (var asset in ae.archive.GetAllAssets())
-                    assetTypes.Add(asset.assetType);
-
+            foreach (var ae in ArchiveEditors.Where(ae => ae.archive is not null))
+                foreach (var assetType in ae.archive.AssetTypes)
+                    assetTypes.Add(assetType);
 
             assetViewToolStripMenuItems = GetAssetViewToolStripMenuItems(assetTypes);
             assetTypesToolStripMenuItem.DropDownItems.AddRange(assetViewToolStripMenuItems);
@@ -1511,15 +1654,6 @@ namespace IndustrialPark
             UpdateToolbarVisibilityButtons();
         }
 
-        private void uIModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            uIModeToolStripMenuItem.Checked = !uIModeToolStripMenuItem.Checked;
-            renderer.isDrawingUI = uIModeToolStripMenuItem.Checked;
-            SetUiAssetsVisibility(renderer.isDrawingUI);
-            renderer.Camera.Reset();
-            mouseMode = false;
-        }
-
         private void SetUiAssetsVisibility(bool value)
         {
             autoShowDropDowns = false;
@@ -1537,97 +1671,9 @@ namespace IndustrialPark
             autoShowDropDowns = true;
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!Program.AboutBox.Visible)
-                Program.AboutBox.Show(this);
-            Program.AboutBox.Activate();
-        }
-
-        public string GetAssetNameFromID(uint assetID)
-        {
-            foreach (ArchiveEditor archiveEditor in archiveEditors)
-                if (archiveEditor.archive.ContainsAsset(assetID))
-                    return archiveEditor.GetAssetNameFromID(assetID);
-
-            return ArchiveEditorFunctions.GetFromNameDictionary(assetID) ?? "0x" + assetID.ToString("X8");
-        }
-
-        public bool AssetExists(uint assetID)
-        {
-            foreach (ArchiveEditor archiveEditor in archiveEditors)
-                if (archiveEditor.archive.ContainsAsset(assetID))
-                    return true;
-
-            if (ArchiveEditorFunctions.GetFromNameDictionary(assetID) != null)
-                return true;
-
-            return false;
-        }
-
-        public void FindWhoTargets(uint assetID)
-        {
-            List<uint> whoTargets = WhoTargets(assetID);
-
-            bool willOpen = true;
-            if (whoTargets.Count > MaxDockedEditors)
-                willOpen = MessageBox.Show($"Warning: you're going to open {whoTargets.Count} Asset Data Editor windows. Are you sure you want to do that?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes;
-
-            if (willOpen)
-                foreach (ArchiveEditor archiveEditor in archiveEditors)
-                    archiveEditor.OpenInternalEditors(whoTargets, true);
-        }
-
-        public List<uint> WhoTargets(uint assetID)
-        {
-            List<uint> whoTargets = new List<uint>();
-            foreach (ArchiveEditor archiveEditor in archiveEditors)
-                whoTargets.AddRange(archiveEditor.archive.FindWhoTargets(assetID));
-
-            return whoTargets;
-        }
-
-        public void ClearTemplateFocus()
-        {
-            foreach (ArchiveEditor archiveEditor in archiveEditors)
-                archiveEditor.ClearTemplateFocus();
-        }
-
-        public void ClearModelTemplateFocus(InternalModelEditor except)
-        {
-            foreach (ArchiveEditor archiveEditor in archiveEditors)
-                archiveEditor.archive.ClearModelTemplateFocus(except);
-        }
-
         private void SetViewAspect(float aspect)
         {
             ClientSize = new Size((int)(renderPanel.Height * aspect), ClientSize.Height);
-        }
-
-        private void toolStripMenuItem116_Click(object sender, EventArgs e)
-        {
-            SetViewAspect(656f / 565f);
-        }
-
-        private void toolStripMenuItem43_Click(object sender, EventArgs e)
-        {
-            SetViewAspect(4f / 3f);
-        }
-
-        private void toolStripMenuItem169_Click(object sender, EventArgs e)
-        {
-            SetViewAspect(16f / 9f);
-        }
-
-        private void ensureAssociationsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (DialogResult.OK == MessageBox.Show(
-                    "Will set Industrial Park as default application for HIP, HOP and BNR (GameCube banner) file formats on registry.",
-                    "Associate HIP/HOP files",
-                    MessageBoxButtons.OKCancel,
-                    MessageBoxIcon.Information))
-
-                FileAssociations.FileAssociations.EnsureAssociationsSet();
         }
 
         private void UnselectTemplateButtons()
@@ -1638,7 +1684,7 @@ namespace IndustrialPark
 
         private void SelectPreviousTemplate()
         {
-            if (ArchiveEditorFunctions.CurrentAssetTemplate == AssetTemplate.User_Template)
+            if (CurrentAssetTemplate == AssetTemplate.User_Template)
             {
                 if (toolStripComboBoxUserTemplate.SelectedIndex == 0)
                     toolStripComboBoxUserTemplate.SelectedIndex = toolStripComboBoxUserTemplate.Items.Count - 1;
@@ -1661,7 +1707,7 @@ namespace IndustrialPark
 
         private void SelectNextTemplate()
         {
-            if (ArchiveEditorFunctions.CurrentAssetTemplate == AssetTemplate.User_Template)
+            if (CurrentAssetTemplate == AssetTemplate.User_Template)
             {
                 if (toolStripComboBoxUserTemplate.SelectedIndex == toolStripComboBoxUserTemplate.Items.Count - 1)
                     toolStripComboBoxUserTemplate.SelectedIndex = 0;
@@ -1682,8 +1728,6 @@ namespace IndustrialPark
             }
         }
 
-        private List<ToolStripMenuItem> templateButtons;
-
         private void TemplateToolStripItemClick(object sender, EventArgs e)
         {
             var item = (ToolStripMenuItem)sender;
@@ -1691,58 +1735,23 @@ namespace IndustrialPark
 
             UnselectTemplateButtons();
 
-            ArchiveEditorFunctions.CurrentAssetTemplate = template;
+            CurrentAssetTemplate = template;
             toolStripStatusLabelTemplate.Text = "Template: " + item.Text;
             toolStripComboBoxUserTemplate.SelectedItem = null;
             item.Checked = true;
-        }
-
-        private void userTemplateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            UpdateUserTemplateComboBox();
         }
 
         public void UpdateUserTemplateComboBox()
         {
             toolStripComboBoxUserTemplate.Items.Clear();
 
-            foreach (string s in Directory.GetFiles(userTemplatesFolder))
+            foreach (string s in Directory.GetFiles(UserTemplateManager.userTemplatesFolder))
             {
                 toolStripComboBoxUserTemplate.Items.Add(Path.GetFileName(s));
 
                 if (toolStripComboBoxUserTemplate.Size.Width < 8 * Path.GetFileName(s).Length)
                     toolStripComboBoxUserTemplate.Size = new System.Drawing.Size(8 * Path.GetFileName(s).Length, toolStripComboBoxUserTemplate.Size.Height);
             }
-        }
-
-        private void toolStripComboBoxUserTemplate_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (toolStripComboBoxUserTemplate.SelectedIndex != -1)
-            {
-                UnselectTemplateButtons();
-                ArchiveEditorFunctions.CurrentAssetTemplate = AssetTemplate.User_Template;
-                ArchiveEditorFunctions.CurrentUserTemplate = toolStripComboBoxUserTemplate.SelectedItem.ToString();
-                toolStripStatusLabelTemplate.Text = $"Template: {toolStripComboBoxUserTemplate.SelectedItem} (User)";
-            }
-        }
-
-        private void manageUserTemplatesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!Program.UserTemplateManager.Visible)
-                Program.UserTemplateManager.Show(this);
-            Program.UserTemplateManager.Activate();
-        }
-
-        private void templatesPersistentShiniesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            templatesPersistentShiniesToolStripMenuItem.Checked = !templatesPersistentShiniesToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.persistentShinies = templatesPersistentShiniesToolStripMenuItem.Checked;
-        }
-
-        private void templatesChainPointMVPTsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            templatesChainPointMVPTsToolStripMenuItem.Checked = !templatesChainPointMVPTsToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.chainPointMVPTs = templatesChainPointMVPTsToolStripMenuItem.Checked;
         }
 
         private void SetGizmoMode(GizmoMode mode)
@@ -1758,344 +1767,17 @@ namespace IndustrialPark
             UpdateToolbarGizmoButtons(mode);
         }
 
-        private void positionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SetGizmoMode(GizmoMode.Position);
-        }
-
-        private void rotationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SetGizmoMode(GizmoMode.Rotation);
-        }
-
-        private void scaleToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SetGizmoMode(GizmoMode.Scale);
-        }
-
-        private void positionLocalToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SetGizmoMode(GizmoMode.PositionLocal);
-        }
-
-        private void noneToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SetGizmoMode(GizmoMode.None);
-        }
-
-        private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.EventSearch ??= new EventSearch();
-            if (!Program.EventSearch.Visible)
-                Program.EventSearch.Show(this);
-        }
-
-        private void assetIDGeneratorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.AssetIDGenerator ??= new AssetIDGenerator();
-            if (!Program.AssetIDGenerator.Visible)
-                Program.AssetIDGenerator.Show(this);
-        }
-
-        private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.DynaSearch ??= new DynaSearch();
-            if (!Program.DynaSearch.Visible)
-                Program.DynaSearch.Show(this);
-        }
-
-        private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.PickupSearch ??= new PickupSearch();
-            if (!Program.PickupSearch.Visible)
-                Program.PickupSearch.Show(this);
-        }
-
-        private void hansToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.HansMainForm ??= new IndustrialPark.SaveFile.HansMainForm();
-            if (!Program.HansMainForm.Visible)
-                Program.HansMainForm.Show(this);
-        }
-
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-            if (renderer == null)
-                return;
-
-            try
-            {
-                if (WindowState == FormWindowState.Minimized)
-                {
-                    renderer.allowRender = false;
-                }
-                else
-                {
-                    renderer.allowRender = true;
-                }
-            }
-            catch
-            {
-            }
-        }
-
-        private void runGameF5ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var ae = archiveEditors.FirstOrDefault(ae => ae.archive.LevelName.Length == 4 && ae.archive.LevelName is not ("boot" or "font" or "plat"));
-            try
-            {
-                if (ae == null)
-                    throw new Exception("No Archive Editor containing a stage found.");
-                RemoteControl.RunGame(ae.archive.game, ae.GetCurrentlyOpenFileName());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Failed to run game:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void saveAllOpenHIPsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (var ae in archiveEditors)
-                if (ae.archive.UnsavedChanges)
-                    ae.Save();
-        }
-
-        private void hideInvisibleMeshesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            hideInvisibleMeshesToolStripMenuItem.Checked = !hideInvisibleMeshesToolStripMenuItem.Checked;
-            RenderWareModelFile.dontDrawInvisible = hideInvisibleMeshesToolStripMenuItem.Checked;
-        }
-
-        private void updateReferencesOnCopyPasteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            updateReferencesOnCopyPasteToolStripMenuItem.Checked = !updateReferencesOnCopyPasteToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.updateReferencesOnCopy = updateReferencesOnCopyPasteToolStripMenuItem.Checked;
-        }
-
-        private void replaceAssetsOnPasteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            replaceAssetsOnPasteToolStripMenuItem.Checked = !replaceAssetsOnPasteToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.replaceAssetsOnPaste = replaceAssetsOnPasteToolStripMenuItem.Checked;
-        }
-
-        private void refreshTexturesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            RefreshTexturesAndModels();
-        }
-
         public void RefreshTexturesAndModels()
         {
-            TextureManager.ClearTextures();
-            foreach (ArchiveEditor ae in archiveEditors)
-                ae.RefreshHop(renderer);
-            ArchiveEditorFunctions.RecalculateAllMatrices();
+            Program.TextureManager.ClearTextures();
+            TextureConverter.SetupTextureDisplay(ArchiveEditors.SelectMany(ae => ae.archive?.Assets.OfType<AssetRWTX>() ?? []));
+            Program.Renderer.Assets.ResetModels(Program.Renderer);
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
         }
 
-        private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)
+        public void UnhideAllAssets()
         {
-            SoundUtility_vgmstream.StopSound();
-        }
-
-        private void exportSceneToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Assimp.ExportFormatDescription format = null;
-
-            string textureExtension = null;
-            while (format == null)
-            {
-                bool ok;
-                (ok, format, textureExtension) = Models.ChooseTarget.GetTarget();
-
-                if (!ok)
-                {
-                    format = null;
-                    break;
-                }
-
-                if (format == null || textureExtension == null)
-                    MessageBox.Show("Unsupported format for exporting scene");
-            }
-
-            if (format != null)
-                using (CommonOpenFileDialog a = new CommonOpenFileDialog() { IsFolderPicker = true })
-                    if (a.ShowDialog() == CommonFileDialogResult.Ok)
-                    {
-                        ArchiveEditorFunctions.ExportScene(a.FileName, format, textureExtension, out string[] textureNames);
-
-                        if (MessageBox.Show("Do you also wish to export textures?", "Export Textures", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        {
-                            Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
-
-                            foreach (var ae in archiveEditors)
-                            {
-                                var d = ae.archive.GetTexturesAsBitmaps(textureNames);
-                                foreach (var key in d)
-                                    bitmaps.Add(key.Key, key.Value);
-                            }
-
-                            RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
-
-                            foreach (string textureName in bitmaps.Keys)
-                                bitmaps[textureName].Save(Path.Combine(a.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
-                        }
-                    }
-        }
-
-        public void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            discordRichPresenceToolStripMenuItem.Checked = !discordRichPresenceToolStripMenuItem.Checked;
-            DiscordRPCController.ToggleDiscordRichPresence(discordRichPresenceToolStripMenuItem.Checked);
-        }
-
-        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var chooseFolder = new CommonOpenFileDialog()
-            {
-                IsFolderPicker = true
-            };
-            if (chooseFolder.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                var dirList = new List<string> { chooseFolder.FileName };
-                foreach (var s in Directory.GetDirectories(chooseFolder.FileName))
-                    dirList.Add(s);
-
-                var hipList = new List<string>();
-                foreach (var s in dirList)
-                    foreach (var ss in Directory.GetFiles(s))
-                    {
-                        var extensionToLower = Path.GetExtension(ss).ToLower();
-                        if (extensionToLower.Equals(".hip") || extensionToLower.Equals(".hop"))
-                            hipList.Add(ss);
-                    }
-
-                var scoobyPlat = Platform.Unknown;
-
-                var p = new ProgressBar("Opening files...");
-                p.SetProgressBar(0, hipList.Count, 1);
-                p.Show(this);
-
-                var layerLogs = new List<string>();
-                var layerTypes = new Dictionary<LayerType, HashSet<AssetType>>();
-
-                foreach (var hip in hipList)
-                {
-                    p.Text = Path.GetFileName(hip);
-                    ArchiveEditorFunctions archive = new ArchiveEditorFunctions(null);
-                    archive.OpenFile(hip, false, scoobyPlat);
-                    scoobyPlat = archive.platform;
-                    foreach (var v in archive.AssetTypesPerLayer())
-                    {
-                        if (!layerTypes.ContainsKey(v.Key))
-                            layerTypes[v.Key] = new HashSet<AssetType>();
-                        foreach (var t in v.Value)
-                        {
-                            layerTypes[v.Key].Add(t);
-                            if (v.Key == LayerType.SRAM && v.Value.Contains(AssetType.SoundInfo))
-                                MessageBox.Show(archive.currentlyOpenFilePath);
-                        }
-                    }
-
-                    //var sndis = archive.GetAllAssets().Where(a => a.assetType == AssetType.SoundInfo);
-                    //if (sndis.Any())
-                    //{
-                    //    archive.SelectedLayerIndex = archive.GetLayerFromAssetID(sndis.FirstOrDefault().assetID);
-                    //    if (archive.GetLayerType() == (int)LayerType_BFBB.SRAM)
-                    //        MessageBox.Show(archive.currentlyOpenFilePath);
-                    //}
-                    archive.Dispose(false);
-                    p.PerformStep();
-                }
-
-                File.WriteAllText("layerslogs.txt", string.Join("\n", layerTypes.OrderBy(l => (int)l.Key).Select(k => $"{k.Key}: {string.Join(", ", k.Value.Select(v => v.ToString()).OrderBy(f => f))}")));
-
-                p.Close();
-            }
-        }
-
-        private void dynaNameSearcherToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                var unkDtypes = new uint[] {
-                    0xEBC04E7B,
-                };
-
-                string ReadZeroTerminatedString(EndianBinaryReader r)
-                {
-                    var bytes = new List<char>();
-                    while (!r.EndOfStream)
-                    {
-                        var b = r.ReadByte();
-                        if (b != 0)
-                            bytes.Add((char)b);
-                        else
-                            break;
-                    }
-
-                    return new string(bytes.ToArray());
-                }
-
-                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
-                EndianBinaryReader reader = new EndianBinaryReader(file, Endianness.Little);
-                while (!reader.EndOfStream)
-                {
-                    var str = ReadZeroTerminatedString(reader);
-                    var hash = Functions.BKDRHash(str);
-                    if (unkDtypes.Contains(hash))
-                        MessageBox.Show("Found: [" + str + "] " + hash.ToString("X8"));
-                }
-                MessageBox.Show("Finished");
-            }
-        }
-
-        private void openLevelToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new OpenLevel().Show(this);
-        }
-
-        private void closeAllEditorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (UnsavedChanges())
-            {
-                DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
-
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
-                else if (result == DialogResult.Cancel)
-                    return;
-            }
-
-            ArchiveEditor[] editorsToClose = archiveEditors.ToArray();
-
-            // close all editors
-            foreach (var editor in editorsToClose)
-            {
-                editor.CloseArchiveEditor();
-            }
-
-            closeAllEditorsToolStripMenuItem.Enabled = false;
-            SetAllAssetTypesVisible();
-        }
-
-        private void DropSelectedAssets()
-        {
-            foreach (var ae in archiveEditors)
-                ae.archive.DropSelectedAssets(renderer);
-        }
-
-        private void HideSelectedAssets()
-        {
-            foreach (var ae in archiveEditors)
-                ae.HideSelectedAssets();
-        }
-
-        private void UnhideAllAssets()
-        {
-            bool unhid = false;
-            foreach (var ae in archiveEditors)
-                unhid |= ae.UnhideAllAssets();
+            bool unhid = Program.ArchiveManager.UnhideAllAssets();
             if (!unhid)
             {
                 autoShowDropDowns = false;
@@ -2107,41 +1789,6 @@ namespace IndustrialPark
             }
         }
 
-        private void showVertexColorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SharpRenderer.RenderVertexColors = showVertexColorsToolStripMenuItem.Checked;
-        }
-
-        private void buildAndRunPS2ISOToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.BuildISO ??= new BuildISO();
-            if (!Program.BuildISO.Visible)
-                Program.BuildISO.Show(this);
-        }
-
-        private void createGameCubeBannerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var bannerCreator = new CreateGameCubeBanner();
-            bannerCreator.Show(this);
-        }
-
-        private void MainForm_Shown(object sender, EventArgs e)
-        {
-            foreach (Form form in Application.OpenForms)
-            {
-                if (form.GetType() == typeof(CreateGameCubeBanner))
-                {
-                    form.BringToFront();
-                    form.Focus();
-                }
-            }
-        }
-
-        private void changeFlyModeCursor(object sender, EventArgs e)
-        {
-            setFlyCursor(Convert.ToInt32(((ToolStripMenuItem)sender).Tag));
-        }
-
         private void setFlyCursor(int flyModeCursor)
         {
             this.flyModeCursor = (FlyModeCursor)flyModeCursor;
@@ -2149,270 +1796,6 @@ namespace IndustrialPark
             // Updaate the toolstrip dropdown items
             foreach (ToolStripMenuItem item in cursorInFlyModeToolStripMenuItem.DropDownItems)
                 item.Checked = Convert.ToInt32(item.Tag) == flyModeCursor;
-        }
-
-        private void showEditorsWhenLoadingProjectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            showEditorsWhenLoadingProjectToolStripMenuItem.Checked = !showEditorsWhenLoadingProjectToolStripMenuItem.Checked;
-        }
-
-        private void translucentToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            translucentToolStripMenuItem.Checked = !translucentToolStripMenuItem.Checked;
-            TranslucentWhenOutOfFocus = translucentToolStripMenuItem.Checked;
-
-            foreach (var ae in archiveEditors)
-            {
-                ae.Opacity = (TranslucentWhenOutOfFocus && !ae.OwnedForms.Any() && !ae.Focused) ? 0.5f : 1f;
-                ae.archive.SetAllOpacity();
-            }
-        }
-
-        private void alwaysListAllAssetsOnArchiveEditorWhenSelectingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            listAllAssetsToolStripMenuItem.Checked = !listAllAssetsToolStripMenuItem.Checked;
-            ArchiveEditor.AlwaysListAllAssets = listAllAssetsToolStripMenuItem.Checked;
-        }
-
-        private void rotationGizmoOnSingleAxisToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            rotationGizmoLocalAxisToolStripMenuItem.Checked = !rotationGizmoLocalAxisToolStripMenuItem.Checked;
-            gizmoManager.RotationGizmoLocalAxis = rotationGizmoLocalAxisToolStripMenuItem.Checked;
-        }
-
-        private void enableAssetToolButtonsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            enableAssetToolButtonsToolStripMenuItem.Checked = !enableAssetToolButtonsToolStripMenuItem.Checked;
-            InternalEditor.EnableAssetToolButtons = enableAssetToolButtonsToolStripMenuItem.Checked;
-        }
-
-        private void fogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AssetFOG.DontRender = !fogToolStripMenuItem.Checked;
-            if (AssetFOG.DontRender)
-                renderer.Camera.FarPlane = SharpCamera.DEFAULT_FAR_PLANE;
-        }
-
-        private void useLightKitsForRenderingToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            AssetLKIT.DontRender = !useLightKitsForRenderingToolStripMenuItem.Checked;
-        }
-
-        private void allMovePointsArePointsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            allMovePointsArePointsToolStripMenuItem.Checked = !allMovePointsArePointsToolStripMenuItem.Checked;
-            AssetMVPT.DrawAllAsPoints = allMovePointsArePointsToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.RecalculateAllMatrices();
-        }
-
-        private void autoDockArchiveEditorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoDockArchiveEditorToolStripMenuItem.Checked = !autoDockArchiveEditorToolStripMenuItem.Checked;
-            AutoDockArchiveEditors = autoDockArchiveEditorToolStripMenuItem.Checked;
-
-            RefreshAssetListDock();
-        }
-
-        private void autoDockAssetEditorsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            autoDockAssetEditorsToolStripMenuItem.Checked = !autoDockAssetEditorsToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.AutoDockAssetEditors = autoDockAssetEditorsToolStripMenuItem.Checked;
-        }
-
-        private void openDockedEditorOnSelectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            openDockedEditorOnSelectionToolStripMenuItem.Checked = !openDockedEditorOnSelectionToolStripMenuItem.Checked;
-            ArchiveEditorFunctions.AutoDockSelectedAssetEditors = openDockedEditorOnSelectionToolStripMenuItem.Checked;
-        }
-
-        private void gizmoConeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            gizmoConesToolStripMenuItem.Checked = !gizmoConesToolStripMenuItem.Checked;
-            GizmoBase.UseCones = gizmoConesToolStripMenuItem.Checked;
-        }
-
-        private void setDolphinPathToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var openFile = new OpenFileDialog()
-            {
-                Filter = "Executables|*.exe",
-                Title = "Please select your Dolphin executable or a shortcut"
-            };
-
-            if (openFile.ShowDialog() == DialogResult.OK)
-            {
-                RemoteControl.DolphinPath = openFile.FileName;
-                MessageBox.Show($"Dolphin path set successfully:\n{RemoteControl.DolphinPath}", "Dolphin path set", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private void MenuStrip_DropDownOpened(object sender, EventArgs e)
-        {
-            if (sender is ToolStripMenuItem menuItem && menuItem.DropDown != null)
-            {
-                if (typeof(ToolStrip)
-                    .GetProperty("ToolTip", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
-                    .GetValue(menuItem.DropDown) is ToolTip dropDownToolTip)
-                {
-                    dropDownToolTip.AutoPopDelay = 20000;
-                }
-            }
-        }
-
-        #region Color Mode
-        private SystemColorMode SystemColorMode
-        {
-            get;
-            set
-            {
-                field = value;
-                systemDefaultToolStripMenuItem.Checked = value == SystemColorMode.System;
-                darkModeToolStripMenuItem.Checked = value == SystemColorMode.Dark;
-                lightModeToolStripMenuItem.Checked = value == SystemColorMode.Classic;
-            }
-        }
-
-        private void darkModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SystemColorMode = SystemColorMode.Dark;
-        }
-
-        private void systemDefaultToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SystemColorMode = SystemColorMode.System;
-        }
-
-        private void lightModeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SystemColorMode = SystemColorMode.Classic;
-        }
-        #endregion
-
-        private void viewUndoBufferToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            new ScrollableMessageBox("Undo Buffer", Program.UndoBuffer.ToString()).Show(this);
-        }
-
-        public void RefreshAssetList(ArchiveEditorFunctions archive)
-        {
-            foreach (var ae in archiveEditors)
-                if (ae.archive == archive)
-                {
-                    var layerIndex = ae.archive.NoLayers ? -1 : ae.SelectedLayerIndex;
-                    ae.PopulateLayerComboBox();
-                    ae.SelectedLayerIndex = layerIndex;
-                }
-        }
-
-        internal void RefreshLayerList(ArchiveEditorFunctions archive, int index = -1)
-        {
-            var ae = archive.GetArchiveEditor();
-            if (!ae.archive.NoLayers)
-            {
-                ae.PopulateLayerComboBox();
-                if (index >= 0 && index < ae.archive.LayerCount)
-                    ae.SelectedLayerIndex = index;
-            }
-        }
-
-        private void viewControlsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (Program.ViewControls.WindowState == FormWindowState.Minimized)
-                Program.ViewControls.WindowState = FormWindowState.Normal;
-
-            if (!Program.ViewControls.Visible)
-                Program.ViewControls.Show(this);
-            Program.ViewControls.Activate();
-        }
-
-        private void undoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.UndoBuffer.Undo();
-        }
-
-        private void redoToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.UndoBuffer.Redo();
-        }
-
-        private void CopySelectedAssets()
-        {
-            var clipboard = new List<AssetClipboard>();
-            foreach (var ae in archiveEditors)
-                clipboard.AddRange(ae.archive.CreateAssetClipboard(copyHierarchy: PressedKeys.Contains(Keys.ShiftKey)));
-            Clipboard.SetText(JsonConvert.SerializeObject(clipboard, Formatting.None));
-        }
-
-        private void PasteSelectedAssets()
-        {
-            if (GetTargetArchiveEditor() is ArchiveEditor archiveEditor)
-            {
-                if (!archiveEditor.archive.NoLayers && archiveEditor.SelectedLayerIndex == -1)
-                {
-                    MessageBox.Show("Please select a layer to paste your asset in!");
-                }
-                else
-                {
-                    (bool success, var finalIndices, _) = archiveEditor.archive.PasteAssetsFromClipboard(archiveEditor.SelectedLayerIndex);
-                    if (success)
-                        archiveEditor.SetSelectedIndices(finalIndices);
-                }
-            }
-            else
-                MessageBox.Show($"Nothing was pasted because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-        }
-
-        public ConnectMarkers markerConnector;
-
-        private void connectMarkersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (markerConnector.SetupConnectMarkers())
-            {
-                if (!markerConnector.Visible)
-                    markerConnector.Show(this);
-                markerConnector.Activate();
-            }
-            else
-            {
-                markerConnector.Hide();
-            }
-        }
-
-        public bool PlaceTemplatesAt(List<Vector3> positions, bool deleteMarkers, AssetMRKR markerA, AssetMRKR markerB)
-        {
-            if (ArchiveEditorFunctions.CurrentAssetTemplate == AssetTemplate.Null || positions == null || positions.Count == 0)
-                return false;
-            if (GetTargetArchiveEditor() is ArchiveEditor ae)
-            {
-                var selected = new List<uint>();
-                foreach (Vector3 position in positions)
-                {
-                    var placed = ae.PlaceTemplate(position);
-                    if (placed == null || placed.Count == 0)
-                        return false;
-                    selected.AddRange(placed);
-                }
-                if (deleteMarkers)
-                {
-                    var actions = new List<IReversibleAction>();
-                    if (ArchiveEditorFunctions.ArchiveContainingAsset(markerA) is ArchiveEditorFunctions archiveA)
-                    {
-                        actions.Add(archiveA.GetAssetRemovedAction(markerA));
-                        archiveA.RemoveAsset(markerA.assetID);
-                    }
-                    if (ArchiveEditorFunctions.ArchiveContainingAsset(markerB) is ArchiveEditorFunctions archiveB)
-                    {
-                        actions.Add(archiveB.GetAssetRemovedAction(markerB));
-                        archiveB.RemoveAsset(markerB.assetID);
-                    }
-                    Program.UndoBuffer.AddAction(actions);
-                }
-                if (selected.Count != 0)
-                    SetSelectedIndices(selected);
-                return true;
-            }
-            MessageBox.Show($"The template could not be placed because no Archive Editor is selected as the target.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            return false;
         }
     }
 }

@@ -228,7 +228,7 @@ namespace IndustrialPark
                 if (bytes.Length == 0)
                     continue;
 
-                var path = Path.Combine(folderName, $"[{cd.DataType.ToString()}] {Program.MainForm.GetAssetNameFromID(cd.AssetID)}");
+                var path = Path.Combine(folderName, $"[{cd.DataType.ToString()}] {Program.NameRepository.Get(cd.AssetID)}");
                 string newpath;
                 int k = 0;
                 do

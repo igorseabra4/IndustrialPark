@@ -3,7 +3,6 @@ using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -36,9 +35,6 @@ namespace IndustrialPark
                 _yaw = reader.ReadSingle();
                 _pitch = reader.ReadSingle();
                 _roll = reader.ReadSingle();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
             }
         }
 
@@ -54,9 +50,9 @@ namespace IndustrialPark
             writer.Write(_roll);
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
     }

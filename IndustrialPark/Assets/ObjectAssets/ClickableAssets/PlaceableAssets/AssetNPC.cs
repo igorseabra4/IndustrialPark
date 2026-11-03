@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using SharpDX;
 using System.ComponentModel;
 
@@ -61,7 +62,7 @@ namespace IndustrialPark
         public AssetSingle ActivateRadius
         {
             get => _activateRadius;
-            set { _activateRadius = value; CreateTransformMatrix(); }
+            set => _activateRadius = value;
         }
         [Category(categoryName)]
         public AssetSingle ActivateFOV { get; set; }
@@ -290,44 +291,42 @@ namespace IndustrialPark
 
         public AssetNPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = entityHeaderEndPosition;
 
-                ActivateRadius = reader.ReadSingle();
-                ActivateFOV = reader.ReadSingle();
-                DetectHeight = reader.ReadSingle();
-                DetectHeightOffset = reader.ReadSingle();
-                SpeedMovement = reader.ReadSingle();
-                SpeedPursue = reader.ReadSingle();
-                SpeedTurn = reader.ReadSingle();
-                PursuitRange = reader.ReadSingle();
-                DurDazedState = reader.ReadInt16();
-                DurGloatState = reader.ReadInt16();
-                DurGummedState = reader.ReadInt16();
-                DurBubbleState = reader.ReadInt16();
-                Hitpoints = reader.ReadByte();
-                BehaviorState = reader.ReadByte();
-                reader.ReadInt16();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                LobSpeed = reader.ReadSingle();
-                LobDurReload = reader.ReadSingle();
-                LobRange = reader.ReadSingle();
-                LobSalvo = reader.ReadInt32();
-                ProjectileType = reader.ReadUInt32();
-                Bullseye_MovePoint = reader.ReadUInt32();
-                LobArcness = reader.ReadSingle();
-                LobHeavy = reader.ReadSingle();
-                ExtenderRange = reader.ReadSingle();
-                ExtenderWidth = reader.ReadSingle();
-                ExtenderDuration = reader.ReadSingle();
-                ExtenderRate = reader.ReadSingle();
-                ExtenderReloadTime = reader.ReadSingle();
-                MovePoint = reader.ReadUInt32();
-                Path = reader.ReadUInt32();
-                MinPlayerPowerups = reader.ReadInt32();
-                MinGameDifficulty = reader.ReadInt32();
-            }
+            ActivateRadius = reader.ReadSingle();
+            ActivateFOV = reader.ReadSingle();
+            DetectHeight = reader.ReadSingle();
+            DetectHeightOffset = reader.ReadSingle();
+            SpeedMovement = reader.ReadSingle();
+            SpeedPursue = reader.ReadSingle();
+            SpeedTurn = reader.ReadSingle();
+            PursuitRange = reader.ReadSingle();
+            DurDazedState = reader.ReadInt16();
+            DurGloatState = reader.ReadInt16();
+            DurGummedState = reader.ReadInt16();
+            DurBubbleState = reader.ReadInt16();
+            Hitpoints = reader.ReadByte();
+            BehaviorState = reader.ReadByte();
+            reader.ReadInt16();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            LobSpeed = reader.ReadSingle();
+            LobDurReload = reader.ReadSingle();
+            LobRange = reader.ReadSingle();
+            LobSalvo = reader.ReadInt32();
+            ProjectileType = reader.ReadUInt32();
+            Bullseye_MovePoint = reader.ReadUInt32();
+            LobArcness = reader.ReadSingle();
+            LobHeavy = reader.ReadSingle();
+            ExtenderRange = reader.ReadSingle();
+            ExtenderWidth = reader.ReadSingle();
+            ExtenderDuration = reader.ReadSingle();
+            ExtenderRate = reader.ReadSingle();
+            ExtenderReloadTime = reader.ReadSingle();
+            MovePoint = reader.ReadUInt32();
+            Path = reader.ReadUInt32();
+            MinPlayerPowerups = reader.ReadInt32();
+            MinGameDifficulty = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -378,7 +377,7 @@ namespace IndustrialPark
             Vector4 Color = _color;
             Color.W = Color.W == 0f ? 1f : Color.W;
 
-            if (ArchiveEditorFunctions.renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+            if ((renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value))
                 value.Draw(renderer, LocalWorld(), Color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
@@ -388,10 +387,10 @@ namespace IndustrialPark
         }
 
         private Matrix radiusMatrix;
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             radiusMatrix = Matrix.Scaling(ActivateRadius) * Matrix.Translation(_position);
-            base.CreateTransformMatrix();
+            base.CreateTransformMatrix(renderer);
         }
     }
 }

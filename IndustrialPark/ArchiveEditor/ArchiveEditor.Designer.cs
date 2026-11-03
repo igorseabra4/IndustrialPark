@@ -46,9 +46,9 @@
             moveLayerUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             moveLayerDownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparatorLayerEditBox = new System.Windows.Forms.ToolStripSeparator();
-            noLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            organizeLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            organizeLegacyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            autoLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            buildLayersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            buildLegacyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
             renameLayerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             legacySaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -216,7 +216,7 @@
             // 
             // layersToolStripMenuItem
             // 
-            layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addLayerToolStripMenuItem, removeLayerToolStripMenuItem, moveLayerUpToolStripMenuItem, moveLayerDownToolStripMenuItem, toolStripSeparatorLayerEditBox, noLayersToolStripMenuItem, organizeLayersToolStripMenuItem, organizeLegacyToolStripMenuItem, toolStripSeparator5, renameLayerToolStripMenuItem });
+            layersToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { addLayerToolStripMenuItem, removeLayerToolStripMenuItem, moveLayerUpToolStripMenuItem, moveLayerDownToolStripMenuItem, toolStripSeparatorLayerEditBox, autoLayersToolStripMenuItem, buildLayersToolStripMenuItem, buildLegacyToolStripMenuItem, toolStripSeparator5, renameLayerToolStripMenuItem });
             resources.ApplyResources(layersToolStripMenuItem, "layersToolStripMenuItem");
             layersToolStripMenuItem.Name = "layersToolStripMenuItem";
             // 
@@ -249,23 +249,23 @@
             toolStripSeparatorLayerEditBox.Name = "toolStripSeparatorLayerEditBox";
             resources.ApplyResources(toolStripSeparatorLayerEditBox, "toolStripSeparatorLayerEditBox");
             // 
-            // noLayersToolStripMenuItem
+            // autoLayersToolStripMenuItem
             // 
-            noLayersToolStripMenuItem.Name = "noLayersToolStripMenuItem";
-            resources.ApplyResources(noLayersToolStripMenuItem, "noLayersToolStripMenuItem");
-            noLayersToolStripMenuItem.Click += noLayersToolStripMenuItem_Click;
+            autoLayersToolStripMenuItem.Name = "autoLayersToolStripMenuItem";
+            resources.ApplyResources(autoLayersToolStripMenuItem, "autoLayersToolStripMenuItem");
+            autoLayersToolStripMenuItem.Click += autoLayersToolStripMenuItem_Click;
             // 
-            // organizeLayersToolStripMenuItem
+            // buildLayersToolStripMenuItem
             // 
-            organizeLayersToolStripMenuItem.Name = "organizeLayersToolStripMenuItem";
-            resources.ApplyResources(organizeLayersToolStripMenuItem, "organizeLayersToolStripMenuItem");
-            organizeLayersToolStripMenuItem.Click += organizeLayersToolStripMenuItem_Click;
+            buildLayersToolStripMenuItem.Name = "buildLayersToolStripMenuItem";
+            resources.ApplyResources(buildLayersToolStripMenuItem, "buildLayersToolStripMenuItem");
+            buildLayersToolStripMenuItem.Click += buildLayersToolStripMenuItem_Click;
             // 
-            // organizeLegacyToolStripMenuItem
+            // buildLegacyToolStripMenuItem
             // 
-            organizeLegacyToolStripMenuItem.Name = "organizeLegacyToolStripMenuItem";
-            resources.ApplyResources(organizeLegacyToolStripMenuItem, "organizeLegacyToolStripMenuItem");
-            organizeLegacyToolStripMenuItem.Click += organizeLegacyToolStripMenuItem_Click;
+            buildLegacyToolStripMenuItem.Name = "buildLegacyToolStripMenuItem";
+            resources.ApplyResources(buildLegacyToolStripMenuItem, "buildLegacyToolStripMenuItem");
+            buildLegacyToolStripMenuItem.Click += buildLegacyToolStripMenuItem_Click;
             // 
             // toolStripSeparator5
             // 
@@ -276,7 +276,7 @@
             // 
             resources.ApplyResources(renameLayerToolStripMenuItem, "renameLayerToolStripMenuItem");
             renameLayerToolStripMenuItem.Name = "renameLayerToolStripMenuItem";
-            renameLayerToolStripMenuItem.Click += renameToolStripMenuItem_Click;
+            renameLayerToolStripMenuItem.Click += renameLayerToolStripMenuItem_Click;
             // 
             // legacySaveToolStripMenuItem
             // 
@@ -665,10 +665,9 @@
             listViewAssets.UseCompatibleStateImageBehavior = false;
             listViewAssets.View = System.Windows.Forms.View.Details;
             listViewAssets.ColumnClick += listViewAssets_ColumnClick;
-            listViewAssets.ItemCheck += checkedListBoxAssets_ItemCheck;
-            listViewAssets.SelectedIndexChanged += checkedListBoxAssets_SelectedIndexChanged;
-            listViewAssets.KeyDown += checkedListBoxAssets_KeyDown;
-            listViewAssets.MouseDown += checkedListBoxAssets_MouseDown;
+            listViewAssets.ItemCheck += listViewAssets_ItemCheck;
+            listViewAssets.SelectedIndexChanged += listViewAssets_SelectedIndexChanged;
+            listViewAssets.MouseDown += listViewAssets_MouseDown;
             // 
             // AssetNameCol
             // 
@@ -709,7 +708,7 @@
             resources.ApplyResources(buttonEditDataAsset, "buttonEditDataAsset");
             buttonEditDataAsset.Name = "buttonEditDataAsset";
             buttonEditDataAsset.UseVisualStyleBackColor = true;
-            buttonEditDataAsset.Click += buttonInternalEdit_Click;
+            buttonEditDataAsset.Click += buttonEditData_Click;
             // 
             // buttonView
             // 
@@ -730,7 +729,7 @@
             resources.ApplyResources(buttonEditAsset, "buttonEditAsset");
             buttonEditAsset.Name = "buttonEditAsset";
             buttonEditAsset.UseVisualStyleBackColor = true;
-            buttonEditAsset.Click += buttonEditAsset_Click;
+            buttonEditAsset.Click += buttonEditHeader_Click;
             // 
             // buttonDuplicateAsset
             // 
@@ -751,7 +750,7 @@
             resources.ApplyResources(buttonImportAsset, "buttonImportAsset");
             buttonImportAsset.Name = "buttonImportAsset";
             buttonImportAsset.UseVisualStyleBackColor = true;
-            buttonImportAsset.Click += buttonAddAsset_Click;
+            buttonImportAsset.Click += buttonImportAsset_Click;
             // 
             // comboBoxAssetTypes
             // 
@@ -786,7 +785,7 @@
             // 
             toolStripMenuItem_Import.Name = "toolStripMenuItem_Import";
             resources.ApplyResources(toolStripMenuItem_Import, "toolStripMenuItem_Import");
-            toolStripMenuItem_Import.Click += buttonAddAsset_Click;
+            toolStripMenuItem_Import.Click += buttonImportAsset_Click;
             // 
             // toolStripMenuItem_Duplicate
             // 
@@ -833,13 +832,13 @@
             // 
             toolStripMenuItem_EditHeader.Name = "toolStripMenuItem_EditHeader";
             resources.ApplyResources(toolStripMenuItem_EditHeader, "toolStripMenuItem_EditHeader");
-            toolStripMenuItem_EditHeader.Click += buttonEditAsset_Click;
+            toolStripMenuItem_EditHeader.Click += buttonEditHeader_Click;
             // 
             // toolStripMenuItem_EditData
             // 
             toolStripMenuItem_EditData.Name = "toolStripMenuItem_EditData";
             resources.ApplyResources(toolStripMenuItem_EditData, "toolStripMenuItem_EditData");
-            toolStripMenuItem_EditData.Click += buttonInternalEdit_Click;
+            toolStripMenuItem_EditData.Click += buttonEditData_Click;
             // 
             // toolStripMenuItem_MultiEdit
             // 
@@ -995,9 +994,9 @@
         private System.Windows.Forms.ColumnHeader AssetTypeCol;
         private System.Windows.Forms.ColumnHeader AssetLinksCol;
         private System.Windows.Forms.ToolStripMenuItem layersToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem noLayersToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem organizeLayersToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem organizeLegacyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem autoLayersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildLayersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem buildLegacyToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
         private System.Windows.Forms.ToolStripMenuItem renameLayerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem hipHopFileToolStripMenuItem;

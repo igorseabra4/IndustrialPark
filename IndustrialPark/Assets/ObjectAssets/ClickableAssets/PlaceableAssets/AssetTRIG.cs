@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -220,7 +221,7 @@ namespace IndustrialPark
         public BoundingSphere boundingSphere;
         private Matrix pivotWorld;
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
             if (Shape == TriggerShape.Box)
             {
@@ -252,10 +253,10 @@ namespace IndustrialPark
 
             pivotWorld = Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected override void CreateBoundingBox()
+        protected override void CreateBoundingBox(SharpRenderer renderer)
         {
             if (Shape == TriggerShape.Sphere)
             {
@@ -265,7 +266,7 @@ namespace IndustrialPark
             else
             {
                 List<Vector3> verticesF = Shape == TriggerShape.Box ?
-                    SharpRenderer.cubeVertices : SharpRenderer.cylinderVertices;
+                    renderer.cubeVertices : renderer.cylinderVertices;
 
                 vertices = new Vector3[verticesF.Count];
 
@@ -290,7 +291,7 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public override bool SpecialBlendMode => true;
+        public override bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
@@ -300,17 +301,17 @@ namespace IndustrialPark
             if (Shape == TriggerShape.Box)
             {
                 if (ray.Intersects(ref boundingBox))
-                    return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
+                    return TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world);
             }
             else if (Shape == TriggerShape.Sphere)
             {
                 if (ray.Intersects(ref boundingSphere))
-                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                    return TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
             }
             else
             {
                 if (ray.Intersects(ref boundingBox))
-                    return TriangleIntersection(ray, SharpRenderer.cylinderTriangles, SharpRenderer.cylinderVertices, world);
+                    return TriangleIntersection(ray, renderer.cylinderTriangles, renderer.cylinderVertices, world);
             }
 
             return null;
@@ -341,8 +342,6 @@ namespace IndustrialPark
                     (_minimum.Z, _maximum.Z) = (_maximum.Z, _minimum.Z);
                 }
             }
-
-            CreateTransformMatrix();
         }
 
         [Category(categoryNamePlacement)]
@@ -486,7 +485,6 @@ namespace IndustrialPark
                 _maximum.X = transformation._scaleSingle;
                 if (Shape == TriggerShape.Cylinder)
                     _maximum.Y = transformation._scaleSfxMax;
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

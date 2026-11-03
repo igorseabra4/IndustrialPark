@@ -4,5 +4,6 @@
     {
         void CopyTransformation();
         void PasteTransformation();
+        void CreateTransformMatrix(SharpRenderer renderer);
     }
 }

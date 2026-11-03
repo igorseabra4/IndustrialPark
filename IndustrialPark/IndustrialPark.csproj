@@ -228,9 +228,7 @@
     <Compile Update="ArchiveEditor\Dialogs\ChooseGeneric.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="MainForm\MainForm_AdvancedDocking.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Update="MainForm\MainForm_AdvancedDocking.cs" />
     <Compile Update="MainForm\ConnectMarkers.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -126,7 +126,7 @@ If disabled, pasted assets will be assigned new names and IDs.
 This setting applies to copying and pasting in an Archive Editor.
 It does not apply to User Templates or the Paste Clipboard template, which never replace existing assets.</value>
   </data>
-  <data name="autoDockArchiveEditorToolStripMenuItem.ToolTipText" xml:space="preserve">
+  <data name="dockTargetArchiveEditorToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>When enabled, the targeted archive editor will be docked on the left side of the main window.
 Right click on the asset list to access all archive editor functionality.
 This option requires the toolbar to be enabled.</value>
@@ -150,7 +150,7 @@ This option only makes a difference when the asset is rotated on more than one a
 If disabled, move points with an arena radius bigger than 0 will render as spheres
 with a radius equal to the arena radius, otherwise as upside down pyramids.</value>
   </data>
-  <data name="runGameF5ToolStripMenuItem.ToolTipText" xml:space="preserve">
+  <data name="launchGameToolStripMenuItem.ToolTipText" xml:space="preserve">
     <value>Attempts to launch the game using the currently selected level as the BOOT parameter. The launch method depends on your configuration:
 
 - Heavy Mod Manager is running: Sends a request to Heavy Mod Manager to launch the game.

@@ -40,8 +40,8 @@
             numericArc = new System.Windows.Forms.NumericUpDown();
             labelArc = new System.Windows.Forms.Label();
             buttonCreate = new System.Windows.Forms.Button();
-            buttonCancel = new System.Windows.Forms.Button();
             checkDeleteMarkers = new System.Windows.Forms.CheckBox();
+            buttonSwapMarkers = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)numericNumber).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericAngle).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericArc).BeginInit();
@@ -147,46 +147,44 @@
             // 
             // buttonCreate
             // 
-            buttonCreate.Location = new System.Drawing.Point(12, 149);
+            buttonCreate.Location = new System.Drawing.Point(12, 162);
             buttonCreate.Name = "buttonCreate";
-            buttonCreate.Size = new System.Drawing.Size(218, 29);
+            buttonCreate.Size = new System.Drawing.Size(218, 30);
             buttonCreate.TabIndex = 11;
             buttonCreate.Text = "Place Templates";
             buttonCreate.UseVisualStyleBackColor = true;
             buttonCreate.Click += buttonCreate_Click;
             // 
-            // buttonCancel
-            // 
-            buttonCancel.Location = new System.Drawing.Point(12, 184);
-            buttonCancel.Name = "buttonCancel";
-            buttonCancel.Size = new System.Drawing.Size(218, 29);
-            buttonCancel.TabIndex = 12;
-            buttonCancel.Text = "Cancel";
-            buttonCancel.UseVisualStyleBackColor = true;
-            buttonCancel.Click += buttonCancel_Click;
-            // 
             // checkDeleteMarkers
             // 
-            checkDeleteMarkers.AutoSize = true;
             checkDeleteMarkers.Checked = true;
             checkDeleteMarkers.CheckState = System.Windows.Forms.CheckState.Checked;
             checkDeleteMarkers.Location = new System.Drawing.Point(12, 124);
             checkDeleteMarkers.Name = "checkDeleteMarkers";
-            checkDeleteMarkers.Size = new System.Drawing.Size(104, 19);
+            checkDeleteMarkers.Size = new System.Drawing.Size(110, 35);
             checkDeleteMarkers.TabIndex = 10;
-            checkDeleteMarkers.Text = "Delete Markers";
+            checkDeleteMarkers.Text = "Delete Markers After Placing";
             checkDeleteMarkers.UseVisualStyleBackColor = true;
+            // 
+            // buttonSwapMarkers
+            // 
+            buttonSwapMarkers.Location = new System.Drawing.Point(128, 124);
+            buttonSwapMarkers.Name = "buttonSwapMarkers";
+            buttonSwapMarkers.Size = new System.Drawing.Size(102, 32);
+            buttonSwapMarkers.TabIndex = 13;
+            buttonSwapMarkers.Text = "Swap Markers";
+            buttonSwapMarkers.UseVisualStyleBackColor = true;
+            buttonSwapMarkers.Click += button1_Click;
             // 
             // ConnectMarkers
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoScroll = true;
-            ClientSize = new System.Drawing.Size(241, 224);
-            ControlBox = false;
-            Controls.Add(checkDeleteMarkers);
-            Controls.Add(buttonCancel);
+            ClientSize = new System.Drawing.Size(242, 202);
             Controls.Add(buttonCreate);
+            Controls.Add(buttonSwapMarkers);
+            Controls.Add(checkDeleteMarkers);
             Controls.Add(numericArc);
             Controls.Add(labelArc);
             Controls.Add(numericAngle);
@@ -199,7 +197,6 @@
             Controls.Add(label1);
             Font = new System.Drawing.Font("Segoe UI", 9F);
             FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "ConnectMarkers";
@@ -226,7 +223,7 @@
         private System.Windows.Forms.NumericUpDown numericArc;
         private System.Windows.Forms.Label labelArc;
         private System.Windows.Forms.Button buttonCreate;
-        private System.Windows.Forms.Button buttonCancel;
         private System.Windows.Forms.CheckBox checkDeleteMarkers;
+        private System.Windows.Forms.Button buttonSwapMarkers;
     }
 }

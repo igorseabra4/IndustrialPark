@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using SharpDX;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -47,34 +47,27 @@ namespace IndustrialPark
             MaximumToSpawn = 1;
             SpawnRate = 1f;
             NPC = new AssetVIL(assetName, position, AssetTemplate.NPC, 0);
-            renderableAssets.Remove(NPC);
-            AddToRenderableAssets(this);
         }
 
         public AssetDUPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-                InitialSpawn = reader.ReadInt16();
-                MaximumInGame = reader.ReadInt16();
-                MaximumToSpawn = reader.ReadInt16();
-                reader.BaseStream.Position += 2;
-                SpawnRate = reader.ReadSingle();
-                UnknownInt_14 = reader.ReadInt32();
-                UnknownInt_18 = reader.ReadInt32();
-                UnknownInt_1C = reader.ReadInt32();
-                UnknownInt_20 = reader.ReadInt32();
-                UnknownInt_24 = reader.ReadInt32();
-                UnknownInt_28 = reader.ReadInt32();
-                NavMesh1 = reader.ReadUInt32();
-                UnknownInt_30 = reader.ReadInt32();
-                NPC = new AssetVIL(reader, game);
-            }
-
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
+            InitialSpawn = reader.ReadInt16();
+            MaximumInGame = reader.ReadInt16();
+            MaximumToSpawn = reader.ReadInt16();
+            reader.BaseStream.Position += 2;
+            SpawnRate = reader.ReadSingle();
+            UnknownInt_14 = reader.ReadInt32();
+            UnknownInt_18 = reader.ReadInt32();
+            UnknownInt_1C = reader.ReadInt32();
+            UnknownInt_20 = reader.ReadInt32();
+            UnknownInt_24 = reader.ReadInt32();
+            UnknownInt_28 = reader.ReadInt32();
+            NavMesh1 = reader.ReadUInt32();
+            UnknownInt_30 = reader.ReadInt32();
+            NPC = new AssetVIL(reader, game);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -108,7 +101,7 @@ namespace IndustrialPark
             SerializeLinks(writer);
         }
 
-        public void CreateTransformMatrix() => NPC.CreateTransformMatrix();
+        public void CreateTransformMatrix(SharpRenderer renderer) => NPC.CreateTransformMatrix(renderer);
         public float GetDistanceFrom(Vector3 position) => NPC.GetDistanceFrom(position);
         public bool ShouldDraw(SharpRenderer renderer)
         {
@@ -125,7 +118,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => NPC.GetIntersectionPosition(renderer, ray);
         public BoundingBox GetBoundingBox() => NPC.GetBoundingBox();
         [Browsable(false)]
-        public bool SpecialBlendMode => NPC.SpecialBlendMode;
+        public bool SpecialBlendMode(SharpRenderer renderer) => NPC.SpecialBlendMode(renderer);
 
         [Category(categoryName2), ReadOnly(true)]
         public AssetSingle PositionX { get => NPC.PositionX; set => NPC.PositionX = value; }

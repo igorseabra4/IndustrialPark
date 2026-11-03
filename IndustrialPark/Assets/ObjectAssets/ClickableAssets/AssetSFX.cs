@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -35,33 +36,33 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
         private float _radius;
         [Category(categoryName)]
         public AssetSingle InnerRadius
         {
             get => _radius;
-            set { _radius = value; CreateTransformMatrix(); }
+            set => _radius = value;
         }
         private float _radius2;
         [Category(categoryName)]
         public AssetSingle OuterRadius
         {
             get => _radius2;
-            set { _radius2 = value; CreateTransformMatrix(); }
+            set => _radius2 = value;
         }
 
         public AssetSFX(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.SFX, BaseAssetType.SFX)
@@ -112,34 +113,26 @@ namespace IndustrialPark
                     }
                 };
             }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
         public AssetSFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
 
-                Flags08.FlagValueByte = reader.ReadByte();
-                Flags09.FlagValueByte = reader.ReadByte();
-                Frequency = reader.ReadInt16();
-                MinFrequency = reader.ReadSingle();
-                Sound = reader.ReadUInt32();
-                Attach = reader.ReadUInt32();
-                LoopCount = reader.ReadByte();
-                Priority = reader.ReadByte();
-                Volume = reader.ReadByte();
-                reader.ReadByte();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _radius = reader.ReadSingle();
-                _radius2 = reader.ReadSingle();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            Flags08.FlagValueByte = reader.ReadByte();
+            Flags09.FlagValueByte = reader.ReadByte();
+            Frequency = reader.ReadInt16();
+            MinFrequency = reader.ReadSingle();
+            Sound = reader.ReadUInt32();
+            Attach = reader.ReadUInt32();
+            LoopCount = reader.ReadByte();
+            Priority = reader.ReadByte();
+            Volume = reader.ReadByte();
+            reader.ReadByte();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _radius = reader.ReadSingle();
+            _radius2 = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -170,11 +163,11 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         public BoundingSphere boundingSphere;
 
-        public void CreateTransformMatrix()
+        public void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
             world2 = Matrix.Scaling(_radius2 * 2f) * Matrix.Translation(_position);
@@ -191,7 +184,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingSphere))
-                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                return TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
             return null;
         }
 
@@ -276,8 +269,6 @@ namespace IndustrialPark
                 _position.Z = transformation._positionZ;
                 _radius = transformation._scaleSfxMin;
                 _radius2 = transformation._scaleSfxMax;
-
-                CreateTransformMatrix();
             }
             catch (Exception ex)
             {

@@ -1,4 +1,5 @@
-﻿using RenderWareFile.Sections;
+﻿using IndustrialPark.AssetEditorColors;
+using RenderWareFile.Sections;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -101,16 +102,14 @@ namespace IndustrialPark
             if (currentMaterials.Count() == 0)
                 return;
 
-            ColorDialog dialog = new ColorDialog()
-            {
-                Color = Color.FromArgb(
+            var dialog = AssetColorEditor.GetColorFromDialog(Color.FromArgb(
                 currentMaterials[0].materialStruct.color.A,
                 currentMaterials[0].materialStruct.color.R,
                 currentMaterials[0].materialStruct.color.G,
                 currentMaterials[0].materialStruct.color.B)
-            };
+            );
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (dialog.Result == DialogResult.OK)
                 foreach (var currentMaterial in currentMaterials)
                 {
                     currentMaterial.materialStruct.color = new RenderWareFile.Color(

@@ -154,7 +154,7 @@ namespace IndustrialPark
             Vector4 Color = _color;
             Color.W = Color.W == 0f ? 1f : Color.W;
 
-            if (ArchiveEditorFunctions.renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+            if (renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value)
                 value.Draw(renderer, LocalWorld(), Color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);

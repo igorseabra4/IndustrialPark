@@ -402,7 +402,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetPIPT : Asset, IAssetAddSelected, IDictionaryAsset, ITableAsset<AssetPIPT, PipeInfo>
+    public class AssetPIPT : Asset, IAssetAddSelected, IDisposableAsset, ITableAsset<AssetPIPT, PipeInfo>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
@@ -414,9 +414,11 @@ namespace IndustrialPark
             set
             {
                 _entries = [.. value];
-                UpdateDictionary();
+                PipeInfoUpdate?.Invoke(false);
             }
         }
+
+        public event Action<bool> PipeInfoUpdate;
 
         public AssetPIPT(string assetName) : base(assetName, AssetType.PipeInfoTable)
         {
@@ -430,8 +432,6 @@ namespace IndustrialPark
             _entries = [with(len)];
             for (int i = 0; i < len; i++)
                 _entries.Add(new PipeInfo(reader, game));
-
-            UpdateDictionary();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -442,38 +442,9 @@ namespace IndustrialPark
                 l.Serialize(writer);
         }
 
-        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, endianness)
+        public void Dispose()
         {
-            this.onPipeInfoTableEdited = onPipeInfoTableEdited;
-        }
-
-        public delegate void OnPipeInfoTableEdited(Dictionary<uint, PipeInfo[]> pipeEntries);
-        private readonly OnPipeInfoTableEdited onPipeInfoTableEdited;
-
-        public void UpdateDictionary()
-        {
-            Dictionary<uint, PipeInfo[]> piptEntries = new Dictionary<uint, PipeInfo[]>();
-
-            foreach (PipeInfo entry in Entries)
-            {
-                if (!piptEntries.ContainsKey(entry.Model))
-                    piptEntries[entry.Model] = new PipeInfo[0];
-
-                var entries = piptEntries[entry.Model].ToList();
-                for (int i = 0; i < entries.Count; i++)
-                    if (entries[i].SubObjectBits.FlagValueInt == entry.SubObjectBits.FlagValueInt)
-                        entries.RemoveAt(i--);
-
-                entries.Add(entry);
-                piptEntries[entry.Model] = entries.ToArray();
-            }
-
-            onPipeInfoTableEdited?.Invoke(piptEntries);
-        }
-
-        public void ClearDictionary()
-        {
-            onPipeInfoTableEdited?.Invoke(null);
+            PipeInfoUpdate?.Invoke(true);
         }
 
         public void Merge(AssetPIPT asset)
@@ -519,11 +490,22 @@ namespace IndustrialPark
 
         public void RemoveEntry(uint assetID)
         {
-            var entries = Entries.ToList();
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].Model == assetID)
-                    entries.RemoveAt(i--);
-            Entries = entries.ToArray();
+            Entries = [.. Entries.Where(e => e.Model != assetID)];
+        }
+
+        public Dictionary<uint, List<PipeInfo>> GetEntryDictionary()
+        {
+            var result = new Dictionary<uint, List<PipeInfo>>();
+            foreach (PipeInfo entry in Entries)
+            {
+                if (!result.ContainsKey(entry.Model))
+                    result[entry.Model] = [];
+
+                result[entry.Model].RemoveAll(item => item.SubObjectBits.FlagValueInt == entry.SubObjectBits.FlagValueInt);
+
+                result[entry.Model].Add(entry);
+            }
+            return result;
         }
     }
 }

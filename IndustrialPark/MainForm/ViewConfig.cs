@@ -19,12 +19,12 @@ namespace IndustrialPark
             ------------
         */
 
-        // Default value assignments moved to Program.MainForm.renderer.
+        // Default value assignments moved to Program.renderer.
 
         public ViewConfig()
         {
             InitializeComponent();
-            Program.MainForm.renderer.Camera.CameraChangedEvent += CameraChanged;
+            Program.Renderer.Camera.CameraChangedEvent += CameraChanged;
 
             NumericIntervalRotation.Maximum = decimal.MaxValue;
             NumericInterval.Maximum = decimal.MaxValue;
@@ -62,7 +62,6 @@ namespace IndustrialPark
             _invalidCameraValues = true;
         }
 
-
         /*
              ------
              Events
@@ -83,42 +82,42 @@ namespace IndustrialPark
         private void NumericCamera_ValueChanged(object sender, EventArgs e)
         {
             if (!ProgramIsUpdatingValues)
-                Program.MainForm.renderer.Camera.SetPosition(new Vector3((float)NumericCameraX.Value, (float)NumericCameraY.Value, (float)NumericCameraZ.Value));
+                Program.Renderer.Camera.SetPosition(new Vector3((float)NumericCameraX.Value, (float)NumericCameraY.Value, (float)NumericCameraZ.Value));
         }
 
         private void NumericCameraRot_ValueChanged(object sender, EventArgs e)
         {
             if (!ProgramIsUpdatingValues)
             {
-                Program.MainForm.renderer.Camera.Pitch = (float)NumericCameraPitch.Value;
-                Program.MainForm.renderer.Camera.Yaw = (float)NumericCameraYaw.Value;
-                Program.MainForm.renderer.Camera.Roll = (float)NumericCameraRoll.Value;
+                Program.Renderer.Camera.Pitch = (float)NumericCameraPitch.Value;
+                Program.Renderer.Camera.Yaw = (float)NumericCameraYaw.Value;
+                Program.Renderer.Camera.Roll = (float)NumericCameraRoll.Value;
             }
         }
 
         private void NumericInterval_ValueChanged(object sender, EventArgs e)
         {
             if (!ProgramIsUpdatingValues)
-                Program.MainForm.renderer.Camera.Speed = (float)NumericInterval.Value;
+                Program.Renderer.Camera.Speed = (float)NumericInterval.Value;
         }
 
         private void NumericIntervalRotation_ValueChanged(object sender, EventArgs e)
         {
             if (!ProgramIsUpdatingValues)
-                Program.MainForm.renderer.Camera.SpeedRot = (float)NumericIntervalRotation.Value;
+                Program.Renderer.Camera.SpeedRot = (float)NumericIntervalRotation.Value;
         }
 
         private void NumericDrawD_ValueChanged(object sender, EventArgs e)
         {
             if (!ProgramIsUpdatingValues)
-                Program.MainForm.renderer.Camera.FarPlane = (float)NumericDrawD.Value;
+                Program.Renderer.Camera.FarPlane = (float)NumericDrawD.Value;
         }
 
         private void NumericFOV_ValueChanged(object sender, EventArgs e)
         {
             if (NumericFOV.Value < 1)
                 NumericFOV.Value = 1;
-            Program.MainForm.renderer.Camera.FieldOfView = MathUtil.DegreesToRadians((float)NumericFOV.Value);
+            Program.Renderer.Camera.FieldOfView = MathUtil.DegreesToRadians((float)NumericFOV.Value);
         }
 
         private void numericGrid_ValueChanged(object sender, EventArgs e)
@@ -156,17 +155,17 @@ namespace IndustrialPark
         public void UpdateValues()
         {
             ProgramIsUpdatingValues = true;
-            NumericFOV.Value = (decimal)MathUtil.RadiansToDegrees(Program.MainForm.renderer.Camera.FieldOfView);
-            NumericDrawD.Value = (decimal)Program.MainForm.renderer.Camera.FarPlane;
-            NumericInterval.Value = (decimal)Program.MainForm.renderer.Camera.Speed;
-            NumericIntervalRotation.Value = (decimal)Program.MainForm.renderer.Camera.SpeedRot;
-            NumericCameraX.Value = (decimal)Program.MainForm.renderer.Camera.Position.X;
-            NumericCameraY.Value = (decimal)Program.MainForm.renderer.Camera.Position.Y;
-            NumericCameraZ.Value = (decimal)Program.MainForm.renderer.Camera.Position.Z;
+            NumericFOV.Value = (decimal)MathUtil.RadiansToDegrees(Program.Renderer.Camera.FieldOfView);
+            NumericDrawD.Value = (decimal)Program.Renderer.Camera.FarPlane;
+            NumericInterval.Value = (decimal)Program.Renderer.Camera.Speed;
+            NumericIntervalRotation.Value = (decimal)Program.Renderer.Camera.SpeedRot;
+            NumericCameraX.Value = (decimal)Program.Renderer.Camera.Position.X;
+            NumericCameraY.Value = (decimal)Program.Renderer.Camera.Position.Y;
+            NumericCameraZ.Value = (decimal)Program.Renderer.Camera.Position.Z;
 
-            NumericCameraYaw.Value = (decimal)Program.MainForm.renderer.Camera.Yaw;
-            NumericCameraPitch.Value = (decimal)Program.MainForm.renderer.Camera.Pitch;
-            NumericCameraRoll.Value = (decimal)Program.MainForm.renderer.Camera.Roll;
+            NumericCameraYaw.Value = (decimal)Program.Renderer.Camera.Yaw;
+            NumericCameraPitch.Value = (decimal)Program.Renderer.Camera.Pitch;
+            NumericCameraRoll.Value = (decimal)Program.Renderer.Camera.Roll;
 
             numericGridX.Value = (decimal)Program.MainForm.gizmoManager.Grid.X;
             numericGridY.Value = (decimal)Program.MainForm.gizmoManager.Grid.Y;

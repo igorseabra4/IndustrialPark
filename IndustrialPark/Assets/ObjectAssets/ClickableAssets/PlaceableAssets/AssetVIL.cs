@@ -1,8 +1,11 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace IndustrialPark
 {
@@ -244,7 +247,7 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (ArchiveEditorFunctions.renderingDictionary.TryGetValue(_model, out IAssetWithModel value))
+            if (renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value)
                 value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
@@ -269,9 +272,9 @@ namespace IndustrialPark
 
         private AssetMVPT FindMVPT(out bool found)
         {
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.TryGetAsset(MovePoint, out Asset asset) && asset is AssetMVPT MVPT)
-                    return FindMVPTWithRadius(MVPT, out found, [MovePoint]);
+            var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(MovePoint);
+            if (ae != null && ae.archive.GetAsset(MovePoint) is AssetMVPT MVPT)
+                return FindMVPTWithRadius(MVPT, out found, [MovePoint]);
 
             found = false;
             return null;
@@ -287,15 +290,14 @@ namespace IndustrialPark
                     return MVPT;
                 }
                 foreach (AssetID assetID in MVPT.NextMovePoints)
-                    foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                        if (ae.archive.TryGetAsset(assetID, out Asset asset))
-                        {
-                            if (asset is AssetMVPT MVPT2 && !list.Contains(assetID))
-                            {
-                                list.Add(assetID);
-                                return FindMVPTWithRadius(MVPT2, out found, list);
-                            }
-                        }
+                {
+                    var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(assetID);
+                    if (ae != null && ae.archive.GetAsset(assetID) is AssetMVPT MVPT2 && !list.Contains(MVPT2.assetID))
+                    {
+                        list.Add(MVPT2.assetID);
+                        return FindMVPTWithRadius(MVPT2, out found, list);
+                    }
+                }
             }
             found = false;
             return null;

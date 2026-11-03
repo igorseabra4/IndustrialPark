@@ -114,32 +114,32 @@ namespace IndustrialPark
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.planeTriangles, SharpRenderer.planeVertices, world);
+                return TriangleIntersection(ray, renderer.planeTriangles, renderer.planeVertices, world);
             return null;
         }
 
 #if DEBUG
-        protected override void CreateBoundingBox()
+        protected override void CreateBoundingBox(SharpRenderer renderer)
         {
-            CreateBoundingBox(SharpRenderer.planeVertices);
+            CreateBoundingBox(renderer, renderer.planeVertices);
         }
 
         public override void Draw(SharpRenderer renderer)
         {
             bool found = false;
-            foreach (var ae in Program.MainForm.archiveEditors)
-                if (ae.archive.TryGetAsset(Text, out Asset asset) && asset is AssetTEXT assetText)
+            var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(Text);
+            if (ae != null && ae.archive.GetAsset(Text) is AssetTEXT assetText)
+            {
+                var newText = assetText.Text;
+                if (newText != text)
                 {
-                    var newText = assetText.Text;
-                    if (newText != text)
-                    {
-                        text = newText;
-                        image?.Dispose();
-                        image = null;
-                        image = TextureUtilities.CreateTextureFromBitmap(renderer.device.Device, DrawBitmapFromText());
-                        found = true;
-                    }
+                    text = newText;
+                    image?.Dispose();
+                    image = null;
+                    image = TextureUtilities.CreateTextureFromBitmap(renderer.device.Device, DrawBitmapFromText());
+                    found = true;
                 }
+            }
             if (!found)
                 image = null;
 

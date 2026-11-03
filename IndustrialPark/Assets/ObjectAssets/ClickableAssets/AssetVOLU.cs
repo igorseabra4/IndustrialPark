@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using SharpDX;
 using System.ComponentModel;
 
@@ -91,46 +92,32 @@ namespace IndustrialPark
                 }
                 break;
             }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
         public AssetVOLU(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = baseHeaderEndPosition;
+
+            Flags.FlagValueInt = reader.ReadUInt32();
+            _shape = (VolumeType)reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            VolumeShape = _shape switch
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                Flags.FlagValueInt = reader.ReadUInt32();
-                _shape = (VolumeType)reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                switch (_shape)
-                {
-                    case VolumeType.Sphere:
-                        VolumeShape = new VolumeSphere(reader);
-                        break;
-                    case VolumeType.Cylinder_DoesntWork:
-                        VolumeShape = new VolumeCylinder(reader);
-                        break;
-                    default:
-                        VolumeShape = new VolumeBox(reader);
-                        break;
-                }
-                reader.BaseStream.Position = 0x34;
-                UnknownInt34 = reader.ReadInt32();
-                UnknownInt38 = reader.ReadInt32();
-                UnknownInt3C = reader.ReadInt32();
-                UnknownInt40 = reader.ReadInt32();
-                Rotation = reader.ReadSingle();
-                PivotX = reader.ReadSingle();
-                PivotZ = reader.ReadSingle();
-            }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
+                VolumeType.Sphere => new VolumeSphere(reader),
+                VolumeType.Cylinder_DoesntWork => new VolumeCylinder(reader),
+                _ => new VolumeBox(reader),
+            };
+            reader.BaseStream.Position = 0x34;
+            UnknownInt34 = reader.ReadInt32();
+            UnknownInt38 = reader.ReadInt32();
+            UnknownInt3C = reader.ReadInt32();
+            UnknownInt40 = reader.ReadInt32();
+            Rotation = reader.ReadSingle();
+            PivotX = reader.ReadSingle();
+            PivotZ = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -162,7 +149,7 @@ namespace IndustrialPark
         public AssetSingle PositionZ { get => VolumeShape.CenterZ; set => VolumeShape.CenterZ = value; }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         public static bool dontRender = false;
 
@@ -175,7 +162,7 @@ namespace IndustrialPark
         }
 
         public BoundingBox GetBoundingBox() => VolumeShape.GetBoundingBox();
-        public void CreateTransformMatrix() => VolumeShape.CreateTransformMatrix();
+        public void CreateTransformMatrix(SharpRenderer renderer) => VolumeShape.CreateTransformMatrix(renderer);
         public float GetDistanceFrom(Vector3 position) => VolumeShape.GetDistanceFrom(position);
         public bool ShouldDraw(SharpRenderer renderer) => VolumeShape.ShouldDraw(renderer, isSelected, dontRender, isInvisible);
         public void Draw(SharpRenderer renderer) => VolumeShape.Draw(renderer, isSelected);

@@ -105,9 +105,9 @@ namespace IndustrialPark
             Rotation = rotation;
         }
 
-        public virtual SharpMesh Mesh => UseCones ? SharpRenderer.Cone : SharpRenderer.Pyramid;
-        protected virtual List<Vector3> vertexList => UseCones ? SharpRenderer.coneVertices : SharpRenderer.pyramidVertices;
-        protected virtual List<Models.Triangle> triangleList => UseCones ? SharpRenderer.coneTriangles : SharpRenderer.pyramidTriangles;
+        public virtual SharpMesh Mesh => UseCones ? Program.Renderer.Cone : Program.Renderer.Pyramid;
+        protected virtual List<Vector3> vertexList => UseCones ? Program.Renderer.coneVertices : Program.Renderer.pyramidVertices;
+        protected virtual List<Models.Triangle> triangleList => UseCones ? Program.Renderer.coneTriangles : Program.Renderer.pyramidTriangles;
 
         protected virtual bool drawLine => true;
 

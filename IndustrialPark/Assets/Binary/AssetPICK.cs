@@ -44,7 +44,7 @@ namespace IndustrialPark
             $"[{HexUIntTypeConverter.StringFromAssetID(PickupHash)}] - [{HexUIntTypeConverter.StringFromAssetID(Model)}]";
     }
 
-    public class AssetPICK : Asset, IDictionaryAsset
+    public class AssetPICK : Asset, IDisposableAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
@@ -91,7 +91,7 @@ namespace IndustrialPark
                 pickEntries[entry.PickupHash] = entry.Model;
         }
 
-        public void ClearDictionary()
+        public void Dispose()
         {
             foreach (EntryPICK entry in _entries)
                 pickEntries.Remove(entry.PickupHash);

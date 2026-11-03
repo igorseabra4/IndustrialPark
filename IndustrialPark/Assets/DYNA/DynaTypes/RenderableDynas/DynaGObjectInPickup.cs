@@ -1,9 +1,9 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archive;
 using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
 namespace IndustrialPark
 {
@@ -52,23 +52,15 @@ namespace IndustrialPark
                     PickupHash = 0x91338C47;
                     break;
             }
-
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
         }
 
         public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__IN_Pickup, game, endianness)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
+            using var reader = new EndianBinaryReader(AHDR.data, endianness);
+            reader.BaseStream.Position = dynaDataStartPosition;
 
-                PickupHash = reader.ReadUInt32();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            PickupHash = reader.ReadUInt32();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
@@ -79,17 +71,17 @@ namespace IndustrialPark
             writer.Write(_position.Z);
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
+        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
-        public override void CreateTransformMatrix()
+        public override void CreateTransformMatrix(SharpRenderer renderer)
         {
-            world = Matrix.Translation(PositionX, PositionY, PositionZ);
+            world = Matrix.Translation(_position);
 
             if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
             {
-                var model = GetFromRenderingDictionary(AssetTPIK.tpikEntries[PickupHash].Model);
+                var model = renderer.Assets.GetModelFromRenderingDictionary(AssetTPIK.tpikEntries[PickupHash].Model);
                 if (model != null)
                 {
                     var vertexList = model.vertexListG;
@@ -104,9 +96,9 @@ namespace IndustrialPark
                 }
             }
 
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+            vertices = new Vector3[renderer.cubeVertices.Count];
+            for (int i = 0; i < renderer.cubeVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(renderer.cubeVertices[i] * 0.5f, world);
             boundingBox = BoundingBox.FromPoints(vertices);
             triangles = null;
         }
@@ -134,12 +126,12 @@ namespace IndustrialPark
             if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
             {
                 var tpikEntry = AssetTPIK.tpikEntries[PickupHash];
-                if (renderingDictionary.TryGetValue(tpikEntry.Model, out IAssetWithModel value))
+                if (renderer.Assets.GetFromRenderingDictionary(tpikEntry.Model) is IAssetWithModel value)
                 {
                     value.Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
                     drew = true;
                 }
-                if (renderingDictionary.TryGetValue(tpikEntry.PulseModel, out IAssetWithModel pulseValue))
+                if (renderer.Assets.GetFromRenderingDictionary(tpikEntry.PulseModel) is IAssetWithModel pulseValue)
                 {
                     var color = new Vector4(tpikEntry.ColorRed, tpikEntry.ColorGreen, tpikEntry.ColorBlue, 1f);
                     pulseValue.Draw(renderer, world, color, Vector3.Zero, isSelected);
