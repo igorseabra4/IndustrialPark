@@ -282,7 +282,7 @@ namespace IndustrialPark
             if (Shape == TriggerShape.Box)
                 renderer.DrawCube(world, isSelected, 1f);
             else if (Shape == TriggerShape.Sphere)
-                renderer.DrawSphere(world, isSelected, renderer.trigColor);
+                renderer.DrawSphere(boundingSphere, isSelected, renderer.trigColor);
             else
                 renderer.DrawCylinder(world, isSelected, renderer.trigColor);
 

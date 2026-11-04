@@ -157,7 +157,6 @@ namespace IndustrialPark
         }
 
         private Matrix world;
-        private Matrix world2;
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
@@ -165,12 +164,12 @@ namespace IndustrialPark
         [Browsable(false)]
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public BoundingSphere boundingSphere;
+        private BoundingSphere boundingSphere;
+        private BoundingSphere boundingSphere2;
 
         public void CreateTransformMatrix(SharpRenderer renderer)
         {
             world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
-            world2 = Matrix.Scaling(_radius2 * 2f) * Matrix.Translation(_position);
 
             CreateBoundingBox();
         }
@@ -178,6 +177,7 @@ namespace IndustrialPark
         protected void CreateBoundingBox()
         {
             boundingSphere = new BoundingSphere(_position, _radius);
+            boundingSphere2 = new BoundingSphere(_position, _radius2);
             boundingBox = BoundingBox.FromSphere(boundingSphere);
         }
 
@@ -199,15 +199,15 @@ namespace IndustrialPark
             if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;
 
-            return renderer.frustum.Intersects(ref boundingBox);
+            return renderer.frustum.Intersects(ref boundingSphere);
         }
 
         public void Draw(SharpRenderer renderer)
         {
-            renderer.DrawSphere(world, isSelected, renderer.sfxColor);
+            renderer.DrawSphere(boundingSphere, isSelected, renderer.sfxColor);
 
             if (isSelected)
-                renderer.DrawSphere(world2, false, renderer.sfxColor);
+                renderer.DrawSphere(boundingSphere2, false, renderer.sfxColor);
         }
 
         public BoundingBox GetBoundingBox() => boundingBox;

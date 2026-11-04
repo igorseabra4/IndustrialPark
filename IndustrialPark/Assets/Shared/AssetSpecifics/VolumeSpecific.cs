@@ -267,7 +267,7 @@ namespace IndustrialPark
             return null;
         }
 
-        public override void Draw(SharpRenderer renderer, bool isSelected) => renderer.DrawSphere(world, isSelected, renderer.trigColor);
+        public override void Draw(SharpRenderer renderer, bool isSelected) => renderer.DrawSphere(boundingSphere, isSelected, renderer.trigColor);
 
         public override void ApplyScale(Vector3 factor, float singleFactor)
         {

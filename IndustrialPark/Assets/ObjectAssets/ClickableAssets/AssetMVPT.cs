@@ -165,7 +165,7 @@ namespace IndustrialPark
             CreateBoundingBox(renderer);
         }
 
-        public BoundingSphere boundingSphere;
+        private BoundingSphere boundingSphere;
 
         protected void CreateBoundingBox(SharpRenderer renderer)
         {
@@ -217,7 +217,7 @@ namespace IndustrialPark
             if (DrawAsPoint)
                 renderer.DrawPyramid(world, isSelected, 1f, renderer.mvptColor);
             else
-                renderer.DrawSphere(world, isSelected, renderer.mvptColor);
+                renderer.DrawSphere(boundingSphere, isSelected, renderer.mvptColor);
         }
 
         public BoundingBox GetBoundingBox() => boundingBox;

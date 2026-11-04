@@ -383,14 +383,7 @@ namespace IndustrialPark
                 renderer.DrawCube(LocalWorld(), isSelected);
 
             if (isSelected)
-                renderer.DrawSphere(radiusMatrix, false, renderer.mvptColor);
-        }
-
-        private Matrix radiusMatrix;
-        public override void CreateTransformMatrix(SharpRenderer renderer)
-        {
-            radiusMatrix = Matrix.Scaling(ActivateRadius) * Matrix.Translation(_position);
-            base.CreateTransformMatrix(renderer);
+                renderer.DrawSphere(new BoundingSphere(_position, ActivateRadius), false, renderer.mvptColor);
         }
     }
 }
