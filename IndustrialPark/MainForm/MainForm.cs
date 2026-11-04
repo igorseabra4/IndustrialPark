@@ -3,8 +3,6 @@ using IndustrialPark.Archive;
 using IndustrialPark.AssetEditorColors;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
-using SharpDX;
-using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -128,7 +126,7 @@ namespace IndustrialPark
                 try
                 {
 #endif
-                    AddArchiveEditor(file);
+                AddArchiveEditor(file);
 #if !DEBUG
                 }
                 catch (Exception ex)
@@ -528,13 +526,13 @@ namespace IndustrialPark
         private void backfaceCullingToolStripMenuItem_Click(object sender, EventArgs e)
         {
             backfaceCullingToolStripMenuItem.Checked = !backfaceCullingToolStripMenuItem.Checked;
-            renderer.device.SetNormalCullMode(backfaceCullingToolStripMenuItem.Checked ? CullMode.None : CullMode.Back);
+            renderer.device.SetNormalCullMode(backfaceCullingToolStripMenuItem.Checked ? SharpDX.Direct3D11.CullMode.None : SharpDX.Direct3D11.CullMode.Back);
         }
 
         private void wireframeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             wireframeToolStripMenuItem.Checked = !wireframeToolStripMenuItem.Checked;
-            renderer.device.SetNormalFillMode(wireframeToolStripMenuItem.Checked ? FillMode.Wireframe : FillMode.Solid);
+            renderer.device.SetNormalFillMode(wireframeToolStripMenuItem.Checked ? SharpDX.Direct3D11.FillMode.Wireframe : SharpDX.Direct3D11.FillMode.Solid);
             toolStripButtonWireframe.Checked = wireframeToolStripMenuItem.Checked;
         }
 
@@ -548,6 +546,11 @@ namespace IndustrialPark
         {
             renderer.device.VSync = !renderer.device.VSync;
             vSyncToolStripMenuItem.Checked = renderer.device.VSync;
+        }
+
+        private void texturesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.device.RenderTextures = texturesToolStripMenuItem.Checked;
         }
 
         private void vertexColorsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1161,9 +1164,8 @@ namespace IndustrialPark
             TranslucentWhenOutOfFocus = settings.translucentEditor;
             translucentToolStripMenuItem.Checked = TranslucentWhenOutOfFocus;
 
-            if (settings.UserKeyBindings != null)
-                foreach (var kb in settings.UserKeyBindings)
-                    SetKeyBind(kb.Action, kb.Binding, false);
+            foreach (var kb in settings.UserKeyBindings ?? IpModernBindings)
+                SetKeyBind(kb.Action, kb.Binding, false);
 
             if (settings.recentArchivePaths != null)
                 foreach (string filepath in settings.recentArchivePaths)
