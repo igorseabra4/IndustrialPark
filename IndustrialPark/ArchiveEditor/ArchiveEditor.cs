@@ -119,68 +119,80 @@ public partial class ArchiveEditor : Form
         if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
             (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
         {
-            Debug.WriteLine("Redo from Archive Editor");
+            e.Handled = true;
             Program.UndoBuffer.Redo();
         }
         else if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
         {
-
-            Debug.WriteLine("Undo from Archive Editor");
+            e.Handled = true;
             Program.UndoBuffer.Undo();
         }
 
         if (PressedKeys.Contains(Keys.Delete))
+        {
+            e.Handled = true;
            ButtonRemoveAsset_Click(sender, e);
+        }
 
         if (PressedKeys.Contains(Keys.ControlKey))
         {
             if (PressedKeys.Contains(Keys.S))
             {
+                e.Handled = true;
                 Save();
             }
             else if (PressedKeys.Contains(Keys.N))
             {
+                e.Handled = true;
                 newToolStripMenuItem_Click(sender, e);
             }
             else if (PressedKeys.Contains(Keys.O))
             {
+                e.Handled = true;
                 openToolStripMenuItem_Click(sender, e);
             }
             else if (PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.W))
             {
+                e.Handled = true;
                 closeToolStripMenuItem_Click(sender, e);
             }
             else if (PressedKeys.Contains(Keys.I))
             {
+                e.Handled = true;
                 buttonImportAsset_Click(sender, e);
             }
             else if (PressedKeys.Contains(Keys.D))
             {
+                e.Handled = true;
                 buttonDuplicate_Click(sender, e);
             }
             else if (PressedKeys.Contains(Keys.C))
             {
+                e.Handled = true;
                 buttonCopy_Click(sender, e);
             }
             else if (PressedKeys.Contains(Keys.V))
             {
+                e.Handled = true;
                 PasteAssets();
             }
             else if (PressedKeys.Contains(Keys.G))
             {
+                e.Handled = true;
                 OpenInternalEditors();
             }
             else if (PressedKeys.Contains(Keys.H))
             {
+                e.Handled = true;
                 buttonEditHeader_Click(sender, e);
             }
             else if (PressedKeys.Contains(Keys.A))
             {
+                e.Handled = true;
                 var assetIDs = listViewAssets.Items.Cast<ListViewItem>().Select(i => (uint)i.Tag);
                 SetSelectedAssets(assetIDs);
             }
         }
-        e.Handled = true;
     }
 
     private void ArchiveEditor_KeyUp(object sender, KeyEventArgs e)
@@ -1238,8 +1250,7 @@ public partial class ArchiveEditor : Form
 
     private void ArchiveSubscriptions()
     {
-        textBoxFindAsset.AutoCompleteCustomSource.Clear();
-        textBoxFindAsset.AutoCompleteCustomSource.AddRange([.. archive.Assets.Select(a => a.assetName)]);
+        textBoxFindAsset.AutoCompleteCustomSource = [.. archive.Assets.Select(a => a.assetName)];
 
         archive.Subscriber.SubscribeToArchiveHeaderSet((_, _, _, _) => UnsavedChanges = true);
         archive.Subscriber.SubscribeToModDateSet((_) => UnsavedChanges = true);
@@ -1254,11 +1265,13 @@ public partial class ArchiveEditor : Form
         archive.Subscriber.SubscribeToLayerAssetAdded((_, _) => UnsavedChanges = true);
         archive.Subscriber.SubscribeToLayerAssetRemoved((_, _) => UnsavedChanges = true);
 
+        archive.Subscriber.SubscribeToAssetAdded(AddToCustomSource);
+        archive.Subscriber.SubscribeToAssetRemoved(RemoveFromCustomSource);
+
         archive.Subscriber.SubscribeToAssetAdded((asset) =>
         {
             UnsavedChanges = true;
             historyManager.AddAsset(asset);
-            AddToCustomSource(asset);
             if (asset is AssetRWTX rwtx)
                 TextureConverter.EnableTextureForDisplay(rwtx);
             asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
@@ -1268,7 +1281,6 @@ public partial class ArchiveEditor : Form
         {
             UnsavedChanges = true;
             historyManager.RemoveAsset(asset.assetID);
-            RemoveFromCustomSource(asset);
             if (asset is AssetRWTX rwtx)
                 Program.TextureManager.RemoveTexture(rwtx.Name, archive, rwtx.assetID);
             selectionManager.Unselect(asset);
@@ -1351,7 +1363,7 @@ public partial class ArchiveEditor : Form
         {
             progressBar = new ProgressBar("Closing Archive");
             progressBar.SetProgressBar(0, archive.AssetCount, 1);
-            progressBar.Show();
+            progressBar.Show(this);
             archive.Subscriber.SubscribeToAssetRemoved((assetID) => progressBar.PerformStep());
         }
 
@@ -1572,37 +1584,37 @@ public partial class ArchiveEditor : Form
     private void PopulateAssetList(AssetType type = AssetType.Null, IEnumerable<Asset> assets = null, bool select = false, IEnumerable<Asset> selectionAssets = null)
     {
         curSelectedType = type;
+        programIsChangingStuff = true;
         listViewAssets.BeginUpdate();
         listViewAssets.ListViewItemSorter = null;
         listViewAssets.Items.Clear();
 
         assets ??= (archive.AutoLayers || comboBoxLayers.SelectedItem != null) ?
-            [.. archive.GetLayerAssetIDs(SelectedLayerIndex).Select(archive.GetAsset)] :
+            [.. archive.GetLayerAssetIDs(SelectedLayerIndex).Select(archive.GetAsset).Where(asset => type == AssetType.Null || asset.assetType == type)] :
             [];
 
-        var items = new List<ListViewItem>(assets.Count());
+        var items = new ListViewItem[assets.Count()];
+        int k = 0;
         foreach (var asset in assets)
-            if (type == AssetType.Null || asset.assetType == type)
-                items.Add(ListViewItemFromAsset(asset, select && selectionAssets.Contains(asset)));
+            items[k++] = ListViewItemFromAsset(asset, select && selectionAssets.Contains(asset));
 
-        listViewAssets.Items.AddRange([.. items]);
-
-        listViewAssets.EndUpdate();
+        listViewAssets.Items.AddRange(items);
 
         if (select)
         {
-            programIsChangingStuff = true;
             int ensureVisible = -1;
             for (int i = 0; i < listViewAssets.Items.Count; i++)
                 if (listViewAssets.Items[i].Selected)
                     ensureVisible = i;
             if (ensureVisible != -1)
                 listViewAssets.EnsureVisible(ensureVisible);
-            programIsChangingStuff = false;
 
             selectionManager.SetSelected(selectionAssets);
             Program.EditorManager.OpenAutoDockedEditors(assets, this);
         }
+
+        listViewAssets.EndUpdate();
+        programIsChangingStuff = false;
 
         toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
 
@@ -1618,13 +1630,14 @@ public partial class ArchiveEditor : Form
             Tag = asset.assetID
         };
 
-        item.SubItems.AddRange(new ListViewItem.ListViewSubItem[]
-        {
+        item.SubItems.AddRange(
+        [
             new ListViewItem.ListViewSubItem(item, asset.assetID.ToString("X8")),
             new ListViewItem.ListViewSubItem(item, asset.TypeString),
             new ListViewItem.ListViewSubItem(item, TreatInfo(asset.AssetInfo)),
             new ListViewItem.ListViewSubItem(item, asset.AssetInfoLinks),
-        });
+        ]);
+
         return item;
     }
 

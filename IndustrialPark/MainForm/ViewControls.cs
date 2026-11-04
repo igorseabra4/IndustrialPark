@@ -37,6 +37,7 @@ namespace IndustrialPark
         public ViewControls()
         {
             InitializeComponent();
+            originalText = labelEditHelp.Text;
 
             foreach (var s in shortcuts)
                 s.IsPreset = !s.EditorAction.HasValue || Program.MainForm.IsKeyBindPreset(s.EditorAction.Value);
@@ -128,6 +129,7 @@ namespace IndustrialPark
             dataGridView1.Invalidate();
         }
 
+        private readonly string originalText;
         private int _capturingRow
         {
             get;
@@ -138,7 +140,7 @@ namespace IndustrialPark
                 if (value >= 0)
                     labelEditHelp.Text = "Press a key to bind, or Esc to cancel";
                 else
-                    labelEditHelp.Text = "Double-click blue commands to edit";
+                    labelEditHelp.Text = originalText;
             }
         } = -1;
 

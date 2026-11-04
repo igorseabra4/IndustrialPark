@@ -91,7 +91,7 @@ public class AssetEditorManager
             if (AutoDockAssetEditors && Program.MainForm.dockedEditorsCount < MainForm.MaxDockedEditors)
                 Program.MainForm.DockAssetEditor(editor);
         }
-        editor.Show();
+        editor.Show(Program.MainForm);
         internalEditors.Add(editor);
     }
 

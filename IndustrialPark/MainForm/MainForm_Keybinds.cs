@@ -274,14 +274,12 @@ public partial class MainForm
         if ((PressedKeys.Contains(Keys.Y) && PressedKeys.Contains(Keys.ControlKey)) ||
             (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey) && PressedKeys.Contains(Keys.ShiftKey)))
         {
-            Debug.WriteLine("Redo from MainForm");
             Program.UndoBuffer.Redo();
             e.Handled = true;
             return;
         }
         else if (PressedKeys.Contains(Keys.Z) && PressedKeys.Contains(Keys.ControlKey))
         {
-            Debug.WriteLine("Undo from MainForm");
             Program.UndoBuffer.Undo();
             e.Handled = true;
             return;

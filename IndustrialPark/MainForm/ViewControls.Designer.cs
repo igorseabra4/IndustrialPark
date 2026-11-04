@@ -51,7 +51,7 @@
             dataGridView1.ReadOnly = true;
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
-            dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.Size = new System.Drawing.Size(600, 478);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
@@ -95,7 +95,7 @@
             // 
             labelEditHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             labelEditHelp.AutoSize = true;
-            labelEditHelp.Location = new System.Drawing.Point(267, 523);
+            labelEditHelp.Location = new System.Drawing.Point(257, 523);
             labelEditHelp.Name = "labelEditHelp";
             labelEditHelp.Size = new System.Drawing.Size(274, 13);
             labelEditHelp.TabIndex = 4;
