@@ -493,6 +493,30 @@ namespace IndustrialPark
             Sphere.Draw(device);
         }
 
+        public void DrawSphere(BoundingSphere sphere, bool isSelected, Vector4 normalColor)
+        {
+            var world = Matrix.Scaling(sphere.Radius * 2f) * Matrix.Translation(sphere.Center);
+            renderData.worldViewProjection = world * viewProjection;
+            renderData.Color = isSelected ? selectedColor : normalColor;
+
+            var campos = Camera.Position;
+            if (sphere.Contains(ref campos) == ContainmentType.Contains)
+                device.SetCullModeReverse();
+            else
+                device.SetCullModeNormal();
+
+            device.ApplyRasterState();
+            device.SetBlendStateAlphaBlend();
+            device.SetDefaultDepthState();
+            device.UpdateAllStates();
+
+            basicBuffer.UpdateValue(renderData);
+            device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
+            basicShader.Apply();
+
+            Sphere.Draw(device);
+        }
+
         public void DrawCylinder(Matrix world, bool isSelected, Vector4 normalColor)
         {
             renderData.worldViewProjection = world * viewProjection;
