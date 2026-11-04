@@ -302,6 +302,8 @@ namespace IndustrialPark
         private CullMode normalCullMode = CullMode.Back;
         private FillMode normalFillMode = FillMode.Solid;
 
+        public bool RenderTextures = true;
+
         public void SetNormalCullMode(CullMode cullMode)
         {
             normalCullMode = cullMode;

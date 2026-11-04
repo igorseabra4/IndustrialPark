@@ -40,10 +40,10 @@
             // 
             dataGridView1.AllowUserToAddRows = false;
             dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AllowUserToResizeColumns = false;
             dataGridView1.AllowUserToResizeRows = false;
             dataGridView1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            dataGridView1.BorderStyle = System.Windows.Forms.BorderStyle.None;
             dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new System.Drawing.Point(12, 38);
             dataGridView1.MultiSelect = false;
@@ -52,7 +52,7 @@
             dataGridView1.RowHeadersVisible = false;
             dataGridView1.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            dataGridView1.Size = new System.Drawing.Size(600, 478);
+            dataGridView1.Size = new System.Drawing.Size(600, 495);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
@@ -64,28 +64,28 @@
             textBoxSearch.Location = new System.Drawing.Point(12, 12);
             textBoxSearch.Name = "textBoxSearch";
             textBoxSearch.PlaceholderText = "Search controls...";
-            textBoxSearch.Size = new System.Drawing.Size(600, 20);
+            textBoxSearch.Size = new System.Drawing.Size(552, 20);
             textBoxSearch.TabIndex = 1;
             textBoxSearch.TextChanged += textBoxSearch_TextChanged;
             // 
             // linkLabel1
             // 
-            linkLabel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
+            linkLabel1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right;
             linkLabel1.AutoSize = true;
-            linkLabel1.Location = new System.Drawing.Point(12, 523);
+            linkLabel1.Location = new System.Drawing.Point(570, 15);
             linkLabel1.Name = "linkLabel1";
-            linkLabel1.Size = new System.Drawing.Size(169, 13);
+            linkLabel1.Size = new System.Drawing.Size(42, 13);
             linkLabel1.TabIndex = 2;
             linkLabel1.TabStop = true;
-            linkLabel1.Text = "Click here to check out the tutorial";
+            linkLabel1.Text = "Tutorial";
             linkLabel1.LinkClicked += linkLabel1_LinkClicked;
             // 
             // buttonDefaults
             // 
             buttonDefaults.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonDefaults.Location = new System.Drawing.Point(537, 519);
+            buttonDefaults.Location = new System.Drawing.Point(537, 536);
             buttonDefaults.Name = "buttonDefaults";
-            buttonDefaults.Size = new System.Drawing.Size(75, 20);
+            buttonDefaults.Size = new System.Drawing.Size(75, 23);
             buttonDefaults.TabIndex = 3;
             buttonDefaults.Text = "Reset All";
             buttonDefaults.UseVisualStyleBackColor = true;
@@ -93,19 +93,19 @@
             // 
             // labelEditHelp
             // 
-            labelEditHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
+            labelEditHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             labelEditHelp.AutoSize = true;
-            labelEditHelp.Location = new System.Drawing.Point(257, 523);
+            labelEditHelp.Location = new System.Drawing.Point(12, 541);
             labelEditHelp.Name = "labelEditHelp";
-            labelEditHelp.Size = new System.Drawing.Size(274, 13);
+            labelEditHelp.Size = new System.Drawing.Size(469, 13);
             labelEditHelp.TabIndex = 4;
-            labelEditHelp.Text = "Double-click blue commands to edit, middle click to reset";
+            labelEditHelp.Text = "Commands in blue are configurable: Double-click to edit - Middle click to clear - Right click to reset";
             // 
             // ViewControls
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(624, 541);
+            ClientSize = new System.Drawing.Size(624, 561);
             Controls.Add(labelEditHelp);
             Controls.Add(buttonDefaults);
             Controls.Add(linkLabel1);

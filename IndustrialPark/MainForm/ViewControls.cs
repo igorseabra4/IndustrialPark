@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
-using static IndustrialPark.MainForm;
 
 namespace IndustrialPark
 {
@@ -54,6 +53,9 @@ namespace IndustrialPark
                 dataGridView1.Columns[2].Width = 66;
             };
             KeyPreview = true;
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+                row.Selected = false;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
@@ -88,6 +90,9 @@ namespace IndustrialPark
                     (s.Description?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (s.Category?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
                     )];
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+                row.Selected = false;
         }
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
@@ -97,20 +102,21 @@ namespace IndustrialPark
 
             if (shortcut.EditorAction.HasValue)
             {
+                var binding = Program.MainForm.GetKeyBind(shortcut.EditorAction.Value);
+
                 if (!shortcut.IsPreset)
-                    e.CellStyle.BackColor = Program.IsDarkMode ? System.Drawing.Color.DarkBlue : System.Drawing.Color.LightBlue;
+                    e.CellStyle.BackColor = binding == null ?
+                        (Program.IsDarkMode ? System.Drawing.Color.DarkRed : System.Drawing.Color.Orange) :
+                        (Program.IsDarkMode ? System.Drawing.Color.DarkSlateBlue : System.Drawing.Color.LightBlue);
 
                 if (e.ColumnIndex == 0)
                 {
                     if (e.RowIndex == _capturingRow)
-                    {
                         e.Value = "Press a key...";
-                    }
-                    else
-                    {
-                        var binding = Program.MainForm.GetKeyBind(shortcut.EditorAction.Value);
+                    else if (binding != null)
                         e.Value = binding.ToString() + shortcut.Input;
-                    }
+                    else
+                        e.Value = "Unassigned";
                 }
 
                 e.FormattingApplied = true;
@@ -160,7 +166,7 @@ namespace IndustrialPark
                 return;
 
             Keys modifiers = ModifierKeys & (Keys.Control | Keys.Shift | Keys.Alt);
-            var binding = new KeyBinding(e.KeyCode, modifiers);
+            var binding = new MainForm.KeyBinding(e.KeyCode, modifiers);
             var shortcut = (ShortcutInfo)dataGridView1.Rows[_capturingRow].DataBoundItem;
             Program.MainForm.SetKeyBind(shortcut.EditorAction.Value, binding, true);
             _capturingRow = -1;
@@ -221,6 +227,7 @@ namespace IndustrialPark
 
             new("Toggle backface culling", "View", KeyboardAction.ToggleCulling),
             new("Toggle wireframe mode", "View", KeyboardAction.ToggleWireframe),
+            new("Toggle texture display", "View", KeyboardAction.ToggleTextures),
             new("Toggle vertex color display", "View", KeyboardAction.ToggleVertexColors),
             new("Toggle invisible geometry display", "View", KeyboardAction.ToggleHideInvisibleMeshes),
             new("Toggle light kit view", "View", KeyboardAction.ToggleLightKit),
@@ -240,7 +247,13 @@ namespace IndustrialPark
 
         private void buttonDefaults_Click(object sender, EventArgs e)
         {
-            Program.MainForm.ResetKeyBinds();
+            bool classic = false;
+            if (textBoxSearch.Text.Contains("classic", StringComparison.InvariantCultureIgnoreCase))
+            {
+                classic = true;
+                textBoxSearch.Text = "";
+            }
+            Program.MainForm.ResetKeyBinds(classic);
             dataGridView1.Refresh();
         }
 
@@ -249,9 +262,16 @@ namespace IndustrialPark
             if (e.RowIndex < 0 || dataGridView1.Rows[e.RowIndex].DataBoundItem is not ShortcutInfo shortcut || shortcut.IsPreset)
                 return;
 
-            if (e.Button == MouseButtons.Middle)
+            if (e.Button == MouseButtons.Right)
             {
+                _capturingRow = -1;
                 Program.MainForm.ResetKeyBind(shortcut.EditorAction.Value);
+                dataGridView1.Invalidate();
+            }
+            else if (e.Button == MouseButtons.Middle)
+            {
+                _capturingRow = -1;
+                Program.MainForm.RemoveKeyBind(shortcut.EditorAction.Value);
                 dataGridView1.Invalidate();
             }
         }

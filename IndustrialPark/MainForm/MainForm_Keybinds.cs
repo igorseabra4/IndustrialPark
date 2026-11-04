@@ -341,7 +341,7 @@ public partial class MainForm
 
     private readonly HashSet<(KeyboardAction Action, KeyBinding Binding)> PresetKeyBindings = IpPresetBindings.ToHashSet();
 
-    private readonly HashSet<(KeyboardAction Action, KeyBinding Binding)> UserKeyBindings = IpModernBindings.ToHashSet();
+    private readonly HashSet<(KeyboardAction Action, KeyBinding Binding)> UserKeyBindings = new HashSet<(KeyboardAction Action, KeyBinding Binding)>();
 
     public record KeyBinding(Keys Key, Keys Modifiers = Keys.None)
     {
@@ -367,42 +367,43 @@ public partial class MainForm
 
     public bool IsKeyBindPreset(KeyboardAction editorAction) => PresetKeyBindings.Any(b => b.Action == editorAction);
 
-    public void SetKeyBind(KeyboardAction editorAction, KeyBinding binding, bool askBeforeOverwrite)
+    public void SetKeyBind(KeyboardAction editorAction, KeyBinding binding, bool displayError)
     {
         var bindingModifiers = (editorAction == KeyboardAction.SnapToGrid) ? Keys.None : binding.Modifiers;
 
-        var overwrite = true;
+        var existing = PresetKeyBindings.Where(x => x.Binding.Key == binding.Key && x.Binding.Modifiers == bindingModifiers);
 
-        if (askBeforeOverwrite)
+        if (existing.Any())
         {
-            var existing = PresetKeyBindings.Where(x => x.Binding.Key == binding.Key && x.Binding.Modifiers == bindingModifiers);
-
-            if (existing.Any())
-            {
+            if (displayError)
                 MessageBox.Show($"The binding {binding} is already assigned and cannot be changed.", "Key Binding Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            return;
         }
 
-        if (overwrite)
-        {
-            UserKeyBindings.RemoveWhere(x => x.Action == editorAction || (x.Binding.Key == binding.Key && x.Binding.Modifiers == binding.Modifiers));
-            UserKeyBindings.Add((editorAction, new KeyBinding(binding.Key, bindingModifiers)));
-        }
+        UserKeyBindings.RemoveWhere(x => x.Action == editorAction || (x.Binding.Key == binding.Key && x.Binding.Modifiers == binding.Modifiers));
+        UserKeyBindings.Add((editorAction, new KeyBinding(binding.Key, bindingModifiers)));
     }
 
     public void ResetKeyBind(KeyboardAction editorAction)
     {
-        UserKeyBindings.RemoveWhere(x => x.Action == editorAction);
+        RemoveKeyBind(editorAction);
         foreach (var binding in IpModernBindings.Where(b => b.Action == editorAction))
             UserKeyBindings.Add(binding);
     }
 
-    public void ResetKeyBinds()
+    public void RemoveKeyBind(KeyboardAction editorAction)
+    {
+        UserKeyBindings.RemoveWhere(x => x.Action == editorAction);
+    }
+
+    public void ResetKeyBinds(bool useClassic)
     {
         UserKeyBindings.Clear();
         foreach (var binding in IpModernBindings)
             UserKeyBindings.Add(binding);
+        if (useClassic)
+            foreach (var binding in IpClassicBindings)
+                SetKeyBind(binding.Action, binding.Binding, false);
     }
 
     public void HandleAction(KeyboardAction action)
@@ -492,6 +493,9 @@ public partial class MainForm
             case KeyboardAction.ToggleUIMode:
                 uIModeToolStripMenuItem.PerformClick();
                 break;
+            case KeyboardAction.ToggleTextures:
+                texturesToolStripMenuItem.PerformClick();
+                return;
             case KeyboardAction.IncreaseCameraSpeed:
                 renderer.Camera.IncreaseCameraSpeed(SharpCamera.DEFAULT_SPEED_INCREMENT);
                 return;
@@ -556,9 +560,9 @@ public partial class MainForm
         (KeyboardAction.None, new KeyBinding(Keys.S, Keys.Control | Keys.Shift)),
     };
 
-    public static readonly List<(KeyboardAction Action, KeyBinding Binding)> IpModernBindings = new()
-    {
-        (KeyboardAction.SnapToGrid, new KeyBinding(Keys.T)),
+    public static List<(KeyboardAction Action, KeyBinding Binding)> IpModernBindings =>
+    [
+        (KeyboardAction.SnapToGrid, new KeyBinding(Keys.X)),
         (KeyboardAction.SelectPreviousTemplate, new KeyBinding(Keys.Oemcomma)),
         (KeyboardAction.SelectNextTemplate, new KeyBinding(Keys.OemPeriod)),
         (KeyboardAction.OpenHeaderEditor, new KeyBinding(Keys.H, Keys.Control)),
@@ -572,14 +576,15 @@ public partial class MainForm
         (KeyboardAction.ToggleCulling, new KeyBinding(Keys.C)),
         (KeyboardAction.ToggleFog, new KeyBinding(Keys.F)),
         (KeyboardAction.ToggleWireframe, new KeyBinding(Keys.Y)),
-        (KeyboardAction.ToggleHideInvisibleMeshes, new KeyBinding(Keys.N)),
+        (KeyboardAction.ToggleHideInvisibleMeshes, new KeyBinding(Keys.I)),
         (KeyboardAction.ToggleLightKit, new KeyBinding(Keys.L)),
         (KeyboardAction.ToggleVertexColors, new KeyBinding(Keys.V)),
         (KeyboardAction.ToggleUIMode, new KeyBinding(Keys.U)),
         (KeyboardAction.ToggleMovementPreview, new KeyBinding(Keys.M)),
         (KeyboardAction.ToggleMouseMode, new KeyBinding(Keys.Z)),
+        (KeyboardAction.ToggleTextures, new KeyBinding(Keys.T)),
         (KeyboardAction.ResetCamera, new KeyBinding(Keys.R)),
-        (KeyboardAction.ResetRoll, new KeyBinding(Keys.R, Keys.Shift)),
+        (KeyboardAction.ResetRoll, new KeyBinding(Keys.R, Keys.Control)),
         (KeyboardAction.DecreaseCameraSpeed, new KeyBinding(Keys.D1)),
         (KeyboardAction.IncreaseCameraSpeed, new KeyBinding(Keys.D2)),
         (KeyboardAction.DecreaseRotationSpeed, new KeyBinding(Keys.D3)),
@@ -591,16 +596,17 @@ public partial class MainForm
         (KeyboardAction.RunGame, new KeyBinding(Keys.F5)),
         (KeyboardAction.BuildAndRunPS2ISO, new KeyBinding(Keys.F6)),
         (KeyboardAction.CreateGameCubeBanner, new KeyBinding(Keys.F7)),
-    };
+    ];
 
-    public static readonly List<(KeyboardAction Action, KeyBinding Binding)> IpClassicBindings = new()
-    {
+    public static List<(KeyboardAction Action, KeyBinding Binding)> IpClassicBindings =>
+    [
         (KeyboardAction.SelectPreviousTemplate, new KeyBinding(Keys.B)),
         (KeyboardAction.SelectNextTemplate, new KeyBinding(Keys.N)),
         (KeyboardAction.OpenInternalEditors, new KeyBinding(Keys.G)),
         (KeyboardAction.OpenSelectedAssetArchiveEditor, new KeyBinding(Keys.G, Keys.Control)),
         (KeyboardAction.CloseMostForms, new KeyBinding(Keys.H, Keys.Control | Keys.Shift)),
         (KeyboardAction.DropSelectedAssets, new KeyBinding(Keys.H)),
+        (KeyboardAction.HideSelectedAssets, new KeyBinding(Keys.H, Keys.Control)),
         (KeyboardAction.CycleGizmoMode, new KeyBinding(Keys.V)),
         (KeyboardAction.ToggleCulling, new KeyBinding(Keys.C)),
         (KeyboardAction.ToggleFog, new KeyBinding(Keys.F)),
@@ -610,6 +616,5 @@ public partial class MainForm
         (KeyboardAction.ToggleUIMode, new KeyBinding(Keys.U)),
         (KeyboardAction.ToggleMouseMode, new KeyBinding(Keys.Z)),
         (KeyboardAction.SnapToGrid, new KeyBinding(Keys.T)),
-        (KeyboardAction.RunGame, new KeyBinding(Keys.F5)),
-    };
+    ];
 }

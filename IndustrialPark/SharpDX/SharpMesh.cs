@@ -97,7 +97,7 @@ namespace IndustrialPark
 
         public void Draw(SharpDevice Device, int subset)
         {
-            Device.DeviceContext.PixelShader.SetShaderResource(0, SubSets[subset].DiffuseMap);
+            Device.DeviceContext.PixelShader.SetShaderResource(0, Device.RenderTextures ? SubSets[subset].DiffuseMap : Program.Renderer.whiteDefault);
             if (isTriStrip)
                 Device.DeviceContext.Draw(SubSets[subset].IndexCount, SubSets[subset].StartIndex);
             else
