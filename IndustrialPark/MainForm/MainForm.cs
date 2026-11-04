@@ -186,12 +186,12 @@ namespace IndustrialPark
 
         private void newEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddArchiveEditor(refreshTexturesModels: false);
+            HandleAction(KeyboardAction.NewArchiveEditor);
         }
 
         private void openLevelToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new OpenLevel().Show(this);
+            HandleAction(KeyboardAction.OpenLevel);
         }
 
         private void closeAllEditorsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -966,28 +966,27 @@ namespace IndustrialPark
 
         private void hideToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.ArchiveManager.HideSelectedAssets();
+            HandleAction(KeyboardAction.HideSelectedAssets);
         }
 
         private void copyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.ArchiveManager.CopySelectedAssets(PressedKeys.Contains(Keys.ShiftKey));
+            HandleAction(KeyboardAction.Copy);
         }
 
         private void pasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.ArchiveManager.PasteAssets();
+            HandleAction(KeyboardAction.Paste);
         }
 
         private void contextEditToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.EditorManager.OpenInternalEditors();
+            HandleAction(KeyboardAction.OpenInternalEditors);
         }
 
         private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!ConfirmBeforeDelete || MessageBox.Show("Are you sure you want to delete the selected assets?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-                Program.ArchiveManager.DeleteSelectedAssets();
+            HandleAction(KeyboardAction.Delete);
         }
 
         private void connectMarkersToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1162,6 +1161,10 @@ namespace IndustrialPark
             TranslucentWhenOutOfFocus = settings.translucentEditor;
             translucentToolStripMenuItem.Checked = TranslucentWhenOutOfFocus;
 
+            if (settings.UserKeyBindings != null)
+                foreach (var kb in settings.UserKeyBindings)
+                    SetKeyBind(kb.Action, kb.Binding, false);
+
             if (settings.recentArchivePaths != null)
                 foreach (string filepath in settings.recentArchivePaths)
                     SetRecentOpenedArchives(filepath);
@@ -1227,6 +1230,7 @@ namespace IndustrialPark
             fog = !AssetFOG.DontRender,
             DolphinPath = RemoteControl.DolphinPath,
             Colors = renderer.colors,
+            UserKeyBindings = [.. UserKeyBindings],
         };
 
         private void SaveProject(string fileName)

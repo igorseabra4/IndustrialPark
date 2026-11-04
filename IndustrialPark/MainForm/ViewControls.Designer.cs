@@ -56,6 +56,7 @@
             dataGridView1.TabIndex = 0;
             dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
             dataGridView1.CellFormatting += dataGridView1_CellFormatting;
+            dataGridView1.CellMouseClick += dataGridView1_CellMouseClick;
             // 
             // textBoxSearch
             // 
@@ -71,7 +72,7 @@
             // 
             linkLabel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left;
             linkLabel1.AutoSize = true;
-            linkLabel1.Location = new System.Drawing.Point(12, 519);
+            linkLabel1.Location = new System.Drawing.Point(12, 523);
             linkLabel1.Name = "linkLabel1";
             linkLabel1.Size = new System.Drawing.Size(169, 13);
             linkLabel1.TabIndex = 2;
@@ -94,11 +95,11 @@
             // 
             labelEditHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
             labelEditHelp.AutoSize = true;
-            labelEditHelp.Location = new System.Drawing.Point(356, 523);
+            labelEditHelp.Location = new System.Drawing.Point(267, 523);
             labelEditHelp.Name = "labelEditHelp";
-            labelEditHelp.Size = new System.Drawing.Size(175, 13);
+            labelEditHelp.Size = new System.Drawing.Size(274, 13);
             labelEditHelp.TabIndex = 4;
-            labelEditHelp.Text = "Double-click blue commands to edit";
+            labelEditHelp.Text = "Double-click blue commands to edit, middle click to reset";
             // 
             // ViewControls
             // 

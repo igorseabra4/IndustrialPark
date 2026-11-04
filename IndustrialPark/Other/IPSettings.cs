@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using static IndustrialPark.MainForm;
 
 namespace IndustrialPark
 {
@@ -36,6 +38,7 @@ namespace IndustrialPark
         public bool AutoDockAssetEditors = false;
         public bool AutoDockSelectedAssetEditors = false;
         public bool GizmoCones = true;
+        public List<(KeyboardAction Action, KeyBinding Binding)> UserKeyBindings = null;
 
         public RendererColors Colors = RendererColors.Default;
         public bool fog = true;

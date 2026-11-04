@@ -367,33 +367,40 @@ public partial class MainForm
         return all.Where(b => b.Action == editorAction).Select(b => b.Binding).FirstOrDefault();
     }
 
-    public bool IsKeybindPreset(KeyboardAction editorAction)
-    {
-        var preset = PresetKeyBindings.Where(b => b.Action == editorAction).Select(b => b.Binding).FirstOrDefault();
-        if (preset != null)
-            return true;
-        return false;
-    }
+    public bool IsKeyBindPreset(KeyboardAction editorAction) => PresetKeyBindings.Any(b => b.Action == editorAction);
 
-    public void SetKeyBind(KeyboardAction editorAction, KeyBinding binding)
+    public void SetKeyBind(KeyboardAction editorAction, KeyBinding binding, bool askBeforeOverwrite)
     {
         var bindingModifiers = (editorAction == KeyboardAction.SnapToGrid) ? Keys.None : binding.Modifiers;
 
-        var existing = PresetKeyBindings.Where(x => x.Binding.Key == binding.Key && x.Binding.Modifiers == bindingModifiers);
-        if (!existing.Any())
-            existing = UserKeyBindings.Where(x => x.Binding.Key == binding.Key && x.Binding.Modifiers == bindingModifiers);
-        if (existing.Any() && existing.First().Action != editorAction)
+        var overwrite = true;
+
+        if (askBeforeOverwrite)
         {
-            MessageBox.Show($"The key combination {binding} is already assigned. Please choose a different combination.", "Key Binding Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            var existing = PresetKeyBindings.Where(x => x.Binding.Key == binding.Key && x.Binding.Modifiers == bindingModifiers);
+
+            if (existing.Any())
+            {
+                MessageBox.Show($"The binding {binding} is already assigned and cannot be changed.", "Key Binding Conflict", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
         }
-        else
+
+        if (overwrite)
         {
-            UserKeyBindings.RemoveWhere(x => x.Action == editorAction);
+            UserKeyBindings.RemoveWhere(x => x.Action == editorAction || (x.Binding.Key == binding.Key && x.Binding.Modifiers == binding.Modifiers));
             UserKeyBindings.Add((editorAction, new KeyBinding(binding.Key, bindingModifiers)));
         }
     }
 
-    public void ResetKeybinds()
+    public void ResetKeyBind(KeyboardAction editorAction)
+    {
+        UserKeyBindings.RemoveWhere(x => x.Action == editorAction);
+        foreach (var binding in IpModernBindings.Where(b => b.Action == editorAction))
+            UserKeyBindings.Add(binding);
+    }
+
+    public void ResetKeyBinds()
     {
         UserKeyBindings.Clear();
         foreach (var binding in IpModernBindings)
@@ -402,16 +409,18 @@ public partial class MainForm
 
     public void HandleAction(KeyboardAction action)
     {
+        // note: only do perform click on buttons from menuStrip1 and toolStripMain
         switch (action)
         {
             case KeyboardAction.Copy:
-                contextCopyToolStripMenuItem.PerformClick();
+                Program.ArchiveManager.CopySelectedAssets(PressedKeys.Contains(Keys.ShiftKey));
                 break;
             case KeyboardAction.Paste:
-                contextPasteToolStripMenuItem.PerformClick();
+                Program.ArchiveManager.PasteAssets();
                 return;
             case KeyboardAction.Delete:
-                contextRemoveToolStripMenuItem.PerformClick();
+                if (!ConfirmBeforeDelete || MessageBox.Show("Are you sure you want to delete the selected assets?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
+                    Program.ArchiveManager.DeleteSelectedAssets();
                 return;
             case KeyboardAction.ResetCamera:
                 renderer.Camera.Reset();
@@ -423,10 +432,10 @@ public partial class MainForm
                 MouseModeToggle();
                 return;
             case KeyboardAction.NewArchiveEditor:
-                newEditorToolStripMenuItem.PerformClick();
+                AddArchiveEditor(refreshTexturesModels: false);
                 return;
             case KeyboardAction.OpenLevel:
-                openLevelToolStripMenuItem.PerformClick();
+                new OpenLevel().Show(this);
                 return;
             case KeyboardAction.SelectPreviousTemplate:
                 SelectPreviousTemplate();
@@ -435,7 +444,7 @@ public partial class MainForm
                 SelectNextTemplate();
                 break;
             case KeyboardAction.OpenInternalEditors:
-                contextEditDataToolStripMenuItem.PerformClick();
+                Program.EditorManager.OpenInternalEditors();
                 break;
             case KeyboardAction.OpenHeaderEditor:
                 Program.ArchiveManager.OpenHeaderEditor();
@@ -447,13 +456,13 @@ public partial class MainForm
                 CloseMostForms();
                 break;
             case KeyboardAction.HideSelectedAssets:
-                contextHideToolStripMenuItem.PerformClick();
+                Program.ArchiveManager.HideSelectedAssets();
                 break;
             case KeyboardAction.UnhideAllAssets:
                 UnhideAllAssets();
                 break;
             case KeyboardAction.DropSelectedAssets:
-                toolStripButtonDropToGround.PerformClick();
+                Program.ArchiveManager.DropSelectedAssets();
                 break;
             case KeyboardAction.CycleGizmoMode:
                 SetGizmoMode(GizmoMode.Cycle);
@@ -573,10 +582,10 @@ public partial class MainForm
         (KeyboardAction.ToggleMouseMode, new KeyBinding(Keys.Z)),
         (KeyboardAction.ResetCamera, new KeyBinding(Keys.R)),
         (KeyboardAction.ResetRoll, new KeyBinding(Keys.R, Keys.Shift)),
-        (KeyboardAction.IncreaseCameraSpeed, new KeyBinding(Keys.D1)),
-        (KeyboardAction.DecreaseCameraSpeed, new KeyBinding(Keys.D2)),
-        (KeyboardAction.IncreaseRotationSpeed, new KeyBinding(Keys.D3)),
-        (KeyboardAction.DecreaseRotationSpeed, new KeyBinding(Keys.D4)),
+        (KeyboardAction.DecreaseCameraSpeed, new KeyBinding(Keys.D1)),
+        (KeyboardAction.IncreaseCameraSpeed, new KeyBinding(Keys.D2)),
+        (KeyboardAction.DecreaseRotationSpeed, new KeyBinding(Keys.D3)),
+        (KeyboardAction.IncreaseRotationSpeed, new KeyBinding(Keys.D4)),
         (KeyboardAction.ViewControls, new KeyBinding(Keys.F1)),
         (KeyboardAction.ViewConfig, new KeyBinding(Keys.F2)),
         (KeyboardAction.ViewAbout, new KeyBinding(Keys.F3)),
