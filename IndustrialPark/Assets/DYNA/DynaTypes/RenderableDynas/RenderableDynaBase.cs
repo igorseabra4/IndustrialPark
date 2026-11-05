@@ -10,7 +10,7 @@ namespace IndustrialPark
 {
     public abstract class RenderableDynaBase : AssetDYNA, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
-        private const string dynaCategoryName = "DYNA Placement";
+        private const string dynaCategoryName = "Placement";
 
         protected Vector3 _position;
         [Category(dynaCategoryName)]

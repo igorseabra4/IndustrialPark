@@ -35,7 +35,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 1;
             }
         }
-        [Category(categoryName), DisplayName("Persistent"), Description("Asset state is saved to the save file and persists after deaths and reloads.")]
+        [Category(categoryName), DisplayName("Persistent"), Description("Asset state, such as Enabled/Disabled and certain other fields for specific types, is saved to the save file and persists after deaths and reloads. All non persistent assets are reset on loads and player respawns.")]
         public bool StateIsPersistent
         {
             get => (BaseFlags & 2) != 0;

@@ -13,7 +13,7 @@ namespace IndustrialPark
         public override string TypeString => dynaCategoryName;
         public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(Marker)} {HexUIntTypeConverter.StringFromAssetID(TargetTeleportBox)}";
 
-        public override string Note => "Version is always 1 or 2. CameraAngle is not present in version 1, or in Movie/Incredibles regardless of version.";
+        public override string Note => "Version is always 1 or 2.";
 
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Marker { get; set; }
@@ -24,7 +24,7 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int LaunchAngle { get; set; }
 
-        [Category(dynaCategoryName), Description("Not used in version 1 or Movie/Incredibles.")]
+        [Category(dynaCategoryName), Description("Only used in BFBB, Version 2")]
         public int CameraAngle { get; set; }
 
         [Category(dynaCategoryName), ValidReferenceRequired]
@@ -61,6 +61,16 @@ namespace IndustrialPark
             writer.Write(TargetTeleportBox);
         }
 
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Incredibles)
+                dt.RemoveProperty("CameraAngle");
+            base.SetDynamicProperties(dt);
+        }
+
+        public const string PositionDescription = "The position values are defined in the Marker asset. I will update them for you if you define them here or with the gizmo, and the marker will turn invisible.";
+
+        [Description(PositionDescription)]
         public override AssetSingle PositionX
         {
             get
@@ -72,10 +82,13 @@ namespace IndustrialPark
             {
                 var MRKR = GetMRKR?.Invoke(Marker);
                 MRKR?.PositionX = value;
+                MRKR?.isInvisible = true;
+                MRKR?.CreateTransformMatrix(Program.Renderer);
                 _position.X = value;
             }
         }
 
+        [Description(PositionDescription)]
         public override AssetSingle PositionY
         {
             get
@@ -87,10 +100,13 @@ namespace IndustrialPark
             {
                 var MRKR = GetMRKR?.Invoke(Marker);
                 MRKR?.PositionY = value;
+                MRKR?.isInvisible = true;
+                MRKR?.CreateTransformMatrix(Program.Renderer);
                 _position.Y = value;
             }
         }
 
+        [Description(PositionDescription)]
         public override AssetSingle PositionZ
         {
             get
@@ -102,6 +118,8 @@ namespace IndustrialPark
             {
                 var MRKR = GetMRKR?.Invoke(Marker);
                 MRKR?.PositionZ = value;
+                MRKR?.isInvisible = true;
+                MRKR?.CreateTransformMatrix(Program.Renderer);
                 _position.Z = value;
             }
         }

@@ -21,7 +21,7 @@ namespace IndustrialPark
         /// <summary>
         /// Rendering flags
         /// </summary>
-        public ushort nodeFlags;
+        public ushort nodeFlags { get; set; }
         public bool Visible
         {
             get => (nodeFlags & 1) != 0;

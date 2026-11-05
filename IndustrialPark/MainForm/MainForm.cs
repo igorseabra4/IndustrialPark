@@ -1427,7 +1427,6 @@ namespace IndustrialPark
             int index = ArchiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 5);
             ArchiveEditors.RemoveAt(index);
-            Program.UndoBuffer.RemoveActionsOfArchive(sender);
             UpdateToolbarArchives();
         }
 
@@ -1770,7 +1769,7 @@ namespace IndustrialPark
 
             try
             {
-            Program.TextureManager.ClearTextures();
+                Program.TextureManager.ClearTextures();
                 TextureConverter.SetupTextureDisplay(textures, progressBar);
                 Program.Renderer.Assets.ResetModels(Program.Renderer, progressBar);
                 Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer, progressBar);

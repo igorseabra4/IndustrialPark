@@ -41,7 +41,10 @@ namespace IndustrialPark
             this.vertexList = vertices.ToArray();
         }
 
-        public HI_Tags_BEEF03() { }
+        public HI_Tags_BEEF03()
+        {
+            vertexList = [];
+        }
 
         public override void Serialize(EndianBinaryWriter writer)
         {

@@ -9,7 +9,7 @@ namespace IndustrialPark
 {
     public abstract class RenderableRotatableDynaBase : RenderableDynaBase, IRotatableAsset
     {
-        private const string dynaCategoryName = "DYNA Placement";
+        private const string dynaCategoryName = "Placement";
 
         protected virtual bool inRadians => true;
 

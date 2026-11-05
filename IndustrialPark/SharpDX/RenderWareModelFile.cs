@@ -625,7 +625,7 @@ namespace IndustrialPark
             }
         }
 
-        public void RenderJsp(SharpRenderer renderer, Matrix world, bool isSelected, bool[] atomicFlags, xJSPNodeInfo[] nodeinfos, HipHopFile.Game game)
+        public void RenderJsp(SharpRenderer renderer, Matrix world, bool isSelected, bool[] atomicFlags, xJSPNodeInfo[] nodeinfos)
         {
             jspRenderData.worldViewProjection = world * renderer.viewProjection;
             jspRenderData.FogColor = renderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;

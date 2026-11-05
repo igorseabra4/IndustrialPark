@@ -1006,14 +1006,14 @@ namespace IndustrialPark
             // viewControlsToolStripMenuItem
             // 
             viewControlsToolStripMenuItem.Name = "viewControlsToolStripMenuItem";
-            viewControlsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            viewControlsToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             viewControlsToolStripMenuItem.Text = "View Controls";
             viewControlsToolStripMenuItem.Click += viewControlsToolStripMenuItem_Click;
             // 
             // aboutToolStripMenuItem
             // 
             aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            aboutToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            aboutToolStripMenuItem.Size = new System.Drawing.Size(185, 22);
             aboutToolStripMenuItem.Text = "About Industrial Park";
             aboutToolStripMenuItem.Click += aboutToolStripMenuItem_Click;
             // 
@@ -1367,10 +1367,10 @@ namespace IndustrialPark
             // 
             // contextGizmoToolStripMenuItem
             // 
-            contextGizmoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { positionToolStripMenuItem, rotationToolStripMenuItem, scaleToolStripMenuItem, positionLocalToolStripMenuItem, noneToolStripMenuItem });
+            contextGizmoToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { noneToolStripMenuItem, positionToolStripMenuItem, rotationToolStripMenuItem, scaleToolStripMenuItem, positionLocalToolStripMenuItem });
             contextGizmoToolStripMenuItem.Name = "contextGizmoToolStripMenuItem";
             contextGizmoToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
-            contextGizmoToolStripMenuItem.Text = "Gizmo (V)";
+            contextGizmoToolStripMenuItem.Text = "Gizmo";
             // 
             // positionToolStripMenuItem
             // 
@@ -1413,7 +1413,7 @@ namespace IndustrialPark
             // 
             contextTemplatesToolStripMenuItem.Name = "contextTemplatesToolStripMenuItem";
             contextTemplatesToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
-            contextTemplatesToolStripMenuItem.Text = "Template (B/N)";
+            contextTemplatesToolStripMenuItem.Text = "Template";
             // 
             // contextUserTemplateToolStripMenuItem
             // 
