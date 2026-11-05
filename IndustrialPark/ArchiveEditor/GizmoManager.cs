@@ -941,21 +941,20 @@ namespace IndustrialPark
                         if (grid)
                             asset.ScaleX = SnapToGrid(asset.ScaleX, GizmoType.X);
                         totalDistanceMoved.X = asset.ScaleX - originalPositions[((Asset)asset).assetID].X;
-                        continue;
+                        break;
                     case GizmoType.ScaleY:
                         asset.ScaleY += movement;
                         if (grid)
                             asset.ScaleY = SnapToGrid(asset.ScaleY, GizmoType.Y);
                         totalDistanceMoved.Y = asset.ScaleY - originalPositions[((Asset)asset).assetID].Y;
-                        continue;
+                        break;
                     case GizmoType.ScaleZ:
                         asset.ScaleZ += movement;
                         if (grid)
                             asset.ScaleZ = SnapToGrid(asset.ScaleZ, GizmoType.Z);
                         totalDistanceMoved.Z = asset.ScaleZ - originalPositions[((Asset)asset).assetID].Z;
-                        continue;
+                        break;
                     case GizmoType.ScaleAll:
-                    {
                         float factor = MathF.Exp(movement / 10f);
                         asset.ScaleX *= factor;
                         asset.ScaleY *= factor;
@@ -963,8 +962,7 @@ namespace IndustrialPark
                         totalDistanceMoved.X = asset.ScaleX - originalPositions[((Asset)asset).assetID].X;
                         totalDistanceMoved.Y = asset.ScaleY - originalPositions[((Asset)asset).assetID].Y;
                         totalDistanceMoved.Z = asset.ScaleZ - originalPositions[((Asset)asset).assetID].Z;
-                        continue;
-                    }
+                        break;
                 }
 
                 if (asset is IRenderableAsset ira)
