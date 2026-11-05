@@ -28,7 +28,7 @@ namespace IndustrialPark
 
         public override int GetHashCode() => value.GetHashCode();
 
-        public override string ToString() => string.Format("{0:0.000000}", value);
+        public override string ToString() => $"{value:0.0######}";
 
         public static implicit operator float(AssetSingle value) => value.value;
 
