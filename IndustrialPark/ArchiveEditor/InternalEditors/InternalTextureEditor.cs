@@ -125,7 +125,6 @@ namespace IndustrialPark
                 }
 
                 asset.InvokePropertyChanged(true);
-                TextureConverter.EnableTextureForDisplay(asset);
             }
         }
 

@@ -55,7 +55,7 @@ public class AssetRepository
     
     public bool ContainsType(AssetType assetType) => assetDictionary.Values.Any(a => a.assetType.Equals(assetType));
 
-    public IEnumerable<Asset> FindWhoTargets(uint assetID) => Assets.Where(asset => asset.HasReference(assetID));
+    public IEnumerable<Asset> FindWhoTargets(uint assetID) => Assets.Where(asset => asset.HasReference(assetID)).ToList();
 
     public void Dispose()
     {

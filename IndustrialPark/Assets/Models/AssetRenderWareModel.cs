@@ -256,7 +256,6 @@ namespace IndustrialPark
                     }
 
                 ModelAsRWSections = sections;
-                SetupModel(Program.Renderer);
             }
         }
 

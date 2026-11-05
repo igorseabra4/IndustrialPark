@@ -325,11 +325,7 @@ public class Archive
         try
         {
             var newAsset = AssetService.ConvertHeaderToAsset(AHDR, Game, platform, false, out _);
-
             assetRepository.Add(newAsset);
-
-            if (asset is AssetRWTX rwtx)
-                TextureConverter.EnableTextureForDisplay(rwtx);
         }
         catch (Exception e)
         {

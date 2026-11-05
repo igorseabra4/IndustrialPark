@@ -34,9 +34,11 @@ namespace IndustrialPark
 
             Section2 = new HI_Tags_BEEF02(reader, endianness);
 
+            reader.endianness = Endianness.Little;
             if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF03)
                 Section3 = new HI_Tags_BEEF03(reader);
 
+            reader.endianness = Endianness.Little;
             if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF04)
                 Section4 = new HI_Tags_BEEF04(reader, endianness);
         }

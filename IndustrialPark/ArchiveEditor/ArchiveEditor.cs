@@ -110,7 +110,7 @@ public partial class ArchiveEditor : Form
 
     private void ArchiveEditor_KeyDown(object sender, KeyEventArgs e)
     {
-        if (e.Handled)
+        if (e.Handled || textBoxFindAsset.Focused)
             return;
 
         if (!PressedKeys.Contains(e.KeyCode))
@@ -1445,6 +1445,7 @@ public partial class ArchiveEditor : Form
         if (archive == null)
             return;
 
+        legacySaveToolStripMenuItem.Enabled = true;
         saveToolStripMenuItem.Enabled = true;
         saveAsToolStripMenuItem.Enabled = true;
         convertArchiveToolStripMenuItem.Enabled = true;

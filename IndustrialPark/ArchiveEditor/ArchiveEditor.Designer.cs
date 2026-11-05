@@ -281,8 +281,8 @@
             // legacySaveToolStripMenuItem
             // 
             legacySaveToolStripMenuItem.CheckOnClick = true;
-            legacySaveToolStripMenuItem.Name = "legacySaveToolStripMenuItem";
             resources.ApplyResources(legacySaveToolStripMenuItem, "legacySaveToolStripMenuItem");
+            legacySaveToolStripMenuItem.Name = "legacySaveToolStripMenuItem";
             legacySaveToolStripMenuItem.Click += legacySaveToolStripMenuItem_Click;
             // 
             // toolStripSeparator3

@@ -101,7 +101,7 @@ public static class ArchiveService
 
         session.SetModDate((int)((DateTimeOffset)DateTime.Now).ToUnixTimeSeconds());
 
-        return new HipFile(session.Game, session.Platform, new Section_HIPA(), session.PACK, DICT, new Section_STRM(), HIPB);
+        return new HipFile(session.Game, session.Platform, session.PACK, DICT, HIPB);
     }
 
     public static void LogAssetOrder(Archive archive, Dictionary<uint, Section_AHDR> AHDRs)
@@ -124,7 +124,7 @@ public static class ArchiveService
             }
 
             var list = archive.GetLayerAssetIDs(i);
-            var sortedList = archive.GetLayerAssetIDs(i).OrderBy(u => AHDRs[u].GetCompareValue(archive.Game, archive.Platform)).ToList();
+            var sortedList = archive.GetLayerAssetIDs(i).OrderBy(u => AHDRs[u].GetCompareValue(archive.Game)).ToList();
             if (!Enumerable.SequenceEqual(list, sortedList))
             {
                 diff = true;

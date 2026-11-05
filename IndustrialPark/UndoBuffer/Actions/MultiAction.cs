@@ -34,6 +34,15 @@ public class MultiAction : IReversibleAction
 
     public void RefreshArchiveEditor(bool undo)
     {
+        var layersChanged = actions.Any(a => a.GetType().ToString().Contains("Layer"));
+        if (layersChanged)
+        {
+            var prevLayer = archiveEditor.SelectedLayerIndex;
+            archiveEditor.PopulateLayerComboBox();
+            if (prevLayer >= 0 && prevLayer < archiveEditor.archive.LayerCount)
+                archiveEditor.SelectedLayerIndex = prevLayer;
+        }
+
         var addingAssets = actions.OfType<AssetDataSwappedAction>().Select(a => a.AssetID);
         if (!addingAssets.Any())
             addingAssets = actions.OfType<AssetAddedAction>().Where(a => a.AssetRemoved == undo).Select(a => a.AssetID);
