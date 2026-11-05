@@ -38,7 +38,18 @@ namespace IndustrialPark
                     for (int i = atomic; i >= 0; i--)
                     {
                         if ((subBits & 1) != 0)
-                            pipeEntries[(uint)i] = p;
+                        {
+                            if (assetName == "test_ring")
+                            {
+                                var p2 = p.Clone();
+                                p2.LightingMode = LightingMode.Prelight;
+                                pipeEntries[(uint)i] = p2;
+                            }
+                            else
+                            {
+                                pipeEntries[(uint)i] = p;
+                            }
+                        }
                         subBits >>= 1;
                     }
                 }

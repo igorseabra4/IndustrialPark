@@ -397,8 +397,23 @@ namespace IndustrialPark
             if (game < Game.Incredibles)
             {
                 dt.RemoveProperty("HDR_Brightening");
+                dt.RemoveProperty("Layer");
                 dt.RemoveProperty("PipePad");
             }
+        }
+
+        public PipeInfo Clone()
+        {
+            var result = new PipeInfo(game)
+            {
+                Model = Model,
+                PipeFlags = PipeFlags,
+                Layer = Layer,
+                AlphaDiscard = AlphaDiscard,
+                PipePad = PipePad
+            };
+            result.SubObjectBits.FlagValueInt = SubObjectBits.FlagValueInt;
+            return result;
         }
     }
 
