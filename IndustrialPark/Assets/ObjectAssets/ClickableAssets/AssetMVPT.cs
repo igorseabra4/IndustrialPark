@@ -154,7 +154,7 @@ namespace IndustrialPark
 
         [Browsable(false)]
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
-        private bool DrawAsPoint => DrawAllAsPoints || _arenaRadius <= 0f;
+        public bool DrawAsPoint => DrawAllAsPoints || _arenaRadius <= 0f;
 
         public void CreateTransformMatrix(SharpRenderer renderer)
         {

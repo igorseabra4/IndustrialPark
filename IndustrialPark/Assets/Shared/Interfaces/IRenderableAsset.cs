@@ -4,6 +4,8 @@ namespace IndustrialPark
 {
     public interface IRenderableAsset
     {
+        uint assetID { get; }
+
         void CreateTransformMatrix(SharpRenderer renderer);
 
         float GetDistanceFrom(Vector3 position);

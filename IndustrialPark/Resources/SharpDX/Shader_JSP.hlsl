@@ -26,12 +26,7 @@ struct PS_IN
 };
 
 Texture2D textureMap;
-SamplerState textureSampler
-{
-    Filter = ANISOTROPIC;
-    AddressU = Wrap;
-    AddressV = Wrap;
-};
+SamplerState textureSampler;
 
 PS_IN VS(VS_IN input)
 {
@@ -60,13 +55,10 @@ PS_IN VS(VS_IN input)
 
 float4 PS(PS_IN input) : SV_Target
 {
-    float4 finalColor = input.color;
-    finalColor *= textureMap.Sample(textureSampler, input.texcoord);
-	
-    if (dot(finalColor, finalColor) == 0)
-        discard;
-
-    if (FogEnable)
+     float4 finalColor = input.color;
+     finalColor *= textureMap.Sample(textureSampler, input.texcoord);
+ 	
+   if (FogEnable)
         finalColor.rgb = input.fogfactor * finalColor.rgb + (1.0 - input.fogfactor) * FogColor.rgb;
 	
     return finalColor;

@@ -117,6 +117,7 @@ namespace IndustrialPark
             allMovePointsArePointsToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparatorToolbar = new ToolStripSeparator();
             showToolbarToolStripMenuItem = new ToolStripMenuItem();
+            wireframeWidgetsToolStripMenuItem = new ToolStripMenuItem();
             gizmoConesToolStripMenuItem = new ToolStripMenuItem();
             toolsToolStripMenuItem = new ToolStripMenuItem();
             saveAllOpenHIPsToolStripMenuItem = new ToolStripMenuItem();
@@ -555,7 +556,7 @@ namespace IndustrialPark
             // 
             // displayToolStripMenuItem
             // 
-            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, backfaceCullingToolStripMenuItem, wireframeToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, texturesToolStripMenuItem, vertexColorsToolStripMenuItem, lightKitToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleGeometryToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, allMovePointsArePointsToolStripMenuItem, toolStripSeparatorToolbar, showToolbarToolStripMenuItem, gizmoConesToolStripMenuItem });
+            displayToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { assetTypesToolStripMenuItem, viewConfigToolStripMenuItem, refreshTexturesAndModelsToolStripMenuItem, uIModeToolStripMenuItem, uIModeAutoSizeToolStripMenuItem, toolStripSeparator10, cursorInFlyModeToolStripMenuItem, colorsToolStripMenuItem, backfaceCullingToolStripMenuItem, wireframeToolStripMenuItem, lowerQualityGraphicsToolStripMenuItem, vSyncToolStripMenuItem, toolStripSeparator6, texturesToolStripMenuItem, vertexColorsToolStripMenuItem, lightKitToolStripMenuItem, fogToolStripMenuItem, movementPreviewToolStripMenuItem, hideInvisibleGeometryToolStripMenuItem, useLODTForRenderingToolStripMenuItem, usePIPTForRenderingToolStripMenuItem, drawOnlyFirstMINFReferenceToolStripMenuItem, allMovePointsArePointsToolStripMenuItem, toolStripSeparatorToolbar, showToolbarToolStripMenuItem, wireframeWidgetsToolStripMenuItem, gizmoConesToolStripMenuItem });
             displayToolStripMenuItem.Name = "displayToolStripMenuItem";
             displayToolStripMenuItem.Size = new System.Drawing.Size(57, 19);
             displayToolStripMenuItem.Text = "&Display";
@@ -870,6 +871,16 @@ namespace IndustrialPark
             showToolbarToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
             showToolbarToolStripMenuItem.Text = "Show Toolbar";
             showToolbarToolStripMenuItem.Click += showToolbarToolStripMenuItem_Click;
+            // 
+            // wireframeWidgetsToolStripMenuItem
+            // 
+            wireframeWidgetsToolStripMenuItem.Checked = false;
+            wireframeWidgetsToolStripMenuItem.CheckOnClick = true;
+            wireframeWidgetsToolStripMenuItem.CheckState = CheckState.Checked;
+            wireframeWidgetsToolStripMenuItem.Name = "wireframeWidgetsToolStripMenuItem";
+            wireframeWidgetsToolStripMenuItem.Size = new System.Drawing.Size(244, 22);
+            wireframeWidgetsToolStripMenuItem.Text = "Wireframe Widgets";
+            wireframeWidgetsToolStripMenuItem.Click += wireframeWidgetsToolStripMenuItem_Click;
             // 
             // gizmoConesToolStripMenuItem
             // 
@@ -1564,7 +1575,6 @@ namespace IndustrialPark
             KeyUp += MainForm_KeyUp;
             MouseWheel += renderPanel_MouseMove;
             Move += ResetMouseCenter;
-            Resize += MainForm_Resize;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             statusStrip1.ResumeLayout(false);
@@ -1764,6 +1774,7 @@ namespace IndustrialPark
         private ToolStripMenuItem contextRemoveToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator13;
         private ToolStripMenuItem texturesToolStripMenuItem;
+        private ToolStripMenuItem wireframeWidgetsToolStripMenuItem;
     }
 }
 

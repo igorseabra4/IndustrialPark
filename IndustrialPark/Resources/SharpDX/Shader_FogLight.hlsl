@@ -46,12 +46,7 @@ struct PS_IN
 };
 
 Texture2D textureMap;
-SamplerState textureSampler
-{
-	Filter = ANISOTROPIC;
-	AddressU = Wrap;
-	AddressV = Wrap;
-};
+SamplerState textureSampler;
 
 PS_IN VS(VS_IN input)
 {

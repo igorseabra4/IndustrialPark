@@ -320,14 +320,13 @@ namespace IndustrialPark
             if (isSelected && !renderer.isDrawingSelectionMask)
                 DrawDebug(renderer);
 #endif
-            if ((renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value))
+            if (renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value)
                 value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
-        [Browsable(false)]
-        public virtual bool SpecialBlendMode(SharpRenderer renderer) => !(renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value) || value.SpecialBlendMode(renderer);
+        public virtual bool SpecialBlendMode(SharpRenderer renderer) => renderer.Assets.GetFromRenderingDictionary(_model) is not IAssetWithModel value || value.SpecialBlendMode(renderer);
 
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
@@ -363,6 +362,12 @@ namespace IndustrialPark
                     min = d;
 
             return min;
+        }
+
+        public virtual float GetCameraDepth(Vector3 cameraPosition, Vector3 cameraForward)
+        {
+            Vector3 center = (boundingBox.Minimum + boundingBox.Maximum) * 0.5f;
+            return Vector3.Dot(center - cameraPosition, cameraForward);
         }
 
         public void ApplyBakeRotation()

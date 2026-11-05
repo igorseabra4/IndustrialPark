@@ -1,5 +1,4 @@
 ﻿using Assimp;
-using DiscordRPC;
 using HipHopFile;
 using IndustrialPark.Archive;
 using IndustrialPark.Models;
@@ -54,34 +53,52 @@ public class AssetRenderer
         if (ra is AssetJSP jsp)
             lock (renderableJSPs)
                 renderableJSPs.Remove(jsp);
-        lock (Program.Renderer.renderableAssets)
-            Program.Renderer.renderableAssets.Remove(ra);
     }
 
-    public IEnumerable<IRenderableAsset> GetRenderableAssets() => renderableAssets;
-    public IEnumerable<IRenderableAsset> GetRenderableJSPs() => renderableJSPs;
-    
+    public List<IRenderableAsset> GetRenderableAssets()
+    {
+        lock (renderableAssets)
+            return renderableAssets.ToList();
+    }
+
+    public List<AssetJSP> GetRenderableJSPs()
+    {
+        lock (renderableJSPs)
+            return renderableJSPs.ToList();
+    }
+
     public bool PauseMatrixRecalculation = false;
 
-    public void ResetModels(SharpRenderer renderer)
+    public void ResetModels(SharpRenderer renderer, IProgressBar progressBar = null)
     {
         foreach (IAssetWithModel a in renderingDictionary.Values)
+        {
             if (a is AssetRenderWareModel model)
                 model.SetupModel(renderer);
+            progressBar?.PerformStep();
+        }
     }
 
-    public void RecalculateAllMatrices(SharpRenderer renderer)
+    public int ModelCount => renderingDictionary.Values.Count;
+
+    public void RecalculateAllMatrices(SharpRenderer renderer, IProgressBar progressBar = null)
     {
         if (PauseMatrixRecalculation)
             return;
 
-        lock (renderableAssets)
-            foreach (var ra in renderableAssets)
-                ra.CreateTransformMatrix(renderer);
-        lock (renderableJSPs)
-            foreach (var jsp in renderableJSPs)
-                jsp.CreateTransformMatrix(renderer);
+        foreach (var ra in GetRenderableAssets())
+        {
+            ra.CreateTransformMatrix(renderer);
+            progressBar?.PerformStep();
+        }
+        foreach (var jsp in GetRenderableJSPs())
+        {
+            jsp.CreateTransformMatrix(renderer);
+            progressBar?.PerformStep();
+        }
     }
+
+    public int MatrixCount => renderableAssets.Count + renderableJSPs.Count;
 
     public void AddToRenderingDictionary(uint assetID, IAssetWithModel value)
     {
@@ -91,9 +108,8 @@ public class AssetRenderer
 
     public void RemoveFromRenderingDictionary(IAssetWithModel iawm)
     {
-        if (renderingDictionary.ContainsValue(iawm))
-            lock (renderingDictionary)
-                renderingDictionary.Remove(iawm.assetID);
+        lock (renderingDictionary)
+            renderingDictionary.Remove(iawm.assetID);
     }
 
     public IAssetWithModel GetFromRenderingDictionary(uint assetID)
@@ -110,24 +126,22 @@ public class AssetRenderer
 
     public void AddToRenderableLightKits(AssetLKIT lkit)
     {
-        lock (renderableLightKits)
+        foreach (var light in lkit.Lights)
         {
-            foreach (var light in lkit.Lights)
+            if (light.ColorRed > 1f || light.ColorGreen > 1f || light.ColorBlue > 1f)
             {
-                if (light.ColorRed > 1f || light.ColorGreen > 1f || light.ColorBlue > 1f)
-                {
-                    float s = Math.Max(light.ColorRed, Math.Max(light.ColorGreen, light.ColorBlue));
-                    s = Math.Max(s, 0.00001f);
-                    s = 1f / s;
+                float s = Math.Max(light.ColorRed, Math.Max(light.ColorGreen, light.ColorBlue));
+                s = Math.Max(s, 0.00001f);
+                s = 1f / s;
 
-                    light.ColorRed *= s;
-                    light.ColorGreen *= s;
-                    light.ColorBlue *= s;
-                }
+                light.ColorRed *= s;
+                light.ColorGreen *= s;
+                light.ColorBlue *= s;
             }
-            renderableLightKits.Add(lkit);
-            AssetLKIT.SceneLightKit = lkit;
         }
+        lock (renderableLightKits)
+            renderableLightKits.Add(lkit);
+        AssetLKIT.SceneLightKit = lkit;
     }
 
     public void RemoveFromRenderableLightKits(AssetLKIT lkit)
@@ -142,10 +156,8 @@ public class AssetRenderer
     public void AddToRenderableFOGs(AssetFOG fog)
     {
         lock (renderableFOGs)
-        {
             renderableFOGs.Add(fog);
-            Program.Renderer.Fog = fog;
-        }
+        Program.Renderer.Fog = fog;
     }
 
     public void RemoveFromRenderableFOGs(AssetFOG fog)
@@ -180,13 +192,13 @@ public class AssetRenderer
     private void UpdateModelBlendModes(Dictionary<uint, List<PipeInfo>> blendModes)
     {
         foreach (var k in blendModes.Keys)
-            if (renderingDictionary.TryGetValue(k, out IAssetWithModel value) && value is AssetMODL MODL)
+            if (GetFromRenderingDictionary(k) is AssetMODL MODL)
                 MODL.SetPipeline(blendModes[k]);
     }
 
     private void ResetModelBlendModes(IEnumerable<uint> assetIDs)
     {
-        var models = assetIDs.Where(renderingDictionary.ContainsKey).Select(m => renderingDictionary[m]).OfType<AssetMODL>();
+        var models = assetIDs.Select(GetFromRenderingDictionary).OfType<AssetMODL>().ToList();
         foreach (var MODL in models)
             MODL.ResetPipeline();
     }
@@ -274,7 +286,7 @@ public class AssetRenderer
 
         foreach (IRenderableAsset ra in l)
         {
-            if (((Asset)ra).assetID == assetIdSkip)
+            if (ra.assetID == assetIdSkip)
                 continue;
 
             float? distance = ra.GetIntersectionPosition(renderer, ray);

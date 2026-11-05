@@ -1,4 +1,5 @@
-﻿using IndustrialPark.RenderData;
+﻿using IndustrialPark.AssetEditorColors;
+using IndustrialPark.RenderData;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
@@ -6,7 +7,6 @@ using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using IndustrialPark.AssetEditorColors;
 
 namespace IndustrialPark
 {
@@ -203,6 +203,8 @@ namespace IndustrialPark
 
             if (SubsetList.Count > 0)
                 AddToMeshList(SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray(), SubsetList));
+            else
+                AddToMeshList(null);
         }
 
         private void AddGeometry(SharpDevice device, Geometry_000F g, Matrix transformMatrix)
@@ -490,8 +492,6 @@ namespace IndustrialPark
                             else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                             {
                                 color = new SharpDX.Color(colorList[objectList[j]].R, colorList[objectList[j]].G, colorList[objectList[j]].B, colorList[objectList[j]].A);
-                                if (color.A == 0)
-                                    color = new SharpDX.Color(255, 255, 255, 255);
                             }
                             else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
                             {
@@ -582,7 +582,6 @@ namespace IndustrialPark
             renderer.device.SetCullModeNone();
             renderer.device.SetDefaultDepthState();
             renderer.device.ApplyRasterState();
-            renderer.device.UpdateAllStates();
 
             renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
             renderer.device.DeviceContext.PixelShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
@@ -612,6 +611,11 @@ namespace IndustrialPark
 
                     renderer.fogLightBuffer.UpdateValue(renderData);
                     renderer.fogLightShader.Apply();
+
+                    if (meshList[i].SubSets[j].DiffuseMap.Tag is SharpDevice.SamplerSettings sdss)
+                        renderer.device.SetSamplerState(sdss);
+                    renderer.device.UpdateAllStates();
+
                     meshList[i].Draw(renderer.device, j);
                 }
 #if DEBUG
@@ -621,7 +625,7 @@ namespace IndustrialPark
             }
         }
 
-        public void RenderJsp(SharpRenderer renderer, Matrix world, bool isSelected, bool[] atomicFlags, xJSPNodeInfo[] nodeinfos)
+        public void RenderJsp(SharpRenderer renderer, Matrix world, bool isSelected, bool[] atomicFlags, xJSPNodeInfo[] nodeinfos, HipHopFile.Game game)
         {
             jspRenderData.worldViewProjection = world * renderer.viewProjection;
             jspRenderData.FogColor = renderer.Fog?.FogColor.ToVector4() ?? Vector4.Zero;
@@ -648,12 +652,11 @@ namespace IndustrialPark
 
                 if (nodeinfos != null && nodeinfos.Length == meshList.Count)
                 {
-                    if ((nodeinfos?[i].nodeFlags & 2) != 0)
+                    if (nodeinfos[i].DisableZBufferWrite)
                         renderer.device.DisableDepthBufferWrite();
-                    if ((nodeinfos?[i].nodeFlags & 4) != 0)
+                    if (nodeinfos[i].DisableBackFaceCulling)
                         renderer.device.SetCullModeNone();
                 }
-                renderer.device.UpdateAllStates();
                 renderer.device.ApplyRasterState();
 
                 meshList[i].Begin(renderer.device);
@@ -665,6 +668,9 @@ namespace IndustrialPark
 
                     renderer.jspBuffer.UpdateValue(jspRenderData);
                     renderer.jspShader.Apply();
+                    if (meshList[i].SubSets[j].DiffuseMap.Tag is SharpDevice.SamplerSettings sdss)
+                        renderer.device.SetSamplerState(sdss);
+                    renderer.device.UpdateAllStates();
 
                     meshList[i].Draw(renderer.device, j);
                 }
@@ -725,17 +731,21 @@ namespace IndustrialPark
 
                 renderData.AlphaDiscard = 0;
                 renderer.device.SetDefaultDepthState();
-                renderer.device.SetBlendStateAlphaBlend();
                 renderer.device.SetCullModeNone();
 
-                PipeInfo pipe;
                 bool drawTwice = false;
-                if (pipeEntries.TryGetValue((uint)i, out pipe) || pipeEntries.TryGetValue(uint.MaxValue, out pipe))
+                if (pipeEntries.TryGetValue((uint)i, out PipeInfo pipe) || pipeEntries.TryGetValue(uint.MaxValue, out pipe))
                 {
                     renderData.AlphaDiscard = pipe.AlphaDiscard / 255f;
-                    renderer.device.SetBlend(BlendOperation.Add, 
-                        pipe.SourceBlend != BlendFactorType.None ? pipe.GetSharpBlendMode(true) : BlendOption.SourceAlpha, 
-                        pipe.DestinationBlend != BlendFactorType.None ? pipe.GetSharpBlendMode(false) : BlendOption.InverseSourceAlpha);
+
+                    if (pipe.SourceBlend == BlendFactorType.None && pipe.DestinationBlend == BlendFactorType.None)
+                    {
+                        renderer.device.SetDefaultBlendState();
+                    }
+                    else
+                    {
+                        renderer.device.SetBlend(BlendOperation.Add, pipe.GetSharpBlendMode(true), pipe.GetSharpBlendMode(false));
+                    }
 
                     if (pipe.ZWriteMode != ZWriteMode.Enabled)
                     {
@@ -745,18 +755,18 @@ namespace IndustrialPark
                     }
                     if (pipe.IgnoreFog)
                         renderData.FogEnable = false;
-                    if (pipe.LightingMode != LightingMode.LightKit)
-                        renderData.VertexColorEnable = true;
                     if (pipe.CullMode >= PiptCullMode.Back)
                     {
                         renderer.device.SetCullModeNormal();
                         if (pipe.CullMode == PiptCullMode.BackThenFront)
                             drawTwice = true;
                     }
-
+                }
+                else
+                {
+                    renderer.device.SetDefaultBlendState();
                 }
                 renderer.device.ApplyRasterState();
-                renderer.device.UpdateAllStates();
 
             Draw:
                 meshList[i].Begin(renderer.device);
@@ -781,13 +791,17 @@ namespace IndustrialPark
                     renderer.fogLightBuffer.UpdateValue(renderData);
                     renderer.fogLightShader.Apply();
 
+                    if (meshList[i].SubSets[j].DiffuseMap.Tag is SharpDevice.SamplerSettings sdss)
+                        renderer.device.SetSamplerState(sdss);
+
+                    renderer.device.UpdateAllStates();
+
                     meshList[i].Draw(renderer.device, j);
                 }
 #if DEBUG
                 SharpRenderer.TotalVerticesDrawn += meshList[i].VerticesAmount;
                 SharpRenderer.TotalAtomicsDrawn++;
 #endif
-
                 if (drawTwice)
                 {
                     if (pipe.CullMode == PiptCullMode.BackThenFront)

@@ -136,27 +136,6 @@ namespace IndustrialPark
 #endif
         }
 
-        private void MainForm_Resize(object sender, EventArgs e)
-        {
-            if (renderer == null)
-                return;
-
-            try
-            {
-                if (WindowState == FormWindowState.Minimized)
-                {
-                    renderer.allowRender = false;
-                }
-                else
-                {
-                    renderer.allowRender = true;
-                }
-            }
-            catch
-            {
-            }
-        }
-
         private void MainForm_Shown(object sender, EventArgs e)
         {
             foreach (Form form in Application.OpenForms)
@@ -606,6 +585,11 @@ namespace IndustrialPark
             allMovePointsArePointsToolStripMenuItem.Checked = !allMovePointsArePointsToolStripMenuItem.Checked;
             AssetMVPT.DrawAllAsPoints = allMovePointsArePointsToolStripMenuItem.Checked;
             Program.Renderer.Assets.RecalculateAllMatrices(renderer);
+        }
+
+        private void wireframeWidgetsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            renderer.WireframeWidgets = wireframeWidgetsToolStripMenuItem.Checked;
         }
 
         private void gizmoConeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1142,6 +1126,9 @@ namespace IndustrialPark
             gizmoConesToolStripMenuItem.Checked = settings.GizmoCones;
             GizmoBase.UseCones = settings.GizmoCones;
 
+            wireframeWidgetsToolStripMenuItem.Checked = settings.WireframeWidgets;
+            renderer.WireframeWidgets = settings.WireframeWidgets;
+
             fogToolStripMenuItem.Checked = settings.fog;
             AssetFOG.DontRender = !settings.fog;
 
@@ -1225,6 +1212,7 @@ namespace IndustrialPark
             AutoDockAssetEditors = Program.EditorManager.AutoDockAssetEditors,
             AutoDockSelectedAssetEditors = Program.EditorManager.AutoDockSelectedAssetEditors,
             GizmoCones = GizmoBase.UseCones,
+            WireframeWidgets = renderer.WireframeWidgets,
             dockLeftSize = dockLeftSizeSave,
             dockRightSize = dockRightSizeSave,
             Speed = renderer.Camera.Speed,
@@ -1775,10 +1763,22 @@ namespace IndustrialPark
 
         public void RefreshTexturesAndModels()
         {
+            var textures = ArchiveEditors.SelectMany(ae => ae.archive?.Assets.OfType<AssetRWTX>() ?? []);
+            var progressBar = new ProgressBar("Setting up textures and models");
+            progressBar.SetProgressBar(0, textures.Count() * 2 + Program.Renderer.Assets.ModelCount + Program.Renderer.Assets.MatrixCount, 1);
+            progressBar.Show(this);
+
+            try
+            {
             Program.TextureManager.ClearTextures();
-            TextureConverter.SetupTextureDisplay(ArchiveEditors.SelectMany(ae => ae.archive?.Assets.OfType<AssetRWTX>() ?? []));
-            Program.Renderer.Assets.ResetModels(Program.Renderer);
-            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
+                TextureConverter.SetupTextureDisplay(textures, progressBar);
+                Program.Renderer.Assets.ResetModels(Program.Renderer, progressBar);
+                Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer, progressBar);
+            }
+            finally
+            {
+                progressBar.Close();
+            }
         }
 
         public void UnhideAllAssets()

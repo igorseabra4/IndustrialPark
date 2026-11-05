@@ -1,4 +1,5 @@
-﻿using SharpDX;
+﻿using IndustrialPark.RenderData;
+using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
 using SharpDX.Windows;
@@ -7,8 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
-using IndustrialPark.RenderData;
-using IndustrialPark.Archive;
 using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 
 namespace IndustrialPark
@@ -141,14 +140,9 @@ namespace IndustrialPark
         /// <summary>
         /// Draws the selected assets into an offscreen mask, then draws an outline around the mask onto the back buffer.
         /// </summary>
-        private void DrawSelectionOutline()
+        private void DrawSelectionOutline(IEnumerable<IRenderableAsset> assets)
         {
-            List<IRenderableAsset> selectedAssets = [
-                .. Assets.GetSelectedJSPs(),
-                .. renderableAssets.Where(a => ((Asset)a).isSelected),
-            ];
-
-            if (selectedAssets.Count == 0)
+            if (!assets.Any())
                 return;
 
             device.SetSelectionMaskTarget();
@@ -162,7 +156,7 @@ namespace IndustrialPark
             device.UpdateAllStates();
 
             isDrawingSelectionMask = true;
-            foreach (IRenderableAsset a in selectedAssets)
+            foreach (IRenderableAsset a in assets)
                 a.Draw(this);
             isDrawingSelectionMask = false;
             device.SelectionMaskMode = false;
@@ -405,7 +399,7 @@ namespace IndustrialPark
             colors = RendererColors.Default;
         }
 
-        public RendererColors colors = new RendererColors();
+        public RendererColors colors;
         public Vector4 normalColor => colors.normalColor;
         public Vector4 trigColor => colors.trigColor;
         public Vector4 mvptColor => colors.mvptColor;
@@ -443,11 +437,12 @@ namespace IndustrialPark
         {
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = color ?? (isSelected ? selectedColor : normalColor);
+            renderData.Color.W = WidgetAlpha - (isSelected ? 0.1f : 0);
 
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
-            device.SetDefaultDepthState();
+            device.DisableDepthBufferWrite();
             device.UpdateAllStates();
 
             basicBuffer.UpdateValue(renderData);
@@ -461,11 +456,12 @@ namespace IndustrialPark
         {
             renderData.worldViewProjection = Matrix.Scaling(multiplier) * world * viewProjection;
             renderData.Color = isSelected ? selectedColor : (color ?? normalColor);
+            renderData.Color.W = WidgetAlpha - (isSelected ? 0.1f : 0);
 
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
-            device.SetDefaultDepthState();
+            device.DisableDepthBufferWrite();
             device.UpdateAllStates();
 
             basicBuffer.UpdateValue(renderData);
@@ -479,11 +475,12 @@ namespace IndustrialPark
         {
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
+            renderData.Color.W = WidgetAlpha - (isSelected ? 0.1f : 0);
 
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
-            device.SetDefaultDepthState();
+            device.DisableDepthBufferWrite();
             device.UpdateAllStates();
 
             basicBuffer.UpdateValue(renderData);
@@ -498,16 +495,12 @@ namespace IndustrialPark
             var world = Matrix.Scaling(sphere.Radius * 2f) * Matrix.Translation(sphere.Center);
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
+            renderData.Color.W = WidgetAlpha - (isSelected ? 0.1f : 0);
 
-            var campos = Camera.Position;
-            if (sphere.Contains(ref campos) == ContainmentType.Contains)
-                device.SetCullModeReverse();
-            else
-                device.SetCullModeNormal();
-
+            device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
-            device.SetDefaultDepthState();
+            device.DisableDepthBufferWrite();
             device.UpdateAllStates();
 
             basicBuffer.UpdateValue(renderData);
@@ -521,11 +514,12 @@ namespace IndustrialPark
         {
             renderData.worldViewProjection = world * viewProjection;
             renderData.Color = isSelected ? selectedColor : normalColor;
+            renderData.Color.W = WidgetAlpha - (isSelected ? 0.1f : 0);
 
             device.SetCullModeNone();
             device.ApplyRasterState();
             device.SetBlendStateAlphaBlend();
-            device.SetDefaultDepthState();
+            device.DisableDepthBufferWrite();
             device.UpdateAllStates();
 
             basicBuffer.UpdateValue(renderData);
@@ -562,8 +556,7 @@ namespace IndustrialPark
             device.DeviceContext.VertexShader.SetConstantBuffer(0, tintedBuffer.Buffer);
             tintedShader.Apply();
 
-            if (texture == null)
-                texture = whiteDefault;
+            texture ??= whiteDefault;
 
             device.DeviceContext.PixelShader.SetShaderResource(0, texture);
 
@@ -617,11 +610,31 @@ namespace IndustrialPark
         public BoundingFrustum frustum;
 
         public bool isDrawingUI = false;
-        public HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
         public const float DefaultLODTDistance = 10000f;
         public bool RenderVertexColors = true;
+        public bool WireframeWidgets = false;
+        public float WidgetAlpha;
 
-        public bool allowRender = true;
+        private float GetTransparentRenderDepth(IRenderableAsset asset)
+        {
+            if (asset is EntityAsset entity)
+                return entity.GetCameraDepth(Camera.Position, Camera.Forward);
+
+            BoundingBox bounds = asset switch
+            {
+                AssetVOLU volume => volume.GetBoundingBox(),
+                AssetSFX sfx => sfx.GetBoundingBox(),
+                AssetSDFX sdfx => sdfx.GetBoundingBox(),
+                AssetMVPT mvpt => mvpt.GetBoundingBox(),
+                RenderableDynaBase dyna => dyna.GetBoundingBox(),
+                _ => default,
+            };
+
+            if (bounds.Minimum != bounds.Maximum)
+                return Vector3.Dot(bounds.Center - Camera.Position, Camera.Forward);
+
+            return asset.GetDistanceFrom(Camera.Position);
+        }
 
         private AssetFOG _fog;
         public AssetFOG Fog
@@ -635,7 +648,6 @@ namespace IndustrialPark
                 else
                     backgroundColor = defaultBackgroundColor;
             }
-
         }
 
         private Stopwatch stopwatch = new Stopwatch();
@@ -692,73 +704,89 @@ namespace IndustrialPark
             if (!AssetFOG.DontRender && Fog != null)
                 Camera.FarPlane = (float)Fog.EndDistance;
 
-            if (allowRender)
-                lock (renderableAssets)
-                    if (isDrawingUI)
-                    {
-                        viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
+            if (isDrawingUI)
+            {
+                viewProjection = Matrix.OrthoOffCenterRH(0, 640, -480, 0, -Camera.FarPlane, Camera.FarPlane);
 
-                        device.SetFillModeDefault();
-                        device.SetCullModeDefault();
-                        device.ApplyRasterState();
-                        device.SetBlendStateAlphaBlend();
-                        device.SetDefaultDepthState();
-                        device.UpdateAllStates();
+                var draw = Assets.GetRenderableAssets().OfType<AssetUI>().Where(a => a.ShouldDraw(this)).OrderByDescending(f => f.PositionZ);
+                foreach (IRenderableAsset a in draw)
+                    a.Draw(this);
+            }
+            else
+            {
+                if (recordingFly)
+                    flyToPlay.Record();
+                else if (playingFly)
+                    flyToPlay.Play();
 
-                        lock (Assets.GetRenderableAssets())
-                        {
-                            foreach (IRenderableAsset a in
-                            (from IRenderableAsset asset in Assets.GetRenderableAssets()
-                             where (asset is AssetUI || asset is AssetUIFT) && asset.ShouldDraw(this)
-                             select (IClickableAsset)asset).OrderBy(f => -f.PositionZ))
-                                a.Draw(this);
-                        }
-                    }
+                Program.MainForm.SetToolStripStatusLabel($"{Camera} | FPS: {sharpFPS.FPS}");
+
+                Matrix view = Camera.ViewMatrix;
+                viewProjection = view * Camera.ProjectionMatrix;
+                frustum = new BoundingFrustum(view * Camera.BiggerFovProjectionMatrix);
+
+                device.SetFillModeDefault();
+                WidgetAlpha = 0.5f;
+
+                foreach (var a in Assets.GetRenderableJSPs())
+                    if (a.ShouldDraw(this))
+                        a.Draw(this);
+
+                HashSet<IRenderableAsset> renderableAssets = new HashSet<IRenderableAsset>();
+
+                foreach (IRenderableAsset a in Assets.GetRenderableAssets())
+                {
+                    if (a.ShouldDraw(this))
+                        renderableAssets.Add(a);
+                    if (EntityAsset.movementPreview && a is EntityAsset entity)
+                        entity.UpdateMovementPreview(movementPreviewFrames);
+                }
+
+                var renderableAssetsTrans = new HashSet<IRenderableAsset>();
+                var renderableWidgets = new HashSet<IRenderableAsset>();
+
+                foreach (IRenderableAsset a in renderableAssets)
+                    if (a is AssetTRIG or AssetVOLU or AssetSFX or AssetSDFX or DynaEffectLight or DynaEffectScreenWarp or AssetMVPT { DrawAsPoint: false })
+                        renderableWidgets.Add(a);
+                    else if (a.SpecialBlendMode(this))
+                        renderableAssetsTrans.Add(a);
                     else
+                        a.Draw(this);
+
+                foreach (IRenderableAsset a in renderableAssetsTrans
+                    .OrderByDescending(GetTransparentRenderDepth)
+                    .ThenBy(a => a.assetID))
+                    a.Draw(this);
+
+                if (WireframeWidgets)
+                {
+                    foreach (IRenderableAsset a in renderableWidgets
+                        .OrderByDescending(GetTransparentRenderDepth)
+                        .ThenBy(a => a.assetID))
                     {
-                        if (recordingFly)
-                            flyToPlay.Record();
-                        else if (playingFly)
-                            flyToPlay.Play();
-
-                        Program.MainForm.SetToolStripStatusLabel($"{Camera} | FPS: {sharpFPS.FPS:0.0000}");
-
-                        Matrix view = Camera.ViewMatrix;
-                        viewProjection = view * Camera.ProjectionMatrix;
-                        frustum = new BoundingFrustum(view * Camera.BiggerFovProjectionMatrix);
-
-                        device.SetFillModeDefault();
-
-                        lock (Assets.GetRenderableJSPs())
-                            foreach (var a in Assets.GetRenderableJSPs().ToList())
-                                if (a.ShouldDraw(this))
-                                    a.Draw(this);
-
-                        lock (Assets.GetRenderableAssets())
-                            foreach (IRenderableAsset a in Assets.GetRenderableAssets().ToList())
-                            {
-                                if (a.ShouldDraw(this))
-                                    renderableAssets.Add(a);
-                                else
-                                    renderableAssets.Remove(a);
-                                if (EntityAsset.movementPreview && a is EntityAsset entity)
-                                    entity.UpdateMovementPreview(movementPreviewFrames);
-                            }
-
-                        var renderableAssetsTrans = new HashSet<IRenderableAsset>();
-
-                        foreach (IRenderableAsset a in renderableAssets)
-                            if (a.SpecialBlendMode(this))
-                                renderableAssetsTrans.Add(a);
-                            else
-                                a.Draw(this);
-
-                        foreach (IRenderableAsset a in renderableAssetsTrans.OrderByDescending(a => a.GetDistanceFrom(Camera.Position)))
+                        if (((Asset)a).isSelected)
+                        {
+                            WidgetAlpha = 0.4f;
+                            device.SetFillModeSolid();
                             a.Draw(this);
-
-                        if (showSelectionOutline)
-                            DrawSelectionOutline();
+                        }
+                        WidgetAlpha = 1f;
+                        device.SetFillModeWireframe();
+                        a.Draw(this);
                     }
+                }
+                else
+                {
+                    WidgetAlpha = 0.3f;
+                    foreach (IRenderableAsset a in renderableWidgets
+                        .OrderByDescending(GetTransparentRenderDepth)
+                        .ThenBy(a => a.assetID))
+                        a.Draw(this);
+                }
+
+                if (showSelectionOutline)
+                    DrawSelectionOutline([.. Assets.GetSelectedJSPs(), .. renderableAssets.Where(a => ((Asset)a).isSelected)]);
+            }
 #if DEBUG
             device.Font.Begin();
             device.Font.DrawString($"Draw Calls: {TotalDrawCalls}", 0, 0);

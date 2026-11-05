@@ -38,6 +38,7 @@ namespace IndustrialPark
         public bool AutoDockAssetEditors = false;
         public bool AutoDockSelectedAssetEditors = false;
         public bool GizmoCones = true;
+        public bool WireframeWidgets = false;
         public List<(KeyboardAction Action, KeyBinding Binding)> UserKeyBindings = null;
 
         public RendererColors Colors = RendererColors.Default;

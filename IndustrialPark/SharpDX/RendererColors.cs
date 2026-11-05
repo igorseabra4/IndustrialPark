@@ -4,8 +4,6 @@ namespace IndustrialPark
 {
     public struct RendererColors
     {
-        public static float defaultAlpha = 0.45f;
-
         public Vector4 normalColor;
         public Vector4 trigColor;
         public Vector4 mvptColor;
@@ -16,23 +14,23 @@ namespace IndustrialPark
 
         public static RendererColors Default => new()
         {
-            normalColor = new Vector4(0.2f, 0.6f, 0.8f, defaultAlpha),
-            camColor = new Vector4(0.6f, 0.8f, 0.9f, defaultAlpha),
-            trigColor = new Vector4(0.3f, 0.8f, 0.7f, defaultAlpha),
-            mvptColor = new Vector4(0.62f, 0.28f, 0.82f, defaultAlpha),
-            sfxColor = new Vector4(1f, 0.35f, 0.3f, defaultAlpha),
-            selectedColor = new Vector4(1f, 0.7f, 0f, defaultAlpha - 0.15f),
+            normalColor = new Vector4(0.2f, 0.6f, 0.8f, 1f),
+            camColor = new Vector4(0.6f, 0.8f, 0.9f, 1f),
+            trigColor = new Vector4(0.3f, 0.8f, 0.7f, 1f),
+            mvptColor = new Vector4(0.62f, 0.28f, 0.82f, 1f),
+            sfxColor = new Vector4(1f, 0.35f, 0.3f, 1f),
+            selectedColor = new Vector4(1f, 0.7f, 0f, 1f),
             selectedObjectColor = new Vector4(1f, 0.7f, 0f, 1f),
         };
 
         public static RendererColors Classic => new()
         {
-            normalColor = new Vector4(0.2f, 0.6f, 0.8f, defaultAlpha),
-            camColor = new Vector4(0.2f, 0.6f, 0.8f, defaultAlpha),
-            trigColor = new Vector4(0.3f, 0.8f, 0.7f, defaultAlpha),
-            mvptColor = new Vector4(0.7f, 0.2f, 0.6f, defaultAlpha),
-            sfxColor = new Vector4(1f, 0.2f, 0.2f, defaultAlpha),
-            selectedColor = new Vector4(1f, 0.5f, 0.1f, defaultAlpha - 0.15f),
+            normalColor = new Vector4(0.2f, 0.6f, 0.8f, 1f),
+            camColor = new Vector4(0.2f, 0.6f, 0.8f, 1f),
+            trigColor = new Vector4(0.3f, 0.8f, 0.7f, 1f),
+            mvptColor = new Vector4(0.7f, 0.2f, 0.6f, 1f),
+            sfxColor = new Vector4(1f, 0.2f, 0.2f, 1f),
+            selectedColor = new Vector4(1f, 0.5f, 0.1f, 1f),
             selectedObjectColor = new Vector4(1f, 0f, 0f, 1f),
         };
     }

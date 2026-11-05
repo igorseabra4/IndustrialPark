@@ -43,12 +43,15 @@ namespace IndustrialPark
             return Program.Renderer.whiteDefault;
         }
 
-        public void LoadTexturesFromTXD(string textureFile, bool reapply = true)
+        public void LoadTexturesFromTXD(string textureFile, bool reapply = true, IProgressBar progressBar = null)
         {
             foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(textureFile))
                 if (rw is TextureDictionary_0016 td)
                     foreach (TextureNative_0015 tn in td.textureNativeList)
+                    {
+                        progressBar?.PerformStep();
                         AddTextureNative(tn.textureNativeStruct);
+                    }
 
             if (reapply)
                 ReapplyTextures();
@@ -108,12 +111,12 @@ namespace IndustrialPark
                 if (mesh != null)
                     foreach (SharpSubSet sub in mesh.SubSets)
                     {
-                        if (Textures.ContainsKey(sub.DiffuseMapName))
+                        if (Textures.TryGetValue(sub.DiffuseMapName, out ShaderResourceView texture))
                         {
-                            if (sub.DiffuseMap != Textures[sub.DiffuseMapName])
+                            if (sub.DiffuseMap != texture)
                             {
                                 DisposeIfNotWhiteDefault(sub.DiffuseMap);
-                                sub.DiffuseMap = Textures[sub.DiffuseMapName];
+                                sub.DiffuseMap = texture;
                             }
                         }
                         else

@@ -16,7 +16,7 @@ public static class TextureConverter
 {
     public static bool SkipTextureDisplay = false;
 
-    public static void SetupTextureDisplay(IEnumerable<AssetRWTX> assets)
+    public static void SetupTextureDisplay(IEnumerable<AssetRWTX> assets, IProgressBar progressBar = null)
     {
         if (SkipTextureDisplay || !assets.Any())
             return;
@@ -30,9 +30,9 @@ public static class TextureConverter
 
             try
             {
-                ExportTextureDictionary(assets, pathToGcTXD, CheckState.Indeterminate);
+                ExportTextureDictionary(assets, pathToGcTXD, CheckState.Indeterminate, progressBar);
                 PerformTXDConversionExternal();
-                Program.TextureManager.LoadTexturesFromTXD(pathToPcTXD);
+                Program.TextureManager.LoadTexturesFromTXD(pathToPcTXD, true, progressBar);
 
                 if (File.Exists(pathToGcTXD))
                     File.Delete(pathToGcTXD);
@@ -68,7 +68,7 @@ public static class TextureConverter
         }
     }
 
-    public static void ExportTextureDictionary(IEnumerable<AssetRWTX> assets, string fileName, CheckState RW3)
+    public static void ExportTextureDictionary(IEnumerable<AssetRWTX> assets, string fileName, CheckState RW3, IProgressBar progressBar = null)
     {
         ReadFileMethods.treatStuffAsByteArray = true;
 
@@ -107,6 +107,7 @@ public static class TextureConverter
                                     tn.textureNativeStruct.textureName = name;
 
                                 textNativeList.Add(tn);
+                                progressBar?.PerformStep();
                             }
                 }
                 catch (Exception ex)

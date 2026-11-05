@@ -10,6 +10,7 @@ namespace IndustrialPark
     using RenderWareFile;
     using RenderWareFile.Sections;
     using SharpDX.Direct3D11;
+    using static IndustrialPark.SharpDevice;
 
     /// <summary>
     /// Custom Loader for DDS files
@@ -1009,36 +1010,35 @@ namespace IndustrialPark
                 mipMaps = tnStruct.mipMaps;
 
             DataRectangle[] dataRectangles = FillInitData(mipMaps, tnStruct.width, tnStruct.height, tnStruct.bitDepth, tnStruct.mipMapCount, format);
-            Texture2D buffer = null;
-
-            while (buffer == null)
+            Texture2D buffer = new Texture2D(device.Device, new Texture2DDescription()
             {
-                try
-                {
-                    buffer = new Texture2D(device.Device, new Texture2DDescription()
-                    {
-                        MipLevels = tnStruct.mipMapCount,
-                        Format = format,
-                        Width = tnStruct.width,
-                        Height = tnStruct.height,
-                        ArraySize = 1,
-                        BindFlags = BindFlags.ShaderResource,
-                        Usage = ResourceUsage.Default,
-                        SampleDescription = new SampleDescription(1, 0),
-                        OptionFlags = ResourceOptionFlags.None,
-                    }, dataRectangles);
-                }
-                catch
-                {
+                MipLevels = mipMaps.Length,
+                Format = format,
+                Width = tnStruct.width,
+                Height = tnStruct.height,
+                ArraySize = 1,
+                BindFlags = BindFlags.ShaderResource,
+                Usage = ResourceUsage.Default,
+                SampleDescription = new SampleDescription(1, 0),
+                OptionFlags = ResourceOptionFlags.None,
+            }, dataRectangles);
 
-                }
-            }
-
-            ShaderResourceView resourceView = new ShaderResourceView(device.Device, buffer);
+            ShaderResourceView resourceView = new ShaderResourceView(device.Device, buffer)
+            {
+                Tag = new SamplerSettings(AddressModeConvert(tnStruct.addressModeU), AddressModeConvert(tnStruct.addressModeV))
+            };
 
             buffer.Dispose();
-
             return resourceView;
         }
+
+        private static SharpDX.Direct3D11.TextureAddressMode AddressModeConvert(RenderWareFile.Sections.TextureAddressMode addressMode) =>
+            addressMode switch
+        {
+            RenderWareFile.Sections.TextureAddressMode.TEXTUREADDRESSBORDER => SharpDX.Direct3D11.TextureAddressMode.Border,
+            RenderWareFile.Sections.TextureAddressMode.TEXTUREADDRESSMIRROR => SharpDX.Direct3D11.TextureAddressMode.Mirror,
+            RenderWareFile.Sections.TextureAddressMode.TEXTUREADDRESSCLAMP => SharpDX.Direct3D11.TextureAddressMode.Clamp,
+            _ => SharpDX.Direct3D11.TextureAddressMode.Wrap,
+        };
     }
 }
