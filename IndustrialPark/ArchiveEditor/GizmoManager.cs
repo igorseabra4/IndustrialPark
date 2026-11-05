@@ -590,17 +590,20 @@ namespace IndustrialPark
                 }
                 else if (asset is AssetVOLU volu && volu.VolumeShape is VolumeBox vbox)
                 {
+                    var originalPosition = originalPositions[assetID];
                     var (Maximum, Minimum) = originalPositionsBoxes[assetID];
                     switch (gizmo.Type)
                     {
                         case GizmoType.X:
                             if (grid)
                             {
+                                vbox.CenterX = SnapToGrid(originalPosition.X + totalAxisMovement, gizmo.Type);
                                 vbox.MinimumX = SnapToGrid(Minimum.X + totalAxisMovement, gizmo.Type);
                                 vbox.MaximumX = SnapToGrid(Maximum.X + totalAxisMovement, gizmo.Type);
                             }
                             else
                             {
+                                vbox.CenterX += assetMovement;
                                 vbox.MinimumX += assetMovement;
                                 vbox.MaximumX += assetMovement;
                             }
@@ -608,11 +611,13 @@ namespace IndustrialPark
                         case GizmoType.Y:
                             if (grid)
                             {
+                                vbox.CenterY = SnapToGrid(originalPosition.Y + totalAxisMovement, gizmo.Type);
                                 vbox.MinimumY = SnapToGrid(Minimum.Y + totalAxisMovement, gizmo.Type);
                                 vbox.MaximumY = SnapToGrid(Maximum.Y + totalAxisMovement, gizmo.Type);
                             }
                             else
                             {
+                                vbox.CenterY += assetMovement;
                                 vbox.MinimumY += assetMovement;
                                 vbox.MaximumY += assetMovement;
                             }
@@ -620,11 +625,13 @@ namespace IndustrialPark
                         case GizmoType.Z:
                             if (grid)
                             {
+                                vbox.CenterZ = SnapToGrid(originalPosition.Z + totalAxisMovement, gizmo.Type);
                                 vbox.MinimumZ = SnapToGrid(Minimum.Z + totalAxisMovement, gizmo.Type);
                                 vbox.MaximumZ = SnapToGrid(Maximum.Z + totalAxisMovement, gizmo.Type);
                             }
                             else
                             {
+                                vbox.CenterZ += assetMovement;
                                 vbox.MinimumZ += assetMovement;
                                 vbox.MaximumZ += assetMovement;
                             }
