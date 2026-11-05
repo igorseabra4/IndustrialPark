@@ -502,6 +502,101 @@ namespace IndustrialPark.Models
             return ToClump(geometries, atomicNeedsMaterialEffects);
         }
 
+        /// <summary>
+        /// Creates a RenderWare BSP world containing one atomic sector from an imported model.
+        /// </summary>
+        /// <param name="fileName">Filepath to model</param>
+        /// <param name="settings">Import settings. Multi-atomic and native-data options are ignored for BSPs.</param>
+        /// <returns>A RenderWare BSP world</returns>
+        public static RWSection CreateBSPFromAssimp(string fileName, ImportModelSettings settings = null)
+        {
+            // Reuse the DFF importer for Assimp processing, material creation, transforms,
+            // triangle generation, and bin mesh generation. A BSP has one atomic sector,
+            // so force the options that are required by the sector representation.
+            ImportModelSettings bspSettings = settings == null ? new ImportModelSettings
+            {
+                IgnoreMeshColors = true,
+                TexCoords = true,
+                Normals = true,
+            } : new ImportModelSettings
+            {
+                TriStrips = settings.TriStrips,
+                FlipUVs = settings.FlipUVs,
+                IgnoreMeshColors = settings.IgnoreMeshColors,
+                VertexColors = settings.VertexColors,
+                TexCoords = settings.TexCoords,
+                Normals = settings.Normals,
+                CollTree = settings.CollTree,
+            };
+
+            bspSettings.GeoTriangles = true;
+            bspSettings.MultiAtomic = false;
+            bspSettings.NativeData = false;
+            bspSettings.BinMesh = true;
+
+            Clump_0010 clump = (Clump_0010)CreateDFFFromAssimp(fileName, bspSettings);
+            Geometry_000F geometry = clump.geometryList.geometryList.Single();
+            GeometryStruct_0001 geometryStruct = geometry.geometryStruct;
+            MorphTarget morphTarget = geometryStruct.morphTargets[0];
+
+            Vertex3[] vertices = morphTarget.vertices;
+            SharpDX.BoundingBox bounds = SharpDX.BoundingBox.FromPoints(
+                vertices.Select(v => new SharpDX.Vector3(v.X, v.Y, v.Z)).ToArray());
+
+            WorldFlags worldFlags = (WorldFlags)0x00010000 | WorldFlags.UseLighting | WorldFlags.WorldSectorsOverlap;
+            if (geometryStruct.GeometryTristrip)
+                worldFlags |= WorldFlags.UseTriangleStrips;
+            if (geometryStruct.textCoords?.Length > 0)
+                worldFlags |= WorldFlags.HasOneSetOfTextCoords;
+            if (geometryStruct.vertexColors?.Length > 0)
+                worldFlags |= WorldFlags.HasVertexColors;
+            if (geometryStruct.GeometryNormals)
+                worldFlags |= WorldFlags.HasNormals;
+            if (geometryStruct.GeometryModulateMaterialColor)
+                worldFlags |= WorldFlags.ModulateMaterialColors;
+
+            BinMeshPLG_050E[] binMeshes = geometry.geometryExtension.extensionSectionList
+                .OfType<BinMeshPLG_050E>()
+                .ToArray();
+
+            return new World_000B()
+            {
+                worldStruct = new WorldStruct_0001()
+                {
+                    rootIsWorldSector = 1,
+                    inverseOrigin = new Vertex3(-0f, -0f, -0f),
+                    numTriangles = (uint)geometryStruct.triangles.Length,
+                    numVertices = (uint)vertices.Length,
+                    numPlaneSectors = 0,
+                    numAtomicSectors = 1,
+                    colSectorSize = 0,
+                    worldFlags = worldFlags,
+                    boxMaximum = new Vertex3(bounds.Maximum.X, bounds.Maximum.Y, bounds.Maximum.Z),
+                    boxMinimum = new Vertex3(bounds.Minimum.X, bounds.Minimum.Y, bounds.Minimum.Z),
+                },
+                materialList = geometry.materialList,
+                firstWorldChunk = new AtomicSector_0009()
+                {
+                    atomicSectorStruct = new AtomicSectorStruct_0001()
+                    {
+                        matListWindowBase = 0,
+                        numTriangles = geometryStruct.triangles.Length,
+                        numVertices = vertices.Length,
+                        boxMaximum = new Vertex3(bounds.Maximum.X, bounds.Maximum.Y, bounds.Maximum.Z),
+                        boxMinimum = new Vertex3(bounds.Minimum.X, bounds.Minimum.Y, bounds.Minimum.Z),
+                        collSectorPresent = 0,
+                        unused = 0,
+                        vertexArray = vertices,
+                        colorArray = geometryStruct.vertexColors ?? [],
+                        uvArray = geometryStruct.textCoords ?? [],
+                        triangleArray = geometryStruct.triangles,
+                    },
+                    atomicSectorExtension = new Extension_0003(binMeshes),
+                },
+                worldExtension = new Extension_0003(),
+            };
+        }
+
         //private static Geometry_000F ToNativeGeometry(Material_0007[] materials, Mesh mesh,
         //    Vertex3[] vertices, Vertex3[] normals, Vertex2[] textCoords, Vertex2[] textCoords2, RenderWareFile.Color[] vertexColors,
         //    Dictionary<Vector3D, ushort> normalIndices, Dictionary<Vector3D, ushort> uvIndices, Dictionary<Vector3D, ushort> uvIndices2, Dictionary<Color4D, ushort> colorIndices,

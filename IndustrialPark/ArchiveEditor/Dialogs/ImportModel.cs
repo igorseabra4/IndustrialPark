@@ -63,17 +63,21 @@ public partial class ImportModel : Form
                 assetName += ".bsp";
                 try
                 {
+                    //byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
+                    //    File.ReadAllBytes(filePath) :
+                    //    RwUtility.PerformBSPConversion(filePath, game,
+                    //    a.checkBoxNormals.Checked,
+                    //    a.checkBoxVertexColors.Checked,
+                    //    a.checkBoxTexCoords.Checked,
+                    //    a.checkBoxTriStrips.Checked,
+                    //    a.checkBoxIgnoreMeshColors.Checked,
+                    //    a.checkBoxNoMaterials.Checked,
+                    //    a.checkBoxFlipUVs.Checked,
+                    //    a.checkBoxCollTree.Checked);
+
                     byte[] assetData = Path.GetExtension(filePath).ToLower().Equals(".bsp") ?
                         File.ReadAllBytes(filePath) :
-                        RwUtility.PerformBSPConversion(filePath, game,
-                        a.checkBoxNormals.Checked,
-                        a.checkBoxVertexColors.Checked,
-                        a.checkBoxTexCoords.Checked,
-                        a.checkBoxTriStrips.Checked,
-                        a.checkBoxIgnoreMeshColors.Checked,
-                        a.checkBoxNoMaterials.Checked,
-                        a.checkBoxFlipUVs.Checked,
-                        a.checkBoxCollTree.Checked);
+                        ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(filePath, a.GetImportModelSettings()), GetModelRenderWareVersion(game));
 
                     ahdrCollections.Add([new Section_AHDR(assetName, a.assetType, AssetService.AHDRFlagsFromAssetType(a.assetType), assetData)]);
                 }
@@ -117,9 +121,7 @@ public partial class ImportModel : Form
             if (assetType == AssetType.BSP)
             {
                 return Path.GetExtension(a.filePaths[0]).ToLower().Equals(".bsp") ? File.ReadAllBytes(a.filePaths[0]) :
-                        RwUtility.PerformBSPConversion(a.filePaths[0], game,
-                        a.checkBoxNormals.Checked, a.checkBoxVertexColors.Checked, a.checkBoxTexCoords.Checked, a.checkBoxTriStrips.Checked,
-                        a.checkBoxIgnoreMeshColors.Checked, a.checkBoxNoMaterials.Checked, a.checkBoxFlipUVs.Checked, a.checkBoxCollTree.Checked);
+                       ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(a.filePaths[0], a.GetImportModelSettings()), GetModelRenderWareVersion(game));
             }
         }
         catch (Exception ex)

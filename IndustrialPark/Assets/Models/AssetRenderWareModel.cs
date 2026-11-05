@@ -70,15 +70,41 @@ namespace IndustrialPark
             get
             {
                 foreach (RWSection rws in ModelAsRWSections)
-                    if (rws is Clump_0010 clump)
-                    {
-                        foreach (Geometry_000F geo in clump.geometryList.geometryList)
-                            foreach (var ext in geo.geometryExtension.extensionSectionList)
-                                if (ext.sectionIdentifier == RenderWareFile.Section.CollisionPLG)
-                                    return true;
-                    }
+                    if (HasCollPlg(rws))
+                        return true;
+                   
                 return false;
             }
+        }
+
+        private static bool HasCollPlg(Clump_0010 clump)
+        {
+            foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                foreach (var ext in geo.geometryExtension.extensionSectionList)
+                    if (ext.sectionIdentifier == RenderWareFile.Section.CollisionPLG)
+                        return true;
+            return false;
+        }
+        private static bool HasCollPlg(AtomicSector_0009 atomic)
+        {
+            foreach (var ext in atomic.atomicSectorExtension.extensionSectionList)
+                if (ext.sectionIdentifier == RenderWareFile.Section.CollisionPLG)
+                    return true;
+            return false;
+        }
+        private static bool HasCollPlg(PlaneSector_000A plane)
+        {
+            return HasCollPlg(plane.leftSection) || HasCollPlg(plane.rightSection);
+        }
+        private static bool HasCollPlg(RWSection section)
+        {
+            if (section is Clump_0010 clump)
+                return HasCollPlg(clump);
+            if (section is AtomicSector_0009 atomic)
+                return HasCollPlg(atomic);
+            if (section is PlaneSector_000A plane)
+                return HasCollPlg(plane);
+            return false;
         }
 
         [Browsable(false)]
@@ -259,7 +285,7 @@ namespace IndustrialPark
             }
         }
 
-        protected bool[] _dontDrawMeshNumber;
+        protected bool[] _dontDrawMeshNumber = new bool[0];
 
         [Category("Model Data")]
         public AtomicFlags[] AtomicFlags
@@ -382,9 +408,31 @@ namespace IndustrialPark
                         else
                             geom.geometryExtension.Add(new Collis_36().RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
                     }
-
+                else if (rws is World_000B world)
+                    BuildCollisionTree(ver, world.firstWorldChunk);
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+        }
+
+        private void BuildCollisionTree(CollTreeVersion ver, RWSection firstWorldChunk)
+        {
+            if (firstWorldChunk is PlaneSector_000A plane)
+            {
+                BuildCollisionTree(ver, plane.leftSection);
+                BuildCollisionTree(ver, plane.rightSection);
+            }
+            else if (firstWorldChunk is AtomicSector_0009 atomic)
+            {
+                atomic.atomicSectorExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+
+                if (atomic.atomicSectorStruct.triangleArray.Length == 0)
+                    return;
+
+                if (ver == CollTreeVersion.COLLTREE_31)
+                    atomic.atomicSectorExtension.Add(new Collis_31().RpCollisionAtomicBuildData(atomic));
+                else
+                    atomic.atomicSectorExtension.Add(new Collis_36().RpCollisionAtomicBuildData(atomic, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
+            }
         }
 
         private void ApplyVertexColors(NativeDataGC nativeData, Func<Vector4, Vector4> getColor)

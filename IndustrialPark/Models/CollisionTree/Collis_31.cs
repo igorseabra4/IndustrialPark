@@ -20,7 +20,7 @@ namespace IndustrialPark.Models.CollisionTree
 
         public CollisionPLG_011D_Pre36001 RpCollisionGeometryBuildData(Geometry_000F geometry)
         {
-            BuildData data = new BuildData(geometry.geometryStruct.morphTargets[0].vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray(), 
+            BuildData data = new BuildData(geometry.geometryStruct.morphTargets[0].vertices.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray(),
                 geometry.geometryStruct.triangles);
             BuildSector tree = BuildTreeGenerate(data);
 
@@ -40,6 +40,32 @@ namespace IndustrialPark.Models.CollisionTree
             triangleMap = new ushort[geometry.geometryStruct.triangles.Length];
             for (int iTri = 0; iTri < geometry.geometryStruct.triangles.Length; iTri++)
                 triangleMap[iTri] = (ushort)Array.IndexOf(geometry.geometryStruct.triangles, data.polygons[iTri].poly);
+
+            return new CollisionPLG_011D_Pre36001(branchNodes, leafNodes, [.. triangleMap.Select(t => (int)t)]);
+        }
+
+        public CollisionPLG_011D_Pre36001 RpCollisionAtomicBuildData(AtomicSector_0009 atomic)
+        {
+            BuildData data = new BuildData(atomic.atomicSectorStruct.vertexArray.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray(),
+                atomic.atomicSectorStruct.triangleArray);
+            BuildSector tree = BuildTreeGenerate(data);
+
+            leafNodes = new RpCollBSPLeafNode[BuildTreeCountLeafNodes(tree)];
+            branchNodes = new RpCollBSPBranchNode[leafNodes.Length - 1];
+
+            int iBranch = 0;
+            int iLeaf = 0;
+            int numTotalPolygons = 0;
+
+            ConvertNode(tree, ref iBranch, ref iLeaf, ref numTotalPolygons);
+
+            Assert(iLeaf == leafNodes.Length);
+            Assert(iBranch == branchNodes.Length);
+            Assert(numTotalPolygons == data.numPolygons);
+
+            triangleMap = new ushort[atomic.atomicSectorStruct.triangleArray.Length];
+            for (int iTri = 0; iTri < atomic.atomicSectorStruct.triangleArray.Length; iTri++)
+                triangleMap[iTri] = (ushort)Array.IndexOf(atomic.atomicSectorStruct.triangleArray, data.polygons[iTri].poly);
 
             return new CollisionPLG_011D_Pre36001(branchNodes, leafNodes, [.. triangleMap.Select(t => (int)t)]);
         }

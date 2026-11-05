@@ -112,6 +112,56 @@ namespace IndustrialPark.Models.CollisionTree
             return collPLG;
         }
 
+        public CollisionPLG_011D RpCollisionAtomicBuildData(AtomicSector_0009 atomic, bool sortTriangles = false)
+        {
+            Vector3[] vertices = atomic.atomicSectorStruct.vertexArray.Select(v => new Vector3(v.X, v.Y, v.Z)).ToArray();
+            Triangle[] tris = (Triangle[])atomic.atomicSectorStruct.triangleArray.Clone();
+
+            BuildData buildData = new BuildData(vertices, tris);
+            ushort[] map = sortTriangles ? new ushort[tris.Length] : null;
+            RpCollTree collTree = CreateCollTreeFromBuildTree(buildData, BuildTreeGenerate(buildData), map);
+
+            if (sortTriangles)
+                for (int i = 0; i < tris.Length; i++)
+                    atomic.atomicSectorStruct.triangleArray[i] = tris[map[i]];
+
+            CollisionPLG_011D collPLG = new CollisionPLG_011D()
+            {
+                version = 0x37002,
+                colTree = new ColTree_002C()
+                {
+                    colTreeStruct = new ColTreeStruct_0001()
+                    {
+                        useMap = Convert.ToInt32(collTree.useMap),
+                        boxMaximum = new Vertex3(collTree.bbox.Maximum.X, collTree.bbox.Maximum.Y, collTree.bbox.Maximum.Z),
+                        boxMinimum = new Vertex3(collTree.bbox.Minimum.X, collTree.bbox.Minimum.Y, collTree.bbox.Minimum.Z),
+                        numTriangles = collTree.numEntries,
+                        numSplits = collTree.numSplits,
+                        splitArray = collTree.splits.Select(s => new Split()
+                        {
+                            negativeSector = new Sector()
+                            {
+                                type = (SectorAxis)s.leftSector.type,
+                                triangleAmount = s.leftSector.contents,
+                                referenceIndex = s.leftSector.index,
+                                splitPosition = s.leftSector.value
+                            },
+                            positiveSector = new Sector()
+                            {
+                                type = (SectorAxis)s.rightSector.type,
+                                triangleAmount = s.rightSector.contents,
+                                referenceIndex = s.rightSector.index,
+                                splitPosition = s.rightSector.value
+                            },
+                        }).ToArray(),
+                        triangleArray = collTree.map
+                    }
+                }
+            };
+
+            return collPLG;
+        }
+
         private RpCollTree CreateCollTreeFromBuildTree(BuildData buildData, BuildSector rootSector, ushort[] map)
         {
             int numSplits = BuildTreeCountLeafNodes(rootSector) - 1;

@@ -1056,7 +1056,7 @@ public class AssetFactory
                 numPlaneSectors = 0,
                 numAtomicSectors = 1,
                 colSectorSize = 0,
-                worldFlags = WorldFlags.HasOneSetOfTextCoords | WorldFlags.HasVertexColors | WorldFlags.WorldSectorsOverlap | (WorldFlags)0x00010000,
+                worldFlags = (WorldFlags)0x00010000,
                 boxMaximum = new Vertex3(),
                 boxMinimum = new Vertex3(),
             },
@@ -1086,7 +1086,8 @@ public class AssetFactory
                         numMeshes = 0,
                         totalIndexCount = 0,
                         binMeshList = new BinMesh[0]
-                    }
+                    },
+                    new CollisionPLG_011D_Pre36001(new RpCollBSPBranchNode[0], new RpCollBSPLeafNode[] { new RpCollBSPLeafNode() }, new int[0]),
                 ])
             },
 
