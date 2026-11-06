@@ -192,12 +192,14 @@ namespace IndustrialPark
         private void buttonResetView_Click(object sender, EventArgs e)
         {
             Program.Renderer.Camera.Reset();
+            UpdateValues();
         }
 
         private void buttonResetSpeeds_Click(object sender, EventArgs e)
         {
             Program.Renderer.Camera.Speed = SharpCamera.DEFAULT_SPEED;
             Program.Renderer.Camera.SpeedRot = SharpCamera.DEFAULT_SPEED_ROT;
+            UpdateValues();
         }
     }
 }
