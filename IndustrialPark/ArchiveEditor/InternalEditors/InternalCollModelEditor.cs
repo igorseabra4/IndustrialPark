@@ -51,7 +51,6 @@ namespace IndustrialPark
             if (openFile.ShowDialog() == DialogResult.OK)
             {
                 asset.Data = ReadFileMethods.ExportRenderWareFile(CreateCollDFFFromAssimp(openFile.FileName), asset.RenderWareVersion);
-                asset.SetupModel(Program.Renderer);
                 UpdateStats();
                 asset.InvokePropertyChanged(true);
             }

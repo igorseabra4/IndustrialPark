@@ -77,9 +77,14 @@ public class AssetRenderer
                 model.SetupModel(renderer);
             progressBar?.PerformStep();
         }
+        foreach (AssetJSP a in renderableJSPs)
+        {
+            a.CreateTransformMatrix(renderer);
+            progressBar?.PerformStep();
+        }
     }
 
-    public int ModelCount => renderingDictionary.Values.Count;
+    public int ModelCount => renderingDictionary.Values.Count + renderableJSPs.Count;
 
     public void RecalculateAllMatrices(SharpRenderer renderer, IProgressBar progressBar = null)
     {
@@ -91,14 +96,9 @@ public class AssetRenderer
             ra.CreateTransformMatrix(renderer);
             progressBar?.PerformStep();
         }
-        foreach (var jsp in GetRenderableJSPs())
-        {
-            jsp.CreateTransformMatrix(renderer);
-            progressBar?.PerformStep();
-        }
     }
 
-    public int MatrixCount => renderableAssets.Count + renderableJSPs.Count;
+    public int MatrixCount => renderableAssets.Count;
 
     public void AddToRenderingDictionary(uint assetID, IAssetWithModel value)
     {

@@ -635,7 +635,7 @@ public partial class ArchiveEditor : Form
             BeginTransaction();
             ArchiveModelTransformer.ApplyScale(archive, applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
             EndTransaction();
-            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
+            Program.MainForm.RefreshTexturesAndModels();
         }
     }
 
@@ -1156,6 +1156,8 @@ public partial class ArchiveEditor : Form
             historyManager.AddAsset(asset);
             if (asset is AssetRWTX rwtx)
                 TextureConverter.EnableTextureForDisplay(rwtx);
+            else if (asset is AssetRenderWareModel model)
+                model.SetupModel(Program.Renderer);
             asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
         });
 
@@ -1274,8 +1276,18 @@ public partial class ArchiveEditor : Form
     public void AssetPropertyChanged(Asset asset, bool hard)
     {
         historyManager.FlushChangesToUndoBuffer(this, asset, hard);
-        if (asset is IRenderableAsset ira)
-            ira.CreateTransformMatrix(Program.Renderer);
+        switch (asset)
+        {
+            case IRenderableAsset ira:
+                ira.CreateTransformMatrix(Program.Renderer);
+                break;
+            case AssetRWTX rwtx:
+                TextureConverter.EnableTextureForDisplay(rwtx);
+                break;
+            case AssetRenderWareModel model:
+                model.SetupModel(Program.Renderer);
+                break;
+        }
         UpdateListView(asset);
         NotifyArchiveStateChanged();
     }
