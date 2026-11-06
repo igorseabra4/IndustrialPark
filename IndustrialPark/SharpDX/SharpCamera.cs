@@ -66,8 +66,8 @@ namespace IndustrialPark
 
         public const float DEFAULT_SPEED = 30f;
         public const float DEFAULT_SPEED_ROT = 30f;
-        public const float DEFAULT_SPEED_INCREMENT = 0.1f;
-        public const float DEFAULT_SPEED_ROT_INCREMENT = 0.1f;
+        public const float DEFAULT_SPEED_INCREMENT = 1f;
+        public const float DEFAULT_SPEED_ROT_INCREMENT = 1f;
         public const float DEFAULT_MOUSE_SPEED_MULT = 1f / 6f;
 
         public float FieldOfView;
