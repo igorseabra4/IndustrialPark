@@ -45,8 +45,6 @@ public class TableAssetManager
 
             assetRepository.Add(asset);
             layerRepository.AddAsset(layerIndex, asset.assetID);
-
-            Program.ArchiveManager.ArchiveEditorContainingAsset(asset)?.PopulateAssetListAndComboBox();
         }
         return assetRepository.Assets.FirstOrDefault(asset => asset.assetType == assetType);
     }

@@ -145,17 +145,8 @@ public class LayerRepository
         return false;
     }
 
-    public int GetLayerFromAssetID(uint assetID)
-    {
-        if (AutoLayers)
-            return -1;
-
-        for (int i = 0; i < Layers.Count; i++)
-            if (Layers[i].AssetIDs.Contains(assetID))
-                return i;
-
-        throw new Exception($"Asset ID {assetID:X8} is not present in any layer.");
-    }
+    public int GetLayerFromAssetID(uint assetID) =>
+        AutoLayers ? -1 : Layers.FindIndex(l => l.AssetIDs.Contains(assetID));
 
     public bool RenameLayer(int index, string name)
     {

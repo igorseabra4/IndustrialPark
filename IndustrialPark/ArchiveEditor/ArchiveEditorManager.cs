@@ -14,6 +14,15 @@ public class ArchiveEditorManager
     public ArchiveEditorManager()
     {
         ArchiveEditors = new List<ArchiveEditor>();
+
+        try
+        {
+            ArchiveEditor.InitializeAssetIcons();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"There was an error setting up the asset type icons: {ex.Message}");
+        }
     }
 
     public ArchiveEditor GetTargetArchiveEditor() => ArchiveEditors.FirstOrDefault(ae => ae.Targeted);
@@ -106,9 +115,9 @@ public class ArchiveEditorManager
         foreach (var asset in assets)
         {
             var ae = ArchiveEditorContainingAsset(asset);
-            ae.RemoveAssets([asset.assetID]);
+            ae.BeginTransaction();
             if (beganTransaction.Add(ae))
-                ae.BeginTransaction();
+                ae.RemoveAssets([asset.assetID]);
         }
         foreach (var ae in beganTransaction)
             ae.EndTransaction();

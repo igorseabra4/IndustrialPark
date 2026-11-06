@@ -1,5 +1,4 @@
-﻿using DiscordRPC;
-using HipHopFile;
+﻿using HipHopFile;
 using IndustrialPark.Archive;
 using IndustrialPark.Models.CollisionTree;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -8,11 +7,11 @@ using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark;
@@ -37,7 +36,7 @@ public partial class ArchiveEditor : Form
     }
 
     public event Action ChangesMade;
-
+    
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int SelectedLayerIndex
     {
@@ -54,20 +53,15 @@ public partial class ArchiveEditor : Form
     private ScrollableMessageBox verifyResult;
     public IEnumerable<string> LayerNames => comboBoxLayers.Items.Cast<object>().Select(o => o.ToString());
 
-    /// <summary>
-    /// Raised when Target or the selected layer changes, so the main window toolbar can update.
-    /// </summary>
     public event Action<ArchiveEditor> ToolbarStateChanged;
     public event Action EditorUpdate;
     protected void OnEditorUpdate() => EditorUpdate?.Invoke();
-    public event Action TransactionBegin;
-    public void BeginTransaction() => TransactionBegin?.Invoke();
-    public event Action TransactionEnd;
-    public void EndTransaction() => TransactionEnd?.Invoke();
 
     public ArchiveEditor(string filePath, Platform scoobyPlatform)
     {
         InitializeComponent();
+
+        ArchiveStateChanged += HandleArchiveStateChanged;
 
         defaultColor = textBoxFindAsset.BackColor;
 
@@ -81,6 +75,9 @@ public partial class ArchiveEditor : Form
         textBoxFindAsset.AutoCompleteCustomSource = new AutoCompleteStringCollection();
 
         selectionManager = new AssetSelectionManager();
+
+        if (assetImageList != null && assetImageList.Images.Count > 0)
+            listViewAssets.SmallImageList = assetImageList;
 
         if (!string.IsNullOrWhiteSpace(filePath))
             OpenFile(filePath, scoobyPlatform);
@@ -131,7 +128,7 @@ public partial class ArchiveEditor : Form
         if (PressedKeys.Contains(Keys.Delete))
         {
             e.Handled = true;
-           ButtonRemoveAsset_Click(sender, e);
+            ButtonRemoveAsset_Click(sender, e);
         }
 
         if (PressedKeys.Contains(Keys.ControlKey))
@@ -328,10 +325,6 @@ public partial class ArchiveEditor : Form
         if (archive.Transformer.EditPack(out IEnumerable<string> unconvertable))
         {
             EndTransaction();
-            PopulateLayerTypeComboBox();
-            PopulateLayerComboBox();
-            SelectFirstLayer();
-            PopulateAssetListAndComboBox();
             OnEditorUpdate();
 
             if (unconvertable != null && unconvertable.Any())
@@ -347,7 +340,6 @@ public partial class ArchiveEditor : Form
         BeginTransaction();
         archive.Transformer.SetAutoLayers(!autoLayersToolStripMenuItem.Checked);
         EndTransaction();
-        SetAutoLayers();
     }
 
     private void buildLayersToolStripMenuItem_Click(object sender, EventArgs e)
@@ -374,9 +366,6 @@ public partial class ArchiveEditor : Form
             if (archive.RenameLayer(index, name))
             {
                 EndTransaction();
-                PopulateLayerComboBox();
-                SelectedLayerIndex = index;
-                PopulateAssetListAndComboBox();
             }
         }
     }
@@ -414,9 +403,6 @@ public partial class ArchiveEditor : Form
             EndTransaction();
             OnEditorUpdate();
             Enabled = true;
-            PopulateLayerComboBox();
-            SelectFirstLayer();
-            PopulateAssetListAndComboBox();
         }
     }
 
@@ -601,9 +587,7 @@ public partial class ArchiveEditor : Form
 
         EndTransaction();
 
-        PopulateLayerComboBox();
         SetSelectedAssets(assets);
-        SetMenuItemsEnabled();
         OnEditorUpdate();
     }
 
@@ -617,11 +601,8 @@ public partial class ArchiveEditor : Form
             var assets = archive.ImportAssets(AHDRs, SelectedLayerIndex, overwrite);
             EndTransaction();
 
-            if (!archive.AutoLayers)
-                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
             OnEditorUpdate();
             SetSelectedAssets(assets);
-            SetMenuItemsEnabled();
         }
     }
 
@@ -663,7 +644,6 @@ public partial class ArchiveEditor : Form
         BeginTransaction();
         archive.TableManager.MergeTableAssets();
         EndTransaction();
-        comboBoxLayers_SelectedIndexChanged(sender, e);
     }
 
     private void BuildCollTree(object sender, EventArgs e)
@@ -763,7 +743,7 @@ public partial class ArchiveEditor : Form
 
         BeginTransaction();
 
-        archive.SetGameSpecificLayerType(SelectedLayerIndex, (int)comboBoxLayerTypes.SelectedItem);
+        archive.SetGameSpecificLayerType(SelectedLayerIndex, Convert.ToInt32(comboBoxLayerTypes.SelectedItem));
         comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
 
         EndTransaction();
@@ -775,9 +755,7 @@ public partial class ArchiveEditor : Form
         {
             BeginTransaction();
 
-            int index = archive.AddLayer();
-            comboBoxLayers.Items.Add(archive.LayerToString(index));
-            comboBoxLayers.SelectedIndex = index;
+            archive.AddLayer();
 
             EndTransaction();
         }
@@ -798,42 +776,19 @@ public partial class ArchiveEditor : Form
             MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
             return;
 
-        int previndex = SelectedLayerIndex;
-
         BeginTransaction();
 
         archive.RemoveLayer(SelectedLayerIndex);
 
         EndTransaction();
-
-        PopulateLayerComboBox();
-
-        if (comboBoxLayers.Items.Count > 0)
-            comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
-        else
-        {
-            comboBoxLayers.SelectedItem = null;
-            comboBoxLayerTypes.SelectedItem = null;
-
-            comboBoxAssetTypes.Items.Clear();
-            listViewAssets.Items.Clear();
-        }
-        PopulateAssetList();
-        SetMenuItemsEnabled();
-        SetupAssetVisibilityButtons();
     }
 
     private void buttonArrowUp_Click(object sender, EventArgs e)
     {
         BeginTransaction();
 
-        int previndex = SelectedLayerIndex;
         if (archive.MoveLayerUp(SelectedLayerIndex))
         {
-            PopulateLayerComboBox();
-            comboBoxLayers.SelectedIndex = Math.Max(previndex - 1, 0);
-            SetMenuItemsEnabled();
-
             EndTransaction();
         }
     }
@@ -842,13 +797,8 @@ public partial class ArchiveEditor : Form
     {
         BeginTransaction();
 
-        int previndex = SelectedLayerIndex;
         if (archive.MoveLayerDown(SelectedLayerIndex))
         {
-            PopulateLayerComboBox();
-            comboBoxLayers.SelectedIndex = Math.Min(previndex + 1, comboBoxLayers.Items.Count - 1);
-            SetMenuItemsEnabled();
-
             EndTransaction();
         }
     }
@@ -953,12 +903,7 @@ public partial class ArchiveEditor : Form
 
             EndTransaction();
 
-            if (!archive.AutoLayers)
-                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-            AddToAssetList(asset);
             SetSelectedAsset(asset);
-            SetupAssetVisibilityButtons();
-            SetMenuItemsEnabled();
         }
     }
 
@@ -980,17 +925,7 @@ public partial class ArchiveEditor : Form
             archive.AddNewAsset(asset, layerIndex);
 
         EndTransaction();
-
-        if (!archive.AutoLayers)
-        {
-            programIsChangingStuff = true;
-            comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-            programIsChangingStuff = false;
-        }
-
-        AddToAssetList(duplicated.Select(d => d.asset));
         SetSelectedAssets(duplicated.Select(d => d.asset));
-        SetMenuItemsEnabled();
     }
 
     private void buttonCopy_Click(object sender, EventArgs e)
@@ -1179,9 +1114,174 @@ public partial class ArchiveEditor : Form
         Clipboard.SetText($"\"{string.Join("\", \"", names)}\"");
     }
 
-    private void AddToCustomSource(Asset asset) => textBoxFindAsset.AutoCompleteCustomSource.Add(asset.assetName);
 
+    public event Action TransactionBegin;
+    public void BeginTransaction() => TransactionBegin?.Invoke();
+    public event Action TransactionEnd;
+    public void EndTransaction() => TransactionEnd?.Invoke();
+    private void AddToCustomSource(Asset asset) => textBoxFindAsset.AutoCompleteCustomSource.Add(asset.assetName);
     private void RemoveFromCustomSource(Asset asset) => textBoxFindAsset.AutoCompleteCustomSource.Remove(asset.assetName);
+
+    private bool archiveRefreshPending = false;
+    private ArchiveRefreshKind pendingArchiveRefresh;
+    private readonly HashSet<uint> pendingAddedAssetIDs = [];
+    private readonly HashSet<uint> pendingRemovedAssetIDs = [];
+    private bool skipNextArchiveSelectionRefresh;
+    private int? requestedLayerIndex;
+    internal event Action<ArchiveRefreshKind> ArchiveStateChanged;
+
+    private void ArchiveSubscriptions()
+    {
+        textBoxFindAsset.AutoCompleteCustomSource = [.. archive.Assets.Select(a => a.assetName)];
+
+        archive.Subscriber.SubscribeToArchiveHeaderSet((_, _, _, _) => NotifyArchiveStateChanged(ArchiveRefreshKind.None));
+        archive.Subscriber.SubscribeToModDateSet((_) => NotifyArchiveStateChanged(ArchiveRefreshKind.None));
+
+        archive.Subscriber.SubscribeToAutoLayersChanged((_) => NotifyArchiveStateChanged(ArchiveRefreshKind.Layout | ArchiveRefreshKind.Menus));
+        archive.Subscriber.SubscribeToLayerAdded((_) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerList | ArchiveRefreshKind.Menus));
+        archive.Subscriber.SubscribeToLayerRemoved((_) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerList | ArchiveRefreshKind.Menus));
+        archive.Subscriber.SubscribeToLayerSwapped((_, _) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerList | ArchiveRefreshKind.Menus));
+        archive.Subscriber.SubscribeToLayerTypeChanged((_, _) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus));
+        archive.Subscriber.SubscribeToLayerRenamed((_, _) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus));
+        archive.Subscriber.SubscribeToLayerIndicesSet((_) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerList | ArchiveRefreshKind.Menus));
+        archive.Subscriber.SubscribeToLayerAssetAdded((_, assetID) => NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus, assetID, true));
+        archive.Subscriber.SubscribeToLayerAssetRemoved((_, assetID) => NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus, assetID, false));
+
+        archive.Subscriber.SubscribeToAssetAdded(AddToCustomSource);
+        archive.Subscriber.SubscribeToAssetRemoved(RemoveFromCustomSource);
+
+        archive.Subscriber.SubscribeToAssetAdded((asset) =>
+        {
+            NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.Menus, asset.assetID, true);
+            historyManager.AddAsset(asset);
+            if (asset is AssetRWTX rwtx)
+                TextureConverter.EnableTextureForDisplay(rwtx);
+            asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
+        });
+
+        archive.Subscriber.SubscribeToAssetRemoved((asset) =>
+        {
+            NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.Menus, asset.assetID, false);
+            historyManager.RemoveAsset(asset.assetID);
+            if (asset is AssetRWTX rwtx)
+                Program.TextureManager.RemoveTexture(rwtx.Name, archive, rwtx.assetID);
+            selectionManager.Unselect(asset);
+            Program.EditorManager.CloseEditor(asset);
+        });
+
+        foreach (var asset in archive.Assets)
+            asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
+
+        TransactionBegin = null;
+        TransactionEnd = null;
+        TransactionBegin += () => Program.UndoBuffer.BeginTransaction(this);
+        TransactionEnd += () => Program.UndoBuffer.EndTransaction(this);
+
+        archive.Subscriber.SetupUndoBuffer(this, Program.UndoBuffer);
+    }
+
+    internal void NotifyArchiveStateChanged(ArchiveRefreshKind refreshKind = ArchiveRefreshKind.Menus, uint? assetID = null, bool? added = null)
+    {
+        if (assetID.HasValue && added.HasValue)
+        {
+            if (added.Value)
+                pendingAddedAssetIDs.Add(assetID.Value);
+            else
+                pendingRemovedAssetIDs.Add(assetID.Value);
+        }
+
+        ArchiveStateChanged?.Invoke(refreshKind);
+    }
+
+    private void HandleArchiveStateChanged(ArchiveRefreshKind refreshKind)
+    {
+        if (InvokeRequired)
+        {
+            if (!IsDisposed)
+                BeginInvoke(() => HandleArchiveStateChanged(refreshKind));
+            return;
+        }
+
+        UnsavedChanges = true;
+        pendingArchiveRefresh |= refreshKind;
+
+        if (refreshKind == ArchiveRefreshKind.None || archiveRefreshPending || IsDisposed || !IsHandleCreated)
+            return;
+
+        archiveRefreshPending = true;
+        BeginInvoke(() =>
+        {
+            archiveRefreshPending = false;
+            var pendingRefresh = pendingArchiveRefresh;
+            var addedAssetIDs = pendingAddedAssetIDs.ToList();
+            var removedAssetIDs = pendingRemovedAssetIDs.ToList();
+            pendingArchiveRefresh = ArchiveRefreshKind.None;
+            pendingAddedAssetIDs.Clear();
+            pendingRemovedAssetIDs.Clear();
+            RefreshArchiveView(pendingRefresh, addedAssetIDs, removedAssetIDs);
+        });
+    }
+
+    private void RefreshArchiveView(ArchiveRefreshKind refreshKind, IEnumerable<uint> addedAssetIDs, IEnumerable<uint> removedAssetIDs)
+    {
+        if (archive == null || IsDisposed)
+            return;
+
+        bool refreshSelection = refreshKind.HasFlag(ArchiveRefreshKind.LayerList)
+            || refreshKind.HasFlag(ArchiveRefreshKind.AssetMutations)
+            || refreshKind.HasFlag(ArchiveRefreshKind.Layout);
+        var selectedAssetIDs = refreshSelection ? SelectedAssetIDs.ToList() : null;
+        int selectedLayer = requestedLayerIndex ?? SelectedLayerIndex;
+        requestedLayerIndex = null;
+        bool layoutChanged = refreshKind.HasFlag(ArchiveRefreshKind.Layout)
+            || autoLayersToolStripMenuItem.Checked != archive.AutoLayers;
+
+        if (layoutChanged)
+        {
+            SetAutoLayers();
+        }
+        else if (!archive.AutoLayers && refreshKind.HasFlag(ArchiveRefreshKind.LayerList))
+        {
+            PopulateLayerComboBox();
+            if (selectedLayer >= 0 && selectedLayer < comboBoxLayers.Items.Count)
+                SelectedLayerIndex = selectedLayer;
+            else
+                SelectFirstLayer();
+            if (SelectedLayerIndex >= 0)
+                ShowSelectedLayerType();
+        }
+
+        if (!archive.AutoLayers && refreshKind.HasFlag(ArchiveRefreshKind.LayerMetadata))
+            RefreshLayerLabels();
+
+        if (!archive.AutoLayers && refreshKind.HasFlag(ArchiveRefreshKind.AssetMutations) && !refreshKind.HasFlag(ArchiveRefreshKind.LayerList))
+            RefreshLayerLabels();
+
+        if (!layoutChanged && refreshKind.HasFlag(ArchiveRefreshKind.LayerList))
+            PopulateAssetListAndComboBox();
+        else if (!layoutChanged && refreshKind.HasFlag(ArchiveRefreshKind.AssetMutations))
+            RefreshAssetMutations(addedAssetIDs, removedAssetIDs);
+
+        if (refreshSelection && !skipNextArchiveSelectionRefresh)
+            SetSelectedAssets(selectedAssetIDs);
+        skipNextArchiveSelectionRefresh = false;
+        if (refreshSelection || refreshKind.HasFlag(ArchiveRefreshKind.Layout))
+            SetupAssetVisibilityButtons();
+        if (refreshKind.HasFlag(ArchiveRefreshKind.Menus) || refreshSelection || refreshKind.HasFlag(ArchiveRefreshKind.Layout))
+            SetMenuItemsEnabled();
+    }
+
+    public void AssetPropertyChanged(Asset asset, bool hard)
+    {
+        historyManager.FlushChangesToUndoBuffer(this, asset, hard);
+        if (asset is IRenderableAsset ira)
+            ira.CreateTransformMatrix(Program.Renderer);
+        UpdateListView(asset);
+        NotifyArchiveStateChanged();
+    }
+
+    public void SubscribeToSelectedAssetsCollectionChanged(Action action) =>
+        selectionManager.SelectedAssets.CollectionChanged += (_, _) => action();
 
     /// <summary>
     /// Opens a HIP file from the specified path.
@@ -1248,56 +1348,6 @@ public partial class ArchiveEditor : Form
         }
     }
 
-    private void ArchiveSubscriptions()
-    {
-        textBoxFindAsset.AutoCompleteCustomSource = [.. archive.Assets.Select(a => a.assetName)];
-
-        archive.Subscriber.SubscribeToArchiveHeaderSet((_, _, _, _) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToModDateSet((_) => UnsavedChanges = true);
-
-        archive.Subscriber.SubscribeToAutoLayersChanged((_) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerAdded((_) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerRemoved((_) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerSwapped((_, _) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerTypeChanged((_, _) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerRenamed((_, _) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerIndicesSet((_) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerAssetAdded((_, _) => UnsavedChanges = true);
-        archive.Subscriber.SubscribeToLayerAssetRemoved((_, _) => UnsavedChanges = true);
-
-        archive.Subscriber.SubscribeToAssetAdded(AddToCustomSource);
-        archive.Subscriber.SubscribeToAssetRemoved(RemoveFromCustomSource);
-
-        archive.Subscriber.SubscribeToAssetAdded((asset) =>
-        {
-            UnsavedChanges = true;
-            historyManager.AddAsset(asset);
-            if (asset is AssetRWTX rwtx)
-                TextureConverter.EnableTextureForDisplay(rwtx);
-            asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
-        });
-
-        archive.Subscriber.SubscribeToAssetRemoved((asset) =>
-        {
-            UnsavedChanges = true;
-            historyManager.RemoveAsset(asset.assetID);
-            if (asset is AssetRWTX rwtx)
-                Program.TextureManager.RemoveTexture(rwtx.Name, archive, rwtx.assetID);
-            selectionManager.Unselect(asset);
-            Program.EditorManager.CloseEditor(asset);
-        });
-
-        foreach (var asset in archive.Assets)
-            asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
-
-        TransactionBegin = null;
-        TransactionEnd = null;
-        TransactionBegin += () => Program.UndoBuffer.BeginTransaction(this);
-        TransactionEnd += () => Program.UndoBuffer.EndTransaction(this);
-
-        archive.Subscriber.SetupUndoBuffer(this, Program.UndoBuffer);
-    }
-
     public void Save()
     {
         SoundUtility_vgmstream.StopSound();
@@ -1305,11 +1355,34 @@ public partial class ArchiveEditor : Form
         if (archive.CurrentFilePath == null)
             SaveAs();
         else
-            new Thread(() => {
-                archive.Save();
+        {
+            var archiveToSave = archive;
+            Task.Run(() =>
+            {
+                try
+                {
+                    archiveToSave.Save();
+                    return (Exception)null;
+                }
+                catch (Exception ex)
+                {
+                    return ex;
+                }
+            }).ContinueWith(task =>
+            {
+                if (IsDisposed)
+                    return;
+
+                if (task.Result != null)
+                {
+                    MessageBox.Show($"Error saving archive: {task.Result.Message}");
+                    return;
+                }
+
                 UnsavedChanges = false;
                 _updateFilesizeStatusBarItem();
-            }).Start();
+            }, TaskScheduler.FromCurrentSynchronizationContext());
+        }
     }
 
     /// <summary>
@@ -1324,7 +1397,16 @@ public partial class ArchiveEditor : Form
             SaveAs();
         else
         {
-            archive.Save();
+            try
+            {
+                archive.Save();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving archive: {ex.Message}");
+                return false;
+            }
+
             UnsavedChanges = false;
             _updateFilesizeStatusBarItem();
         }
@@ -1342,7 +1424,16 @@ public partial class ArchiveEditor : Form
         };
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
-            archive.Save(saveFileDialog.FileName);
+            try
+            {
+                archive.Save(saveFileDialog.FileName);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving archive: {ex.Message}");
+                return;
+            }
+
             UnsavedChanges = false;
 
             Text = Path.GetFileName(saveFileDialog.FileName);
@@ -1395,18 +1486,6 @@ public partial class ArchiveEditor : Form
         OnEditorUpdate();
     }
 
-    public void AssetPropertyChanged(Asset asset, bool hard)
-    {
-        historyManager.FlushChangesToUndoBuffer(this, asset, hard);
-        UnsavedChanges = true;
-        if (asset is IRenderableAsset ira)
-            ira.CreateTransformMatrix(Program.Renderer);
-        UpdateListView(asset);
-    }
-
-    public void SubscribeToSelectedAssetsCollectionChanged(Action action) =>
-        selectionManager.SelectedAssets.CollectionChanged += (_, _) => action();
-
     public string GetCurrentFilePath()
     {
         if (string.IsNullOrWhiteSpace(archive?.CurrentFilePath))
@@ -1440,7 +1519,7 @@ public partial class ArchiveEditor : Form
         return $"{s} {name[(int)i]}";
     }
 
-    private void SetMenuItemsEnabled()
+    internal void SetMenuItemsEnabled()
     {
         if (archive == null)
             return;
@@ -1544,6 +1623,20 @@ public partial class ArchiveEditor : Form
         programIsChangingStuff = false;
     }
 
+    private void RefreshLayerLabels()
+    {
+        if (archive.AutoLayers)
+            return;
+
+        programIsChangingStuff = true;
+        for (int i = 0; i < archive.LayerCount && i < comboBoxLayers.Items.Count; i++)
+            comboBoxLayers.Items[i] = archive.LayerToString(i);
+        programIsChangingStuff = false;
+
+        if (SelectedLayerIndex >= 0)
+            ShowSelectedLayerType();
+    }
+
     private void ShowSelectedLayerType()
     {
         if (archive.Game >= Game.Incredibles)
@@ -1611,7 +1704,7 @@ public partial class ArchiveEditor : Form
                 listViewAssets.EnsureVisible(ensureVisible);
 
             selectionManager.SetSelected(selectionAssets);
-            Program.EditorManager.OpenAutoDockedEditors(assets, this);
+            Program.EditorManager.OpenAutoDockedEditors(selectionAssets, this);
         }
 
         listViewAssets.EndUpdate();
@@ -1628,7 +1721,8 @@ public partial class ArchiveEditor : Form
         {
             Checked = !asset.isInvisible,
             Selected = selected,
-            Tag = asset.assetID
+            Tag = asset.assetID,
+            ImageKey = ImageKey(asset),
         };
 
         item.SubItems.AddRange(
@@ -1647,6 +1741,17 @@ public partial class ArchiveEditor : Form
         if (info.Length > 50)
             info = info.Substring(0, 47) + "...";
         return info;
+    }
+
+    public void ClearListItems(IEnumerable<uint> assetIDs)
+    {
+        var ids = assetIDs.ToHashSet();
+        foreach (ListViewItem v in listViewAssets.Items)
+            if (ids.Contains((uint)v.Tag))
+                listViewAssets.Items.Remove(v);
+
+        toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
+        SetMenuItemsEnabled();
     }
 
     public void UpdateListView(Asset asset)
@@ -1707,7 +1812,122 @@ public partial class ArchiveEditor : Form
         return name;
     }
 
+    private static ImageList assetImageList = null;
+
+    public static void InitializeAssetIcons()
+    {
+        var path = Path.Combine(Application.StartupPath, "Resources", "Icons", "Assets");
+        if (!Directory.Exists(path))
+            return;
+
+        assetImageList = new ImageList
+        {
+            ImageSize = new Size(20, 20),
+            ColorDepth = ColorDepth.Depth32Bit
+        };
+
+        foreach (string file in Directory.GetFiles(path, "*.png"))
+        {
+            string key = Path.GetFileNameWithoutExtension(file);
+            var image = Image.FromFile(file);
+            if (Program.IsDarkMode)
+                assetImageList.Images.Add(key, InvertImage(image));
+            else
+                assetImageList.Images.Add(key, image);
+        }
+
+        var keysConfig = Path.Combine(path, "Config.ini");
+        if (File.Exists(keysConfig))
+            ParseCustomImageKeys(File.ReadAllLines(keysConfig));
+     }
+
+    private static Bitmap InvertImage(Image source)
+    {
+        var result = new Bitmap(source.Width, source.Height);
+        using var graphics = Graphics.FromImage(result);
+        using var attributes = new ImageAttributes();
+        var matrix = new ColorMatrix([
+            [-1,  0,  0,  0, 0],
+            [0, -1,  0,  0, 0],
+            [0,  0, -1,  0, 0],
+            [0,  0,  0,  1, 0],
+            [1,  1,  1,  0, 1]]);
+
+        attributes.SetColorMatrix(matrix);
+        graphics.DrawImage(source, new System.Drawing.Rectangle(0, 0, result.Width, result.Height), 0, 0, source.Width, source.Height, GraphicsUnit.Pixel, attributes);
+        return result;
+    }
+
+    private static string ImageKey(Asset asset)
+    {
+        if (assetImageList == null)
+            return null;
+
+        if (asset is AssetPLAT plat && SubtypeImageKeys.TryGetValue((asset.assetType, plat.PlatformType.ToString()), out string key))
+            return key;
+        if (asset is AssetTRIG trig && SubtypeImageKeys.TryGetValue((asset.assetType, trig.Shape.ToString()), out key))
+            return key;
+        if (asset is AssetBUTN butn && SubtypeImageKeys.TryGetValue((asset.assetType, butn.ActMethod.ToString()), out key))
+            return key;
+
+        if (CustomImageKeys.TryGetValue(asset.assetType, out key))
+            return key;
+
+        key = asset.assetType.ToString();
+
+        return assetImageList.Images.ContainsKey(key) ? key : (assetImageList.Images.ContainsKey("Default") ? "Default" : null);
+    }
+
+    private static Dictionary<AssetType, string> CustomImageKeys = new Dictionary<AssetType, string>();
+    private static Dictionary<(AssetType, string), string> SubtypeImageKeys = new Dictionary<(AssetType, string), string>();
+
+    private static void ParseCustomImageKeys(string[] strings)
+    {
+        var customImageKeys = new Dictionary<AssetType, string>();
+        var subtypeImageKeys = new Dictionary<(AssetType, string), string>();
+        foreach (var line in strings)
+        {
+            var content = line.Split('#', 2)[0].Trim();
+            if (content.Length == 0)
+                continue;
+
+            var separator = content.IndexOf('=');
+            if (separator < 0)
+                continue;
+
+            var assetTypeName = content[..separator].Trim();
+            var imageKey = content[(separator + 1)..].Trim();
+            if (assetTypeName.Length == 0 || imageKey.Length == 0)
+                continue;
+
+            if (!assetImageList.Images.ContainsKey(imageKey))
+                continue;
+
+            var subtypeSeparator = assetTypeName.IndexOf('_');
+            string subtype = null;
+            if (subtypeSeparator >= 0)
+            {
+                subtype = assetTypeName[(subtypeSeparator + 1)..].Trim();
+                assetTypeName = assetTypeName[..subtypeSeparator].Trim();
+                if (subtype.Length == 0)
+                    continue;
+            }
+
+            if (!Enum.TryParse(assetTypeName, out AssetType assetType) || !Enum.IsDefined(assetType))
+                continue;
+
+            if (subtype is null)
+                customImageKeys[assetType] = imageKey;
+            else
+                subtypeImageKeys[(assetType, subtype)] = imageKey;
+        }
+
+        CustomImageKeys = customImageKeys;
+        SubtypeImageKeys = subtypeImageKeys;
+    }
+
     public static bool UpdateReferencesOnCopy = true;
+
     public static bool ReplaceAssetsOnPaste = false;
 
     public void PasteAssets()
@@ -1744,16 +1964,10 @@ public partial class ArchiveEditor : Form
         EndTransaction();
 
         if (containsNewlyAddedAssetType)
-        {
             SetupAssetVisibilityButtons();
-            PopulateAssetListAndComboBox();
-        }
-        else
-        {
-            AddToAssetList(assets);
-        }
 
-        SetSelectedAssets(assets);
+        SetSelectedAssets(result);
+        skipNextArchiveSelectionRefresh = result.Count != 0;
     }
 
     public void RemoveAssets(IEnumerable<uint> assetIDs)
@@ -1779,13 +1993,6 @@ public partial class ArchiveEditor : Form
         }
         else
             SetMenuItemsEnabled();
-    }
-
-    public void ClearListItems(IEnumerable<uint> assetIDs)
-    {
-        foreach (ListViewItem v in listViewAssets.Items)
-            if (assetIDs.Contains((uint)v.Tag))
-                listViewAssets.Items.Remove(v);
     }
 
     public Asset EditHeader(Asset asset)
@@ -1894,6 +2101,74 @@ public partial class ArchiveEditor : Form
             SetSelectedAssets(assets);
     }
 
+    private void RefreshAssetMutations(IEnumerable<uint> addedAssetIDs, IEnumerable<uint> removedAssetIDs)
+    {
+        var removedIDs = removedAssetIDs.ToHashSet();
+        if (removedIDs.Count != 0)
+            ClearListItems(removedIDs);
+
+        RefreshAssetTypeComboBoxIfNeeded();
+
+        var addedAssets = addedAssetIDs
+            .Distinct()
+            .Where(archive.ContainsAsset)
+            .Select(archive.GetAsset)
+            .Where(IsAssetVisibleInCurrentList)
+            .ToList();
+
+        if (addedAssets.Count != 0)
+        {
+            var selectedIDs = SelectedAssetIDs.ToHashSet();
+            AddAssetRows(addedAssets, selectedIDs);
+        }
+
+        toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
+        SetMenuItemsEnabled();
+    }
+
+    private bool IsAssetVisibleInCurrentList(Asset asset)
+    {
+        if (curSelectedType != AssetType.Null && asset.assetType != curSelectedType)
+            return false;
+
+        if (archive.AutoLayers)
+            return true;
+
+        if (SelectedLayerIndex == -1)
+            return false;
+
+        return archive.GetLayerFromAssetID(asset.assetID) == SelectedLayerIndex;
+    }
+
+    private void RefreshAssetTypeComboBoxIfNeeded()
+    {
+        var expectedTypes = archive.AssetTypesOnLayer(SelectedLayerIndex).ToHashSet();
+        var currentTypes = comboBoxAssetTypes.Items
+            .Cast<AssetTypeContainer>()
+            .Select(container => container.assetType)
+            .Where(type => type != AssetType.Null)
+            .ToHashSet();
+
+        if (expectedTypes.SetEquals(currentTypes))
+            return;
+
+        var selectedType = curSelectedType;
+        PopulateAssetTypeComboBox(false);
+
+        if (selectedType != AssetType.Null && expectedTypes.Contains(selectedType))
+        {
+            comboBoxAssetTypes.SelectedItem = comboBoxAssetTypes.Items
+                .Cast<AssetTypeContainer>()
+                .FirstOrDefault(container => container.assetType == selectedType);
+        }
+        else if (selectedType != AssetType.Null)
+        {
+            curSelectedType = AssetType.Null;
+            comboBoxAssetTypes.SelectedIndex = 0;
+            PopulateAssetList();
+        }
+    }
+
     public void AddToAssetList(Asset asset)
     {
         AddToAssetList([asset]);
@@ -1901,8 +2176,16 @@ public partial class ArchiveEditor : Form
 
     public void AddToAssetList(IEnumerable<Asset> assets)
     {
+        var assetList = assets.ToList();
+        AddAssetRows(assetList, assetList.Select(asset => asset.assetID).ToHashSet());
+    }
+
+    private void AddAssetRows(IEnumerable<Asset> assets, HashSet<uint> selectedIDs)
+    {
         listViewAssets.BeginUpdate();
-        listViewAssets.Items.AddRange([.. assets.Select(asset => ListViewItemFromAsset(asset, true))]);
+        listViewAssets.Items.AddRange([.. assets
+            .Where(asset => !listViewAssets.Items.Cast<ListViewItem>().Any(item => (uint)item.Tag == asset.assetID))
+            .Select(asset => ListViewItemFromAsset(asset, selectedIDs.Contains(asset.assetID)))]);
         listViewAssets.EndUpdate();
     }
 
@@ -1910,8 +2193,10 @@ public partial class ArchiveEditor : Form
 
     public void SetSelectedAssets(IEnumerable<Asset> assets, bool clearIfEmpty = true)
     {
+        var assetList = assets?.ToList() ?? [];
+
         programIsChangingStuff = true;
-        if (clearIfEmpty && (!assets.Any() || assets.Any(a => !archive.ContainsAsset(a.assetID))))
+        if (clearIfEmpty && (assetList.Count == 0 || assetList.Any(a => !archive.ContainsAsset(a.assetID))))
         {
             selectionManager.UnselectAll();
             listViewAssets.SelectedIndices.Clear();
@@ -1920,17 +2205,28 @@ public partial class ArchiveEditor : Form
             return;
         }
 
-        AssetType assetType = AssetType.Null;
-        var first = assets.First();
+        if (assetList.Count == 0)
+        {
+            programIsChangingStuff = false;
+            return;
+        }
 
-        if (!AlwaysListAllAssets && assets.All(a => a.assetType == first.assetType))
+        AssetType assetType = AssetType.Null;
+        var first = assetList[0];
+
+        if (!AlwaysListAllAssets && assetList.All(a => a.assetType == first.assetType))
             assetType = first.assetType;
 
         int layerIndex = archive.AutoLayers ? -1 : archive.GetLayerFromAssetID(first.assetID);
         bool layerChanged = !archive.AutoLayers && layerIndex != SelectedLayerIndex;
 
-        if (!layerChanged && curSelectedType == assetType && SelectListedAssets(assets))
+        if (!layerChanged && curSelectedType == assetType)
+        {
+            SelectListedAssets(assetList, addMissingAssets: true);
+
+            programIsChangingStuff = false;
             return;
+        }
 
         if (layerChanged)
         {
@@ -1941,7 +2237,7 @@ public partial class ArchiveEditor : Form
 
         comboBoxAssetTypes.SelectedItem = comboBoxAssetTypes.Items.Cast<AssetTypeContainer>().FirstOrDefault(atc => atc.assetType == assetType);
 
-        PopulateAssetList(assetType, null, true, assets);
+        PopulateAssetList(assetType, null, true, assetList);
         SetMenuItemsEnabled();
         programIsChangingStuff = false;
     }
@@ -1953,13 +2249,27 @@ public partial class ArchiveEditor : Form
     }
 
     /// <summary>
-    /// Selects <paramref name="assets"/> among the rows already in the asset list.
+    /// Selects <paramref name="assets"/> among the rows in the asset list.
     /// </summary>
-    /// <returns>False, leaving the selection untouched, if any of them has no row in the list.</returns>
-    private bool SelectListedAssets(IEnumerable<Asset> assets)
+    /// <param name="addMissingAssets">Adds rows for assets that are not currently listed before selecting them.</param>
+    /// <returns>False, leaving the selection untouched, if any asset has no row in the list.</returns>
+    private bool SelectListedAssets(IReadOnlyList<Asset> assets, bool addMissingAssets = false)
     {
-        var wanted = assets.Select(a => a.assetID).ToHashSet();
-        var indices = new List<int>();
+        var wanted = assets.Select(asset => asset.assetID).ToHashSet();
+
+        if (addMissingAssets)
+        {
+            var listedAssetIDs = listViewAssets.Items
+                .Cast<ListViewItem>()
+                .Select(item => (uint)item.Tag)
+                .ToHashSet();
+            var missingAssets = assets.Where(asset => !listedAssetIDs.Contains(asset.assetID)).ToList();
+
+            if (missingAssets.Count != 0)
+                AddAssetRows(missingAssets, new HashSet<uint>());
+        }
+
+        var indices = new List<int>(wanted.Count);
         for (int i = 0; i < listViewAssets.Items.Count; i++)
             if (wanted.Contains((uint)listViewAssets.Items[i].Tag))
                 indices.Add(i);
@@ -1978,6 +2288,7 @@ public partial class ArchiveEditor : Form
 
         programIsChangingStuff = false;
         selectionManager.SetSelected(assets);
+        Program.EditorManager.OpenAutoDockedEditors(assets, this);
         SetMenuItemsEnabled();
 
         return true;
@@ -2009,24 +2320,6 @@ public partial class ArchiveEditor : Form
         var assets = GenerateTemplateForArchive(template, position);
 
         AddMultipleAssets(assets, true);
-
-        if (assets != null && assets.Count != 0)
-        {
-            programIsChangingStuff = true;
-            if (!archive.AutoLayers)
-                comboBoxLayers.Items[SelectedLayerIndex] = archive.LayerToString(SelectedLayerIndex);
-            programIsChangingStuff = false;
-            if (archive.ContainsNewlyAddedAssetType(assets.Select(a => a.assetID)))
-            {
-                SetupAssetVisibilityButtons();
-                PopulateAssetListAndComboBox();
-            }
-            else
-            {
-                AddToAssetList(assets);
-            }
-            SetSelectedAssets(assets);
-        }
 
         return assets;
     }
@@ -2158,7 +2451,7 @@ public partial class ArchiveEditor : Form
 
     private bool autoLayersForGroupBox = false;
 
-    private void SetAutoLayers()
+    internal void SetAutoLayers()
     {
         if (archive.AutoLayers)
         {

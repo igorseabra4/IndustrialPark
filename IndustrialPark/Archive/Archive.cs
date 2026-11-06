@@ -100,19 +100,12 @@ public class Archive
 
     public void Save(string path = null)
     {
-        try
-        {
-            var hipFile = ArchiveService.BuildHipFile(session, assetRepository.Assets, layerRepository);
-            if (LegacySave)
-                hipFile.HIPB = null;
-            hipFile.ToFile(path ?? session.CurrentFilePath);
+        var hipFile = ArchiveService.BuildHipFile(session, assetRepository.Assets, layerRepository);
+        if (LegacySave)
+            hipFile.HIPB = null;
+        hipFile.ToFile(path ?? session.CurrentFilePath);
 
-            session.CurrentFilePath = path ?? session.CurrentFilePath;
-        }
-        catch (Exception ex)
-        {
-            MessageBox.Show($"Error saving archive: {ex.Message}");
-        }
+        session.CurrentFilePath = path ?? session.CurrentFilePath;
     }
 
     public void ExportToIni(string path)

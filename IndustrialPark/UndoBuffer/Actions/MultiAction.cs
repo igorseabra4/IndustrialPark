@@ -22,36 +22,14 @@ public class MultiAction : IReversibleAction
     {
         for (int i = actions.Count - 1; i >= 0; i--)
             actions[i].Undo();
-        RefreshArchiveEditor(true);
+        archiveEditor.NotifyArchiveStateChanged();
     }
 
     public void Redo()
     {
         for (int i = 0; i < actions.Count; i++)
             actions[i].Redo();
-        RefreshArchiveEditor(false);
-    }
-
-    public void RefreshArchiveEditor(bool undo)
-    {
-        var layersChanged = actions.Any(a => a.GetType().ToString().Contains("Layer"));
-        if (layersChanged)
-        {
-            var prevLayer = archiveEditor.SelectedLayerIndex;
-            archiveEditor.PopulateLayerComboBox();
-            if (prevLayer >= 0 && prevLayer < archiveEditor.archive.LayerCount)
-                archiveEditor.SelectedLayerIndex = prevLayer;
-        }
-
-        var addingAssets = actions.OfType<AssetDataSwappedAction>().Select(a => a.AssetID);
-        if (!addingAssets.Any())
-            addingAssets = actions.OfType<AssetAddedAction>().Where(a => a.AssetRemoved == undo).Select(a => a.AssetID);
-        if (addingAssets.Any())
-            archiveEditor.SetSelectedAssets(addingAssets);
-
-        var removingAssets = actions.OfType<AssetAddedAction>().Where(a => a.AssetRemoved != undo).Select(a => a.AssetID);
-        if (removingAssets.Any())
-            archiveEditor.ClearListItems(removingAssets);
+        archiveEditor.NotifyArchiveStateChanged();
     }
 
     public override string ToString()

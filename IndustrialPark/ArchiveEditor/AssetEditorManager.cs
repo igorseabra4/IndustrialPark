@@ -32,7 +32,7 @@ public class AssetEditorManager
         OpenAssetEditors(Program.ArchiveManager.ArchiveEditors.SelectMany(ae => ae.SelectedAssets), location: Control.MousePosition);
     }
 
-    public void OpenAssetEditors(IEnumerable<Asset> assets, bool openAnyway = false, System.Drawing.Point? location = null)
+    public void OpenAssetEditors(IEnumerable<Asset> assets, bool openAnyway = false, System.Drawing.Point? location = null, bool forceDock = false)
     {
         bool willOpen = true;
         if (assets.Count() > MainForm.MaxDockedEditors && !openAnyway)
@@ -40,10 +40,10 @@ public class AssetEditorManager
 
         if (willOpen)
             foreach (var asset in assets)
-                OpenAssetEditor(asset, assets.Count() == 1 ? location : null);
+                OpenAssetEditor(asset, assets.Count() == 1 ? location : null, forceDock);
     }
 
-    public void OpenAssetEditor(Asset asset, System.Drawing.Point? location = null)
+    public void OpenAssetEditor(Asset asset, System.Drawing.Point? location = null, bool forceDock = false)
     {
         if (internalEditors.FirstOrDefault(e => e.GetAsset().Equals(asset)) is InternalEditor existing)
         {
@@ -88,10 +88,10 @@ public class AssetEditorManager
         if (editor.CanBeDocked)
         {
             editor.FormDropped += Program.MainForm.editor_FormDropped;
-            if (AutoDockAssetEditors && Program.MainForm.dockedEditorsCount < MainForm.MaxDockedEditors)
+            if (forceDock || (AutoDockAssetEditors && Program.MainForm.dockedEditorsCount < MainForm.MaxDockedEditors))
                 Program.MainForm.DockAssetEditor(editor);
         }
-        editor.Show(Program.MainForm);
+        editor.Show();
         internalEditors.Add(editor);
     }
 
@@ -167,7 +167,7 @@ public class AssetEditorManager
             return;
 
         Program.MainForm.ClearDockedAssetEditors(except: assets);
-        OpenAssetEditors(assets, true);
+        OpenAssetEditors(assets, true, forceDock: true);
         foreach (var item in internalEditors.Where(ie => assets.Any(u => u.assetID == ie.GetAssetID())))
         {
             Program.MainForm.SelectDockedTab(item);
