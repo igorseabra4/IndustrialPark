@@ -13,6 +13,11 @@ public class AssetGeneric : Asset
     [Category(categoryName)]
     public byte[] Data { get; set; }
 
+    public AssetGeneric(string assetName, AssetType assetType, byte[] data) : base(assetName, assetType)
+    {
+        Data = data;
+    }
+
     public AssetGeneric(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
     {
         Data = AHDR.data;

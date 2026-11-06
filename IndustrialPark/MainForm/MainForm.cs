@@ -681,6 +681,12 @@ namespace IndustrialPark
                     }
         }
 
+        private void archiveComparerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var comparer = new ArchiveComparerForm(Program.ArchiveManager);
+            comparer.ShowDialog();
+        }
+
         private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (AutomaticUpdater.UpdateIndustrialPark(out bool hasChecked, true))

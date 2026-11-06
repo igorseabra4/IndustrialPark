@@ -183,11 +183,11 @@ namespace IndustrialPark
             toolStripButtonDropToGround = new ToolStripButton();
             contextMenuStripMain = new ContextMenuStrip(components);
             contextGizmoToolStripMenuItem = new ToolStripMenuItem();
+            noneToolStripMenuItem = new ToolStripMenuItem();
             positionToolStripMenuItem = new ToolStripMenuItem();
             rotationToolStripMenuItem = new ToolStripMenuItem();
             scaleToolStripMenuItem = new ToolStripMenuItem();
             positionLocalToolStripMenuItem = new ToolStripMenuItem();
-            noneToolStripMenuItem = new ToolStripMenuItem();
             contextTemplatesToolStripMenuItem = new ToolStripMenuItem();
             contextUserTemplateToolStripMenuItem = new ToolStripMenuItem();
             toolStripComboBoxUserTemplate = new ToolStripComboBox();
@@ -205,6 +205,7 @@ namespace IndustrialPark
             splitContainer1 = new SplitContainer();
             splitContainer2 = new SplitContainer();
             tabControlRight = new TabControl();
+            archiveComparerToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             toolStripMain.SuspendLayout();
@@ -874,7 +875,7 @@ namespace IndustrialPark
             // 
             // wireframeWidgetsToolStripMenuItem
             // 
-            wireframeWidgetsToolStripMenuItem.Checked = false;
+            wireframeWidgetsToolStripMenuItem.Checked = true;
             wireframeWidgetsToolStripMenuItem.CheckOnClick = true;
             wireframeWidgetsToolStripMenuItem.CheckState = CheckState.Checked;
             wireframeWidgetsToolStripMenuItem.Name = "wireframeWidgetsToolStripMenuItem";
@@ -893,7 +894,7 @@ namespace IndustrialPark
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, launchGameToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, createGameCubeBannerToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem, setDolphinPathToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, launchGameToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, createGameCubeBannerToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, archiveComparerToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem, setDolphinPathToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 19);
             toolsToolStripMenuItem.Text = "&Tools";
@@ -1372,6 +1373,15 @@ namespace IndustrialPark
             contextGizmoToolStripMenuItem.Size = new System.Drawing.Size(164, 22);
             contextGizmoToolStripMenuItem.Text = "Gizmo";
             // 
+            // noneToolStripMenuItem
+            // 
+            noneToolStripMenuItem.Checked = true;
+            noneToolStripMenuItem.CheckState = CheckState.Checked;
+            noneToolStripMenuItem.Name = "noneToolStripMenuItem";
+            noneToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
+            noneToolStripMenuItem.Text = "None (Select)";
+            noneToolStripMenuItem.Click += noneToolStripMenuItem_Click;
+            // 
             // positionToolStripMenuItem
             // 
             positionToolStripMenuItem.Name = "positionToolStripMenuItem";
@@ -1399,15 +1409,6 @@ namespace IndustrialPark
             positionLocalToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
             positionLocalToolStripMenuItem.Text = "Local Move";
             positionLocalToolStripMenuItem.Click += positionLocalToolStripMenuItem_Click;
-            // 
-            // noneToolStripMenuItem
-            // 
-            noneToolStripMenuItem.Checked = true;
-            noneToolStripMenuItem.CheckState = CheckState.Checked;
-            noneToolStripMenuItem.Name = "noneToolStripMenuItem";
-            noneToolStripMenuItem.Size = new System.Drawing.Size(145, 22);
-            noneToolStripMenuItem.Text = "None (Select)";
-            noneToolStripMenuItem.Click += noneToolStripMenuItem_Click;
             // 
             // contextTemplatesToolStripMenuItem
             // 
@@ -1549,6 +1550,13 @@ namespace IndustrialPark
             tabControlRight.Size = new System.Drawing.Size(96, 100);
             tabControlRight.TabIndex = 0;
             tabControlRight.MouseClick += tabControl1_MouseClick;
+            // 
+            // archiveComparerToolStripMenuItem
+            // 
+            archiveComparerToolStripMenuItem.Name = "archiveComparerToolStripMenuItem";
+            archiveComparerToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            archiveComparerToolStripMenuItem.Text = "Archive Comparer...";
+            archiveComparerToolStripMenuItem.Click += archiveComparerToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -1775,6 +1783,7 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparator13;
         private ToolStripMenuItem texturesToolStripMenuItem;
         private ToolStripMenuItem wireframeWidgetsToolStripMenuItem;
+        private ToolStripMenuItem archiveComparerToolStripMenuItem;
     }
 }
 

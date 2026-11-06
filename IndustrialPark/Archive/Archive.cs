@@ -25,6 +25,10 @@ public class Archive
 
     public string LevelName => session.LevelName;
 
+    public DateTime FileDate => DateTimeOffset.FromUnixTimeSeconds(session.PACK.PCRT.fileDate).UtcDateTime;
+
+    public string DateString => session.PACK.PCRT.dateString;
+
     // New archive
     public Archive(
         Platform platform,
@@ -32,13 +36,15 @@ public class Archive
         DateTime fileDate,
         string dateString,
         bool autoLayers,
-        bool addDefaultAssets)
+        bool addDefaultAssets,
+        bool subscriptions = true)
     {
         session = new ArchiveSession(platform, game, fileDate, dateString);
         assetRepository = new AssetRepository();
         layerRepository = new LayerRepository(autoLayers);
 
-        Subscriber.RegisterPreAssetsSubscriptions();
+        if (subscriptions)
+            Subscriber.RegisterPreAssetsSubscriptions();
 
         if (addDefaultAssets)
         {
