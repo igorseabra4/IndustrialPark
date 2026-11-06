@@ -96,7 +96,7 @@ namespace IndustrialPark
                     Directory.CreateDirectory(ps2vagDir);
 
                 using (var webClient = new WebClient())
-                    webClient.DownloadFile(new Uri("https://github.com/eurotools/es-ps2-vag-tool/releases/download/3.0.0.0/AIFF2VAG.exe"), ps2vagPath);
+                    webClient.DownloadFile(new Uri("https://github.com/eurotools/es-ps2-vag-tool/releases/latest/download/AIFF2VAG.exe"), ps2vagPath);
 
                 MessageBox.Show("Downloaded PS2 VAG Tool.");
             }

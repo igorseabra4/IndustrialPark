@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
-using System.Threading.Tasks;
+using System.Net;
 using System.Windows.Forms;
 
 namespace IndustrialPark
@@ -9,7 +9,7 @@ namespace IndustrialPark
     {
         private static bool ffmpegInitialized = false;
         private static string ffmpegFolder => Path.Combine(Application.StartupPath, "Resources", "ffmpeg");
-        private static string ffmpegPath => Path.Combine(ffmpegFolder, "ffmpeg-2023-07-19-git-efa6cec759-essentials_build", "bin", "ffmpeg.exe");
+        private static string ffmpegPath => Path.Combine(ffmpegFolder, "ffmpeg-essentials_build", "bin", "ffmpeg.exe");
         public static string ffmpegOutPath => Path.Combine(ffmpegFolder, "test_sound_out.wav");
         public static Process ffmpegProcess;
 
@@ -50,11 +50,13 @@ namespace IndustrialPark
 
         private static void DownloadFfmpeg()
         {
-            AutomaticUpdater.DownloadAndUnzip(
-                   "https://github.com/GyanD/codexffmpeg/releases/download/2023-07-19-git-efa6cec759/ffmpeg-2023-07-19-git-efa6cec759-essentials_build.zip",
-                   Path.Combine(Application.StartupPath, "Resources", "ffmpeg-2023-07-19-git-efa6cec759-essentials_build.zip"),
-                   Path.Combine(Application.StartupPath, "Resources", "ffmpeg"),
-                   "ffmpeg");
+            using WebClient webClient = new();
+
+            var version = webClient.DownloadString("https://www.gyan.dev/ffmpeg/builds/release-version");
+
+            var url = $"https://github.com/GyanD/codexffmpeg/releases/download/{version}/ffmpeg-{version}-essentials_build.zip";
+
+            AutomaticUpdater.DownloadAndUnzip(url, Path.Combine(Application.StartupPath, "Resources", $"ffmpeg-essentials_build.zip"), ffmpegFolder, "ffmpeg");
         }
     }
 }

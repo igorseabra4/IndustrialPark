@@ -106,7 +106,7 @@ namespace IndustrialPark
                     Directory.CreateDirectory(xboxadpcmDir);
 
                 using (var webClient = new WebClient())
-                    webClient.DownloadFile(new Uri("https://github.com/Sergeanur/XboxADPCM/releases/download/v1.2/XboxADPCM.exe"), xboxadpcmPath);
+                    webClient.DownloadFile(new Uri("https://github.com/Sergeanur/XboxADPCM/releases/latest/download/XboxADPCM.exe"), xboxadpcmPath);
 
                 MessageBox.Show("Downloaded XboxADPCM.");
                 return true;
