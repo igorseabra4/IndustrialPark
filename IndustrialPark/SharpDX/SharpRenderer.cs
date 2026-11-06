@@ -6,6 +6,7 @@ using SharpDX.Windows;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using static IndustrialPark.Models.BSP_IO_ReadOBJ;
@@ -202,9 +203,15 @@ namespace IndustrialPark
         public void LoadTexture()
         {
             if (whiteDefault == null || (whiteDefault != null && whiteDefault.IsDisposed))
-                whiteDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/WhiteDefault.png");
+            {
+                var path = Path.Combine(Application.StartupPath, "Resources", "Models", "WhiteDefault.png");
+                whiteDefault = device.LoadTextureFromFile(path);
+            }
             if (arrowDefault == null || (arrowDefault != null && arrowDefault.IsDisposed))
-                arrowDefault = device.LoadTextureFromFile(Application.StartupPath + "/Resources/ArrowDefault.png");
+            {
+                var path = Path.Combine(Application.StartupPath, "Resources", "Models", "ArrowDefault.png");
+                arrowDefault = device.LoadTextureFromFile(path);
+            }
         }
 
         public SharpMesh Cube { get; private set; }
