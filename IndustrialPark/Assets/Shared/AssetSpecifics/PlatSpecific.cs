@@ -1,7 +1,6 @@
 ﻿using HipHopFile;
 using IndustrialPark.Archive;
 using SharpDX;
-using System.ComponentModel;
 
 namespace IndustrialPark
 {
@@ -88,11 +87,9 @@ namespace IndustrialPark
     public class PlatSpecific_BreakawayPlatform : PlatSpecific_Generic
     {
         public AssetSingle BreakawayDelay { get; set; }
-        [Description("Not present in Movie/Incredibles")]
         public AssetID BustModel { get; set; }
         public AssetSingle ResetDelay { get; set; }
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor("Allow sneak");
-        [Description("Only present in Movie/Incredibles")]
         public AssetSingle UnknownFloat { get; set; }
 
         public PlatSpecific_BreakawayPlatform(Game game) : base(game)
@@ -132,6 +129,15 @@ namespace IndustrialPark
             if (game >= Game.Incredibles)
                 writer.Write(UnknownFloat);
         }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game >= Game.Incredibles)
+                dt.RemoveProperty("BustModel");
+            if (game < Game.Incredibles)
+                dt.RemoveProperty("UnknownFloat");
+            base.SetDynamicProperties(dt);
+        }
     }
 
     public class PlatSpecific_Springboard : PlatSpecific_Generic
@@ -139,7 +145,6 @@ namespace IndustrialPark
         public AssetSingle Height1 { get; set; }
         public AssetSingle Height2 { get; set; }
         public AssetSingle Height3 { get; set; }
-        [Description("Not present in Scooby.")]
         public AssetSingle HeightBubbleBounce { get; set; }
         public AssetID Animation1 { get; set; }
         public AssetID Animation2 { get; set; }
@@ -147,7 +152,6 @@ namespace IndustrialPark
         public AssetSingle DirectionX { get; set; }
         public AssetSingle DirectionY { get; set; }
         public AssetSingle DirectionZ { get; set; }
-        [Description("Not present in Scooby.")]
         public FlagBitmask Settings { get; set; } = IntFlagsDescriptor(
             "Lock Camera Down",
             null,
@@ -192,6 +196,16 @@ namespace IndustrialPark
             writer.Write(DirectionZ);
             if (game != Game.Scooby)
                 writer.Write(Settings.FlagValueInt);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Scooby)
+            {
+                dt.RemoveProperty("HeightBubbleBounce");
+                dt.RemoveProperty("Settings");
+            }
+            base.SetDynamicProperties(dt);
         }
     }
 

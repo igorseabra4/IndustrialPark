@@ -337,8 +337,9 @@ namespace IndustrialPark
             return world;
         }
 
-        [Category(categoryName), DisplayName("Data")]
-        public PlatSpecific_Generic PlatformSpecific { get; set; }
+        [Category(categoryName), DisplayName("Type Settings")]
+        public DynamicTypeDescriptor PlatformSpecificDescriptor => DynamicTypeDescriptor.Create(PlatformSpecific);
+        public PlatSpecific_Generic PlatformSpecific;
 
         private bool isSkyBox = false;
         private bool skyBoxUseY = false;

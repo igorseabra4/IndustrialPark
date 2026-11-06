@@ -43,7 +43,7 @@ namespace IndustrialPark
         public AssetSingle Rate { get; set; }
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Texture { get; set; }
-        [Category(dynaCategoryName), Description("ROTU only")]
+        [Category(dynaCategoryName)]
         public AssetSingle EmitDistance { get; set; }
 
         private const string dynaCategoryNameAttach = dynaCategoryName + ": Attach Data";
@@ -351,6 +351,17 @@ namespace IndustrialPark
             }
             ParticleSystem.Serialize(writer);
 
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.ROTU)
+            {
+                dt.RemoveProperty("EmitDistance");
+                dt.RemoveProperty("Height");
+            }
+
+            base.SetDynamicProperties(dt);
         }
 
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;

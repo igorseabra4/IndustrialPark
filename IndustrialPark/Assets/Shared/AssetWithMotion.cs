@@ -52,7 +52,8 @@ namespace IndustrialPark
             return world;
         }
 
-        [Category("\tMotion")]
-        public Motion Motion { get; set; }
+        [Category("\tMotion"), DisplayName("Motion")]
+        public DynamicTypeDescriptor MotionDescriptor => DynamicTypeDescriptor.Create(Motion);
+        public Motion Motion;
     }
 }

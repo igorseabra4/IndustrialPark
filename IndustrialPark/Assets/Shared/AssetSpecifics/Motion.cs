@@ -262,8 +262,6 @@ namespace IndustrialPark
 
     public class Motion_Spline : Motion
     {
-        public string Note => "Speed and LeanModifier are only present in Movie/Incredibles.";
-
         public int SplineID { get; set; }
         public AssetSingle Speed { get; set; }
         public AssetSingle LeanModifier { get; set; }
@@ -278,8 +276,11 @@ namespace IndustrialPark
             _game = game;
 
             SplineID = reader.ReadInt32();
-            Speed = reader.ReadSingle();
-            LeanModifier = reader.ReadSingle();
+            if (game >= Game.Incredibles)
+            {
+                Speed = reader.ReadSingle();
+                LeanModifier = reader.ReadSingle();
+            }
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -291,6 +292,16 @@ namespace IndustrialPark
                 writer.Write(Speed);
                 writer.Write(LeanModifier);
             }
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.Incredibles)
+            {
+                dt.RemoveProperty("Speed");
+                dt.RemoveProperty("LeanModifier");
+            }
+            base.SetDynamicProperties(dt);
         }
     }
 
@@ -436,11 +447,8 @@ namespace IndustrialPark
         public AssetSingle RetractDelay { get; set; }
         [Description("Delay after the reverse movement")]
         public AssetSingle PostRetractDelay { get; set; }
-        [Description("Movie/Incredibles only")]
         public byte ScaleAxis { get; set; }
-        [Description("Movie/Incredibles only")]
         public AssetSingle ScaleAmount { get; set; }
-        [Description("Movie/Incredibles only")]
         public AssetSingle ScaleDuration { get; set; }
 
         public Motion_Mechanism(Game game) : this(game, MotionType.Mechanism) { }
@@ -504,6 +512,17 @@ namespace IndustrialPark
                 writer.Write(ScaleAmount);
                 writer.Write(ScaleDuration);
             }
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game < Game.Incredibles)
+            {
+                dt.RemoveProperty("ScaleAxis");
+                dt.RemoveProperty("ScaleAmount");
+                dt.RemoveProperty("ScaleDuration");
+            }
+            base.SetDynamicProperties(dt);
         }
 
         private CurrentMovementAction currentMovementAction;
