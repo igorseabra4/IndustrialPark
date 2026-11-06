@@ -245,35 +245,23 @@ namespace IndustrialPark
             }
         }
 
-        public void CopyTransformation()
+        public Transformation GetTransformation() => new Transformation()
         {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-                _scaleSingle = _radius,
-                _scaleSfxMin = _radius,
-                _scaleSfxMax = _radius2,
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+            _scaleSingle = _radius,
+            _scaleSfxMin = _radius,
+            _scaleSfxMax = _radius2,
+        };
 
-        public void PasteTransformation()
+        public void SetTransformation(Transformation transformation)
         {
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                _radius = transformation._scaleSfxMin;
-                _radius2 = transformation._scaleSfxMax;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            _radius = transformation._scaleSfxMin;
+            _radius2 = transformation._scaleSfxMax;
         }
     }
 }

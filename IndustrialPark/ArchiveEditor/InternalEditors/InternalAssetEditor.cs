@@ -2,6 +2,7 @@
 using IndustrialPark.Archive;
 using IndustrialPark.Properties;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -240,12 +241,23 @@ public partial class InternalAssetEditor : InternalEditor
 
         AddTool("Copy Transformation", (_, _) =>
         {
-            asset.CopyTransformation();
+            if (asset.GetTransformation() is Transformation transformation)
+                Clipboard.SetText(JsonConvert.SerializeObject(transformation));
         });
 
         AddTool("Paste Transformation", (_, _) =>
         {
-            asset.PasteTransformation();
+            Transformation transformation;
+            try
+            {
+                transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText()) ?? throw new Exception("no transformation found");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
+                return;
+            }
+            asset.SetTransformation(transformation);
             (asset as Asset).InvokePropertyChanged(true);
         });
     }

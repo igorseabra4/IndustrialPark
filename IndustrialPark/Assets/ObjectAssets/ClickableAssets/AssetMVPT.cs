@@ -281,34 +281,22 @@ namespace IndustrialPark
 
         public List<uint> GetItems() => NextMovePoints.Select(a => (uint)a).ToList();
 
-        public void CopyTransformation()
+        public Transformation GetTransformation() => new Transformation()
         {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-                _scaleSingle = GetScale(),
-                _scaleSfxMin = GetScale(),
-                _scaleSfxMax = GetScale(),
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+            _scaleSingle = GetScale(),
+            _scaleSfxMin = GetScale(),
+            _scaleSfxMax = GetScale(),
+        };
 
-        public void PasteTransformation()
+        public void SetTransformation(Transformation transformation)
         {
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                SetScale(transformation._scaleSingle);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            SetScale(transformation._scaleSingle);
         }
     }
 }

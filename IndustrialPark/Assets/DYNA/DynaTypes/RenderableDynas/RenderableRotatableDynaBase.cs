@@ -71,36 +71,24 @@ namespace IndustrialPark
             CreateBoundingBox(renderer);
         }
 
-        public override void CopyTransformation()
+        public override Transformation GetTransformation() => new Transformation()
         {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-                _yaw = _yaw,
-                _pitch = _pitch,
-                _roll = _roll,
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+            _yaw = _yaw,
+            _pitch = _pitch,
+            _roll = _roll,
+        };
 
-        public override void PasteTransformation()
+        public override void SetTransformation(Transformation transformation)
         {
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                _yaw = transformation._yaw;
-                _pitch = transformation._pitch;
-                _roll = transformation._roll;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            _yaw = transformation._yaw;
+            _pitch = transformation._pitch;
+            _roll = transformation._roll;
         }
     }
 }

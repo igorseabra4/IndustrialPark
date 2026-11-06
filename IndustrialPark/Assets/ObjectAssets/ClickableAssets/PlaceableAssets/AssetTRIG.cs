@@ -438,12 +438,12 @@ namespace IndustrialPark
             FixPosition();
         }
 
-        public override void CopyTransformation()
+        public override Transformation GetTransformation()
         {
             if (Shape == TriggerShape.Box)
             {
                 MessageBox.Show("Cannot copy transformation for box triggers");
-                return;
+                return null;
             }
 
             var transformation = new Transformation()
@@ -462,10 +462,10 @@ namespace IndustrialPark
             if (Shape == TriggerShape.Cylinder)
                 transformation._scaleSfxMax = _maximum.Y;
 
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
+            return transformation;
         }
 
-        public override void PasteTransformation()
+        public override void SetTransformation(Transformation transformation)
         {
             if (Shape == TriggerShape.Box)
             {
@@ -473,23 +473,15 @@ namespace IndustrialPark
                 return;
             }
 
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                _minimum.X = transformation._positionX;
-                _minimum.Y = transformation._positionY;
-                _minimum.Z = transformation._positionZ;
-                _maximum.X = transformation._scaleSingle;
-                if (Shape == TriggerShape.Cylinder)
-                    _maximum.Y = transformation._scaleSfxMax;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            _minimum.X = transformation._positionX;
+            _minimum.Y = transformation._positionY;
+            _minimum.Z = transformation._positionZ;
+            _maximum.X = transformation._scaleSingle;
+            if (Shape == TriggerShape.Cylinder)
+                _maximum.Y = transformation._scaleSfxMax;
         }
     }
 }

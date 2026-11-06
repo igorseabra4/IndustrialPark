@@ -2,8 +2,8 @@
 {
     public interface IAssetCopyPasteTransformation
     {
-        void CopyTransformation();
-        void PasteTransformation();
+        Transformation GetTransformation();
+        void SetTransformation(Transformation transformation);
         void CreateTransformMatrix(SharpRenderer renderer);
     }
 }
