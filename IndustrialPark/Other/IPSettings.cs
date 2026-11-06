@@ -7,7 +7,7 @@ namespace IndustrialPark
 {
     public class IPSettings
     {
-        public bool FirstTime = true;
+        public bool ShowAboutOnStartup = true;
         public bool AutosaveOnClose = true;
         public bool AutoloadOnStartup = true;
         public string LastProjectPath = null;

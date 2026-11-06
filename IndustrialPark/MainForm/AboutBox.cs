@@ -1,7 +1,5 @@
-﻿using System;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
+using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -9,120 +7,80 @@ namespace IndustrialPark
 {
     public partial class AboutBox : Form
     {
+        public static string WikiLink => "https://www.heavyironmodding.org/wiki/";
+        private const string DiscordLink = "https://discord.gg/9eAE6UB";
+        private const string SourceLink = "https://github.com/igorseabra4/IndustrialPark";
+        private const string IssuesLink = "https://github.com/igorseabra4/IndustrialPark/issues";
+
         public AboutBox()
         {
             InitializeComponent();
-            this.labelProductName.Text = AssemblyProduct;
-            this.labelCopyright.Text = AssemblyCopyright;
-            this.labelCompanyName.Text = AssemblyCompany;
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(AboutBox));
-            this.textBoxDescription.Text = resources.GetString("textBoxDescription.Text");
-            this.labelVersion.Text = new IPversion().version;
+
+            welcomeLayout.Controls.Add(CreateLinkLabel("Wiki - Use Guide and Modding Information", WikiLink), 0, 3);
+            welcomeLayout.Controls.Add(CreateLinkLabel("Discord Server", DiscordLink), 0, 4);
+            welcomeLayout.Controls.Add(CreateLinkLabel("Source on GitHub", SourceLink), 0, 5);
+            welcomeLayout.Controls.Add(CreateLinkLabel("Report Issues and Feature Requests", IssuesLink), 0, 6);
+
+            labelProductName.Text = $"Industrial Park {new IPversion().version}";
+        }
+
+        public bool ShowOnStartup => checkShowOnStartup.Checked;
+
+        internal void SetCheckForUpdatesOnStartup(bool value)
+        {
+            if (checkForUpdatesOnStartup.Checked != value)
+                checkForUpdatesOnStartup.Checked = value;
+        }
+
+        public void ApplySettings(IPSettings settings)
+        {
+            checkShowOnStartup.Checked = settings.ShowAboutOnStartup;
+            checkForUpdatesOnStartup.Checked = settings.CheckForUpdatesOnStartup;
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.WindowsShutDown)
-                return;
-            if (e.CloseReason == CloseReason.FormOwnerClosing)
-                return;
-
-            e.Cancel = true;
-            Hide();
-        }
-
-        #region Acessório de Atributos do Assembly
-
-        public string AssemblyProduct
-        {
-            get
+            if (e.CloseReason != CloseReason.WindowsShutDown && e.CloseReason != CloseReason.FormOwnerClosing)
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyProductAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyProductAttribute)attributes[0]).Product;
+                e.Cancel = true;
+                Hide();
             }
+
+            base.OnFormClosing(e);
         }
 
-        public string AssemblyCopyright
+        private LinkLabel CreateLinkLabel(string text, string url)
         {
-            get
+            var result = new LinkLabel
             {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCopyrightAttribute)attributes[0]).Copyright;
-            }
+                Text = text,
+                Tag = url,
+                AutoSize = true
+            };
+            result.LinkClicked += LinkLabel_LinkClicked;
+            return result;
         }
 
-        public string AssemblyCompany
+        private void LinkLabel_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            get
-            {
-                object[] attributes = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCompanyAttribute), false);
-                if (attributes.Length == 0)
-                {
-                    return "";
-                }
-                return ((AssemblyCompanyAttribute)attributes[0]).Company;
-            }
-        }
-        #endregion
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "https://github.com/igorseabra4/IndustrialPark", UseShellExecute = true });
+            string url = ((LinkLabel)sender).Tag as string;
+            if (!string.IsNullOrWhiteSpace(url))
+                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
         }
 
-        private void button2_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = "https://discord.gg/9eAE6UB", UseShellExecute = true });
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo() { FileName = WikiLink, UseShellExecute = true });
-        }
-
-        public static string WikiLink => "https://www.heavyironmodding.org/wiki/";
-
-        private void button3_Click(object sender, EventArgs e)
+        private void buttonClose_Click(object sender, EventArgs e)
         {
             Hide();
         }
 
-        private void AboutBox_Load(object sender, EventArgs e)
+        private void checkForUpdatesOnStartup_CheckedChanged(object sender, EventArgs e)
         {
-            SetRandomImage();
+            Program.MainForm.SetCheckForUpdatesOnStartup(checkForUpdatesOnStartup.Checked);
         }
 
-        private void logoPictureBox_Click(object sender, EventArgs e)
+        private void buttonViewControls_Click(object sender, EventArgs e)
         {
-            SetRandomImage();
-        }
-
-        private int num = -1;
-        private readonly Random random = new Random();
-
-        private void SetRandomImage()
-        {
-            var images = (from fileName in Directory.GetFiles(Application.StartupPath + "/Resources/")
-                          where Path.GetFileName(fileName).StartsWith("AboutImage")
-                          select fileName).ToArray();
-
-            int newNum;
-
-            do
-                newNum = random.Next(0, images.Length);
-            while (newNum == num);
-
-            num = newNum;
-
-            logoPictureBox.Image = System.Drawing.Image.FromFile(images[num]);
+            Program.MainForm.HandleAction(KeyboardAction.ViewControls);
         }
     }
 }

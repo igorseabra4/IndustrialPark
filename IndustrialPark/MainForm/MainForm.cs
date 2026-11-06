@@ -56,26 +56,21 @@ namespace IndustrialPark
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            UpdateUserTemplateComboBox();
 
-            if (settings.FirstTime)
+            if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
             {
-                if (AutomaticUpdater.UpdateIndustrialPark(out _))
-                {
-                    Close();
-                    System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
-                    return;
-                }
-                // todo: change this message
-                MessageBox.Show(
-                    "It appears this is your first time using Industrial Park.\nPlease consult the documentation and user guide on the Heavy Iron Modding Wiki to understand how to use the tool if you haven't already.",
-                    "Welcome!",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-                Program.AboutBox.Show(this);
+                Close();
+                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
+                return;
             }
 
+            UpdateUserTemplateComboBox();
+
             ApplyIPSettings(settings);
+            Program.AboutBox.ApplySettings(settings);
+
+            if (settings.ShowAboutOnStartup)
+                Program.AboutBox.Show(this);
 
             SetProjectToolStripStatusLabel();
             StartRenderer();
@@ -350,6 +345,11 @@ namespace IndustrialPark
             if (!Program.UserTemplateManager.Visible)
                 Program.UserTemplateManager.Show(this);
             Program.UserTemplateManager.Activate();
+        }
+
+        public void checkForUpdatesDailyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.AboutBox.SetCheckForUpdatesOnStartup(checkForUpdatesDailyToolStripMenuItem.Checked);
         }
 
         public void discordRichPresenceToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1068,12 +1068,6 @@ namespace IndustrialPark
         {
             SystemColorMode = settings.ColorMode;
 
-            if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
-            {
-                Close();
-                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
-            }
-
             projectAutoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
             projetcAutoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
 
@@ -1187,7 +1181,7 @@ namespace IndustrialPark
 
         private IPSettings SettingsFromCurrentInstance() => new IPSettings
         {
-            FirstTime = false,
+            ShowAboutOnStartup = Program.AboutBox.ShowOnStartup,
             AutosaveOnClose = projectAutoSaveOnClosingToolStripMenuItem.Checked,
             AutoloadOnStartup = projetcAutoLoadOnStartupToolStripMenuItem.Checked,
             LastProjectPath = currentProjectPath,
@@ -1228,6 +1222,12 @@ namespace IndustrialPark
             Colors = renderer.colors,
             UserKeyBindings = [.. UserKeyBindings],
         };
+
+        internal void SetCheckForUpdatesOnStartup(bool value)
+        {
+            if (checkForUpdatesDailyToolStripMenuItem.Checked != value)
+                checkForUpdatesDailyToolStripMenuItem.Checked = value;
+        }
 
         private void SaveProject(string fileName)
         {
