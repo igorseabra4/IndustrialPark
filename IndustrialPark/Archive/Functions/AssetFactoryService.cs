@@ -503,7 +503,7 @@ public static class AssetFactoryService
 
         var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
 
-        var items = new ToolStripItem[] { controllers, placeable, new ToolStripSeparator(), scooby, bfbb, tssm, incredibles, rotu, ratproto, new ToolStripSeparator(), others, paste };
+        var items = new ToolStripItem[] { paste, controllers, placeable, new ToolStripSeparator(), scooby, bfbb, tssm, incredibles, rotu, ratproto, new ToolStripSeparator(), others };
         menu.DropDownItems.AddRange(items);
 
         var result = new List<ToolStripMenuItem>();
