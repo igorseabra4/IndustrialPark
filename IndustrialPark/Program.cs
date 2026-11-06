@@ -53,8 +53,9 @@ public static class Program
 
         UndoBuffer = new UndoBuffer();
 
-        Application.SetColorMode(ipSettings.ColorMode);
-        IsDarkMode = GetIsDarkMode();
+        // Force Classic or Dark mode, because System mode mixes colors from both modes if the system mode is changed with the application running.
+        IsDarkMode = GetIsDarkMode(ipSettings.ColorMode);
+        Application.SetColorMode(IsDarkMode ? SystemColorMode.Dark : SystemColorMode.Classic);
 
         ArchiveManager = new ArchiveEditorManager();
         TextureManager = new TextureManager();
@@ -86,13 +87,15 @@ public static class Program
         return new IPSettings();
     }
 
-    static bool GetIsDarkMode()
+    static bool GetIsDarkMode(SystemColorMode ipLocalColorMode)
     {
-        if (Application.ColorMode == SystemColorMode.Dark)
-            return true;
-
-        if (Application.ColorMode == SystemColorMode.Classic)
-            return false;
+        switch (ipLocalColorMode)
+        {
+            case SystemColorMode.Dark:
+                return true;
+            case SystemColorMode.Classic:
+                return false;
+        }
 
         object value = Registry.GetValue(
             @"HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Themes\Personalize",
