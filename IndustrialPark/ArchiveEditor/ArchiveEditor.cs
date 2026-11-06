@@ -1942,6 +1942,8 @@ public partial class ArchiveEditor : Form
         try
         {
             clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(Clipboard.GetText());
+            if (clipboard == null || clipboard.Count == 0)
+                throw new InvalidDataException("no assets found");
         }
         catch (Exception ex)
         {
@@ -2339,6 +2341,8 @@ public partial class ArchiveEditor : Form
                     AssetTemplate.User_Template => File.ReadAllText(Path.Combine(UserTemplateManager.userTemplatesFolder, Program.MainForm.CurrentUserTemplate)),
                 };
                 clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(text);
+                if (clipboard == null || clipboard.Count == 0)
+                    throw new InvalidDataException("no assets found");
             }
             catch (Exception ex)
             {

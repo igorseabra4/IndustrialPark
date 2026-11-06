@@ -33,20 +33,22 @@
             // 
             // richTextBox1
             // 
-            richTextBox1.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
             richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             richTextBox1.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, 0);
-            richTextBox1.Location = new System.Drawing.Point(12, 12);
+            richTextBox1.Location = new System.Drawing.Point(0, 0);
+            richTextBox1.Margin = new System.Windows.Forms.Padding(0);
             richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new System.Drawing.Size(825, 519);
-            richTextBox1.TabIndex = 6;
+            richTextBox1.ReadOnly = true;
+            richTextBox1.Size = new System.Drawing.Size(672, 476);
+            richTextBox1.TabIndex = 1;
             richTextBox1.Text = "";
             // 
             // ScrollableMessageBox
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(849, 543);
+            ClientSize = new System.Drawing.Size(672, 476);
             Controls.Add(richTextBox1);
             Name = "ScrollableMessageBox";
             ShowIcon = false;

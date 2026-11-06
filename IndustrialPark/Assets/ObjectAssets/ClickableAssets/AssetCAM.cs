@@ -134,11 +134,12 @@ namespace IndustrialPark
 
             CamType = CamType.Static;
 
+            NormalizedForwardZ = 1;
+            NormalizedUpY = 1;
+            NormalizedLeftX = 1;
+
             if (template == AssetTemplate.Start_Camera)
             {
-                NormalizedForwardZ = 1;
-                NormalizedUpY = 1;
-                NormalizedLeftX = 1;
                 FieldOfView = 85;
                 ValidFlags.FlagValueInt = 0x0001018F;
                 CamType = CamType.Follow;
