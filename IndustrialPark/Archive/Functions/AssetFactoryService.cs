@@ -13,7 +13,7 @@ public static class AssetFactoryService
         return item;
     }
 
-    public static List<ToolStripMenuItem> PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler)
+    public static List<ToolStripMenuItem> PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler, bool pasteClipboard)
     {
         ToolStripMenuItem controllers = new ToolStripMenuItem("Stage Controllers");
         controllers.DropDownItems.AddRange(new ToolStripItem[]
@@ -501,15 +501,20 @@ public static class AssetFactoryService
             //GetTemplateMenuItem(AssetTemplate.Empty_Streaming_Sound, eventHandler),
         });
 
-        var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
+        if (pasteClipboard)
+        {
+            var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
+            menu.DropDownItems.Add(paste);
+        }
 
-        var items = new ToolStripItem[] { paste, controllers, placeable, new ToolStripSeparator(), scooby, bfbb, tssm, incredibles, rotu, ratproto, new ToolStripSeparator(), others };
+        var items = new ToolStripItem[] { controllers, placeable, new ToolStripSeparator(), scooby, bfbb, tssm, incredibles, rotu, ratproto, new ToolStripSeparator(), others };
         menu.DropDownItems.AddRange(items);
-
+        
         var result = new List<ToolStripMenuItem>();
         foreach (var i in items)
             if (i is ToolStripMenuItem item)
                 result.AddRange(GetAllItems(item));
+
         return result;
     }
 

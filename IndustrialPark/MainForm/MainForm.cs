@@ -44,7 +44,7 @@ namespace IndustrialPark
 
             SetUiAssetsVisibility(false);
 
-            templateButtons = AssetFactoryService.PopulateTemplateMenusAt(contextTemplatesToolStripMenuItem, TemplateToolStripItemClick);
+            templateButtons = AssetFactoryService.PopulateTemplateMenusAt(contextTemplatesToolStripMenuItem, TemplateToolStripItemClick, true);
 
             Program.Renderer = new SharpRenderer(renderPanel);
 

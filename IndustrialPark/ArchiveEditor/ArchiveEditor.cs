@@ -65,7 +65,7 @@ public partial class ArchiveEditor : Form
 
         defaultColor = textBoxFindAsset.BackColor;
 
-        AssetFactoryService.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click);
+        AssetFactoryService.PopulateTemplateMenusAt(addTemplateToolStripMenuItem, TemplateToolStripMenuItem_Click, false);
 
         comboBoxLayers.SelectedIndexChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
         checkBoxTemplateFocus.CheckedChanged += (s, e) => ToolbarStateChanged?.Invoke(this);
@@ -1170,7 +1170,7 @@ public partial class ArchiveEditor : Form
                 Program.TextureManager.RemoveTexture(rwtx.Name, archive, rwtx.assetID);
             selectionManager.Unselect(asset);
             if (!Program.EditorManager.IsAssetDataSwap(archive, asset))
-            Program.EditorManager.CloseEditor(asset);
+                Program.EditorManager.CloseEditor(asset);
         });
 
         foreach (var asset in archive.Assets)
@@ -2083,7 +2083,7 @@ public partial class ArchiveEditor : Form
         ButtonRemoveAsset_Click(null, null);
         foreach (ListViewItem v in listViewAssets.Items)
             if (v.Selected)
-            v.Selected = false;
+                v.Selected = false;
     }
 
     public void ClearSelectedAssets()
@@ -2337,9 +2337,10 @@ public partial class ArchiveEditor : Form
         }
 
         var assets = GenerateTemplateForArchive(template, position);
+        if (assets == null)
+            return null;
 
         AddMultipleAssets(assets, true);
-
         return assets;
     }
 
