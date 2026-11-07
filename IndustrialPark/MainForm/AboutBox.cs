@@ -1,13 +1,15 @@
 using System;
 using System.Diagnostics;
-using System.Reflection;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace IndustrialPark
 {
     public partial class AboutBox : Form
     {
-        public static string WikiLink => "https://www.heavyironmodding.org/wiki/";
+        private static Color DarkModeLinkColor => Color.FromArgb(100, 180, 255);
+
+        public const string WikiLink = "https://www.heavyironmodding.org/wiki/";
         private const string DiscordLink = "https://discord.gg/9eAE6UB";
         private const string SourceLink = "https://github.com/igorseabra4/IndustrialPark";
         private const string IssuesLink = "https://github.com/igorseabra4/IndustrialPark/issues";
@@ -57,6 +59,8 @@ namespace IndustrialPark
                 Tag = url,
                 AutoSize = true
             };
+            if (Program.IsDarkMode)
+                result.LinkColor = DarkModeLinkColor;
             result.LinkClicked += LinkLabel_LinkClicked;
             return result;
         }
