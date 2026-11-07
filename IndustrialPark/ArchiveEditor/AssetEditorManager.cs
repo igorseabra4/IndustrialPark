@@ -10,6 +10,8 @@ public class AssetEditorManager
 {
     private readonly List<InternalEditor> internalEditors;
     private readonly List<InternalMultiAssetEditor> multiInternalEditors;
+    private Archive dataSwapArchive;
+    private uint? dataSwapAssetID;
 
     public bool AutoDockAssetEditors;
     public bool AutoDockSelectedAssetEditors;
@@ -18,6 +20,39 @@ public class AssetEditorManager
     {
         internalEditors = new List<InternalEditor>();
         multiInternalEditors = new List<InternalMultiAssetEditor>();
+    }
+
+    public void SetAssetData(Archive archive, uint assetID, byte[] data, HipHopFile.Platform platform)
+    {
+        var previousArchive = dataSwapArchive;
+        var previousAssetID = dataSwapAssetID;
+        dataSwapArchive = archive;
+        dataSwapAssetID = assetID;
+        try
+        {
+            archive.SetAssetData(assetID, data, platform);
+        }
+        finally
+        {
+            dataSwapArchive = previousArchive;
+            dataSwapAssetID = previousAssetID;
+        }
+    }
+
+    public bool IsAssetDataSwap(Archive archive, Asset asset) =>
+        ReferenceEquals(dataSwapArchive, archive) && dataSwapAssetID == asset.assetID;
+
+    public bool TryRebindAssetEditor(Archive archive, Asset asset)
+    {
+        if (!IsAssetDataSwap(archive, asset))
+            return false;
+
+        var editor = internalEditors.FirstOrDefault(e => e.IsForArchive(archive) && e.GetAssetID() == asset.assetID);
+        if (editor == null)
+            return false;
+
+        editor.SetAsset(asset);
+        return true;
     }
 
     public void OpenInternalEditor(uint assetID)
@@ -97,28 +132,16 @@ public class AssetEditorManager
 
     private static InternalEditor CreateAssetEditor(Asset asset, ArchiveEditor ae)
     {
-        switch (asset.assetType)
+        return asset switch
         {
-            case AssetType.Model when ((AssetMODL)asset).IsCollisionModel:
-                return new InternalCollModelEditor((AssetRenderWareModel)asset, ae);
-            case AssetType.Model:
-            case AssetType.BSP:
-            case AssetType.JSP:
-                return new InternalModelEditor((AssetRenderWareModel)asset, ae);
-            case AssetType.Flythrough:
-                return new InternalFlyEditor((AssetFLY)asset, ae);
-            case AssetType.Texture:
-            case AssetType.TextureStream:
-                if (asset is AssetRWTX rwtx)
-                    return new InternalTextureEditor(rwtx, ae);
-                break;
-            case AssetType.Sound:
-            case AssetType.SoundStream:
-                return new InternalSoundEditor((AssetSound)asset, ae);
-            case AssetType.Text:
-                return new InternalTextEditor((AssetTEXT)asset, ae);
-        }
-        return new InternalAssetEditor(asset, ae);
+            AssetRenderWareModel model when model.IsCollisionModel => new InternalCollModelEditor(model, ae),
+            AssetRenderWareModel model => new InternalModelEditor(model, ae),
+            AssetFLY fly => new InternalFlyEditor(fly, ae),
+            AssetRWTX rwtx => new InternalTextureEditor(rwtx, ae),
+            AssetSound sound => new InternalSoundEditor(sound, ae),
+            AssetTEXT text => new InternalTextEditor(text, ae),
+            _ => new InternalAssetEditor(asset, ae),
+        };
     }
 
     public void CloseEditor(InternalEditor editor)

@@ -1144,14 +1144,15 @@ public partial class ArchiveEditor : Form
         archive.Subscriber.SubscribeToLayerTypeChanged((_, _) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus));
         archive.Subscriber.SubscribeToLayerRenamed((_, _) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus));
         archive.Subscriber.SubscribeToLayerIndicesSet((_) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerList | ArchiveRefreshKind.Menus));
-        archive.Subscriber.SubscribeToLayerAssetAdded((_, assetID) => NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus, assetID, true));
-        archive.Subscriber.SubscribeToLayerAssetRemoved((_, assetID) => NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.LayerMetadata | ArchiveRefreshKind.Menus, assetID, false));
+        archive.Subscriber.SubscribeToLayerAssetAdded((_, assetID) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerMetadata, assetID, true));
+        archive.Subscriber.SubscribeToLayerAssetRemoved((_, assetID) => NotifyArchiveStateChanged(ArchiveRefreshKind.LayerMetadata, assetID, false));
 
         archive.Subscriber.SubscribeToAssetAdded(AddToCustomSource);
         archive.Subscriber.SubscribeToAssetRemoved(RemoveFromCustomSource);
 
         archive.Subscriber.SubscribeToAssetAdded((asset) =>
         {
+            Program.EditorManager.TryRebindAssetEditor(archive, asset);
             NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.Menus, asset.assetID, true);
             historyManager.AddAsset(asset);
             if (asset is AssetRWTX rwtx)
@@ -1168,6 +1169,7 @@ public partial class ArchiveEditor : Form
             if (asset is AssetRWTX rwtx)
                 Program.TextureManager.RemoveTexture(rwtx.Name, archive, rwtx.assetID);
             selectionManager.Unselect(asset);
+            if (!Program.EditorManager.IsAssetDataSwap(archive, asset))
             Program.EditorManager.CloseEditor(asset);
         });
 
@@ -1757,10 +1759,12 @@ public partial class ArchiveEditor : Form
 
     public void ClearListItems(IEnumerable<uint> assetIDs)
     {
+        programIsChangingStuff = true;
         var ids = assetIDs.ToHashSet();
         foreach (ListViewItem v in listViewAssets.Items)
             if (ids.Contains((uint)v.Tag))
                 listViewAssets.Items.Remove(v);
+        programIsChangingStuff = false;
 
         toolStripStatusLabelSelectionCount.Text = $"{listViewAssets.SelectedItems.Count}/{listViewAssets.Items.Count} assets selected";
         SetMenuItemsEnabled();
@@ -2078,6 +2082,7 @@ public partial class ArchiveEditor : Form
     {
         ButtonRemoveAsset_Click(null, null);
         foreach (ListViewItem v in listViewAssets.Items)
+            if (v.Selected)
             v.Selected = false;
     }
 

@@ -24,6 +24,11 @@ namespace IndustrialPark
 
         private new AssetTEXT asset => (AssetTEXT)base.asset;
 
+        protected override void OnAssetReplaced()
+        {
+            richTextBoxAssetText.Text = asset.Text;
+        }
+
         private void richTextBoxAssetText_TextChanged(object sender, EventArgs e)
         {
             asset.Text = richTextBoxAssetText.Text;

@@ -19,6 +19,11 @@ namespace IndustrialPark
 
         private new AssetRenderWareModel asset => (AssetRenderWareModel)base.asset;
 
+        protected override void OnAssetReplaced()
+        {
+            UpdateStats();
+        }
+
         private void exportButton_Click(object sender, EventArgs e)
         {
             (bool ok, ExportFormatDescription format, string textureExtension) = ChooseTarget.GetTarget();

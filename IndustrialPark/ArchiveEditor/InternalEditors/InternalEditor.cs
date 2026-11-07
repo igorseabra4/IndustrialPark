@@ -28,6 +28,25 @@ public abstract class InternalEditor : Form
 
     public Asset GetAsset() => asset;
     public uint GetAssetID() => asset.assetID;
+    public bool IsForArchive(Archive.Archive archive) => ReferenceEquals(archiveEditor.archive, archive);
+
+    public virtual void SetAsset(Asset newAsset)
+    {
+        if (asset.assetID != newAsset.assetID || asset.assetType != newAsset.assetType)
+            throw new ArgumentException("Cannot change the asset identity or type of an InternalEditor.");
+
+        asset.PropertyChanged -= RefreshPropertyGridDelegate;
+        asset = newAsset;
+        asset.PropertyChanged += RefreshPropertyGridDelegate;
+        Text = newAsset.assetName;
+        OnAssetReplaced();
+        if (IsHandleCreated)
+            RefreshPropertyGrid();
+    }
+
+    protected virtual void OnAssetReplaced()
+    {
+    }
 
     public virtual void RefreshPropertyGrid()
     {

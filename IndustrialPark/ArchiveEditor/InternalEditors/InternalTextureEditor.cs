@@ -37,6 +37,11 @@ namespace IndustrialPark
             propertyGridAsset.Refresh();
         }
 
+        protected override void OnAssetReplaced()
+        {
+            propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
+        }
+
         private void InternalTextureEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             b.Dispose();

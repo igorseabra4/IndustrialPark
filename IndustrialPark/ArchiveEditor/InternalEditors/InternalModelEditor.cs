@@ -62,6 +62,20 @@ namespace IndustrialPark
 
         private new AssetRenderWareModel asset => (AssetRenderWareModel)base.asset;
 
+        protected override void OnAssetReplaced()
+        {
+            SetupTexturesBox();
+            if (asset.assetType == AssetType.Model)
+            {
+                SetupPiptBox(currentPipeInfo);
+                SetupLodtBox();
+                SetupCollBox();
+                SetupShdwBox();
+                SetupCollButton();
+            }
+            buttonExport.Enabled = !(asset.IsNativeData && archiveEditor.archive.Platform == Platform.PS2);
+        }
+
         private void SetupTexturesBox()
         {
             flowLayoutPanelTextures.Controls.Clear();
@@ -352,6 +366,8 @@ namespace IndustrialPark
 
         private void SetupCollBox()
         {
+            buttonCreateCollision.Text = "Create";
+            buttonImportColl.Enabled = false;
             var coll = archiveEditor.archive.TableManager.GetCOLL();
             if (coll != null)
             {
@@ -408,6 +424,7 @@ namespace IndustrialPark
 
         private void SetupShdwBox()
         {
+            buttonCreateShadow.Text = "Create";
             var shdw = archiveEditor.archive.TableManager.GetSHDW();
             if (shdw != null)
             {
@@ -480,10 +497,8 @@ namespace IndustrialPark
 
         private void SetupCollButton()
         {
-            if (asset.IsNativeData)
-                buildCollTreeButton.Enabled = false;
-            if (asset.HasCollisionPLG)
-                removeCollPlgButton.Enabled = true;
+            buildCollTreeButton.Enabled = !asset.IsNativeData;
+            removeCollPlgButton.Enabled = asset.HasCollisionPLG;
         }
 
         private void buildCollTreeButton_Click(object sender, EventArgs e)

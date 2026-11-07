@@ -20,6 +20,12 @@ namespace IndustrialPark
 
         private new AssetFLY asset => (AssetFLY)base.asset;
 
+        protected override void OnAssetReplaced()
+        {
+            UpdateListbox();
+            propertyGridSpecific.SelectedObject = null;
+        }
+
         private void InternalFlyEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (recording || playing)
@@ -35,6 +41,7 @@ namespace IndustrialPark
         private void UpdateListbox()
         {
             listBoxFlyEntries.Items.Clear();
+            maxFrame = 0;
             foreach (FlyFrame entry in asset.Frames)
             {
                 listBoxFlyEntries.Items.Add(entry);

@@ -23,12 +23,12 @@ public class AssetDataSwappedAction : IReversibleAction
 
     public void Undo()
     {
-        Archive.SetAssetData(AssetID, PreviousData, Platform);
+        Program.EditorManager.SetAssetData(Archive, AssetID, PreviousData, Platform);
     }
 
     public void Redo()
     {
-        Archive.SetAssetData(AssetID, NewData, Platform);
+        Program.EditorManager.SetAssetData(Archive, AssetID, NewData, Platform);
     }
 
     public override string ToString() => $"[{AssetID:X8}] {AssetName ?? ""} property changed";

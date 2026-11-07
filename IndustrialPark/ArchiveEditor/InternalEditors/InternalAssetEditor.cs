@@ -20,31 +20,31 @@ public partial class InternalAssetEditor : InternalEditor
 
         switch (asset)
         {
-            case AssetCAM cam:
-                SetupForCam(cam);
+            case AssetCAM:
+                SetupForCam();
                 break;
-            case AssetCSN csn:
-                SetupForCsn(csn);
+            case AssetCSN:
+                SetupForCsn();
                 break;
-            case IAssetAddSelected aas:
-                SetupForAddSelected(aas);
+            case IAssetAddSelected:
+                SetupForAddSelected();
                 break;
-            case AssetSCRP scrp:
-                SetupForScrp(scrp);
+            case AssetSCRP:
+                SetupForScrp();
                 break;
-            case AssetWIRE wire:
-                SetupForWire(wire);
+            case AssetWIRE:
+                SetupForWire();
                 break;
-            case AssetFOG fog:
-                SetupForFog(fog);
+            case AssetFOG:
+                SetupForFog();
                 break;
-            case AssetJSP_INFO info:
-                SetupForJSPInfo(info);
+            case AssetJSP_INFO:
+                SetupForJSPInfo();
                 break;
         }
 
-        if (asset is IAssetCopyPasteTransformation iacpt)
-            SetupForCopyPasteTransformation(iacpt);
+        if (asset is IAssetCopyPasteTransformation)
+            SetupForCopyPasteTransformation();
 
         if (asset is EntityAsset entity && !new AssetType[] {
             AssetType.Trigger,
@@ -53,7 +53,7 @@ public partial class InternalAssetEditor : InternalEditor
             AssetType.UserInterface,
             AssetType.UserInterfaceFont
         }.Contains(asset.assetType))
-            SetupForBakeScaleRot(entity);
+            SetupForBakeScaleRot();
 
         AddRow();
 
@@ -74,13 +74,10 @@ public partial class InternalAssetEditor : InternalEditor
         SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
-    public void SetAsset(Asset asset)
+    protected override void OnAssetReplaced()
     {
-        if (this.asset != null && this.asset.assetType != asset.assetType)
-            throw new ArgumentException("Cannot change the asset type of an InternalAssetEditor.");
-
-        this.asset = asset;
         propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
+        viewToolStripMenuItem.Visible = asset is IClickableAsset;
     }
 
     public override void RefreshPropertyGrid()
@@ -124,65 +121,70 @@ public partial class InternalAssetEditor : InternalEditor
         return (button, menuItem);
     }
 
-    private void SetupForJSPInfo(AssetJSP_INFO asset)
+    private void SetupForJSPInfo()
     {
         AddRow();
         AddTool("Generate JSPInfo", (s, e) =>
         {
-            var jsps = archiveEditor.archive.Assets.OfType<AssetJSP>().Where(a => asset.JSP_AssetIDs.Contains(a.assetID)).ToList();
-            JSPService.GenerateJSPInfo(archiveEditor.archive.Game, archiveEditor.archive.Platform, asset, jsps);
-            asset.InvokePropertyChanged(true);
+            var currentAsset = GetCurrentAsset<AssetJSP_INFO>();
+            var jsps = archiveEditor.archive.Assets.OfType<AssetJSP>().Where(a => currentAsset.JSP_AssetIDs.Contains(a.assetID)).ToList();
+            JSPService.GenerateJSPInfo(archiveEditor.archive.Game, archiveEditor.archive.Platform, currentAsset, jsps);
+            currentAsset.InvokePropertyChanged(true);
         });
     }
 
-    private void SetupForCam(AssetCAM asset)
+    private void SetupForCam()
     {
         AddRow();
 
         AddTool("Get View Position", (_, _) =>
         {
-            asset.SetPosition(Program.Renderer.Camera.Position);
-            asset.InvokePropertyChanged(true);
+            var currentAsset = GetCurrentAsset<AssetCAM>();
+            currentAsset.SetPosition(Program.Renderer.Camera.Position);
+            currentAsset.InvokePropertyChanged(true);
         });
 
         AddTool("Get View Direction", (_, _) =>
         {
-            asset.SetNormalizedForward(Program.Renderer.Camera.Forward);
-            asset.SetNormalizedUp(Program.Renderer.Camera.Up);
-            asset.SetNormalizedLeft(Program.Renderer.Camera.Right);
-            asset.InvokePropertyChanged(true);
+            var currentAsset = GetCurrentAsset<AssetCAM>();
+            currentAsset.SetNormalizedForward(Program.Renderer.Camera.Forward);
+            currentAsset.SetNormalizedUp(Program.Renderer.Camera.Up);
+            currentAsset.SetNormalizedLeft(Program.Renderer.Camera.Right);
+            currentAsset.InvokePropertyChanged(true);
         });
     }
 
-    private void SetupForAddSelected(IAssetAddSelected asset)
+    private void SetupForAddSelected()
     {
         AddRow();
-        AddTool($"Select {asset.GetItemsText} assets", (_, _) =>
+        AddTool($"Select {((IAssetAddSelected)this.asset).GetItemsText} assets", (_, _) =>
         {
-            Program.ArchiveManager.SetSelectedAssets(asset.GetItems(), false);
+            Program.ArchiveManager.SetSelectedAssets(((IAssetAddSelected)this.asset).GetItems(), false);
         });
-        AddTool($"Add selected to {asset.GetItemsText}", (_, _) =>
+        AddTool($"Add selected to {((IAssetAddSelected)this.asset).GetItemsText}", (_, _) =>
         {
-            asset.AddItems([.. archiveEditor.SelectedAssetIDs]);
-            (asset as Asset).InvokePropertyChanged(true);
+            var currentAsset = (IAssetAddSelected)this.asset;
+            currentAsset.AddItems([.. archiveEditor.SelectedAssetIDs]);
+            ((Asset)currentAsset).InvokePropertyChanged(true);
         });
     }
 
-    private void SetupForFog(AssetFOG asset)
+    private void SetupForFog()
     {
         AddRow();
         AddTool("Preview Fog", (_, _) =>
         {
-            Program.Renderer.Fog = asset;
+            Program.Renderer.Fog = GetCurrentAsset<AssetFOG>();
         }, true);
     }
 
-    private void SetupForScrp(AssetSCRP asset)
+    private void SetupForScrp()
     {
         AddRow();
         AddTool("Convert to group of timers", (_, _) =>
         {
-            var newAssets = AssetFactory.ConvertScriptToGroupOfTimers(archiveEditor.archive.Platform, asset, archiveEditor.archive.ContainsAsset);
+            var currentAsset = GetCurrentAsset<AssetSCRP>();
+            var newAssets = AssetFactory.ConvertScriptToGroupOfTimers(archiveEditor.archive.Platform, currentAsset, archiveEditor.archive.ContainsAsset);
 
             archiveEditor.BeginTransaction();
             var layer = archiveEditor.archive.GetOrCreateLayerOfType(LayerType.DEFAULT);
@@ -193,18 +195,18 @@ public partial class InternalAssetEditor : InternalEditor
         }, true);
     }
 
-    private void SetupForCsn(AssetCSN asset)
+    private void SetupForCsn()
     {
         AddRow();
         AddTool("Export All", (_, _) =>
         {
             using var openFolder = new CommonOpenFileDialog() { IsFolderPicker = true };
             if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
-                asset.ExtractToFolder(openFolder.FileName, archiveEditor.archive.Platform.Endianness());
+                GetCurrentAsset<AssetCSN>().ExtractToFolder(openFolder.FileName, archiveEditor.archive.Platform.Endianness());
         }, true);
     }
 
-    private void SetupForWire(AssetWIRE asset)
+    private void SetupForWire()
     {
         AddRow();
 
@@ -217,8 +219,9 @@ public partial class InternalAssetEditor : InternalEditor
 
             if (openFile.ShowDialog() == DialogResult.OK)
             {
-                asset.FromObj(openFile.FileName);
-                asset.InvokePropertyChanged(true);
+                var currentAsset = GetCurrentAsset<AssetWIRE>();
+                currentAsset.FromObj(openFile.FileName);
+                currentAsset.InvokePropertyChanged(true);
             }
         });
 
@@ -227,21 +230,21 @@ public partial class InternalAssetEditor : InternalEditor
             SaveFileDialog saveFile = new SaveFileDialog()
             {
                 Filter = "OBJ Files|*.obj|All files|*.*",
-                FileName = asset.assetName
+                FileName = GetCurrentAsset<AssetWIRE>().assetName
             };
 
             if (saveFile.ShowDialog() == DialogResult.OK)
-                asset.ToObj(saveFile.FileName);
+                GetCurrentAsset<AssetWIRE>().ToObj(saveFile.FileName);
         });
     }
 
-    private void SetupForCopyPasteTransformation(IAssetCopyPasteTransformation asset)
+    private void SetupForCopyPasteTransformation()
     {
         AddRow();
 
         AddTool("Copy Transformation", (_, _) =>
         {
-            if (asset.GetTransformation() is Transformation transformation)
+            if (((IAssetCopyPasteTransformation)this.asset).GetTransformation() is Transformation transformation)
                 Clipboard.SetText(JsonConvert.SerializeObject(transformation));
         });
 
@@ -257,12 +260,13 @@ public partial class InternalAssetEditor : InternalEditor
                 MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
                 return;
             }
-            asset.SetTransformation(transformation);
-            (asset as Asset).InvokePropertyChanged(true);
+            var currentAsset = (IAssetCopyPasteTransformation)this.asset;
+            currentAsset.SetTransformation(transformation);
+            ((Asset)currentAsset).InvokePropertyChanged(true);
         });
     }
 
-    private void SetupForBakeScaleRot(EntityAsset asset)
+    private void SetupForBakeScaleRot()
     {
         AddRow();
 
@@ -272,8 +276,9 @@ public partial class InternalAssetEditor : InternalEditor
             var result = MessageBox.Show(Resources.BakeRotationDescription, "Bake Rotation", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
             {
-                asset.ApplyBakeRotation();
-                asset.InvokePropertyChanged(true);
+                var currentAsset = GetCurrentAsset<EntityAsset>();
+                currentAsset.ApplyBakeRotation();
+                currentAsset.InvokePropertyChanged(true);
             }
         });
         button?.MouseHover += (_, _) => toolTip.Show(Resources.BakeRotationDescription, button);
@@ -284,11 +289,14 @@ public partial class InternalAssetEditor : InternalEditor
             var result = MessageBox.Show(Resources.BakeScaleDescription, "Bake Scale", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
             {
-                asset.ApplyBakeScale();
-                asset.InvokePropertyChanged(true);
+                var currentAsset = GetCurrentAsset<EntityAsset>();
+                currentAsset.ApplyBakeScale();
+                currentAsset.InvokePropertyChanged(true);
             }
         });
         button?.MouseHover += (_, _) => toolTip.Show(Resources.BakeScaleDescription, button);
         menuItem?.MouseHover += (_, _) => toolTip.Show(Resources.BakeScaleDescription, button);
     }
+
+    private T GetCurrentAsset<T>() where T : Asset => (T)asset;
 }
