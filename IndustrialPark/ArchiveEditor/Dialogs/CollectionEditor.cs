@@ -276,11 +276,6 @@ namespace IndustrialPark
             Close();
         }
 
-        private void buttonHelp_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(AboutBox.WikiLink + "Events");
-        }
-
         private void propertyGridItem_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
         {
             var selectedIndices = listBoxItems.SelectedIndices.Cast<int>().ToList();

@@ -38,7 +38,6 @@
             buttonArrowUp = new System.Windows.Forms.Button();
             buttonOK = new System.Windows.Forms.Button();
             buttonCancel = new System.Windows.Forms.Button();
-            buttonHelp = new System.Windows.Forms.Button();
             toolTip1 = new System.Windows.Forms.ToolTip(components);
             propertyGridItem = new System.Windows.Forms.PropertyGrid();
             textBoxSearch = new System.Windows.Forms.TextBox();
@@ -157,17 +156,6 @@
             buttonCancel.UseVisualStyleBackColor = true;
             buttonCancel.Click += buttonCancel_Click;
             // 
-            // buttonHelp
-            // 
-            buttonHelp.Anchor = System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right;
-            buttonHelp.Location = new System.Drawing.Point(396, 361);
-            buttonHelp.Name = "buttonHelp";
-            buttonHelp.Size = new System.Drawing.Size(68, 23);
-            buttonHelp.TabIndex = 9;
-            buttonHelp.Text = "Help";
-            buttonHelp.UseVisualStyleBackColor = true;
-            buttonHelp.Click += buttonHelp_Click;
-            // 
             // propertyGridItem
             // 
             propertyGridItem.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -189,7 +177,6 @@
             Controls.Add(textBoxSearch);
             Controls.Add(listBoxItems);
             Controls.Add(propertyGridItem);
-            Controls.Add(buttonHelp);
             Controls.Add(buttonOK);
             Controls.Add(buttonCancel);
             Controls.Add(buttonArrowDown);
@@ -220,7 +207,6 @@
         private System.Windows.Forms.Button buttonArrowUp;
         private System.Windows.Forms.Button buttonOK;
         private System.Windows.Forms.Button buttonCancel;
-        private System.Windows.Forms.Button buttonHelp;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.PropertyGrid propertyGridItem;
         private System.Windows.Forms.TextBox textBoxSearch;
