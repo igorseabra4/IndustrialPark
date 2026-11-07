@@ -511,6 +511,7 @@ namespace IndustrialPark
             checkForUpdatesDailyToolStripMenuItem.Size = new System.Drawing.Size(198, 22);
             checkForUpdatesDailyToolStripMenuItem.Text = "Check for updates daily";
             checkForUpdatesDailyToolStripMenuItem.ToolTipText = "If enabled, the application will check for updates when starting, at most once per day.";
+            checkForUpdatesDailyToolStripMenuItem.Click += checkForUpdatesDailyToolStripMenuItem_Click;
             // 
             // discordRichPresenceToolStripMenuItem
             // 

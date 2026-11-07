@@ -28,7 +28,6 @@ namespace IndustrialPark
         public AssetTemplate CurrentAssetTemplate = AssetTemplate.Null;
         public string CurrentUserTemplate = "";
         public ConnectMarkers markerConnector;
-        private bool ConfirmBeforeDelete = true;
 
         public MainForm(IPSettings settings)
         {

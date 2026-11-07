@@ -439,8 +439,7 @@ public partial class MainForm
                 Program.ArchiveManager.PasteAssets();
                 return;
             case KeyboardAction.Delete:
-                if (!ConfirmBeforeDelete || MessageBox.Show("Are you sure you want to delete the selected assets?", "Confirm Deletion", MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes)
-                    Program.ArchiveManager.DeleteSelectedAssets();
+                Program.ArchiveManager.DeleteSelectedAssets();
                 return;
             case KeyboardAction.ResetCamera:
                 renderer.Camera.Reset();
