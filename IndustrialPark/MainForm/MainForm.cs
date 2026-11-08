@@ -1360,6 +1360,7 @@ namespace IndustrialPark
         {
             var ae = new ArchiveEditor(filePath, scoobyPlatform);
             ArchiveEditors.Add(ae);
+            gizmoManager.RefreshSelectedAssets();
 
             ToolStripMenuItem tempMenuItem = new ToolStripMenuItem(Path.GetFileName(ae.GetCurrentFilePath()));
             tempMenuItem.Click += new EventHandler((object sender, EventArgs e) =>
@@ -1370,6 +1371,7 @@ namespace IndustrialPark
 
             ae.ChangesMade += UpdateTitleBar;
             ae.SubscribeToSelectedAssetsCollectionChanged(UpdateSelectedAssetStatusBarItem);
+            ae.SubscribeToSelectedAssetsCollectionChanged(gizmoManager.RefreshSelectedAssets);
             ae.EditorUpdate += EditorUpdate;
             ae.ToolbarStateChanged += ArchiveEditor_ToolbarStateChanged;
             if (filePath != null)
@@ -1432,6 +1434,7 @@ namespace IndustrialPark
             int index = ArchiveEditors.IndexOf(sender);
             archiveEditorToolStripMenuItem.DropDownItems.RemoveAt(index + 5);
             ArchiveEditors.RemoveAt(index);
+            gizmoManager.RefreshSelectedAssets();
             UpdateToolbarArchives();
         }
 
