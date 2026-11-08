@@ -23,7 +23,7 @@ namespace IndustrialPark
             meshList.Add(mesh);
             completeMeshList.Add(mesh);
         }
-        public static List<SharpMesh> completeMeshList = new List<SharpMesh>();
+        public static HashSet<SharpMesh> completeMeshList = new HashSet<SharpMesh>();
 
         public uint vertexAmount;
         public uint triangleAmount;
@@ -730,6 +730,7 @@ namespace IndustrialPark
                 renderer.device.DeviceContext.PixelShader.SetConstantBuffer(0, renderer.fogLightBuffer.Buffer);
 
                 renderData.AlphaDiscard = 0;
+                renderData.FogEnable = renderer.Fog != null && !AssetFOG.DontRender;
                 renderer.device.SetDefaultDepthState();
                 renderer.device.SetCullModeNone();
 
@@ -775,7 +776,7 @@ namespace IndustrialPark
                     renderData.SelectedObjectColor = (isSelected || highlightAtomic == i || Program.TextureManager.IsSelected(meshList[i].SubSets[j].DiffuseMapName)) ? renderer.selectedObjectColor : Vector4.Zero;
                     renderData.VertexColorEnable = renderer.RenderVertexColors &&
                         meshList[i].SubSets[j].EnablePrelight &&
-                        ((pipe?.LightingMode == LightingMode.Prelight || pipe?.LightingMode == LightingMode.Both) |
+                        ((pipe?.LightingMode == LightingMode.Prelight || pipe?.LightingMode == LightingMode.Both) ||
                         (pipe?.LightingMode == LightingMode.LightKit && AssetLKIT.SceneLightKit == null));
 
                     renderData.LightingEnable = !AssetLKIT.DontRender && AssetLKIT.SceneLightKit != null && meshList[i].SubSets[j].EnableLights && pipe?.LightingMode != LightingMode.Prelight;

@@ -120,24 +120,8 @@ namespace IndustrialPark
 
         public void Dispose()
         {
-            if (VertexBuffer != null)
-                VertexBuffer.Dispose();
-            if (IndexBuffer != null)
-                IndexBuffer.Dispose();
-        }
-
-        public void DisposeWithTextures()
-        {
-            if (VertexBuffer != null)
-                VertexBuffer.Dispose();
-            if (IndexBuffer != null)
-                IndexBuffer.Dispose();
-
-            foreach (var s in SubSets)
-            {
-                if (s.DiffuseMap != null)
-                    s.DiffuseMap.Dispose();
-            }
+            Utilities.Dispose(ref VertexBuffer);
+            Utilities.Dispose(ref IndexBuffer);
         }
     }
 }

@@ -26,6 +26,7 @@ public class SharpDevice : IDisposable
     private BlendState _blendState;
     private DepthStencilState _depthState;
     private SamplerState _samplerState;
+    private bool _disposed;
 
     private DepthStencilState _defaultDepthState;
     private DepthStencilState _noDepthState;
@@ -35,13 +36,13 @@ public class SharpDevice : IDisposable
     private BlendState _alphaBlendState;
     private BlendState _additiveBlendState;
 
-    private readonly Dictionary<(bool SelectionMask, bool Enabled, BlendOperation Operation, BlendOption Source, BlendOption Destination, BlendOperation AlphaOperation, BlendOption SourceAlpha, BlendOption DestinationAlpha), BlendState> _blendStates = new();
+    private readonly Dictionary<(bool SelectionMask, bool Enabled, BlendOperation Operation, BlendOption Source, BlendOption Destination, BlendOperation AlphaOperation, BlendOption SourceAlpha, BlendOption DestinationAlpha, ColorWriteMaskFlags WriteMask), BlendState> _blendStates = new();
 
     private readonly Dictionary<(CullMode Cull, FillMode Fill, bool GraphicsMode), RasterizerState> _rasterStates = new();
 
     public readonly record struct SamplerSettings(TextureAddressMode AddressU, TextureAddressMode AddressV);
 
-    private readonly Dictionary<SamplerSettings, SamplerState> _samplerStates = new();
+    private readonly Dictionary<(SamplerSettings Settings, bool Anisotropic, int MaximumAnisotropy), SamplerState> _samplerStates = new();
 
     /// <summary>
     /// Device
@@ -133,7 +134,7 @@ public class SharpDevice : IDisposable
         factory.MakeWindowAssociation(Control.Handle, WindowAssociationFlags.IgnoreAll);
 
         //Setup handler on resize form
-        Control.Resize += (sender, args) => MustResize = true;
+        Control.Resize += OnControlResize;
 
         InitializeDepthStates();
         InitializeBlendStates();
@@ -207,6 +208,9 @@ public class SharpDevice : IDisposable
     /// </summary>
     public void Resize()
     {
+        if (Control.Width <= 0 || Control.Height <= 0)
+            return;
+
 #if DEBUG
         Font.Release();
 #endif
@@ -215,9 +219,6 @@ public class SharpDevice : IDisposable
         Utilities.Dispose(ref _zbufferView);
         Utilities.Dispose(ref _selectionMaskView);
         Utilities.Dispose(ref _selectionMaskResourceView);
-
-        if (Control.Width == 0 || Control.Height == 0)
-            return;
 
         // Resize the backbuffer
         SwapChain.ResizeBuffers(1, Control.Width, Control.Height, Format.R8G8B8A8_UNorm, SwapChainFlags.None);
@@ -305,39 +306,47 @@ public class SharpDevice : IDisposable
     /// </summary>
     public void Dispose()
     {
-#if DEBUG
-        Font.Dispose();
-#endif
+        if (_disposed)
+            return;
+        _disposed = true;
 
-        foreach (var state in _rasterStates.Values)
-            state.Dispose();
+        Control.Resize -= OnControlResize;
+
+#if DEBUG
+        Font?.Dispose();
+#endif
 
         foreach (var state in _blendStates.Values)
             state.Dispose();
 
         foreach (var state in _samplerStates.Values)
             state.Dispose();
+        foreach (var state in _rasterStates.Values)
+            state.Dispose();
 
+        _rasterStates.Clear();
         _blendStates.Clear();
+        _samplerStates.Clear();
 
-        _defaultDepthState.Dispose();
-        _noDepthState.Dispose();
-        _readOnlyDepthState.Dispose();
+        Utilities.Dispose(ref _defaultDepthState);
+        Utilities.Dispose(ref _noDepthState);
+        Utilities.Dispose(ref _readOnlyDepthState);
 
-        _defaultBlendState.Dispose();
-        _alphaBlendState.Dispose();
-        _additiveBlendState.Dispose();
+        Utilities.Dispose(ref _defaultBlendState);
+        Utilities.Dispose(ref _alphaBlendState);
+        Utilities.Dispose(ref _additiveBlendState);
 
-        _depthState.Dispose();
-
-        _backbufferView.Dispose();
-        _zbufferView.Dispose();
-        _selectionMaskView?.Dispose();
-        _selectionMaskResourceView?.Dispose();
-        _swapchain.Dispose();
-        _deviceContext.Dispose();
-        _device.Dispose();
+        Utilities.Dispose(ref _samplerState);
+        Utilities.Dispose(ref _backbufferView);
+        Utilities.Dispose(ref _zbufferView);
+        Utilities.Dispose(ref _selectionMaskView);
+        Utilities.Dispose(ref _selectionMaskResourceView);
+        Utilities.Dispose(ref _swapchain);
+        Utilities.Dispose(ref _deviceContext);
+        Utilities.Dispose(ref _device);
     }
+
+    private void OnControlResize(object sender, EventArgs e) => MustResize = true;
 
     /// <summary>
     /// Clear backbuffer and zbuffer
@@ -545,7 +554,8 @@ public class SharpDevice : IDisposable
             target.DestinationBlend,
             target.AlphaBlendOperation,
             target.SourceAlphaBlend,
-            target.DestinationAlphaBlend
+            target.DestinationAlphaBlend,
+            target.RenderTargetWriteMask
         );
 
         if (!_blendStates.TryGetValue(key, out var state))
@@ -577,33 +587,22 @@ public class SharpDevice : IDisposable
     /// </summary>
     public void SetDefaultSamplerState()
     {
-        Utilities.Dispose(ref _samplerState);
-
-        var samplerDescription = new SamplerStateDescription()
-        {
-            Filter = Filter.MinMagMipLinear,
-            AddressU = TextureAddressMode.Wrap,
-            AddressV = TextureAddressMode.Wrap,
-            AddressW = TextureAddressMode.Wrap,
-            MipLodBias = 0,
-            MaximumAnisotropy = 1,
-            ComparisonFunction = Comparison.Never,
-            BorderColor = Color4.Black,
-            MinimumLod = 0,
-            MaximumLod = float.MaxValue
-        };
-
-        _samplerState = new SamplerState(Device, samplerDescription);
+        _samplerState = GetOrCreateSamplerState(new SamplerSettings(TextureAddressMode.Wrap, TextureAddressMode.Wrap), false, 1);
     }
 
     public int AnisotropicFiltering { get; set; } = 1;
 
     public void SetSamplerState(SamplerSettings settings)
     {
-        if (!_samplerStates.TryGetValue(settings, out var sampler))
-        {
-            bool anisotropic = AnisotropicFiltering > 1;
+        bool anisotropic = AnisotropicFiltering > 1;
+        _samplerState = GetOrCreateSamplerState(settings, anisotropic, anisotropic ? AnisotropicFiltering : 1);
+    }
 
+    private SamplerState GetOrCreateSamplerState(SamplerSettings settings, bool anisotropic, int maximumAnisotropy)
+    {
+        var key = (settings, anisotropic, maximumAnisotropy);
+        if (!_samplerStates.TryGetValue(key, out SamplerState sampler))
+        {
             var description = new SamplerStateDescription()
             {
                 Filter = anisotropic ? Filter.Anisotropic : Filter.MinMagMipLinear,
@@ -611,7 +610,7 @@ public class SharpDevice : IDisposable
                 AddressV = settings.AddressV,
                 AddressW = TextureAddressMode.Wrap,
                 MipLodBias = 0,
-                MaximumAnisotropy = anisotropic ? AnisotropicFiltering : 1,
+                MaximumAnisotropy = maximumAnisotropy,
                 ComparisonFunction = Comparison.Never,
                 BorderColor = Color4.Black,
                 MinimumLod = 0,
@@ -619,10 +618,10 @@ public class SharpDevice : IDisposable
             };
 
             sampler = new SamplerState(Device, description);
-            _samplerStates.Add(settings, sampler);
+            _samplerStates.Add(key, sampler);
         }
 
-        _samplerState = sampler;
+        return sampler;
     }
 
     /// <summary>

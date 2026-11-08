@@ -20,25 +20,26 @@ namespace IndustrialPark
 
         public const string DefaultTexture = "default";
         private Dictionary<string, ShaderResourceView> Textures = new Dictionary<string, ShaderResourceView>();
+        private readonly List<ShaderResourceView> retiredTextures = new();
 
         public HashSet<string> OpenTextureFolders { get; private set; } = new HashSet<string>();
 
         public bool HasTexture(string textureName)
         {
-            return Textures.ContainsKey(textureName);
+            return Textures.TryGetValue(textureName, out ShaderResourceView texture) && texture != null && !texture.IsDisposed;
         }
 
         public ShaderResourceView GetTextureFromDictionary(Material_0007 material)
         {
-            if (material != null && material.texture != null && Textures.ContainsKey(material.texture.DiffuseTextureName))
-                return Textures[material.texture.DiffuseTextureName];
+            if (material != null && material.texture != null && Textures.TryGetValue(material.texture.DiffuseTextureName, out ShaderResourceView texture) && !texture.IsDisposed)
+                return texture;
             return Program.Renderer.whiteDefault;
         }
 
         public ShaderResourceView GetTextureFromDictionary(uint assetID)
         {
             foreach (string s in Textures.Keys)
-                if (Functions.BKDRHash(s) == assetID)
+                if (Functions.BKDRHash(s) == assetID && Textures[s] != null && !Textures[s].IsDisposed)
                     return Textures[s];
             return Program.Renderer.whiteDefault;
         }
@@ -65,8 +66,7 @@ namespace IndustrialPark
             { texture = Program.Renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
             catch { return; }
 
-            DisposeTexture(tnStruct.textureName);
-            Textures[tnStruct.textureName] = texture;
+            ReplaceTexture(tnStruct.textureName, texture);
         }
 
         public void RemoveTexture(string textureName, Archive.Archive sender, uint assetID)
@@ -76,7 +76,6 @@ namespace IndustrialPark
                     return;
             
             DisposeTexture(textureName);
-            Textures.Remove(textureName);
             ReapplyTextures();
         }
 
@@ -101,65 +100,92 @@ namespace IndustrialPark
         private void AddTextureBitmap(string path)
         {
             string textureName = TreatTextureName(Path.GetFileNameWithoutExtension(path));
-            DisposeTexture(textureName);
-            Textures[textureName] = Program.Renderer.device.LoadTextureFromFile(path);
+            ReplaceTexture(textureName, Program.Renderer.device.LoadTextureFromFile(path));
         }
 
         public void ReapplyTextures()
         {
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
-                if (mesh != null)
+                if (mesh?.SubSets != null)
                     foreach (SharpSubSet sub in mesh.SubSets)
                     {
-                        if (Textures.TryGetValue(sub.DiffuseMapName, out ShaderResourceView texture))
+                        if (sub == null)
+                            continue;
+
+                        if (Textures.TryGetValue(sub.DiffuseMapName, out ShaderResourceView texture) && texture != null && !texture.IsDisposed)
                         {
                             if (sub.DiffuseMap != texture)
-                            {
-                                DisposeIfNotWhiteDefault(sub.DiffuseMap);
                                 sub.DiffuseMap = texture;
-                            }
                         }
                         else
-                        {
-                            DisposeIfNotWhiteDefault(sub.DiffuseMap);
                             sub.DiffuseMap = Program.Renderer.whiteDefault;
-                        }
                     }
+
+            DisposeRetiredTextures();
         }
 
-        private void DisposeIfNotWhiteDefault(ShaderResourceView texture)
+        private void ReplaceTexture(string textureName, ShaderResourceView texture)
         {
-            if (texture != null && !texture.IsDisposed && texture != Program.Renderer.whiteDefault)
-                texture.Dispose();
+            if (Textures.TryGetValue(textureName, out ShaderResourceView oldTexture) && oldTexture != texture)
+                RetireTexture(oldTexture);
+
+            Textures[textureName] = texture;
+        }
+
+        private void RetireTexture(ShaderResourceView texture)
+        {
+            if (texture != null && texture != Program.Renderer.whiteDefault && !texture.IsDisposed && !retiredTextures.Any(retired => ReferenceEquals(retired, texture)))
+                retiredTextures.Add(texture);
+        }
+
+        private void DisposeRetiredTextures()
+        {
+            for (int i = retiredTextures.Count - 1; i >= 0; i--)
+            {
+                ShaderResourceView texture = retiredTextures[i];
+                if (Textures.Values.Any(current => ReferenceEquals(current, texture)))
+                    continue;
+
+                if (texture != null && !texture.IsDisposed)
+                    texture.Dispose();
+                retiredTextures.RemoveAt(i);
+            }
         }
 
         public void SetTextureForAnimation(string diffuseMapName, string newMapName)
         {
+            ShaderResourceView texture = Textures.TryGetValue(newMapName, out ShaderResourceView foundTexture) && !foundTexture.IsDisposed
+                ? foundTexture
+                : Program.Renderer.whiteDefault;
+
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
-                foreach (SharpSubSet sub in mesh.SubSets)
-                {
-                    if (sub.DiffuseMapName == diffuseMapName)
-                        sub.DiffuseMap = Textures[newMapName];
-                }
+                if (mesh?.SubSets != null)
+                    foreach (SharpSubSet sub in mesh.SubSets)
+                    {
+                        if (sub != null && sub.DiffuseMapName == diffuseMapName)
+                            sub.DiffuseMap = texture;
+                    }
         }
 
         public void DisposeTexture(string textureName)
         {
-            if (Textures.TryGetValue(textureName, out ShaderResourceView value) && value != null && !value.IsDisposed)
-                value.Dispose();
+            if (Textures.Remove(textureName, out ShaderResourceView texture))
+                RetireTexture(texture);
         }
 
         public void DisposeTextures()
         {
             foreach (ShaderResourceView texture in Textures.Values)
-                texture?.Dispose();
+                RetireTexture(texture);
+
+            Textures.Clear();
+            ReapplyTextures();
         }
 
         public void ClearTextures()
         {
             OpenTextureFolders.Clear();
             DisposeTextures();
-            Textures.Clear();
         }
 
         public HashSet<string> SelectedTextures = new HashSet<string>();

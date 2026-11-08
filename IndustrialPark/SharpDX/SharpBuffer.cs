@@ -13,8 +13,9 @@ namespace IndustrialPark
     public class ConstantBuffer<T> : IDisposable where T : struct
     {
         private readonly Device _device;
-        private readonly Buffer _buffer;
-        private readonly DataStream _dataStream;
+        private Buffer _buffer;
+        private DataStream _dataStream;
+        private readonly int _dataSize;
 
         public Buffer Buffer
         {
@@ -27,23 +28,26 @@ namespace IndustrialPark
 
             // If no specific marshalling is needed, can use
             // SharpDX.Utilities.SizeOf<T>() for better performance.
-            int size = Marshal.SizeOf(typeof(T));
+            _dataSize = Marshal.SizeOf(typeof(T));
+            int bufferSize = (_dataSize + 15) & ~15;
 
             _buffer = new Buffer(device, new BufferDescription
             {
                 Usage = ResourceUsage.Default,
                 BindFlags = BindFlags.ConstantBuffer,
-                SizeInBytes = size,
+                SizeInBytes = bufferSize,
                 CpuAccessFlags = CpuAccessFlags.None,
                 OptionFlags = ResourceOptionFlags.None,
                 StructureByteStride = 0
             });
 
-            _dataStream = new DataStream(size, true, true);
+            _dataStream = new DataStream(bufferSize, true, true);
         }
 
         public void UpdateValue(T value)
         {
+            ObjectDisposedException.ThrowIf(_buffer == null || _dataStream == null, this);
+
             // If no specific marshalling is needed, can use 
             // dataStream.Write(value) for better performance.
             Marshal.StructureToPtr(value, _dataStream.DataPointer, false);
@@ -54,10 +58,8 @@ namespace IndustrialPark
 
         public void Dispose()
         {
-            if (_dataStream != null)
-                _dataStream.Dispose();
-            if (_buffer != null)
-                _buffer.Dispose();
+            Utilities.Dispose(ref _dataStream);
+            Utilities.Dispose(ref _buffer);
         }
     }
 }

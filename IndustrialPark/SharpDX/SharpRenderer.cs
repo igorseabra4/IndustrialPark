@@ -13,8 +13,10 @@ using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 
 namespace IndustrialPark
 {
-    public class SharpRenderer
+    public class SharpRenderer : IDisposable
     {
+        private bool disposed;
+
         public SharpDevice device;
         public SharpCamera Camera = new SharpCamera();
         public SharpFPS sharpFPS;
@@ -146,55 +148,65 @@ namespace IndustrialPark
             if (!assets.Any())
                 return;
 
-            device.SetSelectionMaskTarget();
-            device.SelectionMaskMode = true;
-
-            device.SetFillModeSolid();
-            device.SetCullModeDefault();
-            device.ApplyRasterState();
-            device.SetDefaultDepthState();
-            device.SetBlendStateAlphaBlend();
-            device.UpdateAllStates();
-
-            isDrawingSelectionMask = true;
-            foreach (IRenderableAsset a in assets)
-                a.Draw(this);
-            isDrawingSelectionMask = false;
-            device.SelectionMaskMode = false;
-
-            device.SetDefaultTargers();
-
-            device.SetCullModeNone();
-            device.SetFillModeDefault();
-            
-            device.ApplyRasterState();
-            device.SetDepthStateNone();
-            device.SetBlendStateAlphaBlend();
-            device.UpdateAllStates();
-
-            outlineBuffer.UpdateValue(new OutlineRenderData()
-            {
-                Color = new Vector4(selectedColor.X, selectedColor.Y, selectedColor.Z, 1f),
-                Settings = new Vector4(selectionOutlineThickness, 0, 0, 0)
-            });
-
             var context = device.DeviceContext;
-            context.InputAssembler.InputLayout = null;
-            context.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
-            context.VertexShader.Set(outlineVertexShader);
-            context.PixelShader.Set(outlinePixelShader);
-            context.GeometryShader.Set(null);
-            context.DomainShader.Set(null);
-            context.HullShader.Set(null);
-            context.PixelShader.SetConstantBuffer(0, outlineBuffer.Buffer);
-            context.PixelShader.SetShaderResource(0, device.SelectionMaskResourceView);
+            try
+            {
+                device.SetSelectionMaskTarget();
+                device.SelectionMaskMode = true;
 
-            context.Draw(3, 0);
+                device.SetFillModeSolid();
+                device.SetCullModeDefault();
+                device.ApplyRasterState();
+                device.SetDefaultDepthState();
+                device.SetBlendStateAlphaBlend();
+                device.UpdateAllStates();
 
-            // unbind the mask so it can be used as a render target again
-            context.PixelShader.SetShaderResource(0, null);
-            device.SetDefaultDepthState();
-            device.UpdateAllStates();
+                isDrawingSelectionMask = true;
+                foreach (IRenderableAsset a in assets)
+                    a.Draw(this);
+                isDrawingSelectionMask = false;
+                device.SelectionMaskMode = false;
+
+                device.SetDefaultTargers();
+
+                device.SetCullModeNone();
+                device.SetFillModeDefault();
+                device.ApplyRasterState();
+                device.SetDepthStateNone();
+                device.SetBlendStateAlphaBlend();
+                device.UpdateAllStates();
+
+                outlineBuffer.UpdateValue(new OutlineRenderData()
+                {
+                    Color = new Vector4(selectedColor.X, selectedColor.Y, selectedColor.Z, 1f),
+                    Settings = new Vector4(selectionOutlineThickness, 0, 0, 0)
+                });
+
+                context.InputAssembler.InputLayout = null;
+                context.InputAssembler.PrimitiveTopology = SharpDX.Direct3D.PrimitiveTopology.TriangleList;
+                context.VertexShader.Set(outlineVertexShader);
+                context.PixelShader.Set(outlinePixelShader);
+                context.GeometryShader.Set(null);
+                context.DomainShader.Set(null);
+                context.HullShader.Set(null);
+                context.PixelShader.SetConstantBuffer(0, outlineBuffer.Buffer);
+                context.PixelShader.SetShaderResource(0, device.SelectionMaskResourceView);
+
+                context.Draw(3, 0);
+            }
+            finally
+            {
+                isDrawingSelectionMask = false;
+                device.SelectionMaskMode = false;
+                context.PixelShader.SetShaderResource(0, null);
+                device.SetDefaultTargers();
+                device.SetCullModeNone();
+                device.SetFillModeDefault();
+                device.ApplyRasterState();
+                device.SetDefaultDepthState();
+                device.SetBlendStateAlphaBlend();
+                device.UpdateAllStates();
+            }
         }
 
         public ShaderResourceView whiteDefault;
@@ -681,7 +693,8 @@ namespace IndustrialPark
             if (device.MustResize)
             {
                 device.Resize();
-                Camera.AspectRatio = (float)controlSize.Width / controlSize.Height;
+                if (controlSize.Width > 0 && controlSize.Height > 0)
+                    Camera.AspectRatio = (float)controlSize.Width / controlSize.Height;
             }
 
             // Calculate the time elapsed since the last frame
@@ -818,54 +831,66 @@ namespace IndustrialPark
 
         public void RunMainLoop(Control control)
         {
-            using (var loop = new RenderLoop(control))
-                while (loop.NextFrame())
-                    MainLoop(control.Size);
+            try
+            {
+                using (var loop = new RenderLoop(control))
+                    while (loop.NextFrame())
+                        MainLoop(control.Size);
+            }
+            finally
+            {
+                Dispose();
+            }
+        }
 
-            // main loop is done; release resources
+        public void Dispose()
+        {
+            if (disposed)
+                return;
+            disposed = true;
 
             SoundUtility_vgmstream.Dispose();
+            Program.TextureManager?.DisposeTextures();
+            Utilities.Dispose(ref arrowDefault);
+            Utilities.Dispose(ref whiteDefault);
 
-            arrowDefault.Dispose();
-            whiteDefault.Dispose();
-            Program.TextureManager.DisposeTextures();
+            Utilities.Dispose(ref GizmoBase.VertexBuffer);
+            Utilities.Dispose(ref AssetCAM.CamVertexBuffer);
 
-            GizmoBase.VertexBuffer.Dispose();
-            AssetCAM.CamVertexBuffer.Dispose();
+            Cube?.Dispose();
+            Cylinder?.Dispose();
+            Pyramid?.Dispose();
+            Sphere?.Dispose();
+            Plane?.Dispose();
+            Torus?.Dispose();
+            Cone?.Dispose();
+#if DEBUG
+            BoundingBox?.Dispose();
+#endif
 
-            Cube.Dispose();
-            Pyramid.Dispose();
-            Cylinder.Dispose();
-            Sphere.Dispose();
-            Plane.Dispose();
-            Cone.Dispose();
-
-            basicBuffer.Dispose();
-            basicShader.Dispose();
-
-            defaultBuffer.Dispose();
-            defaultShader.Dispose();
-
-            tintedBuffer.Dispose();
-            tintedShader.Dispose();
-
-            fogLightBuffer.Dispose();
-            fogLightShader.Dispose();
-
-            jspBuffer.Dispose();
-            jspShader.Dispose();
-
-            outlineBuffer.Dispose();
-            outlineVertexShader.Dispose();
-            outlinePixelShader.Dispose();
+            basicBuffer?.Dispose();
+            basicShader?.Dispose();
+            defaultBuffer?.Dispose();
+            defaultShader?.Dispose();
+            tintedBuffer?.Dispose();
+            tintedShader?.Dispose();
+            fogLightBuffer?.Dispose();
+            fogLightShader?.Dispose();
+            jspBuffer?.Dispose();
+            jspShader?.Dispose();
+            outlineBuffer?.Dispose();
+            Utilities.Dispose(ref outlineVertexShader);
+            Utilities.Dispose(ref outlinePixelShader);
 
             foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
                 mesh?.Dispose();
+            RenderWareModelFile.completeMeshList.Clear();
 
-            foreach (var bf in completeVertexBufferList)
-                bf?.Dispose();
+            foreach (var buffer in completeVertexBufferList)
+                buffer?.Dispose();
+            completeVertexBufferList.Clear();
 
-            device.Dispose();
+            device?.Dispose();
         }
     }
 }
