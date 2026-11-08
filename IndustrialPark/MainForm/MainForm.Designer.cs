@@ -124,6 +124,7 @@ namespace IndustrialPark
             launchGameToolStripMenuItem = new ToolStripMenuItem();
             buildAndRunPS2ISOToolStripMenuItem = new ToolStripMenuItem();
             createGameCubeBannerToolStripMenuItem = new ToolStripMenuItem();
+            scriptEditorToolStripMenuItem = new ToolStripMenuItem();
             stopSoundToolStripMenuItem = new ToolStripMenuItem();
             exportSceneToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator8 = new ToolStripSeparator();
@@ -895,7 +896,7 @@ namespace IndustrialPark
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, launchGameToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, createGameCubeBannerToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, archiveComparerToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem, setDolphinPathToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, launchGameToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, createGameCubeBannerToolStripMenuItem, scriptEditorToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, archiveComparerToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem, setDolphinPathToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 19);
             toolsToolStripMenuItem.Text = "&Tools";
@@ -930,6 +931,13 @@ namespace IndustrialPark
             createGameCubeBannerToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
             createGameCubeBannerToolStripMenuItem.Text = "Create GameCube banner...";
             createGameCubeBannerToolStripMenuItem.Click += createGameCubeBannerToolStripMenuItem_Click;
+            // 
+            // scriptEditorToolStripMenuItem
+            // 
+            scriptEditorToolStripMenuItem.Name = "scriptEditorToolStripMenuItem";
+            scriptEditorToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            scriptEditorToolStripMenuItem.Text = "C# Script Editor...";
+            scriptEditorToolStripMenuItem.Click += scriptEditorToolStripMenuItem_Click;
             // 
             // stopSoundToolStripMenuItem
             // 
@@ -1615,7 +1623,7 @@ namespace IndustrialPark
         private System.Windows.Forms.ToolStripMenuItem cursorInFlyModeToolStripMenuItem;
 
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-
+        private System.Windows.Forms.ToolStripMenuItem scriptEditorToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem createGameCubeBannerToolStripMenuItem;
 
         #endregion

@@ -243,6 +243,8 @@ namespace IndustrialPark
             new("Launch game", "Tools", KeyboardAction.RunGame),
             new("Open PS2 ISO Build/Run tool", "Tools", KeyboardAction.BuildAndRunPS2ISO),
             new("Open GameCube banner tool", "Tools", KeyboardAction.CreateGameCubeBanner),
+            new("Open C# Script Editor", "Tools", KeyboardAction.OpenScriptEditor),
+            new("Open new C# Script Editor", "Tools", KeyboardAction.OpenNewScriptEditor),
         };
 
         private void buttonDefaults_Click(object sender, EventArgs e)

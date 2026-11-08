@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using IndustrialPark.Archive;
 using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Scripting;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using System;
@@ -628,6 +629,11 @@ namespace IndustrialPark
         {
             var bannerCreator = new CreateGameCubeBanner();
             bannerCreator.Show(this);
+        }
+
+        private void scriptEditorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            new ScriptEditorForm().Show(this);
         }
 
         private void stopSoundToolStripMenuItem_Click(object sender, EventArgs e)

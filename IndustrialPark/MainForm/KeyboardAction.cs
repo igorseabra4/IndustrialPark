@@ -42,4 +42,6 @@ public enum KeyboardAction
     RunGame = 37,
     BuildAndRunPS2ISO = 38,
     CreateGameCubeBanner = 39,
+    OpenScriptEditor = 40,
+    OpenNewScriptEditor = 41,
 }

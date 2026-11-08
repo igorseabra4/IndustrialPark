@@ -546,6 +546,16 @@ public partial class MainForm
             case KeyboardAction.CreateGameCubeBanner:
                 createGameCubeBannerToolStripMenuItem.PerformClick();
                 return;
+            case KeyboardAction.OpenNewScriptEditor:
+                scriptEditorToolStripMenuItem.PerformClick();
+                return;
+            case KeyboardAction.OpenScriptEditor:
+                var form = OwnedForms.OfType<Scripting.ScriptEditorForm>().FirstOrDefault();
+                if (form == null)
+                    scriptEditorToolStripMenuItem.PerformClick();
+                else
+                    form.BringToFront();
+                return;
         }
     }
 
@@ -616,6 +626,8 @@ public partial class MainForm
         (KeyboardAction.RunGame, new KeyBinding(Keys.F5)),
         (KeyboardAction.BuildAndRunPS2ISO, new KeyBinding(Keys.F6)),
         (KeyboardAction.CreateGameCubeBanner, new KeyBinding(Keys.F7)),
+        (KeyboardAction.OpenScriptEditor, new KeyBinding(Keys.F8)),
+        (KeyboardAction.OpenNewScriptEditor, new KeyBinding(Keys.F8, Keys.Shift)),
     ];
 
     public static List<(KeyboardAction Action, KeyBinding Binding)> IpClassicBindings =>
