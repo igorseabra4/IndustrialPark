@@ -238,7 +238,7 @@ public class AssetFactory
             case AssetTemplate.Bus_Stop_Trigger:
                 {
                     var trigger = new AssetTRIG(assetName, position, template);
-                    var lightsSimp = GenerateTemplate(position, assetName.Replace("TRIGGER", "LIGHTS").Replace("TRIG", "LIGHTS"), AssetTemplate.Bus_Stop_Lights);
+                    var lightsSimp = GenerateTemplate(position, assetName.Replace("TRIG", "LIGHTS"), AssetTemplate.Bus_Stop_Lights);
 
                     trigger.Links = new Link[] {
                         new Link(game)
@@ -697,9 +697,9 @@ public class AssetFactory
             }
             case AssetTemplate.Bus_Stop_DYNA:
             {
-                var mrkr = GenerateTemplate(position, assetName.Replace("DYNA", "MARKER"), AssetTemplate.Marker);
-                var cam = GenerateTemplate(position, assetName.Replace("DYNA", "CAM"), AssetTemplate.Bus_Stop_Camera);
-                var simp = GenerateTemplate(position, assetName.Replace("DYNA", "SIMP"), AssetTemplate.Bus_Stop_BusSimp);
+                var mrkr = GenerateTemplate(position, assetName.Replace("ASSET", "MARKER"), AssetTemplate.Marker);
+                var cam = GenerateTemplate(position, assetName.Replace("ASSET", "CAM"), AssetTemplate.Bus_Stop_Camera);
+                var simp = GenerateTemplate(position, assetName.Replace("ASSET", "SIMP"), AssetTemplate.Bus_Stop_BusSimp);
 
                 return new DynaGObjectBusStop(assetName, mrkr.assetID, cam.assetID, simp.assetID);
             }
