@@ -38,10 +38,18 @@ public class ArchiveSubscriber
     {
         SubscribeToAssetAdded((asset) =>
         {
-            if (asset is AssetSDFX sdfx)
-                sdfx.GetSGRP = sgrp => (archive.TryGetAsset(sgrp, out Asset asset) && asset is AssetSGRP SGRP) ? SGRP : null;
-            else if (asset is DynaGObjectTeleport teleport)
-                teleport.GetMRKR = mrkr => (archive.TryGetAsset(mrkr, out Asset asset) && asset is AssetMRKR MRKR) ? MRKR : null;
+            switch (asset)
+            {
+                case AssetSFX sfx:
+                    sfx.GetAttach = attachID => archive.TryGetAsset(attachID, out Asset asset) ? asset : null;
+                    break;
+                case AssetSDFX sdfx:
+                    sdfx.GetSGRP = sgrp => (archive.TryGetAsset(sgrp, out Asset asset) && asset is AssetSGRP SGRP) ? SGRP : null;
+                    break;
+                case DynaGObjectTeleport teleport:
+                    teleport.GetMRKR = mrkr => (archive.TryGetAsset(mrkr, out Asset asset) && asset is AssetMRKR MRKR) ? MRKR : null;
+                    break;
+            }
         });
 
         SubscribeToAssetRemoved((asset) =>

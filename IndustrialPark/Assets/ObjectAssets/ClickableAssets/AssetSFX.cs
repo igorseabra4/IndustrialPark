@@ -14,9 +14,21 @@ namespace IndustrialPark
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Sound);
 
         [Category(categoryName)]
-        public FlagBitmask Flags08 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags09 { get; set; } = ByteFlagsDescriptor();
+        public FlagBitmask Flags { get; set; } = ShortFlagsDescriptor(
+            "Unknown 0001",
+            "Play in 3D", // 0002
+            "Loops (possibly)",
+            "Use Attach", // 0008
+            "Unknown 0010",
+            "Unknown 0020",
+            "Unknown 0040",
+            "Unknown 0080",
+            "Unknown 0100",
+            "Environmental", // 0200
+            "Notify Player", // 0400
+            "Has link which receives Done", // 0800
+            "Pending Play" // 1000
+            );
         [Category(categoryName)]
         public short Frequency { get; set; }
         [Category(categoryName)]
@@ -65,14 +77,20 @@ namespace IndustrialPark
             set => _radius2 = value;
         }
 
+        [Browsable(false)]
+        public bool PlayIn3D => (Flags.FlagValueShort & 0x0002) != 0;
+        [Browsable(false)]
+        public bool UseAttach => (Flags.FlagValueShort & 0x0008) != 0;
+        [Browsable(false)]
+        public Func<uint, Asset> GetAttach;
+
         public AssetSFX(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.SFX, BaseAssetType.SFX)
         {
             _position = position;
 
             if (template == AssetTemplate.SFX_OnRadius)
             {
-                Flags08.FlagValueByte = 0x03;
-                Flags09.FlagValueByte = 0xE6;
+                Flags.FlagValueShort = 0x01C2;
                 _links = new Link[]
                 {
                     new Link(game)
@@ -85,8 +103,7 @@ namespace IndustrialPark
             }
             else if (template == AssetTemplate.SFX_OnEvent)
             {
-                Flags08.FlagValueByte = 0x01;
-                Flags09.FlagValueByte = 0xC0;
+                Flags.FlagValueShort = 0x01C0;
             }
 
             MinFrequency = 1f;
@@ -97,8 +114,7 @@ namespace IndustrialPark
 
             if (template == AssetTemplate.Cauldron_Sfx)
             {
-                Flags08.FlagValueByte = 0x01;
-                Flags09.FlagValueByte = 0xCA;
+                Flags.FlagValueShort = 0x01CA;
                 Sound = "cauldron_loop1";
                 Volume = 100;
                 InnerRadius = 20f;
@@ -120,8 +136,7 @@ namespace IndustrialPark
             using var reader = new EndianBinaryReader(AHDR.data, endianness);
             reader.BaseStream.Position = baseHeaderEndPosition;
 
-            Flags08.FlagValueByte = reader.ReadByte();
-            Flags09.FlagValueByte = reader.ReadByte();
+            Flags.FlagValueShort = reader.ReadUInt16();
             Frequency = reader.ReadInt16();
             MinFrequency = reader.ReadSingle();
             Sound = reader.ReadUInt32();
@@ -138,8 +153,7 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(Flags08.FlagValueByte);
-            writer.Write(Flags09.FlagValueByte);
+            writer.Write(Flags.FlagValueShort);
             writer.Write(Frequency);
             writer.Write(MinFrequency);
             writer.Write(Sound);
@@ -169,16 +183,34 @@ namespace IndustrialPark
 
         public void CreateTransformMatrix(SharpRenderer renderer)
         {
-            world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
-
-            CreateBoundingBox();
+            if (PlayIn3D)
+            {
+                var position = (UseAttach && GetAttach != null && GetAttach(Attach) is IClickableAsset ica) ?
+                    new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ) : _position;
+                world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(position);
+                CreateBoundingBox(position);
+            }
+            else
+            {
+                world = Matrix.Identity;
+                CreateBoundingBox(null);
+            }
         }
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(Vector3? position)
         {
-            boundingSphere = new BoundingSphere(_position, _radius);
-            boundingSphere2 = new BoundingSphere(_position, _radius2);
-            boundingBox = BoundingBox.FromSphere(boundingSphere);
+            if (position.HasValue)
+            {
+                boundingSphere = new BoundingSphere(position.Value, _radius);
+                boundingSphere2 = new BoundingSphere(position.Value, _radius2);
+                boundingBox = BoundingBox.FromSphere(boundingSphere);
+            }
+            else
+            {
+                boundingSphere = new BoundingSphere();
+                boundingSphere2 = new BoundingSphere();
+                boundingBox = new BoundingBox();
+            }
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
@@ -195,6 +227,8 @@ namespace IndustrialPark
             if (dontRender)
                 return false;
             if (isInvisible)
+                return false;
+            if (!PlayIn3D)
                 return false;
             if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;

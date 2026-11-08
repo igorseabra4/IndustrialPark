@@ -149,7 +149,7 @@ public abstract class InternalEditor : Form
 
     protected void viewToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        if (asset is IClickableAsset ica)
+        if (asset is IClickableAsset ica && asset is not AssetSFX { PlayIn3D: false })
             Program.Renderer.Camera.ShowAssetOnViewport(ica);
     }
 

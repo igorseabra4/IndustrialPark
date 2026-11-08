@@ -69,15 +69,13 @@ public partial class InternalAssetEditor : InternalEditor
                 tableLayoutPanel1.RowStyles.Add(rs);
         }
 
-        viewToolStripMenuItem.Visible = asset is IClickableAsset;
-
         SelectFirstProperty(propertyGridAsset.SelectedGridItem);
     }
 
     protected override void OnAssetReplaced()
     {
         propertyGridAsset.SelectedObject = DynamicTypeDescriptor.Create(asset);
-        viewToolStripMenuItem.Visible = asset is IClickableAsset;
+        viewToolStripMenuItem.Visible = asset is IClickableAsset && asset is not AssetSFX { PlayIn3D: false };
     }
 
     public override void RefreshPropertyGrid()

@@ -959,7 +959,9 @@ public partial class ArchiveEditor : Form
 
     private void buttonView_Click(object sender, EventArgs e)
     {
-        var assets = selectionManager.SelectedAssets.OfType<IClickableAsset>().ToArray();
+        var assets = selectionManager.SelectedAssets.OfType<IClickableAsset>()
+            .Where(asset => asset is not AssetSFX { PlayIn3D: false })
+            .ToArray();
         if (assets.Length == 0)
             return;
         currentView++;
@@ -1159,6 +1161,8 @@ public partial class ArchiveEditor : Form
                 TextureConverter.EnableTextureForDisplay(rwtx);
             else if (asset is AssetRenderWareModel model)
                 model.SetupModel(Program.Renderer);
+            if (asset is IClickableAsset clickableAsset)
+                RefreshReferencedTransformMatrices(clickableAsset);
             asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
         });
 
@@ -1290,8 +1294,22 @@ public partial class ArchiveEditor : Form
                 model.SetupModel(Program.Renderer);
                 break;
         }
+        if (asset is IClickableAsset clickableAsset)
+            RefreshReferencedTransformMatrices(clickableAsset);
         UpdateListView(asset);
         NotifyArchiveStateChanged();
+    }
+
+    internal void RefreshReferencedTransformMatrices(IClickableAsset asset)
+    {
+        foreach (var sfx in archive.Assets.OfType<AssetSFX>())
+            if (sfx.UseAttach && ReferenceEquals(sfx.GetAttach?.Invoke(sfx.Attach), asset))
+                sfx.CreateTransformMatrix(Program.Renderer);
+
+        if (asset is AssetMRKR marker)
+            foreach (var teleport in archive.Assets.OfType<DynaGObjectTeleport>())
+                if (ReferenceEquals(teleport.GetMRKR?.Invoke(teleport.Marker), marker))
+                    teleport.CreateTransformMatrix(Program.Renderer);
     }
 
     public void SubscribeToSelectedAssetsCollectionChanged(Action action) =>
@@ -1590,7 +1608,7 @@ public partial class ArchiveEditor : Form
         toolStripMenuItem_EditData.Enabled = buttonEditDataAsset.Enabled = canEditAsset;
         toolStripMenuItem_MultiEdit.Enabled = buttonMultiEditAsset.Enabled = canEditAsset;
         toolStripMenuItem_CreateGroup.Enabled = canEditAsset;
-        toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && selectionManager.SelectedAssets.Any(asset => asset is IClickableAsset);
+        toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && selectionManager.SelectedAssets.Any(asset => asset is not AssetSFX { PlayIn3D: false });
 
         var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
         toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
