@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 using SharpDX;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class PlatSpecific_Generic : GenericAssetDataContainer
     {

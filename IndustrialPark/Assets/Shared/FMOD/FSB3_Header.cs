@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.IO;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class FSB3_Header : GenericAssetDataContainer
     {

@@ -1,6 +1,9 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets.Colors;
+using IndustrialPark.Assets;
+using IndustrialPark.Gizmos;
 using IndustrialPark.Scripting;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
@@ -826,7 +829,7 @@ namespace IndustrialPark
                     HipFile hipFile = HipFile.FromPath(hip);
                     if (hipFile.platform == Platform.Unknown && scoobyPlat != Platform.Unknown)
                         hipFile.platform = scoobyPlat;
-                    var archive = new Archive.Archive(hipFile, hip, true, out _);
+                    var archive = new Archive(hipFile, hip, true, out _);
                     scoobyPlat = archive.Platform;
 
                     for (int i = 0; i < archive.LayerCount; i++)
@@ -846,64 +849,6 @@ namespace IndustrialPark
 
                 p.Close();
             }
-        }
-
-        private void eventSearchToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.EventSearch ??= new EventSearch();
-            if (!Program.EventSearch.Visible)
-                Program.EventSearch.Show(this);
-        }
-
-        private void dYNASearchToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.DynaSearch ??= new DynaSearch();
-            if (!Program.DynaSearch.Visible)
-                Program.DynaSearch.Show(this);
-        }
-
-        private void dynaNameSearcherToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
-            if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                var unkDtypes = new uint[] {
-                    0xEBC04E7B,
-                };
-
-                string ReadZeroTerminatedString(EndianBinaryReader r)
-                {
-                    var bytes = new List<char>();
-                    while (!r.EndOfStream)
-                    {
-                        var b = r.ReadByte();
-                        if (b != 0)
-                            bytes.Add((char)b);
-                        else
-                            break;
-                    }
-
-                    return new string(bytes.ToArray());
-                }
-
-                byte[] file = File.ReadAllBytes(openFileDialog.FileName);
-                EndianBinaryReader reader = new EndianBinaryReader(file, Endianness.Little);
-                while (!reader.EndOfStream)
-                {
-                    var str = ReadZeroTerminatedString(reader);
-                    var hash = Functions.BKDRHash(str);
-                    if (unkDtypes.Contains(hash))
-                        MessageBox.Show("Found: [" + str + "] " + hash.ToString("X8"));
-                }
-                MessageBox.Show("Finished");
-            }
-        }
-
-        private void pickupSearcherToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Program.PickupSearch ??= new PickupSearch();
-            if (!Program.PickupSearch.Visible)
-                Program.PickupSearch.Show(this);
         }
 
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)

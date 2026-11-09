@@ -1,11 +1,11 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetUIFT : AssetUI
     {

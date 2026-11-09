@@ -1,6 +1,6 @@
 ﻿using HipHopFile;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetSound : AssetWithData
     {

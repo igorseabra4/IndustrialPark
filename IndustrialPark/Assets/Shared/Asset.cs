@@ -1,9 +1,9 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 using System;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Assets;
 
 public abstract class Asset : GenericAssetDataContainer
 {

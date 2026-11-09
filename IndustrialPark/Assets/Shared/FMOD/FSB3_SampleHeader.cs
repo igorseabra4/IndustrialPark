@@ -4,7 +4,7 @@ using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class FSB3_SampleHeader : GenericAssetDataContainer
     {

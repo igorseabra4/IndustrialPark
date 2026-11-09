@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class EntrySoundInfo_GCN_V1 : GenericAssetDataContainer
     {

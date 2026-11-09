@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -6,7 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class RenderableDynaBase : AssetDYNA, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
@@ -120,14 +121,14 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        public virtual Transformation GetTransformation() => new Transformation()
+        public virtual AssetTransformation GetTransformation() => new AssetTransformation()
         {
             _positionX = _position.X,
             _positionY = _position.Y,
             _positionZ = _position.Z,
         };
 
-        public virtual void SetTransformation(Transformation transformation)
+        public virtual void SetTransformation(AssetTransformation transformation)
         {
             _position.X = transformation._positionX;
             _position.Y = transformation._positionY;

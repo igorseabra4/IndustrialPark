@@ -1,7 +1,7 @@
 ﻿using SharpDX;
 using System.Collections.Generic;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class VolumeSpecific_Generic : GenericAssetDataContainer
     {

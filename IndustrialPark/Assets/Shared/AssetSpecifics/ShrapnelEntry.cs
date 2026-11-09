@@ -1,10 +1,10 @@
 ﻿using DiscordRPC;
 using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using System;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum IShrapnelType : int
     {

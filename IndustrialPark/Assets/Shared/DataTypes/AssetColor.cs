@@ -1,9 +1,10 @@
-﻿using SharpDX;
+﻿using IndustrialPark.Assets.Colors;
+using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark.AssetEditorColors
+namespace IndustrialPark.Assets.Colors
 {
     [TypeConverter(typeof(AssetColorTypeConverter)), Editor(typeof(AssetColorEditor), typeof(UITypeEditor)), Description("Hex Color (RRGGBBAA)")]
     public class AssetColor

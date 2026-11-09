@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public class LayerTypeChangedAction : IReversibleAction
 {

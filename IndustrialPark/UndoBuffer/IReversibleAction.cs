@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public interface IReversibleAction
 {

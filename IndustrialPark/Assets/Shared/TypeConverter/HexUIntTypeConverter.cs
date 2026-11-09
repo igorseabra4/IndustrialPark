@@ -1,11 +1,11 @@
-﻿using IndustrialPark.Archive;
+﻿using IndustrialPark.Archives;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class HexUIntTypeConverter : TypeConverter
     {

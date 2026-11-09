@@ -1,9 +1,9 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetPLAT : AssetWithMotion
     {

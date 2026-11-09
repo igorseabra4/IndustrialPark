@@ -1,10 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum CamType : byte
     {

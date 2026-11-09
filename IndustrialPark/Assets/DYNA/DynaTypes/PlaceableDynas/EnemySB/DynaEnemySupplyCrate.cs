@@ -1,9 +1,9 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum EnemySupplyCrateType : uint
     {
@@ -33,12 +33,15 @@ namespace IndustrialPark
 
         public DynaEnemySupplyCrate(string assetName, AssetTemplate template, Vector3 position) : base(assetName, DynaType.Enemy__SB__SupplyCrate, position)
         {
-            CrateType =
-                template == AssetTemplate.Wood_Crate ? EnemySupplyCrateType.crate_wood_bind :
-                template == AssetTemplate.Hover_Crate ? EnemySupplyCrateType.crate_hover_bind :
-                template == AssetTemplate.Explode_Crate ? EnemySupplyCrateType.crate_explode_bind :
-                template == AssetTemplate.Shrink_Crate ? EnemySupplyCrateType.crate_shrink_bind :
-                template == AssetTemplate.Steel_Crate ? EnemySupplyCrateType.crate_steel_bind : 0;
+            CrateType = template switch
+            {
+                AssetTemplate.Wood_Crate => EnemySupplyCrateType.crate_wood_bind,
+                AssetTemplate.Hover_Crate => EnemySupplyCrateType.crate_hover_bind,
+                AssetTemplate.Explode_Crate => EnemySupplyCrateType.crate_explode_bind,
+                AssetTemplate.Shrink_Crate => EnemySupplyCrateType.crate_shrink_bind,
+                AssetTemplate.Steel_Crate => EnemySupplyCrateType.crate_steel_bind,
+                _ => 0
+            };
         }
 
         public DynaEnemySupplyCrate(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__SupplyCrate, game, endianness)

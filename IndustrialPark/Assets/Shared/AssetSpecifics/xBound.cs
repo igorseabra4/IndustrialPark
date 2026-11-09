@@ -1,6 +1,6 @@
 ﻿using SharpDX;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     // Todo: Merge with Volume
     public enum BoundType : byte

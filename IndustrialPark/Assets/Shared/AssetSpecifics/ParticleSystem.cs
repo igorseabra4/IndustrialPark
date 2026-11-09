@@ -1,4 +1,4 @@
-﻿using IndustrialPark.AssetEditorColors;
+﻿using IndustrialPark.Assets.Colors;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ParticleSystemType
     {

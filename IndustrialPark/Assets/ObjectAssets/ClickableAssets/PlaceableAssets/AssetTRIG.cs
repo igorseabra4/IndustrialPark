@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum TriggerShape
     {
@@ -438,7 +439,7 @@ namespace IndustrialPark
             FixPosition();
         }
 
-        public override Transformation GetTransformation()
+        public override AssetTransformation GetTransformation()
         {
             if (Shape == TriggerShape.Box)
             {
@@ -446,7 +447,7 @@ namespace IndustrialPark
                 return null;
             }
 
-            var transformation = new Transformation()
+            var transformation = new AssetTransformation()
             {
                 _positionX = _minimum.X,
                 _positionY = _minimum.Y,
@@ -465,7 +466,7 @@ namespace IndustrialPark
             return transformation;
         }
 
-        public override void SetTransformation(Transformation transformation)
+        public override void SetTransformation(AssetTransformation transformation)
         {
             if (Shape == TriggerShape.Box)
             {

@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System.IO;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class FMOD_GcADPCMInfo : GenericAssetDataContainer
     {

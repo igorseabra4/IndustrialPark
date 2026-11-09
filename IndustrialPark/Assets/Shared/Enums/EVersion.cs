@@ -1,4 +1,4 @@
-﻿namespace IndustrialPark
+﻿namespace IndustrialPark.Assets
 {
     public enum EVersionIncrediblesOthers
     {

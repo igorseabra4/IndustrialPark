@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     [TypeConverter(typeof(HexUIntTypeConverter)), Editor(typeof(AssetIDEditor), typeof(UITypeEditor))]
     public struct AssetID : IComparable<AssetID>, IEquatable<AssetID>

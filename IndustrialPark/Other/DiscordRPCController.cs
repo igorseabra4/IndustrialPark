@@ -1,6 +1,7 @@
 ﻿using DiscordRPC;
 using DiscordRPC.Logging;
 using HipHopFile;
+using IndustrialPark.ArchiveEditors;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -146,7 +147,7 @@ namespace IndustrialPark
                     Details = details,
                     State = state,
                     Timestamps = currentTimestamp,
-                    Assets = new Assets()
+                    Assets = new DiscordRPC.Assets()
                     {
                         LargeImageKey = (largeImageKey == "icon" ? largeImageKey : game.ToLower()),
                         LargeImageText = largeImageText,

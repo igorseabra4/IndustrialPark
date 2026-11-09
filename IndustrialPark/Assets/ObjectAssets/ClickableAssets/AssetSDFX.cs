@@ -1,11 +1,12 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetSDFX : BaseAsset, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
@@ -151,14 +152,14 @@ namespace IndustrialPark
             }
         }
 
-        public Transformation GetTransformation() => new Transformation()
+        public AssetTransformation GetTransformation() => new AssetTransformation()
         {
             _positionX = _position.X,
             _positionY = _position.Y,
             _positionZ = _position.Z,
         };
 
-        public void SetTransformation(Transformation transformation)
+        public void SetTransformation(AssetTransformation transformation)
         {
             _position.X = transformation._positionX;
             _position.Y = transformation._positionY;

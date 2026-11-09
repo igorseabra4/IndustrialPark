@@ -2,7 +2,7 @@
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetPEND : AssetWithMotion
     {

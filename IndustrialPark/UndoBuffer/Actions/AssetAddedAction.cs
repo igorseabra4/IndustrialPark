@@ -1,7 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public class AssetAddedAction : IReversibleAction
 {

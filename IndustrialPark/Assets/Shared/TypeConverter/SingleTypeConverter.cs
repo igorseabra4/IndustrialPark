@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class SingleTypeConverter : TypeConverter
     {

@@ -1,6 +1,8 @@
 ﻿using Assimp;
 using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets;
 using IndustrialPark.Models;
 using RenderWareFile;
 using SharpDX;
@@ -203,14 +205,14 @@ public class AssetRenderer
             MODL.ResetPipeline();
     }
 
-    private void LightKitUpdate(Archive.Archive archive, uint lkitID)
+    private void LightKitUpdate(Archive archive, uint lkitID)
     {
         AssetLKIT.SceneLightKit = null;
         if (archive.TryGetAsset(lkitID, out Asset asset) && asset is AssetLKIT lkit)
             AddToRenderableLightKits(lkit);
     }
 
-    public void RegisterSubscriptions(Archive.Archive archive)
+    public void RegisterSubscriptions(Archive archive)
     {
         archive.Subscriber.SubscribeToAssetAdded((asset) =>
         {

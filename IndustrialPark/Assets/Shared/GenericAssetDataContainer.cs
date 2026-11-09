@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public abstract class GenericAssetDataContainer

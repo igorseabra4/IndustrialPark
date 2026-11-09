@@ -1,4 +1,7 @@
-﻿using SharpDX;
+﻿using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Assets;
+using IndustrialPark.Gizmos;
+using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,14 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
-using SharpDX;
-using System;
-using System.Collections.Generic;
+using IndustrialPark.Assets.Colors;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectLightStrobe : AssetDYNA
     {

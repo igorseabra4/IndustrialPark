@@ -5,7 +5,6 @@
     <OutputType>WinExe</OutputType>
 	<ApplicationDefaultFont>Microsoft Sans Serif, 8.25pt</ApplicationDefaultFont>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
 	<ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
 	<ForceDesignerDpiUnaware>true</ForceDesignerDpiUnaware>
   </PropertyGroup>
@@ -18,9 +17,6 @@
     <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetZone>LocalIntranet</TargetZone>
-  </PropertyGroup>
-  <PropertyGroup>
     <GenerateManifests>false</GenerateManifests>
   </PropertyGroup>
   <PropertyGroup>
@@ -31,7 +27,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <Company>Heavy Iron Modding</Company>
-    <Copyright>Copyright ©  2026 Heavy Iron Modding</Copyright>
+    <Copyright>Copyright © 2026 Heavy Iron Modding</Copyright>
     <InformationalVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</InformationalVersion>
     <AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
 	<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
@@ -174,22 +170,6 @@
     <ProjectReference Include="..\RenderWareFile\RenderWareFile\RenderWareFile.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.6.1">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.6.1 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Libraries\" />
-    <Folder Include="Resources\CountryFlagIcons\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AssimpNetter" Version="6.0.5" />
     <PackageReference Include="DiscordRichPresence" Version="1.6.1.70" />
     <PackageReference Include="DSoft.SharpDX.Desktop" Version="4.4.2504.231" />
@@ -205,24 +185,11 @@
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Remove="MainForm\OpenLevel.en-GB.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Resources\SharpDX\Shader_JSP.hlsl" />
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="NvTriStripDotNet">
       <HintPath>Libraries\NvTriStripDotNet.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="ArchiveEditor\Dialogs\ChooseGeneric.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="MainForm\MainForm_AdvancedDocking.cs" />
-    <Compile Update="MainForm\ConnectMarkers.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -240,19 +207,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <ProjectExtensions />
-  <Target Name="AfterBuild">
-    <ItemGroup>
-      <MoveToLibFolder Include="$(OutputPath)*.dll" />
-    </ItemGroup>
-    <Move SourceFiles="@(MoveToLibFolder)" DestinationFolder="$(OutputPath)lib" OverwriteReadOnlyFiles="true" />
-  </Target>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;SYSLIB0014</NoWarn>
   </PropertyGroup>
-  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="if $(ConfigurationName) == Debug (&#xD;&#xA;REM Delete all build_test folders&#xD;&#xA;for /d %25%25G in (&quot;$(TargetDir)build_test*&quot;) do rd  /s /q %25%25G &amp;&amp; echo Deleted Directory: %25%25G&#xD;&#xA;REM Delete all orderlog files&#xD;&#xA;del &quot;$(TargetDir)*orderlog.txt&quot;&#xD;&#xA;) ELSE (&#xD;&#xA;cd $(TargetDir)&#xD;&#xA;del *.pdb&#xD;&#xA;)" />
-  </Target>
-  <Import Project="..\packages\AssimpNetter.6.0.5\build\AssimpNetter.targets" Condition="Exists('..\packages\AssimpNetter.6.0.5\build\AssimpNetter.targets')" />
-  <Import Project="..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('..\packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
 </Project>

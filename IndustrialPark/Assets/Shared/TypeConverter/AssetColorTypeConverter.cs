@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace IndustrialPark.AssetEditorColors;
+namespace IndustrialPark.Assets.Colors;
 
 public class AssetColorTypeConverter : TypeConverter
 {

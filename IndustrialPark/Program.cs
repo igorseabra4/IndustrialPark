@@ -1,5 +1,7 @@
-using IndustrialPark.Archive;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using IndustrialPark.SaveFile;
+using IndustrialPark.Undo;
 using Microsoft.Win32;
 using Newtonsoft.Json;
 using System;
@@ -26,10 +28,7 @@ public static class Program
     public static UndoBuffer UndoBuffer;
     public static BuildISO BuildISO;
     public static HansMainForm HansMainForm;
-    public static EventSearch EventSearch;
-    public static DynaSearch DynaSearch;
     public static AssetIDGenerator AssetIDGenerator;
-    public static PickupSearch PickupSearch;
 
     public static bool IsDarkMode;
 

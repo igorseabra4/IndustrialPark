@@ -7,7 +7,7 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Text;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class EntrySoundInfo_PS2 : GenericAssetDataContainer
     {

@@ -1,5 +1,5 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 using RenderWareFile;
 using RenderWareFile.Enums;
 using RenderWareFile.Sections;
@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetRWTX : AssetWithData
     {

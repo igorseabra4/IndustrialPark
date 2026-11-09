@@ -1,4 +1,4 @@
-﻿namespace IndustrialPark
+﻿namespace IndustrialPark.Assets
 {
     public interface ITableAsset
     {

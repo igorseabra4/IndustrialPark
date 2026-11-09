@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetPORT : BaseAsset
     {

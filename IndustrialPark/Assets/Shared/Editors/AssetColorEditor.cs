@@ -5,7 +5,7 @@ using System.Drawing.Design;
 using System.Windows.Forms;
 using System.Windows.Forms.Design;
 
-namespace IndustrialPark.AssetEditorColors;
+namespace IndustrialPark.Assets.Colors;
 
 public class AssetColorEditor : UITypeEditor
 {

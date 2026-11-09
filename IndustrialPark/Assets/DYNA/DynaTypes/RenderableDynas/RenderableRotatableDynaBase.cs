@@ -1,11 +1,12 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class RenderableRotatableDynaBase : RenderableDynaBase, IRotatableAsset
     {
@@ -71,7 +72,7 @@ namespace IndustrialPark
             CreateBoundingBox(renderer);
         }
 
-        public override Transformation GetTransformation() => new Transformation()
+        public override AssetTransformation GetTransformation() => new AssetTransformation()
         {
             _positionX = _position.X,
             _positionY = _position.Y,
@@ -81,7 +82,7 @@ namespace IndustrialPark
             _roll = _roll,
         };
 
-        public override void SetTransformation(Transformation transformation)
+        public override void SetTransformation(AssetTransformation transformation)
         {
             _position.X = transformation._positionX;
             _position.Y = transformation._positionY;

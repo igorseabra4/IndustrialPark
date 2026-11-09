@@ -1,4 +1,6 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +10,7 @@ namespace IndustrialPark.SaveFile
 {
     public static class SaveFileScene
     {
-        public static string GenerateReport(Archive.Archive archive, Platform platform, byte[] data)
+        public static string GenerateReport(Archive archive, Platform platform, byte[] data)
         {
             var assetTypes = AssetOrder;
             var report = new StringBuilder();
@@ -54,7 +56,7 @@ namespace IndustrialPark.SaveFile
             return report.ToString();
         }
 
-        private static IEnumerable<Asset> GetPersistentAssetsOfType(Archive.Archive archive, AssetType assetType)
+        private static IEnumerable<Asset> GetPersistentAssetsOfType(Archive archive, AssetType assetType)
         {
             var result = new List<Asset>();
             for (int i = 0; i < (archive.AutoLayers ? 1 : archive.LayerCount); i++)

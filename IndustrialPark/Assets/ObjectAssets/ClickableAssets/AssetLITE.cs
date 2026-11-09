@@ -1,10 +1,11 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum LightType : byte
     {
@@ -36,7 +37,7 @@ namespace IndustrialPark
         Cauldron = 17,
     }
 
-    public class AssetLITE : BaseAsset, IRenderableAsset, IClickableAsset
+    public class AssetLITE : BaseAsset, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
         private const string categoryName = "Light";
 
@@ -230,5 +231,26 @@ namespace IndustrialPark
         public BoundingBox GetBoundingBox() => boundingBox;
 
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position);
+
+        public AssetTransformation GetTransformation() => new AssetTransformation()
+        {
+            _positionX = PositionX,
+            _positionY = PositionY,
+            _positionZ = PositionZ,
+            _scaleX = Radius,
+            _scaleY = Radius,
+            _scaleZ = Radius,
+            _scaleSingle = Radius,
+            _scaleSfxMin = Radius,
+            _scaleSfxMax = Radius,
+        };
+
+        public void SetTransformation(AssetTransformation transformation)
+        {
+            PositionX = transformation._positionX;
+            PositionY = transformation._positionY;
+            PositionZ = transformation._positionZ;
+            Radius = transformation._scaleSingle;
+        }
     }
 }

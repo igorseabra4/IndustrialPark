@@ -1,6 +1,6 @@
-﻿using IndustrialPark.Archive;
+﻿using IndustrialPark.Archives;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public class LayerRenamedAction : IReversibleAction
 {

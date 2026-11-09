@@ -1,12 +1,11 @@
 ﻿using HipHopFile;
-using Newtonsoft.Json;
+using IndustrialPark.ArchiveEditors;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class DynaEnemy : AssetDYNA, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset, IAssetCopyPasteTransformation
     {
@@ -335,7 +334,7 @@ namespace IndustrialPark
             return Vector3.Distance(cameraPosition, new Vector3(PositionX, PositionY, PositionZ));
         }
 
-        public Transformation GetTransformation() => new Transformation()
+        public AssetTransformation GetTransformation() => new AssetTransformation()
         {
             _positionX = _position.X,
             _positionY = _position.Y,
@@ -348,7 +347,7 @@ namespace IndustrialPark
             _scaleZ = _scale.Z,
         };
 
-        public void SetTransformation(Transformation transformation)
+        public void SetTransformation(AssetTransformation transformation)
         {
             _position.X = transformation._positionX;
             _position.Y = transformation._positionY;

@@ -1,5 +1,7 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets;
 using System;
 using System.Collections.Generic;
 
@@ -7,13 +9,13 @@ namespace IndustrialPark.Scripting;
 
 public class ArchiveInterface
 {
-    private IndustrialPark.Archive.Archive Archive { get; set; }
+    private Archive Archive { get; set; }
 
     public List<AssetError> AssetErrors { get; set; }
 
     public ArchiveInterface(Game game, Platform platform)
     {
-        Archive = new IndustrialPark.Archive.Archive(platform, game, DateTime.Now, DateTime.Now.ToString(), true, false, false);
+        Archive = new Archive(platform, game, DateTime.Now, DateTime.Now.ToString(), true, false, false);
     }
 
     public ArchiveInterface(string fileName)
@@ -26,11 +28,11 @@ public class ArchiveInterface
         while (hipFile.platform == Platform.Unknown)
             hipFile.platform = ChoosePlatformDialog.GetPlatform();
 
-        Archive = new IndustrialPark.Archive.Archive(hipFile, fileName, false, out List<AssetError> errors);
+        Archive = new Archive(hipFile, fileName, false, out List<AssetError> errors);
         this.AssetErrors = errors;
     }
 
-    public ArchiveInterface(IndustrialPark.Archive.Archive archive)
+    public ArchiveInterface(Archive archive)
     {
         Archive = archive;
     }

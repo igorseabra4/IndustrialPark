@@ -3,7 +3,7 @@ using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetMODL : AssetRenderWareModel, IAssetWithModel
     {

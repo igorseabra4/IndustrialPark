@@ -1,8 +1,9 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetMRKR : Asset, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
@@ -97,14 +98,14 @@ namespace IndustrialPark
 
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position);
 
-        public Transformation GetTransformation() => new Transformation()
+        public AssetTransformation GetTransformation() => new AssetTransformation()
         {
             _positionX = _position.X,
             _positionY = _position.Y,
             _positionZ = _position.Z,
         };
 
-        public void SetTransformation(Transformation transformation)
+        public void SetTransformation(AssetTransformation transformation)
         {
             _position.X = transformation._positionX;
             _position.Y = transformation._positionY;

@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetENV : BaseAsset
     {

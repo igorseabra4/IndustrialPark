@@ -1,9 +1,10 @@
-﻿namespace IndustrialPark
+﻿using IndustrialPark.ArchiveEditors;
+
+namespace IndustrialPark.Assets;
+
+public interface IAssetCopyPasteTransformation
 {
-    public interface IAssetCopyPasteTransformation
-    {
-        Transformation GetTransformation();
-        void SetTransformation(Transformation transformation);
-        void CreateTransformMatrix(SharpRenderer renderer);
-    }
+    AssetTransformation GetTransformation();
+    void SetTransformation(AssetTransformation transformation);
+    void CreateTransformMatrix(SharpRenderer renderer);
 }

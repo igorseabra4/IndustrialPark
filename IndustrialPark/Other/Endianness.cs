@@ -1,4 +1,4 @@
-﻿using IndustrialPark.AssetEditorColors;
+﻿using IndustrialPark.Assets.Colors;
 using System;
 using System.Buffers.Binary;
 using System.IO;

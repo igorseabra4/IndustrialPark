@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
@@ -11,7 +12,7 @@ using static IndustrialPark.Randomizer.RandomizerHelper;
 
 namespace IndustrialPark.Randomizer
 {
-    public class RandomizableArchive : Archive.Archive
+    public class RandomizableArchive : Archive
     {
         public RandomizableArchive(HipFile hipFile, string hipPath) : base(hipFile, hipPath, false, out _)
         {

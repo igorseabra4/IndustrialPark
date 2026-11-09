@@ -1,6 +1,6 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
-using IndustrialPark.Models.CollisionTree;
+using IndustrialPark.Archives;
+using IndustrialPark.Models;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class AssetRenderWareModel : AssetWithData, IDisposableAsset
     {

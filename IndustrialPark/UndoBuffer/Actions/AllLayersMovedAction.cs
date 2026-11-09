@@ -1,7 +1,7 @@
-﻿using IndustrialPark.Archive;
+﻿using IndustrialPark.Archives;
 using System;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public class AllLayersMovedAction : IReversibleAction
 {

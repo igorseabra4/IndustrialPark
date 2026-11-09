@@ -9,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public struct Line
     {

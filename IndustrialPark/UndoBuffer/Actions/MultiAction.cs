@@ -1,11 +1,12 @@
-﻿using IndustrialPark.Archive;
+﻿using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public class MultiAction : IReversibleAction
 {
@@ -58,7 +59,7 @@ public class MultiAction : IReversibleAction
         actions = ConsolidateActions(archiveEditor.archive, actions);
     }
 
-    private static List<IReversibleAction> ConsolidateActions(Archive.Archive archive, List<IReversibleAction> actions)
+    private static List<IReversibleAction> ConsolidateActions(Archive archive, List<IReversibleAction> actions)
     {
         var result = new List<IReversibleAction>();
         var assetActions = new Dictionary<uint, (int Index, IReversibleAction Action)>();

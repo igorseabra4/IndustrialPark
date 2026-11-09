@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using Newtonsoft.Json;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     [TypeConverter(typeof(AssetSingleTypeConverter))]
     public struct AssetSingle

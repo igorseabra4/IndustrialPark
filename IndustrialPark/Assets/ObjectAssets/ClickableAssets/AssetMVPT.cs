@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -9,7 +10,7 @@ using System.Drawing.Design;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetAddSelected, IAssetCopyPasteTransformation
     {
@@ -281,7 +282,7 @@ namespace IndustrialPark
 
         public List<uint> GetItems() => NextMovePoints.Select(a => (uint)a).ToList();
 
-        public Transformation GetTransformation() => new Transformation()
+        public AssetTransformation GetTransformation() => new AssetTransformation()
         {
             _positionX = _position.X,
             _positionY = _position.Y,
@@ -291,7 +292,7 @@ namespace IndustrialPark
             _scaleSfxMax = GetScale(),
         };
 
-        public void SetTransformation(Transformation transformation)
+        public void SetTransformation(AssetTransformation transformation)
         {
             _position.X = transformation._positionX;
             _position.Y = transformation._positionY;

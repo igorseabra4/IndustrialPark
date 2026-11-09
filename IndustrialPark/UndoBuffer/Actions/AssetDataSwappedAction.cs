@@ -1,17 +1,18 @@
 ﻿using HipHopFile;
+using IndustrialPark.Assets;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public class AssetDataSwappedAction : IReversibleAction
 {
-    private readonly Archive.Archive Archive;
+    private readonly Archives.Archive Archive;
     public readonly uint AssetID;
     public readonly string AssetName;
     public byte[] PreviousData;
     public byte[] NewData;
     private readonly Platform Platform;
 
-    public AssetDataSwappedAction(Archive.Archive archive, uint assetID, byte[] removedAssetData, byte[] addedAssetData, Platform platform)
+    public AssetDataSwappedAction(Archives.Archive archive, uint assetID, byte[] removedAssetData, byte[] addedAssetData, Platform platform)
     {
         this.Archive = archive;
         this.AssetID = assetID;

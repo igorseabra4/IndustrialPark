@@ -1,5 +1,5 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.Archives;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.ComponentModel;
 using System.Linq;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetVIL : EntityAsset
     {

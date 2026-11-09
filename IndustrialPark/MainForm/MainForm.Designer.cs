@@ -143,10 +143,6 @@ namespace IndustrialPark
             assetIDGeneratorToolStripMenuItem = new ToolStripMenuItem();
             hansToolStripMenuItem = new ToolStripMenuItem();
             openFolderToolStripMenuItem = new ToolStripMenuItem();
-            eventSearchToolStripMenuItem = new ToolStripMenuItem();
-            dYNASearchToolStripMenuItem = new ToolStripMenuItem();
-            dynaNameSearcherToolStripMenuItem = new ToolStripMenuItem();
-            pickupSearcherToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabelMain = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
@@ -1029,7 +1025,7 @@ namespace IndustrialPark
             // 
             // researchToolStripMenuItem
             // 
-            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem, openFolderToolStripMenuItem, eventSearchToolStripMenuItem, dYNASearchToolStripMenuItem, dynaNameSearcherToolStripMenuItem, pickupSearcherToolStripMenuItem });
+            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem, openFolderToolStripMenuItem });
             researchToolStripMenuItem.Name = "researchToolStripMenuItem";
             researchToolStripMenuItem.Size = new System.Drawing.Size(124, 19);
             researchToolStripMenuItem.Text = "&Research/Advanced";
@@ -1062,34 +1058,6 @@ namespace IndustrialPark
             openFolderToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             openFolderToolStripMenuItem.Text = "Open Folder";
             openFolderToolStripMenuItem.Click += openFolderToolStripMenuItem_Click;
-            // 
-            // eventSearchToolStripMenuItem
-            // 
-            eventSearchToolStripMenuItem.Name = "eventSearchToolStripMenuItem";
-            eventSearchToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            eventSearchToolStripMenuItem.Text = "Event Search";
-            eventSearchToolStripMenuItem.Click += eventSearchToolStripMenuItem_Click;
-            // 
-            // dYNASearchToolStripMenuItem
-            // 
-            dYNASearchToolStripMenuItem.Name = "dYNASearchToolStripMenuItem";
-            dYNASearchToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            dYNASearchToolStripMenuItem.Text = "DYNA Search";
-            dYNASearchToolStripMenuItem.Click += dYNASearchToolStripMenuItem_Click;
-            // 
-            // dynaNameSearcherToolStripMenuItem
-            // 
-            dynaNameSearcherToolStripMenuItem.Name = "dynaNameSearcherToolStripMenuItem";
-            dynaNameSearcherToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            dynaNameSearcherToolStripMenuItem.Text = "Dyna Name Searcher";
-            dynaNameSearcherToolStripMenuItem.Click += dynaNameSearcherToolStripMenuItem_Click;
-            // 
-            // pickupSearcherToolStripMenuItem
-            // 
-            pickupSearcherToolStripMenuItem.Name = "pickupSearcherToolStripMenuItem";
-            pickupSearcherToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            pickupSearcherToolStripMenuItem.Text = "Pickup Searcher";
-            pickupSearcherToolStripMenuItem.Click += pickupSearcherToolStripMenuItem_Click;
             // 
             // statusStrip1
             // 
@@ -1673,7 +1641,6 @@ namespace IndustrialPark
         private ToolStripMenuItem scaleToolStripMenuItem;
         private ToolStripMenuItem positionLocalToolStripMenuItem;
         private ToolStripMenuItem researchToolStripMenuItem;
-        private ToolStripMenuItem eventSearchToolStripMenuItem;
         private ToolStripMenuItem assetIDGeneratorToolStripMenuItem;
         private ToolStripMenuItem useLODTForRenderingToolStripMenuItem;
         private ToolStripMenuItem usePIPTForRenderingToolStripMenuItem;
@@ -1692,7 +1659,6 @@ namespace IndustrialPark
         private System.Windows.Forms.ToolStripMenuItem downloadVgmstreamToolStripMenuItem;
         private ToolStripMenuItem stopSoundToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem templatesChainPointMVPTsToolStripMenuItem;
-        private ToolStripMenuItem dYNASearchToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exportSceneToolStripMenuItem;
         private ToolStripMenuItem discordRichPresenceToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
@@ -1703,13 +1669,11 @@ namespace IndustrialPark
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripSeparator toolStripSeparator11;
         private ToolStripMenuItem openFolderToolStripMenuItem;
-        private ToolStripMenuItem dynaNameSearcherToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openLevelToolStripMenuItem;
         private ToolStripMenuItem closeAllEditorsToolStripMenuItem;
         private ToolStripMenuItem enableAllToolStripMenuItem;
         private ToolStripMenuItem disableAllToolStripMenuItem;
         private ToolStripSeparator toolStripSeparatorAssetTypes;
-        private ToolStripMenuItem pickupSearcherToolStripMenuItem;
         private ToolStripMenuItem drawOnlyFirstMINFReferenceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem useLegacyAssetTypeFormatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateReferencesToolStripMenuItem;

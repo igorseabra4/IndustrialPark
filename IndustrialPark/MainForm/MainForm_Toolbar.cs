@@ -1,5 +1,7 @@
 using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
+using IndustrialPark.Gizmos;
 using System;
 using System.Collections.Generic;
 using System.IO;

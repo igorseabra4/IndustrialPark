@@ -1,12 +1,13 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetSFX : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetCopyPasteTransformation
     {
@@ -17,7 +18,7 @@ namespace IndustrialPark
         public FlagBitmask Flags { get; set; } = ShortFlagsDescriptor(
             "Unknown 0001",
             "Play in 3D", // 0002
-            "Loops (possibly)",
+            "adds sound flag 0x100",
             "Use Attach", // 0008
             "Unknown 0010",
             "Unknown 0020",
@@ -279,7 +280,7 @@ namespace IndustrialPark
             }
         }
 
-        public Transformation GetTransformation() => new Transformation()
+        public AssetTransformation GetTransformation() => new AssetTransformation()
         {
             _positionX = _position.X,
             _positionY = _position.Y,
@@ -289,7 +290,7 @@ namespace IndustrialPark
             _scaleSfxMax = _radius2,
         };
 
-        public void SetTransformation(Transformation transformation)
+        public void SetTransformation(AssetTransformation transformation)
         {
             _position.X = transformation._positionX;
             _position.Y = transformation._positionY;

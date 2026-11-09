@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class ReactiveAnimation : GenericAssetDataContainer
     {

@@ -1,6 +1,6 @@
-﻿using IndustrialPark.AssetEditorColors;
+﻿using IndustrialPark.Assets.Colors;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class ShrapnelLightInfo : GenericAssetDataContainer
     {

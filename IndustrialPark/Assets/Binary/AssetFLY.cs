@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.IO;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class FlyFrame : GenericAssetDataContainer
     {

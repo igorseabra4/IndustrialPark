@@ -1,8 +1,9 @@
-﻿using System;
+﻿using IndustrialPark.ArchiveEditors;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IndustrialPark;
+namespace IndustrialPark.Undo;
 
 public class UndoBuffer
 {

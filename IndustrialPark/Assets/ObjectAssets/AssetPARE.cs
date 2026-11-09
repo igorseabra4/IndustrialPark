@@ -1,12 +1,12 @@
 ﻿using HipHopFile;
-using IndustrialPark.Archive;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum EmitterType : byte
     {
