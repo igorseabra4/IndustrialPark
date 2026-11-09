@@ -13,7 +13,7 @@ namespace IndustrialPark.Randomizer
     public partial class RandomizerMenu : Form
     {
         private Randomizer randomizer;
-        private string pathToSettings => Application.StartupPath + "/randomizer_settings.json";
+        private string pathToSettings => Path.Combine(MainForm.PathToUserFolder, "randomizer_settings.json");
         private string heavyModManagerPath;
         private string mainDolPath;
 
@@ -391,6 +391,11 @@ namespace IndustrialPark.Randomizer
                         original[i] = s;
             }
             return original;
+        }
+
+        private void propertyGridSettings_PropertyValueChanged(object s, PropertyValueChangedEventArgs e)
+        {
+            propertyGridSettings.Refresh();
         }
     }
 }

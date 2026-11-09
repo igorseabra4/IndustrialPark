@@ -267,7 +267,7 @@
             // radioButtonFiles
             // 
             radioButtonFiles.AutoSize = true;
-            radioButtonFiles.Location = new System.Drawing.Point(219, 27);
+            radioButtonFiles.Location = new System.Drawing.Point(236, 27);
             radioButtonFiles.Name = "radioButtonFiles";
             radioButtonFiles.Size = new System.Drawing.Size(110, 19);
             radioButtonFiles.TabIndex = 42;

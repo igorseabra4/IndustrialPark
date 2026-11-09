@@ -110,27 +110,45 @@ public class RandomizerSettings
     [Bfbb(true), Scooby(true), Movie(false)]
     public bool Warps { get; set; }
 
-    [Category("Warps"), DisplayName("Include Mastermind 1 Warp"), Description("If disabled, the warp to Mastermind Unmasked, Part 1 will remain in its default location in Little Lab of Horrors, Part 2. If enabled, it will be randomized along with the other warps.")]
-    [Scooby(false)]
+    [Category("Warps"), DisplayName("Randomize Mastermind 1 Warp"), Description("If disabled, the warp to Mastermind Unmasked, Part 1 will remain in its default location in Little Lab of Horrors, Part 2. If enabled, it will be randomized along with the other warps.")]
+    [Scooby]
     public bool IncludeMastermind1Warp
     {
-        get => skipFilesWarps?.Contains("s004") ?? false;
+        get => !skipFilesWarps?.Contains("s004") ?? false;
         set
         {
-            if (skipFilesWarps != null && !skipFilesWarps.Contains("s004"))
-                skipFilesWarps = [.. skipFilesWarps, "s004"];
+            if (skipFilesWarps != null)
+            {
+                if (!value && !skipFilesWarps.Contains("s004"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps, "s004"];
+                }
+                else if (value && skipFilesWarps.Contains("s004"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps.Where(f => f != "s004")];
+                }
+            }
         }
     }
 
-    [Category("Warps"), DisplayName("Include Mastermind 2 Warp"), Description("If disabled, the warp to Mastermind Unmasked, Part 2 will remain in its default location in Mastermind Unmasked, Part 1. If enabled, it will be randomized along with the other warps.")]
-    [Scooby(true)]
+    [Category("Warps"), DisplayName("Randomize Mastermind 2 Warp"), Description("If disabled, the warp to Mastermind Unmasked, Part 2 will remain in its default location in Mastermind Unmasked, Part 1. If enabled, it will be randomized along with the other warps.")]
+    [Scooby]
     public bool IncludeMastermind2Warp
     {
-        get => skipFilesWarps?.Contains("s005") ?? false;
+        get => !skipFilesWarps?.Contains("s005") ?? false;
         set
         {
-            if (skipFilesWarps != null && !skipFilesWarps.Contains("s005"))
-                skipFilesWarps = [.. skipFilesWarps, "s005"];
+            if (skipFilesWarps != null)
+            {
+                if (!value && !skipFilesWarps.Contains("s005"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps, "s005"];
+                }
+                else if (value && skipFilesWarps.Contains("s005"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps.Where(f => f != "s005")];
+                }
+            }
         }
     }
 
