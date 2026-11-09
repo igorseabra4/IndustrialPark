@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using System.Windows.Forms;
 
 namespace IndustrialPark;
@@ -32,6 +35,18 @@ public static class Program
 
     public static bool IsDarkMode;
 
+    [ModuleInitializer]
+    internal static void InitializeAssemblyResolver()
+    {
+        AssemblyLoadContext.Default.Resolving += ResolveDependencyAssembly;
+    }
+
+    private static Assembly ResolveDependencyAssembly(AssemblyLoadContext context, AssemblyName assemblyName)
+    {
+        string assemblyPath = Path.Combine(AppContext.BaseDirectory, "Library", assemblyName.Name + ".dll");
+        return File.Exists(assemblyPath) ? context.LoadFromAssemblyPath(assemblyPath) : null;
+    }
+
     [STAThread]
     static void Main()
     {
@@ -46,7 +61,7 @@ public static class Program
             return;
         }
 
-        Application.SetDefaultFont(new System.Drawing.Font(new FontFamily("Microsoft Sans Serif"), 8.25f));
+        Application.SetDefaultFont(new Font(new FontFamily("Microsoft Sans Serif"), 8.25f));
 
         IPSettings ipSettings = LoadSettingsFile();
 
@@ -61,7 +76,6 @@ public static class Program
         EditorManager = new AssetEditorManager();
         NameRepository = new NameRepository();
 
-
         MainForm = new MainForm(ipSettings);
 
         ViewConfig = new ViewConfig();
@@ -73,11 +87,11 @@ public static class Program
 
     private static IPSettings LoadSettingsFile()
     {
-        if (File.Exists(MainForm.pathToSettings))
+        if (File.Exists(MainForm.PathToSettings))
         {
             try
             {
-                return JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.pathToSettings));
+                return JsonConvert.DeserializeObject<IPSettings>(File.ReadAllText(MainForm.PathToSettings));
             }
             catch
             {
@@ -86,7 +100,7 @@ public static class Program
         return new IPSettings();
     }
 
-    static bool GetIsDarkMode(SystemColorMode ipLocalColorMode)
+    private static bool GetIsDarkMode(SystemColorMode ipLocalColorMode)
     {
         switch (ipLocalColorMode)
         {

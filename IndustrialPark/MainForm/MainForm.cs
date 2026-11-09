@@ -20,7 +20,9 @@ namespace IndustrialPark
 {
     public partial class MainForm : Form
     {
-        public static string pathToSettings => Application.StartupPath + "/ip_settings.json";
+        public static string PathToUserFolder => Path.Combine(Application.StartupPath, "User");
+        public static string PathToSettings => Path.Combine(PathToUserFolder, "ip_settings.json");
+        public static string PathToDefaultProject => Path.Combine(PathToUserFolder, "default_project.json");
 
         private readonly IPSettings settings;
         private ScrollableMessageBox undoBox;
@@ -55,11 +57,13 @@ namespace IndustrialPark
             markerConnector = new ConnectMarkers(() => ArchiveEditors.SelectMany(ae => ae.SelectedAssets).OfType<AssetMRKR>());
 
             SetupToolbar();
+
+            if (!Directory.Exists(PathToUserFolder))
+                Directory.CreateDirectory(PathToUserFolder);
         }
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-
             if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
             {
                 Close();
@@ -107,7 +111,7 @@ namespace IndustrialPark
                 SaveProject(currentProjectPath);
             IPSettings settings = SettingsFromCurrentInstance();
 
-            File.WriteAllText(pathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
+            File.WriteAllText(PathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -1182,7 +1186,7 @@ namespace IndustrialPark
         private void SaveProject(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
-                fileName = Path.Combine(Application.StartupPath, "default_project.json");
+                fileName = PathToDefaultProject;
             currentProjectPath = fileName;
             SaveProject();
         }
@@ -1697,7 +1701,7 @@ namespace IndustrialPark
         {
             toolStripComboBoxUserTemplate.Items.Clear();
 
-            foreach (string s in Directory.GetFiles(UserTemplateManager.userTemplatesFolder))
+            foreach (string s in Directory.GetFiles(UserTemplateManager.UserTemplatesFolder))
             {
                 toolStripComboBoxUserTemplate.Items.Add(Path.GetFileName(s));
 

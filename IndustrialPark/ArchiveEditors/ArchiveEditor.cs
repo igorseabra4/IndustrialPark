@@ -2375,7 +2375,7 @@ public partial class ArchiveEditor : Form
                 string text = template switch
                 {
                     AssetTemplate.Paste_Clipboard => Clipboard.GetText(),
-                    AssetTemplate.User_Template => File.ReadAllText(Path.Combine(UserTemplateManager.userTemplatesFolder, Program.MainForm.CurrentUserTemplate)),
+                    AssetTemplate.User_Template => File.ReadAllText(Path.Combine(UserTemplateManager.UserTemplatesFolder, Program.MainForm.CurrentUserTemplate)),
                 };
                 clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(text);
                 if (clipboard == null || clipboard.Count == 0)

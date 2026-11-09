@@ -9,14 +9,14 @@ namespace IndustrialPark
 {
     public partial class UserTemplateManager : Form
     {
-        public static string userTemplatesFolder => Application.StartupPath + "/Resources/UserTemplates/";
+        public static string UserTemplatesFolder => Path.Combine(MainForm.PathToUserFolder, "UserTemplates");
 
         public UserTemplateManager()
         {
             InitializeComponent();
 
-            if (!Directory.Exists(userTemplatesFolder))
-                Directory.CreateDirectory(userTemplatesFolder);
+            if (!Directory.Exists(UserTemplatesFolder))
+                Directory.CreateDirectory(UserTemplatesFolder);
 
             UpdateListBox();
         }
@@ -36,7 +36,7 @@ namespace IndustrialPark
         {
             listBoxTemplates.Items.Clear();
 
-            foreach (string s in Directory.GetFiles(userTemplatesFolder))
+            foreach (string s in Directory.GetFiles(UserTemplatesFolder))
                 listBoxTemplates.Items.Add(Path.GetFileName(s));
 
             Program.MainForm.UpdateUserTemplateComboBox();
@@ -53,7 +53,7 @@ namespace IndustrialPark
             if (listBoxTemplates.SelectedIndex < 0)
                 return;
 
-            Clipboard.SetText(File.ReadAllText(Path.Combine(userTemplatesFolder, listBoxTemplates.SelectedItem.ToString())));
+            Clipboard.SetText(File.ReadAllText(Path.Combine(UserTemplatesFolder, listBoxTemplates.SelectedItem.ToString())));
         }
 
         private void buttonPaste_Click(object sender, EventArgs e)
@@ -75,7 +75,7 @@ namespace IndustrialPark
                 templateName += "[" + asset.AHDR.assetType.ToString() + "][" + asset.AHDR.assetName + "]";
 
             File.WriteAllText(
-                Path.Combine(userTemplatesFolder, templateName),
+                Path.Combine(UserTemplatesFolder, templateName),
                 JsonConvert.SerializeObject(clipboard, Formatting.None));
 
             UpdateListBox();
@@ -83,7 +83,7 @@ namespace IndustrialPark
 
         private void buttonDelete_Click(object sender, EventArgs e)
         {
-            File.Delete(Path.Combine(userTemplatesFolder, Path.GetFileName(listBoxTemplates.SelectedItem.ToString())));
+            File.Delete(Path.Combine(UserTemplatesFolder, Path.GetFileName(listBoxTemplates.SelectedItem.ToString())));
             UpdateListBox();
         }
 
@@ -102,8 +102,8 @@ namespace IndustrialPark
             if (okED)
             {
                 File.Move(
-                    Path.Combine(userTemplatesFolder, listBoxTemplates.SelectedItem.ToString()),
-                    Path.Combine(userTemplatesFolder, newName));
+                    Path.Combine(UserTemplatesFolder, listBoxTemplates.SelectedItem.ToString()),
+                    Path.Combine(UserTemplatesFolder, newName));
 
                 UpdateListBox();
             }
