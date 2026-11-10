@@ -187,8 +187,13 @@ public partial class ArchiveEditor : Form
             else if (PressedKeys.Contains(Keys.A))
             {
                 e.Handled = true;
-                var assetIDs = listViewAssets.Items.Cast<ListViewItem>().Select(i => (uint)i.Tag);
-                SetSelectedAssets(assetIDs);
+                var assets = listViewAssets.Items.Cast<ListViewItem>().Select(i => (uint)i.Tag).Select(archive.GetAsset).ToList();
+                SetSelectedAssets(assets, dontChangeType: true);
+            }
+            else if (PressedKeys.Contains(Keys.F))
+            {
+                e.Handled = true;
+                textBoxFindAsset.Focus();
             }
         }
     }
@@ -428,7 +433,6 @@ public partial class ArchiveEditor : Form
                 comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(SelectedLayerIndex);
             OnEditorUpdate();
             SetSelectedAssets(assets);
-            SetMenuItemsEnabled();
         }
         Enabled = true;
     }
@@ -1093,7 +1097,6 @@ public partial class ArchiveEditor : Form
         var template = (AssetTemplate)((ToolStripItem)sender).Tag;
         Vector3 Position = Program.Renderer.Camera.Position + 3 * Program.Renderer.Camera.Forward;
         PlaceTemplate(template, Position);
-        SetupAssetVisibilityButtons();
     }
 
     private void ToolStripMenuItem_CreateGroup_Click(object sender, EventArgs e)
@@ -1104,11 +1107,7 @@ public partial class ArchiveEditor : Form
         group.AddItems([.. ids]);
         archive.AddNewAsset(group, SelectedLayerIndex);
         EndTransaction();
-
-        if (archive.ContainsNewlyAddedAssetType([group.assetID]))
-            PopulateAssetListAndComboBox();
         SetSelectedAsset(group);
-        UpdateListView(group);
     }
 
     private void copyAssetNamesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1239,7 +1238,7 @@ public partial class ArchiveEditor : Form
         bool refreshSelection = refreshKind.HasFlag(ArchiveRefreshKind.LayerList)
             || refreshKind.HasFlag(ArchiveRefreshKind.AssetMutations)
             || refreshKind.HasFlag(ArchiveRefreshKind.Layout);
-        var selectedAssetIDs = refreshSelection ? SelectedAssetIDs.ToList() : null;
+        var selectedAssets = refreshSelection ? SelectedAssets.ToList() : null;
         int selectedLayer = requestedLayerIndex ?? SelectedLayerIndex;
         requestedLayerIndex = null;
         bool layoutChanged = refreshKind.HasFlag(ArchiveRefreshKind.Layout)
@@ -1272,7 +1271,7 @@ public partial class ArchiveEditor : Form
             RefreshAssetMutations(addedAssetIDs, removedAssetIDs);
 
         if (refreshSelection && !skipNextArchiveSelectionRefresh)
-            SetSelectedAssets(selectedAssetIDs);
+            SetSelectedAssets(selectedAssets);
         skipNextArchiveSelectionRefresh = false;
         if (refreshSelection || refreshKind.HasFlag(ArchiveRefreshKind.Layout))
             SetupAssetVisibilityButtons();
@@ -1992,16 +1991,11 @@ public partial class ArchiveEditor : Form
 
     private void AddMultipleAssets(IEnumerable<Asset> assets, bool isTemplate = false)
     {
-        var containsNewlyAddedAssetType = !assets.Select(a => a.assetType).Distinct().All(archive.ContainsAssetWithType);
-
         BeginTransaction();
 
         var result = archive.AddMultipleAssets(assets, SelectedLayerIndex, !isTemplate && ReplaceAssetsOnPaste);
 
         EndTransaction();
-
-        if (containsNewlyAddedAssetType)
-            SetupAssetVisibilityButtons();
 
         SetSelectedAssets(result);
         skipNextArchiveSelectionRefresh = result.Count != 0;
@@ -2022,14 +2016,6 @@ public partial class ArchiveEditor : Form
             listViewAssets.Items.Remove(v);
         listViewAssets.EndUpdate();
         programIsChangingStuff = false;
-
-        if (types.Any(t => !archive.ContainsAssetWithType(t)))
-        {
-            SetupAssetVisibilityButtons();
-            PopulateAssetListAndComboBox();
-        }
-        else
-            SetMenuItemsEnabled();
     }
 
     public Asset EditHeader(Asset asset)
@@ -2074,7 +2060,6 @@ public partial class ArchiveEditor : Form
                     break;
                 }
 
-            AddToAssetList(result);
             SetSelectedAsset(result);
 
             return result;
@@ -2229,30 +2214,28 @@ public partial class ArchiveEditor : Form
 
     public static bool AlwaysListAllAssets { get; internal set; }
 
-    public void SetSelectedAssets(IEnumerable<Asset> assets, bool clearIfEmpty = true)
+    public void SetSelectedAssets(IEnumerable<Asset> assets, bool clearIfEmpty = true, bool dontChangeType = false)
     {
         var assetList = assets?.ToList() ?? [];
 
-        programIsChangingStuff = true;
         if (clearIfEmpty && (assetList.Count == 0 || assetList.Any(a => !archive.ContainsAsset(a.assetID))))
         {
-            selectionManager.UnselectAll();
             listViewAssets.SelectedIndices.Clear();
-            programIsChangingStuff = false;
             SetMenuItemsEnabled();
             return;
         }
 
         if (assetList.Count == 0)
-        {
-            programIsChangingStuff = false;
             return;
-        }
+
+        programIsChangingStuff = true;
 
         AssetType assetType = AssetType.Null;
         var first = assetList[0];
 
-        if (!AlwaysListAllAssets && assetList.All(a => a.assetType == first.assetType))
+        if (dontChangeType)
+            assetType = curSelectedType;
+        else if (!AlwaysListAllAssets && assetList.All(a => a.assetType == first.assetType))
             assetType = first.assetType;
 
         int layerIndex = archive.AutoLayers ? -1 : archive.GetLayerFromAssetID(first.assetID);
@@ -2278,12 +2261,6 @@ public partial class ArchiveEditor : Form
         PopulateAssetList(assetType, null, true, assetList);
         SetMenuItemsEnabled();
         programIsChangingStuff = false;
-    }
-
-    public void SetSelectedAssets(IEnumerable<uint> assetIDs)
-    {
-        var assets = assetIDs.Where(archive.ContainsAsset).Select(archive.GetAsset);
-        SetSelectedAssets(assets);
     }
 
     /// <summary>
@@ -2552,10 +2529,8 @@ public partial class ArchiveEditor : Form
                 {
                     EndTransaction();
                     OnEditorUpdate();
-                    PopulateLayerComboBox();
                     comboBoxLayers.SelectedIndex = archive.GetOrCreateLayerOfType(LayerType.SRAM);
                     SetSelectedAssets(assets);
-                    SetMenuItemsEnabled();
                 }
             }
             catch (Exception e)

@@ -13,21 +13,16 @@ public class Archive
     protected readonly AssetRepository assetRepository;
     protected readonly LayerRepository layerRepository;
 
-    public ArchiveSubscriber Subscriber => new ArchiveSubscriber(this, session, assetRepository, layerRepository);
-    public ArchiveTransformer Transformer => new ArchiveTransformer(session, assetRepository, layerRepository);
-    public SoundManager SoundManager => new SoundManager(session, assetRepository, layerRepository);
-    public TableAssetManager TableManager => new TableAssetManager(session, assetRepository, layerRepository);
+    public readonly ArchiveSubscriber Subscriber;
+    public readonly ArchiveTransformer Transformer;
+    public readonly SoundManager SoundManager;
+    public readonly TableAssetManager TableManager;
 
     public Game Game => session.Game;
-
     public Platform Platform => session.Platform;
-
     public string CurrentFilePath => session.CurrentFilePath;
-
     public string LevelName => session.LevelName;
-
     public DateTime FileDate => DateTimeOffset.FromUnixTimeSeconds(session.PACK.PCRT.fileDate).UtcDateTime;
-
     public string DateString => session.PACK.PCRT.dateString;
 
     // New archive
@@ -43,6 +38,11 @@ public class Archive
         session = new ArchiveSession(platform, game, fileDate, dateString);
         assetRepository = new AssetRepository();
         layerRepository = new LayerRepository(autoLayers);
+
+        Subscriber = new ArchiveSubscriber(this, session, assetRepository, layerRepository);
+        Transformer = new ArchiveTransformer(session, assetRepository, layerRepository);
+        SoundManager = new SoundManager(session, assetRepository, layerRepository);
+        TableManager = new TableAssetManager(session, assetRepository, layerRepository);
 
         if (subscriptions)
             Subscriber.RegisterPreAssetsSubscriptions();
@@ -66,6 +66,11 @@ public class Archive
         session = new ArchiveSession(hipFile.platform, hipFile.game, hipFile.PACK, fileName);
         layerRepository = new LayerRepository(hipFile.DICT.LTOC.LHDRList, hipFile.game, hipFile.HIPB.GetLayerName);
         assetRepository = new AssetRepository();
+
+        Subscriber = new ArchiveSubscriber(this, session, assetRepository, layerRepository);
+        Transformer = new ArchiveTransformer(session, assetRepository, layerRepository);
+        SoundManager = new SoundManager(session, assetRepository, layerRepository);
+        TableManager = new TableAssetManager(session, assetRepository, layerRepository);
 
         if (subscriptions)
             Subscriber.RegisterPreAssetsSubscriptions();
@@ -133,22 +138,6 @@ public class Archive
     public bool ContainsAsset(Asset asset) => assetRepository.Contains(asset);
 
     public bool ContainsAssetWithType(AssetType assetType) => assetRepository.ContainsType(assetType);
-
-    public bool ContainsNewlyAddedAssetType(IEnumerable<uint> assetIDs)
-    {
-        var countPerType = new Dictionary<AssetType, int>(assetIDs.Count());
-        foreach (var u in assetIDs)
-        {
-            var type = GetAsset(u).assetType;
-            countPerType[type] = (countPerType.TryGetValue(type, out var c) ? c : 0) + 1;
-        }
-        foreach (var kvp in countPerType)
-            if (AmountOfAssetWithType(kvp.Key) == kvp.Value)
-                return true;
-        return false;
-    }
-
-    public int AmountOfAssetWithType(AssetType assetType) => assetRepository.Assets.Count(a => a.assetType.Equals(assetType));
 
     public Asset GetAsset(uint key) => assetRepository.Get(key);
 

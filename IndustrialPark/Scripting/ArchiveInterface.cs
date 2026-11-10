@@ -51,7 +51,6 @@ public class ArchiveInterface
     public bool ContainsAsset(uint assetID) => Archive.ContainsAsset(assetID);
     public bool ContainsAsset(Asset asset) => Archive.ContainsAsset(asset);
     public bool ContainsAssetWithType(AssetType assetType) => Archive.ContainsAssetWithType(assetType);
-    public int AmountOfAssetWithType(AssetType assetType) => Archive.AmountOfAssetWithType(assetType);
     public Asset GetAsset(uint key) => Archive.GetAsset(key);
     public bool TryGetAsset(uint key, out Asset asset) => Archive.TryGetAsset(key, out asset);
     public IEnumerable<Asset> Assets => Archive.Assets;
