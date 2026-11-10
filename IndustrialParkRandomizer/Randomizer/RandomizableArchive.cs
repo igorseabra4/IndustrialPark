@@ -701,7 +701,7 @@ namespace IndustrialPark.Randomizer
 
             for (int i = 0; i < assets.Count; i++)
             {
-                var whoTargets = FindWhoTargets(assets[i].assetID).ToList();
+                var whoTargets = FindWhoTargets(assets[i].assetID);
                 if (whoTargets.Count > 0 && whoTargets[0] is AssetDYNA dyna
                     && (dyna.Type == DynaType.game_object__BusStop || dyna.Type == DynaType.game_object__Taxi))
                 {

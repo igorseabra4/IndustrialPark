@@ -226,7 +226,7 @@ public class AssetRenderer
 
                     // recalculate matrices of assets which use me
                     if (!PauseMatrixRecalculation)
-                        foreach (var user in AssetService.WhoTargets(asset.assetID).OfType<IRenderableAsset>())
+                        foreach (var user in AssetService.FindWhoTargets(asset.assetID).OfType<IRenderableAsset>())
                             user.CreateTransformMatrix(Program.Renderer);
                     break;
                 case IRenderableAsset ira:

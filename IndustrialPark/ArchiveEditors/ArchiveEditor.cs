@@ -881,8 +881,6 @@ public partial class ArchiveEditor : Form
 
     private void buttonImportAsset_Click(object sender, EventArgs e)
     {
-        var layerIndex = SelectedLayerIndex;
-
         if (!archive.AutoLayers && SelectedLayerIndex == -1)
             return;
 
@@ -901,14 +899,21 @@ public partial class ArchiveEditor : Form
                     return;
             }
 
-            BeginTransaction();
+            var asset = AssetService.ConvertHeaderToAsset(AHDR, archive.Game, archive.Platform, false, out AssetError error);
+            if (error.reason != ErrorReason.NoError && error.reason != ErrorReason.SkipBuildTesting)
+            {
+                MessageBox.Show($"Unable to import asset: {error.reason} ({error.errorMessage})", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                AssetTransformer.SetAssetPositionToView(asset);
 
-            var asset = archive.AddNewAsset(AHDR, archive.Game, archive.Platform, layerIndex);
-            AssetTransformer.SetAssetPositionToView(asset);
+                BeginTransaction();
+                archive.AddNewAsset(asset, SelectedLayerIndex);
+                EndTransaction();
 
-            EndTransaction();
-
-            SetSelectedAsset(asset);
+                SetSelectedAsset(asset);
+            }
         }
     }
 

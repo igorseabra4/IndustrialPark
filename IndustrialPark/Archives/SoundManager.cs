@@ -120,21 +120,13 @@ public class SoundManager
             switch (a)
             {
                 case AssetSNDI_GCN_V1 SNDI_G1:
-                    if (SNDI_G1.HasReference(assetID))
-                        return SNDI_G1.GetHeader(assetID, assetType);
-                    break;
+                    return SNDI_G1.GetHeader(assetID, assetType);
                 case AssetSNDI_GCN_V2 SNDI_G2:
-                    if (SNDI_G2.HasReference(assetID))
-                        return SNDI_G2.GetHeader(assetID);
-                    break;
+                    return SNDI_G2.GetHeader(assetID);
                 case AssetSNDI_XBOX SNDI_X:
-                    if (SNDI_X.HasReference(assetID))
-                        return SNDI_X.GetHeader(assetID, assetType);
-                    break;
+                    return SNDI_X.GetHeader(assetID, assetType);
                 case AssetSNDI_PS2 SNDI_P:
-                    if (SNDI_P.HasReference(assetID))
-                        return SNDI_P.GetHeader(assetID, assetType);
-                    break;
+                    return SNDI_P.GetHeader(assetID, assetType);
             }
         }
 

@@ -208,6 +208,6 @@ public class AssetEditorManager
 
     public void OpenWhoTargetsAssetEditors(uint assetID)
     {
-        OpenAssetEditors(AssetService.WhoTargets(assetID));
+        OpenAssetEditors(AssetService.FindWhoTargets(assetID));
     }
 }

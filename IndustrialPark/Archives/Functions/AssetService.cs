@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace IndustrialPark.Archives;
 
@@ -658,12 +657,11 @@ public static class AssetService
         };
     }
 
-    public static IEnumerable<Asset> WhoTargets(uint assetID)
-    {
-        foreach (ArchiveEditor archiveEditor in Program.ArchiveEditors)
-            foreach (var item in archiveEditor.archive?.FindWhoTargets(assetID) ?? [])
-                yield return item;
-    }
+    public static List<Asset> FindWhoTargets(uint assetID) =>
+        [.. Program.ArchiveEditors.SelectMany(ae => ae.archive?.FindWhoTargets(assetID) ?? [])];
+
+    public static bool HasWhoTargets(uint assetID) =>
+        Program.ArchiveEditors.Any(ae => ae.archive != null && ae.archive.HasWhoTargets(assetID));
 
     /// <summary>
     /// Returns boolean if <see cref="AssetType"/> is a RenderWare binary

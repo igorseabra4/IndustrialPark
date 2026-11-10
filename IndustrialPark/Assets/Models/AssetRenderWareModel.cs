@@ -165,7 +165,7 @@ namespace IndustrialPark.Assets
                 if (!(Program.NameRepository.AssetExists(new AssetID(s)) || Program.NameRepository.AssetExists(new AssetID(s + ".RW3"))))
                     result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
 
-            if (!AssetService.WhoTargets(assetID).Any())
+            if (!AssetService.HasWhoTargets(assetID))
                 result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
         }
 

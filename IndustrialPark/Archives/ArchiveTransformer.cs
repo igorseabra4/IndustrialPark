@@ -11,8 +11,6 @@ using System.Windows.Forms;
 
 namespace IndustrialPark.Archives;
 
-// TODO: add asset property changed invokes on all methods in this class, where applicable
-
 public class ArchiveTransformer
 {
     private readonly ArchiveSession session;
@@ -586,8 +584,7 @@ public class ArchiveTransformer
                 {
                     numOfModels++;
 
-                    var whoTargets = AssetService.WhoTargets(asset.assetID);
-                    if (!whoTargets.Any())
+                    if (!AssetService.HasWhoTargets(asset.assetID))
                     {
                         output.WriteLine($"  {Convert.ToString(asset.assetID, 16)}: {asset.assetName}");
                         numOfUnusedModels++;

@@ -149,7 +149,9 @@ public class Archive
 
     public IEnumerable<AssetType> AssetTypes => assetRepository.AssetTypes;
 
-    public IEnumerable<Asset> FindWhoTargets(uint assetID) => assetRepository.FindWhoTargets(assetID);
+    public List<Asset> FindWhoTargets(uint assetID) => assetRepository.FindWhoTargets(assetID);
+
+    public bool HasWhoTargets(uint assetID) => assetRepository.HasWhoTargets(assetID);
 
     public Asset AddNewAsset(Asset asset, int layerIndex)
     {
@@ -290,14 +292,8 @@ public class Archive
 
     private void RemoveAssetFromRepository(uint assetID, bool removeSound)
     {
-        var asset = assetRepository.Get(assetID);
-
         if (removeSound)
             SoundManager.RemoveFromSoundInfo(assetID, GetAsset(assetID).assetType);
-
-        if (asset is AssetMODL)
-            foreach (var table in assetRepository.Assets.OfType<ITableAsset>().Where(t => ((Asset)t).HasReference(asset.assetID)))
-                table.RemoveEntry(assetID);
 
         assetRepository.Remove(assetID);
     }
@@ -346,9 +342,9 @@ public class Archive
 
     public void RemoveLayer(int index)
     {
-        var assets = GetLayerAssetIDs(index).Reverse();
-        foreach (var asset in assets)
-            RemoveAssetFromRepository(asset, true);
+        var assetIDs = GetLayerAssetIDs(index).Reverse().ToList();
+        foreach (var assetID in assetIDs)
+            RemoveAssetFromRepository(assetID, true);
         layerRepository.RemoveLayer(index);
     }
 
