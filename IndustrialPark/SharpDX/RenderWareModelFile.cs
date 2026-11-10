@@ -226,18 +226,19 @@ public class RenderWareModelFile
         List<Vector2> textCoordList = new List<Vector2>();
         List<SharpDX.Color> colorList = new List<SharpDX.Color>();
 
-        if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYPOSITIONS) != 0)
+        if (g.geometryStruct.morphTargets != null && g.geometryStruct.morphTargets.Length > 0)
         {
             MorphTarget m = g.geometryStruct.morphTargets[0];
-            foreach (Vertex3 v in m.vertices)
-            {
-                Vector3 pos = Vector3.TransformCoordinate(new Vector3(v.X, v.Y, v.Z), transformMatrix);
-                vertexList1.Add(pos);
-                vertexListG.Add(pos);
-            }
+            if (m.hasVertices != 0)
+                foreach (Vertex3 v in m.vertices)
+                {
+                    Vector3 pos = Vector3.TransformCoordinate(new Vector3(v.X, v.Y, v.Z), transformMatrix);
+                    vertexList1.Add(pos);
+                    vertexListG.Add(pos);
+                }
         }
 
-        if ((g.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYNORMALS) != 0)
+        if (g.geometryStruct.morphTargets != null && g.geometryStruct.morphTargets.Length > 0 && g.geometryStruct.morphTargets[0].hasNormals != 0)
         {
             for (int i = 0; i < vertexList1.Count; i++)
                 normalList.Add(new Vector3(g.geometryStruct.morphTargets[0].normals[i].X, g.geometryStruct.morphTargets[0].normals[i].Y, g.geometryStruct.morphTargets[0].normals[i].Z));

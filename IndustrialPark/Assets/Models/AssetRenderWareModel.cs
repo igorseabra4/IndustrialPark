@@ -31,27 +31,21 @@ namespace IndustrialPark.Assets
             model?.Dispose();
             if (renderer == null)
                 return;
-
-#if !DEBUG
             try
             {
-#endif
-            ReadFileMethods.treatStuffAsByteArray = false;
-            var rwSecArray = ReadFileMethods.ReadRenderWareFile(Data);
-            model = new RenderWareModelFile(renderer.device, rwSecArray);
-            if (rwSecArray.Length > 0)
-                renderWareVersion = rwSecArray[0].renderWareVersion;
-            SetupAtomicFlagsForRender();
-#if !DEBUG
+                ReadFileMethods.treatStuffAsByteArray = false;
+                var rwSecArray = ReadFileMethods.ReadRenderWareFile(Data);
+                model = new RenderWareModelFile(renderer.device, rwSecArray);
+                if (rwSecArray.Length > 0)
+                    renderWareVersion = rwSecArray[0].renderWareVersion;
+                SetupAtomicFlagsForRender();
             }
             catch (Exception ex)
             {
-                if (model != null)
-                    model.Dispose();
+                model?.Dispose();
                 model = null;
-                throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
+                MessageBox.Show($"Error: {this} has an unsupported format and cannot be rendered: {ex.Message}", "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
             }
-#endif
         }
 
         public void Dispose()
