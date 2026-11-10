@@ -1,6 +1,7 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.10.12224.181 stable
+VisualStudioVersion = 18.10.12224.181
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IndustrialPark", "IndustrialPark\IndustrialPark.csproj", "{62F1A222-225B-463F-85A7-70F56C34C324}"
 EndProject
@@ -16,6 +17,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Randomizer", "IndustrialParkRandomizer\Randomizer.csproj", "{6E4742AD-4125-486F-882D-82C703265887}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IndustrialParkTest", "IndustrialParkTest\IndustrialParkTest.csproj", "{BD22CB98-D975-4E37-8707-9FA07C067806}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Updater", "Updater\Updater.csproj", "{B34E64C4-A12C-41FC-9802-B92B7CDC5A10}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +50,10 @@ Global
 		{BD22CB98-D975-4E37-8707-9FA07C067806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD22CB98-D975-4E37-8707-9FA07C067806}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD22CB98-D975-4E37-8707-9FA07C067806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B34E64C4-A12C-41FC-9802-B92B7CDC5A10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B34E64C4-A12C-41FC-9802-B92B7CDC5A10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B34E64C4-A12C-41FC-9802-B92B7CDC5A10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B34E64C4-A12C-41FC-9802-B92B7CDC5A10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -52,25 +52,4 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
   </ItemGroup>
-  <Target Name="RouteDependencyAssembliesToLibrary" BeforeTargets="_CopyFilesMarkedCopyLocal">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Update="@(ReferenceCopyLocalPaths)"
-                               Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll' and '%(ReferenceCopyLocalPaths.DestinationSubDirectory)' == '' and '%(ReferenceCopyLocalPaths.Filename)' != 'IndustrialPark' and '%(ReferenceCopyLocalPaths.Filename)' != 'Randomizer'">
-        <DestinationSubDirectory>Library\</DestinationSubDirectory>
-      </ReferenceCopyLocalPaths>
-    </ItemGroup>
-  </Target>
-  <Target Name="StageAndPruneOutputAssemblies" AfterTargets="CopyFilesToOutputDirectory">
-    <ItemGroup>
-      <DependencyAssembliesToMove Include="$(TargetDir)*.dll" Exclude="$(TargetDir)$(TargetName).dll;$(TargetDir)IndustrialPark.dll;$(TargetDir)Randomizer.dll" />
-      <SatelliteAssembliesToRemove Include="$(TargetDir)*\*.resources.dll" />
-      <SatelliteDirectoriesToRemove Include="@(SatelliteAssembliesToRemove->'%(RootDir)%(Directory)')" />
-    </ItemGroup>
-    <MakeDir Directories="$(TargetDir)Library" Condition="'@(DependencyAssembliesToMove)' != ''" />
-    <Copy SourceFiles="@(DependencyAssembliesToMove)" DestinationFolder="$(TargetDir)Library" SkipUnchangedFiles="true" />
-    <Delete Files="@(DependencyAssembliesToMove)" />
-    <Delete Files="$(TargetDir)Library\IndustrialPark.dll;$(TargetDir)Library\Randomizer.dll" />
-    <Delete Files="@(SatelliteAssembliesToRemove)" />
-    <RemoveDir Directories="@(SatelliteDirectoriesToRemove)" />
-  </Target>
 </Project>

@@ -1,252 +1,146 @@
 ﻿using Newtonsoft.Json;
-using Octokit;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Windows.Forms;
-using Application = System.Windows.Forms.Application;
 
 namespace IndustrialPark
 {
+    public enum UpdateStatus
+    {
+        Throttled,
+        AlreadyUpToDate,
+        Available,
+        Downloaded,
+        UserDeclined,
+        DoesNotExist,
+        Error,
+    }
+
     public static class AutomaticUpdater
     {
         public static DateTime LastCheckedForUpdate;
-        public static bool UpdateIndustrialPark(out bool hasChecked, bool forceCheck = false)
+
+        private static string AutomaticUpdaterPath => Path.Combine(Application.StartupPath, "Updater.exe");
+
+        public static UpdateStatus CheckForUpdates(bool throttle)
         {
-            hasChecked = false;
+            if (throttle && LastCheckedForUpdate != DateTime.MinValue && DateTime.Now.Subtract(LastCheckedForUpdate).TotalHours < 21)
+                return UpdateStatus.Throttled;
 
-            if (new IPversion().version.Contains("beta"))
-                return false;
+            if (!File.Exists(AutomaticUpdaterPath))
+                return UpdateStatus.DoesNotExist;
 
-            string owner = "igorseabra4";
-            string repo = "IndustrialPark";
+            var updater = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = AutomaticUpdaterPath,
+                Arguments = "\"" + Application.ExecutablePath + "\"",
+                UseShellExecute = false,
+                WorkingDirectory = Application.StartupPath,
+            });
+
+            if (updater == null)
+                return UpdateStatus.Error;
+
+            updater.WaitForExit();
+
+            LastCheckedForUpdate = DateTime.Now;
+
+            if (updater.ExitCode == 0)
+                return UpdateStatus.Downloaded;
+            
+            CheckForUpdatesOnEditorFiles(false);
+
+            if (updater.ExitCode == 1)
+                return UpdateStatus.AlreadyUpToDate;
+
+            if (updater.ExitCode == 2)
+                return UpdateStatus.UserDeclined;
+            
+            return UpdateStatus.Error;
+        }
+
+        public static string editorFilesFolder => Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles", "IndustrialPark-EditorFiles-master");
+        
+        private static string editorFilesVersionJson => Path.Combine(editorFilesFolder, "version.json");
+
+        public static UpdateStatus CheckForUpdatesOnEditorFiles(bool downloadWhenNotFound)
+        {
+            var result = VerifyEditorFiles();
+            if (downloadWhenNotFound && result == UpdateStatus.DoesNotExist)
+                return DownloadIfAccepted("The IndustrialPark-EditorFiles folder has not been found under Resources. Do you wish to download it?", "Editor Files Not Found");
+            if (result == UpdateStatus.Available)
+                return DownloadIfAccepted("An update for IndustrialPark-EditorFiles has been found. Do you wish to download it now? Any previously existing files in the folder will be overwritten.", "Update Found");
+            return result;
+        }
+
+        private static UpdateStatus DownloadIfAccepted(string message, string title) =>
+            MessageBox.Show(message, title, MessageBoxButtons.YesNo, MessageBoxIcon.Information) == DialogResult.Yes ?
+            (DownloadEditorFiles() ? UpdateStatus.Downloaded : UpdateStatus.Error) : UpdateStatus.UserDeclined;
+
+        private static UpdateStatus VerifyEditorFiles()
+        {
+            if (!Directory.Exists(editorFilesFolder) || !File.Exists(editorFilesVersionJson))
+                return UpdateStatus.DoesNotExist;
 
             try
             {
-                if (forceCheck || LastCheckedForUpdate == DateTime.MinValue || DateTime.Now.Subtract(LastCheckedForUpdate).TotalHours >= 21)
-                {
-                    var client = new GitHubClient(new ProductHeaderValue("IP"));
-                    Release newRelease = client.Repository.Release.GetLatest(owner, repo).GetAwaiter().GetResult();
+                string localVersion = JsonConvert.DeserializeObject<IPversion>(File.ReadAllText(editorFilesVersionJson)).version;
+                string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark-EditorFiles/master/version.json";
+                string updatedJson;
 
-                    LastCheckedForUpdate = DateTime.Now;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(versionInfoURL);
+                request.AutomaticDecompression = DecompressionMethods.GZip;
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                    updatedJson = reader.ReadToEnd();
 
-                    if (newRelease.TagName.Substring(1) == Application.ProductVersion)
-                    {
-                        hasChecked = true;
-                        return false;
-                    }
-
-                    string messageText = $"There is an update available: Industrial Park ({newRelease.Name}).\n\n{TrimBody(newRelease.Body)}\n\nDo you wish to download it?";
-                    DialogResult d = MessageBox.Show(messageText, "Update Available", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                    if (d == DialogResult.Yes)
-                    {
-                        string updatedIPfilePath = Path.Combine(Application.StartupPath, "release.zip");
-                        string oldIPdestinationPath = Path.Combine(Application.StartupPath, "IndustrialPark_old");
-
-                        using (var webClient = new WebClient())
-                        {
-                            webClient.Headers.Add(HttpRequestHeader.UserAgent, "Anything");
-                            webClient.DownloadFile(newRelease.Assets[0].BrowserDownloadUrl, updatedIPfilePath);
-                        }
-
-                        if (Directory.Exists(oldIPdestinationPath))
-                            RecursiveDelete(oldIPdestinationPath, false);
-                        else
-                            Directory.CreateDirectory(oldIPdestinationPath);
-
-                        List<string> directories = new()
-                        {
-                            "en-GB",
-                            "lib",
-                            "runtimes",
-                            "Resources"
-                        };
-
-                        List<string> copyOnly = new()
-                        {
-                            "ip_settings.json",
-                            "default_project.json",
-                        };
-
-                        foreach (string dir in Directory.GetDirectories(Application.StartupPath, "*", SearchOption.TopDirectoryOnly))
-                        {
-                            if (!directories.Contains(Path.GetRelativePath(Application.StartupPath, dir)))
-                                continue;
-
-                            CloneDirectory(dir, oldIPdestinationPath);
-                        }
-
-                        foreach (string file in Directory.GetFiles(Application.StartupPath, "*", SearchOption.TopDirectoryOnly))
-                        {
-                            if (copyOnly.Contains(Path.GetFileName(file).ToLower()))
-                                File.Copy(file, Path.Combine(oldIPdestinationPath, Path.GetFileName(file)), true);
-                            else if (Path.GetFileName(file).ToLower().Equals(Path.GetFileName(updatedIPfilePath)))
-                                continue;
-                            else
-                                File.Move(file, Path.Combine(oldIPdestinationPath, Path.GetFileName(file)), true);
-                        }
-
-                        ZipFile.ExtractToDirectory(updatedIPfilePath, Application.StartupPath, true);
-
-                        File.Delete(updatedIPfilePath);
-
-                        return true;
-                    }
-                }
-            }
-            catch (ApiException apiex)
-            {
-                MessageBox.Show("There was an api error checking for updates: " + apiex.Message, "API Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
+                return (localVersion != updatedVersion.version) ? UpdateStatus.Available : UpdateStatus.AlreadyUpToDate;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("There was an error checking for updates: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            return false;
-        }
-
-        private static string TrimBody(string body)
-        {
-            const int MaxLines = 20;
-            body ??= string.Empty;
-
-            var lines = body.Split('\n');
-            if (lines.Length > MaxLines)
-            {
-                var sb = new System.Text.StringBuilder();
-                for (int i = 0; i < MaxLines; i++)
-                {
-                    if (i > 0)
-                        sb.Append('\n');
-                    sb.Append(lines[i].TrimEnd('\r'));
-                }
-                sb.Append("\n... (truncated)");
-                body = sb.ToString();
-            }
-
-            return body;
-        }
-
-        private static void CloneDirectory(string src, string dest)
-        {
-            string relativeSrcPath = Path.GetRelativePath(Application.StartupPath, src);
-            string newPath = Path.Combine(Application.StartupPath, dest, relativeSrcPath);
-
-            Directory.CreateDirectory(newPath);
-            foreach (var dir in Directory.GetDirectories(src, "*", SearchOption.AllDirectories))
-            {
-                CloneDirectory(dir, dest);
-            }
-
-            foreach (var file in Directory.GetFiles(src))
-            {
-                File.Copy(file, Path.Combine(newPath, Path.GetFileName(file)), true);
+                MessageBox.Show("Failed to check for update:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return UpdateStatus.Error;
             }
         }
 
-        private static void RecursiveDelete(string directory, bool deleteRoot = true)
+        public static bool DownloadEditorFiles()
         {
-            if (!Directory.Exists(directory) || !directory.Contains(Application.StartupPath))
-                return;
-
-            foreach (string dir in Directory.GetDirectories(directory))
-                Directory.Delete(dir, true);
-
-            foreach (string file in Directory.GetFiles(directory))
-                File.Delete(file);
-
-            if (deleteRoot)
-                Directory.Delete(directory);
-        }
-
-        public static string editorFilesFolder => Application.StartupPath + "/Resources/IndustrialPark-EditorFiles/IndustrialPark-EditorFiles-master/";
-
-        public static bool VerifyEditorFiles()
-        {
-            bool mustUpdate = false;
-
-            try
-            {
-                if (!Directory.Exists(editorFilesFolder))
-                {
-                    mustUpdate = true;
-                }
-                else
-                {
-                    if (File.Exists(editorFilesFolder + "version.json"))
-                    {
-                        string localVersion = JsonConvert.DeserializeObject<IPversion>(File.ReadAllText(editorFilesFolder + "version.json")).version;
-
-                        string versionInfoURL = "https://raw.githubusercontent.com/igorseabra4/IndustrialPark-EditorFiles/master/version.json";
-
-                        string updatedJson;
-
-                        HttpWebRequest request = (HttpWebRequest)WebRequest.Create(versionInfoURL);
-                        request.AutomaticDecompression = DecompressionMethods.GZip;
-                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                        using (StreamReader reader = new StreamReader(response.GetResponseStream()))
-                            updatedJson = reader.ReadToEnd();
-
-                        IPversion updatedVersion = JsonConvert.DeserializeObject<IPversion>(updatedJson);
-
-                        if (localVersion != updatedVersion.version)
-                            mustUpdate = true;
-                    }
-                    else
-                    {
-                        mustUpdate = true;
-                    }
-                }
-
-                if (mustUpdate)
-                {
-                    DialogResult dialogResult = MessageBox.Show("An update for IndustrialPark-EditorFiles has been found. Do you wish to download it now?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                    if (dialogResult == DialogResult.Yes)
-                        DownloadEditorFiles();
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            return mustUpdate;
-        }
-
-        public static void DownloadEditorFiles()
-        {
-            DownloadAndUnzip(
+            return DownloadAndUnzip(
                 "https://github.com/igorseabra4/IndustrialPark-EditorFiles/archive/master.zip",
                 Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles.zip"),
                 Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles"),
                 "IndustrialPark-EditorFiles");
         }
 
-        public static void DownloadAndUnzip(string zipUrl, string destZipPath, string destFolder, string downloadName)
+        public static bool DownloadAndUnzip(string zipUrl, string destZipPath, string destFolder, string downloadName)
         {
             try
             {
                 MessageBox.Show("Will begin download of " + downloadName + " from GitHub to " + destFolder + ". Please wait as this might take a while. Any previously existing files in the folder will be overwritten.");
 
+                if (Directory.Exists(destFolder))
+                    Directory.Delete(destFolder, true);
+
                 using (var webClient = new WebClient())
                     webClient.DownloadFile(new Uri(zipUrl), destZipPath);
 
-                RecursiveDelete(destFolder);
-
                 ZipFile.ExtractToDirectory(destZipPath, destFolder);
 
-                File.Delete(destZipPath);
-
                 MessageBox.Show("Downloaded " + downloadName + " from " + zipUrl + " to " + destFolder);
+                return true;
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Failed to download:\n" + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            finally
+            {
+                if (File.Exists(destZipPath))
+                    File.Delete(destZipPath);
             }
         }
     }

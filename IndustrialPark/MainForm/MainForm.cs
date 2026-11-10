@@ -64,10 +64,9 @@ namespace IndustrialPark
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-            if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
+            if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.CheckForUpdates(true) == UpdateStatus.Downloaded)
             {
                 Close();
-                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
                 return;
             }
 
@@ -701,26 +700,33 @@ namespace IndustrialPark
 
         private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (AutomaticUpdater.UpdateIndustrialPark(out bool hasChecked, true))
+            var result = AutomaticUpdater.CheckForUpdates(false);
+            switch (result)
             {
-                Close();
-                System.Diagnostics.Process.Start(Application.StartupPath + "/IndustrialPark.exe");
+                case UpdateStatus.AlreadyUpToDate:
+                    MessageBox.Show("No update found.", "No update found.", MessageBoxButtons.OK, MessageBoxIcon.None);
+                    break;
+                case UpdateStatus.Error:
+                    MessageBox.Show("There was an error checking for updates.", "Error", MessageBoxButtons.OK, MessageBoxIcon.None);
+                    break;
+                case UpdateStatus.Downloaded:
+                    Close();
+                    break;
             }
-            else if (hasChecked)
-                MessageBox.Show("No update found.");
-            else
-                MessageBox.Show("Unable to check for updates.");
         }
 
-        private void DownloadIndustrialParkEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        private void downloadOrUpdateEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AutomaticUpdater.DownloadEditorFiles();
-        }
-
-        private void CheckForUpdatesOnEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (!AutomaticUpdater.VerifyEditorFiles())
-                MessageBox.Show("No update found.");
+            var result = AutomaticUpdater.CheckForUpdatesOnEditorFiles(true);
+            switch (result)
+            {
+                case UpdateStatus.AlreadyUpToDate:
+                    MessageBox.Show("Editor files are already up to date.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                case UpdateStatus.Error:
+                    MessageBox.Show("Failed to download or update editor files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+            }
         }
 
         private void downloadVgmstreamToolStripMenuItem_Click(object sender, EventArgs e)

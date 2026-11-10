@@ -129,8 +129,7 @@ namespace IndustrialPark
             exportSceneToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator8 = new ToolStripSeparator();
             checkForUpdatesNowToolStripMenuItem = new ToolStripMenuItem();
-            downloadIndustrialParkEditorFilesToolStripMenuItem = new ToolStripMenuItem();
-            checkForUpdatesOnEditorFilesToolStripMenuItem = new ToolStripMenuItem();
+            downloadOrUpdateEditorFilesToolStripMenuItem = new ToolStripMenuItem();
             downloadVgmstreamToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
             ensureAssociationsToolStripMenuItem = new ToolStripMenuItem();
@@ -892,7 +891,7 @@ namespace IndustrialPark
             // 
             // toolsToolStripMenuItem
             // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, launchGameToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, createGameCubeBannerToolStripMenuItem, scriptEditorToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, archiveComparerToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadIndustrialParkEditorFilesToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem, setDolphinPathToolStripMenuItem });
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveAllOpenHIPsToolStripMenuItem, launchGameToolStripMenuItem, buildAndRunPS2ISOToolStripMenuItem, createGameCubeBannerToolStripMenuItem, scriptEditorToolStripMenuItem, stopSoundToolStripMenuItem, exportSceneToolStripMenuItem, archiveComparerToolStripMenuItem, toolStripSeparator8, checkForUpdatesNowToolStripMenuItem, downloadOrUpdateEditorFilesToolStripMenuItem, downloadVgmstreamToolStripMenuItem, toolStripSeparator2, ensureAssociationsToolStripMenuItem, setDolphinPathToolStripMenuItem });
             toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
             toolsToolStripMenuItem.Size = new System.Drawing.Size(47, 19);
             toolsToolStripMenuItem.Text = "&Tools";
@@ -961,19 +960,12 @@ namespace IndustrialPark
             checkForUpdatesNowToolStripMenuItem.Text = "Check for updates now...";
             checkForUpdatesNowToolStripMenuItem.Click += CheckForUpdatesNowToolStripMenuItem_Click;
             // 
-            // downloadIndustrialParkEditorFilesToolStripMenuItem
+            // downloadOrUpdateEditorFilesToolStripMenuItem
             // 
-            downloadIndustrialParkEditorFilesToolStripMenuItem.Name = "downloadIndustrialParkEditorFilesToolStripMenuItem";
-            downloadIndustrialParkEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            downloadIndustrialParkEditorFilesToolStripMenuItem.Text = "Download EditorFiles...";
-            downloadIndustrialParkEditorFilesToolStripMenuItem.Click += DownloadIndustrialParkEditorFilesToolStripMenuItem_Click;
-            // 
-            // checkForUpdatesOnEditorFilesToolStripMenuItem
-            // 
-            checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
-            checkForUpdatesOnEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
-            checkForUpdatesOnEditorFilesToolStripMenuItem.Text = "Check for updates on EditorFiles...";
-            checkForUpdatesOnEditorFilesToolStripMenuItem.Click += CheckForUpdatesOnEditorFilesToolStripMenuItem_Click;
+            downloadOrUpdateEditorFilesToolStripMenuItem.Name = "downloadOrUpdateEditorFilesToolStripMenuItem";
+            downloadOrUpdateEditorFilesToolStripMenuItem.Size = new System.Drawing.Size(253, 22);
+            downloadOrUpdateEditorFilesToolStripMenuItem.Text = "Download or Update EditorFiles...";
+            downloadOrUpdateEditorFilesToolStripMenuItem.Click += downloadOrUpdateEditorFilesToolStripMenuItem_Click;
             // 
             // downloadVgmstreamToolStripMenuItem
             // 
@@ -1650,8 +1642,7 @@ namespace IndustrialPark
         private System.Windows.Forms.ToolStripMenuItem templatesPersistentShiniesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem launchGameToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator8;
-        private System.Windows.Forms.ToolStripMenuItem downloadIndustrialParkEditorFilesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnEditorFilesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem downloadOrUpdateEditorFilesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesNowToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ensureAssociationsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;

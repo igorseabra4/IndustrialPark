@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
 using static HipHopFile.Functions;
 
 namespace IndustrialPark.Randomizer
@@ -56,18 +55,14 @@ namespace IndustrialPark.Randomizer
         {
             HexUIntTypeConverter.Legacy = true;
 
-            if (Directory.Exists(AutomaticUpdater.editorFilesFolder))
+            var editorFilesUpdateStatus = AutomaticUpdater.CheckForUpdatesOnEditorFiles(true);
+            // always returns AlreadyUpToDate, UserDeclined, Downloaded or Error
+            switch (editorFilesUpdateStatus)
             {
-                AutomaticUpdater.VerifyEditorFiles();
-            }
-            else
-            {
-                DialogResult dialogResult = MessageBox.Show("The IndustrialPark-EditorFiles folder has not been found under Resources. You must download it first. Do you wish to download it?", "Note", MessageBoxButtons.YesNo, MessageBoxIcon.Information);
-
-                if (dialogResult == DialogResult.Yes)
-                    AutomaticUpdater.DownloadEditorFiles();
-                else if (dialogResult == DialogResult.No)
+                case UpdateStatus.UserDeclined:
                     return "Canceled";
+                case UpdateStatus.Error:
+                    return "Error";
             }
 
             RandomizableArchive.random = new Random((int)this.seed);

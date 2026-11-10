@@ -168,7 +168,6 @@
     <PackageReference Include="DSoft.SharpDX.Desktop" Version="4.4.2504.231" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="5.9.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="Octokit" Version="13.0.1" />
     <PackageReference Include="Ps2IsoTools" Version="1.1.2" />
     <PackageReference Include="SharpDX.D3DCompiler" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
@@ -203,13 +202,6 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;SYSLIB0014</NoWarn>
   </PropertyGroup>
-  <Target Name="RouteDependencyAssembliesToLibrary" BeforeTargets="_CopyFilesMarkedCopyLocal">
-    <ItemGroup>
-      <ReferenceCopyLocalPaths Update="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.Extension)' == '.dll' and '%(ReferenceCopyLocalPaths.DestinationSubDirectory)' == '' and '%(ReferenceCopyLocalPaths.Filename)' != 'IndustrialPark' and '%(ReferenceCopyLocalPaths.Filename)' != 'Randomizer'">
-        <DestinationSubDirectory>Library\</DestinationSubDirectory>
-      </ReferenceCopyLocalPaths>
-    </ItemGroup>
-  </Target>
   <Target Name="StageAndPruneOutputAssemblies" AfterTargets="CopyFilesToOutputDirectory">
     <ItemGroup>
       <DependencyAssembliesToMove Include="$(TargetDir)*.dll" Exclude="$(TargetDir)$(TargetName).dll;$(TargetDir)IndustrialPark.dll;$(TargetDir)Randomizer.dll" />

@@ -27,10 +27,10 @@ namespace IndustrialPark.Randomizer
                 heavyModManagerPath = settings.heavyModManagerPath;
                 checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.checkForUpdatesOnStartup;
 
-                if (settings.checkForUpdatesOnStartup && AutomaticUpdater.UpdateIndustrialPark(out _))
+                if (settings.checkForUpdatesOnStartup && AutomaticUpdater.CheckForUpdates(true) == UpdateStatus.Downloaded)
                 {
                     Close();
-                    System.Diagnostics.Process.Start(Application.StartupPath + "/Randomizer.exe");
+                    return;
                 }
             }
             else
@@ -371,8 +371,16 @@ namespace IndustrialPark.Randomizer
 
         private void checkForUpdatesOnEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (!AutomaticUpdater.VerifyEditorFiles())
-                MessageBox.Show("No update found.");
+            var result = AutomaticUpdater.CheckForUpdatesOnEditorFiles(true);
+            switch (result)
+            {
+                case UpdateStatus.AlreadyUpToDate:
+                    MessageBox.Show("Editor files are already up to date.", "Info", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    break;
+                case UpdateStatus.Error:
+                    MessageBox.Show("Failed to download or update editor files.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+            }
         }
 
         private void toolStripMenuItemHelp_Click(object sender, EventArgs e)

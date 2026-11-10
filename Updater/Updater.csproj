@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+	<TargetFramework>net10.0-windows</TargetFramework>
+	<LangVersion>preview</LangVersion>
+	<OutputType>WinExe</OutputType>
+	<RootNamespace>IndustrialPark.Updater</RootNamespace>
+	<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+	<UseWindowsForms>true</UseWindowsForms>
+	<ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+	<UseAppHost>true</UseAppHost>
+	<ApplicationIcon>..\IndustrialPark\icon.ico</ApplicationIcon>
+	<Company>Heavy Iron Modding</Company>
+	<Copyright>Copyright © 2026 Heavy Iron Modding</Copyright>
+	<Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<OutputPath>..\IndustrialPark\bin\Debug\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<DebugType>none</DebugType>
+	<WarningLevel>3</WarningLevel>
+	<NoWarn>1701;1702;SYSLIB0014</NoWarn>
+	<OutputPath>..\IndustrialPark\bin\Release\</OutputPath>
+  </PropertyGroup>
+  <ItemGroup>
+	<PackageReference Include="Octokit" Version="14.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+	<ProjectReference Include="..\IndustrialPark\IndustrialPark.csproj" />
+  </ItemGroup>
+</Project>
