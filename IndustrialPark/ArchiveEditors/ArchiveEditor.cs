@@ -1907,6 +1907,7 @@ public partial class ArchiveEditor : Form
 
     private static Dictionary<AssetType, string> CustomImageKeys = new Dictionary<AssetType, string>();
     private static Dictionary<(AssetType, string), string> SubtypeImageKeys = new Dictionary<(AssetType, string), string>();
+    public static string IconPackTitle { get; private set; } = null;
 
     private static void ParseCustomImageKeys(string[] strings)
     {
@@ -1914,6 +1915,12 @@ public partial class ArchiveEditor : Form
         var subtypeImageKeys = new Dictionary<(AssetType, string), string>();
         foreach (var line in strings)
         {
+            if (line.StartsWith('[') && line.EndsWith(']'))
+            {
+                IconPackTitle = line[1..^1].Trim();
+                continue;
+            }
+
             var content = line.Split('#', 2)[0].Trim();
             if (content.Length == 0)
                 continue;

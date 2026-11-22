@@ -24,6 +24,9 @@ namespace IndustrialPark
             welcomeLayout.Controls.Add(CreateLinkLabel("Report Issues and Feature Requests", IssuesLink), 0, 6);
 
             labelProductName.Text = $"Industrial Park {new IPversion().version}";
+            if (!string.IsNullOrWhiteSpace(ArchiveEditors.ArchiveEditor.IconPackTitle))
+                aboutText.Text += "\r\nAsset Icon Pack: " + ArchiveEditors.ArchiveEditor.IconPackTitle;
+
         }
 
         public bool ShowOnStartup => checkShowOnStartup.Checked;
