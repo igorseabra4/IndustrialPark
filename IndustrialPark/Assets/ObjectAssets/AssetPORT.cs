@@ -2,6 +2,7 @@
 using System;
 using System.ComponentModel;
 using System.Linq;
+using System.Text;
 
 namespace IndustrialPark.Assets
 {
@@ -22,8 +23,8 @@ namespace IndustrialPark.Assets
             get;
             set
             {
-                if (value.Length != 4)
-                    throw new ArgumentException("Value must be 4 characters long");
+                if (value == null || value.Length != 4 || value.Any(c => c > 127))
+                    throw new ArgumentException("Value must contain exactly 4 ASCII characters.");
                 field = value;
             }
         }
@@ -40,8 +41,10 @@ namespace IndustrialPark.Assets
             DestinationMarker = reader.ReadUInt32();
             Rotation = reader.ReadSingle();
 
-            var chars = reader.ReadChars(4);
-            DestinationLevel = (reader.endianness == Endianness.Little && game < Game.Incredibles) ? new string(chars) : new string(chars.Reverse().ToArray());
+            var chars = reader.ReadBytes(4);
+            if (DestinationLevelIsBackwards(game, reader.endianness))
+                Array.Reverse(chars);
+            DestinationLevel = Encoding.ASCII.GetString(chars);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -51,13 +54,16 @@ namespace IndustrialPark.Assets
             writer.Write(DestinationMarker);
             writer.Write(Rotation);
 
-            if (writer.endianness == Endianness.Little && game < Game.Incredibles)
-                writer.WritePaddedString(DestinationLevel.Reverse().ToString(), 4);
-            else
-                writer.WritePaddedString(DestinationLevel, 4);
+            var chars = Encoding.ASCII.GetBytes(DestinationLevel);
+            if (DestinationLevelIsBackwards(game, writer.endianness))
+                Array.Reverse(chars);
+            writer.Write(chars);
 
-            writer.WritePaddedString(DestinationLevel, 4);
             SerializeLinks(writer);
         }
+
+        // Backwards for Scooby and BFBB on GC, and for the other games on PS2 and Xbox, for some reason
+        public static bool DestinationLevelIsBackwards(Game game, Endianness endianness) =>
+            (game == Game.Scooby || game == Game.BFBB) == (endianness == Endianness.Big);
     }
 }
