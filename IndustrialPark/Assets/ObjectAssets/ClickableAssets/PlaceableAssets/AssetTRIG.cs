@@ -170,27 +170,22 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetTRIG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetTRIG(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
+            _minimum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _maximum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            Position2X = reader.ReadSingle();
+            Position2Y = reader.ReadSingle();
+            Position2Z = reader.ReadSingle();
+            Position3X = reader.ReadSingle();
+            Position3Y = reader.ReadSingle();
+            Position3Z = reader.ReadSingle();
+            DirectionX = reader.ReadSingle();
+            DirectionY = reader.ReadSingle();
+            DirectionZ = reader.ReadSingle();
+            TriggerFlags.FlagValueInt = reader.ReadUInt32();
 
-                _minimum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _maximum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                Position2X = reader.ReadSingle();
-                Position2Y = reader.ReadSingle();
-                Position2Z = reader.ReadSingle();
-                Position3X = reader.ReadSingle();
-                Position3Y = reader.ReadSingle();
-                Position3Z = reader.ReadSingle();
-                DirectionX = reader.ReadSingle();
-                DirectionY = reader.ReadSingle();
-                DirectionZ = reader.ReadSingle();
-                TriggerFlags.FlagValueInt = reader.ReadUInt32();
-
-                FixPosition();
-            }
+            FixPosition();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -222,7 +217,7 @@ namespace IndustrialPark.Assets
         public BoundingSphere boundingSphere;
         private Matrix pivotWorld;
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             if (Shape == TriggerShape.Box)
             {
@@ -266,15 +261,7 @@ namespace IndustrialPark.Assets
             }
             else
             {
-                List<Vector3> verticesF = Shape == TriggerShape.Box ?
-                    renderer.cubeVertices : renderer.cylinderVertices;
-
-                vertices = new Vector3[verticesF.Count];
-
-                for (int i = 0; i < verticesF.Count; i++)
-                    vertices[i] = Vector3.TransformCoordinate(verticesF[i], world);
-
-                boundingBox = BoundingBox.FromPoints(vertices);
+                boundingBox = CreateBoundingBox(Shape == TriggerShape.Box ? renderer.cubeVertices : renderer.cylinderVertices, world);
             }
         }
 

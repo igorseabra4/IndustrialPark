@@ -48,18 +48,13 @@ namespace IndustrialPark.Assets
             template == AssetTemplate.Turret_v3 ? EnemyTurretType.turret_v3_bind : 0;
         }
 
-        public DynaEnemyTurret(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Turret, game, endianness)
+        public DynaEnemyTurret(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__Turret, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                Rotation = reader.ReadSingle();
-                Unknown54 = reader.ReadUInt32();
-                TargetPlayer = reader.ReadInt32();
-                Unknown5C = reader.ReadUInt32();
-                Unknown60 = reader.ReadUInt32();
-            }
+            Rotation = reader.ReadSingle();
+            Unknown54 = reader.ReadUInt32();
+            TargetPlayer = reader.ReadInt32();
+            Unknown5C = reader.ReadUInt32();
+            Unknown60 = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

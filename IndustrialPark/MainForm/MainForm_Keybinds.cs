@@ -454,7 +454,7 @@ public partial class MainForm
                 MouseModeToggle();
                 return;
             case KeyboardAction.NewArchiveEditor:
-                AddArchiveEditor(refreshTexturesModels: false);
+                AddArchiveEditor(recalculateMatrices: false);
                 return;
             case KeyboardAction.OpenLevel:
                 new OpenLevel().Show(this);

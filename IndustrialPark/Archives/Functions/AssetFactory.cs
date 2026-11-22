@@ -145,28 +145,28 @@ public class AssetFactory
                         {
                             FloatParameter1 = 2,
                             TargetAsset = checkpointSimp.assetID,
-                            EventReceiveID = (ushort)EventBFBB.Run,
-                            EventSendID = (ushort)EventBFBB.AnimPlay
+                            EventReceiveBFBB = EventBFBB.Run,
+                            EventSendBFBB = EventBFBB.AnimPlay
                         },
                         new Link(game)
                         {
                             Parameter1 = "checkpoint_text",
                             TargetAsset = checkpointTalkbox,
-                            EventReceiveID = (ushort)EventBFBB.Run,
-                            EventSendID = (ushort)EventBFBB.StartConversation
+                            EventReceiveBFBB = EventBFBB.Run,
+                            EventSendBFBB = EventBFBB.StartConversation
                         },
                         new Link(game)
                         {
                             FloatParameter1 = 3,
                             TargetAsset = checkpointSimp.assetID,
-                            EventReceiveID = (ushort)EventBFBB.Expired,
-                            EventSendID = (ushort)EventBFBB.AnimPlayLoop
+                            EventReceiveBFBB = EventBFBB.Expired,
+                            EventSendBFBB = EventBFBB.AnimPlayLoop
                         },
                         new Link(game)
                         {
                             TargetAsset = timer.assetID,
-                            EventReceiveID = (ushort)EventBFBB.Expired,
-                            EventSendID = (ushort)EventBFBB.Disable
+                            EventReceiveBFBB = EventBFBB.Expired,
+                            EventSendBFBB = EventBFBB.Disable
                         },
                     };
                     return timer;
@@ -204,8 +204,8 @@ public class AssetFactory
                         GenerateTemplate(position, $"{assetName}_POINTER", AssetTemplate.Pointer).assetID :
                         GenerateTemplate(position, $"{assetName}_MARKER", AssetTemplate.Marker).assetID,
                         TargetAsset = checkpointDisp,
-                        EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                        EventSendID = (ushort)EventBFBB.SetCheckPoint
+                        EventReceiveBFBB = EventBFBB.EnterPlayer,
+                        EventSendBFBB = EventBFBB.SetCheckPoint
                     }
                 };
 
@@ -213,8 +213,8 @@ public class AssetFactory
                         links.Add(new Link(game)
                         {
                             TargetAsset = GenerateTemplate(position, $"{assetName}_TIMER", AssetTemplate.Checkpoint_Timer).assetID,
-                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                            EventSendID = (ushort)EventBFBB.Run
+                            EventReceiveBFBB = EventBFBB.EnterPlayer,
+                            EventSendBFBB = EventBFBB.Run
                         });
 
                     if (template == AssetTemplate.Checkpoint_Set && game == Game.Incredibles)
@@ -222,14 +222,14 @@ public class AssetFactory
                         links.Add(new Link(game)
                         {
                             TargetAsset = GenerateTemplate(position, $"{assetName}_SCRIPT", AssetTemplate.Checkpoint_Script).assetID,
-                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                            EventSendID = (ushort)EventBFBB.Run
+                            EventReceiveBFBB = EventBFBB.EnterPlayer,
+                            EventSendBFBB = EventBFBB.Run
                         });
                         links.Add(new Link(game)
                         {
                             TargetAsset = trigger.assetID,
-                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                            EventSendID = (ushort)EventBFBB.Disable
+                            EventReceiveBFBB = EventBFBB.EnterPlayer,
+                            EventSendBFBB = EventBFBB.Disable
                         });
                     }
 
@@ -245,14 +245,14 @@ public class AssetFactory
                         new Link(game)
                         {
                             TargetAsset = lightsSimp.assetID,
-                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                            EventSendID = (ushort)EventBFBB.Visible
+                            EventReceiveBFBB = EventBFBB.EnterPlayer,
+                            EventSendBFBB = EventBFBB.Visible
                         },
                         new Link(game)
                         {
                             TargetAsset = lightsSimp.assetID,
-                            EventReceiveID = (ushort)EventBFBB.ExitPlayer,
-                            EventSendID = (ushort)EventBFBB.Invisible
+                            EventReceiveBFBB = EventBFBB.ExitPlayer,
+                            EventSendBFBB = EventBFBB.Invisible
                         }
                     };
                     return trigger;
@@ -388,8 +388,8 @@ public class AssetFactory
                         {
                             new Link(game)
                             {
-                                EventReceiveID = (ushort)EventScooby.Digup,
-                                EventSendID = (ushort)EventScooby.CollisionVisibleOn,
+                                EventReceiveScooby = EventScooby.Digup,
+                                EventSendScooby = EventScooby.CollisionVisibleOn,
                                 TargetAsset = dig.assetID,
                             }
                         };
@@ -534,8 +534,8 @@ public class AssetFactory
                             new Link(game)
                             {
                                 TargetAsset = GenerateTemplate(position, assetName + "_GROUP", AssetTemplate.Group).assetID,
-                                EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                                EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                                EventReceiveBFBB = EventBFBB.ScenePrepare,
+                                EventSendBFBB = EventBFBB.Connect_IOwnYou
                             }
                         };
                 }
@@ -569,8 +569,8 @@ public class AssetFactory
                         new Link(game)
                         {
                             TargetAsset = vil.assetID,
-                            EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                            EventSendID = (ushort)EventBFBB.DetectPlayerOff
+                            EventReceiveBFBB = EventBFBB.ScenePrepare,
+                            EventSendBFBB = EventBFBB.DetectPlayerOff
                         }
                     };
 
@@ -580,14 +580,14 @@ public class AssetFactory
                         new Link(game)
                         {
                             TargetAsset = vil.assetID,
-                            EventReceiveID = (ushort)EventBFBB.EnterPlayer,
-                            EventSendID = (ushort)EventBFBB.DetectPlayerOn
+                            EventReceiveBFBB = EventBFBB.EnterPlayer,
+                            EventSendBFBB = EventBFBB.DetectPlayerOn
                         },
                         new Link(game)
                         {
                             TargetAsset = vil.assetID,
-                            EventReceiveID = (ushort)EventBFBB.ExitPlayer,
-                            EventSendID = (ushort)EventBFBB.DetectPlayerOff
+                            EventReceiveBFBB = EventBFBB.ExitPlayer,
+                            EventSendBFBB = EventBFBB.DetectPlayerOff
                         }
                     };
                 }
@@ -604,8 +604,8 @@ public class AssetFactory
                         links.Add(new Link(game)
                         {
                             TargetAsset = dog.assetID,
-                            EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                            EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                            EventReceiveBFBB = EventBFBB.ScenePrepare,
+                            EventSendBFBB = EventBFBB.Connect_IOwnYou
                         });
                     }
                     vil.Links = links.ToArray();
@@ -619,8 +619,8 @@ public class AssetFactory
                         links.Add(new Link(game)
                         {
                             TargetAsset = slave.assetID,
-                            EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                            EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                            EventReceiveBFBB = EventBFBB.ScenePrepare,
+                            EventSendBFBB = EventBFBB.Connect_IOwnYou
                         });
                     }
                     vil.Links = links.ToArray();
@@ -717,26 +717,26 @@ public class AssetFactory
                         new Link(game)
                         {
                             TargetAsset = checkpointSdfx.assetID,
-                            EventSendID = (ushort)EventTSSM.Play
+                            EventSendTSSM = EventTSSM.Play
                         },
                         new Link(game)
                         {
                             FloatParameter4 = 10f,
                             TargetAsset = checkpointSimp.assetID,
-                            EventSendID = (ushort)EventTSSM.LaunchFireWorks
+                            EventSendTSSM = EventTSSM.LaunchFireWorks
                         },
                         new Link(game)
                         {
                             FloatParameter1 = 2f,
                             TargetAsset = checkpointSimp.assetID,
-                            EventSendID = (ushort)EventTSSM.AnimPlay
+                            EventSendTSSM = EventTSSM.AnimPlay
                         },
                         new Link(game)
                         {
                             Time = 0.5f,
                             FloatParameter1 = 3f,
                             TargetAsset = checkpointSimp.assetID,
-                            EventSendID = (ushort)EventTSSM.AnimPlayLoop
+                            EventSendTSSM = EventTSSM.AnimPlayLoop
                         },
                     };
 
@@ -809,8 +809,8 @@ public class AssetFactory
                     {
                         new Link(game)
                         {
-                            EventReceiveID = (ushort)EventTSSM.ScenePrepare,
-                            EventSendID = (ushort)EventTSSM.Drivenby,
+                            EventReceiveTSSM = EventTSSM.ScenePrepare,
+                            EventSendTSSM = EventTSSM.Drivenby,
                             TargetAsset = block.assetID,
                             FloatParameter1 = 1f
                         }
@@ -829,8 +829,8 @@ public class AssetFactory
                     {
                         new Link(game)
                         {
-                            EventReceiveID = (ushort)EventTSSM.ScenePrepare,
-                            EventSendID = (ushort)EventTSSM.Drivenby,
+                            EventReceiveTSSM = EventTSSM.ScenePrepare,
+                            EventSendTSSM = EventTSSM.Drivenby,
                             TargetAsset = driver.assetID,
                             FloatParameter1 = 1f
                         }
@@ -854,19 +854,19 @@ public class AssetFactory
                         new Link(game)
                         {
                             Time = 0,
-                            EventSendID = (ushort)EventTSSM.Run,
+                            EventSendTSSM = EventTSSM.Run,
                             TargetAsset = block.assetID
                         },
                         new Link(game)
                         {
                             Time = 1,
-                            EventSendID = (ushort)EventTSSM.CollisionVisibleOff,
+                            EventSendTSSM = EventTSSM.CollisionVisibleOff,
                             TargetAsset = block.assetID
                         },
                         new Link(game)
                         {
                             Time = 1,
-                            EventSendID = (ushort)EventTSSM.Play,
+                            EventSendTSSM = EventTSSM.Play,
                             TargetAsset = sdfx.assetID
                         },
                     };
@@ -874,8 +874,8 @@ public class AssetFactory
                     var links = block.Links.ToList();
                     links.Add(new Link(game)
                     {
-                        EventReceiveID = (ushort)EventTSSM.Mount,
-                        EventSendID = (ushort)EventTSSM.Run,
+                        EventReceiveTSSM = EventTSSM.Mount,
+                        EventSendTSSM = EventTSSM.Run,
                         TargetAsset = script.assetID,
                     });
                     block.Links = links.ToArray();
@@ -1107,7 +1107,7 @@ public class AssetFactory
             timer.Links = [
                 new Link(timer.game)
                 {
-                    EventReceiveID = 0x0014,
+                    EventReceiveID = (ushort)EventBFBB.Expired,
                     EventSendID = link.EventSendID,
                     TargetAsset = link.TargetAsset,
                     ArgumentAsset = link.ArgumentAsset,

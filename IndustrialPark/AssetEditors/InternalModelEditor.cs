@@ -532,14 +532,9 @@ namespace IndustrialPark.ArchiveEditors
 
             string collName = asset.assetName + "_COLL";
 
-            Section_AHDR collmodelAhdr = new Section_AHDR(
-                Functions.BKDRHash(collName),
-                AssetType.Model,
-                AssetService.AHDRFlagsFromAssetType(AssetType.Model),
-                new Section_ADBG(0, collName, "", 0),
-                rwmodel.GetBytes(asset.RenderWareVersion));
+            var collModel = new AssetMODL(collName, rwmodel.GetBytes(asset.RenderWareVersion));
 
-            Asset collModel = ac.ImportAssets([collmodelAhdr], ac.GetOrCreateLayerOfType(LayerType.MODEL), false)[0];
+            ac.AddNewAsset(collModel, ac.GetOrCreateLayerOfType(LayerType.MODEL));
 
             var coll = ac.TableManager.GetCOLL();
             foreach (var item in coll.Entries)

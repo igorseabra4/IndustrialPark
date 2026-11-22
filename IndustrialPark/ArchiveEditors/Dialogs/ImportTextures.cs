@@ -87,7 +87,7 @@ namespace IndustrialPark.ArchiveEditors
                         string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
 
                         Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);
-                        Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(assetName), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture), ADBG, data);
+                        Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(assetName), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture), ADBG, data, game, platform);
 
                         AHDRs.Add(AHDR);
                     }

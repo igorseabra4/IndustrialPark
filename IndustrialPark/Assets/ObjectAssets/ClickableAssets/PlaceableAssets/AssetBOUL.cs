@@ -68,43 +68,38 @@ namespace IndustrialPark.Assets
             ColorAlphaSpeed = 0;
         }
 
-        public AssetBOUL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetBOUL(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            Gravity = reader.ReadSingle();
+            Mass = reader.ReadSingle();
+            BounceFactor = reader.ReadSingle();
+            Friction = reader.ReadSingle();
+            if (game == Game.BFBB)
+                StartFriction = reader.ReadSingle();
+            MaxLinearVelocity = reader.ReadSingle();
+            MaxAngularVelocity = reader.ReadSingle();
+            Stickiness = reader.ReadSingle();
+            BounceDamp = reader.ReadSingle();
+            BoulderFlags.FlagValueInt = reader.ReadUInt32();
+            KillTimer = reader.ReadSingle();
+            Hitpoints = reader.ReadInt32();
+            Sound = reader.ReadUInt32();
+            if (game == Game.BFBB)
+                Volume = reader.ReadSingle();
+            MinSoundVel = reader.ReadSingle();
+            MaxSoundVel = reader.ReadSingle();
+            if (game == Game.BFBB)
             {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                Gravity = reader.ReadSingle();
-                Mass = reader.ReadSingle();
-                BounceFactor = reader.ReadSingle();
-                Friction = reader.ReadSingle();
-                if (game == Game.BFBB)
-                    StartFriction = reader.ReadSingle();
-                MaxLinearVelocity = reader.ReadSingle();
-                MaxAngularVelocity = reader.ReadSingle();
-                Stickiness = reader.ReadSingle();
-                BounceDamp = reader.ReadSingle();
-                BoulderFlags.FlagValueInt = reader.ReadUInt32();
-                KillTimer = reader.ReadSingle();
-                Hitpoints = reader.ReadInt32();
-                Sound = reader.ReadUInt32();
-                if (game == Game.BFBB)
-                    Volume = reader.ReadSingle();
-                MinSoundVel = reader.ReadSingle();
-                MaxSoundVel = reader.ReadSingle();
-                if (game == Game.BFBB)
-                {
-                    InnerRadius = reader.ReadSingle();
-                    OuterRadius = reader.ReadSingle();
-                }
-                else
-                {
-                    SphereRadius = reader.ReadSingle();
-                    reader.ReadBytes(3);
-                    BoneIndex = reader.ReadByte();
-                    if (game >= Game.ROTU)
-                        InitNonCollideTime = reader.ReadSingle();
-                }
+                InnerRadius = reader.ReadSingle();
+                OuterRadius = reader.ReadSingle();
+            }
+            else
+            {
+                SphereRadius = reader.ReadSingle();
+                reader.ReadBytes(3);
+                BoneIndex = reader.ReadByte();
+                if (game >= Game.ROTU)
+                    InitNonCollideTime = reader.ReadSingle();
             }
         }
 

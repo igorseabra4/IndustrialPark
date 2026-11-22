@@ -65,7 +65,9 @@ public static class JSPService
         if (jspInfo.Section2?.Version.Equals(5) ?? true)
             return;
 
-        Clump_0010[] clumps = jspInfo.JSP_AssetIDs.Select(i => ((AssetJSP)GetAsset(i)).GetClump()).ToArray();
+        Clump_0010[] clumps = jspInfo.JSP_AssetIDs?.Select(i => ((AssetJSP)GetAsset(i)).GetClump()).ToArray();
+        if (clumps == null || clumps.Length == 0)
+            throw new NullReferenceException("No clumps found - JSPInfo has no useful JSP references");
 
         int clumpVertOffset = 0;
         int atomicOffset = clumps.Sum(c => c.atomicList.Length) - 1;

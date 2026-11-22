@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -28,11 +27,8 @@ public class DynaEffectRumbleSphere : RenderableDynaBase
     public static bool dontRender = false;
     protected override bool DontRender => dontRender;
 
-    public DynaEffectRumbleSphere(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, game, endianness)
+    public DynaEffectRumbleSphere(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__RumbleSphericalEmitter, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         Rumble = reader.ReadUInt32();
         Radius = reader.ReadSingle();
         _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -54,9 +50,18 @@ public class DynaEffectRumbleSphere : RenderableDynaBase
         writer.Write((byte)0);
     }
 
-    protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
+    protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.sphereVertices;
 
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.sphereTriangles;
 
-    public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
+    private BoundingSphere boundingSphere;
+
+    public override void CalculateTransformation(SharpRenderer renderer)
+    {
+        world = Matrix.Scaling(Radius * 2f) * Matrix.Translation(_position);
+        boundingSphere = new BoundingSphere(new Vector3(PositionX, PositionY, PositionZ), Radius);
+        boundingBox = BoundingBox.FromSphere(boundingSphere);
+    }
+
+    public override void Draw(SharpRenderer renderer) => renderer.DrawSphere(boundingSphere, isSelected, renderer.trigColor);
 }

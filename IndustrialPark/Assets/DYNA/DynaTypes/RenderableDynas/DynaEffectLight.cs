@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using IndustrialPark.Assets.Colors;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -52,7 +51,7 @@ public class DynaEffectLight : RenderableDynaBase
     }
 
     protected float _radius;
-    [Category("DYNA Placement")]
+    [Category("Placement")]
     public AssetSingle Radius
     {
         get => _radius;
@@ -73,11 +72,8 @@ public class DynaEffectLight : RenderableDynaBase
         LightCardScale = 1f;
     }
 
-    public DynaEffectLight(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__light, game, endianness)
+    public DynaEffectLight(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__light, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         LightType = (eLightType)reader.ReadUInt32();
         LightEffectID = reader.ReadUInt32();
         LightEffectSpeed = reader.ReadSingle();
@@ -114,12 +110,12 @@ public class DynaEffectLight : RenderableDynaBase
 
     protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.sphereVertices;
 
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.sphereTriangles;
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.sphereTriangles;
 
-    public override void CreateTransformMatrix(SharpRenderer renderer)
+    public override void CalculateTransformation(SharpRenderer renderer)
     {
         world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
-        CreateBoundingBox(renderer);
+        boundingBox = CreateBoundingBox(vertexSource(renderer), world);
     }
 
     public override void Draw(SharpRenderer renderer) => renderer.DrawSphere(world, isSelected, renderer.trigColor);

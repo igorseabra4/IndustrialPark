@@ -13,11 +13,10 @@ public class AssetJSP : AssetRenderWareModel, IRenderableAsset
 
     public AssetJSP(string assetName, AssetType assetType, byte[] data) : base(assetName, assetType, data) { }
 
-    public AssetJSP(Section_AHDR AHDR, Game game) : base(AHDR, game) { }
+    public AssetJSP(Section_AHDR AHDR) : base(AHDR) { }
 
-    public void CreateTransformMatrix(SharpRenderer renderer)
+    public void CalculateTransformation(SharpRenderer renderer)
     {
-        base.SetupModel(renderer);
         if (model != null)
             boundingBox = BoundingBox.FromPoints(model.vertexListG.ToArray());
     }
@@ -39,7 +38,7 @@ public class AssetJSP : AssetRenderWareModel, IRenderableAsset
     public void Draw(SharpRenderer renderer)
     {
         xJSPNodeInfo[] nodeInfos = renderer.Assets.GetFromJspNodeInfos(assetID);
-        model.RenderJsp(renderer, Matrix.Identity, isSelected, _dontDrawMeshNumber, nodeInfos);
+        model?.RenderJsp(renderer, Matrix.Identity, isSelected, _dontDrawMeshNumber, nodeInfos);
     }
 
     public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)

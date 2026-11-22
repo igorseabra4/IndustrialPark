@@ -1,4 +1,5 @@
-﻿using IndustrialPark.Assets;
+﻿using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Assets;
 using SharpDX;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ public static class AssetTransformer
             cam.SetNormalizedForward(Program.Renderer.Camera.Forward);
             cam.SetNormalizedUp(Program.Renderer.Camera.Up);
             cam.SetNormalizedLeft(Program.Renderer.Camera.Right);
-            cam.CreateTransformMatrix(Program.Renderer);
+            cam.CalculateTransformation(Program.Renderer);
         }
         else if (asset is IClickableAsset ir)
         {
@@ -92,5 +93,31 @@ public static class AssetTransformer
                     box.MaximumZ + trigDelta.Z + groupDelta.Z);
             }
         }
+    }
+
+    public static void DropAssets(SharpRenderer renderer, List<IClickableAsset> assets)
+    {
+        var beganTransaction = new HashSet<ArchiveEditor>();
+        
+        foreach (var asset in assets.OrderBy(a => a.PositionY))
+        {
+            if (asset is AssetTRIG || asset is AssetVOLU)
+                continue;
+
+            var position = renderer.Assets.GetRayIntersectionPosition(renderer,
+                new Ray(new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ), new Vector3(0f, -1f, 0f)),
+                asset.assetID);
+
+            asset.PositionY = position.Y;
+
+            var assetasset = (Asset)asset;
+            var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(assetasset);
+            if (beganTransaction.Add(ae))
+                ae.BeginTransaction();
+            assetasset.InvokePropertyChanged(false);
+        }
+
+        foreach (var ae in beganTransaction)
+            ae.EndTransaction();
     }
 }

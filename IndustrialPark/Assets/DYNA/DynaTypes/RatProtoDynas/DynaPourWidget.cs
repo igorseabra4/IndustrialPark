@@ -47,29 +47,24 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetID FillOutputID { get; set; }
 
-        public DynaPourWidget(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Pour_Widget, game, endianness)
+        public DynaPourWidget(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Pour_Widget, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Volume = reader.ReadSingle();
-                FillInputID = reader.ReadUInt32();
-                FillInputType = reader.ReadUInt32();
-                FillInputMin = reader.ReadSingle();
-                FillInputMax = reader.ReadSingle();
-                FillFlowRate = reader.ReadSingle();
-                TiltInputID = reader.ReadUInt32();
-                TiltInputType = reader.ReadUInt32();
-                TiltInputMin = reader.ReadSingle();
-                TiltInputMax = reader.ReadSingle();
-                FillWeight = reader.ReadSingle();
-                SpillWeight = reader.ReadSingle();
-                FoamWeight = reader.ReadSingle();
-                ScoreCounterID = reader.ReadUInt32();
-                FlowOutputID = reader.ReadUInt32();
-                FillOutputID = reader.ReadUInt32();
-            }
+            Volume = reader.ReadSingle();
+            FillInputID = reader.ReadUInt32();
+            FillInputType = reader.ReadUInt32();
+            FillInputMin = reader.ReadSingle();
+            FillInputMax = reader.ReadSingle();
+            FillFlowRate = reader.ReadSingle();
+            TiltInputID = reader.ReadUInt32();
+            TiltInputType = reader.ReadUInt32();
+            TiltInputMin = reader.ReadSingle();
+            TiltInputMax = reader.ReadSingle();
+            FillWeight = reader.ReadSingle();
+            SpillWeight = reader.ReadSingle();
+            FoamWeight = reader.ReadSingle();
+            ScoreCounterID = reader.ReadUInt32();
+            FlowOutputID = reader.ReadUInt32();
+            FillOutputID = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

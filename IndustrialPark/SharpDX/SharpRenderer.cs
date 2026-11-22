@@ -52,12 +52,6 @@ public class SharpRenderer : IDisposable
         LoadTexture();
     }
 
-    public SharpRenderer()
-    {
-        device = new SharpDevice(new Control(), false);
-        LoadModels(true);
-    }
-
     public SharpShader basicShader;
     public ConstantBuffer<DefaultRenderData> basicBuffer;
 
@@ -242,47 +236,47 @@ public class SharpRenderer : IDisposable
 #endif
 
     public List<Vector3> cubeVertices;
-    public List<Models.Triangle> cubeTriangles;
+    public List<RenderWareFile.Triangle> cubeTriangles;
     public List<Vector3> cylinderVertices;
-    public List<Models.Triangle> cylinderTriangles;
+    public List<RenderWareFile.Triangle> cylinderTriangles;
     public List<Vector3> pyramidVertices;
-    public List<Models.Triangle> pyramidTriangles;
+    public List<RenderWareFile.Triangle> pyramidTriangles;
     public List<Vector3> sphereVertices;
-    public List<Models.Triangle> sphereTriangles;
+    public List<RenderWareFile.Triangle> sphereTriangles;
     public List<Vector3> planeVertices;
-    public List<Models.Triangle> planeTriangles;
+    public List<RenderWareFile.Triangle> planeTriangles;
     public List<Vector3> torusVertices;
-    public List<Models.Triangle> torusTriangles;
+    public List<RenderWareFile.Triangle> torusTriangles;
     public List<Vector3> coneVertices;
-    public List<Models.Triangle> coneTriangles;
+    public List<RenderWareFile.Triangle> coneTriangles;
 
-    public void LoadModels(bool tiny = false)
+    public void LoadModels()
     {
         cubeVertices = [];
         cubeTriangles = [];
-        Cube = LoadMesh(tiny, "Box", ref cubeVertices, ref cubeTriangles);
+        Cube = LoadMesh("Box", ref cubeVertices, ref cubeTriangles);
 
         cylinderVertices = [];
         cylinderTriangles = [];
-        Cylinder = LoadMesh(tiny, "Cylinder", ref cylinderVertices, ref cylinderTriangles);
+        Cylinder = LoadMesh("Cylinder", ref cylinderVertices, ref cylinderTriangles);
 
         pyramidVertices = [];
         pyramidTriangles = [];
-        Pyramid = LoadMesh(tiny, "Pyramid", ref pyramidVertices, ref pyramidTriangles);
+        Pyramid = LoadMesh("Pyramid", ref pyramidVertices, ref pyramidTriangles);
 
         sphereVertices = [];
         sphereTriangles = [];
-        Sphere = LoadMesh(tiny, "Sphere", ref sphereVertices, ref sphereTriangles);
+        Sphere = LoadMesh("Sphere", ref sphereVertices, ref sphereTriangles);
 
         torusVertices = [];
         torusTriangles = [];
-        Torus = LoadMesh(tiny, "Torus", ref torusVertices, ref torusTriangles);
+        Torus = LoadMesh("Torus", ref torusVertices, ref torusTriangles);
 
         coneVertices = [];
         coneTriangles = [];
-        Cone = LoadMesh(tiny, "Cone", ref coneVertices, ref coneTriangles);
+        Cone = LoadMesh("Cone", ref coneVertices, ref coneTriangles);
 
-        CreatePlaneMesh(tiny);
+        CreatePlaneMesh();
 #if DEBUG
         CreateBoundingBoxMesh();
 #endif
@@ -290,7 +284,7 @@ public class SharpRenderer : IDisposable
         AssetCAM.CamVertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.Up * 0.8f]);
     }
 
-    private SharpMesh LoadMesh(bool tiny, string meshName, ref List<Vector3> vertices, ref List<Models.Triangle> triangles)
+    private SharpMesh LoadMesh(string meshName, ref List<Vector3> vertices, ref List<RenderWareFile.Triangle> triangles)
     {
         var objData = ReadOBJFile(Application.StartupPath + $"/Resources/Models/{meshName}.obj", false);
         List<Vertex> vertexList = [];
@@ -305,18 +299,16 @@ public class SharpRenderer : IDisposable
             indexList.Add(t.vertex1);
             indexList.Add(t.vertex2);
             indexList.Add(t.vertex3);
-            triangles.Add(t);
+            triangles.Add(new RenderWareFile.Triangle((ushort)t.materialIndex, (ushort)t.vertex1, (ushort)t.vertex2, (ushort)t.vertex3));
         }
-
-        if (!tiny)
-            return SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
-        return null;
+        
+        return SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
     }
 
-    public void CreatePlaneMesh(bool tiny)
+    public void CreatePlaneMesh()
     {
-        planeVertices = new List<Vector3>();
-        planeTriangles = new List<Models.Triangle>();
+        planeVertices = [];
+        planeTriangles = [];
 
         List<VertexColoredTextured> vertexList = new List<VertexColoredTextured>
         {
@@ -334,11 +326,10 @@ public class SharpRenderer : IDisposable
             0, 1, 2, 3, 2, 1
         };
 
-        planeTriangles.Add(new Models.Triangle() { vertex1 = 0, vertex2 = 1, vertex3 = 2, UVCoord1 = 0, UVCoord2 = 1, UVCoord3 = 2 });
-        planeTriangles.Add(new Models.Triangle() { vertex1 = 3, vertex2 = 2, vertex3 = 1, UVCoord1 = 3, UVCoord2 = 2, UVCoord3 = 1 });
+        planeTriangles.Add(new RenderWareFile.Triangle(0, 0, 1, 2));
+        planeTriangles.Add(new RenderWareFile.Triangle(0, 3, 2, 1));
 
-        if (!tiny)
-            Plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
+        Plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
     }
 
 #if DEBUG

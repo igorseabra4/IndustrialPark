@@ -169,8 +169,6 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName + " Entity References")]
         public AssetID Surface { get; set; }
 
-        protected int entityDynaEndPosition => dynaDataStartPosition + 0x50;
-
         public DynaEnemy(string assetName, DynaType type, Vector3 position) : base(assetName, type)
         {
             PseudoBaseFlags.FlagValueShort = 0x1D;
@@ -182,11 +180,8 @@ namespace IndustrialPark.Assets
             _color = new Vector4(1f);
         }
 
-        public DynaEnemy(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        public DynaEnemy(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             PseudoAssetID = reader.ReadUInt32();
             PseudoAssetType = reader.ReadByte();
             PseudoLinkCount = reader.ReadByte();
@@ -240,40 +235,15 @@ namespace IndustrialPark.Assets
         public Matrix world { get; private set; }
         private BoundingBox boundingBox;
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             world = ((renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
 
-            CreateBoundingBox(renderer);
-        }
-
-        protected void CreateBoundingBox(SharpRenderer renderer)
-        {
             var model = renderer.Assets.GetModelFromRenderingDictionary(Model);
-            if (model != null)
-            {
-                triangles = model.triangleList;
-                CreateBoundingBox(model.vertexListG);
-            }
-            else
-            {
-                triangles = null;
-                CreateBoundingBox(renderer.cubeVertices, 0.5f);
-            }
-        }
-
-        protected Vector3[] vertices;
-        protected List<RenderWareFile.Triangle> triangles;
-
-        protected void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
-        {
-            vertices = new Vector3[vertexList.Count];
-            for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
-            boundingBox = BoundingBox.FromPoints(vertices);
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.cubeVertices, world);
         }
 
         [Browsable(false)]
@@ -308,26 +278,14 @@ namespace IndustrialPark.Assets
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world) : TriangleIntersection(ray);
+            {
+                var model = renderer.Assets.GetModelFromRenderingDictionary(_model);
+                return TriangleIntersection(ray, model?.triangleList ?? renderer.cubeTriangles, model?.vertexListG ?? renderer.cubeVertices, world);
+            }
             return null;
         }
 
-        private float? TriangleIntersection(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-
-            return smallestDistance;
-        }
-
-        public BoundingBox GetBoundingBox()
-        {
-            return boundingBox;
-        }
+        public BoundingBox GetBoundingBox() => boundingBox;
 
         public float GetDistanceFrom(Vector3 cameraPosition)
         {

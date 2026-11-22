@@ -19,7 +19,7 @@ public class AssetAddedAction : IReversibleAction
     public AssetAddedAction(ArchiveSession session, AssetRepository assetRepository, Asset asset, bool assetRemoved = false)
     {
         this.assetRepository = assetRepository;
-        AHDR = asset.BuildAHDR(session.Platform.Endianness());
+        AHDR = asset.BuildAHDR(session.Platform);
         this.game = session.Game;
         this.platform = session.Platform;
         this.assetRemoved = assetRemoved;
@@ -43,7 +43,7 @@ public class AssetAddedAction : IReversibleAction
 
     private void AddAsset()
     {
-        var asset = AssetService.ConvertHeaderToAsset(AHDR, game, platform, false, out _);
+        var asset = AssetService.ConvertHeaderToAsset(AHDR, false, out _);
         assetRepository.Add(asset);
     }
 

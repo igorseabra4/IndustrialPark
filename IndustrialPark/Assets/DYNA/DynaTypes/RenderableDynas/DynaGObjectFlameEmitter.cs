@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,11 +43,8 @@ public class DynaGObjectFlameEmitter : RenderableDynaBase
     [Category(dynaCategoryName)]
     public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
 
-    public DynaGObjectFlameEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__flame_emitter, game, endianness)
+    public DynaGObjectFlameEmitter(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__flame_emitter, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         Flags.FlagValueInt = reader.ReadUInt32();
         _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         DirectionX = reader.ReadSingle();
@@ -114,7 +110,7 @@ public class DynaGObjectFlameEmitter : RenderableDynaBase
 
     protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
     public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
 

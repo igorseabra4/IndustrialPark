@@ -132,17 +132,17 @@ namespace IndustrialPark.Assets
 
         public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LightKit)
         {
-            Read(data, endianness);
-        }
-
-        public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
-        {
-            Read(AHDR.data, endianness);
-        }
-
-        private void Read(byte[] data, Endianness endianness)
-        {
             using var reader = new EndianBinaryReader(data, endianness);
+            Read(reader);
+        }
+
+        public AssetLKIT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
+        {
+            Read(reader);
+        }
+
+        private void Read(EndianBinaryReader reader)
+        {
             reader.BaseStream.Position = 0x04;
             Group = reader.ReadUInt32();
             int lightCount = reader.ReadInt32();

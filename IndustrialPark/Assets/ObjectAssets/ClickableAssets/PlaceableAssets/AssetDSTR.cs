@@ -88,45 +88,40 @@ namespace IndustrialPark.Assets
                 {
                     new Link(Game.Scooby)
                     {
-                        EventReceiveID = (ushort)EventScooby.Destroy,
-                        EventSendID = (ushort)EventScooby.LobMasterShootFromWidget,
+                        EventReceiveScooby = EventScooby.Destroy,
+                        EventSendScooby = EventScooby.LobMasterShootFromWidget,
                         TargetAsset = "CRATESHARDLOB"
                     },
                     new Link(Game.Scooby)
                     {
-                        EventReceiveID = (ushort)EventScooby.Destroy,
-                        EventSendID = (ushort)EventScooby.Play,
+                        EventReceiveScooby = EventScooby.Destroy,
+                        EventSendScooby = EventScooby.Play,
                         TargetAsset = "SMASH"
                     }
                 };
             }
         }
 
-        public AssetDSTR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetDSTR(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            AnimationSpeed = reader.ReadInt32();
+            InitialAnimationState = reader.ReadInt32();
+            Health = reader.ReadInt32();
+            SpawnItem = reader.ReadUInt32();
+            HitMask.FlagValueInt = reader.ReadUInt32();
+            CollType = reader.ReadByte();
+            FxType = reader.ReadByte();
+            reader.ReadInt16();
+            BlastRadius = reader.ReadSingle();
+            BlastStrength = reader.ReadSingle();
+            if (game != Game.Scooby)
             {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                AnimationSpeed = reader.ReadInt32();
-                InitialAnimationState = reader.ReadInt32();
-                Health = reader.ReadInt32();
-                SpawnItem = reader.ReadUInt32();
-                HitMask.FlagValueInt = reader.ReadUInt32();
-                CollType = reader.ReadByte();
-                FxType = reader.ReadByte();
-                reader.ReadInt16();
-                BlastRadius = reader.ReadSingle();
-                BlastStrength = reader.ReadSingle();
-                if (game != Game.Scooby)
-                {
-                    DestroyShrapnel = reader.ReadUInt32();
-                    HitShrapnel = reader.ReadUInt32();
-                    DestroySFX = reader.ReadUInt32();
-                    HitSFX = reader.ReadUInt32();
-                    HitModel = reader.ReadUInt32();
-                    DestroyModel = reader.ReadUInt32();
-                }
+                DestroyShrapnel = reader.ReadUInt32();
+                HitShrapnel = reader.ReadUInt32();
+                DestroySFX = reader.ReadUInt32();
+                HitSFX = reader.ReadUInt32();
+                HitModel = reader.ReadUInt32();
+                DestroyModel = reader.ReadUInt32();
             }
         }
 

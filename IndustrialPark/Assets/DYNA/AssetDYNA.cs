@@ -18,18 +18,15 @@ namespace IndustrialPark.Assets
         public virtual string Note => $"Version is {(constVersion == -1 ? "unknown" : $"always {constVersion}")}";
         protected virtual short constVersion => -1;
 
-        protected int dynaDataStartPosition => baseHeaderEndPosition + 8;
-
         public AssetDYNA(string assetName, DynaType type, short version = -1) : base(assetName, type.ToAssetType(), BaseAssetType.Unknown_Other)
         {
             Type = type;
             Version = (version == -1 && constVersion != -1) ? constVersion : version;
         }
 
-        public AssetDYNA(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetDYNA(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition + 4;
+            reader.BaseStream.Position += 4;
 
             Type = type;
             Version = reader.ReadInt16();

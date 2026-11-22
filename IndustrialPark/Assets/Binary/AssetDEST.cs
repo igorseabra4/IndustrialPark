@@ -109,34 +109,31 @@ namespace IndustrialPark.Assets
             States = new DestState[0];
         }
 
-        public AssetDEST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetDEST(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            ModelInfo = reader.ReadUInt32();
+            int numStates = reader.ReadInt32();
+            HitPoints = reader.ReadUInt32();
+            HitFilter = reader.ReadUInt32();
+            if (game >= Game.ROTU)
             {
-                ModelInfo = reader.ReadUInt32();
-                int numStates = reader.ReadInt32();
-                HitPoints = reader.ReadUInt32();
-                HitFilter = reader.ReadUInt32();
-                if (game >= Game.ROTU)
-                {
-                    HitFilter_Excluded = reader.ReadUInt32();
-                    HealthPoints = reader.ReadUInt32();
-                    ExpPoints = reader.ReadUInt32();
-                    HealthChance = reader.ReadSingle();
-                    ExpChance = reader.ReadSingle();
-                }
-                LaunchFlag.FlagValueInt = reader.ReadUInt32();
-                Behaviour = reader.ReadUInt32();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                SoundGroup_Idle = reader.ReadUInt32();
-                Respawn = reader.ReadSingle();
-                TargetPriority = reader.ReadByte();
-                reader.ReadBytes(3);
-
-                States = new DestState[numStates];
-                for (int i = 0; i < States.Length; i++)
-                    States[i] = new DestState(reader);
+                HitFilter_Excluded = reader.ReadUInt32();
+                HealthPoints = reader.ReadUInt32();
+                ExpPoints = reader.ReadUInt32();
+                HealthChance = reader.ReadSingle();
+                ExpChance = reader.ReadSingle();
             }
+            LaunchFlag.FlagValueInt = reader.ReadUInt32();
+            Behaviour = reader.ReadUInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            SoundGroup_Idle = reader.ReadUInt32();
+            Respawn = reader.ReadSingle();
+            TargetPriority = reader.ReadByte();
+            reader.ReadBytes(3);
+
+            States = new DestState[numStates];
+            for (int i = 0; i < States.Length; i++)
+                States[i] = new DestState(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

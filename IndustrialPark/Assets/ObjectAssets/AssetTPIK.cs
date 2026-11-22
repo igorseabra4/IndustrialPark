@@ -108,19 +108,15 @@ namespace IndustrialPark.Assets
             Entries = new EntryTPIK[0];
         }
 
-        public AssetTPIK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetTPIK(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-                Version = reader.ReadInt32();
-                int count = reader.ReadInt32();
-                _entries = new EntryTPIK[count];
-                for (int i = 0; i < _entries.Length; i++)
-                    _entries[i] = new EntryTPIK(reader);
+            Version = reader.ReadInt32();
+            int count = reader.ReadInt32();
+            _entries = new EntryTPIK[count];
+            for (int i = 0; i < _entries.Length; i++)
+                _entries[i] = new EntryTPIK(reader);
 
-                UpdateDictionary();
-            }
+            UpdateDictionary();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

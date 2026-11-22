@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Assets;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,22 +17,20 @@ public static class SoundService
         _ => null
     };
 
-    public static IEnumerable<Section_AHDR> CreateSounds(Game game, Platform platform, AssetType assetType, bool raw, string[] fileNames, Action<string> step = null)
+    public static IEnumerable<AssetSound> CreateSounds(Game game, Platform platform, AssetType assetType, bool raw, string[] fileNames, Action<string> step = null)
     {
-        var assets = new List<Section_AHDR>();
+        var assets = new List<AssetSound>();
 
         foreach (var fileName in fileNames)
         {
             var assetName = Path.GetFileNameWithoutExtension(fileName);
-            var assetID = Functions.BKDRHash(assetName);
 
             byte[] data = raw ? File.ReadAllBytes(fileName) : CreateSoundFile(game, platform, fileName);
             if (data == null)
                 continue;
 
-            var AHDR = new Section_AHDR(assetID, assetType, AssetService.AHDRFlagsFromAssetType(assetType), new Section_ADBG(0, assetName, "", 0), data);
-
-            assets.Add(AHDR);
+            var sound = new AssetSound(assetName, assetType, game, platform, data);
+            assets.Add(sound);
             step?.Invoke(fileName);
         }
 

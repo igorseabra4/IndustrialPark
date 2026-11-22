@@ -72,8 +72,8 @@ public class ArchiveTransformer
         }
         else
         {
-            layerRepository.AutoLayers = false;
-            BuildLayers(false);
+            if (BuildLayers(false))
+                layerRepository.AutoLayers = false;
         }
     }
 
@@ -112,48 +112,52 @@ public class ArchiveTransformer
 
         foreach (Section_AHDR AHDR in hip.DICT.ATOC.AHDRList)
         {
-            switch (AHDR.assetType)
+            Asset asset = AssetService.ConvertHeaderToAsset(AHDR, true, out AssetError error);
+
+            switch (asset)
             {
-                case AssetType.CollisionTable when assetRepository.ContainsType(AssetType.CollisionTable):
-                    RemoveAssetFromImportedLayers(AHDR.assetID);
-                    tableManager.MergeTableAsset<AssetCOLL, EntryCOLL>(new AssetCOLL(AHDR, hip.game, hip.platform.Endianness()));
+                case AssetCOLL coll when assetRepository.ContainsType(AssetType.CollisionTable):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeTableAsset<AssetCOLL, EntryCOLL>(coll);
                     continue;
-                case AssetType.JawDataTable when assetRepository.ContainsType(AssetType.JawDataTable):
-                    RemoveAssetFromImportedLayers(AHDR.assetID);
-                    tableManager.MergeTableAsset<AssetJAW, EntryJAW>(new AssetJAW(AHDR, hip.game, hip.platform.Endianness()));
+                case AssetJAW jaw when assetRepository.ContainsType(AssetType.JawDataTable):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeTableAsset<AssetJAW, EntryJAW>(jaw);
                     continue;
-                case AssetType.LevelOfDetailTable when assetRepository.ContainsType(AssetType.LevelOfDetailTable):
-                    RemoveAssetFromImportedLayers(AHDR.assetID);
-                    tableManager.MergeTableAsset<AssetLODT, EntryLODT>(new AssetLODT(AHDR, hip.game, hip.platform.Endianness()));
+                case AssetLODT lodt when assetRepository.ContainsType(AssetType.LevelOfDetailTable):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeTableAsset<AssetLODT, EntryLODT>(lodt);
                     continue;
-                case AssetType.PipeInfoTable when assetRepository.ContainsType(AssetType.PipeInfoTable):
-                    RemoveAssetFromImportedLayers(AHDR.assetID);
-                    tableManager.MergeTableAsset<AssetPIPT, PipeInfo>(new AssetPIPT(AHDR, hip.game, hip.platform.Endianness()));
+                case AssetPIPT pipt when assetRepository.ContainsType(AssetType.PipeInfoTable):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeTableAsset<AssetPIPT, PipeInfo>(pipt);
                     continue;
-                case AssetType.ShadowTable when assetRepository.ContainsType(AssetType.ShadowTable):
-                    RemoveAssetFromImportedLayers(AHDR.assetID);
-                    tableManager.MergeTableAsset<AssetSHDW, EntrySHDW>(new AssetSHDW(AHDR, hip.game, hip.platform.Endianness()));
+                case AssetSHDW shdw when assetRepository.ContainsType(AssetType.ShadowTable):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeTableAsset<AssetSHDW, EntrySHDW>(shdw);
                     continue;
-                case AssetType.SoundInfo when assetRepository.ContainsType(AssetType.SoundInfo):
-                    RemoveAssetFromImportedLayers(AHDR.assetID);
-                    if (hip.platform == Platform.GameCube)
-                    {
-                        if (hip.game >= Game.Incredibles)
-                            tableManager.MergeSoundInfo(new AssetSNDI_GCN_V2(AHDR, hip.game));
-                        else
-                            tableManager.MergeSoundInfo(new AssetSNDI_GCN_V1(AHDR, hip.game));
-                    }
-                    else if (hip.platform == Platform.Xbox)
-                        tableManager.MergeSoundInfo(new AssetSNDI_XBOX(AHDR, hip.game));
-                    else if (hip.platform == Platform.PS2)
-                        tableManager.MergeSoundInfo(new AssetSNDI_PS2(AHDR, hip.game));
+                case AssetSNDI_GCN_V1 sndi when assetRepository.ContainsType(AssetType.SoundInfo):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeSoundInfo(sndi);
+                    continue;
+                case AssetSNDI_GCN_V2 sndi when assetRepository.ContainsType(AssetType.SoundInfo):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeSoundInfo(sndi);
+                    continue;
+                case AssetSNDI_XBOX sndi when assetRepository.ContainsType(AssetType.SoundInfo):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeSoundInfo(sndi);
+                    continue;
+                case AssetSNDI_PS2 sndi when assetRepository.ContainsType(AssetType.SoundInfo):
+                    RemoveAssetFromImportedLayers(asset.assetID);
+                    tableManager.MergeSoundInfo(sndi);
                     continue;
             }
 
-            if (assetRepository.Contains(AHDR.assetID))
+            if (assetRepository.Contains(asset.assetID))
             {
                 DialogResult result = forceOverwrite ? DialogResult.Yes :
-                MessageBox.Show($"Asset [{AHDR.assetID:X8}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Asset already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                MessageBox.Show($"Asset [{asset.assetID:X8}] {asset.assetName} already present in archive. Do you wish to overwrite it?", "Asset already exists", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result != DialogResult.Yes)
                 {
@@ -163,16 +167,15 @@ public class ArchiveTransformer
                     continue;
                 }
 
-                assetRepository.Remove(AHDR.assetID);
-                layerRepository.RemoveAsset(AHDR.assetID);
+                assetRepository.Remove(asset.assetID);
+                layerRepository.RemoveAsset(asset.assetID);
             }
 
-            Asset asset = AssetService.ConvertHeaderToAsset(AHDR, hip.game, hip.platform, true, out AssetError error);
             assetRepository.Add(asset);
             assetIDs.Add(asset.assetID);
 
             if (asset is AssetJSP_INFO jspInfo)
-                jspInfo.JSP_AssetIDs = JSPService.GetDefaultJspAssetIds(hip.DICT, hip.DICT.LTOC.LHDRList.FindIndex(layer => layer.assetIDlist.Contains(AHDR.assetID)), hip.game);
+                jspInfo.JSP_AssetIDs = JSPService.GetDefaultJspAssetIds(hip.DICT, hip.DICT.LTOC.LHDRList.FindIndex(layer => layer.assetIDlist.Contains(asset.assetID)), hip.game);
         }
 
         if (!layerRepository.AutoLayers)
@@ -223,7 +226,7 @@ public class ArchiveTransformer
             int layerIndex = layerRepository.GetJSPInfoInsertIndex();
 
             layerIndex = layerRepository.Add(LayerType.BSP, layerIndex);
-            var jsp0 = (AssetJSP)AssetService.ConvertHeaderToAsset(AHDRs[0], session.Game, session.Platform, false, out _);
+            var jsp0 = (AssetJSP)AssetService.ConvertHeaderToAsset(AHDRs[0], false, out _);
             assetRepository.Add(jsp0);
             layerRepository.AddAsset(layerIndex, jsp0.assetID);
             List<AssetJSP> bsps = [jsp0];
@@ -233,7 +236,7 @@ public class ArchiveTransformer
             layerIndex = layerRepository.Add(LayerType.BSP, layerIndex);
             if (AHDRs.Count > 1)
             {
-                var jsp1 = (AssetJSP)AssetService.ConvertHeaderToAsset(AHDRs[1], session.Game, session.Platform, false, out _);
+                var jsp1 = (AssetJSP)AssetService.ConvertHeaderToAsset(AHDRs[1], false, out _);
                 assetRepository.Add(jsp1);
                 layerRepository.AddAsset(layerIndex, jsp1.assetID);
                 bsps.Add(jsp1);
@@ -244,7 +247,7 @@ public class ArchiveTransformer
             layerIndex = layerRepository.Add(LayerType.BSP, layerIndex);
             if (AHDRs.Count > 2)
             {
-                var jsp2 = (AssetJSP)AssetService.ConvertHeaderToAsset(AHDRs[2], session.Game, session.Platform, false, out _);
+                var jsp2 = (AssetJSP)AssetService.ConvertHeaderToAsset(AHDRs[2], false, out _);
                 assetRepository.Add(jsp2);
                 layerRepository.AddAsset(layerIndex, jsp2.assetID);
                 bsps.Add(jsp2);
@@ -275,7 +278,7 @@ public class ArchiveTransformer
         return jspInfos;
     }
 
-    public List<Asset> MakeSimps(List<Asset> models, bool solid, bool ledgeGrabSimps)
+    public List<Asset> MakeSimps(List<Asset> models, bool visible, bool solid, bool ledgeGrabSimps)
     {
         int layerIndex = layerRepository.GetOrCreateLayerOfType(LayerType.DEFAULT);
         var result = new List<Asset>();
@@ -289,14 +292,14 @@ public class ArchiveTransformer
 
             var simp = (AssetSIMP)AssetFactory.GenerateTemplate(session.Game, session.Platform, assetRepository.Contains, AssetTemplate.Simple_Object, simpName, Vector3.Zero, true)[0];
             simp.Model = model.assetID;
+
+            if (!visible)
+                simp.VisibilityFlags.FlagValueByte = 0;
             if (!solid)
-            {
                 simp.CollType.FlagValueByte = 0;
-            }
-            else if (ledgeGrabSimps)
-            {
+            if (ledgeGrabSimps)
                 simp.SolidityFlags.FlagValueByte = 0x82;
-            }
+
             result.Add(simp);
 
             assetRepository.Add(simp);
@@ -525,30 +528,28 @@ public class ArchiveTransformer
                             string eventSendIDName = "";
                             string eventReceiveIDName = "";
 
-                            if (archive.Game == Game.BFBB)
+                            switch (archive.Game)
                             {
-                                eventSendIDName = ((EventBFBB)link.EventSendID).ToString();
-                                eventReceiveIDName = ((EventBFBB)link.EventReceiveID).ToString();
-                            }
-                            else if (archive.Game == Game.Scooby)
-                            {
-                                eventSendIDName = ((EventScooby)link.EventSendID).ToString();
-                                eventReceiveIDName = ((EventScooby)link.EventReceiveID).ToString();
-                            }
-                            else if (archive.Game == Game.Incredibles) // TSSM/Incredibles
-                            {
-                                eventSendIDName = ((EventTSSM)link.EventSendID).ToString();
-                                eventReceiveIDName = ((EventTSSM)link.EventReceiveID).ToString();
-                            }
-                            else if (archive.Game == Game.ROTU)
-                            {
-                                eventSendIDName = ((EventROTU)link.EventSendID).ToString();
-                                eventReceiveIDName = ((EventROTU)link.EventReceiveID).ToString();
-                            }
-                            else if (archive.Game == Game.RatProto)
-                            {
-                                eventSendIDName = ((EventRatProto)link.EventSendID).ToString();
-                                eventReceiveIDName = ((EventRatProto)link.EventReceiveID).ToString();
+                                case Game.BFBB:
+                                    eventSendIDName = link.EventSendBFBB.ToString();
+                                    eventReceiveIDName = link.EventReceiveBFBB.ToString();
+                                    break;
+                                case Game.Scooby:
+                                    eventSendIDName = link.EventSendScooby.ToString();
+                                    eventReceiveIDName = link.EventReceiveScooby.ToString();
+                                    break;
+                                case Game.Incredibles:
+                                    eventSendIDName = link.EventSendTSSM.ToString();
+                                    eventReceiveIDName = link.EventReceiveTSSM.ToString();
+                                    break;
+                                case Game.ROTU:
+                                    eventSendIDName = link.EventSendROTU.ToString();
+                                    eventReceiveIDName = link.EventReceiveROTU.ToString();
+                                    break;
+                                case Game.RatProto:
+                                    eventSendIDName = link.EventSendRatProto.ToString();
+                                    eventReceiveIDName = link.EventReceiveRatProto.ToString();
+                                    break;
                             }
 
                             // If event name not supplied, event ID used instead.

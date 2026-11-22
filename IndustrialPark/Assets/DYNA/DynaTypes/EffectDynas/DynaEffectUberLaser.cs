@@ -18,16 +18,11 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle Time { get; set; }
 
-        public DynaEffectUberLaser(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__uber_laser, game, endianness)
+        public DynaEffectUberLaser(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__uber_laser, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                MarkerStart = reader.ReadUInt32();
-                MarkerEnd = reader.ReadUInt32();
-                Time = reader.ReadSingle();
-            }
+            MarkerStart = reader.ReadUInt32();
+            MarkerEnd = reader.ReadUInt32();
+            Time = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

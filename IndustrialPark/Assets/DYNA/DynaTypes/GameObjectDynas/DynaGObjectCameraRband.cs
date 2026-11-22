@@ -23,17 +23,12 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle Vertical_offset { get; set; }
 
-        public DynaGObjectCameraRband(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__rband_camera_asset, game, endianness)
+        public DynaGObjectCameraRband(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__rband_camera_asset, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Spring_len = reader.ReadSingle();
-                Spring_const = reader.ReadSingle();
-                Damp_const = reader.ReadSingle();
-                Vertical_offset = reader.ReadSingle();
-            }
+            Spring_len = reader.ReadSingle();
+            Spring_const = reader.ReadSingle();
+            Damp_const = reader.ReadSingle();
+            Vertical_offset = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -4,7 +4,7 @@ using System.Drawing.Design;
 
 namespace IndustrialPark.Assets
 {
-    public class CameraCurveBear : GenericAssetDataContainer
+    public class CameraCurveBead : GenericAssetDataContainer
     {
         public AssetSingle mCurveU { get; set; }
         public AssetSingle mCurveU2 { get; set; }
@@ -17,8 +17,8 @@ namespace IndustrialPark.Assets
         public AssetSingle mNearWallAdjust { get; set; }
         public AssetSingle mFarWallAdjust { get; set; }
 
-        public CameraCurveBear() { }
-        public CameraCurveBear(EndianBinaryReader reader)
+        public CameraCurveBead() { }
+        public CameraCurveBead(EndianBinaryReader reader)
         {
             mCurveU = reader.ReadSingle();
             mCurveU2 = reader.ReadSingle();
@@ -67,33 +67,31 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public AssetID mCurveID2 { get; set; }
         [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
-        public CameraCurveBear[] CurveBeads { get; set; }
+        public CameraCurveBead[] CurveBeads { get; set; }
 
         public AssetCCRV(string assetName) : base(assetName, AssetType.CameraCurve, BaseAssetType.CameraCurve)
         {
             mVersion = 4;
-            CurveBeads = new CameraCurveBear[0];
+            CurveBeads = new CameraCurveBead[0];
         }
-        public AssetCCRV(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
-        {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-                mVersion = reader.ReadByte();
-                reader.BaseStream.Position += 3;
-                mCameraType = reader.ReadInt32();
-                mFlags.FlagValueInt = reader.ReadUInt32();
-                mTransitionType = reader.ReadInt32();
-                mTransitionTime = reader.ReadSingle();
-                mCurveID = reader.ReadUInt32();
-                mCurveID2 = reader.ReadUInt32();
-                int numBeads = reader.ReadInt32();
 
-                CurveBeads = new CameraCurveBear[numBeads];
-                for (int i = 0; i < numBeads; i++)
-                    CurveBeads[i] = new CameraCurveBear(reader);
-            }
+        public AssetCCRV(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
+        {
+            mVersion = reader.ReadByte();
+            reader.BaseStream.Position += 3;
+            mCameraType = reader.ReadInt32();
+            mFlags.FlagValueInt = reader.ReadUInt32();
+            mTransitionType = reader.ReadInt32();
+            mTransitionTime = reader.ReadSingle();
+            mCurveID = reader.ReadUInt32();
+            mCurveID2 = reader.ReadUInt32();
+            int numBeads = reader.ReadInt32();
+
+            CurveBeads = new CameraCurveBead[numBeads];
+            for (int i = 0; i < numBeads; i++)
+                CurveBeads[i] = new CameraCurveBead(reader);
         }
+
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);

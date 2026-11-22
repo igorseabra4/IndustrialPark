@@ -16,15 +16,10 @@ namespace IndustrialPark.Assets
         public AssetSingle Length { get; set; }
 
         public DynaCObjectPoleSwing(string assetName) : base(assetName, DynaType.ContextObject_PoleSwing) { }
-        public DynaCObjectPoleSwing(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ContextObject_PoleSwing, game, endianness)
+        public DynaCObjectPoleSwing(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.ContextObject_PoleSwing, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                PoleID = reader.ReadUInt32();
-                Length = reader.ReadSingle();
-            }
+            PoleID = reader.ReadUInt32();
+            Length = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -137,11 +137,8 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetLITE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetLITE(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             LightType = (LightType)reader.ReadByte();
             LightEffect = (LightEffect)reader.ReadByte();
             reader.ReadInt16();
@@ -189,7 +186,7 @@ namespace IndustrialPark.Assets
         [Browsable(false)]
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.Translation(_position);
             CreateBoundingBox(renderer);

@@ -504,85 +504,78 @@ namespace IndustrialPark.Assets
             HitDecalData2 = new zHitDecalData();
         }
 
-        public AssetSURF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSURF(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            DamageType = reader.ReadByte();
+            Sticky = reader.ReadByte();
+            DamageFlags = reader.ReadByte();
+            SurfaceType = reader.ReadByte();
+            Phys_Pad = reader.ReadByte();
+            SlideStart = reader.ReadByte();
+            SlideStop = reader.ReadByte();
+            PhysicsFlags.FlagValueByte = reader.ReadByte();
+            Friction = reader.ReadSingle();
+            zSurfMatFX = new zSurfMatFX(reader);
+            zSurfColorFX = new zSurfColorFX(reader);
+            TextureAnimFlags.FlagValueInt = reader.ReadUInt32();
+            zSurfTextureAnim1 = new zSurfTextureAnim(reader);
+            zSurfTextureAnim2 = new zSurfTextureAnim(reader);
+            UVEffectsFlags.FlagValueInt = reader.ReadUInt32();
+            zSurfUVFX = new zSurfUVFX(reader, game);
+            zSurfUVFX2 = new zSurfUVFX(reader, game);
+            On = reader.ReadByte();
+            reader.ReadBytes(3);
+
+            if (game != Game.Scooby)
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+                OutOfBoundsDelay = reader.ReadSingle();
+                WalljumpScaleXZ = reader.ReadSingle();
+                WalljumpScaleY = reader.ReadSingle();
+                DamageTimer = reader.ReadSingle();
+                DamageBounce = reader.ReadSingle();
 
-                DamageType = reader.ReadByte();
-                Sticky = reader.ReadByte();
-                DamageFlags = reader.ReadByte();
-                SurfaceType = reader.ReadByte();
-                Phys_Pad = reader.ReadByte();
-                SlideStart = reader.ReadByte();
-                SlideStop = reader.ReadByte();
-                PhysicsFlags.FlagValueByte = reader.ReadByte();
-                Friction = reader.ReadSingle();
-                zSurfMatFX = new zSurfMatFX(reader);
-                zSurfColorFX = new zSurfColorFX(reader);
-                TextureAnimFlags.FlagValueInt = reader.ReadUInt32();
-                zSurfTextureAnim1 = new zSurfTextureAnim(reader);
-                zSurfTextureAnim2 = new zSurfTextureAnim(reader);
-                UVEffectsFlags.FlagValueInt = reader.ReadUInt32();
-                zSurfUVFX = new zSurfUVFX(reader, game);
-                zSurfUVFX2 = new zSurfUVFX(reader, game);
-                On = reader.ReadByte();
-                reader.ReadBytes(3);
-
-                if (game != Game.Scooby)
+                if (game >= Game.Incredibles)
                 {
-                    OutOfBoundsDelay = reader.ReadSingle();
-                    WalljumpScaleXZ = reader.ReadSingle();
-                    WalljumpScaleY = reader.ReadSingle();
-                    DamageTimer = reader.ReadSingle();
-                    DamageBounce = reader.ReadSingle();
-
-                    if (game >= Game.Incredibles)
-                    {
-                        ImpactSound = reader.ReadUInt32();
-                        DashImpactType = reader.ReadByte();
-                        reader.ReadByte();
-                        reader.ReadByte();
-                        reader.ReadByte();
-                        DashImpactThrowBack = reader.ReadSingle();
-                        DashSprayMagnitude = reader.ReadSingle();
-                        DashCoolRate = reader.ReadSingle();
-                        DashCoolAmount = reader.ReadSingle();
-                        DashPass = reader.ReadSingle();
-                        DashRampMaxDistance = reader.ReadSingle();
-                        DashRampMinDistance = reader.ReadSingle();
-                        DashRampKeySpeed = reader.ReadSingle();
-                        DashRampMaxHeight = reader.ReadSingle();
-                        DashRampTarget_MovePoint = reader.ReadUInt32();
-                        DamageAmount = reader.ReadInt32();
-                        _hitsource = reader.ReadUInt32();
-                        OffSurface = new zFootstepsData(reader);
-                        OnSurface = new zFootstepsData(reader);
-                        HitDecalData0 = new zHitDecalData(reader);
-                        HitDecalData1 = new zHitDecalData(reader);
-                        HitDecalData2 = new zHitDecalData(reader);
-                        OffSurfaceTime = reader.ReadSingle();
-                        SwimmableSurface = reader.ReadByte();
-                        DashFall = reader.ReadByte();
-                        NeedButtonPress = reader.ReadByte();
-                        DashAttack = reader.ReadByte();
-                        FootstepDecals = reader.ReadByte();
-                        reader.ReadInt32();
-                        DrivingSurfaceType = (DrivingSurf)reader.ReadByte();
-                        reader.ReadByte();
-                        reader.ReadByte();
-                    }
-                    else
-                    {
-                        OffSurface = new zFootstepsData();
-                        OnSurface = new zFootstepsData();
-                        HitDecalData0 = new zHitDecalData();
-                        HitDecalData1 = new zHitDecalData();
-                        HitDecalData2 = new zHitDecalData();
-                    }
+                    ImpactSound = reader.ReadUInt32();
+                    DashImpactType = reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
+                    DashImpactThrowBack = reader.ReadSingle();
+                    DashSprayMagnitude = reader.ReadSingle();
+                    DashCoolRate = reader.ReadSingle();
+                    DashCoolAmount = reader.ReadSingle();
+                    DashPass = reader.ReadSingle();
+                    DashRampMaxDistance = reader.ReadSingle();
+                    DashRampMinDistance = reader.ReadSingle();
+                    DashRampKeySpeed = reader.ReadSingle();
+                    DashRampMaxHeight = reader.ReadSingle();
+                    DashRampTarget_MovePoint = reader.ReadUInt32();
+                    DamageAmount = reader.ReadInt32();
+                    _hitsource = reader.ReadUInt32();
+                    OffSurface = new zFootstepsData(reader);
+                    OnSurface = new zFootstepsData(reader);
+                    HitDecalData0 = new zHitDecalData(reader);
+                    HitDecalData1 = new zHitDecalData(reader);
+                    HitDecalData2 = new zHitDecalData(reader);
+                    OffSurfaceTime = reader.ReadSingle();
+                    SwimmableSurface = reader.ReadByte();
+                    DashFall = reader.ReadByte();
+                    NeedButtonPress = reader.ReadByte();
+                    DashAttack = reader.ReadByte();
+                    FootstepDecals = reader.ReadByte();
+                    reader.ReadInt32();
+                    DrivingSurfaceType = (DrivingSurf)reader.ReadByte();
+                    reader.ReadByte();
+                    reader.ReadByte();
                 }
             }
+
+            OffSurface ??= new zFootstepsData();
+            OnSurface ??= new zFootstepsData();
+            HitDecalData0 ??= new zHitDecalData();
+            HitDecalData1 ??= new zHitDecalData();
+            HitDecalData2 ??= new zHitDecalData();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

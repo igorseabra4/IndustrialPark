@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -8,7 +7,7 @@ namespace IndustrialPark.Assets
 {
     public class DynaPointer : RenderableDynaBase, IRotatableAsset
     {
-        private const string dynaCategoryName1 = "DYNA Placement";
+        private const string dynaCategoryName1 = "Placement";
 
         [Category(dynaCategoryName1)]
         public AssetSingle Yaw { get; set; }
@@ -17,13 +16,13 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName1)]
         public AssetSingle Roll { get; set; }
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.RotationYawPitchRoll(
                 MathUtil.DegreesToRadians(Yaw),
                 MathUtil.DegreesToRadians(Pitch),
                 MathUtil.DegreesToRadians(Roll)) * Matrix.Translation(_position);
-            CreateBoundingBox(renderer);
+            boundingBox = CreateBoundingBox(vertexSource(renderer), world);
         }
 
         public override string TypeString => "pointer";
@@ -34,11 +33,8 @@ namespace IndustrialPark.Assets
         {
         }
 
-        public DynaPointer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.pointer, game, endianness)
+        public DynaPointer(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.pointer, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             Yaw = reader.ReadSingle();
             Pitch = reader.ReadSingle();
@@ -57,7 +53,7 @@ namespace IndustrialPark.Assets
 
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
         public override void Draw(SharpRenderer renderer)
         {

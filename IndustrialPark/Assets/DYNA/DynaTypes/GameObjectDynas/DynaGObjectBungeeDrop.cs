@@ -24,16 +24,11 @@ namespace IndustrialPark.Assets
             SetViewAngle = 1;
         }
 
-        public DynaGObjectBungeeDrop(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bungee_drop, game, endianness)
+        public DynaGObjectBungeeDrop(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__bungee_drop, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Marker = reader.ReadUInt32();
-                SetViewAngle = reader.ReadInt32();
-                ViewAngle = reader.ReadSingle();
-            }
+            Marker = reader.ReadUInt32();
+            SetViewAngle = reader.ReadInt32();
+            ViewAngle = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

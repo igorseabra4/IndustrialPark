@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -69,11 +68,8 @@ public class DynaGObjectRing : RenderableRotatableDynaBase
         RedTimer = -1f;
     }
 
-    public DynaGObjectRing(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Ring, game, endianness)
+    public DynaGObjectRing(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Ring, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         _yaw = reader.ReadSingle();
         _pitch = reader.ReadSingle();
@@ -114,39 +110,28 @@ public class DynaGObjectRing : RenderableRotatableDynaBase
         writer.Write(DriverPlatform);
     }
 
-    public override void CreateTransformMatrix(SharpRenderer renderer)
+    public override void CalculateTransformation(SharpRenderer renderer)
     {
         world = ((renderer.Assets.GetFromRenderingDictionary(DynaGObjectRingControl.RingModelAssetID) is IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
             * Matrix.Scaling(_scale)
             * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
             * Matrix.Translation(_position);
 
-        CreateBoundingBox(renderer);
+        boundingBox = CreateBoundingBox(vertexSource(renderer), world);
+        Reset();
     }
 
-    protected override void CreateBoundingBox(SharpRenderer renderer)
+    protected override List<Vector3> vertexSource(SharpRenderer renderer)
     {
         var model = renderer.Assets.GetModelFromRenderingDictionary(DynaGObjectRingControl.RingModelAssetID);
-        if (model != null)
-            CreateBoundingBox(model.vertexListG, model.triangleList);
-        else
-            base.CreateBoundingBox(renderer);
+        return model?.vertexListG ?? renderer.cubeVertices;
     }
 
-    private void CreateBoundingBox(List<Vector3> vertexList, List<RenderWareFile.Triangle> triangleList)
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer)
     {
-        vertices = new Vector3[vertexList.Count];
-        for (int i = 0; i < vertexList.Count; i++)
-            vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
-
-        boundingBox = BoundingBox.FromPoints(vertices);
-
-        triangles = triangleList;
+        var model = renderer.Assets.GetModelFromRenderingDictionary(DynaGObjectRingControl.RingModelAssetID);
+        return model?.triangleList ?? renderer.cubeTriangles;
     }
-
-    protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
-
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
     public override bool ShouldDraw(SharpRenderer renderer)
     {
@@ -165,9 +150,35 @@ public class DynaGObjectRing : RenderableRotatableDynaBase
 
     public override void Draw(SharpRenderer renderer)
     {
+        var world = LocalWorld();
+
         if (renderer.Assets.GetFromRenderingDictionary(DynaGObjectRingControl.RingModelAssetID) is IAssetWithModel value)
             value.Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
         else
             renderer.DrawCube(world, isSelected);
+    }
+
+    public void Reset()
+    {
+        driver = DriverPlatform != 0 &&
+            Program.ArchiveManager.ArchiveEditorContainingAsset(DriverPlatform) is ArchiveEditors.ArchiveEditor ae &&
+            ae.archive.GetAsset(DriverPlatform) is EntityAsset entity ?
+            entity : null;
+    }
+
+    protected EntityAsset driver = null;
+
+    private Matrix LocalWorld()
+    {
+        if (EntityAsset.movementPreview && driver != null)
+        {
+            return Matrix.Scaling(_scale)
+                * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
+                * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
+                * driver.PlatLocalRotation()
+                * Matrix.Translation(Vector3.TransformCoordinate(Vector3.Zero, driver.LocalWorld()));
+        }
+
+        return world;
     }
 }

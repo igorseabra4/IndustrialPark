@@ -267,16 +267,11 @@ namespace IndustrialPark.Assets
             Shape = BitConverter.GetBytes(PickReferenceID)[3];
         }
 
-        public AssetPKUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPKUP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                PickReferenceID = reader.ReadUInt32();
-                PickupFlags = (EPickupFlags)reader.ReadUInt16();
-                PickupValue = reader.ReadInt16();
-            }
+            PickReferenceID = reader.ReadUInt32();
+            PickupFlags = (EPickupFlags)reader.ReadUInt16();
+            PickupValue = reader.ReadInt16();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -298,25 +293,7 @@ namespace IndustrialPark.Assets
         protected override void CreateBoundingBox(SharpRenderer renderer)
         {
             var model = renderer.Assets.GetModelFromRenderingDictionary(PickupModel);
-            if (model != null)
-            {
-                var vertexList = model.vertexListG;
-
-                vertices = new Vector3[vertexList.Count];
-                for (int i = 0; i < vertexList.Count; i++)
-                    vertices[i] = Vector3.TransformCoordinate(vertexList[i], world);
-                boundingBox = BoundingBox.FromPoints(vertices);
-
-                triangles = model.triangleList;
-                return;
-            }
-
-            vertices = new Vector3[renderer.cubeVertices.Count];
-            for (int i = 0; i < renderer.cubeVertices.Count; i++)
-                vertices[i] = Vector3.TransformCoordinate(renderer.cubeVertices[i] * 0.5f, world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = null;
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.cubeVertices, world, model != null ? 1f : 0.5f);
         }
 
         public override void Draw(SharpRenderer renderer)

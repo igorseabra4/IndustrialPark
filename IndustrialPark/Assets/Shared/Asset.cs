@@ -40,10 +40,9 @@ public abstract class Asset : GenericAssetDataContainer
         flags = AssetService.AHDRFlagsFromAssetType(assetType);
     }
 
-    public Asset(Section_AHDR AHDR, Game game)
+    public Asset(Section_AHDR AHDR)
     {
-        _game = game;
-
+        _game = AHDR.Game;
         assetID = AHDR.assetID;
         assetName = AHDR.ADBG.assetName;
         assetFileName = AHDR.ADBG.assetFileName;
@@ -55,11 +54,11 @@ public abstract class Asset : GenericAssetDataContainer
     // use with DUPC VIL only
     protected Asset() { }
 
-    public Section_AHDR BuildAHDR(Endianness endianness)
+    public Section_AHDR BuildAHDR(Platform platform)
     {
         return new Section_AHDR(assetID, assetType, flags,
             new Section_ADBG(0, assetName, assetFileName, checksum),
-            Serialize(endianness));
+            Serialize(platform.Endianness()), game, platform);
     }
 
     public override string ToString() => $"{assetName} [{assetID:X8}]";

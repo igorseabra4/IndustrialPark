@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using IndustrialPark.Assets.Colors;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -97,11 +96,8 @@ namespace IndustrialPark.Assets
             LightColor = new AssetColor();
         }
 
-        public DynaEffectSparkEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__spark_emitter, game, endianness)
+        public DynaEffectSparkEmitter(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__spark_emitter, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             UpdateDistance = reader.ReadSingle();
             Texture = reader.ReadUInt32();
             Flags.FlagValueInt = reader.ReadUInt32();
@@ -174,7 +170,7 @@ namespace IndustrialPark.Assets
 
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
 

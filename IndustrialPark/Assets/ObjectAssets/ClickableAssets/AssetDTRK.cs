@@ -3,6 +3,7 @@ using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq;
 
 namespace IndustrialPark.Assets
 {
@@ -107,11 +108,8 @@ namespace IndustrialPark.Assets
         [Browsable(false)]
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public AssetDTRK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetDTRK(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             var numVertices = reader.ReadUInt32();
             var numTriangles = reader.ReadUInt32();
             LandableStart = reader.ReadUInt32();
@@ -167,7 +165,7 @@ namespace IndustrialPark.Assets
             SerializeLinks(writer);
         }
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             if (Vertices.Length == 0)
                 boundingBox = new BoundingBox();
@@ -196,11 +194,11 @@ namespace IndustrialPark.Assets
                 vertices.Add(new VertexColoredTextured(new Vector3(v.X, v.Y, v.Z), new Vector2(0, 0), new Color(255, 255, 255, 0)));
             }
 
-            triangles = new List<Models.Triangle>(Triangles.Length);
+            triangles = new List<RenderWareFile.Triangle>(Triangles.Length);
 
             foreach (var T in Triangles)
             {
-                var t = new Models.Triangle();
+                var t = new RenderWareFile.Triangle();
 
                 t.vertex1 = T.Vertex1;
                 if (vertices[T.Vertex1].Color.A == 0)
@@ -221,7 +219,7 @@ namespace IndustrialPark.Assets
                     {
                         v.TextureCoordinate.X = T.U1;
                         v.TextureCoordinate.Y = T.V1;
-                        t.vertex1 = vertices.Count;
+                        t.vertex1 = (ushort)vertices.Count;
                         vertices.Add(v);
                     }
                 }
@@ -245,7 +243,7 @@ namespace IndustrialPark.Assets
                     {
                         v.TextureCoordinate.X = T.U2;
                         v.TextureCoordinate.Y = T.V2;
-                        t.vertex2 = vertices.Count;
+                        t.vertex2 = (ushort)vertices.Count;
                         vertices.Add(v);
                     }
                 }
@@ -269,7 +267,7 @@ namespace IndustrialPark.Assets
                     {
                         v.TextureCoordinate.X = T.U3;
                         v.TextureCoordinate.Y = T.V3;
-                        t.vertex3 = vertices.Count;
+                        t.vertex3 = (ushort)vertices.Count;
                         vertices.Add(v);
                     }
                 }
@@ -277,9 +275,7 @@ namespace IndustrialPark.Assets
                 triangles.Add(t);
             }
 
-            this.vertices = new List<Vector3>(Vertices.Length);
-            foreach (var v in vertices)
-                this.vertices.Add((Vector3)v.Position);
+            this.vertices = vertices.Select(v => (Vector3)v.Position).ToList();
 
             Setup(Program.Renderer, vertices);
         }
@@ -308,7 +304,7 @@ namespace IndustrialPark.Assets
         private BoundingBox boundingBox;
 
         private List<Vector3> vertices;
-        private List<Models.Triangle> triangles;
+        private List<RenderWareFile.Triangle> triangles;
 
         public bool ShouldDraw(SharpRenderer renderer)
         {

@@ -18,13 +18,15 @@ public class ArchiveInterface
         Archive = new Archive(platform, game, DateTime.Now, DateTime.Now.ToString(), true, false, false);
     }
 
-    public ArchiveInterface(string fileName)
+    public ArchiveInterface(string fileName, Platform platform = Platform.Unknown)
     {
         HipFile hipFile = HipFile.FromPath(fileName);
 
         while (hipFile.game == Game.Unknown)
             hipFile.game = ChooseGame.GetGame();
 
+        if (hipFile.platform == Platform.Unknown && platform != Platform.Unknown)
+            hipFile.platform = platform;
         while (hipFile.platform == Platform.Unknown)
             hipFile.platform = ChoosePlatformDialog.GetPlatform();
 
@@ -52,7 +54,8 @@ public class ArchiveInterface
     public bool ContainsAsset(Asset asset) => Archive.ContainsAsset(asset);
     public bool ContainsAssetWithType(AssetType assetType) => Archive.ContainsAssetWithType(assetType);
     public Asset GetAsset(uint key) => Archive.GetAsset(key);
-    public bool TryGetAsset(uint key, out Asset asset) => Archive.TryGetAsset(key, out asset);
+    public T GetAsset<T>(uint key) where T : Asset => Archive.GetAsset<T>(key);
+    public bool TryGetAsset<T>(uint key, out T asset) where T : Asset => Archive.TryGetAsset(key, out asset);
     public IEnumerable<Asset> Assets => Archive.Assets;
     public int AssetCount => Archive.AssetCount;
     public IEnumerable<AssetType> AssetTypes => Archive.AssetTypes;

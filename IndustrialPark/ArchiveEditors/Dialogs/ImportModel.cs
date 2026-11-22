@@ -41,12 +41,12 @@ public partial class ImportModel : Form
                         SplitClump(assetData).Select(c => ReadFileMethods.ExportRenderWareFile(c, GetModelRenderWareVersion(game))).ToArray() :
                         [assetData];
 
-                        var clumpAHDRs = clumps.Select((data, i) => new Section_AHDR($"{assetName}{i}", a.assetType, AssetService.AHDRFlagsFromAssetType(a.assetType), data));
+                        var clumpAHDRs = clumps.Select((data, i) => new Section_AHDR($"{assetName}{i}", a.assetType, AssetService.AHDRFlagsFromAssetType(a.assetType), data, game, platform));
                         ahdrCollections.Add([.. clumpAHDRs]);
                     }
                     else
                     {
-                        ahdrCollections.Add([new Section_AHDR(assetName, a.assetType, AssetService.AHDRFlagsFromAssetType(a.assetType), assetData)]);
+                        ahdrCollections.Add([new Section_AHDR(assetName, a.assetType, AssetService.AHDRFlagsFromAssetType(a.assetType), assetData, game, platform)]);
                     }
                 }
                 catch (Exception ex)
@@ -78,7 +78,7 @@ public partial class ImportModel : Form
                         File.ReadAllBytes(filePath) :
                         ReadFileMethods.ExportRenderWareFile(CreateBSPFromAssimp(filePath, a.GetImportModelSettings()), GetModelRenderWareVersion(game));
 
-                    ahdrCollections.Add([new Section_AHDR(assetName, a.assetType, AssetService.AHDRFlagsFromAssetType(a.assetType), assetData)]);
+                    ahdrCollections.Add([new Section_AHDR(assetName, a.assetType, AssetService.AHDRFlagsFromAssetType(a.assetType), assetData, game, platform)]);
                 }
                 catch (Exception ex)
                 {
@@ -98,6 +98,7 @@ public partial class ImportModel : Form
             GenerateSimps = a.checkBoxGenSimps.Checked,
             LedgeGrabSimps = a.checkBoxLedgeGrab.Checked,
             PiptVColors = a.checkBoxCreatePIPT.Checked,
+            VisibleSimps = a.checkBoxVisibleSimps.Checked,
             SolidSimps = a.checkBoxSolidSimps.Checked,
         };
     }
@@ -231,6 +232,7 @@ public partial class ImportModel : Form
             grpSIMP.Enabled = false;
             (checkBoxGenSimps.Enabled, checkBoxGenSimps.Checked) = (false, false);
             (checkBoxSolidSimps.Enabled, checkBoxSolidSimps.Checked) = (false, false);
+            (checkBoxVisibleSimps.Enabled, checkBoxVisibleSimps.Checked) = (false, false);
             (checkBoxLedgeGrab.Enabled, checkBoxLedgeGrab.Checked) = (false, false);
         }
         else
@@ -238,6 +240,7 @@ public partial class ImportModel : Form
             grpSIMP.Enabled = true;
             checkBoxGenSimps.Enabled = true;
             (checkBoxSolidSimps.Enabled, checkBoxSolidSimps.Checked) = (checkBoxGenSimps.Checked, checkBoxGenSimps.Checked);
+            (checkBoxVisibleSimps.Enabled, checkBoxVisibleSimps.Checked) = (checkBoxGenSimps.Checked, checkBoxGenSimps.Checked);
             (checkBoxLedgeGrab.Enabled, checkBoxLedgeGrab.Checked) = (checkBoxGenSimps.Checked, checkBoxGenSimps.Checked);
         }
     }

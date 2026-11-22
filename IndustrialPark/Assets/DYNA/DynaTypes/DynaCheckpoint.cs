@@ -28,19 +28,14 @@ namespace IndustrialPark.Assets
         {
         }
 
-        public DynaCheckpoint(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Checkpoint, game, endianness)
+        public DynaCheckpoint(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Checkpoint, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Number = reader.ReadUInt32();
-                Trigger = reader.ReadUInt32();
-                Script = reader.ReadUInt32();
-                Camera = reader.ReadUInt32();
-                PointerMrIncredible = reader.ReadUInt32();
-                PointerFrozone = reader.ReadUInt32();
-            }
+            Number = reader.ReadUInt32();
+            Trigger = reader.ReadUInt32();
+            Script = reader.ReadUInt32();
+            Camera = reader.ReadUInt32();
+            PointerMrIncredible = reader.ReadUInt32();
+            PointerFrozone = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

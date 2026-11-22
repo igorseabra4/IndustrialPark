@@ -483,30 +483,29 @@ public class RenderWareModelFile
 
                     for (int j = 0; j < objectList.Count(); j++)
                     {
-                        if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_POS)
+                        switch (n.attr[j].attr)
                         {
-                            position = Vector3.TransformCoordinate(
-                                new Vector3(
-                                    vertexList1[objectList[j]].X,
-                                    vertexList1[objectList[j]].Y,
-                                    vertexList1[objectList[j]].Z),
-                                transformMatrix);
-                        }
-                        else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
-                        {
-                            color = new SharpDX.Color(colorList[objectList[j]].R, colorList[objectList[j]].G, colorList[objectList[j]].B, colorList[objectList[j]].A);
-                        }
-                        else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_TEX0)
-                        {
-                            textureCoordinate.X = textCoordList[objectList[j]].X;
-                            textureCoordinate.Y = textCoordList[objectList[j]].Y;
-                        }
-                        else if (n.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_NRM)
-                        {
-                            normal = new Vector3(
+                            case rwGCNVertexAttribute.rwGCNVA_POS:
+                                position = Vector3.TransformCoordinate(
+                                    new Vector3(
+                                        vertexList1[objectList[j]].X,
+                                        vertexList1[objectList[j]].Y,
+                                        vertexList1[objectList[j]].Z),
+                                    transformMatrix);
+                                break;
+                            case rwGCNVertexAttribute.rwGCNVA_CLR0:
+                                color = new SharpDX.Color(colorList[objectList[j]].R, colorList[objectList[j]].G, colorList[objectList[j]].B, colorList[objectList[j]].A);
+                                break;
+                            case rwGCNVertexAttribute.rwGCNVA_TEX0:
+                                textureCoordinate.X = textCoordList[objectList[j]].X;
+                                textureCoordinate.Y = textCoordList[objectList[j]].Y;
+                                break;
+                            case rwGCNVertexAttribute.rwGCNVA_NRM:
+                                normal = new Vector3(
                                     normalList[objectList[j]].X,
                                     normalList[objectList[j]].Y,
                                     normalList[objectList[j]].Z);
+                                break;
                         }
                     }
 

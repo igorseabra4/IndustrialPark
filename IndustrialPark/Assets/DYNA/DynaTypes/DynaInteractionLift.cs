@@ -35,28 +35,23 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public FlagBitmask LiftFlags { get; set; } = IntFlagsDescriptor();
 
-        public DynaInteractionLift(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Lift, game, endianness)
+        public DynaInteractionLift(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.interaction__Lift, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                ForwardScript = reader.ReadUInt32();
-                BackwardScript = reader.ReadUInt32();
-                LiftObject = reader.ReadUInt32();
-                StandPointer = reader.ReadUInt32();
-                if (game == Game.Incredibles)
-                    ButtonFreq = reader.ReadSingle();
-                else if (game == Game.ROTU)
-                    Rotu_PointerID = reader.ReadUInt32();
-                ProgressSpeed = reader.ReadSingle();
-                SlipSpeed = reader.ReadSingle();
-                FinalPos = reader.ReadSingle();
-                TossSpeed = reader.ReadSingle();
-                DropGravity = reader.ReadSingle();
-                if (game == Game.Incredibles)
-                    LiftFlags.FlagValueInt = reader.ReadUInt32();
-            }
+            ForwardScript = reader.ReadUInt32();
+            BackwardScript = reader.ReadUInt32();
+            LiftObject = reader.ReadUInt32();
+            StandPointer = reader.ReadUInt32();
+            if (game == Game.Incredibles)
+                ButtonFreq = reader.ReadSingle();
+            else if (game == Game.ROTU)
+                Rotu_PointerID = reader.ReadUInt32();
+            ProgressSpeed = reader.ReadSingle();
+            SlipSpeed = reader.ReadSingle();
+            FinalPos = reader.ReadSingle();
+            TossSpeed = reader.ReadSingle();
+            DropGravity = reader.ReadSingle();
+            if (game == Game.Incredibles)
+                LiftFlags.FlagValueInt = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

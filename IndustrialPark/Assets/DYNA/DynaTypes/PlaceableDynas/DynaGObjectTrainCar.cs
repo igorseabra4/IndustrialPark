@@ -35,27 +35,22 @@ public class DynaGObjectTrainCar : DynaEnemy
     [Category(dynaCategoryName)]
     public AssetByte NavMeshGroupIndex { get; set; }
 
-    public DynaGObjectTrainCar(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__train_car, game, endianness)
+    public DynaGObjectTrainCar(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__train_car, reader)
     {
-        using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-        {
-            reader.BaseStream.Position = entityDynaEndPosition;
-
-            ParentCar = reader.ReadUInt32();
-            StartSpline = reader.ReadUInt32();
-            InitialU = reader.ReadSingle();
-            FrontAxleDist = reader.ReadSingle();
-            RearAxleDist = reader.ReadSingle();
-            FrontHitchDist = reader.ReadSingle();
-            RearHitchDist = reader.ReadSingle();
-            AxleWidth = reader.ReadSingle();
-            HaveSparks = reader.ReadByte();
-            IsDestructible = reader.ReadByte();
-            reader.ReadByte();
-            reader.ReadByte();
-            NavMesh = reader.ReadUInt32();
-            NavMeshGroupIndex = reader.ReadByte();
-        }
+        ParentCar = reader.ReadUInt32();
+        StartSpline = reader.ReadUInt32();
+        InitialU = reader.ReadSingle();
+        FrontAxleDist = reader.ReadSingle();
+        RearAxleDist = reader.ReadSingle();
+        FrontHitchDist = reader.ReadSingle();
+        RearHitchDist = reader.ReadSingle();
+        AxleWidth = reader.ReadSingle();
+        HaveSparks = reader.ReadByte();
+        IsDestructible = reader.ReadByte();
+        reader.ReadByte();
+        reader.ReadByte();
+        NavMesh = reader.ReadUInt32();
+        NavMeshGroupIndex = reader.ReadByte();
     }
 
     protected override void SerializeDyna(EndianBinaryWriter writer)

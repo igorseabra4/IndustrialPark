@@ -18,15 +18,12 @@ namespace IndustrialPark.Assets
             Animations = new AssetID[10];
         }
 
-        public AssetALST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetALST(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                var assetIDs = new List<AssetID>();
-                while (!reader.EndOfStream)
-                    assetIDs.Add(reader.ReadUInt32());
-                Animations = assetIDs.ToArray();
-            }
+            var assetIDs = new List<AssetID>();
+            while (!reader.EndOfStream)
+                assetIDs.Add(reader.ReadUInt32());
+            Animations = assetIDs.ToArray();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

@@ -31,23 +31,18 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle mFarWallScale { get; set; }
 
-        public DynaCameraBinary(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.camera__binary_poi, game, endianness)
+        public DynaCameraBinary(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.camera__binary_poi, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                mVersion = reader.ReadUInt16();
-                mFlags.FlagValueShort = reader.ReadUInt16();
-                mTargetID = reader.ReadUInt32();
-                mTargetMarginAngle = reader.ReadSingle();
-                mTargetRadiusScale = reader.ReadSingle();
-                mDistanceScale = reader.ReadSingle();
-                mPhiOffset = reader.ReadSingle();
-                mYawOffset = reader.ReadSingle();
-                mNearWallScale = reader.ReadSingle();
-                mFarWallScale = reader.ReadSingle();
-            }
+            mVersion = reader.ReadUInt16();
+            mFlags.FlagValueShort = reader.ReadUInt16();
+            mTargetID = reader.ReadUInt32();
+            mTargetMarginAngle = reader.ReadSingle();
+            mTargetRadiusScale = reader.ReadSingle();
+            mDistanceScale = reader.ReadSingle();
+            mPhiOffset = reader.ReadSingle();
+            mYawOffset = reader.ReadSingle();
+            mNearWallScale = reader.ReadSingle();
+            mFarWallScale = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

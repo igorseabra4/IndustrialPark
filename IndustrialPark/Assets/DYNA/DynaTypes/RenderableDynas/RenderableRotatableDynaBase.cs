@@ -57,9 +57,9 @@ namespace IndustrialPark.Assets
         }
 
         public RenderableRotatableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType, position) { }
-        public RenderableRotatableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
+        public RenderableRotatableDynaBase(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader) { }
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             if (inRadians)
                 world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
@@ -69,7 +69,7 @@ namespace IndustrialPark.Assets
                     MathUtil.DegreesToRadians(_pitch),
                     MathUtil.DegreesToRadians(_roll)) * Matrix.Translation(_position);
 
-            CreateBoundingBox(renderer);
+            boundingBox = CreateBoundingBox(vertexSource(renderer), world);
         }
 
         public override AssetTransformation GetTransformation() => new AssetTransformation()

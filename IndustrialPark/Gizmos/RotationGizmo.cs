@@ -23,7 +23,7 @@ namespace IndustrialPark.Gizmos
         }
 
         public override SharpMesh Mesh => Program.Renderer.Torus;
-        protected override List<Models.Triangle> triangleList => Program.Renderer.torusTriangles;
+        protected override List<RenderWareFile.Triangle> triangleList => Program.Renderer.torusTriangles;
         protected override List<Vector3> vertexList => Program.Renderer.torusVertices;
         protected override bool drawLine => false;
     }

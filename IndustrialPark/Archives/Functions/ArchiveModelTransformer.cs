@@ -201,7 +201,7 @@ public static class ArchiveModelTransformer
 
     public static uint ApplyBakeScaleLocal(Archive archive, Asset model, Vector3 scale)
     {
-        var AHDR = model.BuildAHDR(archive.Platform.Endianness());
+        var AHDR = model.BuildAHDR(archive.Platform);
         var newAssetName = AHDR.ADBG.assetName + $"_{scale.X:.0###########}_{scale.Y:.0###########}_{scale.Z:.0###########}";
         var newAssetId = Functions.BKDRHash(newAssetName);
 
@@ -212,7 +212,7 @@ public static class ArchiveModelTransformer
 
             var layerIndex = archive.GetLayerFromAssetID(model.assetID);
 
-            var newModel = archive.AddNewAsset(AHDR, archive.Game, archive.Platform, layerIndex);
+            var newModel = archive.AddNewAsset(AHDR, layerIndex);
             ((IAssetWithModel)newModel).ApplyScale(scale);
         }
 
@@ -231,7 +231,7 @@ public static class ArchiveModelTransformer
         int count = 0;
 
         foreach (var ae in Program.ArchiveEditors)
-            if (ae.archive.TryGetAsset(modelAssetId, out Asset asset) && asset is AssetMODL model)
+            if (ae.archive.TryGetAsset(modelAssetId, out AssetMODL model))
             {
                 bsmc = (ae.archive, model);
                 count++;
@@ -252,7 +252,7 @@ public static class ArchiveModelTransformer
 
     public static uint ApplyBakeRotationLocal(Archive archive, AssetMODL model, float yaw, float pitch, float roll)
     {
-        var AHDR = model.BuildAHDR(archive.Platform.Endianness());
+        var AHDR = model.BuildAHDR(archive.Platform);
         var newAssetName = AHDR.ADBG.assetName + $"_{MathUtil.RadiansToDegrees(yaw):.0###########}_{MathUtil.RadiansToDegrees(pitch):.0###########}_{MathUtil.RadiansToDegrees(roll):.0###########}";
         var newAssetId = Functions.BKDRHash(newAssetName);
 
@@ -263,7 +263,7 @@ public static class ArchiveModelTransformer
 
             var layerIndex = archive.GetLayerFromAssetID(model.assetID);
 
-            var newModel = (AssetMODL)archive.AddNewAsset(AHDR, archive.Game, archive.Platform, layerIndex);
+            var newModel = (AssetMODL)archive.AddNewAsset(AHDR, layerIndex);
             newModel.ApplyRotation(yaw, pitch, roll);
         }
 

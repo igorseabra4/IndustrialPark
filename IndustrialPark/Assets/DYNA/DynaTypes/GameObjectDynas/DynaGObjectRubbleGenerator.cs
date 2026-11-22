@@ -65,41 +65,36 @@ namespace IndustrialPark.Assets
             Models = new AssetID[0];
         }
 
-        public DynaGObjectRubbleGenerator(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RubbleGenerator, game, endianness)
+        public DynaGObjectRubbleGenerator(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__RubbleGenerator, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            Flags.FlagValueInt = reader.ReadUInt32();
+            SpawnFromMarker = reader.ReadUInt32();
+            SpawnToMarker = reader.ReadUInt32();
+            var modelCount = reader.ReadUInt32();
+            var modelOffset = reader.ReadUInt32();
+            SpawnRate = reader.ReadSingle();
+            SpawnLimit = reader.ReadInt32();
+            if (Version == 8)
             {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Flags.FlagValueInt = reader.ReadUInt32();
-                SpawnFromMarker = reader.ReadUInt32();
-                SpawnToMarker = reader.ReadUInt32();
-                var modelCount = reader.ReadUInt32();
-                var modelOffset = reader.ReadUInt32();
-                SpawnRate = reader.ReadSingle();
-                SpawnLimit = reader.ReadInt32();
-                if (Version == 8)
-                {
-                    MinLaunchAngle = reader.ReadSingle();
-                    MaxLaunchAngle = reader.ReadSingle();
-                    MinBouncesDistRatio = reader.ReadSingle();
-                    MaxBouncesDistRatio = reader.ReadSingle();
-                }
-                else if (Version == 5)
-                {
-                    MinVelocity = reader.ReadSingle();
-                    MaxVelocity = reader.ReadSingle();
-                }
-                MinRotations = reader.ReadUInt32();
-                MaxRotations = reader.ReadUInt32();
-                LandEffectType = (ILandEffectType)reader.ReadInt32();
-                RepeatType = reader.ReadUInt32();
-                LaunchSoundGroup = reader.ReadUInt32();
-                LandSoundGroup = reader.ReadUInt32();
-                Models = new AssetID[modelCount];
-                for (int i = 0; i < modelCount; i++)
-                    Models[i] = reader.ReadUInt32();
+                MinLaunchAngle = reader.ReadSingle();
+                MaxLaunchAngle = reader.ReadSingle();
+                MinBouncesDistRatio = reader.ReadSingle();
+                MaxBouncesDistRatio = reader.ReadSingle();
             }
+            else if (Version == 5)
+            {
+                MinVelocity = reader.ReadSingle();
+                MaxVelocity = reader.ReadSingle();
+            }
+            MinRotations = reader.ReadUInt32();
+            MaxRotations = reader.ReadUInt32();
+            LandEffectType = (ILandEffectType)reader.ReadInt32();
+            RepeatType = reader.ReadUInt32();
+            LaunchSoundGroup = reader.ReadUInt32();
+            LandSoundGroup = reader.ReadUInt32();
+            Models = new AssetID[modelCount];
+            for (int i = 0; i < modelCount; i++)
+                Models[i] = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

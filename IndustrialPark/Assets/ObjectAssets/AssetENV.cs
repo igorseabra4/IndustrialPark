@@ -69,11 +69,8 @@ namespace IndustrialPark.Assets
             LoldHeight = 10f;
         }
 
-        public AssetENV(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetENV(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             BSP = reader.ReadUInt32();
             StartCamera = reader.ReadUInt32();
             ClimateFlags = reader.ReadInt32();

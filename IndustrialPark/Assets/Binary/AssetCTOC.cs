@@ -108,9 +108,9 @@
 //            BreakList = new xCutsceneBreak[0];
 //        }
 
-//        public AssetCSN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+//        public AssetCSN(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
 //        {
-//            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+//            using (var reader = new EndianBinaryReader(AHDR.data, AHDR.Platform))
 //            {
 //                reader.ReadInt32();
 //                reader.ReadInt32();

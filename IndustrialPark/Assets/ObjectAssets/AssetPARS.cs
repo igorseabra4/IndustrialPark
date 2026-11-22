@@ -33,73 +33,69 @@ namespace IndustrialPark.Assets
         public ParticleCommand[] Commands { get; set; }
         [Category(categoryName)]
         public FlagBitmask ParFlags { get; set; } = IntFlagsDescriptor();
-        public AssetPARS(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPARS(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            Type = reader.ReadInt32();
+            ParticleSystem = reader.ReadUInt32();
+            Texture = reader.ReadUInt32();
+            Flags.FlagValueByte = reader.ReadByte();
+            Priority = reader.ReadByte();
+            MaxParticles = reader.ReadInt16();
+            RenderFunction = reader.ReadByte();
+            RenderSourceBlendMode = reader.ReadByte();
+            RenderDestBlendMode = reader.ReadByte();
+            int cmdCount = reader.ReadByte();
+            int cmdSize = reader.ReadInt32();
+
+            if (game >= Game.Incredibles)
+                ParFlags.FlagValueInt = reader.ReadUInt32();
+
+            Commands = new ParticleCommand[cmdCount];
+            for (int i = 0; i < Commands.Length; i++)
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+                var parType = (ParticleCommandType)reader.ReadInt32();
 
-                Type = reader.ReadInt32();
-                ParticleSystem = reader.ReadUInt32();
-                Texture = reader.ReadUInt32();
-                Flags.FlagValueByte = reader.ReadByte();
-                Priority = reader.ReadByte();
-                MaxParticles = reader.ReadInt16();
-                RenderFunction = reader.ReadByte();
-                RenderSourceBlendMode = reader.ReadByte();
-                RenderDestBlendMode = reader.ReadByte();
-                int cmdCount = reader.ReadByte();
-                int cmdSize = reader.ReadInt32();
-
-                if (game >= Game.Incredibles)
-                    ParFlags.FlagValueInt = reader.ReadUInt32();
-
-                Commands = new ParticleCommand[cmdCount];
-                for (int i = 0; i < Commands.Length; i++)
+                Commands[i] = parType switch
                 {
-                    var parType = (ParticleCommandType)reader.ReadInt32();
-
-                    Commands[i] = parType switch
-                    {
-                        ParticleCommandType.Move => new ParticleCommand_Move(reader),
-                        ParticleCommandType.MoveRandom => new ParticleCommand_MoveRandom(reader),
-                        ParticleCommandType.MoveRandomPar => new ParticleCommand_MoveRandomPar(reader),
-                        ParticleCommandType.Accelerate => new ParticleCommand_Accelerate(reader),
-                        ParticleCommandType.VelocityApply => new ParticleCommand_VelocityApply(reader),
-                        ParticleCommandType.Jet => new ParticleCommand_Jet(reader),
-                        ParticleCommandType.KillSlow => new ParticleCommand_KillSlow(reader),
-                        ParticleCommandType.Follow => new ParticleCommand_Follow(reader),
-                        ParticleCommandType.OrbitPoint => new ParticleCommand_OrbitPoint(reader),
-                        ParticleCommandType.OrbitLine => new ParticleCommand_OrbitLine(reader),
-                        ParticleCommandType.Scale3rdPolyReg => new ParticleCommand_Scale3rdPolyReg(reader),
-                        ParticleCommandType.Alpha3rdPolyReg => new ParticleCommand_Alpha3rdPolyReg(reader),
-                        ParticleCommandType.Tex => new ParticleCommand_Tex(reader),
-                        ParticleCommandType.TexAnim => new ParticleCommand_TexAnim(reader),
-                        ParticleCommandType.PlayerCollision => new ParticleCommand_Scale3rdPolyReg(reader),
-                        ParticleCommandType.RotPar => new ParticleCommand_RotPar(reader),
-                        ParticleCommandType.RandomVelocityPar => new ParticleCommand_RandomVelocityPar(reader),
-                        ParticleCommandType.Custom => new ParticleCommand_Custom(reader),
-                        ParticleCommandType.KillDistance => new ParticleCommand_KillDistance(reader),
-                        ParticleCommandType.Age => new ParticleCommand_Age(reader),
-                        ParticleCommandType.ApplyWind => new ParticleCommand_ApplyWind(reader),
-                        ParticleCommandType.ApplyCamMat => new ParticleCommand_ApplyCamMat(reader),
-                        ParticleCommandType.RotateAround => new ParticleCommand_RotateAround(reader),
-                        ParticleCommandType.SmokeAlpha => new ParticleCommand_SmokeAlpha(reader),
-                        ParticleCommandType.Scale => new ParticleCommand_Scale(reader),
-                        ParticleCommandType.ClipVolumes => new ParticleCommand_ClipVolumes(reader),
-                        ParticleCommandType.AnimalMagentism => new ParticleCommand_AnimalMagentism(reader),
-                        ParticleCommandType.DamagePlayer => new ParticleCommand_DamagePlayer(reader, game),
-                        ParticleCommandType.CollideFall => new ParticleCommand_CollideFall(reader),
-                        ParticleCommandType.FallSticky => new ParticleCommand_CollideFallSticky(reader),
-                        ParticleCommandType.Shaper => new ParticleCommand_Shaper(reader),
-                        ParticleCommandType.AlphaInOut => new ParticleCommand_AlphaInOut(reader),
-                        ParticleCommandType.SizeInOut => new ParticleCommand_SizeInOut(reader),
-                        ParticleCommandType.DampenSpeed => new ParticleCommand_DampenData(reader),
-                        _ => throw new Exception($"Unsupported Particle command: {parType}"),
-                    };
-                }
+                    ParticleCommandType.Move => new ParticleCommand_Move(reader),
+                    ParticleCommandType.MoveRandom => new ParticleCommand_MoveRandom(reader),
+                    ParticleCommandType.MoveRandomPar => new ParticleCommand_MoveRandomPar(reader),
+                    ParticleCommandType.Accelerate => new ParticleCommand_Accelerate(reader),
+                    ParticleCommandType.VelocityApply => new ParticleCommand_VelocityApply(reader),
+                    ParticleCommandType.Jet => new ParticleCommand_Jet(reader),
+                    ParticleCommandType.KillSlow => new ParticleCommand_KillSlow(reader),
+                    ParticleCommandType.Follow => new ParticleCommand_Follow(reader),
+                    ParticleCommandType.OrbitPoint => new ParticleCommand_OrbitPoint(reader),
+                    ParticleCommandType.OrbitLine => new ParticleCommand_OrbitLine(reader),
+                    ParticleCommandType.Scale3rdPolyReg => new ParticleCommand_Scale3rdPolyReg(reader),
+                    ParticleCommandType.Alpha3rdPolyReg => new ParticleCommand_Alpha3rdPolyReg(reader),
+                    ParticleCommandType.Tex => new ParticleCommand_Tex(reader),
+                    ParticleCommandType.TexAnim => new ParticleCommand_TexAnim(reader),
+                    ParticleCommandType.PlayerCollision => new ParticleCommand_Scale3rdPolyReg(reader),
+                    ParticleCommandType.RotPar => new ParticleCommand_RotPar(reader),
+                    ParticleCommandType.RandomVelocityPar => new ParticleCommand_RandomVelocityPar(reader),
+                    ParticleCommandType.Custom => new ParticleCommand_Custom(reader),
+                    ParticleCommandType.KillDistance => new ParticleCommand_KillDistance(reader),
+                    ParticleCommandType.Age => new ParticleCommand_Age(reader),
+                    ParticleCommandType.ApplyWind => new ParticleCommand_ApplyWind(reader),
+                    ParticleCommandType.ApplyCamMat => new ParticleCommand_ApplyCamMat(reader),
+                    ParticleCommandType.RotateAround => new ParticleCommand_RotateAround(reader),
+                    ParticleCommandType.SmokeAlpha => new ParticleCommand_SmokeAlpha(reader),
+                    ParticleCommandType.Scale => new ParticleCommand_Scale(reader),
+                    ParticleCommandType.ClipVolumes => new ParticleCommand_ClipVolumes(reader),
+                    ParticleCommandType.AnimalMagentism => new ParticleCommand_AnimalMagentism(reader),
+                    ParticleCommandType.DamagePlayer => new ParticleCommand_DamagePlayer(reader, game),
+                    ParticleCommandType.CollideFall => new ParticleCommand_CollideFall(reader),
+                    ParticleCommandType.FallSticky => new ParticleCommand_CollideFallSticky(reader),
+                    ParticleCommandType.Shaper => new ParticleCommand_Shaper(reader),
+                    ParticleCommandType.AlphaInOut => new ParticleCommand_AlphaInOut(reader),
+                    ParticleCommandType.SizeInOut => new ParticleCommand_SizeInOut(reader),
+                    ParticleCommandType.DampenSpeed => new ParticleCommand_DampenData(reader),
+                    _ => throw new Exception($"Unsupported Particle command: {parType}"),
+                };
             }
         }
+
         public override bool SkipBuildTesting => Commands.Any(i => i.NeedsFix == true);
         public override void Serialize(EndianBinaryWriter writer)
         {

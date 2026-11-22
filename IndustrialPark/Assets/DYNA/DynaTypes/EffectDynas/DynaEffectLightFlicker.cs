@@ -45,21 +45,16 @@ namespace IndustrialPark.Assets
             Flags.FlagValueInt = 1;
         }
 
-        public DynaEffectLightFlicker(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__LightEffectFlicker, game, endianness)
+        public DynaEffectLightFlicker(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__LightEffectFlicker, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                RedMult = reader.ReadSingle();
-                GreenMult = reader.ReadSingle();
-                BlueMult = reader.ReadSingle();
-                SeeThru = reader.ReadSingle();
-                FlickerRate = reader.ReadSingle();
-                RandomFlickerRate = reader.ReadSingle();
-                BlendTime = reader.ReadSingle();
-                Flags.FlagValueInt = reader.ReadUInt32();
-            }
+            RedMult = reader.ReadSingle();
+            GreenMult = reader.ReadSingle();
+            BlueMult = reader.ReadSingle();
+            SeeThru = reader.ReadSingle();
+            FlickerRate = reader.ReadSingle();
+            RandomFlickerRate = reader.ReadSingle();
+            BlendTime = reader.ReadSingle();
+            Flags.FlagValueInt = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -20,17 +20,12 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle FadeUpTime { get; set; }
 
-        public DynaEffectScreenFade(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__ScreenFade, game, endianness)
+        public DynaEffectScreenFade(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__ScreenFade, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Color = reader.ReadColor();
-                FadeDownTime = reader.ReadSingle();
-                WaitTime = reader.ReadSingle();
-                FadeUpTime = reader.ReadSingle();
-            }
+            Color = reader.ReadColor();
+            FadeDownTime = reader.ReadSingle();
+            WaitTime = reader.ReadSingle();
+            FadeUpTime = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

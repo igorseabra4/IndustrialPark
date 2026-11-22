@@ -9,7 +9,7 @@ namespace IndustrialPark.Assets
 
         protected override short constVersion => 0;
 
-        public DynaUIController(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__controller, game, endianness)
+        public DynaUIController(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.ui__controller, reader)
         {
         }
 

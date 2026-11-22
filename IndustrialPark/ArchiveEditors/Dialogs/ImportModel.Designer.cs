@@ -47,6 +47,7 @@
             checkBoxSplitClump = new System.Windows.Forms.CheckBox();
             checkBoxNoMaterials = new System.Windows.Forms.CheckBox();
             grpSIMP = new System.Windows.Forms.GroupBox();
+            checkBoxVisibleSimps = new System.Windows.Forms.CheckBox();
             groupBoxModelSettings = new System.Windows.Forms.GroupBox();
             checkBoxBinMesh = new System.Windows.Forms.CheckBox();
             checkBoxMultiAtomic = new System.Windows.Forms.CheckBox();
@@ -191,12 +192,21 @@
             // 
             // grpSIMP
             // 
+            grpSIMP.Controls.Add(checkBoxVisibleSimps);
             grpSIMP.Controls.Add(checkBoxGenSimps);
             grpSIMP.Controls.Add(checkBoxSolidSimps);
             grpSIMP.Controls.Add(checkBoxLedgeGrab);
             resources.ApplyResources(grpSIMP, "grpSIMP");
             grpSIMP.Name = "grpSIMP";
             grpSIMP.TabStop = false;
+            // 
+            // checkBoxVisibleSimps
+            // 
+            resources.ApplyResources(checkBoxVisibleSimps, "checkBoxVisibleSimps");
+            checkBoxVisibleSimps.Checked = true;
+            checkBoxVisibleSimps.CheckState = System.Windows.Forms.CheckState.Checked;
+            checkBoxVisibleSimps.Name = "checkBoxVisibleSimps";
+            checkBoxVisibleSimps.UseVisualStyleBackColor = true;
             // 
             // groupBoxModelSettings
             // 
@@ -354,5 +364,6 @@
         private System.Windows.Forms.CheckBox checkBoxSplitClump;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label labelFiles;
+        private System.Windows.Forms.CheckBox checkBoxVisibleSimps;
     }
 }

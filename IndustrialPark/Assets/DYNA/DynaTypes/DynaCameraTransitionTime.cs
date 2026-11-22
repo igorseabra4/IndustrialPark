@@ -30,20 +30,15 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle mDecel { get; set; }
 
-        public DynaCameraTransitionTime(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.camera__transition_time, game, endianness)
+        public DynaCameraTransitionTime(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.camera__transition_time, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                mVersion = reader.ReadUInt32();
-                mType = reader.ReadInt32();
-                mFlags.FlagValueInt = reader.ReadUInt32();
-                mDestCameraID = reader.ReadUInt32();
-                mTime = reader.ReadSingle();
-                mAccel = reader.ReadSingle();
-                mDecel = reader.ReadSingle();
-            }
+            mVersion = reader.ReadUInt32();
+            mType = reader.ReadInt32();
+            mFlags.FlagValueInt = reader.ReadUInt32();
+            mDestCameraID = reader.ReadUInt32();
+            mTime = reader.ReadSingle();
+            mAccel = reader.ReadSingle();
+            mDecel = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

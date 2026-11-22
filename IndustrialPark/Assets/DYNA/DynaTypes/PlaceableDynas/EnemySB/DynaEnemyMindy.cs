@@ -37,19 +37,14 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetID SecondaryTaskBoxID { get; set; }
 
-        public DynaEnemyMindy(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Mindy, game, endianness)
+        public DynaEnemyMindy(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__Mindy, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                TaskBoxID = reader.ReadUInt32();
-                ClamOpenDistance = reader.ReadSingle();
-                ClamCloseDistance = reader.ReadSingle();
-                TextBoxID = reader.ReadUInt32();
-                PrimaryCharacter = reader.ReadInt32();
-                SecondaryTaskBoxID = reader.ReadUInt32();
-            }
+            TaskBoxID = reader.ReadUInt32();
+            ClamOpenDistance = reader.ReadSingle();
+            ClamCloseDistance = reader.ReadSingle();
+            TextBoxID = reader.ReadUInt32();
+            PrimaryCharacter = reader.ReadInt32();
+            SecondaryTaskBoxID = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -25,14 +25,9 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetID Unknown { get; set; }
 
-        public DynaEnemyFrogFish(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__FrogFish, game, endianness)
+        public DynaEnemyFrogFish(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__FrogFish, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                Unknown = reader.ReadUInt32();
-            }
+            Unknown = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

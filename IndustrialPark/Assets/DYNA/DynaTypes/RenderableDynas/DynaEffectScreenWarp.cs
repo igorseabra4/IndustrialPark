@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -20,7 +19,7 @@ public class DynaEffectScreenWarp : RenderableDynaBase
         "Running");
 
     protected float _radius;
-    [Category("DYNA Placement")]
+    [Category("Placement")]
     public AssetSingle Radius
     {
         get => _radius;
@@ -38,11 +37,8 @@ public class DynaEffectScreenWarp : RenderableDynaBase
     [Category(dynaCategoryName)]
     public AssetSingle TriggerDistance { get; set; }
 
-    public DynaEffectScreenWarp(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__ScreenWarp, game, endianness)
+    public DynaEffectScreenWarp(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__ScreenWarp, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         EffectType = reader.ReadUInt32();
         Flags.FlagValueInt = reader.ReadUInt32();
         _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -71,15 +67,18 @@ public class DynaEffectScreenWarp : RenderableDynaBase
 
     protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.sphereVertices;
 
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.sphereTriangles;
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.sphereTriangles;
 
-    public override void CreateTransformMatrix(SharpRenderer renderer)
+    private BoundingSphere boundingSphere;
+
+    public override void CalculateTransformation(SharpRenderer renderer)
     {
         world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
-        CreateBoundingBox(renderer);
+        boundingSphere = new BoundingSphere(new Vector3(PositionX, PositionY, PositionZ), Radius);
+        boundingBox = BoundingBox.FromSphere(boundingSphere);
     }
 
-    public override void Draw(SharpRenderer renderer) => renderer.DrawSphere(world, isSelected, renderer.trigColor);
+    public override void Draw(SharpRenderer renderer) => renderer.DrawSphere(boundingSphere, isSelected, renderer.trigColor);
 
     public static bool dontRender = false;
     protected override bool DontRender => dontRender;

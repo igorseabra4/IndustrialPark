@@ -15,7 +15,7 @@ namespace IndustrialPark.Assets
             Data = data;
         }
 
-        public AssetWithData(Section_AHDR AHDR, Game game) : base(AHDR, game)
+        public AssetWithData(Section_AHDR AHDR) : base(AHDR)
         {
             Data = AHDR.data;
         }

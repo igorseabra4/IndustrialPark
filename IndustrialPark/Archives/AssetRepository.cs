@@ -34,7 +34,18 @@ public class AssetRepository
         throw new KeyNotFoundException($"Asset [{assetID:X8}] not present in dictionary.");
     }
 
-    public bool TryGet(uint key, out Asset asset) => assetDictionary.TryGetValue(key, out asset);
+    public T Get<T>(uint assetID) where T : Asset => (T)Get(assetID);
+
+    public bool TryGet<T>(uint key, out T asset) where T : Asset
+    {
+        if (assetDictionary.TryGetValue(key, out var a) && a is T t)
+        {
+            asset = t;
+            return true;
+        }
+        asset = null;
+        return false;
+    }
 
     public void Add(params IEnumerable<Asset> assets)
     {

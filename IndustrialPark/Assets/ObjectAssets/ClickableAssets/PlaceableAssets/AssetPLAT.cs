@@ -212,42 +212,37 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetPLAT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPLAT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            _platformType = (PlatType)reader.ReadByte();
+
+            reader.ReadByte();
+
+            PlatformFlags.FlagValueShort = reader.ReadUInt16();
+
+            PlatformSpecific = (PlatType)(byte)TypeFlag switch
             {
-                reader.BaseStream.Position = entityHeaderEndPosition;
+                PlatType.ConveyorBelt => new PlatSpecific_ConveryorBelt(reader, game),
+                PlatType.FallingPlatform => new PlatSpecific_FallingPlatform(reader, game),
+                PlatType.FR => new PlatSpecific_FR(reader, game),
+                PlatType.BreakawayPlatform => new PlatSpecific_BreakawayPlatform(reader, game),
+                PlatType.Springboard => new PlatSpecific_Springboard(reader, game),
+                PlatType.TeeterTotter => new PlatSpecific_TeeterTotter(reader, game),
+                PlatType.Paddle => new PlatSpecific_Paddle(reader, game),
+                _ => new PlatSpecific_Generic(game),
+            };
+            reader.BaseStream.Position = motionStart(game);
 
-                _platformType = (PlatType)reader.ReadByte();
-
-                reader.ReadByte();
-
-                PlatformFlags.FlagValueShort = reader.ReadUInt16();
-
-                PlatformSpecific = (PlatType)(byte)TypeFlag switch
-                {
-                    PlatType.ConveyorBelt => new PlatSpecific_ConveryorBelt(reader, game),
-                    PlatType.FallingPlatform => new PlatSpecific_FallingPlatform(reader, game),
-                    PlatType.FR => new PlatSpecific_FR(reader, game),
-                    PlatType.BreakawayPlatform => new PlatSpecific_BreakawayPlatform(reader, game),
-                    PlatType.Springboard => new PlatSpecific_Springboard(reader, game),
-                    PlatType.TeeterTotter => new PlatSpecific_TeeterTotter(reader, game),
-                    PlatType.Paddle => new PlatSpecific_Paddle(reader, game),
-                    _ => new PlatSpecific_Generic(game),
-                };
-                reader.BaseStream.Position = motionStart(game);
-
-                Motion = PlatformType switch
-                {
-                    PlatType.ExtendRetract => new Motion_ExtendRetract(reader, game),
-                    PlatType.Orbit => new Motion_Orbit(reader, game),
-                    PlatType.Spline => new Motion_Spline(reader, game),
-                    PlatType.Pendulum => new Motion_Pendulum(reader, game),
-                    PlatType.MovePoint => new Motion_MovePoint(reader, game, _position),
-                    PlatType.Mechanism => new Motion_Mechanism(reader, game),
-                    _ => new Motion(reader, game),
-                };
-            }
+            Motion = PlatformType switch
+            {
+                PlatType.ExtendRetract => new Motion_ExtendRetract(reader, game),
+                PlatType.Orbit => new Motion_Orbit(reader, game),
+                PlatType.Spline => new Motion_Spline(reader, game),
+                PlatType.Pendulum => new Motion_Pendulum(reader, game),
+                PlatType.MovePoint => new Motion_MovePoint(reader, game, _position),
+                PlatType.Mechanism => new Motion_Mechanism(reader, game),
+                _ => new Motion(reader, game),
+            };
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -349,7 +344,7 @@ namespace IndustrialPark.Assets
             isSkyBox = false;
             skyBoxUseY = false;
             foreach (Link link in _links)
-                if ((EventBFBB)link.EventSendID == EventBFBB.SetasSkydome && link.TargetAsset.Equals(assetID))
+                if (link.EventSendBFBB == EventBFBB.SetasSkydome && link.TargetAsset.Equals(assetID))
                 {
                     isSkyBox = true;
                     if (link.FloatParameter2 == 1f)

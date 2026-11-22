@@ -83,35 +83,30 @@ public class AssetUI : EntityAsset
         TextCoordBottomLeftY = 1f;
     }
 
-    public AssetUI(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+    public AssetUI(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
     {
-        using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-        {
-            reader.BaseStream.Position = entityHeaderEndPosition;
+        UIFlags.FlagValueInt = reader.ReadUInt32();
+        _width = reader.ReadInt16();
+        Height = reader.ReadInt16();
 
-            UIFlags.FlagValueInt = reader.ReadUInt32();
-            _width = reader.ReadInt16();
-            Height = reader.ReadInt16();
-
-            Texture = reader.ReadUInt32();
-            TextCoordTopLeftX = reader.ReadSingle();
-            TextCoordTopLeftY = reader.ReadSingle();
-            TextCoordTopRightX = reader.ReadSingle();
-            TextCoordTopRightY = reader.ReadSingle();
-            TextCoordBottomRightX = reader.ReadSingle();
-            TextCoordBottomRightY = reader.ReadSingle();
-            TextCoordBottomLeftX = reader.ReadSingle();
-            TextCoordBottomLeftY = reader.ReadSingle();
-        }
+        Texture = reader.ReadUInt32();
+        TextCoordTopLeftX = reader.ReadSingle();
+        TextCoordTopLeftY = reader.ReadSingle();
+        TextCoordTopRightX = reader.ReadSingle();
+        TextCoordTopRightY = reader.ReadSingle();
+        TextCoordBottomRightX = reader.ReadSingle();
+        TextCoordBottomRightY = reader.ReadSingle();
+        TextCoordBottomLeftX = reader.ReadSingle();
+        TextCoordBottomLeftY = reader.ReadSingle();
     }
 
     public override void Serialize(EndianBinaryWriter writer)
     {
-        SerializeForUIFT(writer);
+        SerializeUI(writer);
         SerializeLinks(writer);
     }
 
-    protected void SerializeForUIFT(EndianBinaryWriter writer)
+    protected void SerializeUI(EndianBinaryWriter writer)
     {
         base.Serialize(writer);
         writer.Write(UIFlags.FlagValueInt);
@@ -132,7 +127,7 @@ public class AssetUI : EntityAsset
 
     public override bool DontRender => dontRender;
 
-    public override void CreateTransformMatrix(SharpRenderer renderer)
+    public override void CalculateTransformation(SharpRenderer renderer)
     {
         world = (renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity;
 
@@ -158,7 +153,7 @@ public class AssetUI : EntityAsset
         else
         {
             var model = renderer.Assets.GetModelFromRenderingDictionary(_model);
-            CreateBoundingBox(renderer, model != null ? model.vertexListG : renderer.planeVertices);
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.planeVertices, world);
         }
     }
 
@@ -187,30 +182,13 @@ public class AssetUI : EntityAsset
     [Browsable(false)]
     public override bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-    protected override float? TriangleIntersection(Ray r)
+    public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
     {
-        if (Texture == 0)
-            return base.TriangleIntersection(r);
+        if (this is not AssetUIFT && Texture == 0)
+            return base.GetIntersectionPosition(renderer, ray);
 
-        bool hasIntersected = false;
-        float smallestDistance = 1000f;
-
-        foreach (var t in Program.Renderer.planeTriangles)
-        {
-            var v1 = Vector3.TransformCoordinate(Program.Renderer.planeVertices[t.vertex1], world);
-            var v2 = Vector3.TransformCoordinate(Program.Renderer.planeVertices[t.vertex2], world);
-            var v3 = Vector3.TransformCoordinate(Program.Renderer.planeVertices[t.vertex3], world);
-
-            if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-            {
-                hasIntersected = true;
-                if (distance < smallestDistance)
-                    smallestDistance = distance;
-            }
-        }
-
-        if (hasIntersected)
-            return smallestDistance;
+        if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
+            return TriangleIntersection(ray, renderer.planeTriangles, renderer.planeVertices, world);
         return null;
     }
 }

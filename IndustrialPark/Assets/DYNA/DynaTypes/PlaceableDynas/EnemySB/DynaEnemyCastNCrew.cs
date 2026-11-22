@@ -24,7 +24,7 @@ namespace IndustrialPark.Assets
             set => Model = (uint)value;
         }
 
-        public DynaEnemyCastNCrew(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__CastNCrew, game, endianness) { }
+        public DynaEnemyCastNCrew(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__CastNCrew, reader) { }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {

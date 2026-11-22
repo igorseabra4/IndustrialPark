@@ -73,43 +73,38 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle TargetTextureSizeY { get; set; }
 
-        public DynaGObjectTurret(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Turret, game, endianness)
+        public DynaGObjectTurret(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Turret, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                BaseObject = reader.ReadUInt32();
-                GunObject = reader.ReadUInt32();
-                YawRange = reader.ReadSingle();
-                YawSpeed = reader.ReadSingle();
-                PitchRange = reader.ReadSingle();
-                PitchSpeed = reader.ReadSingle();
-                RecoveryTime = reader.ReadSingle();
-                OverheatFraction = reader.ReadSingle();
-                CoolingSpeed = reader.ReadSingle();
-                OverheatTime = reader.ReadSingle();
-                HitPoints = reader.ReadInt16();
-                Damage = reader.ReadInt16();
-                CameraOffsetX = reader.ReadSingle();
-                CameraOffsetY = reader.ReadSingle();
-                CameraOffsetZ = reader.ReadSingle();
-                FinalPointer = reader.ReadUInt32();
-                LaserColor = reader.ReadColor();
-                Offset1X = reader.ReadSingle();
-                Offset1Y = reader.ReadSingle();
-                Offset1Z = reader.ReadSingle();
-                Offset2X = reader.ReadSingle();
-                Offset2Y = reader.ReadSingle();
-                Offset2Z = reader.ReadSingle();
-                LaserLength = reader.ReadSingle();
-                LaserThickness = reader.ReadSingle();
-                LaserSpeed = reader.ReadSingle();
-                LaserSoundGroup = reader.ReadUInt32();
-                TargetTexture = reader.ReadUInt32();
-                TargetTextureSizeX = reader.ReadSingle();
-                TargetTextureSizeY = reader.ReadSingle();
-            }
+            BaseObject = reader.ReadUInt32();
+            GunObject = reader.ReadUInt32();
+            YawRange = reader.ReadSingle();
+            YawSpeed = reader.ReadSingle();
+            PitchRange = reader.ReadSingle();
+            PitchSpeed = reader.ReadSingle();
+            RecoveryTime = reader.ReadSingle();
+            OverheatFraction = reader.ReadSingle();
+            CoolingSpeed = reader.ReadSingle();
+            OverheatTime = reader.ReadSingle();
+            HitPoints = reader.ReadInt16();
+            Damage = reader.ReadInt16();
+            CameraOffsetX = reader.ReadSingle();
+            CameraOffsetY = reader.ReadSingle();
+            CameraOffsetZ = reader.ReadSingle();
+            FinalPointer = reader.ReadUInt32();
+            LaserColor = reader.ReadColor();
+            Offset1X = reader.ReadSingle();
+            Offset1Y = reader.ReadSingle();
+            Offset1Z = reader.ReadSingle();
+            Offset2X = reader.ReadSingle();
+            Offset2Y = reader.ReadSingle();
+            Offset2Z = reader.ReadSingle();
+            LaserLength = reader.ReadSingle();
+            LaserThickness = reader.ReadSingle();
+            LaserSpeed = reader.ReadSingle();
+            LaserSoundGroup = reader.ReadUInt32();
+            TargetTexture = reader.ReadUInt32();
+            TargetTextureSizeX = reader.ReadSingle();
+            TargetTextureSizeY = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

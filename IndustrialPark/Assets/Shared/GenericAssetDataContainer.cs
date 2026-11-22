@@ -217,24 +217,56 @@ namespace IndustrialPark.Assets
             return dt.DFD_FromComponent(ff);
         }
 
-        protected static float? TriangleIntersection(Ray r, IList<Models.Triangle> triangles, IList<Vector3> vertices, Matrix world)
+        protected static BoundingBox CreateBoundingBox(List<Vector3> vertexList, Matrix world, float multiplier = 1f)
         {
-            float? smallestDistance = null;
+            if (vertexList == null || vertexList.Count == 0)
+                return new BoundingBox();
 
-            foreach (var t in triangles)
+            var min = new Vector3(float.MaxValue);
+            var max = new Vector3(float.MinValue);
+
+            for (int i = 0; i < vertexList.Count; i++)
             {
-                var v1 = Vector3.TransformCoordinate(vertices[t.vertex1], world);
-                var v2 = Vector3.TransformCoordinate(vertices[t.vertex2], world);
-                var v3 = Vector3.TransformCoordinate(vertices[t.vertex3], world);
-
-                if (r.Intersects(ref v1, ref v2, ref v3, out float distance))
-                {
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-                }
+                var transformed = Vector3.TransformCoordinate(vertexList[i] * multiplier, world);
+                min = Vector3.Min(min, transformed);
+                max = Vector3.Max(max, transformed);
             }
 
-            return smallestDistance;
+            return new BoundingBox(min, max);
+        }
+
+        protected static float? TriangleIntersection(Ray r, List<RenderWareFile.Triangle> triangles, List<Vector3> vertices, Matrix world)
+        {
+            Matrix.Invert(ref world, out Matrix invWorld);
+
+            Vector3 localOrigin = Vector3.TransformCoordinate(r.Position, invWorld);
+            Vector3 localDir = Vector3.TransformNormal(r.Direction, invWorld);
+            float dirLength = localDir.Length();
+            if (dirLength == 0f)
+                return null;
+            localDir /= dirLength;
+
+            Ray localRay = new Ray(localOrigin, localDir);
+            float? smallestLocalDist = null;
+
+            for (int i = 0; i < triangles.Count; i++)
+            {
+                var t = triangles[i];
+                Vector3 v1 = vertices[t.vertex1];
+                Vector3 v2 = vertices[t.vertex2];
+                Vector3 v3 = vertices[t.vertex3];
+
+                if (localRay.Intersects(ref v1, ref v2, ref v3, out float distance) && (smallestLocalDist == null || distance < smallestLocalDist))
+                    smallestLocalDist = distance;
+            }
+
+            if (smallestLocalDist == null)
+                return null;
+
+            // Convert local hit distance back to accurate world-space distance
+            Vector3 localHit = localOrigin + localDir * smallestLocalDist.Value;
+            Vector3 worldHit = Vector3.TransformCoordinate(localHit, world);
+            return Vector3.Distance(r.Position, worldHit);
         }
     }
 }

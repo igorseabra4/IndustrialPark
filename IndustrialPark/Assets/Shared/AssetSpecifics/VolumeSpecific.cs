@@ -40,9 +40,8 @@ namespace IndustrialPark.Assets
         public BoundingBox boundingBox;
         public BoundingSphere boundingSphere;
         protected Matrix world;
-        protected Vector3[] vertices;
 
-        public abstract void CreateTransformMatrix(SharpRenderer renderer);
+        public abstract void CalculateTransformation(SharpRenderer renderer);
         public abstract float? GetIntersectionPosition(SharpRenderer renderer, Ray ray);
         public abstract void Draw(SharpRenderer renderer, bool isSelected);
 
@@ -162,7 +161,7 @@ namespace IndustrialPark.Assets
             writer.Write(MinimumZ);
         }
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             Vector3 boxSize = _maximum - _minimum;
             Vector3 midPos = (_minimum + _maximum) / 2f;
@@ -170,7 +169,7 @@ namespace IndustrialPark.Assets
             world = Matrix.Scaling(boxSize) * Matrix.Translation(midPos);
 
             var verticesF = renderer.cubeVertices;
-            vertices = new Vector3[verticesF.Count];
+            var vertices = new Vector3[verticesF.Count];
             for (int i = 0; i < verticesF.Count; i++)
                 vertices[i] = Vector3.TransformCoordinate(verticesF[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);
@@ -251,7 +250,7 @@ namespace IndustrialPark.Assets
             writer.Write(Radius);
         }
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             var center = new Vector3(CenterX, CenterY, CenterZ);
             world = Matrix.Scaling(Radius * 2f) * Matrix.Translation(center);
@@ -299,12 +298,12 @@ namespace IndustrialPark.Assets
             writer.Write(Height);
         }
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.Scaling(Radius * 2f, Height * 2f, Radius * 2f) * Matrix.Translation(CenterX, CenterY, CenterZ);
 
             List<Vector3> verticesF = renderer.cylinderVertices;
-            vertices = new Vector3[verticesF.Count];
+            var vertices = new Vector3[verticesF.Count];
             for (int i = 0; i < verticesF.Count; i++)
                 vertices[i] = Vector3.TransformCoordinate(verticesF[i], world);
             boundingBox = BoundingBox.FromPoints(vertices);

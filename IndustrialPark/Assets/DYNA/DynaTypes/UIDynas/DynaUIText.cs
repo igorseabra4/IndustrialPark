@@ -49,35 +49,28 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle shadowScaleY { get; set; }
 
-        protected int dynaUITextEnd => dynaUIEnd + 36;
+        public DynaUIText(Section_AHDR AHDR, EndianBinaryReader reader) : this(AHDR, DynaType.ui__text, reader) { }
 
-        public DynaUIText(Section_AHDR AHDR, Game game, Endianness endianness) : this(AHDR, DynaType.ui__text, game, endianness) { }
-
-        protected DynaUIText(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        protected DynaUIText(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaUIEnd;
-
-                Text = reader.ReadUInt32();
-                font = reader.ReadByte();
-                fontSizeW = reader.ReadByte();
-                fontSizeH = reader.ReadByte();
-                fontSpacingX = reader.ReadByte();
-                fontSpacingY = reader.ReadByte();
-                textBoxInsetTop = reader.ReadByte();
-                textBoxInsetLeft = reader.ReadByte();
-                textBoxInsetRight = reader.ReadByte();
-                textBoxInsetBottom = reader.ReadByte();
-                justifyX = reader.ReadByte();
-                justifyY = reader.ReadByte();
-                textFlags = reader.ReadByte();
-                ShadowColor = reader.ReadColor();
-                shadowOffsetX = reader.ReadSingle();
-                shadowOffsetY = reader.ReadSingle();
-                shadowScaleX = reader.ReadSingle();
-                shadowScaleY = reader.ReadSingle();
-            }
+            Text = reader.ReadUInt32();
+            font = reader.ReadByte();
+            fontSizeW = reader.ReadByte();
+            fontSizeH = reader.ReadByte();
+            fontSpacingX = reader.ReadByte();
+            fontSpacingY = reader.ReadByte();
+            textBoxInsetTop = reader.ReadByte();
+            textBoxInsetLeft = reader.ReadByte();
+            textBoxInsetRight = reader.ReadByte();
+            textBoxInsetBottom = reader.ReadByte();
+            justifyX = reader.ReadByte();
+            justifyY = reader.ReadByte();
+            textFlags = reader.ReadByte();
+            ShadowColor = reader.ReadColor();
+            shadowOffsetX = reader.ReadSingle();
+            shadowOffsetY = reader.ReadSingle();
+            shadowScaleX = reader.ReadSingle();
+            shadowScaleY = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

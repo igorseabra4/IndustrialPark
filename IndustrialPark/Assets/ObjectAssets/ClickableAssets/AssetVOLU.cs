@@ -94,11 +94,8 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetVOLU(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetVOLU(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             Flags.FlagValueInt = reader.ReadUInt32();
             _shape = (VolumeType)reader.ReadByte();
             reader.ReadByte();
@@ -162,7 +159,7 @@ namespace IndustrialPark.Assets
         }
 
         public BoundingBox GetBoundingBox() => VolumeShape.GetBoundingBox();
-        public void CreateTransformMatrix(SharpRenderer renderer) => VolumeShape.CreateTransformMatrix(renderer);
+        public void CalculateTransformation(SharpRenderer renderer) => VolumeShape.CalculateTransformation(renderer);
         public float GetDistanceFrom(Vector3 position) => VolumeShape.GetDistanceFrom(position);
         public bool ShouldDraw(SharpRenderer renderer) => VolumeShape.ShouldDraw(renderer, isSelected, dontRender, isInvisible);
         public void Draw(SharpRenderer renderer) => VolumeShape.Draw(renderer, isSelected);

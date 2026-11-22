@@ -127,13 +127,37 @@ public class ArchiveEditorManager
 
     public void DropSelectedAssets()
     {
-        Program.Renderer.Assets.DropSelectedAssets(Program.Renderer, ArchiveEditors.SelectMany(ae => ae.SelectedAssets).ToList());
+        AssetTransformer.DropAssets(Program.Renderer, [.. ArchiveEditors.SelectMany(ae => ae.SelectedAssets.OfType<IClickableAsset>())]);
     }
+
+    private HashSet<Asset> latestHiddenAssets;
 
     public void HideSelectedAssets()
     {
-        foreach (var ae in ArchiveEditors)
-            ae.HideSelectedAssets();
+        var assets = ArchiveEditors.SelectMany(ae => ae.SelectedAssets).ToHashSet();
+
+        if (assets.Count > 0)
+        {
+            // hide assets
+            foreach (var asset in assets)
+                asset.isInvisible = true;
+            foreach (var ae in ArchiveEditors)
+                ae.HideAssets(assets);
+
+            latestHiddenAssets = assets;
+        }
+        else if (latestHiddenAssets != null && latestHiddenAssets.Count > 0)
+        {
+            // unhide latest hidden assets
+            foreach (var asset in latestHiddenAssets)
+                asset.isInvisible = false;
+            foreach (var ae in ArchiveEditors)
+            {
+                ae.Unhide(latestHiddenAssets);
+                ae.SetSelectedAssets(assets, false);
+            }
+            latestHiddenAssets = null;
+        }
     }
 
     public bool UnhideAllAssets()
@@ -154,8 +178,12 @@ public class ArchiveEditorManager
     {
         foreach (ArchiveEditor ae in ArchiveEditors)
             if (ae.archive != null)
+            {
                 foreach (EntityAsset p in ae.archive.Assets.OfType<EntityAsset>())
                     p.Reset();
+                foreach (DynaGObjectRing ring in ae.archive.Assets.OfType<DynaGObjectRing>())
+                    ring.Reset();
+            }
     }
 
     public bool PlaceTemplatesAt(AssetTemplate template, List<Vector3> positions)

@@ -1,6 +1,5 @@
 ﻿using Assimp;
 using HipHopFile;
-using IndustrialPark.ArchiveEditors;
 using IndustrialPark.Archives;
 using IndustrialPark.Assets;
 using IndustrialPark.Models;
@@ -32,9 +31,12 @@ public class AssetRenderer
         jspInfoNodeInfo = new Dictionary<uint, xJSPNodeInfo[]>();
     }
 
-    public void AddToRenderableAssets(IRenderableAsset ira)
+    public void AddToRenderableAssets(IRenderableAsset renderable)
     {
-        if (ira is AssetJSP jsp)
+        if (!PauseMatrixRecalculation)
+            renderable.CalculateTransformation(Program.Renderer);
+
+        if (renderable is AssetJSP jsp)
             lock (renderableJSPs)
             {
                 renderableJSPs.Remove(jsp);
@@ -43,8 +45,8 @@ public class AssetRenderer
         else
             lock (renderableAssets)
             {
-                renderableAssets.Remove(ira);
-                renderableAssets.Add(ira);
+                renderableAssets.Remove(renderable);
+                renderableAssets.Add(renderable);
             }
     }
 
@@ -71,21 +73,6 @@ public class AssetRenderer
 
     public bool PauseMatrixRecalculation = false;
 
-    public void ResetModels(SharpRenderer renderer, IProgressBar progressBar = null)
-    {
-        foreach (IAssetWithModel a in renderingDictionary.Values)
-        {
-            if (a is AssetRenderWareModel model)
-                model.SetupModel(renderer);
-            progressBar?.PerformStep();
-        }
-        foreach (AssetJSP a in renderableJSPs)
-        {
-            a.CreateTransformMatrix(renderer);
-            progressBar?.PerformStep();
-        }
-    }
-
     public int ModelCount => renderingDictionary.Values.Count + renderableJSPs.Count;
 
     public void RecalculateAllMatrices(SharpRenderer renderer, IProgressBar progressBar = null)
@@ -93,25 +80,37 @@ public class AssetRenderer
         if (PauseMatrixRecalculation)
             return;
 
-        foreach (var ra in GetRenderableAssets())
+        foreach (var ra in GetRenderableAssets().Concat(GetRenderableJSPs()))
         {
-            ra.CreateTransformMatrix(renderer);
+            ra.CalculateTransformation(renderer);
             progressBar?.PerformStep();
         }
     }
 
     public int MatrixCount => renderableAssets.Count;
 
-    public void AddToRenderingDictionary(uint assetID, IAssetWithModel value)
+    public void AddToRenderingDictionary(IAssetWithModel withModel)
     {
         lock (renderingDictionary)
-            renderingDictionary[assetID] = value;
+        {
+            renderingDictionary[withModel.assetID] = withModel;
+            if (((Asset)withModel).game >= Game.Incredibles)
+                renderingDictionary[new AssetID(withModel.fileNameWithoutExtension)] = withModel;
+
+            // recalculate matrices of assets which use me
+            if (!PauseMatrixRecalculation)
+                foreach (var user in AssetService.FindWhoTargets(withModel.assetID).OfType<IRenderableAsset>())
+                    user.CalculateTransformation(Program.Renderer);
+        }
     }
 
-    public void RemoveFromRenderingDictionary(IAssetWithModel iawm)
+    public void RemoveFromRenderingDictionary(IAssetWithModel withModel)
     {
         lock (renderingDictionary)
-            renderingDictionary.Remove(iawm.assetID);
+        {
+            renderingDictionary.Remove(withModel.assetID);
+            renderingDictionary.Remove(new AssetID(withModel.fileNameWithoutExtension));
+        }
     }
 
     public IAssetWithModel GetFromRenderingDictionary(uint assetID)
@@ -139,6 +138,8 @@ public class AssetRenderer
                 light.ColorRed *= s;
                 light.ColorGreen *= s;
                 light.ColorBlue *= s;
+
+                // warning: I shouldn't be modifying the asset
             }
         }
         lock (renderableLightKits)
@@ -208,31 +209,47 @@ public class AssetRenderer
     private void LightKitUpdate(Archive archive, uint lkitID)
     {
         AssetLKIT.SceneLightKit = null;
-        if (archive.TryGetAsset(lkitID, out Asset asset) && asset is AssetLKIT lkit)
+        if (archive.TryGetAsset(lkitID, out AssetLKIT lkit))
             AddToRenderableLightKits(lkit);
+    }
+
+    public void SetupAsset(ISetupableAsset setupable)
+    {
+        try
+        {
+            setupable.Setup(Program.Renderer);
+            if (setupable is IRenderableAsset renderable)
+                AddToRenderableAssets(renderable);
+            if (setupable is IAssetWithModel withModel)
+                AddToRenderingDictionary(withModel);
+        }
+        catch
+        {
+            if (setupable is IRenderableAsset renderable)
+                RemoveFromRenderableAssets(renderable);
+            if (setupable is IAssetWithModel withModel)
+                RemoveFromRenderingDictionary(withModel);
+        }
     }
 
     public void RegisterSubscriptions(Archive archive)
     {
         archive.Subscriber.SubscribeToAssetAdded((asset) =>
         {
+            if (asset is IRenderableAsset renderable0)
+                asset.PropertyChanged += _ => renderable0.CalculateTransformation(Program.Renderer);
+
             switch (asset)
             {
-                case IAssetWithModel iawm:
-                    AddToRenderingDictionary(asset.assetID, iawm);
-
-                    if (asset.game >= Game.Incredibles)
-                        AddToRenderingDictionary(new AssetID(iawm.fileNameWithoutExtension), iawm);
-
-                    // recalculate matrices of assets which use me
-                    if (!PauseMatrixRecalculation)
-                        foreach (var user in AssetService.FindWhoTargets(asset.assetID).OfType<IRenderableAsset>())
-                            user.CreateTransformMatrix(Program.Renderer);
+                case ISetupableAsset setupable: // BSP, JSP, MODL, SPLN, WIRE
+                    asset.PropertyChanged += _ => SetupAsset(setupable);
+                    SetupAsset(setupable);
                     break;
-                case IRenderableAsset ira:
-                    if (!PauseMatrixRecalculation)
-                        ira.CreateTransformMatrix(Program.Renderer);
-                    AddToRenderableAssets(ira);
+                case IAssetWithModel withModel: // MINF
+                    AddToRenderingDictionary(withModel);
+                    break;
+                case IRenderableAsset renderable1:
+                    AddToRenderableAssets(renderable1);
                     break;
                 case AssetPIPT PIPT:
                     PIPT.PipeInfoUpdate += isDisposing => PipeInfoUpdate(PIPT, isDisposing);
@@ -243,7 +260,7 @@ public class AssetRenderer
                     LightKitUpdate(archive, ENV.Object_LightKit);
                     break;
                 case AssetFOG FOG:
-                    if (FOG.Links.Any(l => (EventBFBB)l.EventSendID == EventBFBB.On))
+                    if (FOG.Links.Any(l => l.EventSendBFBB == EventBFBB.On))
                         AddToRenderableFOGs(FOG);
                     break;
                 case AssetLKIT LKIT:
@@ -277,16 +294,11 @@ public class AssetRenderer
 
     public Vector3 GetRayIntersectionPosition(SharpRenderer renderer, SharpDX.Ray ray, uint assetIdSkip = 0)
     {
-        List<IRenderableAsset> l = new List<IRenderableAsset>();
-
-        lock (renderableAssets)
-            l.AddRange(renderableAssets);
-        lock (renderableJSPs)
-            l.AddRange(renderableJSPs);
+        var assets = GetRenderableAssets().Concat(GetRenderableJSPs()).ToList();
 
         float? smallestDistance = null;
 
-        foreach (IRenderableAsset ra in l)
+        foreach (IRenderableAsset ra in assets)
         {
             if (ra.assetID == assetIdSkip)
                 continue;
@@ -316,32 +328,6 @@ public class AssetRenderer
                 resultAsset = asset;
             }
         return resultAsset;
-    }
-
-    public void DropSelectedAssets(SharpRenderer renderer, List<Asset> assets)
-    {
-        var beganTransaction = new HashSet<ArchiveEditor>();
-
-        foreach (var asset in assets.OfType<IClickableAsset>())
-        {
-            if (asset is AssetTRIG || asset is AssetVOLU)
-                continue;
-
-            var position = GetRayIntersectionPosition(renderer,
-                new SharpDX.Ray(new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ), new Vector3(0f, -1f, 0f)),
-                ((Asset)asset).assetID);
-
-            asset.PositionY = position.Y;
-
-            var assetasset = (Asset)asset;
-            var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(assetasset);
-            if (beganTransaction.Add(ae))
-                ae.BeginTransaction();
-            assetasset.InvokePropertyChanged(true);
-        }
-
-        foreach (var ae in beganTransaction)
-            ae.EndTransaction();
     }
 
     public void ExportScene(string folderName, ExportFormatDescription format, string textureExtension, out string[] textureNames)

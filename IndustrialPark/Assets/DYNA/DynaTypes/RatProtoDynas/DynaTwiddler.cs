@@ -32,21 +32,16 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle DefaultValue { get; set; }
 
-        public DynaTwiddler(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Twiddler, game, endianness)
+        public DynaTwiddler(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Twiddler, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                TwiddleeID = reader.ReadUInt32();
-                TwiddlerType = reader.ReadUInt32();
-                Axis = reader.ReadUInt32();
-                InputMin = reader.ReadSingle();
-                InputMax = reader.ReadSingle();
-                OutputMin = reader.ReadSingle();
-                OutputMax = reader.ReadSingle();
-                DefaultValue = reader.ReadSingle();
-            }
+            TwiddleeID = reader.ReadUInt32();
+            TwiddlerType = reader.ReadUInt32();
+            Axis = reader.ReadUInt32();
+            InputMin = reader.ReadSingle();
+            InputMax = reader.ReadSingle();
+            OutputMin = reader.ReadSingle();
+            OutputMax = reader.ReadSingle();
+            DefaultValue = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

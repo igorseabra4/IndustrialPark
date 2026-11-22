@@ -23,20 +23,15 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle WarnTime3 { get; set; }
 
-        public DynaGObjectRaceTimer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RaceTimer, game, endianness)
+        public DynaGObjectRaceTimer(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__RaceTimer, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                CountDown = reader.ReadByteBool();
-                reader.BaseStream.Position += 3;
-                StartTime = reader.ReadInt32();
-                VictoryTime = reader.ReadInt32();
-                WarnTime1 = reader.ReadSingle();
-                WarnTime2 = reader.ReadSingle();
-                WarnTime3 = reader.ReadSingle();
-            }
+            CountDown = reader.ReadByteBool();
+            reader.BaseStream.Position += 3;
+            StartTime = reader.ReadInt32();
+            VictoryTime = reader.ReadInt32();
+            WarnTime1 = reader.ReadSingle();
+            WarnTime2 = reader.ReadSingle();
+            WarnTime3 = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

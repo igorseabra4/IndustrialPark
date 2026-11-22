@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using IndustrialPark.Assets.Colors;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,11 +60,8 @@ public class DynaEffectSmokeEmitter : RenderableRotatableDynaBase
     [Category(dynaCategoryName)]
     public AssetColor ColorDeath { get; set; }
 
-    public DynaEffectSmokeEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__smoke_emitter, game, endianness)
+    public DynaEffectSmokeEmitter(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__smoke_emitter, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         SmokeEmitterFlags.FlagValueInt = reader.ReadUInt32();
         AttachTo = reader.ReadUInt32();
         _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
@@ -130,7 +126,7 @@ public class DynaEffectSmokeEmitter : RenderableRotatableDynaBase
 
     protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
     public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
 

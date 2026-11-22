@@ -81,7 +81,7 @@ namespace IndustrialPark.Assets
         [Browsable(false)]
         public bool PlayIn3D => (Flags.FlagValueShort & 0x0002) != 0;
         [Browsable(false)]
-        public bool UseAttach => (Flags.FlagValueShort & 0x0008) != 0;
+        public bool UseAttach => PlayIn3D && (Flags.FlagValueShort & 0x0008) != 0;
         [Browsable(false)]
         public Func<uint, Asset> GetAttach;
 
@@ -97,8 +97,8 @@ namespace IndustrialPark.Assets
                     new Link(game)
                     {
                         TargetAsset = assetID,
-                        EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                        EventSendID = (ushort)EventBFBB.Play
+                        EventReceiveBFBB = EventBFBB.ScenePrepare,
+                        EventSendBFBB = EventBFBB.Play
                     }
                 };
             }
@@ -125,18 +125,15 @@ namespace IndustrialPark.Assets
                     new Link(game)
                     {
                         TargetAsset = assetID,
-                        EventReceiveID = (ushort)EventScooby.ScenePrepare,
-                        EventSendID = (ushort)EventScooby.Play
+                        EventReceiveScooby = EventScooby.ScenePrepare,
+                        EventSendScooby = EventScooby.Play
                     }
                 };
             }
         }
 
-        public AssetSFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSFX(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             Flags.FlagValueShort = reader.ReadUInt16();
             Frequency = reader.ReadInt16();
             MinFrequency = reader.ReadSingle();
@@ -150,7 +147,6 @@ namespace IndustrialPark.Assets
             _radius = reader.ReadSingle();
             _radius2 = reader.ReadSingle();
         }
-
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
@@ -182,11 +178,11 @@ namespace IndustrialPark.Assets
         private BoundingSphere boundingSphere;
         private BoundingSphere boundingSphere2;
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             if (PlayIn3D)
             {
-                var position = (UseAttach && GetAttach != null && GetAttach(Attach) is IClickableAsset ica) ?
+                var position = (UseAttach && GetAttach?.Invoke(Attach) is IClickableAsset ica) ?
                     new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ) : _position;
                 world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(position);
                 CreateBoundingBox(position);

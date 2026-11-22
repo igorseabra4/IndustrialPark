@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System;
 using System.Collections.Generic;
@@ -38,11 +37,8 @@ namespace IndustrialPark.Assets
 
         public Func<uint, AssetMRKR> GetMRKR;
 
-        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
+        public DynaGObjectTeleport(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Teleport, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             Marker = reader.ReadUInt32();
             Opened = reader.ReadInt32Bool();
             LaunchAngle = reader.ReadInt32();
@@ -83,7 +79,7 @@ namespace IndustrialPark.Assets
                 var MRKR = GetMRKR?.Invoke(Marker);
                 MRKR?.PositionX = value;
                 MRKR?.isInvisible = true;
-                MRKR?.CreateTransformMatrix(Program.Renderer);
+                MRKR?.CalculateTransformation(Program.Renderer);
                 _position.X = value;
             }
         }
@@ -101,7 +97,7 @@ namespace IndustrialPark.Assets
                 var MRKR = GetMRKR?.Invoke(Marker);
                 MRKR?.PositionY = value;
                 MRKR?.isInvisible = true;
-                MRKR?.CreateTransformMatrix(Program.Renderer);
+                MRKR?.CalculateTransformation(Program.Renderer);
                 _position.Y = value;
             }
         }
@@ -119,32 +115,31 @@ namespace IndustrialPark.Assets
                 var MRKR = GetMRKR?.Invoke(Marker);
                 MRKR?.PositionZ = value;
                 MRKR?.isInvisible = true;
-                MRKR?.CreateTransformMatrix(Program.Renderer);
+                MRKR?.CalculateTransformation(Program.Renderer);
                 _position.Z = value;
             }
         }
 
-        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer)
+        {
+            var model = renderer.Assets.GetModelFromRenderingDictionary(_modelAssetID);
+            return model?.vertexListG ?? renderer.pyramidVertices;
+        }
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer)
+        {
+            var model = renderer.Assets.GetModelFromRenderingDictionary(_modelAssetID);
+            return model?.triangleList ?? renderer.pyramidTriangles;
+        }
 
         private static readonly uint _modelAssetID = new AssetID("teleportation_box_bind");
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.RotationY(MathUtil.DegreesToRadians(LaunchAngle)) * Matrix.Translation(PositionX, PositionY, PositionZ);
 
             var model = renderer.Assets.GetModelFromRenderingDictionary(_modelAssetID);
-            CreateBoundingBox((model != null) ? model.vertexListG : renderer.pyramidVertices);
-            triangles = model?.triangleList;
-        }
-
-        private void CreateBoundingBox(List<Vector3> vertexList)
-        {
-            vertices = new Vector3[vertexList.Count];
-            for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
-            boundingBox = BoundingBox.FromPoints(vertices);
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.pyramidVertices, world, model == null ? 0.5f : 1f);
         }
 
         public override void Draw(SharpRenderer renderer)

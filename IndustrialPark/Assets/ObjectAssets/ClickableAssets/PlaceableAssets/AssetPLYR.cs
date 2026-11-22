@@ -22,14 +22,13 @@ public class AssetPLYR : EntityAsset
             Model = 0x96E7F1D5;
     }
 
-    public AssetPLYR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+    public AssetPLYR(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
     {
         if (game != Game.Scooby)
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = reader.BaseStream.Length - 4;
-                LightKit = reader.ReadUInt32();
-            }
+        {
+            reader.BaseStream.Position = reader.BaseStream.Length - 4;
+            LightKit = reader.ReadUInt32();
+        }
     }
 
     public override void Serialize(EndianBinaryWriter writer)
@@ -55,7 +54,7 @@ public class AssetPLYR : EntityAsset
     protected override void CreateBoundingBox(SharpRenderer renderer)
     {
         var model = renderer.Assets.GetModelFromRenderingDictionary(_model);
-        CreateBoundingBox(renderer, model == null ? renderer.pyramidVertices : model.vertexListG);
+        boundingBox = CreateBoundingBox(model == null ? renderer.pyramidVertices : model.vertexListG, world);
     }
 
     public override void Draw(SharpRenderer renderer)

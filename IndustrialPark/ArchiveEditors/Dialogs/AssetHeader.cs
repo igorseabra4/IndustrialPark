@@ -77,7 +77,7 @@ namespace IndustrialPark.ArchiveEditors
             programIsChangingStuff = false;
         }
 
-        public static Section_AHDR GetAsset(Section_AHDR existing = null)
+        public static Section_AHDR GetAsset(Game game, Platform platform, Section_AHDR existing = null)
         {
             var a = existing == null ? new AssetHeader() : new AssetHeader(existing);
             if (a.ShowDialog() == DialogResult.OK)
@@ -90,7 +90,7 @@ namespace IndustrialPark.ArchiveEditors
 
                 Section_ADBG ADBG = new Section_ADBG(0, a.assetName, a.assetFileName, a.checksum);
 
-                Section_AHDR AHDR = new Section_AHDR(a.assetID, a.assetType, flags, ADBG, a.data)
+                Section_AHDR AHDR = new Section_AHDR(a.assetID, a.assetType, flags, ADBG, a.data, game, platform)
                 {
                     fileSize = a.data.Length,
                     plusValue = 0

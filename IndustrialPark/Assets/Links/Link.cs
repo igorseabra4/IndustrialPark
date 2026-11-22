@@ -53,6 +53,57 @@ public class Link : GenericAssetDataContainer
     public int Flags { get; set; } // only for progress
     public bool Enabled { get; set; } = true; // only for timed rotu
 
+    public EventScooby EventReceiveScooby
+    {
+        get => (EventScooby)EventReceiveID;
+        set => EventReceiveID = (ushort)value;
+    }
+    public EventScooby EventSendScooby
+    {
+        get => (EventScooby)EventSendID;
+        set => EventSendID = (ushort)value;
+    }
+    public EventBFBB EventReceiveBFBB
+    {
+        get => (EventBFBB)EventReceiveID;
+        set => EventReceiveID = (ushort)value;
+    }
+    public EventBFBB EventSendBFBB
+    {
+        get => (EventBFBB)EventSendID;
+        set => EventSendID = (ushort)value;
+    }
+    public EventTSSM EventReceiveTSSM
+    {
+        get => (EventTSSM)EventReceiveID;
+        set => EventReceiveID = (ushort)value;
+    }
+    public EventTSSM EventSendTSSM
+    {
+        get => (EventTSSM)EventSendID;
+        set => EventSendID = (ushort)value;
+    }
+    public EventROTU EventReceiveROTU
+    {
+        get => (EventROTU)EventReceiveID;
+        set => EventReceiveID = (ushort)value;
+    }
+    public EventROTU EventSendROTU
+    {
+        get => (EventROTU)EventSendID;
+        set => EventSendID = (ushort)value;
+    }
+    public EventRatProto EventReceiveRatProto
+    {
+        get => (EventRatProto)EventReceiveID;
+        set => EventReceiveID = (ushort)value;
+    }
+    public EventRatProto EventSendRatProto
+    {
+        get => (EventRatProto)EventSendID;
+        set => EventSendID = (ushort)value;
+    }
+
     [JsonConstructor]
     private Link()
     {
@@ -143,24 +194,24 @@ public class Link : GenericAssetDataContainer
         switch (game)
         {
             case Game.Scooby:
-                recEvent = ((EventScooby)EventReceiveID).ToString();
-                sndEvent = ((EventScooby)EventSendID).ToString();
+                recEvent = EventReceiveScooby.ToString();
+                sndEvent = EventSendScooby.ToString();
                 break;
             case Game.BFBB:
-                recEvent = ((EventBFBB)EventReceiveID).ToString();
-                sndEvent = ((EventBFBB)EventSendID).ToString();
+                recEvent = EventReceiveBFBB.ToString();
+                sndEvent = EventSendBFBB.ToString();
                 break;
             case Game.Incredibles:
-                recEvent = ((EventTSSM)EventReceiveID).ToString();
-                sndEvent = ((EventTSSM)EventSendID).ToString();
+                recEvent = EventReceiveTSSM.ToString();
+                sndEvent = EventSendTSSM.ToString();
                 break;
             case Game.ROTU:
-                recEvent = ((EventROTU)EventReceiveID).ToString();
-                sndEvent = ((EventROTU)EventSendID).ToString();
+                recEvent = EventReceiveROTU.ToString();
+                sndEvent = EventSendROTU.ToString();
                 break;
             case Game.RatProto:
-                recEvent = ((EventRatProto)EventReceiveID).ToString();
-                sndEvent = ((EventRatProto)EventSendID).ToString();
+                recEvent = EventReceiveRatProto.ToString();
+                sndEvent = EventSendRatProto.ToString();
                 break;
             default:
                 recEvent = "?";

@@ -68,26 +68,21 @@ namespace IndustrialPark.Assets
             Rings = new AssetID[0];
         }
 
-        public DynaGObjectRingControl(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__RingControl, game, endianness)
+        public DynaGObjectRingControl(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__RingControl, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
-                RingModel = reader.ReadUInt32();
-                DefaultWarningTime = reader.ReadSingle();
-                int ringCount = reader.ReadInt32();
-                UnusedOffset = reader.ReadInt32();
-                RingSoundGroup1 = reader.ReadUInt32();
-                RingSoundGroup2 = reader.ReadUInt32();
-                RingSoundGroup3 = reader.ReadUInt32();
-                RingSoundGroup4 = reader.ReadUInt32();
-                NumNextRingsToShow = reader.ReadInt32();
-                Rings = new AssetID[ringCount];
-                for (int i = 0; i < Rings.Length; i++)
-                    Rings[i] = reader.ReadUInt32();
-            }
+            PlayerType = (DynaRingControlPlayerType)reader.ReadInt32();
+            RingModel = reader.ReadUInt32();
+            DefaultWarningTime = reader.ReadSingle();
+            int ringCount = reader.ReadInt32();
+            UnusedOffset = reader.ReadInt32();
+            RingSoundGroup1 = reader.ReadUInt32();
+            RingSoundGroup2 = reader.ReadUInt32();
+            RingSoundGroup3 = reader.ReadUInt32();
+            RingSoundGroup4 = reader.ReadUInt32();
+            NumNextRingsToShow = reader.ReadInt32();
+            Rings = new AssetID[ringCount];
+            for (int i = 0; i < Rings.Length; i++)
+                Rings[i] = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

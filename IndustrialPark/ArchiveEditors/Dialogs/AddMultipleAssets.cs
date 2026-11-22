@@ -89,7 +89,7 @@ namespace IndustrialPark.ArchiveEditors
             Close();
         }
 
-        public static (List<Section_AHDR> AHDRs, bool overwrite) GetAssets()
+        public static (List<Section_AHDR> AHDRs, bool overwrite) GetAssets(Game game, Platform platform)
         {
             AddMultipleAssets a = new AddMultipleAssets();
             DialogResult d = a.ShowDialog();
@@ -101,7 +101,7 @@ namespace IndustrialPark.ArchiveEditors
                 {
                     Section_ADBG ADBG = new Section_ADBG(0, a.assetNames[i], "", 0);
 
-                    Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(a.assetNames[i]), a.assetType, a.AHDRflags, ADBG, a.assetData[i])
+                    Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(a.assetNames[i]), a.assetType, a.AHDRflags, ADBG, a.assetData[i], game, platform)
                     {
                         fileSize = a.assetData[i].Length
                     };

@@ -272,14 +272,14 @@ public class GizmoManager
 
     private static void CreateTransformMatrix(IRenderableAsset asset)
     {
-        asset.CreateTransformMatrix(Program.Renderer);
+        asset.CalculateTransformation(Program.Renderer);
         if (asset is IClickableAsset clickableAsset)
             foreach (var archiveEditor in Program.ArchiveEditors)
                 archiveEditor.RefreshReferencedTransformMatrices(clickableAsset);
     }
 
     private static bool CanUsePositionGizmo(IClickableAsset asset) =>
-        asset is not AssetSFX sfx || sfx.PlayIn3D && (!sfx.UseAttach || sfx.GetAttach?.Invoke(sfx.Attach) is not IClickableAsset);
+        asset is not AssetDTRK && (asset is not AssetSFX sfx || sfx.PlayIn3D && (!sfx.UseAttach || sfx.GetAttach?.Invoke(sfx.Attach) is not IClickableAsset));
 
     private static bool CanUseScaleGizmo(IScalableAsset asset) =>
         asset is not AssetSFX sfx || sfx.PlayIn3D;
@@ -293,82 +293,66 @@ public class GizmoManager
         switch (CurrentGizmoMode)
         {
             case GizmoMode.Position:
-            {
-                (int index, _) = GetGizmoIntersectionIndex(positionGizmos, r);
-                if (index != -1 && !positionGizmos[index].isSelected)
+                if (GetIntersectedGizmo(positionGizmos, r) is PositionGizmo posGizmo)
                 {
                     SaveOriginalPositions();
                     SaveOriginalPositionsBoxes();
-                    positionGizmos[index].isSelected = true;
+                    posGizmo.isSelected = true;
                     IsMovingGizmo = true;
                 }
-            }
-            break;
+                break;
             case GizmoMode.Rotation:
-            {
-                (int index, _) = GetGizmoIntersectionIndex(rotationGizmos, r);
-                if (index != -1 && !rotationGizmos[index].isSelected)
+                if (GetIntersectedGizmo(rotationGizmos, r) is RotationGizmo rotGizmo)
                 {
                     SaveOriginalRotations();
                     SaveOriginalRotationsCameras();
-                    rotationGizmos[index].isSelected = true;
+                    rotGizmo.isSelected = true;
                     IsMovingGizmo = true;
                 }
-            }
-            break;
+                break;
             case GizmoMode.Scale:
-            {
-                (int index, _) = GetGizmoIntersectionIndex(scaleGizmos, r);
-                if (index != -1 && !scaleGizmos[index].isSelected)
+                if (GetIntersectedGizmo(scaleGizmos, r) is ScaleGizmo sclGizmo)
                 {
                     SaveOriginalPositionsBoxes();
                     SaveOriginalScales();
-                    scaleGizmos[index].isSelected = true;
+                    sclGizmo.isSelected = true;
                     IsMovingGizmo = true;
                 }
-            }
-            break;
+                break;
             case GizmoMode.PositionLocal:
-            {
                 if (TriggerGizmo)
                 {
-                    (int index, _) = GetGizmoIntersectionIndex(triggerPositionGizmos, r);
-                    if (index != -1 && !triggerPositionGizmos[index].isSelected)
+                    if (GetIntersectedGizmo(triggerPositionGizmos, r) is BoxTrigPositionGizmo boxGizmo)
                     {
                         SaveOriginalPositionsBoxes();
-                        triggerPositionGizmos[index].isSelected = true;
+                        boxGizmo.isSelected = true;
                         IsMovingGizmo = true;
                     }
                 }
-                else
+                else if (GetIntersectedGizmo(positionGizmos, r) is PositionGizmo locPosGizmo)
                 {
-                    (int index, _) = GetGizmoIntersectionIndex(positionGizmos, r);
-                    if (index != -1 && !positionGizmos[index].isSelected)
-                    {
-                        SaveOriginalPositions();
-                        positionGizmos[index].isSelected = true;
-                        IsMovingGizmo = true;
-                    }
+                    SaveOriginalPositions();
+                    locPosGizmo.isSelected = true;
+                    IsMovingGizmo = true;
                 }
-            }
-            break;
+                break;
         }
     }
 
-    private static (int index, float distance) GetGizmoIntersectionIndex(GizmoBase[] gizmos, Ray r)
+    private static GizmoBase GetIntersectedGizmo(GizmoBase[] gizmos, Ray r)
     {
-        int index = -1;
+        GizmoBase result = null;
         float dist = 10000f;
-        for (int g = 0; g < gizmos.Length; g++)
+        foreach (var gizmo in gizmos)
         {
-            float? distance = gizmos[g].IntersectsWith(r);
+            float? distance = gizmo.IntersectsWith(r);
             if (distance != null && distance < dist)
             {
                 dist = (float)distance;
-                index = g;
+                result = gizmo;
             }
         }
-        return (index, dist);
+        return result;
     }
 
     private void SaveOriginalPositions()

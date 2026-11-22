@@ -9,72 +9,69 @@ namespace IndustrialPark.Assets
 {
     public class AssetCSN : Asset
     {
-        public AssetCSN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetCSN(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            reader.ReadUInt32();
+            reader.ReadUInt32();
+            uint numData = reader.ReadUInt32();
+            uint numTime = reader.ReadUInt32();
+            reader.ReadUInt32();
+            reader.ReadUInt32();
+            reader.ReadUInt32();
+            uint headerSize = reader.ReadUInt32();
+            uint visCount = reader.ReadUInt32();
+            uint visSize = reader.ReadUInt32();
+            uint breakCount = reader.ReadUInt32();
+            reader.ReadUInt32();
+
+            headerSize -= numData * 16 + numTime * 4 + visSize * 4 + breakCount * 8 + 4;
+
+            if (headerSize == 0x50)
             {
-                reader.ReadUInt32();
-                reader.ReadUInt32();
-                uint numData = reader.ReadUInt32();
-                uint numTime = reader.ReadUInt32();
-                reader.ReadUInt32();
-                reader.ReadUInt32();
-                reader.ReadUInt32();
-                uint headerSize = reader.ReadUInt32();
-                uint visCount = reader.ReadUInt32();
-                uint visSize = reader.ReadUInt32();
-                uint breakCount = reader.ReadUInt32();
-                reader.ReadUInt32();
+                _audioTrackCount = 1;
+                _audioTracks = new CutsceneAudioTrackV1[] { new CutsceneAudioTrackV1(reader) };
+            }
+            else
+            {
+                _audioTrackCount = 32;
+                _audioTracks = new CutsceneAudioTrackV1[_audioTrackCount];
 
-                headerSize -= numData * 16 + numTime * 4 + visSize * 4 + breakCount * 8 + 4;
-
-                if (headerSize == 0x50)
-                {
-                    _audioTrackCount = 1;
-                    _audioTracks = new CutsceneAudioTrackV1[] { new CutsceneAudioTrackV1(reader) };
-                }
+                int soundStrLen;
+                if (headerSize == 0x830)
+                    soundStrLen = 28;
+                else if (headerSize == 0x1030)
+                    soundStrLen = 60;
                 else
-                {
-                    _audioTrackCount = 32;
-                    _audioTracks = new CutsceneAudioTrackV1[_audioTrackCount];
+                    throw new System.Exception($"Unknown asset format: header size {headerSize}");
 
-                    int soundStrLen;
-                    if (headerSize == 0x830)
-                        soundStrLen = 28;
-                    else if (headerSize == 0x1030)
-                        soundStrLen = 60;
-                    else
-                        throw new System.Exception($"Unknown asset format: header size {headerSize}");
+                for (int i = 0; i < _audioTracks.Length; i++)
+                    _audioTracks[i] = new CutsceneAudioTrackV2(reader, soundStrLen);
+            }
 
-                    for (int i = 0; i < _audioTracks.Length; i++)
-                        _audioTracks[i] = new CutsceneAudioTrackV2(reader, soundStrLen);
-                }
+            CutsceneData = new CutsceneData[numData];
+            for (int i = 0; i < CutsceneData.Length; i++)
+                CutsceneData[i] = new CutsceneData(reader, game);
 
-                CutsceneData = new CutsceneData[numData];
-                for (int i = 0; i < CutsceneData.Length; i++)
-                    CutsceneData[i] = new CutsceneData(reader, game);
+            uint[] CutsceneTime = new uint[numTime];
+            for (int i = 0; i < CutsceneTime.Length; i++)
+                CutsceneTime[i] = reader.ReadUInt32();
 
-                uint[] CutsceneTime = new uint[numTime];
-                for (int i = 0; i < CutsceneTime.Length; i++)
-                    CutsceneTime[i] = reader.ReadUInt32();
+            reader.ReadUInt32();
 
-                reader.ReadUInt32();
+            int visBytesCount = visCount != 0 ? (int)(visSize * 4 / visCount) : 0;
+            Visibility = new byte[visCount][];
+            for (int i = 0; i < Visibility.Length; i++)
+                Visibility[i] = reader.ReadBytes(visBytesCount);
 
-                int visBytesCount = visCount != 0 ? (int)(visSize * 4 / visCount) : 0;
-                Visibility = new byte[visCount][];
-                for (int i = 0; i < Visibility.Length; i++)
-                    Visibility[i] = reader.ReadBytes(visBytesCount);
+            CutsceneBreaks = new CutsceneBreak[breakCount];
+            for (int i = 0; i < CutsceneBreaks.Length; i++)
+                CutsceneBreaks[i] = new CutsceneBreak(reader);
 
-                CutsceneBreaks = new CutsceneBreak[breakCount];
-                for (int i = 0; i < CutsceneBreaks.Length; i++)
-                    CutsceneBreaks[i] = new CutsceneBreak(reader);
-
-                TimeChunks = new TimeChunk[numTime];
-                for (int i = 0; i < TimeChunks.Length; i++)
-                {
-                    reader.BaseStream.Position = CutsceneTime[i];
-                    TimeChunks[i] = new TimeChunk(reader);
-                }
+            TimeChunks = new TimeChunk[numTime];
+            for (int i = 0; i < TimeChunks.Length; i++)
+            {
+                reader.BaseStream.Position = CutsceneTime[i];
+                TimeChunks[i] = new TimeChunk(reader);
             }
         }
 

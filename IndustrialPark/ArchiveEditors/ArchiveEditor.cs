@@ -245,8 +245,9 @@ public partial class ArchiveEditor : Form
                 getNewArchive.Value.addDefaultAssets
             );
 
+            historyManager?.Dispose();
             historyManager = new AssetHistoryManager(archive);
-            foreach (var (assetID, data) in archive.Assets.Select(a => (a.assetID, a.BuildAHDR(archive.Platform.Endianness()).data)))
+            foreach (var (assetID, data) in archive.Assets.Select(a => (a.assetID, a.BuildAHDR(archive.Platform).data)))
                 historyManager.AddAsset(assetID, data);
 
             ArchiveSubscriptions();
@@ -383,10 +384,7 @@ public partial class ArchiveEditor : Form
 
         BeginTransaction();
         if (isLegacy && archive.AutoLayers)
-        {
             archive.Transformer.SetAutoLayers(false);
-            SetAutoLayers();
-        }
         EndTransaction();
 
         autoLayersToolStripMenuItem.Enabled = !isLegacy;
@@ -586,7 +584,7 @@ public partial class ArchiveEditor : Form
                 if (result.PiptVColors)
                     archive.Transformer.MakePiptVcolors(assets);
                 if (result.GenerateSimps)
-                    assets.AddRange(archive.Transformer.MakeSimps(assets, result.SolidSimps, result.LedgeGrabSimps));
+                    assets.AddRange(archive.Transformer.MakeSimps(assets, result.VisibleSimps, result.SolidSimps, result.LedgeGrabSimps));
             }
         }
 
@@ -598,7 +596,7 @@ public partial class ArchiveEditor : Form
 
     private void importMultipleAssetsToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        (List<Section_AHDR> AHDRs, bool overwrite) = ArchiveEditors.AddMultipleAssets.GetAssets();
+        (List<Section_AHDR> AHDRs, bool overwrite) = ArchiveEditors.AddMultipleAssets.GetAssets(archive.Game, archive.Platform);
 
         if (AHDRs != null)
         {
@@ -640,7 +638,7 @@ public partial class ArchiveEditor : Form
             BeginTransaction();
             ArchiveModelTransformer.ApplyScale(archive, applyScale.Value.Item1, applyScale.Value.Item2, applyScale.Value.Item3, applyScale.Value.Item4);
             EndTransaction();
-            Program.MainForm.RefreshTexturesAndModels();
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
         }
     }
 
@@ -884,22 +882,22 @@ public partial class ArchiveEditor : Form
         if (!archive.AutoLayers && SelectedLayerIndex == -1)
             return;
 
-        Section_AHDR AHDR = AssetHeader.GetAsset();
+        Section_AHDR AHDR = AssetHeader.GetAsset(archive.Game, archive.Platform);
 
         if (AHDR != null)
         {
             while (archive.ContainsAsset(AHDR.assetID))
             {
-                var result = MessageBox.Show($"Archive already contains asset with id [{AHDR.assetID:X8}]. Do you wish to overwrite it? Select 'No' to try again, or 'Cancel' to discard.", "Asset already exists", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
+                var result = MessageBox.Show($"Archive already contains asset with id [{AHDR.assetID:X8}]. Do you wish to overwrite it? Select 'No' to try again, or 'Cancel' to discard changes.", "Asset already exists", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
                 if (result == DialogResult.Yes)
                     break;
                 else if (result == DialogResult.No)
-                    AHDR = AssetHeader.GetAsset(AHDR);
+                    AHDR = AssetHeader.GetAsset(AHDR.Game, AHDR.Platform, AHDR);
                 else if (result == DialogResult.Cancel)
                     return;
             }
 
-            var asset = AssetService.ConvertHeaderToAsset(AHDR, archive.Game, archive.Platform, false, out AssetError error);
+            var asset = AssetService.ConvertHeaderToAsset(AHDR, false, out AssetError error);
             if (error.reason != ErrorReason.NoError && error.reason != ErrorReason.SkipBuildTesting)
             {
                 MessageBox.Show($"Unable to import asset: {error.reason} ({error.errorMessage})", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -1002,7 +1000,7 @@ public partial class ArchiveEditor : Form
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 try
                 {
-                    var AHDR = asset.BuildAHDR(archive.Platform.Endianness());
+                    var AHDR = asset.BuildAHDR(archive.Platform);
                     File.WriteAllBytes(saveFileDialog.FileName, AHDR.data);
                 }
                 catch (Exception ex)
@@ -1026,7 +1024,7 @@ public partial class ArchiveEditor : Form
                         if (Path.GetExtension(asset.assetFileName).ToLower().Equals(".anm") && !string.IsNullOrWhiteSpace(asset.assetFileName))
                             assetFileName = Path.GetFileName(asset.assetFileName);
 
-                        var AHDR = asset.BuildAHDR(archive.Platform.Endianness());
+                        var AHDR = asset.BuildAHDR(archive.Platform);
                         File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, assetFileName), AHDR.data);
                     }
                     catch (Exception ex)
@@ -1164,8 +1162,6 @@ public partial class ArchiveEditor : Form
             historyManager.AddAsset(asset);
             if (asset is AssetRWTX rwtx)
                 TextureConverter.EnableTextureForDisplay(rwtx);
-            else if (asset is AssetRenderWareModel model)
-                model.SetupModel(Program.Renderer);
             if (asset is IClickableAsset clickableAsset)
                 RefreshReferencedTransformMatrices(clickableAsset);
             asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
@@ -1287,18 +1283,8 @@ public partial class ArchiveEditor : Form
     public void AssetPropertyChanged(Asset asset, bool hard)
     {
         historyManager.FlushChangesToUndoBuffer(this, asset, hard);
-        switch (asset)
-        {
-            case IRenderableAsset ira:
-                ira.CreateTransformMatrix(Program.Renderer);
-                break;
-            case AssetRWTX rwtx:
-                TextureConverter.EnableTextureForDisplay(rwtx);
-                break;
-            case AssetRenderWareModel model:
-                model.SetupModel(Program.Renderer);
-                break;
-        }
+        if (asset is AssetRWTX rwtx)
+            TextureConverter.EnableTextureForDisplay(rwtx);
         if (asset is IClickableAsset clickableAsset)
             RefreshReferencedTransformMatrices(clickableAsset);
         UpdateListView(asset);
@@ -1307,14 +1293,12 @@ public partial class ArchiveEditor : Form
 
     internal void RefreshReferencedTransformMatrices(IClickableAsset asset)
     {
-        foreach (var sfx in archive.Assets.OfType<AssetSFX>())
-            if (sfx.UseAttach && ReferenceEquals(sfx.GetAttach?.Invoke(sfx.Attach), asset))
-                sfx.CreateTransformMatrix(Program.Renderer);
+        foreach (var sfx in archive.Assets.OfType<AssetSFX>().Where(sfx => sfx.UseAttach && sfx.Attach == asset.assetID))
+            sfx.CalculateTransformation(Program.Renderer);
 
         if (asset is AssetMRKR marker)
-            foreach (var teleport in archive.Assets.OfType<DynaGObjectTeleport>())
-                if (ReferenceEquals(teleport.GetMRKR?.Invoke(teleport.Marker), marker))
-                    teleport.CreateTransformMatrix(Program.Renderer);
+            foreach (var teleport in archive.Assets.OfType<DynaGObjectTeleport>().Where(teleport => teleport.Marker == marker.assetID))
+                teleport.CalculateTransformation(Program.Renderer);
     }
 
     public void SubscribeToSelectedAssetsCollectionChanged(Action action) =>
@@ -1357,11 +1341,15 @@ public partial class ArchiveEditor : Form
                     $"{errors.Count} Asset(s) with errors",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+            historyManager?.Dispose();
             historyManager = new AssetHistoryManager(archive);
             foreach (var (assetID, data) in hipFile.DICT.ATOC.AHDRList.Select(ahdr => (ahdr.assetID, ahdr.data)))
                 historyManager.AddAsset(assetID, data);
 
             ArchiveSubscriptions();
+            var textures = archive.Assets.OfType<AssetRWTX>();
+            if (textures.Any())
+                TextureConverter.SetupTextureDisplay(textures);
 
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
@@ -1613,7 +1601,7 @@ public partial class ArchiveEditor : Form
         toolStripMenuItem_EditData.Enabled = buttonEditDataAsset.Enabled = canEditAsset;
         toolStripMenuItem_MultiEdit.Enabled = buttonMultiEditAsset.Enabled = canEditAsset;
         toolStripMenuItem_CreateGroup.Enabled = canEditAsset;
-        toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && selectionManager.SelectedAssets.Any(asset => asset is not AssetSFX { PlayIn3D: false });
+        toolStripMenuItem_View.Enabled = buttonView.Enabled = canEditAsset && selectionManager.SelectedAssets.OfType<IClickableAsset>().Any(asset => asset is not AssetSFX { PlayIn3D: false });
 
         var canEditSingleAsset = listViewAssets.SelectedItems.Count == 1;
         toolStripMenuItem_EditHeader.Enabled = buttonEditAsset.Enabled = canEditSingleAsset;
@@ -2030,7 +2018,7 @@ public partial class ArchiveEditor : Form
             var oldLayer = archive.GetLayerFromAssetID(asset.assetID);
             var oldAssetID = asset.assetID;
 
-            Section_AHDR AHDR = AssetHeader.GetAsset(asset.BuildAHDR(archive.Platform.Endianness()));
+            Section_AHDR AHDR = AssetHeader.GetAsset(archive.Game, archive.Platform, asset.BuildAHDR(archive.Platform));
 
             if (AHDR == null)
                 return null;
@@ -2041,7 +2029,7 @@ public partial class ArchiveEditor : Form
                 if (dr == DialogResult.Yes)
                     break;
                 else if (dr == DialogResult.No)
-                    AHDR = AssetHeader.GetAsset(AHDR);
+                    AHDR = AssetHeader.GetAsset(archive.Game, archive.Platform, AHDR);
                 else if (dr == DialogResult.Cancel)
                     return null;
             }
@@ -2050,7 +2038,7 @@ public partial class ArchiveEditor : Form
 
             archive.RemoveAsset(oldAssetID, false);
 
-            var result = archive.AddNewAsset(AHDR, asset.game, archive.Platform, oldLayer);
+            var result = archive.AddNewAsset(AHDR, oldLayer);
 
             if (UpdateReferencesOnCopy && oldAssetID != result.assetID)
                 foreach (var ae in Program.ArchiveEditors)
@@ -2337,6 +2325,12 @@ public partial class ArchiveEditor : Form
             return null;
         }
 
+        if (template == AssetTemplate.Null)
+        {
+            MessageBox.Show("Please select a template to place!", "No template selected", MessageBoxButtons.OK);
+            return null;
+        }
+
         var assets = GenerateTemplateForArchive(template, position);
         if (assets == null)
             return null;
@@ -2405,7 +2399,7 @@ public partial class ArchiveEditor : Form
         {
             BeginTransaction();
 
-            var AHDRs = TextureConverter.GetAssetsFromTextureDictionary(openTXD.FileName, RW3, archive.Game);
+            var AHDRs = TextureConverter.GetAssetsFromTextureDictionary(openTXD.FileName, RW3, archive.Game, archive.Platform);
             archive.ImportAssets(AHDRs, SelectedLayerIndex, true);
 
             EndTransaction();
@@ -2528,8 +2522,10 @@ public partial class ArchiveEditor : Form
 
             try
             {
+                var sounds = SoundService.CreateSounds(archive.Game, archive.Platform, assetType, raw, openFile.FileNames, progressBar.PerformStep);
+
                 BeginTransaction();
-                var assets = archive.ImportSounds(raw, openFile.FileNames, assetType, overwriteSoundsOnImportToolStripMenuItem.Checked, progressBar.PerformStep);
+                var assets = archive.ImportSounds(sounds, overwriteSoundsOnImportToolStripMenuItem.Checked);
                 if (assets.Any())
                 {
                     EndTransaction();
@@ -2550,14 +2546,30 @@ public partial class ArchiveEditor : Form
         Enabled = true;
     }
 
-    public void HideSelectedAssets()
+    public void HideAssets(HashSet<Asset> assets)
     {
         foreach (ListViewItem item in listViewAssets.SelectedItems)
-            if (item.Checked)
+            if (item.Checked && assets.Contains(archive.GetAsset((uint)item.Tag)))
             {
                 item.Checked = false;
                 item.Selected = false;
             }
+    }
+
+    public void Unhide(HashSet<Asset> assets)
+    {
+        programIsChangingStuff = true;
+        foreach (ListViewItem item in listViewAssets.Items)
+            if (!item.Checked)
+            {
+                var asset = archive.GetAsset((uint)item.Tag);
+                if (assets.Contains(asset))
+                {
+                    item.Checked = true;
+                    item.Selected = true;
+                }
+            }
+        programIsChangingStuff = false;
     }
 
     public void HideAssets(IEnumerable<uint> assetIDs)

@@ -37,30 +37,22 @@ namespace IndustrialPark.Assets
             Delay = 1.5f;
         }
 
-        public DynaGObjectBusStop(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BusStop, game, endianness)
+        public DynaGObjectBusStop(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__BusStop, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Marker = reader.ReadUInt32();
-                Player = (PlayerEnum)reader.ReadInt32();
-                Camera = reader.ReadUInt32();
-                SimpleObject = reader.ReadUInt32();
-                Delay = reader.ReadSingle();
-            }
+            Marker = reader.ReadUInt32();
+            Player = (PlayerEnum)reader.ReadInt32();
+            Camera = reader.ReadUInt32();
+            SimpleObject = reader.ReadUInt32();
+            Delay = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
             writer.Write(Marker);
             writer.Write((int)Player);
             writer.Write(Camera);
             writer.Write(SimpleObject);
             writer.Write(Delay);
-
-
         }
     }
 }

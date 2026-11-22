@@ -1,5 +1,7 @@
+using HipHopFile;
 using Microsoft.CodeAnalysis.CSharp.Scripting;
 using Microsoft.CodeAnalysis.Scripting;
+using RenderWareFile;
 using System;
 using System.Drawing;
 using System.IO;
@@ -100,7 +102,9 @@ public sealed class ScriptEditorForm : Form
         {
             ScriptOptions options = ScriptOptions.Default
                 .AddReferences(typeof(ScriptGlobals).Assembly)
-                .AddImports("System", "System.IO", "System.Linq", "System.Collections.Generic", "IndustrialPark", "IndustrialPark.Scripting");
+                .AddReferences(typeof(HipFile).Assembly)
+                .AddReferences(typeof(RWSection).Assembly)
+                .AddImports("System", "System.IO", "System.Linq", "System.Collections.Generic", "IndustrialPark.Assets", "HipHopFile", "RenderWareFile", "IndustrialPark.Scripting");
             ScriptGlobals globals = new ScriptGlobals(AppendOutput);
             var state = await CSharpScript.RunAsync(scriptEditor.Text, options, globals);
             if (state.ReturnValue != null)

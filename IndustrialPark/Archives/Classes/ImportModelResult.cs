@@ -11,5 +11,6 @@ public sealed class ImportModelResult
     public bool PiptVColors { get; init; }
     public bool GenerateSimps { get; init; }
     public bool LedgeGrabSimps { get; init; }
+    public bool VisibleSimps { get; init; }
     public bool SolidSimps { get; init; }
 }

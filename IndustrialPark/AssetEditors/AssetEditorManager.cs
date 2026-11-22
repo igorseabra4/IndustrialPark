@@ -23,7 +23,7 @@ public class AssetEditorManager
         multiInternalEditors = new List<InternalMultiAssetEditor>();
     }
 
-    public void SetAssetData(Archive archive, uint assetID, byte[] data, HipHopFile.Platform platform)
+    public void SetAssetData(Archive archive, uint assetID, byte[] data, HipHopFile.Game game, HipHopFile.Platform platform)
     {
         var previousArchive = dataSwapArchive;
         var previousAssetID = dataSwapAssetID;
@@ -31,7 +31,7 @@ public class AssetEditorManager
         dataSwapAssetID = assetID;
         try
         {
-            archive.SetAssetData(assetID, data, platform);
+            archive.SetAssetData(assetID, data, game, platform);
         }
         finally
         {

@@ -141,7 +141,6 @@ namespace IndustrialPark
             viewUndoBufferToolStripMenuItem = new ToolStripMenuItem();
             assetIDGeneratorToolStripMenuItem = new ToolStripMenuItem();
             hansToolStripMenuItem = new ToolStripMenuItem();
-            openFolderToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             toolStripStatusLabelMain = new ToolStripStatusLabel();
             toolStripStatusLabel2 = new ToolStripStatusLabel();
@@ -1017,7 +1016,7 @@ namespace IndustrialPark
             // 
             // researchToolStripMenuItem
             // 
-            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem, openFolderToolStripMenuItem });
+            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem });
             researchToolStripMenuItem.Name = "researchToolStripMenuItem";
             researchToolStripMenuItem.Size = new System.Drawing.Size(124, 19);
             researchToolStripMenuItem.Text = "&Research/Advanced";
@@ -1043,13 +1042,6 @@ namespace IndustrialPark
             hansToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
             hansToolStripMenuItem.Text = "Hans (Save File Editor)";
             hansToolStripMenuItem.Click += hansToolStripMenuItem_Click;
-            // 
-            // openFolderToolStripMenuItem
-            // 
-            openFolderToolStripMenuItem.Name = "openFolderToolStripMenuItem";
-            openFolderToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
-            openFolderToolStripMenuItem.Text = "Open Folder";
-            openFolderToolStripMenuItem.Click += openFolderToolStripMenuItem_Click;
             // 
             // statusStrip1
             // 
@@ -1659,7 +1651,6 @@ namespace IndustrialPark
         private ToolStripMenuItem movementPreviewToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator6;
         private ToolStripSeparator toolStripSeparator11;
-        private ToolStripMenuItem openFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem openLevelToolStripMenuItem;
         private ToolStripMenuItem closeAllEditorsToolStripMenuItem;
         private ToolStripMenuItem enableAllToolStripMenuItem;

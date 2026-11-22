@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,11 +15,8 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public uint InterestType { get; set; }
 
-        public DynaInterestPointer(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Interest_Pointer, game, endianness)
+        public DynaInterestPointer(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Interest_Pointer, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             _yaw = reader.ReadSingle();
             _pitch = reader.ReadSingle();
@@ -41,7 +37,7 @@ namespace IndustrialPark.Assets
 
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
 

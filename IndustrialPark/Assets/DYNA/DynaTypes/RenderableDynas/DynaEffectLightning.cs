@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using IndustrialPark.Assets.Colors;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,11 +60,8 @@ public class DynaEffectLightning : RenderableDynaBase
     [Category(dynaCategoryName)]
     public bool DamagePlayer { get; set; }
 
-    public DynaEffectLightning(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Lightning, game, endianness)
+    public DynaEffectLightning(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__Lightning, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         _positionEnd = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         Color = reader.ReadColor();
@@ -108,15 +104,15 @@ public class DynaEffectLightning : RenderableDynaBase
 
     private Matrix world2;
 
-    public override void CreateTransformMatrix(SharpRenderer renderer)
+    public override void CalculateTransformation(SharpRenderer renderer)
     {
         world2 = Matrix.Translation(_positionEnd);
-        base.CreateTransformMatrix(renderer);
+        base.CalculateTransformation(renderer);
     }
 
-    protected override List<Vector3> vertexSource(SharpRenderer renderer) => SimpleObject1 == 0 ? renderer.cubeVertices : new List<Vector3>();
+    protected override List<Vector3> vertexSource(SharpRenderer renderer) => SimpleObject1 == 0 ? renderer.cubeVertices : [];
 
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => SimpleObject1 == 0 ? renderer.cubeTriangles : new List<Triangle>();
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => SimpleObject1 == 0 ? renderer.cubeTriangles : [];
 
     public override void Draw(SharpRenderer renderer)
     {

@@ -172,102 +172,72 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetPARE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPARE(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            
+            EmitterFlags.FlagValueByte = reader.ReadByte();
+            _emitterType = (EmitterType)reader.ReadByte();
+
+            if (game == Game.Scooby)
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+                Count = reader.ReadByte();
+                CountVariation = reader.ReadByte();
+                Interval = reader.ReadSingle();
+            }
+            else
+            {
+                reader.BaseStream.Position += 2;
+                ParticleProperties = reader.ReadUInt32();
+            }
 
-                EmitterFlags.FlagValueByte = reader.ReadByte();
-                _emitterType = (EmitterType)reader.ReadByte();
+            var beforePare = reader.BaseStream.Position;
 
-                if (game == Game.Scooby)
-                {
-                    Count = reader.ReadByte();
-                    CountVariation = reader.ReadByte();
-                    Interval = reader.ReadSingle();
-                }
-                else
-                {
-                    reader.BaseStream.Position += 2;
-                    ParticleProperties = reader.ReadUInt32();
-                }
-
-                switch (_emitterType)
-                {
-                    case EmitterType.Point:
-                        ParticleEmitterSettings = new PareSpecific_Generic();
-                        break;
-                    case EmitterType.CircleEdge:
-                    case EmitterType.Circle:
-                    case EmitterType.OCircleEdge:
-                    case EmitterType.OCircle:
-                        ParticleEmitterSettings = new PareSpecific_xPECircle(reader);
-                        break;
-                    case EmitterType.RectEdge:
-                    case EmitterType.Rect:
-                        ParticleEmitterSettings = new PareSpecific_tagEmitRect(reader);
-                        break;
-                    case EmitterType.Line:
-                        ParticleEmitterSettings = new PareSpecific_tagEmitLine(reader);
-                        break;
-                    case EmitterType.Volume:
-                        ParticleEmitterSettings = new PareSpecific_tagEmitVolume(reader);
-                        break;
-                    case EmitterType.SphereEdge:
-                    case EmitterType.Sphere:
-                    case EmitterType.SphereEdge10:
-                    case EmitterType.SphereEdge11:
-                        ParticleEmitterSettings = new PareSpecific_tagEmitSphere(reader);
-                        break;
-                    case EmitterType.OffsetPoint:
-                        ParticleEmitterSettings = new PareSpecific_tagEmitOffsetPoint(reader);
-                        break;
-                    case EmitterType.VCylEdge:
-                        ParticleEmitterSettings = new PareSpecific_xPEVCyl(reader);
-                        break;
-                    case EmitterType.EntityBone:
-                        ParticleEmitterSettings = new PareSpecific_xPEEntBone(reader);
-                        break;
-                    case EmitterType.EntityBound:
-                        ParticleEmitterSettings = new PareSpecific_xPEEntBound(reader);
-                        break;
-                    default:
-                        throw new ArgumentException($"Unknown particle emitter type: {_emitterType}");
-                } // 0x1C in size
-
-                reader.BaseStream.Position = 0x2C;
-                Emitter = reader.ReadUInt32();
-                if (game == Game.Scooby)
-                    ParticleSystem = reader.ReadUInt32();
-                Emitter_PosX = reader.ReadSingle();
-                Emitter_PosY = reader.ReadSingle();
-                Emitter_PosZ = reader.ReadSingle();
-                Velocity_X = reader.ReadSingle();
-                Velocity_Y = reader.ReadSingle();
-                Velocity_Z = reader.ReadSingle();
-                Velocity_AngleVariation_Rad = reader.ReadSingle();
-                if (game == Game.Scooby)
-                {
-                    StartColor = reader.ReadColor();
-                    EndColor = reader.ReadColor();
-                    SizeBirth = reader.ReadSingle();
-                    SizeBirthVariation = reader.ReadSingle();
-                    SizeDeath = reader.ReadSingle();
-                    Life = reader.ReadSingle();
-                    LifeVariation = reader.ReadSingle();
-                    reader.ReadByte();
-                    reader.ReadByte();
-                    CullMode = reader.ReadByte();
-                    reader.ReadByte();
-                    CullDistanceSquared = reader.ReadSingle();
-                    MaxEmit = reader.ReadByte();
-                }
-                else
-                {
-                    CullMode = reader.ReadInt32();
-                    CullDistanceSquared = reader.ReadSingle();
-                }
+            ParticleEmitterSettings = _emitterType switch
+            {
+                EmitterType.Point => new PareSpecific_Generic(),
+                EmitterType.CircleEdge or EmitterType.Circle or EmitterType.OCircleEdge or EmitterType.OCircle => new PareSpecific_xPECircle(reader),
+                EmitterType.RectEdge or EmitterType.Rect => new PareSpecific_tagEmitRect(reader),
+                EmitterType.Line => new PareSpecific_tagEmitLine(reader),
+                EmitterType.Volume => new PareSpecific_tagEmitVolume(reader),
+                EmitterType.SphereEdge or EmitterType.Sphere or EmitterType.SphereEdge10 or EmitterType.SphereEdge11 => new PareSpecific_tagEmitSphere(reader),
+                EmitterType.OffsetPoint => new PareSpecific_tagEmitOffsetPoint(reader),
+                EmitterType.VCylEdge => new PareSpecific_xPEVCyl(reader),
+                EmitterType.EntityBone => new PareSpecific_xPEEntBone(reader),
+                EmitterType.EntityBound => new PareSpecific_xPEEntBound(reader),
+                _ => throw new ArgumentException($"Unknown particle emitter type: {_emitterType}"),
+            };
+            // 0x1C in size
+            reader.BaseStream.Position = beforePare + 0x1C;
+            Emitter = reader.ReadUInt32();
+            if (game == Game.Scooby)
+                ParticleSystem = reader.ReadUInt32();
+            Emitter_PosX = reader.ReadSingle();
+            Emitter_PosY = reader.ReadSingle();
+            Emitter_PosZ = reader.ReadSingle();
+            Velocity_X = reader.ReadSingle();
+            Velocity_Y = reader.ReadSingle();
+            Velocity_Z = reader.ReadSingle();
+            Velocity_AngleVariation_Rad = reader.ReadSingle();
+            if (game == Game.Scooby)
+            {
+                StartColor = reader.ReadColor();
+                EndColor = reader.ReadColor();
+                SizeBirth = reader.ReadSingle();
+                SizeBirthVariation = reader.ReadSingle();
+                SizeDeath = reader.ReadSingle();
+                Life = reader.ReadSingle();
+                LifeVariation = reader.ReadSingle();
+                reader.ReadByte();
+                reader.ReadByte();
+                CullMode = reader.ReadByte();
+                reader.ReadByte();
+                CullDistanceSquared = reader.ReadSingle();
+                MaxEmit = reader.ReadByte();
+            }
+            else
+            {
+                CullMode = reader.ReadInt32();
+                CullDistanceSquared = reader.ReadSingle();
             }
         }
 
@@ -289,8 +259,9 @@ namespace IndustrialPark.Assets
                 writer.Write((byte)0);
                 writer.Write(ParticleProperties);
             }
+            var beforePare = writer.BaseStream.Position;
             ParticleEmitterSettings.Serialize(writer);
-            while (writer.BaseStream.Length < 0x2C)
+            while (writer.BaseStream.Position < beforePare + 0x1C)
                 writer.Write((byte)0);
             writer.Write(Emitter);
             if (game == Game.Scooby)

@@ -85,7 +85,7 @@ public static class ArchiveService
             asset.SetGame(session.Game);
             if (asset is AssetSNDI_PS2 sndips2)
                 sndips2.OrderEntries();
-            DICT.ATOC.AHDRList.Add(asset.BuildAHDR(session.Platform.Endianness()));
+            DICT.ATOC.AHDRList.Add(asset.BuildAHDR(session.Platform));
         }
 
         DICT.LTOC.LHDRList = layerManager.AutoLayers ?

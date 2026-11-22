@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace IndustrialPark.Assets
 {
-    public abstract class AssetRenderWareModel : AssetWithData, IDisposableAsset
+    public abstract class AssetRenderWareModel : AssetWithData, IDisposableAsset, ISetupableAsset
     {
         protected RenderWareModelFile model;
 
@@ -22,29 +22,23 @@ namespace IndustrialPark.Assets
         {
         }
 
-        protected AssetRenderWareModel(Section_AHDR AHDR, Game game) : base(AHDR, game)
+        protected AssetRenderWareModel(Section_AHDR AHDR) : base(AHDR)
         {
         }
 
-        public virtual void SetupModel(SharpRenderer renderer)
+        public void Setup(SharpRenderer renderer)
         {
             model?.Dispose();
-            if (renderer == null)
-                return;
             try
             {
-                ReadFileMethods.treatStuffAsByteArray = false;
-                var rwSecArray = ReadFileMethods.ReadRenderWareFile(Data);
-                model = new RenderWareModelFile(renderer.device, rwSecArray);
-                if (rwSecArray.Length > 0)
-                    renderWareVersion = rwSecArray[0].renderWareVersion;
+                model = new RenderWareModelFile(renderer.device, ModelAsRWSections);
                 SetupAtomicFlagsForRender();
             }
-            catch (Exception ex)
+            catch
             {
                 model?.Dispose();
                 model = null;
-                MessageBox.Show($"Error: {this} has an unsupported format and cannot be rendered: {ex.Message}", "Error", System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                throw;
             }
         }
 
@@ -200,9 +194,6 @@ namespace IndustrialPark.Assets
             {
                 ReadFileMethods.treatStuffAsByteArray = false;
                 Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
-
-                model.Dispose();
-                SetupModel(Program.Renderer);
             }
         }
 
@@ -224,6 +215,8 @@ namespace IndustrialPark.Assets
                     if (rws is Clump_0010 clump)
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             materials.AddRange(geo.materialList.materialList);
+                    else if (rws is World_000B world)
+                        materials.AddRange(world.materialList.materialList);
 
                 return materials.ToArray();
             }
@@ -237,45 +230,54 @@ namespace IndustrialPark.Assets
                     {
                         for (int i = 0; i < clump.geometryList.geometryList.Length; i++)
                         {
-                            bool hasMaterialEffects = false;
-                            for (int j = 0; j < clump.geometryList.geometryList[i].materialList.materialList.Length; j++)
-                            {
-                                if (k >= value.Length)
-                                    break;
-                                else
-                                    clump.geometryList.geometryList[i].materialList.materialList[j] = value[k];
-
-                                foreach (var rwss in value[k].materialExtension.extensionSectionList)
-                                    if (rwss is MaterialEffectsPLG_0120)
-                                        hasMaterialEffects = true;
-                                k++;
-                            }
-
-                            // giving the atomic the material effects
-                            if (hasMaterialEffects)
-                            {
-                                var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
-
-                                bool newMatEffsFound = false;
-                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Length; j++)
-                                    if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120)
-                                    {
-                                        clump.atomicList[i].atomicExtension.extensionSectionList[j] = plg;
-                                        newMatEffsFound = true;
-                                        break;
-                                    }
-
-                                if (!newMatEffsFound)
-                                    clump.atomicList[i].atomicExtension.Add(plg);
-                            }
-                            else
-                            {
-                                clump.atomicList[i].atomicExtension.RemoveAll(s => s is MaterialEffectsPLG_0120 plg);
-                            }
+                            ApplyMaterials(clump.geometryList.geometryList[i].materialList, clump.atomicList[i].atomicExtension, value, ref k);
                         }
+                    }
+                    else if (rws is World_000B world)
+                    {
+                        ApplyMaterials(world.materialList, world.worldExtension, value, ref k);
                     }
 
                 ModelAsRWSections = sections;
+            }
+        }
+
+        private void ApplyMaterials(MaterialList_0008 materialList, Extension_0003 extension, Material_0007[] value, ref int k)
+        {
+            bool hasMaterialEffects = false;
+            for (int j = 0; j < materialList.materialList.Length; j++)
+            {
+                if (k >= value.Length)
+                    break;
+                else
+                    materialList.materialList[j] = value[k];
+
+                foreach (var rwss in value[k].materialExtension.extensionSectionList)
+                    if (rwss is MaterialEffectsPLG_0120)
+                        hasMaterialEffects = true;
+                k++;
+            }
+
+            // giving the atomic the material effects
+            if (hasMaterialEffects)
+            {
+                var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
+
+                bool newMatEffsFound = false;
+                for (int j = 0; j < extension.extensionSectionList.Length; j++)
+                    if (extension.extensionSectionList[j] is MaterialEffectsPLG_0120)
+                    {
+                        extension.extensionSectionList[j] = plg;
+                        newMatEffsFound = true;
+                        break;
+                    }
+
+                if (!newMatEffsFound)
+                    extension.Add(plg);
+            }
+            else
+            {
+                extension.RemoveAll(s => s is MaterialEffectsPLG_0120 plg);
             }
         }
 
@@ -353,8 +355,6 @@ namespace IndustrialPark.Assets
                                         ApplyVertexColors(nativeData.nativeDataStruct.nativeDataPs2, getColor);
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            if (Program.MainForm != null)
-                SetupModel(Program.Renderer);
         }
 
         public void RemoveCollisionTree()
@@ -519,7 +519,6 @@ namespace IndustrialPark.Assets
                 }
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            SetupModel(Program.Renderer);
         }
 
         private void StripClump(Clump_0010 clump)

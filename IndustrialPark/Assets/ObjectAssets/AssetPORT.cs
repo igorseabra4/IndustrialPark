@@ -17,16 +17,14 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public AssetSingle Rotation { get; set; }
         [Category(categoryName)]
-        private char[] _destinationLevel;
-        [Category(categoryName)]
         public string DestinationLevel
         {
-            get => new string(_destinationLevel);
+            get;
             set
             {
                 if (value.Length != 4)
                     throw new ArgumentException("Value must be 4 characters long");
-                _destinationLevel = value.ToCharArray();
+                field = value;
             }
         }
 
@@ -36,19 +34,14 @@ namespace IndustrialPark.Assets
             DestinationLevel = "AA00";
         }
 
-        public AssetPORT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPORT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            Camera = reader.ReadUInt32();
+            DestinationMarker = reader.ReadUInt32();
+            Rotation = reader.ReadSingle();
 
-                Camera = reader.ReadUInt32();
-                DestinationMarker = reader.ReadUInt32();
-                Rotation = reader.ReadSingle();
-
-                var chars = reader.ReadChars(4);
-                _destinationLevel = reader.endianness == Endianness.Little ? chars : chars.Reverse().ToArray();
-            }
+            var chars = reader.ReadChars(4);
+            DestinationLevel = (reader.endianness == Endianness.Little && game < Game.Incredibles) ? new string(chars) : new string(chars.Reverse().ToArray());
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -57,7 +50,13 @@ namespace IndustrialPark.Assets
             writer.Write(Camera);
             writer.Write(DestinationMarker);
             writer.Write(Rotation);
-            writer.WriteMagic(new string(_destinationLevel.ToArray()));
+
+            if (writer.endianness == Endianness.Little && game < Game.Incredibles)
+                writer.WritePaddedString(DestinationLevel.Reverse().ToString(), 4);
+            else
+                writer.WritePaddedString(DestinationLevel, 4);
+
+            writer.WritePaddedString(DestinationLevel, 4);
             SerializeLinks(writer);
         }
     }

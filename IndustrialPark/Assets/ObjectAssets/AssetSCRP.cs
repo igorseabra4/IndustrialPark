@@ -38,25 +38,20 @@ namespace IndustrialPark.Assets
             ScriptStartTime = 1f;
         }
 
-        public AssetSCRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSCRP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            ScriptStartTime = reader.ReadSingle();
+            int timedLinkCount = reader.ReadInt32();
+
+            if (game >= Game.Incredibles)
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                ScriptStartTime = reader.ReadSingle();
-                int timedLinkCount = reader.ReadInt32();
-
-                if (game >= Game.Incredibles)
-                {
-                    Loop = reader.ReadBoolean();
-                    reader.ReadBytes(3);
-                }
-
-                _timedLinks = new Link[timedLinkCount];
-                for (int i = 0; i < _timedLinks.Length; i++)
-                    _timedLinks[i] = new Link(reader, (game >= Game.ROTU) ? LinkType.TimedRotu : LinkType.Timed, game);
+                Loop = reader.ReadBoolean();
+                reader.ReadBytes(3);
             }
+
+            _timedLinks = new Link[timedLinkCount];
+            for (int i = 0; i < _timedLinks.Length; i++)
+                _timedLinks[i] = new Link(reader, (game >= Game.ROTU) ? LinkType.TimedRotu : LinkType.Timed, game);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

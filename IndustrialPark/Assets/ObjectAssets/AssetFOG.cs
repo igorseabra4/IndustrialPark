@@ -42,11 +42,8 @@ namespace IndustrialPark.Assets
             EndDistance = 400;
         }
 
-        public AssetFOG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetFOG(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             _backgroundColor = reader.ReadColor();
             FogColor = reader.ReadColor();
             FogDensity = reader.ReadSingle();

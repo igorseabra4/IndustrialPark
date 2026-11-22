@@ -18,16 +18,14 @@ namespace IndustrialPark.Assets
 
         private string platformFormat;
 
-        public AssetRWTX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetRWTX(Section_AHDR AHDR) : base(AHDR)
         {
             platformFormat = GetPlatform();
             try
             {
-                using (var reader = new BinaryReader(new MemoryStream(Data)))
-                {
-                    reader.BaseStream.Position = 0x8;
-                    renderWareVersion = reader.ReadInt32();
-                }
+                using var reader = new BinaryReader(new MemoryStream(Data));
+                reader.BaseStream.Position = 0x8;
+                renderWareVersion = reader.ReadInt32();
             }
             catch { }
         }

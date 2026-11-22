@@ -77,11 +77,15 @@ public class Archive
        
         errors = [];
 
+        var ahdrDictionary = new Dictionary<uint, Section_AHDR>();
+        foreach (var ahdr in hipFile.DICT.ATOC.AHDRList)
+            ahdrDictionary[ahdr.assetID] = ahdr;
+
         for (int i = 0; i < layerRepository.LayerCount; i++)
             foreach (var u in layerRepository.GetLayerAssetIDs(i))
             {
-                var AHDR = hipFile.DICT.ATOC.AHDRList.First(ahdr => ahdr.assetID == u);
-                var asset = AssetService.ConvertHeaderToAsset(AHDR, Game, Platform, true, out AssetError error);
+                var AHDR = ahdrDictionary[u];
+                var asset = AssetService.ConvertHeaderToAsset(AHDR, true, out AssetError error);
                 assetRepository.Add(asset);
 
                 if (error.reason != ErrorReason.NoError)
@@ -141,7 +145,9 @@ public class Archive
 
     public Asset GetAsset(uint key) => assetRepository.Get(key);
 
-    public bool TryGetAsset(uint key, out Asset asset) => assetRepository.TryGet(key, out asset);
+    public T GetAsset<T>(uint key) where T : Asset => assetRepository.Get<T>(key);
+
+    public bool TryGetAsset<T>(uint key, out T asset) where T : Asset => assetRepository.TryGet(key, out asset);
 
     public IEnumerable<Asset> Assets => assetRepository.Assets;
 
@@ -160,9 +166,9 @@ public class Archive
         return asset;
     }
 
-    public Asset AddNewAsset(Section_AHDR AHDR, Game game, Platform platform, int layerIndex)
+    public Asset AddNewAsset(Section_AHDR AHDR, int layerIndex)
     {
-        var asset = AssetService.ConvertHeaderToAsset(AHDR, game, platform, false, out _);
+        var asset = AssetService.ConvertHeaderToAsset(AHDR, false, out _);
         return AddNewAsset(asset, layerIndex);
     }
 
@@ -188,7 +194,7 @@ public class Archive
                     }
                 }
 
-                var asset = AddNewAsset(AHDR, Game, Platform, layerIndex);
+                var asset = AddNewAsset(AHDR, layerIndex);
 
                 if (asset is AssetSound sound)
                     SoundManager.AddToSoundInfo(sound);
@@ -298,18 +304,19 @@ public class Archive
         assetRepository.Remove(assetID);
     }
 
-    public void SetAssetData(uint assetID, byte[] data, Platform platform)
+    // note: this method removes the previous asset instance from the repository and replaces it with a new one
+    public void SetAssetData(uint assetID, byte[] data, Game game, Platform platform)
     {
         if (!TryGetAsset(assetID, out Asset asset))
             return;
 
         var AHDR = new Section_AHDR(asset.assetID, asset.assetType, asset.flags,
             new Section_ADBG(0, asset.assetName, asset.assetFileName, asset.checksum),
-            data);
+            data, game, platform);
 
         try
         {
-            var newAsset = AssetService.ConvertHeaderToAsset(AHDR, Game, platform, false, out _);
+            var newAsset = AssetService.ConvertHeaderToAsset(AHDR, false, out _);
             assetRepository.Add(newAsset);
         }
         catch (Exception e)
@@ -366,10 +373,8 @@ public class Archive
 
     public byte[] GetSoundData(uint assetID, byte[] previousData) => SoundManager.GetCompleteSoundData(assetID, GetAsset(assetID).assetType, previousData);
 
-    public IEnumerable<Asset> ImportSounds(bool raw, string[] fileNames, AssetType assetType, bool forceOverwrite, Action<string> step = null)
+    public IEnumerable<Asset> ImportSounds(IEnumerable<AssetSound> sounds, bool forceOverwrite)
     {
-        var sounds = SoundService.CreateSounds(Game, Platform, assetType, raw, fileNames, step);
-
         if (!sounds.Any())
             return [];
 
@@ -378,22 +383,22 @@ public class Archive
 
         var assets = new List<Asset>();
 
-        foreach (var AHDR in sounds)
+        foreach (var asset in sounds)
         {
-            if (ContainsAsset(AHDR.assetID))
+            if (ContainsAsset(asset.assetID))
             {
                 var result = forceOverwrite ? DialogResult.Yes :
-                MessageBox.Show($"Asset [{AHDR.assetID:X8}] {AHDR.ADBG.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                MessageBox.Show($"Asset [{asset.assetID:X8}] {asset.assetName} already present in archive. Do you wish to overwrite it?", "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
                 if (result == DialogResult.Yes)
-                    RemoveAsset(AHDR.assetID, true);
+                    RemoveAsset(asset.assetID, true);
                 else
                     continue;
             }
 
             try
             {
-                var sound = (AssetSound)AddNewAsset(AHDR, Game, Platform, sramLayer);
+                var sound = (AssetSound)AddNewAsset(asset, sramLayer);
                 SoundManager.AddToSoundInfo(sound);
                 assets.Add(sound);
             }

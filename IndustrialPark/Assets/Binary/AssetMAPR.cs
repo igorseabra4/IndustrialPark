@@ -60,17 +60,14 @@ namespace IndustrialPark.Assets
             Entries = new EntryMAPR[0];
         }
 
-        public AssetMAPR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetMAPR(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.ReadInt32();
-                int maprCount = reader.ReadInt32();
-                Entries = new EntryMAPR[maprCount];
+            reader.ReadInt32();
+            int maprCount = reader.ReadInt32();
+            Entries = new EntryMAPR[maprCount];
 
-                for (int i = 0; i < Entries.Length; i++)
-                    Entries[i] = new EntryMAPR(reader, game);
-            }
+            for (int i = 0; i < Entries.Length; i++)
+                Entries[i] = new EntryMAPR(reader, game);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

@@ -36,39 +36,35 @@ namespace IndustrialPark.Assets
             BackwardsIDs = new AssetID[0];
         }
 
-        public AssetSPLP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSPLP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-                Exclusive = reader.ReadByteBool();
-                Used = reader.ReadByte();
-                HasHover = reader.ReadByteBool();
-                UnknownByte = reader.ReadByte();
-                short forwardCount = reader.ReadInt16();
-                short backwardCount = reader.ReadInt16();
-                Speed = reader.ReadSingle();
-                HoverTime = reader.ReadSingle();
+            Exclusive = reader.ReadByteBool();
+            Used = reader.ReadByte();
+            HasHover = reader.ReadByteBool();
+            UnknownByte = reader.ReadByte();
+            short forwardCount = reader.ReadInt16();
+            short backwardCount = reader.ReadInt16();
+            Speed = reader.ReadSingle();
+            HoverTime = reader.ReadSingle();
 
-                reader.endianness = Endianness.Little;
-                HoverPoint_X = reader.ReadSingle();
-                HoverPoint_Y = reader.ReadSingle();
-                HoverPoint_Z = reader.ReadSingle();
-                reader.endianness = endianness;
+            reader.endianness = Endianness.Little;
+            HoverPoint_X = reader.ReadSingle();
+            HoverPoint_Y = reader.ReadSingle();
+            HoverPoint_Z = reader.ReadSingle();
+            reader.endianness = AHDR.Platform.Endianness();
 
-                SplineID = reader.ReadUInt32();
+            SplineID = reader.ReadUInt32();
 
-                ForwardPath = reader.ReadUInt32();
-                BackwardsPath = reader.ReadUInt32();
+            ForwardPath = reader.ReadUInt32();
+            BackwardsPath = reader.ReadUInt32();
 
-                ForwardIDs = new AssetID[forwardCount];
-                for (int i = 0; i < forwardCount; i++)
-                    ForwardIDs[i] = reader.ReadUInt32();
+            ForwardIDs = new AssetID[forwardCount];
+            for (int i = 0; i < forwardCount; i++)
+                ForwardIDs[i] = reader.ReadUInt32();
 
-                BackwardsIDs = new AssetID[backwardCount];
-                for (int i = 0; i < backwardCount; i++)
-                    BackwardsIDs[i] = reader.ReadUInt32();
-            }
+            BackwardsIDs = new AssetID[backwardCount];
+            for (int i = 0; i < backwardCount; i++)
+                BackwardsIDs[i] = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

@@ -1,11 +1,8 @@
 ﻿using HipHopFile;
 using IndustrialPark.ArchiveEditors;
-using Newtonsoft.Json;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace IndustrialPark.Assets
 {
@@ -38,37 +35,19 @@ namespace IndustrialPark.Assets
             _position = position;
         }
 
-        public RenderableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
+        public RenderableDynaBase(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader) { }
 
         [Browsable(false)]
         public Matrix world { get; protected set; }
         protected BoundingBox boundingBox;
-        protected Vector3[] vertices;
-        protected List<RenderWareFile.Triangle> triangles;
 
         protected abstract List<Vector3> vertexSource(SharpRenderer renderer);
-        protected abstract List<Models.Triangle> triangleSource(SharpRenderer renderer);
+        protected abstract List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer);
 
-        public virtual void CreateTransformMatrix(SharpRenderer renderer)
+        public virtual void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.Translation(_position);
-
-            CreateBoundingBox(renderer);
-        }
-
-        protected virtual void CreateBoundingBox(SharpRenderer renderer)
-        {
-            var vertexSource = this.vertexSource(renderer);
-            vertices = new Vector3[vertexSource.Count];
-            for (int i = 0; i < vertexSource.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexSource[i], world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            var triangleSource = this.triangleSource(renderer);
-            triangles = new List<RenderWareFile.Triangle>(triangleSource.Count);
-            for (int i = 0; i < triangleSource.Count; i++)
-                triangles.Add(new RenderWareFile.Triangle((ushort)triangleSource[i].materialIndex,
-                    (ushort)triangleSource[i].vertex1, (ushort)triangleSource[i].vertex2, (ushort)triangleSource[i].vertex3));
+            boundingBox = CreateBoundingBox(vertexSource(renderer), world);
         }
 
         public abstract void Draw(SharpRenderer renderer);
@@ -86,20 +65,8 @@ namespace IndustrialPark.Assets
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, triangleSource(renderer), vertexSource(renderer), world) : TriangleIntersection(ray);
+                return TriangleIntersection(ray, triangleSource(renderer), vertexSource(renderer), world);
             return null;
-        }
-
-        private float? TriangleIntersection(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-
-            return smallestDistance;
         }
 
         [Browsable(false)]

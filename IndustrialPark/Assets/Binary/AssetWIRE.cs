@@ -42,7 +42,7 @@ namespace IndustrialPark.Assets
         }
     }
 
-    public class AssetWIRE : Asset, IRenderableAsset, IDisposableAsset
+    public class AssetWIRE : Asset, IRenderableAsset, IDisposableAsset, ISetupableAsset
     {
         private const string categoryName = "Wireframe Model";
 
@@ -57,26 +57,21 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public AssetID hashID1 { get; set; }
 
-        public AssetWIRE(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game)
+        public AssetWIRE(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.ReadInt32();
-                int vertexAmount = reader.ReadInt32();
-                int lineAmount = reader.ReadInt32();
-                hashID0 = reader.ReadUInt32();
-                hashID1 = reader.ReadUInt32();
+            reader.ReadInt32();
+            int vertexAmount = reader.ReadInt32();
+            int lineAmount = reader.ReadInt32();
+            hashID0 = reader.ReadUInt32();
+            hashID1 = reader.ReadUInt32();
 
-                Points = new WireVector[vertexAmount];
-                for (int i = 0; i < Points.Length; i++)
-                    Points[i] = new WireVector(reader);
+            Points = new WireVector[vertexAmount];
+            for (int i = 0; i < Points.Length; i++)
+                Points[i] = new WireVector(reader);
 
-                Lines = new Line[lineAmount];
-                for (int i = 0; i < Lines.Length; i++)
-                    Lines[i] = new Line(reader);
-
-                Setup(renderer);
-            }
+            Lines = new Line[lineAmount];
+            for (int i = 0; i < Lines.Length; i++)
+                Lines[i] = new Line(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -163,9 +158,6 @@ namespace IndustrialPark.Assets
 
         public void Setup(SharpRenderer renderer)
         {
-            if (renderer == null)
-                return;
-
             renderer.completeVertexBufferList.Remove(vertexBuffer);
             if (vertexBuffer != null)
                 vertexBuffer.Dispose();
@@ -194,7 +186,7 @@ namespace IndustrialPark.Assets
             vertexBuffer.Dispose();
         }
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
         }
 

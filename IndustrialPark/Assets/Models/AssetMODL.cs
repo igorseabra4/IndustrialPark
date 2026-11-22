@@ -10,8 +10,11 @@ namespace IndustrialPark.Assets
         public static bool renderBasedOnLodt = false;
         public static bool renderBasedOnPipt = true;
 
-        public AssetMODL(Section_AHDR AHDR, Game game) : base(AHDR, game) { }
+        public AssetMODL(string assetName, byte[] data) : base(assetName, AssetType.Model, data) { }
 
+        public AssetMODL(Section_AHDR AHDR) : base(AHDR) { }
+
+        [Browsable(false)]
         public string fileNameWithoutExtension => assetName.Replace(".dff", "");
 
         private Dictionary<uint, PipeInfo> pipeEntries;

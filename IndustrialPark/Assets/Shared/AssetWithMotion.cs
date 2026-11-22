@@ -8,7 +8,7 @@ namespace IndustrialPark.Assets
     {
         public AssetWithMotion(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) : base(assetName, assetType, baseAssetType, position) { }
 
-        public AssetWithMotion(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness) { }
+        public AssetWithMotion(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader) { }
 
         public override void Reset()
         {

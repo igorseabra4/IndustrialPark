@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,11 +22,8 @@ public class DynaHudCompassObject : RenderableDynaBase
     public DynaHudCompassObject(string assetName, Vector3 position) : base(assetName, DynaType.HUD_Compass_Object, position)
     {
     }
-    public DynaHudCompassObject(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.HUD_Compass_Object, game, endianness)
+    public DynaHudCompassObject(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.HUD_Compass_Object, reader)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
-        reader.BaseStream.Position = dynaDataStartPosition;
-
         ObjectId = reader.ReadUInt32();
         _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         TextureId = reader.ReadUInt32();
@@ -46,7 +42,7 @@ public class DynaHudCompassObject : RenderableDynaBase
 
     protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-    protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
+    protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
     public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
 

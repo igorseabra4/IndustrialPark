@@ -205,6 +205,7 @@ namespace IndustrialPark
             new("Select previous template", "Selection", KeyboardAction.SelectPreviousTemplate),
             new("Select next template", "Selection", KeyboardAction.SelectNextTemplate),
             new("Hide selected assets", "View", KeyboardAction.HideSelectedAssets),
+            new(" (twice)", "Unhide latest hidden assets", "View", KeyboardAction.HideSelectedAssets),
             new("Unhide all individually hidden assets", "View", KeyboardAction.UnhideAllAssets),
             new(" (twice)", "Unhide all asset types", "View", KeyboardAction.UnhideAllAssets),
             new("Open Asset Header Editor for selected assets", "Tools", KeyboardAction.OpenHeaderEditor),

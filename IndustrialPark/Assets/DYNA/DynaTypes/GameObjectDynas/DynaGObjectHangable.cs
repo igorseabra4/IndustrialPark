@@ -36,25 +36,20 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public FlagBitmask HangFlags { get; set; } = IntFlagsDescriptor();
 
-        public DynaGObjectHangable(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Hangable, game, endianness)
+        public DynaGObjectHangable(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Hangable, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Object = reader.ReadUInt32();
-                PivotX = reader.ReadSingle();
-                PivotY = reader.ReadSingle();
-                PivotZ = reader.ReadSingle();
-                HandleX = reader.ReadSingle();
-                HandleY = reader.ReadSingle();
-                HandleZ = reader.ReadSingle();
-                OnGravity = reader.ReadSingle();
-                OffGravity = reader.ReadSingle();
-                MaxAngVel = reader.ReadSingle();
-                MinArcDegrees = reader.ReadSingle();
-                HangFlags.FlagValueInt = reader.ReadUInt32();
-            }
+            Object = reader.ReadUInt32();
+            PivotX = reader.ReadSingle();
+            PivotY = reader.ReadSingle();
+            PivotZ = reader.ReadSingle();
+            HandleX = reader.ReadSingle();
+            HandleY = reader.ReadSingle();
+            HandleZ = reader.ReadSingle();
+            OnGravity = reader.ReadSingle();
+            OffGravity = reader.ReadSingle();
+            MaxAngVel = reader.ReadSingle();
+            MinArcDegrees = reader.ReadSingle();
+            HangFlags.FlagValueInt = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -165,32 +165,29 @@ namespace IndustrialPark.Assets
             Entries_SNDS = new EntrySoundInfo_PS2[0];
         }
 
-        public AssetSNDI_PS2(Section_AHDR AHDR, Game game) : base(AHDR, game)
+        public AssetSNDI_PS2(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
+            var maybeAssetId = reader.ReadUInt32();
+            if (maybeAssetId == assetID)
             {
-                var maybeAssetId = reader.ReadUInt32();
-                if (maybeAssetId == assetID)
-                {
-                    AssetVersion = EVersionIncrediblesROTUOthers.IncrediblesRotu;
-                }
-                else
-                {
-                    AssetVersion = EVersionIncrediblesROTUOthers.ScoobyBfbbMovie;
-                    reader.BaseStream.Position = 0;
-                }
-
-                int entriesSndAmount = reader.ReadInt32();
-                int entriesSndsAmount = reader.ReadInt32();
-
-                Entries_SND = new EntrySoundInfo_PS2[entriesSndAmount];
-                for (int i = 0; i < Entries_SND.Length; i++)
-                    Entries_SND[i] = new EntrySoundInfo_PS2(reader);
-
-                Entries_SNDS = new EntrySoundInfo_PS2[entriesSndsAmount];
-                for (int i = 0; i < Entries_SNDS.Length; i++)
-                    Entries_SNDS[i] = new EntrySoundInfo_PS2(reader);
+                AssetVersion = EVersionIncrediblesROTUOthers.IncrediblesRotu;
             }
+            else
+            {
+                AssetVersion = EVersionIncrediblesROTUOthers.ScoobyBfbbMovie;
+                reader.BaseStream.Position = 0;
+            }
+
+            int entriesSndAmount = reader.ReadInt32();
+            int entriesSndsAmount = reader.ReadInt32();
+
+            Entries_SND = new EntrySoundInfo_PS2[entriesSndAmount];
+            for (int i = 0; i < Entries_SND.Length; i++)
+                Entries_SND[i] = new EntrySoundInfo_PS2(reader);
+
+            Entries_SNDS = new EntrySoundInfo_PS2[entriesSndsAmount];
+            for (int i = 0; i < Entries_SNDS.Length; i++)
+                Entries_SNDS[i] = new EntrySoundInfo_PS2(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

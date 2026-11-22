@@ -12,9 +12,9 @@ public static class Archives
         return new ArchiveInterface(game, platform);
     }
 
-    public static ArchiveInterface FromPath(string filePath)
+    public static ArchiveInterface FromPath(string filePath, Platform platform = Platform.Unknown)
     {
-        return new ArchiveInterface(filePath);
+        return new ArchiveInterface(filePath, platform);
     }
 
     public static List<ArchiveInterface> FromPaths(List<string> filePaths)

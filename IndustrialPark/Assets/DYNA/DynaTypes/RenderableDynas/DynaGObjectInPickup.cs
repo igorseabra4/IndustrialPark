@@ -1,6 +1,5 @@
 ﻿using HipHopFile;
 using IndustrialPark.Archives;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -54,11 +53,8 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public DynaGObjectInPickup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__IN_Pickup, game, endianness)
+        public DynaGObjectInPickup(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__IN_Pickup, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             PickupHash = reader.ReadUInt32();
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
         }
@@ -73,34 +69,14 @@ namespace IndustrialPark.Assets
 
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.Translation(_position);
 
-            if (AssetTPIK.tpikEntries.ContainsKey(PickupHash))
-            {
-                var model = renderer.Assets.GetModelFromRenderingDictionary(AssetTPIK.tpikEntries[PickupHash].Model);
-                if (model != null)
-                {
-                    var vertexList = model.vertexListG;
-
-                    vertices = new Vector3[vertexList.Count];
-                    for (int i = 0; i < vertexList.Count; i++)
-                        vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
-                    boundingBox = BoundingBox.FromPoints(vertices);
-
-                    triangles = model.triangleList;
-                    return;
-                }
-            }
-
-            vertices = new Vector3[renderer.cubeVertices.Count];
-            for (int i = 0; i < renderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(renderer.cubeVertices[i] * 0.5f, world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-            triangles = null;
+            var model = AssetTPIK.tpikEntries.ContainsKey(PickupHash) ? renderer.Assets.GetModelFromRenderingDictionary(AssetTPIK.tpikEntries[PickupHash].Model) : null;
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.cubeVertices, world, model != null ? 1f : 0.5f);
         }
 
         public override bool ShouldDraw(SharpRenderer renderer)

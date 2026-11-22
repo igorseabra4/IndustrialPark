@@ -14,20 +14,14 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Spline { get; set; }
 
-        public DynaGObjectDashCameraSpline(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__dash_camera_spline, game, endianness)
+        public DynaGObjectDashCameraSpline(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__dash_camera_spline, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-                Spline = reader.ReadUInt32();
-            }
+            Spline = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
             writer.Write(Spline);
-
         }
     }
 }

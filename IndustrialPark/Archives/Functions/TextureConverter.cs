@@ -125,7 +125,7 @@ public static class TextureConverter
         ReadFileMethods.treatStuffAsByteArray = false;
     }
 
-    public static List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3, Game game)
+    public static List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3, Game game, Platform platform)
     {
         ReadFileMethods.treatStuffAsByteArray = true;
 
@@ -150,7 +150,7 @@ public static class TextureConverter
 
                     // And add the new dictionary as an asset.
                     Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
-                    Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.Texture, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data);
+                    Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.Texture, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data, game, platform);
 
 
                     AHDRs.Add(AHDR);
@@ -174,8 +174,8 @@ public static class TextureConverter
             File.WriteAllBytes(pathToPcTXD, txdFile);
 
             PerformTXDConversionExternal(custom_output:
-                "gameRoot=" + tempPcTxdsDir + "\r\n" +
-                "outputRoot=" + tempGcTxdsDir + "\r\n" +
+                $"gameRoot={tempPcTxdsDir}\r\n" +
+                $"outputRoot={tempGcTxdsDir}\r\n" +
                 "targetVersion=VC\r\n" +
                 (hasTransparency ?
                 "targetPlatform=PC\r\n" :

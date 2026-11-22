@@ -41,15 +41,10 @@ namespace IndustrialPark.Assets
             MovePoint = mvptAssetID;
         }
 
-        public DynaEnemyCritter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Critter, game, endianness)
+        public DynaEnemyCritter(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__Critter, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                MovePoint = reader.ReadUInt32();
-                Unknown54 = reader.ReadUInt32();
-            }
+            MovePoint = reader.ReadUInt32();
+            Unknown54 = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

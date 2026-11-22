@@ -61,9 +61,8 @@ namespace IndustrialPark.Assets
             _entries = [];
         }
 
-        public AssetCOLL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetCOLL(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
             var len = reader.ReadInt32();
             _entries = [with(len)];
             for (int i = 0; i < len; i++)

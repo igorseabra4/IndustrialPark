@@ -361,34 +361,31 @@ namespace IndustrialPark.Assets
         [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AttackTableState[] States { get; set; }
 
-        public AssetATKT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetATKT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
             if (AHDR.data.Length == 0)
                 return;
 
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                var sectionCount = reader.ReadInt16();
-                var entryCount = reader.ReadInt16();
-                var transitionCount = reader.ReadInt16();
-                var stateCount = reader.ReadInt16();
+            var sectionCount = reader.ReadInt16();
+            var entryCount = reader.ReadInt16();
+            var transitionCount = reader.ReadInt16();
+            var stateCount = reader.ReadInt16();
 
-                Sections = new AttackTableSection[sectionCount];
-                for (int i = 0; i < sectionCount; i++)
-                    Sections[i] = new AttackTableSection(reader);
+            Sections = new AttackTableSection[sectionCount];
+            for (int i = 0; i < sectionCount; i++)
+                Sections[i] = new AttackTableSection(reader);
 
-                Entries = new AttackTableEntry[entryCount];
-                for (int i = 0; i < entryCount; i++)
-                    Entries[i] = new AttackTableEntry(reader);
+            Entries = new AttackTableEntry[entryCount];
+            for (int i = 0; i < entryCount; i++)
+                Entries[i] = new AttackTableEntry(reader);
 
-                Transitions = new AttackTableTransition[transitionCount];
-                for (int i = 0; i < transitionCount; i++)
-                    Transitions[i] = new AttackTableTransition(reader);
+            Transitions = new AttackTableTransition[transitionCount];
+            for (int i = 0; i < transitionCount; i++)
+                Transitions[i] = new AttackTableTransition(reader);
 
-                States = new AttackTableState[stateCount];
-                for (int i = 0; i < stateCount; i++)
-                    States[i] = new AttackTableState(reader);
-            }
+            States = new AttackTableState[stateCount];
+            for (int i = 0; i < stateCount; i++)
+                States[i] = new AttackTableState(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

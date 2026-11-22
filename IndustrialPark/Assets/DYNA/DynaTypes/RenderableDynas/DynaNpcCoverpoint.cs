@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,11 +16,8 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetID Obj_AssetID { get; set; }
 
-        public DynaNPCCoverpoint(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.npc__CoverPoint, game, endianness)
+        public DynaNPCCoverpoint(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.npc__CoverPoint, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             _yaw = reader.ReadSingle();
             _pitch = reader.ReadSingle();
@@ -41,7 +37,7 @@ namespace IndustrialPark.Assets
         }
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
 

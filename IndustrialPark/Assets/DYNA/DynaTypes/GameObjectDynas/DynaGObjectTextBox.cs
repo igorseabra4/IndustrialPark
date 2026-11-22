@@ -98,54 +98,49 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle ShadowOffsetY { get; set; }
 
-        public DynaGObjectTextBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__text_box, game, endianness)
+        public DynaGObjectTextBox(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__text_box, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            DefaultTextID = reader.ReadUInt32();
+            XPosition = reader.ReadSingle();
+            YPosition = reader.ReadSingle();
+            Width = reader.ReadSingle();
+            Height = reader.ReadSingle();
+            if (Version == 4)
             {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                DefaultTextID = reader.ReadUInt32();
-                XPosition = reader.ReadSingle();
-                YPosition = reader.ReadSingle();
-                Width = reader.ReadSingle();
-                Height = reader.ReadSingle();
-                if (Version == 4)
-                {
-                    Y_As_Bottom = reader.ReadByte();
-                    AutoCenterOnScreen = reader.ReadByte();
-                    reader.ReadInt16();
-                }
-                Font = (FontEnum)reader.ReadInt32();
-                TextWidth = reader.ReadSingle();
-                TextHeight = reader.ReadSingle();
-                CharSpacingX = reader.ReadSingle();
-                CharSpacingY = reader.ReadSingle();
-                Color = reader.ReadColor();
-                LeftMargin = reader.ReadSingle();
-                TopMargin = reader.ReadSingle();
-                RightMargin = reader.ReadSingle();
-                BottomMargin = reader.ReadSingle();
-                XAlignment = (XJustify)reader.ReadInt32();
-                if (Version >= 3)
-                    YAlignment = (YJustify)reader.ReadInt32();
-                ExpandMode = (Expand)reader.ReadInt32();
-                MaxHeight = reader.ReadSingle();
-                BackgroundMode = reader.ReadInt32();
-                BackdropColor = reader.ReadColor();
-                BackgroundTextureID = reader.ReadUInt32();
-                if (Version >= 3)
-                {
-                    BackgroundBorderU = reader.ReadSingle();
-                    BackgroundBorderV = reader.ReadSingle();
-                    BackgroundBorderWidth = reader.ReadSingle();
-                    BackgroundBorderHeight = reader.ReadSingle();
-                    ShadowColor = reader.ReadColor();
-                    ShadowOffsetX = reader.ReadSingle();
-                    ShadowOffsetY = reader.ReadSingle();
-                }
-                else
-                    ShadowColor = new AssetColor();
+                Y_As_Bottom = reader.ReadByte();
+                AutoCenterOnScreen = reader.ReadByte();
+                reader.ReadInt16();
             }
+            Font = (FontEnum)reader.ReadInt32();
+            TextWidth = reader.ReadSingle();
+            TextHeight = reader.ReadSingle();
+            CharSpacingX = reader.ReadSingle();
+            CharSpacingY = reader.ReadSingle();
+            Color = reader.ReadColor();
+            LeftMargin = reader.ReadSingle();
+            TopMargin = reader.ReadSingle();
+            RightMargin = reader.ReadSingle();
+            BottomMargin = reader.ReadSingle();
+            XAlignment = (XJustify)reader.ReadInt32();
+            if (Version >= 3)
+                YAlignment = (YJustify)reader.ReadInt32();
+            ExpandMode = (Expand)reader.ReadInt32();
+            MaxHeight = reader.ReadSingle();
+            BackgroundMode = reader.ReadInt32();
+            BackdropColor = reader.ReadColor();
+            BackgroundTextureID = reader.ReadUInt32();
+            if (Version >= 3)
+            {
+                BackgroundBorderU = reader.ReadSingle();
+                BackgroundBorderV = reader.ReadSingle();
+                BackgroundBorderWidth = reader.ReadSingle();
+                BackgroundBorderHeight = reader.ReadSingle();
+                ShadowColor = reader.ReadColor();
+                ShadowOffsetX = reader.ReadSingle();
+                ShadowOffsetY = reader.ReadSingle();
+            }
+            else
+                ShadowColor = new AssetColor();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

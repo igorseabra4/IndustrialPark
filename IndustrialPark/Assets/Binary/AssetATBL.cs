@@ -575,28 +575,25 @@ namespace IndustrialPark.Assets
         [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowCopy: false)]
         public AnimationState[] AnimationStates { get; set; }
 
-        public AssetATBL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetATBL(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.ReadInt32();
-                int numRaw = reader.ReadInt32();
-                int numFiles = reader.ReadInt32();
-                int numStates = reader.ReadInt32();
-                ConstructFunc_Hash = reader.ReadUInt32();
+            reader.ReadInt32();
+            int numRaw = reader.ReadInt32();
+            int numFiles = reader.ReadInt32();
+            int numStates = reader.ReadInt32();
+            ConstructFunc_Hash = reader.ReadUInt32();
 
-                Animations = new AssetID[numRaw];
-                for (int i = 0; i < Animations.Length; i++)
-                    Animations[i] = reader.ReadUInt32();
+            Animations = new AssetID[numRaw];
+            for (int i = 0; i < Animations.Length; i++)
+                Animations[i] = reader.ReadUInt32();
 
-                AnimationFiles = new AnimationFile[numFiles];
-                for (int i = 0; i < AnimationFiles.Length; i++)
-                    AnimationFiles[i] = new AnimationFile(reader);
+            AnimationFiles = new AnimationFile[numFiles];
+            for (int i = 0; i < AnimationFiles.Length; i++)
+                AnimationFiles[i] = new AnimationFile(reader);
 
-                AnimationStates = new AnimationState[numStates];
-                for (int i = 0; i < AnimationStates.Length; i++)
-                    AnimationStates[i] = new AnimationState(reader, game);
-            }
+            AnimationStates = new AnimationState[numStates];
+            for (int i = 0; i < AnimationStates.Length; i++)
+                AnimationStates[i] = new AnimationState(reader, game);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

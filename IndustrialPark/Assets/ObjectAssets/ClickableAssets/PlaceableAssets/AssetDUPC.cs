@@ -49,11 +49,8 @@ namespace IndustrialPark.Assets
             NPC = new AssetVIL(assetName, position, AssetTemplate.NPC, 0);
         }
 
-        public AssetDUPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetDUPC(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             InitialSpawn = reader.ReadInt16();
             MaximumInGame = reader.ReadInt16();
             MaximumToSpawn = reader.ReadInt16();
@@ -101,7 +98,7 @@ namespace IndustrialPark.Assets
             SerializeLinks(writer);
         }
 
-        public void CreateTransformMatrix(SharpRenderer renderer) => NPC.CreateTransformMatrix(renderer);
+        public void CalculateTransformation(SharpRenderer renderer) => NPC.CalculateTransformation(renderer);
         public float GetDistanceFrom(Vector3 position) => NPC.GetDistanceFrom(position);
         public bool ShouldDraw(SharpRenderer renderer)
         {

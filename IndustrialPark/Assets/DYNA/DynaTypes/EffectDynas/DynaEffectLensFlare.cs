@@ -34,24 +34,19 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public int Unknown28 { get; set; }
 
-        public DynaEffectLensFlare(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__LensFlareElement, game, endianness)
+        public DynaEffectLensFlare(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__LensFlareElement, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Texture = reader.ReadUInt32();
-                Unknown04 = reader.ReadUInt32();
-                Unknown08 = reader.ReadSingle();
-                Unknown0C = reader.ReadSingle();
-                Unknown10 = reader.ReadSingle();
-                Unknown14 = reader.ReadSingle();
-                Unknown18 = reader.ReadSingle();
-                Unknown1C = reader.ReadSingle();
-                Unknown20 = reader.ReadSingle();
-                Unknown24 = reader.ReadInt32();
-                Unknown28 = reader.ReadInt32();
-            }
+            Texture = reader.ReadUInt32();
+            Unknown04 = reader.ReadUInt32();
+            Unknown08 = reader.ReadSingle();
+            Unknown0C = reader.ReadSingle();
+            Unknown10 = reader.ReadSingle();
+            Unknown14 = reader.ReadSingle();
+            Unknown18 = reader.ReadSingle();
+            Unknown1C = reader.ReadSingle();
+            Unknown20 = reader.ReadSingle();
+            Unknown24 = reader.ReadInt32();
+            Unknown28 = reader.ReadInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

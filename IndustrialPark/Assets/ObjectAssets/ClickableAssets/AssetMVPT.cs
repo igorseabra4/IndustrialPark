@@ -99,11 +99,8 @@ namespace IndustrialPark.Assets
 
         public static uint chainPointMVPTlast = 0;
 
-        public AssetMVPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetMVPT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             Weight = reader.ReadUInt16();
             On = reader.ReadByte() != 0;
@@ -157,7 +154,7 @@ namespace IndustrialPark.Assets
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
         public bool DrawAsPoint => DrawAllAsPoints || _arenaRadius <= 0f;
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             world = DrawAsPoint
                 ? Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f))

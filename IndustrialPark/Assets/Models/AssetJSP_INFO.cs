@@ -25,14 +25,14 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public HI_Tags_BEEF04 Section4 { get; set; }
 
-        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetJSP_INFO(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, Endianness.Little);
+            reader.endianness = Endianness.Little;
             Section1 = new HI_Tags_BEEF01(reader, game);
 
             renderWareVersion = Section1.RenderWareVersion;
 
-            Section2 = new HI_Tags_BEEF02(reader, endianness);
+            Section2 = new HI_Tags_BEEF02(reader, AHDR.Platform.Endianness());
 
             reader.endianness = Endianness.Little;
             if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF03)
@@ -40,7 +40,7 @@ namespace IndustrialPark.Assets
 
             reader.endianness = Endianness.Little;
             if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF04)
-                Section4 = new HI_Tags_BEEF04(reader, endianness);
+                Section4 = new HI_Tags_BEEF04(reader, AHDR.Platform.Endianness());
         }
 
         public AssetJSP_INFO(string assetName, Game game, Platform platform) : base(assetName, AssetType.JSPInfo)
@@ -133,17 +133,18 @@ namespace IndustrialPark.Assets
                 }
             }
 
-            for (int i = 0; i < Section3.vertexList.Length; i++)
-            {
-                Section3.vertexList[i].X *= factor.X;
-                Section3.vertexList[i].Y *= factor.Y;
-                Section3.vertexList[i].Z *= factor.Z;
-            }
+            if (Section3 != null && Section3.vertexList != null)
+                for (int i = 0; i < Section3.vertexList.Length; i++)
+                {
+                    Section3.vertexList[i].X *= factor.X;
+                    Section3.vertexList[i].Y *= factor.Y;
+                    Section3.vertexList[i].Z *= factor.Z;
+                }
         }
 
         public override bool HasReference(uint assetID)
         {
-            return JSP_AssetIDs.Contains(assetID);
+            return JSP_AssetIDs?.Contains(assetID) ?? false;
         }
     }
 }

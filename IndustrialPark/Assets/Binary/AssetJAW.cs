@@ -68,9 +68,8 @@ namespace IndustrialPark.Assets
             _entries = [];
         }
 
-        public AssetJAW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetJAW(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
             var len = reader.ReadInt32();
             _entries = [with(len)];
 
@@ -78,7 +77,7 @@ namespace IndustrialPark.Assets
 
             for (int i = 0; i < len; i++)
             {
-                reader.endianness = endianness;
+                reader.endianness = AHDR.Platform.Endianness();
                 uint soundAssetID = reader.ReadUInt32();
                 int offset = reader.ReadInt32();
                 reader.ReadInt32();

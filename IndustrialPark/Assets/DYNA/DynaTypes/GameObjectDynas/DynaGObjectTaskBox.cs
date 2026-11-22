@@ -36,25 +36,20 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetID End_TextID { get; set; }
 
-        public DynaGObjectTaskBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__task_box, game, endianness)
+        public DynaGObjectTaskBox(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__task_box, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Persistent = reader.ReadByteBool();
-                Loop = reader.ReadByteBool();
-                Enable = reader.ReadByteBool();
-                Retry = reader.ReadByteBool();
-                TalkBox = reader.ReadUInt32();
-                NextTaskBox = reader.ReadUInt32();
-                BeginText = reader.ReadUInt32();
-                DescriptionText = reader.ReadUInt32();
-                ReminderText = reader.ReadUInt32();
-                SuccessText = reader.ReadUInt32();
-                FailureText = reader.ReadUInt32();
-                End_TextID = reader.ReadUInt32();
-            }
+            Persistent = reader.ReadByteBool();
+            Loop = reader.ReadByteBool();
+            Enable = reader.ReadByteBool();
+            Retry = reader.ReadByteBool();
+            TalkBox = reader.ReadUInt32();
+            NextTaskBox = reader.ReadUInt32();
+            BeginText = reader.ReadUInt32();
+            DescriptionText = reader.ReadUInt32();
+            ReminderText = reader.ReadUInt32();
+            SuccessText = reader.ReadUInt32();
+            FailureText = reader.ReadUInt32();
+            End_TextID = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

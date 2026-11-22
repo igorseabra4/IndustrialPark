@@ -13,15 +13,10 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public byte softMaxChars { get; set; }
 
-        public DynaUITextUserString(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__text__userstring, game, endianness)
+        public DynaUITextUserString(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.ui__text__userstring, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaUITextEnd;
-
-                hardMaxChars = reader.ReadByte();
-                softMaxChars = reader.ReadByte();
-            }
+            hardMaxChars = reader.ReadByte();
+            softMaxChars = reader.ReadByte();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -1,10 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace IndustrialPark.Assets
 {
@@ -161,11 +159,8 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryNameParSystem)]
         public ParticleSystem_Generic ParticleSystem { get; set; }
 
-        public DynaEffectParticleGenerator(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Effect__particle_generator, game, endianness)
+        public DynaEffectParticleGenerator(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Effect__particle_generator, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             ParticleGeneratorFlags.FlagValueByte = reader.ReadByte();
             AttachFlags.FlagValueByte = reader.ReadByte();
             MotionFlags.FlagValueByte = reader.ReadByte();
@@ -366,15 +361,15 @@ namespace IndustrialPark.Assets
 
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.RotationX(-MathUtil.PiOverTwo)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            base.CreateBoundingBox(renderer);
+            boundingBox = CreateBoundingBox(vertexSource(renderer), world);
         }
 
         public override void Draw(SharpRenderer renderer)

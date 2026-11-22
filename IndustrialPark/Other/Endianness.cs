@@ -25,6 +25,8 @@ public class EndianBinaryReader : BinaryReader
         this.endianness = endianness;
     }
 
+    public EndianBinaryReader(byte[] data, HipHopFile.Platform platform) : this(data, platform.Endianness()) { }
+
     public override float ReadSingle()
     {
         if (endianness == Endianness.Little)
@@ -95,6 +97,13 @@ public class EndianBinaryReader : BinaryReader
     public AssetColor ReadColor() => new AssetColor(ReadByte(), ReadByte(), ReadByte(), ReadByte());
 
     public bool EndOfStream => BaseStream.Position == BaseStream.Length;
+
+    public override byte[] ReadBytes(int count)
+    {
+        if (BaseStream.Position + count > BaseStream.Length)
+            throw new EndOfStreamException("Attempted to read past the end of the stream.");
+        return base.ReadBytes(count);
+    }
 }
 
 public class EndianBinaryWriter : BinaryWriter

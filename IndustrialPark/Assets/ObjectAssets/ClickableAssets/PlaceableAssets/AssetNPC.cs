@@ -289,11 +289,8 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetNPC(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetNPC(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = entityHeaderEndPosition;
-
             ActivateRadius = reader.ReadSingle();
             ActivateFOV = reader.ReadSingle();
             DetectHeight = reader.ReadSingle();

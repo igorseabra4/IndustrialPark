@@ -107,7 +107,7 @@ namespace IndustrialPark.Gizmos
 
         public virtual SharpMesh Mesh => UseCones ? Program.Renderer.Cone : Program.Renderer.Pyramid;
         protected virtual List<Vector3> vertexList => UseCones ? Program.Renderer.coneVertices : Program.Renderer.pyramidVertices;
-        protected virtual List<Models.Triangle> triangleList => UseCones ? Program.Renderer.coneTriangles : Program.Renderer.pyramidTriangles;
+        protected virtual List<RenderWareFile.Triangle> triangleList => UseCones ? Program.Renderer.coneTriangles : Program.Renderer.pyramidTriangles;
 
         protected virtual bool drawLine => true;
 
@@ -142,7 +142,7 @@ namespace IndustrialPark.Gizmos
             float? smallestDistance = null;
 
             if (ray.Intersects(ref boundingBox))
-                foreach (Models.Triangle t in triangleList)
+                foreach (RenderWareFile.Triangle t in triangleList)
                     if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
                         if (smallestDistance == null || distance < smallestDistance)
                             smallestDistance = distance;

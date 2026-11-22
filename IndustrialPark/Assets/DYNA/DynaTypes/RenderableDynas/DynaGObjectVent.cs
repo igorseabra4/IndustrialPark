@@ -1,5 +1,4 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -41,11 +40,8 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public int DamagePoints { get; set; }
 
-        public DynaGObjectVent(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Vent, game, endianness)
+        public DynaGObjectVent(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Vent, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = dynaDataStartPosition;
-
             VentType = reader.ReadUInt32();
             _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
             _yaw = reader.ReadSingle();
@@ -100,15 +96,15 @@ namespace IndustrialPark.Assets
 
         protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
-        public override void CreateTransformMatrix(SharpRenderer renderer)
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.RotationX(-MathUtil.PiOverTwo)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            base.CreateBoundingBox(renderer);
+            boundingBox = CreateBoundingBox(vertexSource(renderer), world);
         }
 
         public override void Draw(SharpRenderer renderer)

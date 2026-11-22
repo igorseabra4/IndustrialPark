@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
 using IndustrialPark.ArchiveEditors;
 using IndustrialPark.Archives;
-using IndustrialPark.Assets.Colors;
 using IndustrialPark.Assets;
+using IndustrialPark.Assets.Colors;
 using IndustrialPark.Gizmos;
 using IndustrialPark.Scripting;
 using Microsoft.WindowsAPICodePack.Dialogs;
@@ -41,11 +41,6 @@ namespace IndustrialPark
             this.settings = settings;
             InitializeComponent();
             InitAdvancedDocking();
-
-#if !DEBUG
-            openFolderToolStripMenuItem.Visible = false;
-            dynaNameSearcherToolStripMenuItem.Visible = false;
-#endif
 
             SetUiAssetsVisibility(false);
 
@@ -127,7 +122,7 @@ namespace IndustrialPark
                 try
                 {
 #endif
-                AddArchiveEditor(file);
+                AddArchiveEditor(file, recalculateMatrices: false);
 #if !DEBUG
                 }
                 catch (Exception ex)
@@ -135,6 +130,7 @@ namespace IndustrialPark
                     MessageBox.Show("Error opening file: " + ex.Message);
                 }
 #endif
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
@@ -803,64 +799,6 @@ namespace IndustrialPark
                 Program.HansMainForm.Show(this);
         }
 
-        private void openFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var chooseFolder = new CommonOpenFileDialog()
-            {
-                IsFolderPicker = true
-            };
-            if (chooseFolder.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                var dirList = new List<string> { chooseFolder.FileName };
-                foreach (var s in Directory.GetDirectories(chooseFolder.FileName))
-                    dirList.Add(s);
-
-                var hipList = new List<string>();
-                foreach (var s in dirList)
-                    foreach (var ss in Directory.GetFiles(s))
-                    {
-                        var extensionToLower = Path.GetExtension(ss).ToLower();
-                        if (extensionToLower.Equals(".hip") || extensionToLower.Equals(".hop"))
-                            hipList.Add(ss);
-                    }
-
-                var scoobyPlat = Platform.Unknown;
-
-                var p = new ProgressBar("Opening files...");
-                p.SetProgressBar(0, hipList.Count, 1);
-                p.Show(this);
-
-                var layerLogs = new List<string>();
-                var layerTypes = new Dictionary<LayerType, HashSet<AssetType>>();
-
-                foreach (var hip in hipList)
-                {
-                    p.Text = Path.GetFileName(hip);
-                    HipFile hipFile = HipFile.FromPath(hip);
-                    if (hipFile.platform == Platform.Unknown && scoobyPlat != Platform.Unknown)
-                        hipFile.platform = scoobyPlat;
-                    var archive = new Archive(hipFile, hip, true, out _);
-                    scoobyPlat = archive.Platform;
-
-                    for (int i = 0; i < archive.LayerCount; i++)
-                    {
-                        var lType = archive.GetLayerTypeGeneric(i);
-                        if (!layerTypes.ContainsKey(lType))
-                            layerTypes[lType] = new HashSet<AssetType>();
-                        foreach (var t in archive.GetLayerAssetIDs(i).Select(a => archive.GetAsset(a).assetType).ToHashSet())
-                            layerTypes[lType].Add(t);
-                    }
-
-                    archive.Dispose();
-                    p.PerformStep();
-                }
-
-                File.WriteAllText("layerslogs.txt", string.Join("\n", layerTypes.OrderBy(l => (int)l.Key).Select(k => $"{k.Key}: {string.Join(", ", k.Value.Select(v => v.ToString()).OrderBy(f => f))}")));
-
-                p.Close();
-            }
-        }
-
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
             viewConfigToolStripMenuItem.PerformClick();
@@ -1280,7 +1218,7 @@ namespace IndustrialPark
                     }
                 }
 
-            RefreshTexturesAndModels();
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
 
             if (project.hiddenAssets.Count != 0)
                 foreach (var ae in archiveEditors)
@@ -1312,12 +1250,13 @@ namespace IndustrialPark
 
             UpdateToolbarVisibilityButtons();
         }
+
         private void SetProjectToolStripStatusLabel()
         {
             toolStripStatusLabelProject.Text = "Project: " + (currentProjectPath ?? "None");
         }
 
-        public ArchiveEditor AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown, bool show = true, bool refreshTexturesModels = true)
+        public ArchiveEditor AddArchiveEditor(string filePath = null, Platform scoobyPlatform = Platform.Unknown, bool show = true, bool recalculateMatrices = true)
         {
             var ae = new ArchiveEditor(filePath, scoobyPlatform);
             ArchiveEditors.Add(ae);
@@ -1349,8 +1288,8 @@ namespace IndustrialPark
             if (!show)
                 ae.Hide();
 
-            if (refreshTexturesModels)
-                RefreshTexturesAndModels();
+            if (recalculateMatrices)
+                Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
 
             return ae;
         }
@@ -1358,7 +1297,7 @@ namespace IndustrialPark
         public void EditorUpdate()
         {
             closeAllEditorsToolStripMenuItem.Enabled = ArchiveEditors.Count > 0;
-            RefreshTexturesAndModels();
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
             SetupAssetVisibilityButtons();
         }
 
@@ -1731,16 +1670,15 @@ namespace IndustrialPark
 
         public void RefreshTexturesAndModels()
         {
-            var textures = ArchiveEditors.SelectMany(ae => ae.archive?.Assets.OfType<AssetRWTX>() ?? []);
+            var textures = ArchiveEditors.SelectMany(ae => ae.archive?.Assets.OfType<AssetRWTX>() ?? []).ToList();
             var progressBar = new ProgressBar("Setting up textures and models");
-            progressBar.SetProgressBar(0, textures.Count() * 2 + Program.Renderer.Assets.ModelCount + Program.Renderer.Assets.MatrixCount, 1);
+            progressBar.SetProgressBar(0, textures.Count * 2 + Program.Renderer.Assets.MatrixCount, 1);
             progressBar.Show(this);
 
             try
             {
                 Program.TextureManager.ClearTextures();
                 TextureConverter.SetupTextureDisplay(textures, progressBar);
-                Program.Renderer.Assets.ResetModels(Program.Renderer, progressBar);
                 Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer, progressBar);
             }
             finally

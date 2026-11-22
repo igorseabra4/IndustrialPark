@@ -31,17 +31,17 @@ public static class TextureIOHelper
             string ini =
                 "[Main]\r\n" +
                 (custom_output ??
-                "gameRoot=" + tempGcTxdsDir + "\r\n" +
-                "outputRoot=" + tempPcTxdsDir + "\r\n" +
+                $"gameRoot={tempGcTxdsDir}\r\n" +
+                $"outputRoot={tempPcTxdsDir}\r\n" +
                 "targetVersion=VC\r\n" +
                 "targetPlatform=PC\r\n"
                 ) +
                 "clearMipmaps=false\r\n" +
-                "generateMipmaps=" + generateMipmaps.ToString().ToLower() + "\r\n" +
+                $"generateMipmaps={generateMipmaps.ToString().ToLower()}\r\n" +
                 "mipGenMode=default\r\n" +
                 "mipGenMaxLevel=10\r\n" +
                 "improveFiltering=true\r\n" +
-                "compressTextures=" + compress.ToString().ToLower() + "\r\n" +
+                $"compressTextures={compress.ToString().ToLower()}\r\n" +
                 "compressionQuality=1.0\r\n" +
                 "palRuntimeType=PNGQUANT\r\n" +
                 "dxtRuntimeType=SQUISH\r\n" +
@@ -211,14 +211,15 @@ public static class TextureIOHelper
             File.WriteAllBytes(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(
                 new TextureDictionary_0016(textureNativeList), currentTextureVersion(game, platform)));
 
-            PerformTXDConversionExternal(compress, mipmaps,
-                "gameRoot=" + tempPcTxdsDir + "\r\n" +
-                "outputRoot=" + tempGcTxdsDir + "\r\n" +
-                "targetVersion=VC\r\n" +
-                "targetPlatform=" +
-                (platform == Platform.GameCube ? "Gamecube" :
+            var platformText = (platform == Platform.GameCube ? "Gamecube" :
                 platform == Platform.Xbox ? "XBOX" :
-                platform == Platform.PS2 ? "PS2" : "PC"));
+                platform == Platform.PS2 ? "PS2" : "PC");
+
+            PerformTXDConversionExternal(compress, mipmaps,
+                $"gameRoot={tempPcTxdsDir}\r\n" +
+                $"outputRoot={tempGcTxdsDir}\r\n" +
+                "targetVersion=VC\r\n" +
+                $"targetPlatform={platformText}\r\n");
 
             ReadFileMethods.treatStuffAsByteArray = true;
 
@@ -230,7 +231,7 @@ public static class TextureIOHelper
                 string sanitizedTexture = game == Game.Scooby && appendRW3 ? texture.textureNativeStruct.textureName + ".RW3" : texture.textureNativeStruct.textureName;
                 AHDRs.Add(new Section_AHDR(BKDRHash(sanitizedTexture), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture),
                     new Section_ADBG(0, sanitizedTexture, "", 0),
-                    ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(texture), currentTextureVersion(game, platform))));
+                    ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(texture), currentTextureVersion(game, platform)), game, platform));
             }
 
             // fix for apparent transparency issue

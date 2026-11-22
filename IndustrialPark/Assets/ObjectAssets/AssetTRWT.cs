@@ -67,18 +67,13 @@ namespace IndustrialPark.Assets
             Entries = new ThrowableEntry[0];
         }
 
-        public AssetTRWT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetTRWT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                Version = reader.ReadInt32();
-                var count = reader.ReadInt32();
-                Entries = new ThrowableEntry[count];
-                for (int i = 0; i < count; i++)
-                    Entries[i] = new ThrowableEntry(reader);
-            }
+            Version = reader.ReadInt32();
+            var count = reader.ReadInt32();
+            Entries = new ThrowableEntry[count];
+            for (int i = 0; i < count; i++)
+                Entries[i] = new ThrowableEntry(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

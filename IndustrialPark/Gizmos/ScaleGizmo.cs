@@ -44,7 +44,7 @@ namespace IndustrialPark.Gizmos
 
         public override SharpMesh Mesh => Program.Renderer.Cube;
         protected override List<Vector3> vertexList => Program.Renderer.cubeVertices;
-        protected override List<Models.Triangle> triangleList => Program.Renderer.cubeTriangles;
+        protected override List<RenderWareFile.Triangle> triangleList => Program.Renderer.cubeTriangles;
         protected override bool drawLine => Type != GizmoType.ScaleAll;
     }
 }

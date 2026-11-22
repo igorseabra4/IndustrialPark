@@ -132,25 +132,20 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public int Emit_limit_reset_time { get; set; }
 
-        public AssetPARP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPARP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            ParticleSystem = reader.ReadUInt32();
 
-                ParticleSystem = reader.ReadUInt32();
+            _structs = new StructPARP[14];
 
-                _structs = new StructPARP[14];
+            for (int i = 0; i < _structs.Length; i++)
+                _structs[i] = new StructPARP(reader, i);
 
-                for (int i = 0; i < _structs.Length; i++)
-                    _structs[i] = new StructPARP(reader, i);
-
-                VelX = reader.ReadSingle();
-                VelY = reader.ReadSingle();
-                VelZ = reader.ReadSingle();
-                Emit_Limit = reader.ReadInt32();
-                Emit_limit_reset_time = reader.ReadInt32();
-            }
+            VelX = reader.ReadSingle();
+            VelY = reader.ReadSingle();
+            VelZ = reader.ReadSingle();
+            Emit_Limit = reader.ReadInt32();
+            Emit_limit_reset_time = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

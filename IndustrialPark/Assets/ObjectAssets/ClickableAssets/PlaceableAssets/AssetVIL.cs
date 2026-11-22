@@ -165,24 +165,19 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetVIL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetVIL(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            NpcFlags.FlagValueInt = reader.ReadUInt32();
+            NpcType = reader.ReadUInt32();
+            NPCSettingsObject = reader.ReadUInt32();
+            MovePoint = reader.ReadUInt32();
+            TaskBox1 = reader.ReadUInt32();
+            TaskBox2 = reader.ReadUInt32();
+
+            if (game >= Game.Incredibles)
             {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                NpcFlags.FlagValueInt = reader.ReadUInt32();
-                NpcType = reader.ReadUInt32();
-                NPCSettingsObject = reader.ReadUInt32();
-                MovePoint = reader.ReadUInt32();
-                TaskBox1 = reader.ReadUInt32();
-                TaskBox2 = reader.ReadUInt32();
-
-                if (game >= Game.Incredibles)
-                {
-                    NavMesh2 = reader.ReadUInt32();
-                    NPCSettings = reader.ReadUInt32();
-                }
+                NavMesh2 = reader.ReadUInt32();
+                NPCSettings = reader.ReadUInt32();
             }
         }
 

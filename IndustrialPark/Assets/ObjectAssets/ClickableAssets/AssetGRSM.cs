@@ -71,11 +71,8 @@ namespace IndustrialPark.Assets
         [Browsable(false)]
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public AssetGRSM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetGRSM(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             var numVertices = reader.ReadUInt32();
             var numTriangles = reader.ReadUInt32();
 
@@ -117,7 +114,7 @@ namespace IndustrialPark.Assets
             SerializeLinks(writer);
         }
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             if (Vertices.Length == 0)
                 boundingBox = new BoundingBox();
@@ -150,29 +147,21 @@ namespace IndustrialPark.Assets
                     new Color(v.Color.R, v.Color.G, v.Color.B, v.Color.A)));
             }
 
-            triangles = new List<Models.Triangle>(Triangles.Length);
+            triangles = new List<RenderWareFile.Triangle>(Triangles.Length);
 
             foreach (var T in Triangles)
-                triangles.Add(new Models.Triangle
+                triangles.Add(new RenderWareFile.Triangle
                 {
                     vertex1 = T.Vertex1,
                     vertex2 = T.Vertex2,
                     vertex3 = T.Vertex3,
-
-                    normal1 = T.Vertex1,
-                    normal2 = T.Vertex2,
-                    normal3 = T.Vertex3,
-
-                    Color1 = T.Vertex1,
-                    Color2 = T.Vertex2,
-                    Color3 = T.Vertex3
                 });
 
             vertices = new List<Vector3>(Vertices.Length);
             foreach (var v in verticesCT)
                 vertices.Add((Vector3)v.Position);
 
-            Setup(Program.Renderer, verticesCT);
+            Setup(renderer, verticesCT);
         }
 
         private void Setup(SharpRenderer renderer, List<VertexColoredTextured> vertices)
@@ -199,7 +188,7 @@ namespace IndustrialPark.Assets
         private BoundingBox boundingBox;
 
         private List<Vector3> vertices;
-        private List<Models.Triangle> triangles;
+        private List<RenderWareFile.Triangle> triangles;
 
         public bool ShouldDraw(SharpRenderer renderer)
         {

@@ -67,36 +67,31 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public DynaGObjectTalkBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__talk_box, game, endianness)
+        public DynaGObjectTalkBox(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__talk_box, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Dialog_TextBoxID = reader.ReadUInt32();
-                Prompt_TextBoxID = reader.ReadUInt32();
-                Quit_TextBoxID = reader.ReadUInt32();
-                Trap = reader.ReadByte();
-                Pause = reader.ReadByte();
-                AllowQuit = reader.ReadByte();
-                TriggerPads = reader.ReadByte();
-                Page = reader.ReadByte();
-                Show = reader.ReadByte();
-                Hide = reader.ReadByte();
-                AudioEffect = reader.ReadByte();
-                TeleportPointerID = reader.ReadUInt32();
-                AutoWaitTypeTime = reader.ReadByte();
-                AutoWaitTypePrompt = reader.ReadByte();
-                AutoWaitTypeSound = reader.ReadByte();
-                AutoWaitTypeEvent = reader.ReadByte();
-                AutoWaitDelay = reader.ReadSingle();
-                AutoWaitWhichEvent = reader.ReadInt32();
-                PromptSkip_TextID = reader.ReadUInt32();
-                PromptNoSkip_TextID = reader.ReadUInt32();
-                PromptQuitTextID = reader.ReadUInt32();
-                PromptNoQuitTextID = reader.ReadUInt32();
-                PromptYesNoTextID = reader.ReadUInt32();
-            }
+            Dialog_TextBoxID = reader.ReadUInt32();
+            Prompt_TextBoxID = reader.ReadUInt32();
+            Quit_TextBoxID = reader.ReadUInt32();
+            Trap = reader.ReadByte();
+            Pause = reader.ReadByte();
+            AllowQuit = reader.ReadByte();
+            TriggerPads = reader.ReadByte();
+            Page = reader.ReadByte();
+            Show = reader.ReadByte();
+            Hide = reader.ReadByte();
+            AudioEffect = reader.ReadByte();
+            TeleportPointerID = reader.ReadUInt32();
+            AutoWaitTypeTime = reader.ReadByte();
+            AutoWaitTypePrompt = reader.ReadByte();
+            AutoWaitTypeSound = reader.ReadByte();
+            AutoWaitTypeEvent = reader.ReadByte();
+            AutoWaitDelay = reader.ReadSingle();
+            AutoWaitWhichEvent = reader.ReadInt32();
+            PromptSkip_TextID = reader.ReadUInt32();
+            PromptNoSkip_TextID = reader.ReadUInt32();
+            PromptQuitTextID = reader.ReadUInt32();
+            PromptNoQuitTextID = reader.ReadUInt32();
+            PromptYesNoTextID = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

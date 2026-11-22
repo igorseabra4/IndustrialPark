@@ -52,7 +52,7 @@ namespace IndustrialPark.Assets
         }
     }
 
-    public class AssetSPLN : BaseAsset, IRenderableAsset, IDisposableAsset
+    public class AssetSPLN : BaseAsset, IRenderableAsset, IDisposableAsset, ISetupableAsset
     {
         private const string categoryName = "Spline";
 
@@ -67,29 +67,19 @@ namespace IndustrialPark.Assets
         public SplineVector[] Points
         {
             get => _points;
-            set
-            {
-                _points = value;
-                Setup(Program.Renderer);
-            }
+            set => _points = value;
         }
         private AssetSingle[] _points2;
         [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetSingle[] Points2
         {
             get => _points2;
-            set
-            {
-                _points2 = value;
-            }
+            set => _points2 = value;
         }
 
-        public AssetSPLN(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
+        public AssetSPLN(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
             BaseFlags = BitConverter.ToUInt16(AHDR.data, 6);
-
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
 
             SplineType = reader.ReadInt32();
             int pointCount = reader.ReadInt32() - SplineType; // point count plus 3
@@ -108,8 +98,6 @@ namespace IndustrialPark.Assets
 
             for (int i = 0; i < _points.Length; i++)
                 _points[i].W = reader.ReadSingle();
-
-            Setup(renderer);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -151,9 +139,6 @@ namespace IndustrialPark.Assets
 
         public void Setup(SharpRenderer renderer)
         {
-            if (renderer == null)
-                return;
-
             renderer.completeVertexBufferList.Remove(vertexBuffer);
             if (vertexBuffer != null)
                 vertexBuffer.Dispose();
@@ -182,7 +167,7 @@ namespace IndustrialPark.Assets
         public void Draw(SharpRenderer renderer) => renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity,
                 isSelected ? renderer.selectedObjectColor : Color.YellowGreen.ToVector4(), false);
 
-        public void CreateTransformMatrix(SharpRenderer renderer)
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             if (_points.Length == 0)
                 boundingBox = new BoundingBox();

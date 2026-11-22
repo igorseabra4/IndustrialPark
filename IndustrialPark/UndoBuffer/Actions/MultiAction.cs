@@ -96,7 +96,7 @@ public class MultiAction : IReversibleAction
 
                 // Removed -> Added: replace with a data swap.
                 case (AssetAddedAction { AssetRemoved: true } removed, AssetAddedAction { AssetRemoved: false } added):
-                    result[previous.Index] = new AssetDataSwappedAction(archive, assetID, removed.AssetData, added.AssetData, archive.Platform);
+                    result[previous.Index] = new AssetDataSwappedAction(archive, assetID, removed.AssetData, added.AssetData, archive.Game, archive.Platform);
                     break;
 
                 // Added -> Modified: keep addition with final data.

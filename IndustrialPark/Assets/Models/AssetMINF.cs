@@ -182,7 +182,7 @@ public class AssetMINF : Asset, IAssetWithModel
         set
         {
             _parameters = value;
-            CreateTransformMatrix();
+            CalculateTransformation();
         }
     }
 
@@ -192,9 +192,8 @@ public class AssetMINF : Asset, IAssetWithModel
         _parameters = new MinfParam[0];
     }
 
-    public AssetMINF(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+    public AssetMINF(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
     {
-        using var reader = new EndianBinaryReader(AHDR.data, endianness);
         reader.ReadInt32();
         int amountOfReferences = reader.ReadInt32();
         AnimationTable = reader.ReadUInt32();
@@ -213,7 +212,7 @@ public class AssetMINF : Asset, IAssetWithModel
             mParams.Add(new MinfParam(reader));
         _parameters = mParams.ToArray();
 
-        CreateTransformMatrix();
+        CalculateTransformation();
     }
 
     public override void Serialize(EndianBinaryWriter writer)
@@ -234,6 +233,7 @@ public class AssetMINF : Asset, IAssetWithModel
             b.Serialize(writer);
     }
 
+    [Browsable(false)]
     public string fileNameWithoutExtension => assetName.Replace(".MINF", "");
 
 
@@ -267,7 +267,7 @@ public class AssetMINF : Asset, IAssetWithModel
     [Browsable(false)]
     public Matrix TransformMatrix { get; private set; }
 
-    public void CreateTransformMatrix()
+    public void CalculateTransformation()
     {
         TransformMatrix = Matrix.Scaling(GetScaleParameter());
     }

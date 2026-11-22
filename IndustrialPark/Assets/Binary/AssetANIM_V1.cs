@@ -79,10 +79,9 @@ namespace IndustrialPark.Assets
             ReadAnim(reader);
         }
 
-        public AssetANIM_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetANIM_V1(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-                ReadAnim(reader);
+            ReadAnim(reader);
         }
 
         public void ReadAnim(EndianBinaryReader reader)

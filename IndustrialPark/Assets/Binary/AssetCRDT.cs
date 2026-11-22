@@ -367,28 +367,25 @@ namespace IndustrialPark.Assets
             Sections = new CreditsEntry[0];
         }
 
-        public AssetCRDT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetCRDT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
             byte[] _data = new byte[AHDR.data.Length];
             System.Array.Copy(AHDR.data, _data, AHDR.data.Length);
 
-            using (var reader = new EndianBinaryReader(_data, endianness))
-            {
-                reader.ReadUInt32(); // beef
-                Version = reader.ReadUInt32();
-                CrdId = reader.ReadUInt32();
-                State = reader.ReadUInt32();
-                TotalTime = reader.ReadSingle();
-                int totalsize = reader.ReadInt32();
+            reader.ReadUInt32(); // beef
+            Version = reader.ReadUInt32();
+            CrdId = reader.ReadUInt32();
+            State = reader.ReadUInt32();
+            TotalTime = reader.ReadSingle();
+            int totalsize = reader.ReadInt32();
 
-                if (State == 3)
-                    DecipherData(ref _data);
+            if (State == 3)
+                DecipherData(ref _data);
 
-                var sections = new List<CreditsEntry>();
-                while (!reader.EndOfStream)
-                    sections.Add(new CreditsEntry(reader));
-                Sections = sections.ToArray();
-            }
+            var sections = new List<CreditsEntry>();
+            while (!reader.EndOfStream)
+                sections.Add(new CreditsEntry(reader));
+            Sections = sections.ToArray();
         }
 
         private const string Key = "xCMChunkHand";

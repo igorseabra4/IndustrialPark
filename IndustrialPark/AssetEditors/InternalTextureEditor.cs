@@ -28,7 +28,7 @@ namespace IndustrialPark.ArchiveEditors
 
             foreach (Bitmap bitmap in TextureConverter.ExportTXDToBitmaps(asset.Data, false).Values)
                 b = bitmap;
-            pictureBox1.Image = b;
+                pictureBox1.Image = b;
 
             if (b != null)
             {
@@ -45,7 +45,7 @@ namespace IndustrialPark.ArchiveEditors
 
         private void InternalTextureEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            b.Dispose();
+            b?.Dispose();
         }
 
         private new AssetRWTX asset => (AssetRWTX)base.asset;
@@ -60,13 +60,15 @@ namespace IndustrialPark.ArchiveEditors
         {
             SaveFileDialog a = new SaveFileDialog()
             {
-                Filter = "All supported formats|*.png;*.bmp;*.gif;*.jpeg;*.jpg;*.tiff;*.rwtex" +
+                Filter = "All supported formats|*.png;*.bmp;*.gif;*.jpeg;*.jpg;*.tiff;*.txd;*.rwtex" +
                 "|PNG Files|*.png" +
                 "|BMP Files|*.bmp" +
                 "|GIF Files|*.gif" +
                 "|JPG Files|*.jpeg;*.jpg;" +
                 "|TIFF Files|*.tiff" +
-                "|RWTEX Files|*.rwtex",
+                "|TXD Files|*.txd" +
+                "|RWTEX Files|*.rwtex" +
+                "|All Files|*",
 
                 FileName = Path.ChangeExtension(asset.assetName, ".png")
             };
@@ -74,6 +76,9 @@ namespace IndustrialPark.ArchiveEditors
             {
                 switch (Path.GetExtension(a.FileName).ToLower())
                 {
+                    case ".txd":
+                        File.WriteAllBytes(a.FileName, asset.Serialize(archiveEditor.archive.Platform.Endianness()));
+                        break;
                     case ".rwtex":
                         ExportSingleTextureToRWTEX(asset.Data, a.FileName);
                         break;

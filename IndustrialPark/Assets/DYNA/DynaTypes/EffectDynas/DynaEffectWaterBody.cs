@@ -23,19 +23,14 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetID LightDir { get; set; }
 
-        public DynaEffectWaterBody(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__water_body, game, endianness)
+        public DynaEffectWaterBody(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__water_body, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                WaterBodyFlags.FlagValueInt = reader.ReadUInt32();
-                MotionType = reader.ReadUInt32();
-                Body = reader.ReadUInt32();
-                FacadeRefract = reader.ReadUInt32();
-                FacadeReflect = reader.ReadUInt32();
-                LightDir = reader.ReadUInt32();
-            }
+            WaterBodyFlags.FlagValueInt = reader.ReadUInt32();
+            MotionType = reader.ReadUInt32();
+            Body = reader.ReadUInt32();
+            FacadeRefract = reader.ReadUInt32();
+            FacadeReflect = reader.ReadUInt32();
+            LightDir = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

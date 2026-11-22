@@ -31,24 +31,19 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle Animate { get; set; }
 
-        public DynaEffectGrass(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__grass, game, endianness)
+        public DynaEffectGrass(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__grass, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Orient = reader.ReadByte();
-                reader.ReadByte();
-                EffectGrassFlags.FlagValueShort = reader.ReadUInt16();
-                GrassMesh = reader.ReadUInt32();
-                Model = reader.ReadUInt32();
-                WidthScale = reader.ReadSingle();
-                HeightScale = reader.ReadSingle();
-                DensityScale = reader.ReadSingle();
-                WidthMin = reader.ReadSingle();
-                HightMin = reader.ReadSingle();
-                Animate = reader.ReadSingle();
-            }
+            Orient = reader.ReadByte();
+            reader.ReadByte();
+            EffectGrassFlags.FlagValueShort = reader.ReadUInt16();
+            GrassMesh = reader.ReadUInt32();
+            Model = reader.ReadUInt32();
+            WidthScale = reader.ReadSingle();
+            HeightScale = reader.ReadSingle();
+            DensityScale = reader.ReadSingle();
+            WidthMin = reader.ReadSingle();
+            HightMin = reader.ReadSingle();
+            Animate = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

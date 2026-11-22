@@ -62,17 +62,14 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public AssetPICK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetPICK(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.ReadInt32();
-                _entries = new EntryPICK[reader.ReadInt32()];
-                for (int i = 0; i < _entries.Length; i++)
-                    _entries[i] = new EntryPICK(reader);
+            reader.ReadInt32();
+            _entries = new EntryPICK[reader.ReadInt32()];
+            for (int i = 0; i < _entries.Length; i++)
+                _entries[i] = new EntryPICK(reader);
 
-                UpdateDictionary();
-            }
+            UpdateDictionary();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

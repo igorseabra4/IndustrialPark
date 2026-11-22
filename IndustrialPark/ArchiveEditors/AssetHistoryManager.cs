@@ -43,7 +43,7 @@ public class AssetHistoryManager
         if (Enumerable.SequenceEqual(previous, next))
             return;
 
-        var action = new AssetDataSwappedAction(archive, asset.assetID, previous, next, archive.Platform);
+        var action = new AssetDataSwappedAction(archive, asset.assetID, previous, next, asset.game, archive.Platform);
 
         if (hard)
             Program.UndoBuffer.AddAction(new MultiAction(archiveEditor, [action]));
@@ -63,5 +63,10 @@ public class AssetHistoryManager
             if (a is AssetDataSwappedAction s && history.ContainsKey(s.AssetID))
                 history[s.AssetID] = s.NewData;
         }
+    }
+
+    public void Dispose()
+    {
+        Program.UndoBuffer.ActionAdded -= UndoBuffer_ActionAdded;
     }
 }

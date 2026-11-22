@@ -18,10 +18,10 @@ public class AssetGeneric : Asset
         Data = data;
     }
 
-    public AssetGeneric(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+    public AssetGeneric(Section_AHDR AHDR) : base(AHDR)
     {
         Data = AHDR.data;
-        this.endianness = endianness;
+        endianness = AHDR.Platform.Endianness();
     }
 
     public override void Serialize(EndianBinaryWriter writer)
@@ -37,21 +37,19 @@ public class AssetGeneric : Asset
             try
             {
                 var values = new List<AssetID>();
-                var reader = new EndianBinaryReader(Data, endianness);
+                using var reader = new EndianBinaryReader(Data, endianness);
                 while (!reader.EndOfStream)
                     values.Add(reader.ReadUInt32());
                 return values.ToArray();
             }
-            catch { return new AssetID[0]; }
+            catch { return []; }
         }
         set
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                foreach (var f in value)
-                    writer.Write(f);
-                Data = writer.ToArray();
-            }
+            using var writer = new EndianBinaryWriter(endianness);
+            foreach (var f in value)
+                writer.Write(f);
+            Data = writer.ToArray();
         }
     }
 
@@ -63,21 +61,19 @@ public class AssetGeneric : Asset
             try
             {
                 var values = new List<AssetSingle>();
-                var reader = new EndianBinaryReader(Data, endianness);
+                using var reader = new EndianBinaryReader(Data, endianness);
                 while (!reader.EndOfStream)
                     values.Add(reader.ReadSingle());
                 return values.ToArray();
             }
-            catch { return new AssetSingle[0]; }
+            catch { return []; }
         }
         set
         {
-            using (var writer = new EndianBinaryWriter(endianness))
-            {
-                foreach (var f in value)
-                    writer.Write(f);
-                Data = writer.ToArray();
-            }
+            using var writer = new EndianBinaryWriter(endianness);
+            foreach (var f in value)
+                writer.Write(f);
+            Data = writer.ToArray();
         }
     }
 }

@@ -28,21 +28,16 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetSingle TeleportTimer { get; set; }
 
-        public DynaGObjectTaxi(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Taxi, game, endianness)
+        public DynaGObjectTaxi(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Taxi, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Marker = reader.ReadUInt32();
-                Camera = reader.ReadUInt32();
-                Portal = reader.ReadUInt32();
-                TalkBox = reader.ReadUInt32();
-                Text = reader.ReadUInt32();
-                SimpleObject = reader.ReadUInt32();
-                InvisibleTimer = reader.ReadSingle();
-                TeleportTimer = reader.ReadSingle();
-            }
+            Marker = reader.ReadUInt32();
+            Camera = reader.ReadUInt32();
+            Portal = reader.ReadUInt32();
+            TalkBox = reader.ReadUInt32();
+            Text = reader.ReadUInt32();
+            SimpleObject = reader.ReadUInt32();
+            InvisibleTimer = reader.ReadSingle();
+            TeleportTimer = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

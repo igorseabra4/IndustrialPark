@@ -27,15 +27,10 @@ namespace IndustrialPark.Assets
         [Category(dynaCategoryName)]
         public AssetID Unknown54 { get; set; }
 
-        public DynaEnemyNeptune(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Neptune, game, endianness)
+        public DynaEnemyNeptune(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__Neptune, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                Unknown50 = reader.ReadUInt32();
-                Unknown54 = reader.ReadUInt32();
-            }
+            Unknown50 = reader.ReadUInt32();
+            Unknown54 = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

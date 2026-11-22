@@ -82,29 +82,24 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public DynaGObjectNPCSettings(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__NPCSettings, game, endianness)
+        public DynaGObjectNPCSettings(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__NPCSettings, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                BasisType = (NpcSettingsBasisType)reader.ReadInt32();
-                AllowDetect = reader.ReadByteBool();
-                AllowPatrol = reader.ReadByteBool();
-                AllowWander = reader.ReadByteBool();
-                ReduceCollide = reader.ReadByteBool();
-                UseNavSplines = reader.ReadByteBool();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                AllowChase = reader.ReadByteBool();
-                AllowAttack = reader.ReadByteBool();
-                AssumeLOS = reader.ReadByteBool();
-                AssumeFOV = reader.ReadByteBool();
-                DuploWaveMode = (En_dupowavmod)reader.ReadInt32();
-                DuploSpawnDelay = reader.ReadSingle();
-                DuploSpawnLifeMax = reader.ReadInt32();
-            }
+            BasisType = (NpcSettingsBasisType)reader.ReadInt32();
+            AllowDetect = reader.ReadByteBool();
+            AllowPatrol = reader.ReadByteBool();
+            AllowWander = reader.ReadByteBool();
+            ReduceCollide = reader.ReadByteBool();
+            UseNavSplines = reader.ReadByteBool();
+            reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            AllowChase = reader.ReadByteBool();
+            AllowAttack = reader.ReadByteBool();
+            AssumeLOS = reader.ReadByteBool();
+            AssumeFOV = reader.ReadByteBool();
+            DuploWaveMode = (En_dupowavmod)reader.ReadInt32();
+            DuploSpawnDelay = reader.ReadSingle();
+            DuploSpawnLifeMax = reader.ReadInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

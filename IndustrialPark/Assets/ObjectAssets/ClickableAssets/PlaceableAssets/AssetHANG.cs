@@ -29,21 +29,16 @@ namespace IndustrialPark.Assets
         {
         }
 
-        public AssetHANG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetHANG(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                HangFlags.FlagValueInt = reader.ReadUInt32();
-                PivotOffset = reader.ReadSingle();
-                LeverArm = reader.ReadSingle();
-                Gravity = reader.ReadSingle();
-                Acceleration = reader.ReadSingle();
-                Decay = reader.ReadSingle();
-                GrabDelay = reader.ReadSingle();
-                StopDeceleration = reader.ReadSingle();
-            }
+            HangFlags.FlagValueInt = reader.ReadUInt32();
+            PivotOffset = reader.ReadSingle();
+            LeverArm = reader.ReadSingle();
+            Gravity = reader.ReadSingle();
+            Acceleration = reader.ReadSingle();
+            Decay = reader.ReadSingle();
+            GrabDelay = reader.ReadSingle();
+            StopDeceleration = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

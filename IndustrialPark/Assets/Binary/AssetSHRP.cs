@@ -23,57 +23,54 @@ namespace IndustrialPark.Assets
             Entries = new Shrapnel[0];
         }
 
-        public AssetSHRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetSHRP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            int count = reader.ReadInt32();
+            ThisAssetID = reader.ReadUInt32();
+            _internalpointer = reader.ReadInt32();
+            Entries = new Shrapnel[count];
+
+            for (int i = 0; i < Entries.Length; i++)
             {
-                int count = reader.ReadInt32();
-                ThisAssetID = reader.ReadUInt32();
-                _internalpointer = reader.ReadInt32();
-                Entries = new Shrapnel[count];
+                var entryType = (IShrapnelType)reader.ReadInt32();
 
-                for (int i = 0; i < Entries.Length; i++)
+                switch (entryType)
                 {
-                    var entryType = (IShrapnelType)reader.ReadInt32();
-
-                    switch (entryType)
-                    {
-                        case IShrapnelType.Particle:
-                            Entries[i] = new ShrapnelEntry_Particle(reader, game);
-                            break;
-                        case IShrapnelType.Projectile:
-                            Entries[i] = new ShrapnelEntry_Projectile(reader, game);
-                            break;
-                        case IShrapnelType.Lightning:
-                            Entries[i] = new ShrapnelEntry_Lightning(reader, game);
-                            break;
-                        case IShrapnelType.Sound:
-                            Entries[i] = new ShrapnelEntry_Sound(reader, game);
-                            break;
-                        case IShrapnelType.Shockwave:
-                            Entries[i] = new ShrapnelEntry_Shockwave(reader, game);
-                            break;
-                        case IShrapnelType.Explosion:
-                            Entries[i] = new ShrapnelEntry_Explosion(reader, game);
-                            break;
-                        case IShrapnelType.Distortion:
-                            Entries[i] = new ShrapnelEntry_Distortion(reader, game);
-                            break;
-                        case IShrapnelType.Fire:
-                            Entries[i] = new ShrapnelEntry_Fire(reader, game);
-                            break;
-                        case IShrapnelType.Light:
-                            Entries[i] = new ShrapnelEntry_Light(reader, game);
-                            break;
-                        case IShrapnelType.Smoke:
-                            Entries[i] = new ShrapnelEntry_Smoke(reader, game);
-                            break;
-                        case IShrapnelType.Goo:
-                            Entries[i] = new ShrapnelEntry_Goo(reader, game);
-                            break;
-                        default:
-                            throw new Exception($"Unknown shrapnel entry type: {entryType}");
-                    }
+                    case IShrapnelType.Particle:
+                        Entries[i] = new ShrapnelEntry_Particle(reader, game);
+                        break;
+                    case IShrapnelType.Projectile:
+                        Entries[i] = new ShrapnelEntry_Projectile(reader, game);
+                        break;
+                    case IShrapnelType.Lightning:
+                        Entries[i] = new ShrapnelEntry_Lightning(reader, game);
+                        break;
+                    case IShrapnelType.Sound:
+                        Entries[i] = new ShrapnelEntry_Sound(reader, game);
+                        break;
+                    case IShrapnelType.Shockwave:
+                        Entries[i] = new ShrapnelEntry_Shockwave(reader, game);
+                        break;
+                    case IShrapnelType.Explosion:
+                        Entries[i] = new ShrapnelEntry_Explosion(reader, game);
+                        break;
+                    case IShrapnelType.Distortion:
+                        Entries[i] = new ShrapnelEntry_Distortion(reader, game);
+                        break;
+                    case IShrapnelType.Fire:
+                        Entries[i] = new ShrapnelEntry_Fire(reader, game);
+                        break;
+                    case IShrapnelType.Light:
+                        Entries[i] = new ShrapnelEntry_Light(reader, game);
+                        break;
+                    case IShrapnelType.Smoke:
+                        Entries[i] = new ShrapnelEntry_Smoke(reader, game);
+                        break;
+                    case IShrapnelType.Goo:
+                        Entries[i] = new ShrapnelEntry_Goo(reader, game);
+                        break;
+                    default:
+                        throw new Exception($"Unknown shrapnel entry type: {entryType}");
                 }
             }
         }

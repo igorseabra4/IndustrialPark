@@ -44,14 +44,9 @@ namespace IndustrialPark.Assets
             };
         }
 
-        public DynaEnemySupplyCrate(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__SupplyCrate, game, endianness)
+        public DynaEnemySupplyCrate(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__SupplyCrate, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                MovePoint = reader.ReadUInt32();
-            }
+            MovePoint = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

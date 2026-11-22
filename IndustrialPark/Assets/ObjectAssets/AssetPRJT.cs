@@ -39,28 +39,23 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public int ExtraSpace6 { get; set; }
 
-        public AssetPRJT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPRJT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                EffectType = reader.ReadInt32();
-                Model = reader.ReadUInt32();
-                Animation = reader.ReadUInt32();
-                AtRestModel = reader.ReadUInt32();
-                AtRestAnimation = reader.ReadUInt32();
-                DestructEnabled = reader.ReadInt32();
-                DestructTime = reader.ReadSingle();
-                DestructDist = reader.ReadSingle();
-                Oriented = reader.ReadInt32();
-                ExtraSpace1 = reader.ReadInt32();
-                ExtraSpace2 = reader.ReadInt32();
-                ExtraSpace3 = reader.ReadInt32();
-                ExtraSpace4 = reader.ReadInt32();
-                ExtraSpace5 = reader.ReadInt32();
-                ExtraSpace6 = reader.ReadInt32();
-            }
+            EffectType = reader.ReadInt32();
+            Model = reader.ReadUInt32();
+            Animation = reader.ReadUInt32();
+            AtRestModel = reader.ReadUInt32();
+            AtRestAnimation = reader.ReadUInt32();
+            DestructEnabled = reader.ReadInt32();
+            DestructTime = reader.ReadSingle();
+            DestructDist = reader.ReadSingle();
+            Oriented = reader.ReadInt32();
+            ExtraSpace1 = reader.ReadInt32();
+            ExtraSpace2 = reader.ReadInt32();
+            ExtraSpace3 = reader.ReadInt32();
+            ExtraSpace4 = reader.ReadInt32();
+            ExtraSpace5 = reader.ReadInt32();
+            ExtraSpace6 = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

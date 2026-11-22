@@ -16,13 +16,9 @@ namespace IndustrialPark.Assets
             ValidReferenceRequired]
         public AssetID Model { get; set; }
 
-        public DynaHudModel(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__model, game, endianness)
+        public DynaHudModel(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.hud__model, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaHudEnd;
-                Model = reader.ReadUInt32();
-            }
+            Model = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

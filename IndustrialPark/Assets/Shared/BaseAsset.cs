@@ -18,7 +18,7 @@ namespace IndustrialPark.Assets
         }
 
         [Category(categoryName), ReadOnly(true)]
-        public BaseAssetType BaseAssetType { get; set; }
+        public BaseAssetType BaseAssetType { get; private set; }
 
         [Category(categoryName), Browsable(false)]
         public ushort BaseFlags { get; set; }
@@ -102,8 +102,6 @@ namespace IndustrialPark.Assets
             }
         }
 
-        protected const int baseHeaderEndPosition = 8;
-
         protected int linkStartPosition(long streamLength, int linkCount) =>
             (int)(streamLength - linkCount * Link.sizeOfStruct - (this is AssetPLYR && game != Game.Scooby ? 4 : 0));
 
@@ -114,21 +112,25 @@ namespace IndustrialPark.Assets
             _links = new Link[0];
         }
 
-        public BaseAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public BaseAsset(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = 0x4;
+            int len = AHDR.data.Length > 0 ? AHDR.data.Length : (int)reader.BaseStream.Length;
+
+            var startPosition = reader.BaseStream.Position;
+            reader.BaseStream.Position += 0x4;
 
             BaseAssetType = (BaseAssetType)reader.ReadByte();
             byte LinkCount = reader.ReadByte();
 
             BaseFlags = reader.ReadUInt16();
 
-            reader.BaseStream.Position = linkStartPosition(reader.BaseStream.Length, LinkCount);
+            reader.BaseStream.Position = startPosition + linkStartPosition(len, LinkCount);
 
             _links = new Link[LinkCount];
             for (int i = 0; i < _links.Length; i++)
                 _links[i] = new Link(reader, LinkType.Normal, game);
+
+            reader.BaseStream.Position = startPosition + 8;
         }
 
         // meant for use with DUPC VIL only

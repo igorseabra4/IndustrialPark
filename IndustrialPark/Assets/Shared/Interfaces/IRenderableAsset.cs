@@ -6,7 +6,7 @@ namespace IndustrialPark.Assets
     {
         uint assetID { get; }
 
-        void CreateTransformMatrix(SharpRenderer renderer);
+        void CalculateTransformation(SharpRenderer renderer);
 
         float GetDistanceFrom(Vector3 position);
 

@@ -2,12 +2,9 @@
 using IndustrialPark.ArchiveEditors;
 using IndustrialPark.Archives;
 using IndustrialPark.Assets.Colors;
-using Newtonsoft.Json;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 
 namespace IndustrialPark.Assets
 {
@@ -168,8 +165,6 @@ namespace IndustrialPark.Assets
         [Category(categoryNameColor)]
         public AssetSingle ColorAlphaSpeed { get; set; }
 
-        protected int entityHeaderEndPosition => game == Game.BFBB ? 0x54 : 0x50;
-
         public EntityAsset(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) : base(assetName, assetType, baseAssetType)
         {
             VisibilityFlags.FlagValueByte = 1;
@@ -180,11 +175,8 @@ namespace IndustrialPark.Assets
             ColorAlphaSpeed = 255f;
         }
 
-        public EntityAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public EntityAsset(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using var reader = new EndianBinaryReader(AHDR.data, endianness);
-            reader.BaseStream.Position = baseHeaderEndPosition;
-
             VisibilityFlags.FlagValueByte = reader.ReadByte();
             TypeFlag = reader.ReadByte();
             Flag0A.FlagValueByte = reader.ReadByte();
@@ -259,7 +251,7 @@ namespace IndustrialPark.Assets
         [Browsable(false)]
         public abstract bool DontRender { get; }
 
-        public virtual void CreateTransformMatrix(SharpRenderer renderer)
+        public virtual void CalculateTransformation(SharpRenderer renderer)
         {
             world = ((renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.Scaling(_scale)
@@ -273,22 +265,7 @@ namespace IndustrialPark.Assets
         protected virtual void CreateBoundingBox(SharpRenderer renderer)
         {
             var model = renderer.Assets.GetModelFromRenderingDictionary(_model);
-            if (model != null)
-                CreateBoundingBox(renderer, model.vertexListG);
-            else
-                CreateBoundingBox(renderer, renderer.cubeVertices, 0.5f);
-        }
-
-        protected Vector3[] vertices;
-        protected List<RenderWareFile.Triangle> triangles;
-
-        protected virtual void CreateBoundingBox(SharpRenderer renderer, List<Vector3> vertexList, float multiplier = 1f)
-        {
-            vertices = new Vector3[vertexList.Count];
-            for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = Vector3.TransformCoordinate(vertexList[i] * multiplier, world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-            triangles = renderer.Assets.GetModelFromRenderingDictionary(_model)?.triangleList;
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.cubeVertices, world, model != null ? 1f : 0.5f);
         }
 
         public virtual bool ShouldDraw(SharpRenderer renderer)
@@ -332,20 +309,11 @@ namespace IndustrialPark.Assets
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world) : TriangleIntersection(ray);
+            {
+                var model = renderer.Assets.GetModelFromRenderingDictionary(_model);
+                return TriangleIntersection(ray, model?.triangleList ?? renderer.cubeTriangles, model?.vertexListG ?? renderer.cubeVertices, world);
+            }
             return null;
-        }
-
-        protected virtual float? TriangleIntersection(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-
-            return smallestDistance;
         }
 
         public BoundingBox GetBoundingBox()
@@ -438,7 +406,7 @@ namespace IndustrialPark.Assets
             foreach (var link in _links)
             {
                 uint PlatID;
-                switch ((EventBFBB)link.EventSendID)
+                switch (link.EventSendBFBB)
                 {
                     case EventBFBB.Drivenby:
                         PlatID = link.TargetAsset;
@@ -454,7 +422,7 @@ namespace IndustrialPark.Assets
                     var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(PlatID);
                     if (ae != null && ae.archive.GetAsset(PlatID) is EntityAsset entity)
                     {
-                        var useRotation = link.FloatParameter1 != 0 || (EventBFBB)link.EventSendID == EventBFBB.Mount;
+                        var useRotation = link.FloatParameter1 != 0 || link.EventSendBFBB == EventBFBB.Mount;
                         return (entity, useRotation);
                     }
                 }

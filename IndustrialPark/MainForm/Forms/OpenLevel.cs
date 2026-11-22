@@ -62,7 +62,7 @@ namespace IndustrialPark
             {
                 try
                 {
-                    Program.MainForm.AddArchiveEditor(txtHIP.Text, refreshTexturesModels: false);
+                    Program.MainForm.AddArchiveEditor(txtHIP.Text, recalculateMatrices: false);
                 }
                 catch (Exception ex)
                 {
@@ -77,7 +77,7 @@ namespace IndustrialPark
             {
                 try
                 {
-                    Program.MainForm.AddArchiveEditor(txtHOP.Text, refreshTexturesModels: false);
+                    Program.MainForm.AddArchiveEditor(txtHOP.Text, recalculateMatrices: false);
                 }
                 catch (Exception ex)
                 {
@@ -90,7 +90,7 @@ namespace IndustrialPark
             {
                 try
                 {
-                    Program.MainForm.AddArchiveEditor(txtBOOT.Text, refreshTexturesModels: false);
+                    Program.MainForm.AddArchiveEditor(txtBOOT.Text, recalculateMatrices: false);
                 }
                 catch (Exception ex)
                 {
@@ -105,7 +105,7 @@ namespace IndustrialPark
                 {
                     try
                     {
-                        Program.MainForm.AddArchiveEditor(((ListViewItem)item).Text, refreshTexturesModels: false);
+                        Program.MainForm.AddArchiveEditor(((ListViewItem)item).Text, recalculateMatrices: false);
                     }
                     catch (Exception ex)
                     {
@@ -115,7 +115,7 @@ namespace IndustrialPark
                 }
             }
 
-            Program.MainForm.RefreshTexturesAndModels();
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
 
             if (importSuccessful)
             {
