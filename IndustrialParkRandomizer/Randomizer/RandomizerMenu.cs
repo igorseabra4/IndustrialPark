@@ -21,6 +21,9 @@ namespace IndustrialPark.Randomizer
         {
             InitializeComponent();
 
+            if (!Directory.Exists(MainForm.PathToUserFolder))
+                Directory.CreateDirectory(MainForm.PathToUserFolder);
+
             if (File.Exists(pathToSettings))
             {
                 Randomizer_JSON_Settings settings = JsonConvert.DeserializeObject<Randomizer_JSON_Settings>(File.ReadAllText(pathToSettings));
