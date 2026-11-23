@@ -4,95 +4,130 @@ using System.IO;
 using System.IO.Compression;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.SoundUtility;
+
+public static class SoundUtility_FMOD
 {
-    public static class SoundUtility_FMOD
+    private static readonly object initializationLock = new();
+
+    private static string fsbankDir => Path.Combine(Program.ResourcesFolder, "FSBank");
+    private static string fsbankPath => Path.Combine(fsbankDir, "fsbank.exe");
+
+    private static bool fsbankInitialized = false;
+
+    public static byte[] ConvertSoundToFSB3(string fileName, int frequency, bool forcemono, bool compress)
     {
-        private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
+        string? tempFolder = null;
 
-        public static byte[] ConvertSoundToFSB3(string fileName, int frequency, bool forcemono, bool compress)
+        try
         {
-            try
-            {
-                if (!SoundUtility_ffmpeg.InitFfmpeg())
-                    return null;
-
-                if (File.Exists(ffmpegOutPath))
-                    File.Delete(ffmpegOutPath);
-
-                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -ac {(forcemono ? "1" : "2")} -ar {frequency} \"{ffmpegOutPath}\"");
-
-                if (!InitFSBank())
-                {
-                    if (File.Exists(ffmpegOutPath))
-                        File.Delete(ffmpegOutPath);
-                    return null;
-                }
-
-                if (File.Exists(fsbankOutPath))
-                    File.Delete(fsbankOutPath);
-
-                if (File.Exists(fsbankOutPath2))
-                    File.Delete(fsbankOutPath2);
-
-                if (File.Exists(fsbankTextPath))
-                    File.Delete(fsbankTextPath);
-
-                File.WriteAllText(fsbankTextPath, ffmpegOutPath);
-
-                ConvertFSBank(fsbankTextPath, fsbankOutPath, compress);
-
-                var file = File.ReadAllBytes(fsbankOutPath);
-
-                File.Delete(ffmpegOutPath);
-                File.Delete(fsbankOutPath);
-                File.Delete(fsbankTextPath);
-
-                if (File.Exists(fsbankOutPath2))
-                    File.Delete(fsbankOutPath2);
-
-                return file;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to convert sound: " + ex);
+            if (!SoundUtility_ffmpeg.InitFfmpeg())
                 return null;
-            }
+
+            if (!InitFSBank())
+                return null;
+
+            tempFolder = Path.Combine(Path.GetTempPath(), $"FSBConversion_{Guid.NewGuid():N}");
+
+            Directory.CreateDirectory(tempFolder);
+
+            string wavPath = Path.Combine(tempFolder, "input.wav");
+            string fsbPath = Path.Combine(tempFolder, "output.fsb");
+            string headerPath = Path.Combine(tempFolder, "output.h");
+            string listPath = Path.Combine(tempFolder, "list.txt");
+
+            // Decode and resample using FFmpeg.
+            SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -ac {(forcemono ? "1" : "2")} -ar {frequency} \"{wavPath}\"");
+
+            if (!File.Exists(wavPath))
+                throw new InvalidOperationException("FFmpeg did not produce an output file.");
+
+            File.WriteAllText(listPath, wavPath);
+
+            ConvertFSBank(listPath, fsbPath, compress);
+
+            if (!File.Exists(fsbPath))
+                throw new InvalidOperationException("FSBank did not produce an output file.");
+
+            return File.ReadAllBytes(fsbPath);
         }
-
-        private static bool fsbankInitialized = false;
-        private static string fsbankDir => Path.Combine(Application.StartupPath, "Resources", "FSBank");
-        private static string fsbankPath => Path.Combine(fsbankDir, "fsbank.exe");
-        private static string fsbankOutPath => Path.Combine(fsbankDir, "test_sound_out.fsb");
-        private static string fsbankOutPath2 => Path.Combine(fsbankDir, "test_sound_out.h");
-        private static string fsbankTextPath => Path.Combine(fsbankDir, "list.txt");
-
-        private static Process fsbankProcess;
-
-        private static bool InitFSBank()
+        catch (Exception ex)
         {
-            if (!fsbankInitialized)
-            {
-                if (!File.Exists(fsbankPath))
-                    ZipFile.ExtractToDirectory(Path.Combine(Application.StartupPath, "Resources", "FSBank.zip"), fsbankDir);
+            MessageBox.Show(
+                "Unable to convert sound: " + ex.Message,
+                "FSB conversion failed",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
 
-                fsbankProcess = new Process();
-                fsbankProcess.StartInfo.FileName = fsbankPath;
-                fsbankProcess.StartInfo.RedirectStandardOutput = true;
-                fsbankProcess.StartInfo.RedirectStandardError = true;
-                fsbankProcess.StartInfo.UseShellExecute = false;
-                fsbankProcess.EnableRaisingEvents = true;
-                fsbankInitialized = true;
+            return null;
+        }
+        finally
+        {
+            if (tempFolder != null)
+                SoundUtility_ffmpeg.TryDeleteDirectory(tempFolder);
+        }
+    }
+
+    #region FSBank initialization
+
+    private static bool InitFSBank()
+    {
+        lock (initializationLock)
+        {
+            if (fsbankInitialized && File.Exists(fsbankPath))
+                return true;
+
+            if (!File.Exists(fsbankPath))
+            {
+                string archivePath = Path.Combine(Program.ResourcesFolder, "FSBank.zip");
+
+                if (!File.Exists(archivePath))
+                    throw new FileNotFoundException("FSBank archive was not found.", archivePath);
+
+                Directory.CreateDirectory(fsbankDir);
+
+                ZipFile.ExtractToDirectory(archivePath, fsbankDir, overwriteFiles: true);
             }
+
+            if (!File.Exists(fsbankPath))
+                throw new InvalidDataException("FSBank.exe was not found after extracting the archive.");
+
+            fsbankInitialized = true;
 
             return true;
         }
-
-        private static void ConvertFSBank(string inPath, string outPath, bool compress)
-        {
-            fsbankProcess.StartInfo.Arguments = $"-o \"{outPath}\" \"{inPath}\" -p gc -f {(compress ? "gcadpcm" : "pcm")} -h";
-            fsbankProcess.Start();
-            fsbankProcess.WaitForExit();
-        }
     }
+
+    #endregion
+
+    #region FSBank conversion
+
+    private static void ConvertFSBank(string inPath, string outPath, bool compress)
+    {
+        using var process = new Process();
+
+        process.StartInfo.FileName = fsbankPath;
+        process.StartInfo.CreateNoWindow = true;
+        process.StartInfo.UseShellExecute = false;
+        process.StartInfo.WorkingDirectory = fsbankDir;
+
+        process.StartInfo.ArgumentList.Add("-o");
+        process.StartInfo.ArgumentList.Add(outPath);
+        process.StartInfo.ArgumentList.Add(inPath);
+        process.StartInfo.ArgumentList.Add("-p");
+        process.StartInfo.ArgumentList.Add("gc");
+        process.StartInfo.ArgumentList.Add("-f");
+        process.StartInfo.ArgumentList.Add(compress ? "gcadpcm" : "pcm");
+        process.StartInfo.ArgumentList.Add("-h");
+
+        if (!process.Start())
+            throw new InvalidOperationException("Could not start FSBank.");
+
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+            throw new InvalidOperationException($"FSBank exited with error code {process.ExitCode}.");
+    }
+
+    #endregion
 }

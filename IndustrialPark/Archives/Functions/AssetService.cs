@@ -77,7 +77,12 @@ public static class AssetService
     private static Asset ConvertHeaderToAsset(Section_AHDR AHDR)
     {
         if (AHDR.data.Length == 0)
+        {
+            if (AHDR.Platform == Platform.GameCube && AHDR.Game >= Game.Incredibles && (AHDR.assetType is AssetType.Sound or AssetType.SoundStream))
+                return new AssetSound(AHDR);
+
             return new AssetGeneric(AHDR);
+        }
 
         // intention is to, eventually, be able to read asset data directly from the hip stream, avoiding copy of the data into a byte array
         // will require inspecting asset readers and serializers to make uses of BaseStream.Position and BaseStream.Length agnostic to this

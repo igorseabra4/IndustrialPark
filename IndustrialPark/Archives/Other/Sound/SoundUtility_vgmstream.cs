@@ -1,7 +1,6 @@
 ﻿using IndustrialPark.Archives;
 using IndustrialPark.Assets;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -9,214 +8,311 @@ using System.Linq;
 using System.Media;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.SoundUtility;
+
+public static class SoundUtility_vgmstream
 {
-    public static class SoundUtility_vgmstream
+    private static readonly object initializationLock = new();
+    private static readonly object playerLock = new();
+
+    private static string vgmsFolder => Path.Combine(Program.ResourcesFolder, "vgmstream");
+    private static string vgmsPath => Path.Combine(vgmsFolder, "vgmstream-cli.exe");
+    private static string vgmsInPath => Path.Combine(vgmsFolder, "test_sound_in");
+    private static string vgmsOutPath => Path.Combine(vgmsFolder, "test_sound_out.wav");
+    private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
+
+    private static SoundPlayer player;
+    private static uint? playerSoundAssetId;
+    private static MemoryStream playerStream;
+
+    public static void DownloadVgmstream()
     {
-        public static void DownloadVgmstream()
-        {
-            AutomaticUpdater.DownloadAndUnzip(
-                "https://github.com/vgmstream/vgmstream/releases/download/r1866/vgmstream-win.zip",
-                Path.Combine(Application.StartupPath, "Resources", "vgmstream-win.zip"),
-                vgmsFolder,
-                "vgmstream");
+        AutomaticUpdater.DownloadAndUnzip(
+            "https://github.com/vgmstream/vgmstream/releases/download/r1866/vgmstream-win.zip",
+            Path.Combine(Program.ResourcesFolder, "vgmstream-win.zip"),
+            vgmsFolder,
+            "vgmstream");
 
-            ZipFile.ExtractToDirectory(
-                Path.Combine(Application.StartupPath, "Resources", "vgmstream_ip_fix.zip"),
-                vgmsFolder);
+        string patchPath = Path.Combine(Program.ResourcesFolder, "vgmstream_ip_fix.zip");
+
+        if (!File.Exists(patchPath))
+            throw new FileNotFoundException("vgmstream patch archive not found.", patchPath);
+
+        ZipFile.ExtractToDirectory(patchPath, vgmsFolder, overwriteFiles: true);
+
+        if (!File.Exists(vgmsPath))
+            throw new FileNotFoundException("vgmstream-cli.exe was not found after extraction.", vgmsPath);
+    }
+
+    private static bool InitVgmstream()
+    {
+        lock (initializationLock)
+        {
+            if (File.Exists(vgmsPath))
+                return true;
+
+            var result = MessageBox.Show(
+                "vgmstream not found under /Resources/vgmstream. Do you wish to download it?",
+                "vgmstream not found",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Error);
+
+            if (result != DialogResult.Yes)
+                return false;
+
+            DownloadVgmstream();
+
+            return File.Exists(vgmsPath);
+        }
+    }
+
+    public static void ConvertVgmstream(
+        string inPath,
+        string outPath,
+        double loopCount = -1,
+        double fadeTime = -1,
+        double fadeDelay = -1,
+        bool ignoreLooping = false)
+    {
+        using var process = new Process();
+
+        process.StartInfo = new ProcessStartInfo
+        {
+            FileName = vgmsPath,
+            WorkingDirectory = vgmsFolder,
+            CreateNoWindow = true,
+            UseShellExecute = false
+        };
+
+        if (loopCount >= 0)
+        {
+            process.StartInfo.ArgumentList.Add("-l");
+            process.StartInfo.ArgumentList.Add(loopCount.ToString(
+                System.Globalization.CultureInfo.InvariantCulture));
         }
 
-        private static bool vgmsInitialized = false;
-        private static string vgmsFolder => Path.Combine(Application.StartupPath, "Resources", "vgmstream");
-        private static string vgmsPath => Path.Combine(vgmsFolder, "vgmstream-cli.exe");
-        private static string vgmsInPath => Path.Combine(vgmsFolder, "test_sound_in");
-        private static string vgmsOutPath => Path.Combine(vgmsFolder, "test_sound_out.wav");
-        private static Process vgmsProcess;
-
-        private static SoundPlayer player;
-        private static uint playerSoundAssetId;
-
-        public static void ExportToFile(AssetSound asset, Archive archive, string fileName)
+        if (fadeTime >= 0)
         {
-            try
-            {
-                if (!InitVgmstream())
-                    return;
+            process.StartInfo.ArgumentList.Add("-f");
+            process.StartInfo.ArgumentList.Add(fadeTime.ToString(
+                System.Globalization.CultureInfo.InvariantCulture));
+        }
 
-                var soundData = archive.GetSoundData(asset.assetID, asset.Data);
-                File.WriteAllBytes(vgmsInPath, soundData);
+        if (fadeDelay >= 0)
+        {
+            process.StartInfo.ArgumentList.Add("-d");
+            process.StartInfo.ArgumentList.Add(fadeDelay.ToString(
+                System.Globalization.CultureInfo.InvariantCulture));
+        }
 
-                ConvertVgmstream(vgmsInPath, fileName);
+        if (ignoreLooping)
+            process.StartInfo.ArgumentList.Add("-i");
 
+        process.StartInfo.ArgumentList.Add("-o");
+        process.StartInfo.ArgumentList.Add(outPath);
+        process.StartInfo.ArgumentList.Add(inPath);
+
+        if (!process.Start())
+            throw new Exception("Unable to start vgmstream.");
+
+        process.WaitForExit();
+
+        //if (process.ExitCode != 0)
+        //    throw new Exception($"vgmstream exited with code {process.ExitCode}.");
+    }
+
+    public static void ExportToFile(AssetSound asset, Archive archive, string fileName)
+    {
+        try
+        {
+            if (!InitVgmstream())
+                return;
+
+            File.WriteAllBytes(vgmsInPath, archive.GetSoundData(asset.assetID, asset.Data));
+
+            ConvertVgmstream(vgmsInPath, fileName);
+
+            if (!File.Exists(fileName))
+                throw new Exception("vgmstream did not produce the expected output file.");
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(
+                $"Unable to export [{asset.assetID:X8}] {asset.assetName}: " + ex);
+        }
+        finally
+        {
+            if (File.Exists(vgmsInPath))
                 File.Delete(vgmsInPath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Unable to export [{asset.assetID:X8}] {asset.assetName}: " + ex);
-            }
         }
+    }
 
-        public static void PlaySound(AssetSound asset, Archives.Archive archive)
+    public static void PlaySound(AssetSound asset, Archive archive)
+    {
+        try
         {
-            try
-            {
-                if (!InitVgmstream())
-                    return;
+            if (!InitVgmstream())
+                return;
 
+            lock (playerLock)
+            {
                 if (asset.assetID != playerSoundAssetId)
                 {
-                    playerSoundAssetId = asset.assetID;
-                    var soundData = archive.GetSoundData(asset.assetID, asset.Data);
-                    File.WriteAllBytes(vgmsInPath, soundData);
+                    File.WriteAllBytes(
+                        vgmsInPath,
+                        archive.GetSoundData(asset.assetID, asset.Data));
 
-                    ConvertVgmstream(vgmsInPath, vgmsOutPath);
+                    try
+                    {
+                        ConvertVgmstream(vgmsInPath, vgmsOutPath);
 
-                    if (player != null)
-                        player.Dispose();
+                        if (!File.Exists(vgmsOutPath))
+                            throw new Exception("vgmstream did not produce the expected WAV file.");
 
-                    player = new SoundPlayer(new MemoryStream(File.ReadAllBytes(vgmsOutPath)));
+                        var stream = new MemoryStream(File.ReadAllBytes(vgmsOutPath));
+                        var newPlayer = new SoundPlayer(stream);
 
-                    File.Delete(vgmsInPath);
-                    File.Delete(vgmsOutPath);
+                        DisposePlayer();
+
+                        playerStream = stream;
+                        player = newPlayer;
+                        playerSoundAssetId = asset.assetID;
+                    }
+                    finally
+                    {
+                        if (File.Exists(vgmsInPath))
+                            File.Delete(vgmsInPath);
+                        if (File.Exists(vgmsOutPath))
+                            File.Delete(vgmsOutPath);
+                    }
                 }
 
-                player.Play();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to play sound: " + ex);
+                player?.Play();
             }
         }
-
-        private static bool InitVgmstream()
+        catch (Exception ex)
         {
-            if (!vgmsInitialized)
-            {
-                if (!File.Exists(vgmsPath))
-                {
-                    var result = MessageBox.Show("vgmstream not found under /Resources/vgmstream. Do you wish to download it?", "vgmstream not found", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
-
-                    if (result == DialogResult.Yes)
-                        DownloadVgmstream();
-                    else
-                        return false;
-                }
-
-                vgmsProcess = new Process();
-                vgmsProcess.StartInfo.FileName = vgmsPath;
-                vgmsProcess.StartInfo.CreateNoWindow = true;
-                vgmsProcess.StartInfo.WorkingDirectory = vgmsFolder;
-                vgmsProcess.StartInfo.RedirectStandardOutput = true;
-                vgmsProcess.StartInfo.RedirectStandardError = true;
-                vgmsProcess.StartInfo.UseShellExecute = false;
-                vgmsProcess.EnableRaisingEvents = true;
-                vgmsInitialized = true;
-            }
-
-            return true;
+            MessageBox.Show("Unable to play sound: " + ex);
         }
+    }
 
-        public static void ConvertVgmstream(string inPath, string outPath, double loopCount = -1, double fadeTime = -1, double fadeDelay = -1, bool ignoreLooping = false)
+    public static void ClearSound()
+    {
+        lock (playerLock)
         {
-            List<string> args = new List<string>();
-
-            if (loopCount >= 0)
-                args.Add("-l " + loopCount);
-            if (fadeTime >= 0)
-                args.Add("-f " + fadeTime);
-            if (fadeDelay >= 0)
-                args.Add("-d " + fadeDelay);
-            if (ignoreLooping)
-                args.Add("-i");
-
-            args.Add(string.Format("-o \"{0}\"", outPath));
-            args.Add(string.Format("\"{0}\"", inPath));
-
-            string argString = string.Join(" ", args.ToArray<string>());
-
-            vgmsProcess.StartInfo.Arguments = argString;
-            vgmsProcess.Start();
-            vgmsProcess.WaitForExit();
+            DisposePlayer();
+            playerSoundAssetId = null;
         }
+    }
 
-        public static void ClearSound()
+    public static void StopSound()
+    {
+        lock (playerLock)
         {
-            playerSoundAssetId = 0;
-
-            if (player != null)
-                player.Dispose();
+            player?.Stop();
         }
+    }
 
-        public static void StopSound()
+    public static void Dispose()
+    {
+        lock (playerLock)
         {
-            if (player != null)
-                player.Stop();
+            DisposePlayer();
+            playerSoundAssetId = null;
         }
+    }
 
-        public static void Dispose()
+    private static void DisposePlayer()
+    {
+        player?.Stop();
+        player?.Dispose();
+        player = null;
+
+        playerStream?.Dispose();
+        playerStream = null;
+    }
+
+    public static byte[]? GenerateJawData(byte[] bytes, float multiplier)
+    {
+        try
         {
-            if (player != null)
-                player.Dispose();
-        }
+            if (!InitVgmstream())
+                return null;
 
-        private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
+            if (!SoundUtility_ffmpeg.InitFfmpeg())
+                return null;
 
-        public static byte[] GenerateJawData(byte[] bytes, float multiplier)
-        {
-            try
-            {
-                if (!InitVgmstream())
-                    return null;
+            File.WriteAllBytes(vgmsInPath, bytes);
 
-                File.WriteAllBytes(vgmsInPath, bytes);
-                ConvertVgmstream(vgmsInPath, vgmsOutPath);
+            ConvertVgmstream(vgmsInPath, vgmsOutPath);
 
-                if (!SoundUtility_ffmpeg.InitFfmpeg())
-                    return null;
+            if (!File.Exists(vgmsOutPath))
+                throw new Exception("vgmstream did not produce the expected WAV file.");
 
-                if (File.Exists(ffmpegOutPath))
-                    File.Delete(ffmpegOutPath);
-
-                ConvertFfmpegJaw(vgmsOutPath, ffmpegOutPath);
-
-                var file = File.ReadAllBytes(ffmpegOutPath);
-
-                File.Delete(vgmsInPath);
-                File.Delete(vgmsOutPath);
+            if (File.Exists(ffmpegOutPath))
                 File.Delete(ffmpegOutPath);
 
-                return ConvertToJaw(file.Skip(0x4E).ToArray(), multiplier);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to convert sound: " + ex);
-                return null;
-            }
-        }
+            ConvertFfmpegJaw(vgmsOutPath, ffmpegOutPath);
 
-        private static void ConvertFfmpegJaw(string inPath, string outPath)
+            if (!File.Exists(ffmpegOutPath))
+                throw new Exception("FFmpeg did not produce the expected PCM file.");
+
+            byte[] file = File.ReadAllBytes(ffmpegOutPath);
+
+            if (file.Length < 0x4E)
+                throw new Exception("The generated WAV file is too small.");
+
+            return ConvertToJaw(file.Skip(0x4E).ToArray(), multiplier);
+        }
+        catch (Exception ex)
         {
-            SoundUtility_ffmpeg.ffmpegProcess.StartInfo.Arguments = $"-i \"{inPath}\" -ac 1 -ar 60 -sample_fmt s16 \"{outPath}\"";
-            SoundUtility_ffmpeg.ffmpegProcess.Start();
-            SoundUtility_ffmpeg.ffmpegProcess.WaitForExit();
+            MessageBox.Show("Unable to convert sound: " + ex);
+            return null;
         }
-
-        private static byte[] ConvertToJaw(byte[] bytes, float multiplier)
+        finally
         {
-            var data = new short[bytes.Length / 2];
-            short max = 0;
-            for (int i = 0; i < data.Length; i++)
-            {
-                data[i] = Math.Abs(BitConverter.ToInt16(bytes, i * 2));
-                if (data[i] > max)
-                    max = data[i];
-            }
-
-            var data2 = new byte[data.Length];
-            for (int i = 0; i < data.Length; i++)
-                data2[i] = (byte)Math.Min(multiplier * data[i] / max, 255);
-
-            return data2;
+            if (File.Exists(vgmsInPath))
+                File.Delete(vgmsInPath);
+            if (File.Exists(vgmsOutPath))
+                File.Delete(vgmsOutPath);
+            if (File.Exists(ffmpegOutPath))
+                File.Delete(ffmpegOutPath);
         }
+    }
+
+    private static void ConvertFfmpegJaw(string inPath, string outPath)
+    {
+        SoundUtility_ffmpeg.ConvertFfmpeg(
+            $"-i \"{inPath}\" -ac 1 -ar 60 -sample_fmt s16 \"{outPath}\"");
+    }
+
+    private static byte[] ConvertToJaw(byte[] bytes, float multiplier)
+    {
+        if (bytes.Length % 2 != 0)
+            throw new Exception("Invalid PCM data: expected 16-bit samples.");
+
+        var data = new int[bytes.Length / 2];
+        int max = 0;
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] = Math.Abs((int)BitConverter.ToInt16(bytes, i * 2));
+
+            if (data[i] > max)
+                max = data[i];
+        }
+
+        var result = new byte[data.Length];
+
+        if (max == 0)
+            return result;
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            float value = multiplier * data[i] / max;
+            result[i] = (byte)Math.Clamp(value, 0, 255);
+        }
+
+        return result;
     }
 }

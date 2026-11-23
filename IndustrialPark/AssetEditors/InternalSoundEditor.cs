@@ -1,6 +1,7 @@
 ﻿using HipHopFile;
 using IndustrialPark.Archives;
 using IndustrialPark.Assets;
+using IndustrialPark.SoundUtility;
 using System;
 using System.IO;
 using System.Windows.Forms;

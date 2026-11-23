@@ -1,121 +1,148 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net;
+using System.Net.Http;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.SoundUtility;
+
+public static class SoundUtility_XboxADPCM
 {
-    public static class SoundUtility_XboxADPCM
+    private static readonly HttpClient httpClient = new();
+    private static readonly object initializationLock = new();
+
+    private static string xboxadpcmDir => Path.Combine(Program.ResourcesFolder, "XboxADPCM");
+    private static string xboxadpcmPath => Path.Combine(xboxadpcmDir, "XboxADPCM.exe");
+
+    private static readonly string xboxadpcmDownloadUrl = "https://github.com/Sergeanur/XboxADPCM/releases/latest/download/XboxADPCM.exe";
+
+    public static byte[]? ConvertSoundToXboxADPCM(string fileName, bool compress, bool forcemono, int samplerate)
     {
-        private static string ffmpegOutPath => SoundUtility_ffmpeg.ffmpegOutPath;
+        string tempDir = null;
 
-        public static byte[] ConvertSoundToXboxADPCM(string fileName, bool compress, bool forcemono, int samplerate)
+        try
         {
-            try
-            {
-                if (!SoundUtility_ffmpeg.InitFfmpeg())
-                    return null;
-
-                if (File.Exists(ffmpegOutPath))
-                    File.Delete(ffmpegOutPath);
-
-                SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -bitexact -map_metadata -1 -ac {(forcemono ? "1" : "2")} -ar {samplerate} \"{ffmpegOutPath}\"");
-
-                if (!InitXboxADPCM())
-                {
-                    if (File.Exists(ffmpegOutPath))
-                        File.Delete(ffmpegOutPath);
-                    return null;
-                }
-
-                if (File.Exists(xboxadpcmOutPath))
-                    File.Delete(xboxadpcmOutPath);
-
-                byte[] file;
-                if (compress)
-                {
-                    ConvertXboxADPCM(ffmpegOutPath, xboxadpcmOutPath);
-                    file = File.ReadAllBytes(xboxadpcmOutPath);
-                    File.Delete(xboxadpcmOutPath);
-                }
-                else
-                    file = File.ReadAllBytes(ffmpegOutPath);
-                File.Delete(ffmpegOutPath);
-
-                return file;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Unable to convert sound: " + ex);
+            if (!SoundUtility_ffmpeg.InitFfmpeg())
                 return null;
-            }
+
+            tempDir = Path.Combine(Path.GetTempPath(), $"XboxADPCMConversion_{Guid.NewGuid():N}");
+            Directory.CreateDirectory(tempDir);
+
+            string wavPath = Path.Combine(tempDir, "input.wav");
+
+            SoundUtility_ffmpeg.ConvertFfmpeg($"-i \"{fileName}\" -bitexact -map_metadata -1 -ac {(forcemono ? "1" : "2")} -ar {samplerate} \"{wavPath}\"");
+
+            if (!File.Exists(wavPath))
+                throw new Exception("FFmpeg did not produce the expected WAV file.");
+
+            if (!compress)
+                return File.ReadAllBytes(wavPath);
+
+            if (!InitXboxADPCM())
+                return null;
+
+            string outputPath = Path.Combine(tempDir, "output.wav");
+
+            ConvertXboxADPCM(wavPath, outputPath);
+
+            if (!File.Exists(outputPath))
+                throw new Exception("XboxADPCM did not produce the expected output file.");
+
+            return File.ReadAllBytes(outputPath);
         }
-
-        private static bool xboxadpcmInitialized = false;
-        private static string xboxadpcmDir => Path.Combine(Application.StartupPath, "Resources", "XboxADPCM");
-        private static string xboxadpcmPath => Path.Combine(xboxadpcmDir, "XboxADPCM.exe");
-        private static string xboxadpcmOutPath => Path.Combine(xboxadpcmDir, "test_sound_out.wav");
-
-        private static Process xboxadpcmProcess;
-
-        private static bool InitXboxADPCM()
+        catch (Exception ex)
         {
-            if (!xboxadpcmInitialized)
-            {
-                if (!File.Exists(xboxadpcmPath))
-                {
-                    var result = MessageBox.Show("XboxADPCM not found. Do you wish to download it?", "XboxADPCM not found", MessageBoxButtons.YesNo, MessageBoxIcon.Error);
+            MessageBox.Show("Unable to convert sound: " + ex);
+            return null;
+        }
+        finally
+        {
+            SoundUtility_ffmpeg.TryDeleteDirectory(tempDir);
+        }
+    }
 
-                    if (result == DialogResult.Yes)
-                    {
-                        if (!DownloadXboxADPCM())
-                            return false;
-                    }
-                    else
-                        return false;
-                }
+    private static bool InitXboxADPCM()
+    {
+        lock (initializationLock)
+        {
+            if (File.Exists(xboxadpcmPath))
+                return true;
 
-                xboxadpcmProcess = new Process();
-                xboxadpcmProcess.StartInfo.FileName = xboxadpcmPath;
-                xboxadpcmProcess.StartInfo.CreateNoWindow = true;
-                xboxadpcmProcess.StartInfo.RedirectStandardOutput = true;
-                xboxadpcmProcess.StartInfo.RedirectStandardError = true;
-                xboxadpcmProcess.StartInfo.UseShellExecute = false;
-                xboxadpcmProcess.EnableRaisingEvents = true;
-                xboxadpcmInitialized = true;
-            }
+            var result = MessageBox.Show(
+                "XboxADPCM not found. Do you wish to download it?",
+                "XboxADPCM not found",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Error);
+
+            if (result != DialogResult.Yes)
+                return false;
+
+            return DownloadXboxADPCM();
+        }
+    }
+
+    private static void ConvertXboxADPCM(string inPath, string outPath)
+    {
+        using var process = new Process();
+
+        process.StartInfo = new ProcessStartInfo
+        {
+            FileName = xboxadpcmPath,
+            CreateNoWindow = true,
+            UseShellExecute = false
+        };
+
+        process.StartInfo.ArgumentList.Add(inPath);
+        process.StartInfo.ArgumentList.Add(outPath);
+
+        if (!process.Start())
+            throw new Exception("Unable to start XboxADPCM.");
+
+        process.WaitForExit();
+
+        if (process.ExitCode != 0)
+            throw new Exception($"XboxADPCM exited with code {process.ExitCode}.");
+    }
+
+    private static bool DownloadXboxADPCM()
+    {
+        string tempPath = xboxadpcmPath + ".download";
+
+        try
+        {
+            MessageBox.Show("Will begin download of XboxADPCM from GitHub. Please wait as this might take a while.");
+
+            Directory.CreateDirectory(xboxadpcmDir);
+
+            byte[] data = httpClient.GetByteArrayAsync(xboxadpcmDownloadUrl)
+                .GetAwaiter()
+                .GetResult();
+
+            if (data.Length == 0)
+                throw new Exception("The downloaded XboxADPCM file is empty.");
+
+            File.WriteAllBytes(tempPath, data);
+            File.Move(tempPath, xboxadpcmPath, true);
+
+            MessageBox.Show("Downloaded XboxADPCM.");
 
             return true;
         }
-
-        private static void ConvertXboxADPCM(string inPath, string outPath)
+        catch (Exception ex)
         {
-            xboxadpcmProcess.StartInfo.Arguments = $"\"{inPath}\" \"{outPath}\"";
-            xboxadpcmProcess.Start();
-            xboxadpcmProcess.WaitForExit();
+            MessageBox.Show("Unable to download XboxADPCM: " + ex.Message);
+            return false;
         }
-
-        private static bool DownloadXboxADPCM()
+        finally
         {
             try
             {
-                MessageBox.Show("Will begin download of XboxADPCM from GitHub. Please wait as this might take a while.");
-
-                if (!Directory.Exists(xboxadpcmDir))
-                    Directory.CreateDirectory(xboxadpcmDir);
-
-                using (var webClient = new WebClient())
-                    webClient.DownloadFile(new Uri("https://github.com/Sergeanur/XboxADPCM/releases/latest/download/XboxADPCM.exe"), xboxadpcmPath);
-
-                MessageBox.Show("Downloaded XboxADPCM.");
-                return true;
+                if (File.Exists(tempPath))
+                    File.Delete(tempPath);
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show(ex.Message);
             }
-            return false;
         }
     }
 }
