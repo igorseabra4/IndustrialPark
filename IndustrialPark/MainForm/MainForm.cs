@@ -5,6 +5,7 @@ using IndustrialPark.Assets;
 using IndustrialPark.Assets.Colors;
 using IndustrialPark.Gizmos;
 using IndustrialPark.Scripting;
+using IndustrialPark.SoundUtility;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using System;
@@ -106,6 +107,8 @@ namespace IndustrialPark
             IPSettings settings = SettingsFromCurrentInstance();
 
             File.WriteAllText(PathToSettings, JsonConvert.SerializeObject(settings, Formatting.Indented));
+
+            Program.NameRepository.Save();
         }
 
         private void MainForm_DragEnter(object sender, DragEventArgs e)
@@ -278,6 +281,19 @@ namespace IndustrialPark
         {
             useLegacyAssetIDFormatToolStripMenuItem.Checked = !useLegacyAssetIDFormatToolStripMenuItem.Checked;
             HexUIntTypeConverter.Legacy = useLegacyAssetIDFormatToolStripMenuItem.Checked;
+        }
+
+        private void persistentAssetNameRepositoryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            persistentAssetNameRepositoryToolStripMenuItem.Checked = !persistentAssetNameRepositoryToolStripMenuItem.Checked;
+            Program.NameRepository.Persistent = persistentAssetNameRepositoryToolStripMenuItem.Checked;
+            if (!Program.NameRepository.Persistent)
+                Program.NameRepository.Reset();
+        }
+
+        private void clearStaleAssetNamesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Program.NameRepository.Reset();
         }
 
         private void defaultToAllAssetsToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1049,6 +1065,10 @@ namespace IndustrialPark
             TranslucentWhenOutOfFocus = settings.translucentEditor;
             translucentToolStripMenuItem.Checked = TranslucentWhenOutOfFocus;
 
+            Program.NameRepository.Persistent = settings.PersistentNameRepository;
+            persistentAssetNameRepositoryToolStripMenuItem.Checked = Program.NameRepository.Persistent;
+            Program.NameRepository.Load();
+
             foreach (var kb in settings.UserKeyBindings ?? IpModernBindings)
                 SetKeyBind(kb.Action, kb.Binding, false);
 
@@ -1119,6 +1139,7 @@ namespace IndustrialPark
             DolphinPath = RemoteControl.DolphinPath,
             Colors = renderer.colors,
             UserKeyBindings = [.. UserKeyBindings],
+            PersistentNameRepository = Program.NameRepository.Persistent,
         };
 
         internal void SetCheckForUpdatesOnStartup(bool value)

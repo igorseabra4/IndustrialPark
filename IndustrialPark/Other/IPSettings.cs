@@ -54,5 +54,7 @@ namespace IndustrialPark
         public bool translucentEditor = true;
         public bool showEditorsWhenLoadingProject = true;
         public SystemColorMode ColorMode = SystemColorMode.System;
+
+        public bool PersistentNameRepository = true;
     }
 }
