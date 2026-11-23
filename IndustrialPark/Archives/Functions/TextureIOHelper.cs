@@ -15,11 +15,11 @@ public static class TextureIOHelper
 {
     public static readonly object locker = new object();
 
-    public static string txdGenFolder => Application.StartupPath + "/Resources/txdgen_1.0/";
-    public static string tempGcTxdsDir => txdGenFolder + "Temp/txds_gc/";
-    public static string tempPcTxdsDir => txdGenFolder + "Temp/txds_pc/";
-    public static string pathToGcTXD => tempGcTxdsDir + "temp.txd";
-    public static string pathToPcTXD => tempPcTxdsDir + "temp.txd";
+    public static string txdGenFolder => Path.Combine(Program.ResourcesFolder, "txdgen_1.0");
+    public static string tempGcTxdsDir => Path.Combine(txdGenFolder, "Temp", "txds_gc");
+    public static string tempPcTxdsDir => Path.Combine(txdGenFolder, "Temp", "txds_pc");
+    public static string pathToGcTXD => Path.Combine(tempGcTxdsDir, "temp.txd");
+    public static string pathToPcTXD => Path.Combine(tempPcTxdsDir, "temp.txd");
 
     public static void PerformTXDConversionExternal(bool compress = false, bool generateMipmaps = false, string custom_output = null)
     {
@@ -53,7 +53,7 @@ public static class TextureIOHelper
                 "imgArchivesCompressed=false\r\n" +
                 "ignoreSerializationRegions=true";
 
-            File.WriteAllText(txdGenFolder + "txdgen.ini", ini);
+            File.WriteAllText(Path.Combine(txdGenFolder, "txdgen.ini"), ini);
 
             txdgenProcess.Start();
             txdgenProcess.WaitForExit(5000);
@@ -66,7 +66,7 @@ public static class TextureIOHelper
     public static void initConverter()
     {
         txdgenProcess = new Process();
-        txdgenProcess.StartInfo.FileName = txdGenFolder + "txdgen.exe";
+        txdgenProcess.StartInfo.FileName = Path.Combine(txdGenFolder, "txdgen.exe");
         txdgenProcess.StartInfo.WorkingDirectory = txdGenFolder;
         txdgenProcess.StartInfo.CreateNoWindow = true;
         txdgenProcess.StartInfo.RedirectStandardOutput = true;

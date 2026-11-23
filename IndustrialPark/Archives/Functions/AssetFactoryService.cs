@@ -503,16 +503,12 @@ public static class AssetFactoryService
         });
 
         if (pasteClipboard)
-        {
-            var paste = GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler);
-            menu.DropDownItems.Add(paste);
-        }
+            menu.DropDownItems.Add(GetTemplateMenuItem(AssetTemplate.Paste_Clipboard, eventHandler));
 
-        var items = new ToolStripItem[] { controllers, placeable, new ToolStripSeparator(), scooby, bfbb, tssm, incredibles, rotu, ratproto, new ToolStripSeparator(), others };
-        menu.DropDownItems.AddRange(items);
-        
+        menu.DropDownItems.AddRange([controllers, placeable, new ToolStripSeparator(), scooby, bfbb, tssm, incredibles, rotu, ratproto, new ToolStripSeparator(), others]);
+
         var result = new List<ToolStripMenuItem>();
-        foreach (var i in items)
+        foreach (var i in menu.DropDownItems)
             if (i is ToolStripMenuItem item)
                 result.AddRange(GetAllItems(item));
 

@@ -2,6 +2,7 @@
 using IndustrialPark.Archives;
 using IndustrialPark.Assets;
 using IndustrialPark.Models;
+using IndustrialPark.SoundUtility;
 using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using SharpDX;
@@ -1843,7 +1844,7 @@ public partial class ArchiveEditor : Form
 
     public static void InitializeAssetIcons()
     {
-        var path = Path.Combine(Application.StartupPath, "Resources", "Icons", "Assets");
+        var path = Path.Combine(Program.ResourcesFolder, "Icons", "Assets");
         if (!Directory.Exists(path))
             return;
 

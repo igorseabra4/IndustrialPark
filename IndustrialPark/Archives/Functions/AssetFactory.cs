@@ -758,7 +758,7 @@ public class AssetFactory
                     template == AssetTemplate.LKIT_lights ? "lights" :
                     template == AssetTemplate.LKIT_JF_SB_lights ? "JF_SB_lights" :
                     template == AssetTemplate.LKIT_jf01_light_kit ? "jf01_light_kit" : "";
-                var data = File.ReadAllBytes(Path.Combine(Application.StartupPath, "Resources", fileName));
+                var data = File.ReadAllBytes(Path.Combine(Program.ResourcesFolder, fileName));
                 return new AssetLKIT(assetName, data, Endianness.Big);
             }
             case AssetTemplate.Health_10:

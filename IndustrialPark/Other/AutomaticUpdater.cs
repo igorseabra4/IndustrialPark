@@ -61,7 +61,7 @@ namespace IndustrialPark
             return UpdateStatus.Error;
         }
 
-        public static string editorFilesFolder => Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles", "IndustrialPark-EditorFiles-master");
+        public static string editorFilesFolder => Path.Combine(Program.ResourcesFolder, "IndustrialPark-EditorFiles", "IndustrialPark-EditorFiles-master");
         
         private static string editorFilesVersionJson => Path.Combine(editorFilesFolder, "version.json");
 
@@ -110,8 +110,8 @@ namespace IndustrialPark
         {
             return DownloadAndUnzip(
                 "https://github.com/igorseabra4/IndustrialPark-EditorFiles/archive/master.zip",
-                Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles.zip"),
-                Path.Combine(Application.StartupPath, "Resources", "IndustrialPark-EditorFiles"),
+                Path.Combine(Program.ResourcesFolder, "IndustrialPark-EditorFiles.zip"),
+                Path.Combine(Program.ResourcesFolder, "IndustrialPark-EditorFiles"),
                 "IndustrialPark-EditorFiles");
         }
 

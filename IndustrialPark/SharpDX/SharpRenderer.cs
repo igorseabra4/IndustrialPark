@@ -2,6 +2,7 @@
 using IndustrialPark.Assets;
 using IndustrialPark.Gizmos;
 using IndustrialPark.RenderData;
+using IndustrialPark.SoundUtility;
 using SharpDX;
 using SharpDX.Direct3D11;
 using SharpDX.DXGI;
@@ -80,7 +81,7 @@ public class SharpRenderer : IDisposable
 
     public void SetSharpShader()
     {
-        basicShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Basic.hlsl",
+        basicShader = new SharpShader(device, Path.Combine(Program.ResourcesFolder, "SharpDX", "Shader_Basic.hlsl"),
             new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
             new InputElement[] {
                     new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0)
@@ -88,7 +89,7 @@ public class SharpRenderer : IDisposable
 
         basicBuffer = new ConstantBuffer<DefaultRenderData>(device.Device);
 
-        defaultShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Default.hlsl",
+        defaultShader = new SharpShader(device, Path.Combine(Program.ResourcesFolder, "SharpDX", "Shader_Default.hlsl"),
             new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
             new InputElement[] {
                     new InputElement("POSITION", 0, Format.R32G32B32_Float, 0, 0),
@@ -98,7 +99,7 @@ public class SharpRenderer : IDisposable
 
         defaultBuffer = new ConstantBuffer<Matrix>(device.Device);
 
-        tintedShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_Tinted.hlsl",
+        tintedShader = new SharpShader(device, Path.Combine(Program.ResourcesFolder, "SharpDX", "Shader_Tinted.hlsl"),
             new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
             new InputElement[] {
                     new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
@@ -108,7 +109,7 @@ public class SharpRenderer : IDisposable
 
         tintedBuffer = new ConstantBuffer<UvAnimRenderData>(device.Device);
 
-        fogLightShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_FogLight.hlsl",
+        fogLightShader = new SharpShader(device, Path.Combine(Program.ResourcesFolder, "SharpDX", "Shader_FogLight.hlsl"),
             new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
             new InputElement[] {
                     new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
@@ -119,7 +120,7 @@ public class SharpRenderer : IDisposable
         fogLightBuffer = new ConstantBuffer<FogLightRenderData>(device.Device);
 
 
-        jspShader = new SharpShader(device, Application.StartupPath + "/Resources/SharpDX/Shader_JSP.hlsl",
+        jspShader = new SharpShader(device, Path.Combine(Program.ResourcesFolder, "SharpDX", "Shader_JSP.hlsl"),
             new SharpShaderDescription() { VertexShaderFunction = "VS", PixelShaderFunction = "PS" },
             new InputElement[] {
                     new InputElement("POSITION", 0, Format.R32G32B32A32_Float, 0, 0),
@@ -129,7 +130,7 @@ public class SharpRenderer : IDisposable
         jspBuffer = new ConstantBuffer<JspRenderData>(device.Device);
 
         // The outline is a fullscreen pass with no vertex input, so it doesn't use SharpShader (which needs an input layout)
-        string outlinePath = Application.StartupPath + "/Resources/SharpDX/Shader_Outline.hlsl";
+        string outlinePath = Path.Combine(Program.ResourcesFolder, "SharpDX", "Shader_Outline.hlsl");
         using (var vsByteCode = SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(outlinePath, "VS", "vs_5_0"))
             outlineVertexShader = new VertexShader(device.Device, vsByteCode);
         using (var psByteCode = SharpDX.D3DCompiler.ShaderBytecode.CompileFromFile(outlinePath, "PS", "ps_5_0"))
@@ -213,12 +214,12 @@ public class SharpRenderer : IDisposable
     {
         if (whiteDefault == null || (whiteDefault != null && whiteDefault.IsDisposed))
         {
-            var path = Path.Combine(Application.StartupPath, "Resources", "Models", "WhiteDefault.png");
+            var path = Path.Combine(Program.ResourcesFolder, "Models", "WhiteDefault.png");
             whiteDefault = device.LoadTextureFromFile(path);
         }
         if (arrowDefault == null || (arrowDefault != null && arrowDefault.IsDisposed))
         {
-            var path = Path.Combine(Application.StartupPath, "Resources", "Models", "ArrowDefault.png");
+            var path = Path.Combine(Program.ResourcesFolder, "Models", "ArrowDefault.png");
             arrowDefault = device.LoadTextureFromFile(path);
         }
     }
@@ -286,7 +287,7 @@ public class SharpRenderer : IDisposable
 
     private SharpMesh LoadMesh(string meshName, ref List<Vector3> vertices, ref List<RenderWareFile.Triangle> triangles)
     {
-        var objData = ReadOBJFile(Application.StartupPath + $"/Resources/Models/{meshName}.obj", false);
+        var objData = ReadOBJFile(Path.Combine(Program.ResourcesFolder, "Models", $"{meshName}.obj"), false);
         List<Vertex> vertexList = [];
         foreach (Models.Vertex v in objData.VertexList)
         {

@@ -117,4 +117,6 @@ public static class Program
 
         return Convert.ToInt32(value) == 0;
     }
+
+    public static string ResourcesFolder => Path.Combine(Application.StartupPath, "Resources");
 }
