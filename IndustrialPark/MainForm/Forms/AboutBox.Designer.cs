@@ -17,17 +17,17 @@ namespace IndustrialPark
             tabControl = new System.Windows.Forms.TabControl();
             tabWelcome = new System.Windows.Forms.TabPage();
             welcomeLayout = new System.Windows.Forms.TableLayoutPanel();
+            buttonViewControls = new System.Windows.Forms.Button();
             welcomeTitle = new System.Windows.Forms.Label();
             welcomeText = new System.Windows.Forms.Label();
             resourcesLabel = new System.Windows.Forms.Label();
             checkShowOnStartup = new System.Windows.Forms.CheckBox();
             checkForUpdatesOnStartup = new System.Windows.Forms.CheckBox();
-            buttonViewControls = new System.Windows.Forms.Button();
-            buttonClose = new System.Windows.Forms.Button();
             tabAbout = new System.Windows.Forms.TabPage();
             aboutLayout = new System.Windows.Forms.TableLayoutPanel();
             labelProductName = new System.Windows.Forms.Label();
             aboutText = new System.Windows.Forms.TextBox();
+            buttonClose = new System.Windows.Forms.Button();
             tabControl.SuspendLayout();
             tabWelcome.SuspendLayout();
             welcomeLayout.SuspendLayout();
@@ -48,10 +48,10 @@ namespace IndustrialPark
             // tabWelcome
             // 
             tabWelcome.Controls.Add(welcomeLayout);
-            tabWelcome.Location = new System.Drawing.Point(4, 24);
+            tabWelcome.Location = new System.Drawing.Point(4, 22);
             tabWelcome.Name = "tabWelcome";
             tabWelcome.Padding = new System.Windows.Forms.Padding(12);
-            tabWelcome.Size = new System.Drawing.Size(564, 342);
+            tabWelcome.Size = new System.Drawing.Size(564, 344);
             tabWelcome.TabIndex = 0;
             tabWelcome.Text = "Welcome";
             // 
@@ -79,8 +79,19 @@ namespace IndustrialPark
             welcomeLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             welcomeLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
             welcomeLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 30F));
-            welcomeLayout.Size = new System.Drawing.Size(540, 318);
+            welcomeLayout.Size = new System.Drawing.Size(540, 320);
             welcomeLayout.TabIndex = 0;
+            // 
+            // buttonViewControls
+            // 
+            buttonViewControls.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            buttonViewControls.Location = new System.Drawing.Point(3, 287);
+            buttonViewControls.Name = "buttonViewControls";
+            buttonViewControls.Size = new System.Drawing.Size(121, 25);
+            buttonViewControls.TabIndex = 3;
+            buttonViewControls.Text = "View Controls";
+            buttonViewControls.UseVisualStyleBackColor = true;
+            buttonViewControls.Click += buttonViewControls_Click;
             // 
             // welcomeTitle
             // 
@@ -119,7 +130,7 @@ namespace IndustrialPark
             checkShowOnStartup.AutoSize = true;
             checkShowOnStartup.Location = new System.Drawing.Point(3, 223);
             checkShowOnStartup.Name = "checkShowOnStartup";
-            checkShowOnStartup.Size = new System.Drawing.Size(220, 20);
+            checkShowOnStartup.Size = new System.Drawing.Size(184, 17);
             checkShowOnStartup.TabIndex = 1;
             checkShowOnStartup.Text = "Show welcome window at startup";
             // 
@@ -128,40 +139,18 @@ namespace IndustrialPark
             checkForUpdatesOnStartup.AutoSize = true;
             checkForUpdatesOnStartup.Location = new System.Drawing.Point(3, 253);
             checkForUpdatesOnStartup.Name = "checkForUpdatesOnStartup";
-            checkForUpdatesOnStartup.Size = new System.Drawing.Size(276, 20);
+            checkForUpdatesOnStartup.Size = new System.Drawing.Size(228, 17);
             checkForUpdatesOnStartup.TabIndex = 2;
             checkForUpdatesOnStartup.Text = "Check for updates at startup, once per day";
             checkForUpdatesOnStartup.CheckedChanged += checkForUpdatesOnStartup_CheckedChanged;
             // 
-            // buttonViewControls
-            // 
-            buttonViewControls.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            buttonViewControls.Location = new System.Drawing.Point(3, 286);
-            buttonViewControls.Name = "buttonViewControls";
-            buttonViewControls.Size = new System.Drawing.Size(121, 25);
-            buttonViewControls.TabIndex = 3;
-            buttonViewControls.Text = "View Controls";
-            buttonViewControls.UseVisualStyleBackColor = true;
-            buttonViewControls.Click += buttonViewControls_Click;
-            // 
-            // buttonClose
-            // 
-            buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Right;
-            buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            buttonClose.Location = new System.Drawing.Point(489, 381);
-            buttonClose.Name = "buttonClose";
-            buttonClose.Size = new System.Drawing.Size(75, 25);
-            buttonClose.TabIndex = 4;
-            buttonClose.Text = "Close";
-            buttonClose.Click += buttonClose_Click;
-            // 
             // tabAbout
             // 
             tabAbout.Controls.Add(aboutLayout);
-            tabAbout.Location = new System.Drawing.Point(4, 24);
+            tabAbout.Location = new System.Drawing.Point(4, 22);
             tabAbout.Name = "tabAbout";
             tabAbout.Padding = new System.Windows.Forms.Padding(12);
-            tabAbout.Size = new System.Drawing.Size(552, 336);
+            tabAbout.Size = new System.Drawing.Size(564, 344);
             tabAbout.TabIndex = 1;
             tabAbout.Text = "About";
             // 
@@ -179,7 +168,7 @@ namespace IndustrialPark
             aboutLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             aboutLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             aboutLayout.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            aboutLayout.Size = new System.Drawing.Size(528, 312);
+            aboutLayout.Size = new System.Drawing.Size(540, 320);
             aboutLayout.TabIndex = 0;
             // 
             // labelProductName
@@ -201,10 +190,21 @@ namespace IndustrialPark
             aboutText.Name = "aboutText";
             aboutText.ReadOnly = true;
             aboutText.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            aboutText.Size = new System.Drawing.Size(522, 274);
+            aboutText.Size = new System.Drawing.Size(534, 282);
             aboutText.TabIndex = 6;
             aboutText.TabStop = false;
             aboutText.Text = resources.GetString("aboutText.Text");
+            // 
+            // buttonClose
+            // 
+            buttonClose.Anchor = System.Windows.Forms.AnchorStyles.Right;
+            buttonClose.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            buttonClose.Location = new System.Drawing.Point(489, 381);
+            buttonClose.Name = "buttonClose";
+            buttonClose.Size = new System.Drawing.Size(75, 25);
+            buttonClose.TabIndex = 4;
+            buttonClose.Text = "Close";
+            buttonClose.Click += buttonClose_Click;
             // 
             // AboutBox
             // 
