@@ -16,7 +16,7 @@ namespace IndustrialPark.Assets
         public override string ToString()
         {
             if (GetType().IsSubclassOf(typeof(PlatSpecific_Generic)))
-                return base.ToString().Substring(28);
+                return base.ToString().Substring(35);
             return "";
         }
     }

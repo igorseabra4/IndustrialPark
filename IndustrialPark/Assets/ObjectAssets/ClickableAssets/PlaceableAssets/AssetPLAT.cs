@@ -334,7 +334,8 @@ namespace IndustrialPark.Assets
 
         [Category(categoryName), DisplayName("Type Settings")]
         public DynamicTypeDescriptor PlatformSpecificDescriptor => DynamicTypeDescriptor.Create(PlatformSpecific);
-        public PlatSpecific_Generic PlatformSpecific;
+        [Browsable(false)]
+        public PlatSpecific_Generic PlatformSpecific { get; set; }
 
         private bool isSkyBox = false;
         private bool skyBoxUseY = false;

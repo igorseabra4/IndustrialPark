@@ -42,24 +42,14 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public AssetByte Flg_Props { get; set; }
 
-        [Category(categoryName), Description("How long the object waits at this point before continuing, in seconds. NPCs may wander around the point during this time if ZoneRadius is enabled.")]
+        [Category(categoryName), Description("How long the object waits at this point before continuing, in seconds. NPCs may wander around the point during this time if ZoneRadius is enabled (except in Scooby, where ZoneRadius doesn't exist).")]
         public AssetSingle Delay { get; set; }
 
-        private float _zoneRadius;
         [Category(categoryName), Description("For NPCs, determines the radius within which they wander randomly while waiting at this point. Set to -1 to disable. Delay must be greater than 0 for wandering to occur, and wandering might have to be turned on for certain NPC types.")]
-        public AssetSingle ZoneRadius
-        {
-            get => _zoneRadius;
-            set => _zoneRadius = value;
-        }
+        public AssetSingle ZoneRadius { get; set; }
 
-        private float _arenaRadius;
         [Category(categoryName), Description("Applies only to NPCs. Determines the radius within which the NPC can detect the player. Set to -1 to disable. A move point with an ArenaRadius greater than 0 can optionally be used in combination with other move points as a player-detection trigger. Turn the point off and reference it as a next move point of the other move points used by the NPC. The NPC will not move to this point, but will use its position and ArenaRadius to detect the player.")]
-        public AssetSingle ArenaRadius
-        {
-            get => _arenaRadius;
-            set => _arenaRadius = value;
-        }
+        public AssetSingle ArenaRadius { get; set; }
 
         [Category(categoryName), Description("Determines whether the point starts enabled or disabled. Disabled points cannot be selected as next destinations. Use the On and Off events to change the point's state, or Reset to restore its initial state. An NPC can still start at a disabled point if it is directly referenced in the NPC asset.")]
         public bool On { get; set; }
@@ -68,7 +58,7 @@ namespace IndustrialPark.Assets
         public ushort Weight { get; set; }
 
         [Category(categoryName), ValidReferenceRequired, Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)),
-            Description("The points the object can move to after reaching this point and completing its Delay. The next destination is chosen randomly from the points that are currently enabled, taking their Weight values into account. If no eligible destination is found, the object remains at the current point.")]
+            Description("The points the object can move to after reaching this point and completing its Delay. The next destination is chosen randomly from the points that are currently on, taking their Weight values into account. If no eligible destination is found, the object remains at the current point.")]
         public AssetID[] NextMovePoints { get; set; }
 
         public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MovePoint, BaseAssetType.MovePoint)
@@ -88,7 +78,7 @@ namespace IndustrialPark.Assets
                     break;
                 case AssetTemplate.MovePoint:
                     On = true;
-                    Delay = game >= Game.Incredibles ? 2 : 0;
+                    Delay = 0;
                     ZoneRadius = -1;
                     ArenaRadius = -1;
                     break;
@@ -108,12 +98,13 @@ namespace IndustrialPark.Assets
             Flg_Props = reader.ReadByte();
             reader.ReadByte(); // pad
             ushort pointCount = reader.ReadUInt16();
-
+            
+            Delay = reader.ReadSingle();
             if (game != Game.Scooby)
-                Delay = reader.ReadSingle();
-            _zoneRadius = reader.ReadSingle();
-            if (game != Game.Scooby)
-                _arenaRadius = reader.ReadSingle();
+            {
+                ZoneRadius = reader.ReadSingle();
+                ArenaRadius = reader.ReadSingle();
+            }
 
             NextMovePoints = new AssetID[pointCount];
             for (int i = 0; i < NextMovePoints.Length; i++)
@@ -133,11 +124,12 @@ namespace IndustrialPark.Assets
             writer.Write(Flg_Props);
             writer.Write((byte)0);
             writer.Write((ushort)NextMovePoints.Length);
+            writer.Write(Delay);
             if (game != Game.Scooby)
-                writer.Write(Delay);
-            writer.Write(_zoneRadius);
-            if (game != Game.Scooby)
-                writer.Write(_arenaRadius);
+            {
+                writer.Write(ZoneRadius);
+                writer.Write(ArenaRadius);
+            }
             foreach (var i in NextMovePoints)
                 writer.Write(i);
 
@@ -152,13 +144,13 @@ namespace IndustrialPark.Assets
 
         [Browsable(false)]
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
-        public bool DrawAsPoint => DrawAllAsPoints || _arenaRadius <= 0f;
+        public bool DrawAsPoint => DrawAllAsPoints || ArenaRadius <= 0f;
 
         public void CalculateTransformation(SharpRenderer renderer)
         {
             world = DrawAsPoint
                 ? Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f))
-                : Matrix.Scaling(_arenaRadius * 2f) * Matrix.Translation(_position);
+                : Matrix.Scaling(ArenaRadius * 2f) * Matrix.Translation(_position);
 
             CreateBoundingBox(renderer);
         }
@@ -179,7 +171,7 @@ namespace IndustrialPark.Assets
             }
             else
             {
-                boundingSphere = new BoundingSphere(_position, _arenaRadius);
+                boundingSphere = new BoundingSphere(_position, ArenaRadius);
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
         }
@@ -220,7 +212,7 @@ namespace IndustrialPark.Assets
 
         public BoundingBox GetBoundingBox() => boundingBox;
 
-        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - Math.Max(0f, _arenaRadius);
+        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - Math.Max(0f, ArenaRadius);
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
@@ -254,7 +246,7 @@ namespace IndustrialPark.Assets
         private float GetScale()
         {
             if (DrawAsPoint)
-                return _arenaRadius;
+                return ArenaRadius;
 
             return 1f;
         }
