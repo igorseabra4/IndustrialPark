@@ -85,6 +85,8 @@ public class Archive
             foreach (var u in layerRepository.GetLayerAssetIDs(i))
             {
                 var AHDR = ahdrDictionary[u];
+                (AHDR.Game, AHDR.Platform) = (hipFile.game, hipFile.platform);
+
                 var asset = AssetService.ConvertHeaderToAsset(AHDR, true, out AssetError error);
                 assetRepository.Add(asset);
 
