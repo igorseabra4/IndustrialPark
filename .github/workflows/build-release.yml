@@ -26,20 +26,6 @@ jobs:
 
       - name: Set timezone
         run: tzutil /s "W. Europe Standard Time"
-
-      - name: Clone RenderWare repo
-        uses: actions/checkout@v5
-        with:
-          repository: energydrink02/RenderWare
-          token: ${{ secrets.RENDERWARE_ACCESS }}
-          path: ./RenderWare
-
-      - name: Cache RenderWare
-        id: cache-renderware
-        uses: actions/cache@v3
-        with:
-          path: ./RenderWare
-          key: renderware-cache-${{ hashFiles('./RenderWare/**/*.cpp', './RenderWare/**/*.vcxproj', './RenderWare/**/*.h') }}
         
       - name: Restore dependencies
         run: dotnet restore
@@ -57,23 +43,7 @@ jobs:
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v2
-
-      - name: Build renderware
-        if: steps.cache-renderware.outputs.cache-hit != 'true'
-        shell: pwsh
-        run: |
-          cd ./RenderWare
-          msbuild -t:restore -p:RestorePackagesConfig=true
-          msbuild /p:Configuration=Release /p:Platform=x86
-          cd .. 
-
-      - name: Move renderware to IP
-        shell: pwsh
-        run: |
-          $robocopy_process = Start-Process "robocopy" -ArgumentList "./RenderWare/Release ${{ env.OUTPUT_PATH }}Resources/RenderWare *.dll *.exe" -PassThru -Wait 
-          if ($robocopy_process.ExitCode -ne 1) { exit $robocopy_process.ExitCode }
-          Copy-Item -Path ./RenderWare/assimp/assimp-vc143-mtd.dll -Destination ${{ env.OUTPUT_PATH}}Resources/RenderWare
-          
+        
       - name: Clean and zip output
         run: |
           cd ${{ env.OUTPUT_PATH }}

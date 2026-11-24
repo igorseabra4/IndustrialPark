@@ -1,3 +1,4 @@
+
 name: Build
 
 on:
@@ -5,21 +6,29 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
-    
+
 jobs:
   build:
     runs-on: windows-2022
-    
+
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-        
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
       - name: Setup MSBuild
         uses: microsoft/setup-msbuild@v2
 
       - name: Setup NuGet
         uses: NuGet/setup-nuget@v2
+
+      - name: Check SDK
+        run: dotnet --info
 
       - name: Restore Packages
         run: nuget restore IndustrialPark.sln
@@ -31,4 +40,3 @@ jobs:
         uses: rusty-bender/vstest-action@main
         with:
           testAssembly: '**\bin\Release\**\*Test.dll'
-
