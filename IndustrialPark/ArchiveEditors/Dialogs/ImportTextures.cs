@@ -34,12 +34,7 @@ namespace IndustrialPark.ArchiveEditors
             };
 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
-            {
-                foreach (string s in openFileDialog.FileNames)
-                    filePaths.Add(s);
-
-                UpdateListBox();
-            }
+                AddFiles(openFileDialog.FileNames);
         }
 
         private void UpdateListBox()
@@ -145,9 +140,28 @@ namespace IndustrialPark.ArchiveEditors
         {
             if (e.Data.GetData(DataFormats.FileDrop) is not string[] files)
                 return;
+            AddFiles(files);
+        }
+
+        private void AddFiles(string[] files)
+        {
+            var skipped = new List<string>();
             foreach (string file in files)
-                filePaths.Add(file);
+                if (Path.GetFileNameWithoutExtension(file).Length < 32)
+                    filePaths.Add(file);
+                else
+                    skipped.Add(file);
+
             UpdateListBox();
+
+            if (skipped.Count == 1)
+            {
+                MessageBox.Show($"Unable to add texture {skipped[0]}: name must not exceed 31 characters.");
+            }
+            else if (skipped.Count > 1)
+            {
+                MessageBox.Show($"Unable to add {skipped.Count} textures: names must not exceed 31 characters.");
+            }
         }
     }
 }
