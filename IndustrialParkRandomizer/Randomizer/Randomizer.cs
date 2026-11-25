@@ -124,9 +124,11 @@ namespace IndustrialPark.Randomizer
             }
 
             // This goes through each file in the game and gets the warp names
+            var hips = new Dictionary<string, RandomizableArchive>();
             foreach (string hipPath in hipPaths)
             {
                 var hip = OpenHipFile(hipPath);
+                hips[hipPath] = hip;
 
                 progressBar.PerformStep($" | Opening {Path.GetFileNameWithoutExtension(hip.CurrentFilePath)}...");
 
@@ -221,7 +223,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    boot.Save(destPath);
+                    boot.Save(destPath, createBackup: false);
                 }
             }
 
@@ -239,7 +241,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    sppa.Save(destPath);
+                    sppa.Save(destPath, createBackup: false);
                 }
 
                 // Randomize spsb
@@ -254,7 +256,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    spsb.Save(destPath);
+                    spsb.Save(destPath, createBackup: false);
                 }
 
                 // Randomize spsc
@@ -269,7 +271,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    spsc.Save(destPath);
+                    spsc.Save(destPath, createBackup: false);
                 }
             }
 
@@ -292,7 +294,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    mnu5.Save(destPath);
+                    mnu5.Save(destPath, createBackup: false);
                 }
             }
 
@@ -315,7 +317,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    mnu4.Save(destPath);
+                    mnu4.Save(destPath, createBackup: false);
                 }
             }
 
@@ -335,7 +337,7 @@ namespace IndustrialPark.Randomizer
 
             foreach (string hipPath in hipPaths)
             {
-                var hip = OpenHipFile(hipPath);
+                var hip = hips[hipPath];
 
                 progressBar.PerformStep($" | Randomizing {Path.GetFileNameWithoutExtension(hip.CurrentFilePath)}...");
 
@@ -389,7 +391,7 @@ namespace IndustrialPark.Randomizer
                 var destDir = Path.GetDirectoryName(destPath);
                 if (!Directory.Exists(destDir))
                     Directory.CreateDirectory(destDir);
-                hip.Save(destPath);
+                hip.Save(destPath, createBackup: false);
 
                 if (backupDir == destinationDir)
                     File.Delete(hopPath);

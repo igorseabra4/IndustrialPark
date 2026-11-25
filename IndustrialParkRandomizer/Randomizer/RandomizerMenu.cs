@@ -218,39 +218,49 @@ namespace IndustrialPark.Randomizer
             Enabled = false;
             new Thread(new ThreadStart(() =>
             {
-                var message = randomizer.Perform(backupDir, destinationDir, progressBar);
-
-                if (isHmm)
+                string message;
+                bool failed = false;
+                try
                 {
-                    mod.RemoveFiles = randomizer.RemoveFiles;
-                    mod.INIReplacements = randomizer.INI;
+                    message = randomizer.Perform(backupDir, destinationDir, progressBar);
 
-                    if (!Directory.Exists(destinationDir))
-                        Directory.CreateDirectory(destinationDir);
-                    File.WriteAllText(Path.Combine(modDir, "mod.json"), JsonConvert.SerializeObject(mod));
-                }
-                else
-                {
-                    var iniLocation = Path.Combine(destinationDir, gameIniName);
-                    if (File.Exists(iniLocation))
+                    if (isHmm)
                     {
-                        var newIni = PerformIniSubstitutions(File.ReadAllLines(iniLocation), randomizer.INI.Split('\n'));
-                        File.WriteAllLines(iniLocation, newIni);
+                        mod.RemoveFiles = randomizer.RemoveFiles;
+                        mod.INIReplacements = randomizer.INI;
+
+                        if (!Directory.Exists(destinationDir))
+                            Directory.CreateDirectory(destinationDir);
+                        File.WriteAllText(Path.Combine(modDir, "mod.json"), JsonConvert.SerializeObject(mod));
+                    }
+                    else
+                    {
+                        var iniLocation = Path.Combine(destinationDir, gameIniName);
+                        if (File.Exists(iniLocation))
+                        {
+                            var newIni = PerformIniSubstitutions(File.ReadAllLines(iniLocation), randomizer.INI.Split('\n'));
+                            File.WriteAllLines(iniLocation, newIni);
+                        }
                     }
                 }
-
-                ThreadDone(progressBar, message);
+                catch (Exception ex)
+                {
+                    message = $"Randomization failed: {ex.Message}";
+                    failed = true;
+                }
+                ThreadDone(progressBar, message, failed);
             })).Start();
         }
 
-        private void ThreadDone(ProgressBar progressBar, string message)
+        private void ThreadDone(ProgressBar progressBar, string message, bool failed)
         {
             Invoke(new Action(() =>
             {
                 progressBar.Close();
                 Enabled = true;
                 UpdateInterfaceFromRandomizer();
-                MessageBox.Show(message);
+                MessageBox.Show(message, failed ? "Randomization Error" : "Randomization Complete",
+                    MessageBoxButtons.OK, failed ? MessageBoxIcon.Error : MessageBoxIcon.Information);
                 Activate();
             }));
         }
