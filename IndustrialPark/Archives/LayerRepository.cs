@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using IndustrialPark.Assets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -246,6 +247,16 @@ public class LayerRepository
         if (lastJSPINFOIndex == -1)
             lastJSPINFOIndex = Layers.FindLastIndex(l => l.Type == LayerType.TEXTURE);
 
-        return lastJSPINFOIndex != -1 ? (lastJSPINFOIndex + 1) : Layers.Count;
+        return lastJSPINFOIndex != -1 ? (lastJSPINFOIndex + 1) : 0;
+    }
+
+    public int CreateNewTextureLayer()
+    {
+        if (AutoLayers)
+            return -1;
+        int index = Layers.FindLastIndex(l => l.Type == LayerType.TEXTURE) + 1;
+        Layers.Insert(index, new Layer(LayerType.TEXTURE));
+        LayerAdded?.Invoke(index);
+        return index;
     }
 }

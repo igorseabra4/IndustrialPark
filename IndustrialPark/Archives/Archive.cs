@@ -396,6 +396,8 @@ public class Archive
 
     public int GetOrCreateLayerOfType(LayerType layerType) => layerRepository.GetOrCreateLayerOfType(layerType);
 
+    public int CreateNewTextureLayer() => layerRepository.CreateNewTextureLayer();
+
     public byte[] GetSoundData(uint assetID, byte[] previousData) => SoundManager.GetCompleteSoundData(assetID, GetAsset(assetID).assetType, previousData);
 
     public IEnumerable<Asset> ImportSounds(IEnumerable<AssetSound> sounds, bool forceOverwrite)

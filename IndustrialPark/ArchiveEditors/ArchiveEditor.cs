@@ -419,18 +419,28 @@ public partial class ArchiveEditor : Form
 
     private void importTexturesToolStripMenuItem_Click(object sender, EventArgs e)
     {
+        var layerIndex = SelectedLayerIndex;
+        bool newLayerCreated = false;
+        if (!archive.AutoLayers && archive.GetLayerTypeGeneric(layerIndex) is not (LayerType.TEXTURE or LayerType.TEXTURE_STRM))
+        {
+            layerIndex = archive.CreateNewTextureLayer();
+            newLayerCreated = true;
+        }
+
         Enabled = false;
         var (AHDRs, overwrite) = ImportTextures.GetAssets(archive.Game, archive.Platform);
 
         if (AHDRs != null)
         {
             BeginTransaction();
-            List<Asset> assets = archive.ImportAssets(AHDRs, SelectedLayerIndex, overwrite);
+            List<Asset> assets = archive.ImportAssets(AHDRs, layerIndex, overwrite);
             EndTransaction();
             if (!archive.AutoLayers)
-                comboBoxLayers.Items[comboBoxLayers.SelectedIndex] = archive.LayerToString(SelectedLayerIndex);
+                comboBoxLayers.Items[layerIndex] = archive.LayerToString(layerIndex);
             OnEditorUpdate();
-            SetSelectedAssets(assets);
+            Invoke(() => SetSelectedAssets(assets));
+            if (newLayerCreated)
+                MessageBox.Show("Since your previously selected layer was not a texture layer, a new texture layer was created for the imported textures.", "New Layer Created", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
         Enabled = true;
     }
@@ -577,7 +587,15 @@ public partial class ArchiveEditor : Form
         }
         else
         {
-            assets = archive.ImportAssets([.. result.AHDRCollections.SelectMany(list => list)], SelectedLayerIndex, result.Overwrite);
+            var layerIndex = SelectedLayerIndex;
+            var requiredType = result.AssetType == AssetType.Model ? LayerType.MODEL : LayerType.BSP;
+            if (!archive.AutoLayers && archive.GetLayerTypeGeneric(layerIndex) != requiredType)
+            {
+                MessageBox.Show($"You do not have a {requiredType} layer selected! Moving imported assets to a {requiredType} layer.");
+                layerIndex = archive.GetOrCreateLayerOfType(requiredType);
+            }
+
+            assets = archive.ImportAssets([.. result.AHDRCollections.SelectMany(list => list)], layerIndex, result.Overwrite);
 
             if (result.AssetType == AssetType.Model)
             {
@@ -590,7 +608,7 @@ public partial class ArchiveEditor : Form
 
         EndTransaction();
 
-        SetSelectedAssets(assets);
+        Invoke(() => SetSelectedAssets(assets));
         OnEditorUpdate();
     }
 
@@ -758,9 +776,11 @@ public partial class ArchiveEditor : Form
         {
             BeginTransaction();
 
-            archive.AddLayer();
+            var index = archive.AddLayer();
 
             EndTransaction();
+
+            Invoke(() => SelectedLayerIndex = index);
         }
         catch (Exception ex)
         {
@@ -781,17 +801,22 @@ public partial class ArchiveEditor : Form
 
         BeginTransaction();
 
-        archive.RemoveLayer(SelectedLayerIndex);
+        var index = SelectedLayerIndex;
+        archive.RemoveLayer(index);
 
         EndTransaction();
+        
+        Invoke(() => SelectedLayerIndex = archive.LayerCount == 0 ? -1 : Math.Max(index, archive.LayerCount - 1));
     }
 
     private void buttonArrowUp_Click(object sender, EventArgs e)
     {
         BeginTransaction();
 
-        if (archive.MoveLayerUp(SelectedLayerIndex))
+        var selected = SelectedLayerIndex;
+        if (archive.MoveLayerUp(selected))
         {
+            Invoke(() => SelectedLayerIndex = selected - 1);
             EndTransaction();
         }
     }
@@ -800,8 +825,10 @@ public partial class ArchiveEditor : Form
     {
         BeginTransaction();
 
-        if (archive.MoveLayerDown(SelectedLayerIndex))
+        var selected = SelectedLayerIndex;
+        if (archive.MoveLayerDown(selected))
         {
+            Invoke(() => SelectedLayerIndex = selected + 1);
             EndTransaction();
         }
     }
@@ -814,12 +841,12 @@ public partial class ArchiveEditor : Form
 
     private void textBoxFindAsset_TextChanged(object sender, EventArgs e)
     {
-        uint assetID = 0;
         if (textBoxFindAsset.Text == "")
         {
             PopulateAssetList();
             return;
         }
+        uint assetID = 0;
         try
         {
             textBoxFindAsset.BackColor = defaultColor;
