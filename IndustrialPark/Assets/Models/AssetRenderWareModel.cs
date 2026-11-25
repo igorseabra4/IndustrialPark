@@ -153,14 +153,14 @@ namespace IndustrialPark.Assets
             base.Verify(ref result);
 
             if (ModelAsRWSections.Length == 0)
-                result.Add("Failed to read MODL asset. This might be just a library error and does not necessarily mean the model is broken.");
+                result.Add("Library failed to read model asset.");
 
             foreach (string s in Textures)
                 if (!(Program.NameRepository.AssetExists(new AssetID(s)) || Program.NameRepository.AssetExists(new AssetID(s + ".RW3"))))
-                    result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
+                    result.Add($"Texture {s} referenced by model was not found.");
 
             if (!AssetService.HasWhoTargets(assetID))
-                result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
+                result.Add("Model appears unused; no references found.");
         }
 
         public override List<uint> GetHierarchy()

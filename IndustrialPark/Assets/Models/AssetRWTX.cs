@@ -35,10 +35,10 @@ namespace IndustrialPark.Assets
             base.Verify(ref result);
 
             if (TextureAsRWSections.Length == 0)
-                result.Add("Failed to read RWTX asset. This might be just a library error and does not necessarily mean the texture is broken.");
+                result.Add("Library failed to read texture asset.");
 
             if (!AssetService.HasWhoTargets(assetID))
-                result.Add("Texture appears to be unused, as I could not find another asset that references it.");
+                result.Add("Texture appears unused; no references found.");
         }
 
         [Category(categoryName)]
