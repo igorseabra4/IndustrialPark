@@ -1060,18 +1060,29 @@ namespace IndustrialPark.Randomizer
         private RWSection[] ModelAsRWSections(byte[] data, out int renderWareVersion, bool treatStuffAsByteArray = true)
         {
             ReadFileMethods.treatStuffAsByteArray = treatStuffAsByteArray;
-            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(data);
-            renderWareVersion = sections[0].renderWareVersion;
-            ReadFileMethods.treatStuffAsByteArray = false;
-            return sections;
+            try
+            {
+                RWSection[] sections = ReadFileMethods.ReadRenderWareFile(data);
+                renderWareVersion = sections[0].renderWareVersion;
+                return sections;
+            }
+            finally
+            {
+                ReadFileMethods.treatStuffAsByteArray = false;
+            }
         }
 
         private byte[] ModelToRWSections(RWSection[] sections, int renderWareVersion)
         {
             ReadFileMethods.treatStuffAsByteArray = true;
-            byte[] data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            ReadFileMethods.treatStuffAsByteArray = false;
-            return data;
+            try
+            {
+                return ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+            }
+            finally
+            {
+                ReadFileMethods.treatStuffAsByteArray = false;
+            }
         }
 
         private bool ShuffleBusStops()

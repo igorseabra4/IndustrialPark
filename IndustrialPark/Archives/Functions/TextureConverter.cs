@@ -72,94 +72,103 @@ public static class TextureConverter
     public static void ExportTextureDictionary(IEnumerable<AssetRWTX> assets, string fileName, CheckState RW3, IProgressBar progressBar = null)
     {
         ReadFileMethods.treatStuffAsByteArray = true;
+        try
+        {
+            List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
 
-        List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
+            int fileVersion = 0;
 
-        int fileVersion = 0;
-
-        foreach (var asset in assets)
-            if ((RW3 == CheckState.Indeterminate) || ((RW3 == CheckState.Checked) && asset.assetName.Contains(".RW3")) || ((RW3 == CheckState.Unchecked) && !asset.assetName.Contains(".RW3")))
-                try
-                {
-                    foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(asset.Data))
-                        if (rw is TextureDictionary_0016 td)
-                            foreach (TextureNative_0015 tn in td.textureNativeList)
-                            {
-                                fileVersion = tn.renderWareVersion;
-
-                                var name = asset.assetName;
-                                // Fix for trimmed texture file names
-                                // For example, track textures in SpongeBall challenges
-                                // Length indicates that the file may have been trimmed (TODO: check if trim length is always 31?)
-                                int trimLength = 31;
-
-                                if (name.Length == trimLength && !name.EndsWith(".RW3"))
+            foreach (var asset in assets)
+                if ((RW3 == CheckState.Indeterminate) || ((RW3 == CheckState.Checked) && asset.assetName.Contains(".RW3")) || ((RW3 == CheckState.Unchecked) && !asset.assetName.Contains(".RW3")))
+                    try
+                    {
+                        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(asset.Data))
+                            if (rw is TextureDictionary_0016 td)
+                                foreach (TextureNative_0015 tn in td.textureNativeList)
                                 {
-                                    if (name.EndsWith(".RW"))
-                                        tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 3);
-                                    else if (asset.assetName.EndsWith(".R"))
-                                        tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 2);
-                                    else if (asset.assetName.EndsWith("."))
-                                        tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 1);
+                                    fileVersion = tn.renderWareVersion;
+
+                                    var name = asset.assetName;
+                                    // Fix for trimmed texture file names
+                                    // For example, track textures in SpongeBall challenges
+                                    // Length indicates that the file may have been trimmed (TODO: check if trim length is always 31?)
+                                    int trimLength = 31;
+
+                                    if (name.Length == trimLength && !name.EndsWith(".RW3"))
+                                    {
+                                        if (name.EndsWith(".RW"))
+                                            tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 3);
+                                        else if (asset.assetName.EndsWith(".R"))
+                                            tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 2);
+                                        else if (asset.assetName.EndsWith("."))
+                                            tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 1);
+                                    }
+                                    else if (name.EndsWith(".RW3"))
+                                        tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 4);
+                                    else
+                                        tn.textureNativeStruct.textureName = name;
+
+                                    textNativeList.Add(tn);
+                                    progressBar?.PerformStep();
                                 }
-                                else if (name.EndsWith(".RW3"))
-                                    tn.textureNativeStruct.textureName = name.Substring(0, name.Length - 4);
-                                else
-                                    tn.textureNativeStruct.textureName = name;
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Unable to add {asset.assetName} to TXD archive: {ex.Message}");
+                    }
 
-                                textNativeList.Add(tn);
-                                progressBar?.PerformStep();
-                            }
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Unable to add {asset.assetName} to TXD archive: {ex.Message}");
-                }
+            TextureDictionary_0016 rws = new TextureDictionary_0016(textNativeList);
 
-        TextureDictionary_0016 rws = new TextureDictionary_0016(textNativeList);
+            rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
 
-        rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
+            File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
 
-        File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
-
-        ReadFileMethods.treatStuffAsByteArray = false;
+        }
+        finally
+        {
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
     }
 
     public static List<Section_AHDR> GetAssetsFromTextureDictionary(string fileName, bool RW3, Game game, Platform platform)
     {
         ReadFileMethods.treatStuffAsByteArray = true;
-
-        List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-
-        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(fileName))
+        try
         {
-            if (rw is TextureDictionary_0016 td)
+            List<Section_AHDR> AHDRs = new List<Section_AHDR>();
+
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(fileName))
             {
-                // For each texture in the dictionary...
-                foreach (TextureNative_0015 tn in td.textureNativeList)
+                if (rw is TextureDictionary_0016 td)
                 {
-                    string textureName = tn.textureNativeStruct.textureName;
-                    if (RW3 && !textureName.Contains(".RW3"))
-                        textureName += ".RW3";
+                    // For each texture in the dictionary...
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                    {
+                        string textureName = tn.textureNativeStruct.textureName;
+                        if (RW3 && !textureName.Contains(".RW3"))
+                            textureName += ".RW3";
 
-                    // Create a new dictionary that has only that texture.
-                    byte[] data = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(tn), tn.renderWareVersion);
+                        // Create a new dictionary that has only that texture.
+                        byte[] data = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(tn), tn.renderWareVersion);
 
-                    if (game == Game.Scooby)
-                        FixTextureForScooby(ref data);
+                        if (game == Game.Scooby)
+                            FixTextureForScooby(ref data);
 
-                    // And add the new dictionary as an asset.
-                    Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
-                    Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.Texture, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data, game, platform);
+                        // And add the new dictionary as an asset.
+                        Section_ADBG ADBG = new Section_ADBG(0, textureName, "", 0);
+                        Section_AHDR AHDR = new Section_AHDR(BKDRHash(textureName), AssetType.Texture, AHDRFlags.SOURCE_VIRTUAL | AHDRFlags.READ_TRANSFORM, ADBG, data, game, platform);
 
 
-                    AHDRs.Add(AHDR);
+                        AHDRs.Add(AHDR);
+                    }
                 }
             }
+            return AHDRs;
         }
-        ReadFileMethods.treatStuffAsByteArray = false;
-
-        return AHDRs;
+        finally
+        {
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
     }
 
     public static Dictionary<string, Bitmap> ExportTXDToBitmaps(byte[] txdFile, bool hasTransparency = false)
@@ -279,27 +288,34 @@ public static class TextureConverter
         List<TextureNative_0015> textures = new List<TextureNative_0015>();
 
         ReadFileMethods.treatStuffAsByteArray = true;
-
-        foreach (AssetRWTX RWTX in assets)
+        byte[] txdFile;
+        try
         {
-            var data = RWTX.Data;
-
-            // Some RWTX files seem to have no data, causing a crash when exporting as PNG
-            // e.g. bubble_wand.RW3 in JF01.hop
-            if (data.Length == 0)
-                continue;
-
-            var textureDictionary = ReadFileMethods.ReadRenderWareFile(data)[0] as TextureDictionary_0016;
-            var texNativeList = textureDictionary.textureNativeList;
-
-            foreach (TextureNative_0015 texture in texNativeList)
+            foreach (AssetRWTX RWTX in assets)
             {
-                texture.textureNativeStruct.textureName = RWTX.assetName;
-                textures.Add(texture);
-            }
-        }
+                var data = RWTX.Data;
 
-        var txdFile = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(textures), rwVersion);
+                // Some RWTX files seem to have no data, causing a crash when exporting as PNG
+                // e.g. bubble_wand.RW3 in JF01.hop
+                if (data.Length == 0)
+                    continue;
+
+                var textureDictionary = ReadFileMethods.ReadRenderWareFile(data)[0] as TextureDictionary_0016;
+                var texNativeList = textureDictionary.textureNativeList;
+
+                foreach (TextureNative_0015 texture in texNativeList)
+                {
+                    texture.textureNativeStruct.textureName = RWTX.assetName;
+                    textures.Add(texture);
+                }
+            }
+
+            txdFile = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(textures), rwVersion);
+        }
+        finally
+        {
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
         return ExportTXDToBitmaps(txdFile).Select(b => (b.Key, b.Value)).ToList();
     }
 
@@ -308,32 +324,39 @@ public static class TextureConverter
         List<TextureNative_0015> textures = new List<TextureNative_0015>();
 
         ReadFileMethods.treatStuffAsByteArray = true;
-
-        foreach (string t in textureNames)
+        byte[] txdFile;
+        try
         {
-            AssetRWTX RWTX;
-
-            uint assetID = new AssetID(t + ".RW3");
-            if (archive.TryGetAsset(assetID, out Asset asset) && asset is AssetRWTX rWTX1)
-                RWTX = rWTX1;
-            else
+            foreach (string t in textureNames)
             {
-                assetID = new AssetID(t);
-                if (archive.TryGetAsset(assetID, out asset) && asset is AssetRWTX rWTX2)
-                    RWTX = rWTX2;
+                AssetRWTX RWTX;
+
+                uint assetID = new AssetID(t + ".RW3");
+                if (archive.TryGetAsset(assetID, out Asset asset) && asset is AssetRWTX rWTX1)
+                    RWTX = rWTX1;
                 else
-                    continue;
+                {
+                    assetID = new AssetID(t);
+                    if (archive.TryGetAsset(assetID, out asset) && asset is AssetRWTX rWTX2)
+                        RWTX = rWTX2;
+                    else
+                        continue;
+                }
+
+                foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(RWTX.Data)[0]).textureNativeList)
+                {
+                    texture.textureNativeStruct.textureName = t;
+                    textures.Add(texture);
+                }
             }
 
-            foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(RWTX.Data)[0]).textureNativeList)
-            {
-                texture.textureNativeStruct.textureName = t;
-                textures.Add(texture);
-            }
+
+            txdFile = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(textures), currentTextureVersion(archive.Game, archive.Platform));
         }
-
-
-        var txdFile = ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(textures), currentTextureVersion(archive.Game, archive.Platform));
+        finally
+        {
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
         return ExportTXDToBitmaps(txdFile, false);
     }
 

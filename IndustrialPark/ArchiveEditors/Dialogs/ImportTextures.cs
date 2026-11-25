@@ -72,35 +72,39 @@ namespace IndustrialPark.ArchiveEditors
             if (a.ShowDialog() == DialogResult.OK)
             {
                 ReadFileMethods.treatStuffAsByteArray = true;
-
                 List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-
-                List<string> forBitmap = new List<string>();
-
-                for (int i = 0; i < a.filePaths.Count; i++)
+                try
                 {
-                    if (Path.GetExtension(a.filePaths[i]).ToLower().Equals(".rwtex"))
+                    List<string> forBitmap = new List<string>();
+
+                    for (int i = 0; i < a.filePaths.Count; i++)
                     {
-                        byte[] data = ReadFileMethods.ExportRenderWareFile(
-                            new TextureDictionary_0016(new TextureNative_0015(File.ReadAllBytes(a.filePaths[i]))), currentTextureVersion(game, platform));
+                        if (Path.GetExtension(a.filePaths[i]).ToLower().Equals(".rwtex"))
+                        {
+                            byte[] data = ReadFileMethods.ExportRenderWareFile(
+                                new TextureDictionary_0016(new TextureNative_0015(File.ReadAllBytes(a.filePaths[i]))), currentTextureVersion(game, platform));
 
-                        string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
+                            string assetName = Path.GetFileNameWithoutExtension(a.filePaths[i]) + (a.checkBoxRW3.Checked ? ".RW3" : "");
 
-                        Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);
-                        Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(assetName), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture), ADBG, data, game, platform);
+                            Section_ADBG ADBG = new Section_ADBG(0, assetName, "", 0);
+                            Section_AHDR AHDR = new Section_AHDR(Functions.BKDRHash(assetName), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture), ADBG, data, game, platform);
 
-                        AHDRs.Add(AHDR);
+                            AHDRs.Add(AHDR);
+                        }
+                        else
+                        {
+                            forBitmap.Add(a.filePaths[i]);
+                        }
                     }
-                    else
-                    {
-                        forBitmap.Add(a.filePaths[i]);
-                    }
+
+                    AHDRs.AddRange(CreateRWTXsFromBitmaps(game, platform, forBitmap, a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked,
+                        a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked, a.checkBoxTransFix.Checked));
+
                 }
-
-                AHDRs.AddRange(CreateRWTXsFromBitmaps(game, platform, forBitmap, a.checkBoxRW3.Checked, a.checkBoxFlipTextures.Checked,
-                    a.checkBoxMipmaps.Checked, a.checkBoxCompress.Checked, a.checkBoxTransFix.Checked));
-
-                ReadFileMethods.treatStuffAsByteArray = false;
+                finally
+                {
+                    ReadFileMethods.treatStuffAsByteArray = false;
+                }
 
                 if (game == Game.Scooby)
                     for (int i = 0; i < AHDRs.Count; i++)

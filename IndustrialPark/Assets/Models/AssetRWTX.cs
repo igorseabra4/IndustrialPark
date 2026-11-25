@@ -58,20 +58,29 @@ namespace IndustrialPark.Assets
                     ReadFileMethods.treatStuffAsByteArray = true;
                     _textureAsRWSections = ReadFileMethods.ReadRenderWareFile(Data);
                     renderWareVersion = _textureAsRWSections[0].renderWareVersion;
-                    ReadFileMethods.treatStuffAsByteArray = false;
                     return _textureAsRWSections;
                 }
                 catch
                 {
                     return new RWSection[0];
                 }
+                finally
+                {
+                    ReadFileMethods.treatStuffAsByteArray = false;
+                }
             }
             set
             {
                 ReadFileMethods.treatStuffAsByteArray = true;
-                _textureAsRWSections = value;
-                Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
-                ReadFileMethods.treatStuffAsByteArray = false;
+                try
+                {
+                    _textureAsRWSections = value;
+                    Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
+                }
+                finally
+                {
+                    ReadFileMethods.treatStuffAsByteArray = false;
+                }
             }
         }
 

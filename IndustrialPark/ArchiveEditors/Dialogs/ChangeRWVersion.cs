@@ -54,15 +54,20 @@ namespace IndustrialPark.ArchiveEditors
                 return file;
 
             ReadFileMethods.treatStuffAsByteArray = true;
-            RWSection[] rws = ReadFileMethods.ReadRenderWareFile(file);
+            try
+            {
+                RWSection[] rws = ReadFileMethods.ReadRenderWareFile(file);
 
-            if (rws[0] is Clump_0010 clump)
-                foreach (var gl in clump.geometryList.geometryList)
-                    gl.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+                if (rws[0] is Clump_0010 clump)
+                    foreach (var gl in clump.geometryList.geometryList)
+                        gl.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
 
-            byte[] data = ReadFileMethods.ExportRenderWareFile(rws, version.Value);
-            ReadFileMethods.treatStuffAsByteArray = false;
-            return data;
+                return ReadFileMethods.ExportRenderWareFile(rws, version.Value);
+            }
+            finally
+            {
+                ReadFileMethods.treatStuffAsByteArray = false;
+            }
         }
 
         /// <summary>

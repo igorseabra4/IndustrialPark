@@ -87,58 +87,67 @@ public static class TextureIOHelper
         switch (game)
         {
             case Game.Scooby when platform == Platform.PS2:
-                return (3,1,0,0);
+                return (3, 1, 0, 0);
             case Game.Scooby when platform == Platform.GameCube:
-                return (3,3,0,2);
+                return (3, 3, 0, 2);
             case Game.BFBB when platform == Platform.GameCube:
-                return (3,4,0,3); 
+                return (3, 4, 0, 3);
             case Game.Scooby when platform == Platform.Xbox:
-                return (3,4,0,5); 
+                return (3, 4, 0, 5);
             case Game.BFBB:
             case Game.Incredibles when platform == Platform.PS2:
-                return (3,5,0,0); 
+                return (3, 5, 0, 0);
             default:
-                return (3,7,0,2,0xA);
+                return (3, 7, 0, 2, 0xA);
         }
     }
 
     public static void ExportSingleTextureToRWTEX(byte[] data, string fileName)
     {
         ReadFileMethods.treatStuffAsByteArray = true;
+        try
+        {
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
+                if (rw is TextureDictionary_0016 td)
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                        File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(tn, tn.renderWareVersion));
 
-        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
-            if (rw is TextureDictionary_0016 td)
-                foreach (TextureNative_0015 tn in td.textureNativeList)
-                    File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(tn, tn.renderWareVersion));
-
-        ReadFileMethods.treatStuffAsByteArray = false;
+        }
+        finally
+        {
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
     }
 
     public static void ExportSingleTextureToDictionary(string fileName, byte[] data, string textureName)
     {
         ReadFileMethods.treatStuffAsByteArray = true;
+        try
+        {
+            List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
 
-        List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
+            int fileVersion = 0;
 
-        int fileVersion = 0;
+            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
+                if (rw is TextureDictionary_0016 td)
+                    foreach (TextureNative_0015 tn in td.textureNativeList)
+                    {
+                        fileVersion = tn.renderWareVersion;
+                        tn.textureNativeStruct.textureName = textureName.Replace(".RW3", "");
+                        textNativeList.Add(tn);
+                    }
 
-        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
-            if (rw is TextureDictionary_0016 td)
-                foreach (TextureNative_0015 tn in td.textureNativeList)
-                {
-                    fileVersion = tn.renderWareVersion;
-                    tn.textureNativeStruct.textureName = textureName.Replace(".RW3", "");
-                    textNativeList.Add(tn);
-                }
+            TextureDictionary_0016 rws = new TextureDictionary_0016(textNativeList);
 
-        TextureDictionary_0016 rws = new TextureDictionary_0016(textNativeList);
+            rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
 
-        rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
+            File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
 
-        File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
-
-        ReadFileMethods.treatStuffAsByteArray = false;
-
+        }
+        finally
+        {
+            ReadFileMethods.treatStuffAsByteArray = false;
+        }
     }
 
     public static Section_AHDR CreateRWTXFromBitmap(Game game, Platform platform, string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
@@ -222,24 +231,28 @@ public static class TextureIOHelper
                 $"targetPlatform={platformText}\r\n");
 
             ReadFileMethods.treatStuffAsByteArray = true;
-
             List<Section_AHDR> AHDRs = new List<Section_AHDR>();
-
-
-            foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(pathToGcTXD)[0]).textureNativeList)
+            try
             {
-                string sanitizedTexture = game == Game.Scooby && appendRW3 ? texture.textureNativeStruct.textureName + ".RW3" : texture.textureNativeStruct.textureName;
-                AHDRs.Add(new Section_AHDR(BKDRHash(sanitizedTexture), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture),
-                    new Section_ADBG(0, sanitizedTexture, "", 0),
-                    ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(texture), currentTextureVersion(game, platform)), game, platform));
+
+                foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(pathToGcTXD)[0]).textureNativeList)
+                {
+                    string sanitizedTexture = game == Game.Scooby && appendRW3 ? texture.textureNativeStruct.textureName + ".RW3" : texture.textureNativeStruct.textureName;
+                    AHDRs.Add(new Section_AHDR(BKDRHash(sanitizedTexture), AssetType.Texture, AssetService.AHDRFlagsFromAssetType(AssetType.Texture),
+                        new Section_ADBG(0, sanitizedTexture, "", 0),
+                        ReadFileMethods.ExportRenderWareFile(new TextureDictionary_0016(texture), currentTextureVersion(game, platform)), game, platform));
+                }
+
+                // fix for apparent transparency issue
+                if (transFix && platform == Platform.GameCube)
+                    foreach (var AHDR in AHDRs)
+                        AHDR.data[0x9B] = 0x01;
+
             }
-
-            // fix for apparent transparency issue
-            if (transFix && platform == Platform.GameCube)
-                foreach (var AHDR in AHDRs)
-                    AHDR.data[0x9B] = 0x01;
-
-            ReadFileMethods.treatStuffAsByteArray = false;
+            finally
+            {
+                ReadFileMethods.treatStuffAsByteArray = false;
+            }
 
             File.Delete(pathToGcTXD);
             File.Delete(pathToPcTXD);
