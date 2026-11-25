@@ -3,9 +3,10 @@
     public enum ErrorReason
     {
         NoError,
-        SequenceNotEqual,
+        ParseException,
+        CannotBuild,
+        NotImplemented,
+        NoData,
         SkipBuildTesting,
-        Exception,
-        NoData
     }
 }

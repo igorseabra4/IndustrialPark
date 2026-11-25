@@ -54,6 +54,8 @@ namespace IndustrialPark
             replaceAssetsOnPasteToolStripMenuItem = new ToolStripMenuItem();
             useLegacyAssetTypeFormatToolStripMenuItem = new ToolStripMenuItem();
             useLegacyAssetIDFormatToolStripMenuItem = new ToolStripMenuItem();
+            persistentAssetNameRepositoryToolStripMenuItem = new ToolStripMenuItem();
+            clearStaleAssetNamesToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator12 = new ToolStripSeparator();
             defaultToAllAssetsToolStripMenuItem = new ToolStripMenuItem();
             dockTargetArchiveEditorToolStripMenuItem = new ToolStripMenuItem();
@@ -201,8 +203,7 @@ namespace IndustrialPark
             splitContainer1 = new SplitContainer();
             splitContainer2 = new SplitContainer();
             tabControlRight = new TabControl();
-            persistentAssetNameRepositoryToolStripMenuItem = new ToolStripMenuItem();
-            clearStaleAssetNamesToolStripMenuItem = new ToolStripMenuItem();
+            soakToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             toolStripMain.SuspendLayout();
@@ -388,6 +389,22 @@ namespace IndustrialPark
             useLegacyAssetIDFormatToolStripMenuItem.Text = "Use &Legacy Asset ID Format";
             useLegacyAssetIDFormatToolStripMenuItem.ToolTipText = "If enabled, asset IDs will always be displayed as hexadecimal numbers.";
             useLegacyAssetIDFormatToolStripMenuItem.Click += useLegacyAssetIDFormatToolStripMenuItem_Click;
+            // 
+            // persistentAssetNameRepositoryToolStripMenuItem
+            // 
+            persistentAssetNameRepositoryToolStripMenuItem.Checked = true;
+            persistentAssetNameRepositoryToolStripMenuItem.CheckState = CheckState.Checked;
+            persistentAssetNameRepositoryToolStripMenuItem.Name = "persistentAssetNameRepositoryToolStripMenuItem";
+            persistentAssetNameRepositoryToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            persistentAssetNameRepositoryToolStripMenuItem.Text = "Persistent asset name repository";
+            persistentAssetNameRepositoryToolStripMenuItem.Click += persistentAssetNameRepositoryToolStripMenuItem_Click;
+            // 
+            // clearStaleAssetNamesToolStripMenuItem
+            // 
+            clearStaleAssetNamesToolStripMenuItem.Name = "clearStaleAssetNamesToolStripMenuItem";
+            clearStaleAssetNamesToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
+            clearStaleAssetNamesToolStripMenuItem.Text = "Clear stale asset names...";
+            clearStaleAssetNamesToolStripMenuItem.Click += clearStaleAssetNamesToolStripMenuItem_Click;
             // 
             // toolStripSeparator12
             // 
@@ -1025,7 +1042,7 @@ namespace IndustrialPark
             // 
             // researchToolStripMenuItem
             // 
-            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem });
+            researchToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { viewUndoBufferToolStripMenuItem, assetIDGeneratorToolStripMenuItem, hansToolStripMenuItem, soakToolStripMenuItem });
             researchToolStripMenuItem.Name = "researchToolStripMenuItem";
             researchToolStripMenuItem.Size = new System.Drawing.Size(124, 19);
             researchToolStripMenuItem.Text = "&Research/Advanced";
@@ -1521,21 +1538,12 @@ namespace IndustrialPark
             tabControlRight.TabIndex = 0;
             tabControlRight.MouseClick += tabControl1_MouseClick;
             // 
-            // persistentAssetNameRepositoryToolStripMenuItem
+            // soakToolStripMenuItem
             // 
-            persistentAssetNameRepositoryToolStripMenuItem.Checked = true;
-            persistentAssetNameRepositoryToolStripMenuItem.CheckState = CheckState.Checked;
-            persistentAssetNameRepositoryToolStripMenuItem.Name = "persistentAssetNameRepositoryToolStripMenuItem";
-            persistentAssetNameRepositoryToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
-            persistentAssetNameRepositoryToolStripMenuItem.Text = "Persistent asset name repository";
-            persistentAssetNameRepositoryToolStripMenuItem.Click += persistentAssetNameRepositoryToolStripMenuItem_Click;
-            // 
-            // clearStaleAssetNamesToolStripMenuItem
-            // 
-            clearStaleAssetNamesToolStripMenuItem.Name = "clearStaleAssetNamesToolStripMenuItem";
-            clearStaleAssetNamesToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
-            clearStaleAssetNamesToolStripMenuItem.Text = "Clear stale asset names...";
-            clearStaleAssetNamesToolStripMenuItem.Click += clearStaleAssetNamesToolStripMenuItem_Click;
+            soakToolStripMenuItem.Name = "soakToolStripMenuItem";
+            soakToolStripMenuItem.Size = new System.Drawing.Size(191, 22);
+            soakToolStripMenuItem.Text = "Soak";
+            soakToolStripMenuItem.Click += soakToolStripMenuItem_Click;
             // 
             // MainForm
             // 
@@ -1759,6 +1767,7 @@ namespace IndustrialPark
         private ToolStripMenuItem archiveComparerToolStripMenuItem;
         private ToolStripMenuItem persistentAssetNameRepositoryToolStripMenuItem;
         private ToolStripMenuItem clearStaleAssetNamesToolStripMenuItem;
+        private ToolStripMenuItem soakToolStripMenuItem;
     }
 }
 

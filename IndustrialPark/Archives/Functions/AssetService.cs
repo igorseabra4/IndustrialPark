@@ -19,21 +19,12 @@ public static class AssetService
         Asset newAsset;
         try
         {
-            newAsset = ConvertHeaderToAsset(AHDR);
+            newAsset = ConvertHeaderToAsset(AHDR, ref error);
         }
         catch (Exception ex)
         {
-            if (AHDR.data.Length == 0)
-            {
-                error.reason = ErrorReason.NoData;
-                error.errorMessage = "Asset is empty and does not contain any data";
-            }
-            else
-            {
-                error.reason = ErrorReason.Exception;
-                error.errorMessage = $"Asset format currently not supported by Industrial Park: {ex.Message}";
-            }
-
+            error.reason = ErrorReason.ParseException;
+            error.exception = ex.Message;
             newAsset = new AssetGeneric(AHDR);
         }
 
@@ -45,8 +36,7 @@ public static class AssetService
             var isSndiV2 = newAsset is AssetSNDI_GCN_V2;
             if (!BuiltDataMatches(AHDR.data, built, isSndiV2))
             {
-                error.reason = ErrorReason.SequenceNotEqual;
-                error.errorMessage = "Asset format not supported by Industrial Park";
+                error.reason = ErrorReason.CannotBuild;
                 newAsset = new AssetGeneric(AHDR);
 #if DEBUG
                 string folder = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "build_test_out");
@@ -58,6 +48,9 @@ public static class AssetService
 #endif
             }
         }
+
+        if ((newAsset is AssetGeneric or AssetGenericBase or DynaGeneric) && error.reason == ErrorReason.NoError)
+            error.reason = ErrorReason.NotImplemented;
 
         return newAsset;
     }
@@ -74,13 +67,14 @@ public static class AssetService
         return Enumerable.SequenceEqual(existingData, builtData);
     }
 
-    private static Asset ConvertHeaderToAsset(Section_AHDR AHDR)
+    private static Asset ConvertHeaderToAsset(Section_AHDR AHDR, ref AssetError error)
     {
         if (AHDR.data.Length == 0)
         {
             if (AHDR.Platform == Platform.GameCube && AHDR.Game >= Game.Incredibles && (AHDR.assetType is AssetType.Sound or AssetType.SoundStream))
                 return new AssetSound(AHDR);
 
+            error.reason = ErrorReason.NoData;
             return new AssetGeneric(AHDR);
         }
 

@@ -818,6 +818,16 @@ namespace IndustrialPark
                 Program.HansMainForm.Show(this);
         }
 
+        private void soakToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using var openFolder = new CommonOpenFileDialog() { IsFolderPicker = true, Multiselect = true };
+            if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                var result = ArchiveSoak.Run(true, openFolder.FileNames);
+                new ScrollableMessageBox("Soak Results", result).Show(this);
+            }
+        }
+
         private void toolStripStatusLabel1_Click(object sender, EventArgs e)
         {
             viewConfigToolStripMenuItem.PerformClick();
