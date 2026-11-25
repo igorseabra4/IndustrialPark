@@ -13,7 +13,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace IndustrialPark.ArchiveEditors;
@@ -227,8 +226,8 @@ public partial class ArchiveEditor : Form
 
             if (result == DialogResult.Cancel)
                 return;
-            if (result == DialogResult.Yes)
-                Save();
+            if (result == DialogResult.Yes && !Save())
+                return;
         }
 
         var getNewArchive = NewArchive.GetNewArchive();
@@ -266,8 +265,8 @@ public partial class ArchiveEditor : Form
 
             if (result == DialogResult.Cancel)
                 return;
-            if (result == DialogResult.Yes)
-                Save();
+            if (result == DialogResult.Yes && !Save())
+                return;
         }
 
         OpenFileDialog openFile = new OpenFileDialog()
@@ -319,8 +318,8 @@ public partial class ArchiveEditor : Form
 
             if (result == DialogResult.Cancel)
                 return;
-            if (result == DialogResult.Yes)
-                SaveAndWait();
+            if (result == DialogResult.Yes && !Save())
+                return;
         }
 
         CloseArchiveEditor();
@@ -901,7 +900,7 @@ public partial class ArchiveEditor : Form
             var asset = AssetService.ConvertHeaderToAsset(AHDR, false, out AssetError error);
             if (error.reason != ErrorReason.NoError && error.reason != ErrorReason.SkipBuildTesting)
             {
-                MessageBox.Show($"Unable to import asset: {error.reason} ({error.errorMessage})", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Unable to import asset: {error.reason} ({error.ErrorMessage})", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             else
             {
@@ -1374,53 +1373,12 @@ public partial class ArchiveEditor : Form
         }
     }
 
-    public void Save()
+    public bool Save()
     {
         SoundUtility_vgmstream.StopSound();
 
         if (archive.CurrentFilePath == null)
-            SaveAs();
-        else
-        {
-            var archiveToSave = archive;
-            Task.Run(() =>
-            {
-                try
-                {
-                    archiveToSave.Save();
-                    return (Exception)null;
-                }
-                catch (Exception ex)
-                {
-                    return ex;
-                }
-            }).ContinueWith(task =>
-            {
-                if (IsDisposed)
-                    return;
-
-                if (task.Result != null)
-                {
-                    MessageBox.Show($"Error saving archive: {task.Result.Message}");
-                    return;
-                }
-
-                UnsavedChanges = false;
-                _updateFilesizeStatusBarItem();
-            }, TaskScheduler.FromCurrentSynchronizationContext());
-        }
-    }
-
-    /// <summary>
-    /// Saves on the calling thread (unlike Save, which writes the file in the background).
-    /// </summary>
-    /// <returns>Whether the archive is saved</returns>
-    public bool SaveAndWait()
-    {
-        SoundUtility_vgmstream.StopSound();
-
-        if (archive.CurrentFilePath == null)
-            SaveAs();
+            return SaveAs();
         else
         {
             try
@@ -1429,7 +1387,7 @@ public partial class ArchiveEditor : Form
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving archive: {ex.Message}");
+                MessageBox.Show($"Error saving archive: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
@@ -1437,10 +1395,10 @@ public partial class ArchiveEditor : Form
             _updateFilesizeStatusBarItem();
         }
 
-        return !UnsavedChanges;
+        return true;
     }
 
-    private void SaveAs()
+    private bool SaveAs()
     {
         SaveFileDialog saveFileDialog = new SaveFileDialog()
         {
@@ -1456,8 +1414,8 @@ public partial class ArchiveEditor : Form
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving archive: {ex.Message}");
-                return;
+                MessageBox.Show($"Error saving archive: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
             UnsavedChanges = false;
@@ -1466,9 +1424,11 @@ public partial class ArchiveEditor : Form
             Program.MainForm.SetToolStripItemName(this, Text);
             Program.MainForm.SetRecentOpenedArchives(saveFileDialog.FileName);
             toolStripStatusLabelCurrentFilename.Text = "File: " + saveFileDialog.FileName;
+            _updateFilesizeStatusBarItem();
+            return true;
         }
 
-        _updateFilesizeStatusBarItem();
+        return false;
     }
 
     public void DisposeArchive(bool showProgressBar = false)

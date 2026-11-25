@@ -119,4 +119,65 @@ public class UpdaterTests : IDisposable
 
         Assert.Null(service.GetAvailableRelease("1.0.0-beta"));
     }
+
+    [Fact]
+    public void InvalidUpdateDoesNotMoveInstallationOrDeletePreviousBackup()
+    {
+        WriteFile(Path.Combine(appDir, "IndustrialPark.exe"), "old exe");
+        WriteFile(Path.Combine(appDir, "IndustrialPark_old", "previous.txt"), "previous backup");
+        string zip = Path.Combine(root, "invalid.zip");
+        File.WriteAllText(zip, "not a zip");
+        var release = new ReleaseInfo();
+        var service = new UpdateService(new FakeReleaseProvider(release, zip));
+
+        Assert.Throws<InvalidDataException>(() => service.InstallUpdate(release, appDir));
+        Assert.Equal("old exe", File.ReadAllText(Path.Combine(appDir, "IndustrialPark.exe")));
+        Assert.Equal("previous backup", File.ReadAllText(Path.Combine(appDir, "IndustrialPark_old", "previous.txt")));
+    }
+
+    [Fact]
+    public void FailedInstallRestoresMovedFilesAndPreviousBackup()
+    {
+        WriteFile(Path.Combine(appDir, "IndustrialPark.exe"), "old exe");
+        WriteFile(Path.Combine(appDir, "Library", "old.dll"), "old library");
+        WriteFile(Path.Combine(appDir, "IndustrialPark_old", "previous.txt"), "previous backup");
+        WriteFile(Path.Combine(appDir, "notes.txt"), "existing notes");
+        WriteFile(Path.Combine(appDir, "blocked"), "existing file");
+        string zip = CreateDummyUpdateZip(new Dictionary<string, string>
+        {
+            ["IndustrialPark.exe"] = "new exe",
+            ["notes.txt"] = "new notes",
+            ["Library/new.dll"] = "new library",
+            ["blocked/file.txt"] = "cannot create directory",
+        });
+        var release = new ReleaseInfo();
+        var service = new UpdateService(new FakeReleaseProvider(release, zip));
+
+        Assert.ThrowsAny<IOException>(() => service.InstallUpdate(release, appDir));
+        Assert.Equal("old exe", File.ReadAllText(Path.Combine(appDir, "IndustrialPark.exe")));
+        Assert.Equal("old library", File.ReadAllText(Path.Combine(appDir, "Library", "old.dll")));
+        Assert.Equal("existing notes", File.ReadAllText(Path.Combine(appDir, "notes.txt")));
+        Assert.Equal("existing file", File.ReadAllText(Path.Combine(appDir, "blocked")));
+        Assert.False(File.Exists(Path.Combine(appDir, "Library", "new.dll")));
+        Assert.Equal("previous backup", File.ReadAllText(Path.Combine(appDir, "IndustrialPark_old", "previous.txt")));
+    }
+
+    [Fact]
+    public void FailedBackupRestoresItemsMovedBeforeFailure()
+    {
+        string exe = Path.Combine(appDir, "IndustrialPark.exe");
+        WriteFile(exe, "old exe");
+        WriteFile(Path.Combine(appDir, "Library", "old.dll"), "old library");
+        WriteFile(Path.Combine(appDir, "IndustrialPark_old", "previous.txt"), "previous backup");
+        string zip = CreateDummyUpdateZip(new Dictionary<string, string> { ["IndustrialPark.exe"] = "new exe" });
+        var release = new ReleaseInfo();
+        var service = new UpdateService(new FakeReleaseProvider(release, zip));
+
+        using (File.Open(exe, FileMode.Open, FileAccess.Read, FileShare.None))
+            Assert.ThrowsAny<IOException>(() => service.InstallUpdate(release, appDir));
+
+        Assert.Equal("old exe", File.ReadAllText(exe));
+        Assert.Equal("old library", File.ReadAllText(Path.Combine(appDir, "Library", "old.dll")));
+        Assert.Equal("previous backup", File.ReadAllText(Path.Combine(appDir, "IndustrialPark_old", "previous.txt")));
+    }
 }

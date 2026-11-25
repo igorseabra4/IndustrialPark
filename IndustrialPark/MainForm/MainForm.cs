@@ -91,8 +91,11 @@ namespace IndustrialPark
                     MessageBoxButtons.YesNoCancel,
                     MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
+                if (result == DialogResult.Yes && !SaveAllChanges())
+                {
+                    e.Cancel = true;
+                    return;
+                }
                 else if (result == DialogResult.Cancel)
                 {
                     e.Cancel = true;
@@ -177,8 +180,8 @@ namespace IndustrialPark
             {
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
+                if (result == DialogResult.Yes && !SaveAllChanges())
+                    return;
                 else if (result == DialogResult.Cancel)
                     return;
             }
@@ -201,8 +204,8 @@ namespace IndustrialPark
             {
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
+                if (result == DialogResult.Yes && !SaveAllChanges())
+                    return;
                 else if (result == DialogResult.Cancel)
                     return;
             }
@@ -222,8 +225,8 @@ namespace IndustrialPark
             {
                 DialogResult result = MessageBox.Show("You appear to have unsaved changes in one of your Archive Editors. Do you wish to save them before closing?", "Warning", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning);
 
-                if (result == DialogResult.Yes)
-                    SaveAllChanges();
+                if (result == DialogResult.Yes && !SaveAllChanges())
+                    return;
                 else if (result == DialogResult.Cancel)
                     return;
             }
@@ -1373,11 +1376,12 @@ namespace IndustrialPark
             return false;
         }
 
-        private void SaveAllChanges()
+        private bool SaveAllChanges()
         {
             foreach (var ae in ArchiveEditors)
-                if (ae.UnsavedChanges)
-                    ae.Save();
+                if (ae.UnsavedChanges && !ae.Save())
+                    return false;
+            return true;
         }
 
         // Close all forms that are not Archive Editors

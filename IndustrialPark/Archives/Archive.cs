@@ -2,6 +2,7 @@
 using IndustrialPark.Assets;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -95,6 +96,7 @@ public class Archive
                 progressBar?.PerformStep();
             }
 
+        // TODO: fix this bad code
         foreach (var jspinfo in assetRepository.Assets.OfType<AssetJSP_INFO>())
         {
             var ni = jspinfo.SetJspAssets(GetJspAssets(jspinfo));
@@ -116,14 +118,36 @@ public class Archive
 
     public bool LegacySave = false;
 
-    public void Save(string path = null)
+    public void Save(string path = null, bool createBackup = true)
     {
         var hipFile = ArchiveService.BuildHipFile(session, assetRepository.Assets, layerRepository);
         if (LegacySave)
             hipFile.HIPB = null;
-        hipFile.ToFile(path ?? session.CurrentFilePath);
 
-        session.CurrentFilePath = path ?? session.CurrentFilePath;
+        var target = Path.GetFullPath(path ?? session.CurrentFilePath);
+        if (!createBackup)
+        {
+            hipFile.ToFile(target);
+        }
+        else
+        {
+            var temp = Path.Combine(Path.GetDirectoryName(target), $".{Path.GetFileName(target)}.{Guid.NewGuid():N}.tmp");
+            try
+            {
+                hipFile.ToFile(temp);
+                if (File.Exists(target))
+                    File.Replace(temp, target, target + ".bak");
+                else
+                    File.Move(temp, target);
+            }
+            finally
+            {
+                if (File.Exists(temp))
+                    File.Delete(temp);
+            }
+        }
+
+        session.CurrentFilePath = target;
     }
 
     public void ExportToIni(string path)

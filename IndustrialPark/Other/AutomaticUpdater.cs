@@ -121,13 +121,10 @@ namespace IndustrialPark
             {
                 MessageBox.Show("Will begin download of " + downloadName + " from GitHub to " + destFolder + ". Please wait as this might take a while. Any previously existing files in the folder will be overwritten.");
 
-                if (Directory.Exists(destFolder))
-                    Directory.Delete(destFolder, true);
-
                 using (var webClient = new WebClient())
                     webClient.DownloadFile(new Uri(zipUrl), destZipPath);
 
-                ZipFile.ExtractToDirectory(destZipPath, destFolder);
+                ZipFile.ExtractToDirectory(destZipPath, destFolder, overwriteFiles: true);
 
                 MessageBox.Show("Downloaded " + downloadName + " from " + zipUrl + " to " + destFolder);
                 return true;

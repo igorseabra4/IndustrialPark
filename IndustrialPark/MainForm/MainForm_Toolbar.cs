@@ -416,7 +416,7 @@ namespace IndustrialPark
         {
             // Save on this thread so the files are written before the game starts
             foreach (var ae in ArchiveEditors)
-                if (ae.UnsavedChanges && !ae.SaveAndWait())
+                if (ae.UnsavedChanges && !ae.Save())
                 {
                     MessageBox.Show($"{Path.GetFileName(ae.GetCurrentFilePath())} was not saved, so the game was not started.",
                         "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
