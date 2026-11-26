@@ -42,6 +42,7 @@
             setHeavyModManagerPathToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             checkForUpdatesOnStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            checkForUpdatesNowToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             checkForUpdatesOnEditorFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripMenuItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -154,7 +155,7 @@
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { setHeavyModManagerPathToolStripMenuItem, toolStripSeparator1, checkForUpdatesOnStartupToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { setHeavyModManagerPathToolStripMenuItem, toolStripSeparator1, checkForUpdatesOnStartupToolStripMenuItem, checkForUpdatesNowToolStripMenuItem, checkForUpdatesOnEditorFilesToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
             optionsToolStripMenuItem.Text = "Options";
@@ -177,7 +178,14 @@
             checkForUpdatesOnStartupToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
             checkForUpdatesOnStartupToolStripMenuItem.Text = "Check For Updates On Startup";
             checkForUpdatesOnStartupToolStripMenuItem.Click += CheckForUpdatesOnStartupToolStripMenuItem_Click;
-            // 
+            //
+            // checkForUpdatesNowToolStripMenuItem
+            //
+            checkForUpdatesNowToolStripMenuItem.Name = "checkForUpdatesNowToolStripMenuItem";
+            checkForUpdatesNowToolStripMenuItem.Size = new System.Drawing.Size(258, 22);
+            checkForUpdatesNowToolStripMenuItem.Text = "Check For Updates Now...";
+            checkForUpdatesNowToolStripMenuItem.Click += CheckForUpdatesNowToolStripMenuItem_Click;
+            //
             // checkForUpdatesOnEditorFilesToolStripMenuItem
             // 
             checkForUpdatesOnEditorFilesToolStripMenuItem.Name = "checkForUpdatesOnEditorFilesToolStripMenuItem";
@@ -336,6 +344,7 @@
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem checkForUpdatesOnStartupToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesNowToolStripMenuItem;
         private System.Windows.Forms.Label labelHmmPath;
         private System.Windows.Forms.Label labelSeed;
         private System.Windows.Forms.RichTextBox richTextBoxHelp;

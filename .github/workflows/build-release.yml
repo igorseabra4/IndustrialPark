@@ -1,78 +1,91 @@
-name: Build and publish
+name: Package release
 
 on:
   workflow_dispatch:
-
-env:
-  OUTPUT_PATH: ./IndustrialPark/bin/Release/net10.0-windows/
+    inputs:
+      publish_draft:
+        description: Create a draft release (otherwise build a beta test artifact only)
+        type: boolean
+        default: false
+      revision:
+        description: Optional same-day numeric revision (for example 1)
+        type: string
+        required: false
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: industrialpark-package-release
+  cancel-in-progress: false
 
 jobs:
-  build:
-    runs-on: windows-latest
-
+  package:
+    runs-on: windows-2022
+    permissions:
+      contents: write
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
-            submodules: recursive
-
-      - name: Set up .NET 10
-        uses: actions/setup-dotnet@v3
+          submodules: recursive
+          fetch-depth: 0
+      - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '10.x'
-
-      - name: Set timezone
-        run: tzutil /s "W. Europe Standard Time"
-        
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build solution
-        id: build_solution
+          dotnet-version: '10.0.x'
+      - name: Select version
+        id: version
+        shell: pwsh
+        env:
+          REVISION: ${{ inputs.revision }}
+          PUBLISH_DRAFT: ${{ inputs.publish_draft }}
+        run: |
+          $version = [DateTime]::UtcNow.ToString('yyyy.MM.dd')
+          if ($env:REVISION) {
+            if ($env:REVISION -notmatch '^[1-9][0-9]{0,4}$' -or [int]$env:REVISION -gt 65534) {
+              throw 'Revision must be an integer from 1 to 65534 without leading zeroes.'
+            }
+            $version += ".$env:REVISION"
+          }
+          $tag = "v$version"
+          if ($env:PUBLISH_DRAFT -eq 'true') {
+            git fetch --tags
+            if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            if (git tag --list $tag) { throw "Tag $tag already exists; choose a revision." }
+            $buildVersion = $version
+          } else {
+            $buildVersion = "$version-beta"
+          }
+          "tag=$tag" >> $env:GITHUB_OUTPUT
+          "build_version=$buildVersion" >> $env:GITHUB_OUTPUT
+      - name: Restore
+        run: dotnet restore IndustrialPark.sln
+      - name: Build
+        run: dotnet build IndustrialPark.sln --configuration Release --no-restore -m:1 -p:IPBuildVersion=${{ steps.version.outputs.build_version }}
+      - name: Run tests
         shell: pwsh
         run: |
-          $currentDate = Get-Date -Format "yyyy.MM.dd"
-          $secondsInDay = [math]::Round((Get-Date).TimeOfDay.TotalSeconds)
-          $buildVersion = "$($currentDate)-$($secondsInDay)"
-          
-          dotnet build -c Release /p:Version=$($buildVersion) --no-restore 
-          echo "build_version=$buildVersion" >> $env:GITHUB_OUTPUT
-
-      - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v2
-        
-      - name: Clean and zip output
+          & .\IndustrialParkTest\bin\Release\net10.0-windows\IndustrialParkTest.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Package
+        shell: pwsh
         run: |
-          cd ${{ env.OUTPUT_PATH }}
-          del *.pdb
-          Compress-Archive * -DestinationPath ${{ github.workspace }}/IndustrialPark_v${{ steps.build_solution.outputs.build_version }}.zip
-          
+          .\.github\scripts\package-release.ps1 -Version '${{ steps.version.outputs.build_version }}' -OutputDirectory '.\IndustrialPark\bin\Release\net10.0-windows' -DestinationZip "$env:RUNNER_TEMP\IndustrialPark_v${{ steps.version.outputs.build_version }}.zip"
+      - name: Test full update process
+        shell: pwsh
+        run: |
+          .\.github\scripts\test-update.ps1 -ZipPath "$env:RUNNER_TEMP\IndustrialPark_v${{ steps.version.outputs.build_version }}.zip" -Version '${{ steps.version.outputs.build_version }}'
       - uses: actions/upload-artifact@v4
         with:
-          name: IndustrialPark_v${{ steps.build_solution.outputs.build_version }}
-          path: ${{ env.OUTPUT_PATH }}
-          
-      - name: Create tag
-        uses: actions/github-script@v8
+          name: IndustrialPark-v${{ steps.version.outputs.build_version }}
+          path: ${{ runner.temp }}\IndustrialPark_v${{ steps.version.outputs.build_version }}.zip
+          if-no-files-found: error
+      - name: Create draft release
+        if: inputs.publish_draft
+        uses: softprops/action-gh-release@v2
         with:
-          script: |
-            github.rest.git.createRef({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'refs/tags/v${{ steps.build_solution.outputs.build_version }}',
-              sha: context.sha
-            })
-            
-      - name: Create Release
-        uses: softprops/action-gh-release@v2.0.8
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          name: Industrial Park v${{ steps.build_solution.outputs.build_version }}
+          name: Industrial Park ${{ steps.version.outputs.tag }}
+          tag_name: ${{ steps.version.outputs.tag }}
+          target_commitish: ${{ github.sha }}
           generate_release_notes: true
           draft: true
-          tag_name: v${{ steps.build_solution.outputs.build_version }}
-          files: |
-            IndustrialPark_v${{ steps.build_solution.outputs.build_version }}.zip
+          files: ${{ runner.temp }}\IndustrialPark_v${{ steps.version.outputs.build_version }}.zip

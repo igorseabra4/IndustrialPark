@@ -62,7 +62,8 @@ namespace IndustrialPark
         {
             if (settings.CheckForUpdatesOnStartup && AutomaticUpdater.CheckForUpdates(true) == UpdateStatus.Downloaded)
             {
-                Close();
+                AutomaticUpdater.CloseForUpdate(this);
+                if (IsDisposed)
                 return;
             }
 
@@ -715,19 +716,7 @@ namespace IndustrialPark
 
         private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var result = AutomaticUpdater.CheckForUpdates(false);
-            switch (result)
-            {
-                case UpdateStatus.AlreadyUpToDate:
-                    MessageBox.Show("No update found.", "No update found.", MessageBoxButtons.OK, MessageBoxIcon.None);
-                    break;
-                case UpdateStatus.Error:
-                    MessageBox.Show("There was an error checking for updates.", "Error", MessageBoxButtons.OK, MessageBoxIcon.None);
-                    break;
-                case UpdateStatus.Downloaded:
-                    Close();
-                    break;
-            }
+            AutomaticUpdater.CheckForUpdatesNow(this);
         }
 
         private void downloadOrUpdateEditorFilesToolStripMenuItem_Click(object sender, EventArgs e)

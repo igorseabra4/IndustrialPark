@@ -30,7 +30,8 @@
   <PropertyGroup>
     <Company>Heavy Iron Modding</Company>
     <Copyright>Copyright © 2026 Heavy Iron Modding</Copyright>
-    <InformationalVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</InformationalVersion>
+    <IPBuildVersion Condition="'$(IPBuildVersion)' == ''">$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))-beta</IPBuildVersion>
+    <InformationalVersion>$(IPBuildVersion)</InformationalVersion>
     <AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yyyy.MM.dd"))</AssemblyVersion>
 	<ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>

@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
@@ -23,6 +24,7 @@ namespace IndustrialPark
         public static DateTime LastCheckedForUpdate;
 
         private static string AutomaticUpdaterPath => Path.Combine(Application.StartupPath, "Updater.exe");
+        private static string pendingReleasePath;
 
         public static UpdateStatus CheckForUpdates(bool throttle)
         {
@@ -32,33 +34,97 @@ namespace IndustrialPark
             if (!File.Exists(AutomaticUpdaterPath))
                 return UpdateStatus.DoesNotExist;
 
-            var updater = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            string releasePath = Path.Combine(Path.GetTempPath(), $"IndustrialPark_release_{Guid.NewGuid():N}.json");
+            var start = new System.Diagnostics.ProcessStartInfo
             {
                 FileName = AutomaticUpdaterPath,
-                Arguments = "\"" + Application.ExecutablePath + "\"",
                 UseShellExecute = false,
                 WorkingDirectory = Application.StartupPath,
-            });
+            };
+            start.ArgumentList.Add("--check");
+            start.ArgumentList.Add(releasePath);
+            try
+            {
+                using var updater = System.Diagnostics.Process.Start(start);
+                if (updater == null)
+                    return UpdateStatus.Error;
 
-            if (updater == null)
+                updater.WaitForExit();
+                LastCheckedForUpdate = DateTime.Now;
+
+                if (updater.ExitCode == 0)
+                {
+                    if (!File.Exists(releasePath))
+                        return UpdateStatus.Error;
+                    pendingReleasePath = releasePath;
+                    return UpdateStatus.Downloaded;
+                }
+
+                CheckForUpdatesOnEditorFiles(false);
+                if (updater.ExitCode == 1)
+                    return UpdateStatus.AlreadyUpToDate;
+                if (updater.ExitCode == 2)
+                    return UpdateStatus.UserDeclined;
                 return UpdateStatus.Error;
+            }
+            catch (Exception ex) when (ex is Win32Exception or InvalidOperationException or UnauthorizedAccessException or IOException)
+            {
+                MessageBox.Show("Failed to check for application updates: " + ex.Message, "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return UpdateStatus.Error;
+            }
+        }
 
-            updater.WaitForExit();
+        public static void CloseForUpdate(Form form)
+        {
+            if (pendingReleasePath == null)
+                throw new InvalidOperationException("No update has been selected.");
 
-            LastCheckedForUpdate = DateTime.Now;
+            string releasePath = pendingReleasePath;
+            pendingReleasePath = null;
+            FormClosedEventHandler onClosed = (_, _) =>
+            {
+                try
+                {
+                    var start = new System.Diagnostics.ProcessStartInfo(AutomaticUpdaterPath)
+                    {
+                        UseShellExecute = false,
+                        WorkingDirectory = Application.StartupPath,
+                    };
+                    start.ArgumentList.Add("--apply");
+                    start.ArgumentList.Add(Application.ExecutablePath);
+                    start.ArgumentList.Add(releasePath);
+                    start.ArgumentList.Add(Environment.ProcessId.ToString());
+                    using var process = System.Diagnostics.Process.Start(start)
+                        ?? throw new InvalidOperationException("The update installer could not be started.");
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Failed to start the update: " + ex.Message, "Update Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            };
+            form.FormClosed += onClosed;
+            form.Close();
+            if (!form.IsDisposed)
+            {
+                form.FormClosed -= onClosed;
+                File.Delete(releasePath);
+            }
+        }
 
-            if (updater.ExitCode == 0)
-                return UpdateStatus.Downloaded;
-            
-            CheckForUpdatesOnEditorFiles(false);
-
-            if (updater.ExitCode == 1)
-                return UpdateStatus.AlreadyUpToDate;
-
-            if (updater.ExitCode == 2)
-                return UpdateStatus.UserDeclined;
-            
-            return UpdateStatus.Error;
+        public static void CheckForUpdatesNow(Form form)
+        {
+            switch (CheckForUpdates(false))
+            {
+                case UpdateStatus.AlreadyUpToDate:
+                    MessageBox.Show("No update found.", "No update found.", MessageBoxButtons.OK, MessageBoxIcon.None);
+                    break;
+                case UpdateStatus.Error:
+                    MessageBox.Show("There was an error checking for updates.", "Error", MessageBoxButtons.OK, MessageBoxIcon.None);
+                    break;
+                case UpdateStatus.Downloaded:
+                    CloseForUpdate(form);
+                    break;
+            }
         }
 
         public static string editorFilesFolder => Path.Combine(Program.ResourcesFolder, "IndustrialPark-EditorFiles", "IndustrialPark-EditorFiles-master");

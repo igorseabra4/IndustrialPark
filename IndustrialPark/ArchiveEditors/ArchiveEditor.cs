@@ -3,7 +3,6 @@ using IndustrialPark.Archives;
 using IndustrialPark.Assets;
 using IndustrialPark.Models;
 using IndustrialPark.SoundUtility;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -412,9 +411,9 @@ public partial class ArchiveEditor : Form
 
     private void exportAssetsIniToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        CommonOpenFileDialog openFile = new CommonOpenFileDialog() { IsFolderPicker = true };
-        if (openFile.ShowDialog() == CommonFileDialogResult.Ok)
-            archive.ExportToIni(openFile.FileName);
+        using var openFile = new FolderBrowserDialog();
+        if (openFile.ShowDialog() == DialogResult.OK)
+            archive.ExportToIni(openFile.SelectedPath);
     }
 
     private void importTexturesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -447,18 +446,15 @@ public partial class ArchiveEditor : Form
 
     private void exportAllTexturesToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
-        {
-            IsFolderPicker = true
-        };
-        if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+        using var saveFileDialog = new FolderBrowserDialog();
+        if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
             var textures = TextureConverter.GetTexturesAsBitmaps(archive.Assets.OfType<AssetRWTX>(), TextureIOHelper.currentTextureVersion(archive.Game, archive.Platform));
 
             RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
 
             foreach ((string textureName, Bitmap texture) in textures)
-                texture.Save(Path.Combine(saveFileDialog.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                texture.Save(Path.Combine(saveFileDialog.SelectedPath, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
         }
     }
 
@@ -507,18 +503,15 @@ public partial class ArchiveEditor : Form
         if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
             return;
 
-        CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
-        {
-            IsFolderPicker = true
-        };
-        if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+        using var saveFileDialog = new FolderBrowserDialog();
+        if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
             ProgressBar progressBar = new ProgressBar("Export All (Wav)");
             progressBar.SetProgressBar(0, archive.Assets.OfType<AssetSound>().Count(), 1);
             progressBar.Show(this);
             foreach (var asset in archive.Assets.OfType<AssetSound>())
             {
-                SoundUtility_vgmstream.ExportToFile(asset, archive, Path.Combine(saveFileDialog.FileName, asset.assetName + ".wav"));
+                SoundUtility_vgmstream.ExportToFile(asset, archive, Path.Combine(saveFileDialog.SelectedPath, asset.assetName + ".wav"));
                 progressBar.PerformStep(asset.assetName);
             }
             progressBar.Close();
@@ -530,11 +523,8 @@ public partial class ArchiveEditor : Form
         if (!archive.ContainsAssetWithType(AssetType.Sound) && !archive.ContainsAssetWithType(AssetType.SoundStream))
             return;
 
-        CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
-        {
-            IsFolderPicker = true
-        };
-        if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+        using var saveFileDialog = new FolderBrowserDialog();
+        if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
             foreach (var asset in archive.Assets.OfType<AssetWithData>().Where(asset => asset.assetType == AssetType.Sound || asset.assetType == AssetType.SoundStream))
                 try
@@ -549,7 +539,7 @@ public partial class ArchiveEditor : Form
                         asset.assetName :
                         asset.assetName + extension;
 
-                    File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, filename),
+                    File.WriteAllBytes(Path.Combine(saveFileDialog.SelectedPath, filename),
                         archive.GetSoundData(asset.assetID, asset.Data));
                 }
                 catch (Exception ex)
@@ -1037,11 +1027,8 @@ public partial class ArchiveEditor : Form
         }
         else
         {
-            CommonOpenFileDialog saveFileDialog = new CommonOpenFileDialog()
-            {
-                IsFolderPicker = true
-            };
-            if (saveFileDialog.ShowDialog() == CommonFileDialogResult.Ok)
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+            if (folderBrowserDialog.ShowDialog() == DialogResult.OK)
                 foreach (var asset in selected)
                     try
                     {
@@ -1052,7 +1039,7 @@ public partial class ArchiveEditor : Form
                             assetFileName = Path.GetFileName(asset.assetFileName);
 
                         var AHDR = asset.BuildAHDR(archive.Platform);
-                        File.WriteAllBytes(Path.Combine(saveFileDialog.FileName, assetFileName), AHDR.data);
+                        File.WriteAllBytes(Path.Combine(folderBrowserDialog.SelectedPath, assetFileName), AHDR.data);
                     }
                     catch (Exception ex)
                     {

@@ -23,18 +23,37 @@ public sealed class UpdateService
         this.provider = provider;
     }
 
-    public ReleaseInfo GetAvailableRelease(string currentVersion)
+    public ReleaseInfo GetAvailableRelease(string currentVersion) =>
+        GetAvailableRelease(currentVersion, false, out _);
+
+    public ReleaseInfo GetAvailableRelease(string currentVersion, bool includeSameOrOlder, out int comparison)
     {
-        if (string.IsNullOrEmpty(currentVersion) || currentVersion.Contains("beta"))
-            return null;
+        if (string.IsNullOrWhiteSpace(currentVersion))
+            throw new InvalidDataException("The installed application has no version.");
+
+        int suffix = currentVersion.IndexOfAny(['-', '+']);
+        int legacyBeta = currentVersion.IndexOf(".beta", StringComparison.OrdinalIgnoreCase);
+        if (legacyBeta >= 0 && (suffix < 0 || legacyBeta < suffix))
+            suffix = legacyBeta;
+        string numericVersion = suffix < 0 ? currentVersion : currentVersion[..suffix];
+        if (!Version.TryParse(numericVersion, out Version installed))
+            throw new InvalidDataException($"Invalid installed application version: {currentVersion}");
 
         ReleaseInfo latest = provider.GetLatestRelease();
+        string tag = latest.TagName;
+        if (string.IsNullOrWhiteSpace(tag) || tag[0] != 'v' ||
+            !Version.TryParse(tag[1..], out Version available))
+            throw new InvalidDataException($"Invalid release tag: {tag}");
 
-        if (latest.TagName[1..] == currentVersion)
+        comparison = NormalizeVersion(available).CompareTo(NormalizeVersion(installed));
+        if (!includeSameOrOlder && comparison <= 0)
             return null;
 
         return latest;
     }
+
+    private static Version NormalizeVersion(Version version) =>
+        new(version.Major, version.Minor, Math.Max(version.Build, 0), Math.Max(version.Revision, 0));
 
     public void InstallUpdate(ReleaseInfo release, string appDir)
     {

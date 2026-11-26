@@ -29,12 +29,6 @@ namespace IndustrialPark.Randomizer
                 Randomizer_JSON_Settings settings = JsonConvert.DeserializeObject<Randomizer_JSON_Settings>(File.ReadAllText(pathToSettings));
                 heavyModManagerPath = settings.heavyModManagerPath;
                 checkForUpdatesOnStartupToolStripMenuItem.Checked = settings.checkForUpdatesOnStartup;
-
-                if (settings.checkForUpdatesOnStartup && AutomaticUpdater.CheckForUpdates(true) == UpdateStatus.Downloaded)
-                {
-                    Close();
-                    return;
-                }
             }
             else
             {
@@ -54,6 +48,13 @@ namespace IndustrialPark.Randomizer
 
         private void RandomizerMenu_Load(object sender, EventArgs e)
         {
+            if (checkForUpdatesOnStartupToolStripMenuItem.Checked && AutomaticUpdater.CheckForUpdates(true) == UpdateStatus.Downloaded)
+            {
+                AutomaticUpdater.CloseForUpdate(this);
+                if (IsDisposed)
+                    return;
+            }
+
             Text = $"Industrial Park Randomizer v{Randomizer.currVersion}";
 
             InternalEditor.SelectFirstProperty(propertyGridSettings.SelectedGridItem);
@@ -365,6 +366,11 @@ namespace IndustrialPark.Randomizer
         private void CheckForUpdatesOnStartupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             checkForUpdatesOnStartupToolStripMenuItem.Checked = !checkForUpdatesOnStartupToolStripMenuItem.Checked;
+        }
+
+        private void CheckForUpdatesNowToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AutomaticUpdater.CheckForUpdatesNow(this);
         }
 
         private void propertyGridAsset_SelectedGridItemChanged(object sender, SelectedGridItemChangedEventArgs e)

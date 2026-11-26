@@ -52,6 +52,7 @@ public class UpdaterTests : IDisposable
         private readonly string zipPath;
 
         public int DownloadCount { get; private set; }
+        public int LookupCount { get; private set; }
 
         public FakeReleaseProvider(ReleaseInfo release, string zipPath)
         {
@@ -59,7 +60,11 @@ public class UpdaterTests : IDisposable
             this.zipPath = zipPath;
         }
 
-        public ReleaseInfo GetLatestRelease() => release;
+        public ReleaseInfo GetLatestRelease()
+        {
+            LookupCount++;
+            return release;
+        }
 
         public void DownloadRelease(ReleaseInfo release, string destinationZipPath)
         {
@@ -111,15 +116,35 @@ public class UpdaterTests : IDisposable
         Assert.Equal(0, provider.DownloadCount);
     }
 
-    [Fact]
-    public void UpdateNotAvailableForBetaBuild()
+    [Theory]
+    [InlineData("2026.11.25", "v2026.11.25.0", 0)]
+    [InlineData("2026.11.25.1", "v2026.11.25", -1)]
+    [InlineData("2026.11.25", "v2026.11.25.1", 1)]
+    [InlineData("2026.12.01", "v2026.11.30", -1)]
+    [InlineData("2026.11.25", "v2026.12.01", 1)]
+    [InlineData("2026.11.25-beta", "v2026.11.25", 0)]
+    [InlineData("2026.11.25.1-beta", "v2026.11.25", -1)]
+    [InlineData("2026.11.25-beta", "v2026.11.25.1", 1)]
+    [InlineData("2026.11.25.BETA.7", "v2026.11.26", 1)]
+    [InlineData("2026.11.25-rc.1+build", "v2026.11.26", 1)]
+    public void InAppChecksOnlyOfferNewerReleasesButStandaloneOffersAll(string installed, string tag, int expected)
     {
-        var release = new ReleaseInfo { TagName = "v2.0.0", Name = "2.0.0", Body = "", DownloadUrl = "dummy" };
-        var service = new UpdateService(new FakeReleaseProvider(release, null));
+        var release = new ReleaseInfo { TagName = tag };
+        var provider = new FakeReleaseProvider(release, null);
+        var service = new UpdateService(provider);
 
-        Assert.Null(service.GetAvailableRelease("1.0.0-beta"));
+        Assert.Equal(expected > 0 ? release : null, service.GetAvailableRelease(installed));
+        Assert.Same(release, service.GetAvailableRelease(installed, true, out int comparison));
+        Assert.Equal(expected, Math.Sign(comparison));
+        Assert.Equal(2, provider.LookupCount);
     }
 
+    [Fact]
+    public void InvalidReleaseTagIsReported()
+    {
+        var service = new UpdateService(new FakeReleaseProvider(new ReleaseInfo { TagName = "latest" }, null));
+        Assert.Throws<InvalidDataException>(() => service.GetAvailableRelease("2026.11.25"));
+    }
     [Fact]
     public void InvalidUpdateDoesNotMoveInstallationOrDeletePreviousBackup()
     {
