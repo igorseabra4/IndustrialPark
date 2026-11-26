@@ -127,20 +127,9 @@ public partial class ArchiveEditor : Form
             Program.UndoBuffer.Undo();
         }
 
-        if (PressedKeys.Contains(Keys.Delete))
-        {
-            e.Handled = true;
-            ButtonRemoveAsset_Click(sender, e);
-        }
-
         if (PressedKeys.Contains(Keys.ControlKey))
         {
-            if (PressedKeys.Contains(Keys.S))
-            {
-                e.Handled = true;
-                Save();
-            }
-            else if (PressedKeys.Contains(Keys.N))
+            if (PressedKeys.Contains(Keys.N))
             {
                 e.Handled = true;
                 newToolStripMenuItem_Click(sender, e);
@@ -154,6 +143,24 @@ public partial class ArchiveEditor : Form
             {
                 e.Handled = true;
                 closeToolStripMenuItem_Click(sender, e);
+            }
+        }
+
+        if (archive == null)
+            return;
+
+        if (PressedKeys.Contains(Keys.Delete))
+        {
+            e.Handled = true;
+            ButtonRemoveAsset_Click(sender, e);
+        }
+
+        if (PressedKeys.Contains(Keys.ControlKey))
+        {
+            if (PressedKeys.Contains(Keys.S))
+            {
+                e.Handled = true;
+                Save();
             }
             else if (PressedKeys.Contains(Keys.I))
             {
