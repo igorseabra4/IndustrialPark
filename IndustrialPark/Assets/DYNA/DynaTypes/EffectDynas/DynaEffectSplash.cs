@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectSplash : AssetDYNA
     {
@@ -21,18 +21,13 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID SoundGroup { get; set; }
 
-        public DynaEffectSplash(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Splash, game, endianness)
+        public DynaEffectSplash(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__Splash, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                PositionX = reader.ReadSingle();
-                PositionY = reader.ReadSingle();
-                PositionZ = reader.ReadSingle();
-                MotionType = reader.ReadUInt32();
-                SoundGroup = reader.ReadUInt32();
-            }
+            PositionX = reader.ReadSingle();
+            PositionY = reader.ReadSingle();
+            PositionZ = reader.ReadSingle();
+            MotionType = reader.ReadUInt32();
+            SoundGroup = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

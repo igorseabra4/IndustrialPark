@@ -1,73 +1,72 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using IndustrialPark.Archives;
+using System;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets;
+
+public abstract class Asset : GenericAssetDataContainer
 {
-    public abstract class Asset : GenericAssetDataContainer
+    [Browsable(false)]
+    public bool isSelected { get; set; }
+    public bool isInvisible = false;
+
+    [Browsable(false)]
+    public virtual bool SkipBuildTesting => false;
+
+    [Browsable(false)]
+    public uint assetID { get; set; }
+    public string assetName;
+    public string assetFileName;
+    public AssetType assetType;
+    public AHDRFlags flags;
+    public int checksum;
+
+    [Browsable(false)]
+    public virtual string AssetInfo => "";
+    [Browsable(false)]
+    public virtual string AssetInfoLinks => "-";
+    [Browsable(false)]
+    public virtual string TypeString => AssetTypeContainer.AssetTypeToString(assetType);
+
+    public Asset(string assetName, AssetType assetType)
     {
-        public bool isSelected;
-        public bool isInvisible = false;
+        _game = Game.Unknown;
 
-        [Browsable(false)]
-        public virtual bool SkipBuildTesting => false;
+        this.assetType = assetType;
+        this.assetName = assetName;
+        assetID = new AssetID(assetName);
+        assetFileName = "";
+        flags = AssetService.AHDRFlagsFromAssetType(assetType);
+    }
 
-        [Browsable(false)]
-        public uint assetID { get; set; }
-        public string assetName;
-        public string assetFileName;
-        public AssetType assetType;
-        public AHDRFlags flags;
-        public int checksum;
+    public Asset(Section_AHDR AHDR)
+    {
+        _game = AHDR.Game;
+        assetID = AHDR.assetID;
+        assetName = AHDR.ADBG.assetName;
+        assetFileName = AHDR.ADBG.assetFileName;
+        assetType = AHDR.assetType;
+        flags = AHDR.flags;
+        checksum = AHDR.ADBG.checksum;
+    }
 
-        [Browsable(false)]
-        public virtual string AssetInfo => "";
-        [Browsable(false)]
-        public virtual string AssetInfoLinks => "-";
-        [Browsable(false)]
-        public virtual string TypeString => AssetTypeContainer.AssetTypeToString(assetType);
+    // use with DUPC VIL only
+    protected Asset() { }
 
-        public Asset(string assetName, AssetType assetType)
-        {
-            _game = Game.Unknown;
+    public Section_AHDR BuildAHDR(Platform platform)
+    {
+        return new Section_AHDR(assetID, assetType, flags,
+            new Section_ADBG(0, assetName, assetFileName, checksum),
+            Serialize(platform.Endianness()), game, platform);
+    }
 
-            this.assetType = assetType;
-            this.assetName = assetName;
-            assetID = new AssetID(assetName);
-            assetFileName = "";
-            flags = ArchiveEditorFunctions.AHDRFlagsFromAssetType(assetType);
-        }
+    public override string ToString() => $"{assetName} [{assetID:X8}]";
 
-        public Asset(Section_AHDR AHDR, Game game)
-        {
-            _game = game;
+    public event Action<bool> PropertyChanged;
 
-            assetID = AHDR.assetID;
-            assetName = AHDR.ADBG.assetName;
-            assetFileName = AHDR.ADBG.assetFileName;
-            assetType = AHDR.assetType;
-            flags = AHDR.flags;
-            checksum = AHDR.ADBG.checksum;
-        }
-
-        // use with DUPC VIL only
-        protected Asset() { }
-
-        public Section_AHDR BuildAHDR(Endianness endianness)
-        {
-            return new Section_AHDR(assetID, assetType, flags,
-                new Section_ADBG(0, assetName, assetFileName, checksum),
-                Serialize(endianness));
-        }
-
-        public override string ToString() => $"{assetName} [{assetID:X8}]";
-
-        public override int GetHashCode() => (int)assetID;
-
-        public override bool Equals(object obj)
-        {
-            if (obj is Asset other)
-                return other.GetHashCode() == GetHashCode();
-            return false;
-        }
+    public void InvokePropertyChanged(bool hard)
+    {
+        PropertyChanged?.Invoke(hard);
     }
 }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class DynaCarryableProperty : AssetDYNA
     {
@@ -19,19 +19,12 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask Flags { get; set; } = IntFlagsDescriptor();
 
-        protected int carryablePropertyEndPosition => dynaDataStartPosition + 12;
-
         public DynaCarryableProperty(string assetName, DynaType type) : base(assetName, type) { }
-        public DynaCarryableProperty(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        public DynaCarryableProperty(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                ShrapnelID = reader.ReadUInt32();
-                AnimCode = reader.ReadUInt32();
-                Flags.FlagValueInt = reader.ReadUInt32();
-            }
+            ShrapnelID = reader.ReadUInt32();
+            AnimCode = reader.ReadUInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
         }
 
         protected void SerializeCarryableDyna(EndianBinaryWriter writer)
@@ -49,7 +42,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         public DynaCarryablePropertyAttract(string assetName) : base(assetName, DynaType.Carrying_CarryableProperty_UsePropertyAttract) { }
-        public DynaCarryablePropertyAttract(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Carrying_CarryableProperty_UsePropertyAttract, game, endianness)
+        public DynaCarryablePropertyAttract(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Carrying_CarryableProperty_UsePropertyAttract, reader)
         {
         }
 
@@ -69,14 +62,9 @@ namespace IndustrialPark
         public AssetID useAnimCode { get; set; }
 
         public DynaCarryablePropertyGeneric(string assetName) : base(assetName, DynaType.Carrying_CarryableProperty_GenericUseProperty) { }
-        public DynaCarryablePropertyGeneric(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Carrying_CarryableProperty_GenericUseProperty, game, endianness)
+        public DynaCarryablePropertyGeneric(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Carrying_CarryableProperty_GenericUseProperty, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = carryablePropertyEndPosition;
-
-                useAnimCode = reader.ReadUInt32();
-            }
+            useAnimCode = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
@@ -93,7 +81,7 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         public DynaCarryablePropertyRepel(string assetName) : base(assetName, DynaType.Carrying_CarryableProperty_GenericUseProperty) { }
-        public DynaCarryablePropertyRepel(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Carrying_CarryableProperty_UsePropertyRepel, game, endianness)
+        public DynaCarryablePropertyRepel(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Carrying_CarryableProperty_UsePropertyRepel, reader)
         {
         }
 
@@ -113,14 +101,9 @@ namespace IndustrialPark
         public AssetID useAnimCode { get; set; }
 
         public DynaCarryablePropertySwipe(string assetName) : base(assetName, DynaType.Carrying_CarryableProperty_UsePropertySwipe) { }
-        public DynaCarryablePropertySwipe(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Carrying_CarryableProperty_UsePropertySwipe, game, endianness)
+        public DynaCarryablePropertySwipe(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Carrying_CarryableProperty_UsePropertySwipe, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = carryablePropertyEndPosition;
-
-                useAnimCode = reader.ReadUInt32();
-            }
+            useAnimCode = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -2,7 +2,7 @@
 using System;
 using System.Diagnostics;
 
-namespace FileAssociations
+namespace IndustrialPark.FileAssociations
 {
     public class FileAssociation
     {

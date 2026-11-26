@@ -1,15 +1,12 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
-using Newtonsoft.Json;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
-using SharpDX.Direct3D11;
-using static IndustrialPark.ArchiveEditorFunctions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class EntityAsset : BaseAsset, IRenderableAsset, IClickableAsset, IRotatableAsset, IScalableAsset, IAssetCopyPasteTransformation
     {
@@ -22,7 +19,7 @@ namespace IndustrialPark
         public AssetID Model
         {
             get => _model;
-            set { _model = value; CreateTransformMatrix(); }
+            set => _model = value;
         }
 
         [Category(categoryNameReferences)]
@@ -48,7 +45,7 @@ namespace IndustrialPark
         public FlagBitmask Flag0A { get; set; } = ByteFlagsDescriptor();
         [Category(categoryNameFlags)]
         public FlagBitmask SolidityFlags { get; set; } = ByteFlagsDescriptor(
-            "Diggable",
+            "Translucent On",
             "Precise Collision",
             null,
             "Grabbable",
@@ -64,19 +61,19 @@ namespace IndustrialPark
         public virtual AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryNamePlacement)]
         public virtual AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryNamePlacement)]
         public virtual AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
         protected float _yaw;
@@ -84,7 +81,7 @@ namespace IndustrialPark
         public AssetSingle Yaw
         {
             get => MathUtil.RadiansToDegrees(_yaw);
-            set { _yaw = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            set => _yaw = MathUtil.DegreesToRadians(value);
         }
 
         protected float _pitch;
@@ -92,7 +89,7 @@ namespace IndustrialPark
         public AssetSingle Pitch
         {
             get => MathUtil.RadiansToDegrees(_pitch);
-            set { _pitch = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            set => _pitch = MathUtil.DegreesToRadians(value);
         }
 
         protected float _roll;
@@ -100,27 +97,29 @@ namespace IndustrialPark
         public AssetSingle Roll
         {
             get => MathUtil.RadiansToDegrees(_roll);
-            set { _roll = MathUtil.DegreesToRadians(value); CreateTransformMatrix(); }
+            set => _roll = MathUtil.DegreesToRadians(value);
         }
 
+        private const string scaleDescription = "(X, Y, Z) scale must be uniform on all 3 axes for solid objects, otherwise risking collision glitches. To circumvent this, use the 'Bake Scale' function to create a copy of the model with a non-uniform scale applied.";
         protected Vector3 _scale;
-        [Category(categoryNamePlacement)]
+
+        [Category(categoryNamePlacement), Description(scaleDescription)]
         public virtual AssetSingle ScaleX
         {
             get => _scale.X;
-            set { _scale.X = value; CreateTransformMatrix(); }
+            set => _scale.X = value;
         }
-        [Category(categoryNamePlacement)]
+        [Category(categoryNamePlacement), Description(scaleDescription)]
         public virtual AssetSingle ScaleY
         {
             get => _scale.Y;
-            set { _scale.Y = value; CreateTransformMatrix(); }
+            set => _scale.Y = value;
         }
-        [Category(categoryNamePlacement)]
+        [Category(categoryNamePlacement), Description(scaleDescription)]
         public virtual AssetSingle ScaleZ
         {
             get => _scale.Z;
-            set { _scale.Z = value; CreateTransformMatrix(); }
+            set => _scale.Z = value;
         }
 
         private const string categoryNameColor = "\tEntity Color";
@@ -144,7 +143,7 @@ namespace IndustrialPark
             get => _color.Z;
             set => _color.Z = value;
         }
-        [Category(categoryNameColor), DisplayName("Alpha (0 - 1)")]
+        [Category(categoryNameColor), DisplayName("Alpha (0 - 1)"), Description("Alpha is turned off after the first player death on all games except Scooby. Use the SetOpacity event, with the opacity value as the first paramenter, to fix this.")]
         public AssetSingle ColorAlpha
         {
             get => _color.W;
@@ -166,8 +165,6 @@ namespace IndustrialPark
         [Category(categoryNameColor)]
         public AssetSingle ColorAlphaSpeed { get; set; }
 
-        protected int entityHeaderEndPosition => game == Game.BFBB ? 0x54 : 0x50;
-
         public EntityAsset(string assetName, AssetType assetType, BaseAssetType baseAssetType, Vector3 position) : base(assetName, assetType, baseAssetType)
         {
             VisibilityFlags.FlagValueByte = 1;
@@ -176,37 +173,26 @@ namespace IndustrialPark
             _scale = new Vector3(1f, 1f, 1f);
             _color = new Vector4(1f, 1f, 1f, 1f);
             ColorAlphaSpeed = 255f;
-
-            CreateTransformMatrix();
-            AddToRenderableAssets(this);
         }
 
-        public EntityAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public EntityAsset(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                VisibilityFlags.FlagValueByte = reader.ReadByte();
-                TypeFlag = reader.ReadByte();
-                Flag0A.FlagValueByte = reader.ReadByte();
-                SolidityFlags.FlagValueByte = reader.ReadByte();
-                if (game == Game.BFBB)
-                    reader.ReadInt32();
-                Surface = reader.ReadUInt32();
-                _yaw = reader.ReadSingle();
-                _pitch = reader.ReadSingle();
-                _roll = reader.ReadSingle();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                ColorAlphaSpeed = reader.ReadSingle();
-                _model = reader.ReadUInt32();
-                Animation = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            VisibilityFlags.FlagValueByte = reader.ReadByte();
+            TypeFlag = reader.ReadByte();
+            Flag0A.FlagValueByte = reader.ReadByte();
+            SolidityFlags.FlagValueByte = reader.ReadByte();
+            if (game == Game.BFBB)
+                reader.ReadInt32();
+            Surface = reader.ReadUInt32();
+            _yaw = reader.ReadSingle();
+            _pitch = reader.ReadSingle();
+            _roll = reader.ReadSingle();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _scale = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            ColorAlphaSpeed = reader.ReadSingle();
+            _model = reader.ReadUInt32();
+            Animation = reader.ReadUInt32();
         }
 
         // meant for use with DUPC VIL only
@@ -265,36 +251,21 @@ namespace IndustrialPark
         [Browsable(false)]
         public abstract bool DontRender { get; }
 
-        public virtual void CreateTransformMatrix()
+        public virtual void CalculateTransformation(SharpRenderer renderer)
         {
-            world = (renderingDictionary.ContainsKey(_model) ? renderingDictionary[_model].TransformMatrix : Matrix.Identity)
+            world = ((renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value) ? value.TransformMatrix : Matrix.Identity)
                 * Matrix.Scaling(_scale)
                 * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                 * Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
             Reset();
         }
 
-        protected virtual void CreateBoundingBox()
+        protected virtual void CreateBoundingBox(SharpRenderer renderer)
         {
-            var model = GetFromRenderingDictionary(_model);
-            if (model != null)
-                CreateBoundingBox(model.vertexListG);
-            else
-                CreateBoundingBox(SharpRenderer.cubeVertices, 0.5f);
-        }
-
-        protected Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
-
-        protected virtual void CreateBoundingBox(List<Vector3> vertexList, float multiplier = 1f)
-        {
-            vertices = new Vector3[vertexList.Count];
-            for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexList[i] * multiplier, world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-            triangles = GetFromRenderingDictionary(_model)?.triangleList.ToArray();
+            var model = renderer.Assets.GetModelFromRenderingDictionary(_model);
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.cubeVertices, world, model != null ? 1f : 0.5f);
         }
 
         public virtual bool ShouldDraw(SharpRenderer renderer)
@@ -313,49 +284,36 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
+#if DEBUG
+        public void DrawDebug(SharpRenderer renderer)
+        {
+            renderer.DrawBoundingBox(boundingBox);
+            renderer.debugSelectedObjects.Add($"[{assetID:X8}] {assetName}");
+        }
+#endif
+
         public virtual void Draw(SharpRenderer renderer)
         {
-            if (renderingDictionary.ContainsKey(_model))
-                renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+#if DEBUG
+            if (isSelected && !renderer.isDrawingSelectionMask)
+                DrawDebug(renderer);
+#endif
+            if (renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value)
+                value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
 
-        [Browsable(false)]
-        public virtual bool SpecialBlendMode => !renderingDictionary.ContainsKey(_model) || renderingDictionary[_model].SpecialBlendMode;
+        public virtual bool SpecialBlendMode(SharpRenderer renderer) => renderer.Assets.GetFromRenderingDictionary(_model) is not IAssetWithModel value || value.SpecialBlendMode(renderer);
 
         public virtual float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
-            var backfaceCulling = renderer.device.NormalCullMode == CullMode.Back;
-            // If backface culling is enabled, rays should pass through the back of the faces
-            
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world) : TriangleIntersection(ray, !backfaceCulling);
+            {
+                var model = renderer.Assets.GetModelFromRenderingDictionary(_model);
+                return TriangleIntersection(ray, model?.triangleList ?? renderer.cubeTriangles, model?.vertexListG ?? renderer.cubeVertices, world);
+            }
             return null;
-        }
-
-        protected virtual float? TriangleIntersection(Ray ray, bool hitBackfaces = true)
-        {
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3],
-                        out float distance))
-                {
-                    // If backface culling is enabled, rays should pass through the back of the faces
-                    if (!hitBackfaces)
-                    {
-                        var normal = Vector3.Cross(vertices[t.vertex2] - vertices[t.vertex1], vertices[t.vertex3] - vertices[t.vertex1]);
-                        if (Vector3.Dot(normal, ray.Direction) > 0)
-                            continue;
-                    }
-                    
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-                }
-                    
-
-            return smallestDistance;
         }
 
         public BoundingBox GetBoundingBox()
@@ -375,115 +333,101 @@ namespace IndustrialPark
             return min;
         }
 
+        public virtual float GetCameraDepth(Vector3 cameraPosition, Vector3 cameraForward)
+        {
+            Vector3 center = (boundingBox.Minimum + boundingBox.Maximum) * 0.5f;
+            return Vector3.Dot(center - cameraPosition, cameraForward);
+        }
+
         public void ApplyBakeRotation()
         {
-            var result = MessageBox.Show("A copy of the model with the rotation baked into will be created. " +
-            "The asset will then use the new rotated model and the rotation values will be set to (0, 0, 0). " +
-            "It's, for most part, only needed when rotating TRACK assets (used for custom slides). " +
-            "This only works with Model assets.", "Bake Rotation", MessageBoxButtons.OKCancel);
-            if (result == DialogResult.OK)
+            var newValue = ArchiveModelTransformer.ApplyBakeRotation(_model, _yaw, _pitch, _roll);
+            if (newValue != _model)
             {
-                var newValue = ArchiveEditorFunctions.ApplyBakeRotation(_model, _yaw, _pitch, _roll);
-                if (newValue != _model)
-                {
-                    _model = newValue;
-                    _yaw = 0;
-                    _pitch = 0;
-                    _roll = 0;
-                    CreateTransformMatrix();
-                }
+                _model = newValue;
+                _yaw = 0;
+                _pitch = 0;
+                _roll = 0;
             }
         }
 
         public void ApplyBakeScale()
         {
-            var result = MessageBox.Show("A copy of the model with the scale baked into will be created. " +
-            "The asset will then use the new scaled model and the scale values will be set to (1, 1, 1). " +
-            "Use this to prevent collision glitches. " +
-            "It's only needed when the scale axes are not equal to each other or when scaling models with MINFs (Model Infos).", "Bake Scale", MessageBoxButtons.OKCancel);
-            if (result == DialogResult.OK)
+            var newValue = ArchiveModelTransformer.ApplyBakeScale(assetName, _model, _scale);
+            if (newValue != _model)
             {
-                var newValue = ArchiveEditorFunctions.ApplyBakeScale(assetName, _model, _scale);
-                if (newValue != _model)
-                {
-                    _model = newValue;
-                    _scale = new Vector3(1f, 1f, 1f);
-                    CreateTransformMatrix();
-                }
+                _model = newValue;
+                _scale = new Vector3(1f, 1f, 1f);
             }
         }
 
-        public virtual void CopyTransformation()
+        public virtual AssetTransformation GetTransformation() => new AssetTransformation()
         {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-                _yaw = _yaw,
-                _pitch = _pitch,
-                _roll = _roll,
-                _scaleX = _scale.X,
-                _scaleY = _scale.Y,
-                _scaleZ = _scale.Z,
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+            _yaw = _yaw,
+            _pitch = _pitch,
+            _roll = _roll,
+            _scaleX = _scale.X,
+            _scaleY = _scale.Y,
+            _scaleZ = _scale.Z,
+        };
 
-        public virtual void PasteTransformation()
+        public virtual void SetTransformation(AssetTransformation transformation)
         {
-            try
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            _yaw = transformation._yaw;
+            _pitch = transformation._pitch;
+            _roll = transformation._roll;
+            if (assetType != AssetType.Player && assetType != AssetType.Pickup)
             {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                _yaw = transformation._yaw;
-                _pitch = transformation._pitch;
-                _roll = transformation._roll;
-                if (assetType != AssetType.Player && assetType != AssetType.Pickup)
-                {
-                    _scale.X = transformation._scaleX;
-                    _scale.Y = transformation._scaleY;
-                    _scale.Z = transformation._scaleZ;
-                }
-                CreateTransformMatrix();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
+                _scale.X = transformation._scaleX;
+                _scale.Y = transformation._scaleY;
+                _scale.Z = transformation._scaleZ;
             }
         }
 
         public static bool movementPreview = false;
 
-        protected EntityAsset FindDrivenByAsset(out bool useRotation)
+        /// <summary>
+        /// Advances this entity's movement preview. Called once per frame while movement preview is enabled.
+        /// </summary>
+        /// <param name="frames">Time since the previous frame, in 60 fps frames</param>
+        public virtual void UpdateMovementPreview(double frames)
+        {
+            localFrameCounter += frames;
+        }
+
+        protected (EntityAsset driver, bool useRotation) FindDriverAsset()
         {
             foreach (var link in _links)
             {
-                uint PlatID = 0;
-
-                if ((EventBFBB)link.EventSendID == EventBFBB.Drivenby)
-                    PlatID = link.TargetAsset;
-                else if ((EventBFBB)link.EventSendID == EventBFBB.Mount)
-                    PlatID = link.ArgumentAsset;
-                else
-                    continue;
-
-                foreach (var ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(PlatID))
+                uint PlatID;
+                switch (link.EventSendBFBB)
+                {
+                    case EventBFBB.Drivenby:
+                        PlatID = link.TargetAsset;
+                        break;
+                    case EventBFBB.Mount when this is AssetPKUP:
+                        PlatID = link.ArgumentAsset;
+                        break;
+                    default:
+                        continue;
+                }
+                if (PlatID != 0)
+                {
+                    var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(PlatID);
+                    if (ae != null && ae.archive.GetAsset(PlatID) is EntityAsset entity)
                     {
-                        var asset = ae.archive.GetFromAssetID(PlatID);
-                        if (asset is EntityAsset entity)
-                        {
-                            useRotation = link.FloatParameter1 != 0 || (EventBFBB)link.EventSendID == EventBFBB.Mount;
-                            return entity;
-                        }
+                        var useRotation = link.FloatParameter1 != 0 || link.EventSendBFBB == EventBFBB.Mount;
+                        return (entity, useRotation);
                     }
+                }
             }
-
-            useRotation = false;
-            return null;
+            return (null, false);
         }
 
         public virtual Matrix PlatLocalRotation()
@@ -491,19 +435,20 @@ namespace IndustrialPark
             return Matrix.Identity;
         }
 
+        protected EntityAsset driver = null;
+        protected bool driverUseRotation;
+
         public virtual Matrix LocalWorld()
         {
             if (movementPreview)
             {
-                var driver = FindDrivenByAsset(out bool useRotation);
-
                 if (driver != null)
                 {
                     return Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(_position - driver._position)
-                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
-                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                        * (driverUseRotation ? driver.PlatLocalRotation() : Matrix.Identity)
+                        * Matrix.Translation(Vector3.TransformCoordinate(Vector3.Zero, driver.LocalWorld()));
                 }
             }
 
@@ -514,25 +459,30 @@ namespace IndustrialPark
         {
             localFrameCounter = -1;
             FindSurf();
+            (driver, driverUseRotation) = FindDriverAsset();
         }
 
         protected Vector3 uvTransSpeed;
-        protected int localFrameCounter = -1;
+        /// <summary>
+        /// Time since the movement preview started, in 60 fps frames
+        /// </summary>
+        protected double localFrameCounter = -1;
 
         private void FindSurf()
         {
-            if (Program.MainForm != null && Surface != 0)
-                foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                    if (ae.archive.ContainsAsset(Surface))
-                        if (ae.archive.GetFromAssetID(Surface) is AssetSURF SURF)
-                        {
-                            uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
-                            return;
-                        }
+            if (Surface != 0)
+            {
+                var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(Surface);
+                if (ae != null && ae.archive.GetAsset(Surface) is AssetSURF SURF)
+                {
+                    uvTransSpeed = new Vector3(SURF.zSurfUVFX.TransSpeed_X, SURF.zSurfUVFX.TransSpeed_Y, SURF.zSurfUVFX.TransSpeed_Z);
+                    return;
+                }
+            }
             uvTransSpeed = Vector3.Zero;
         }
 
         [Browsable(false)]
-        public Vector3 UvAnimOffset => movementPreview ? uvTransSpeed * localFrameCounter++ / 60f : Vector3.Zero;
+        public Vector3 UvAnimOffset => movementPreview ? uvTransSpeed * (float)localFrameCounter / 60f : Vector3.Zero;
     }
 }

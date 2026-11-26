@@ -1,10 +1,10 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
 using SharpDX;
 using System;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum EPickupFlags : ushort
     {
@@ -18,15 +18,9 @@ namespace IndustrialPark
     {
         private const string categoryName = "Pickup";
 
-        public override string AssetInfo
-        {
-            get
-            {
-                if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
-                    return HexUIntTypeConverter.StringFromAssetID(AssetPICK.pickEntries[PickReferenceID]);
-                return HexUIntTypeConverter.StringFromAssetID(PickReferenceID);
-            }
-        }
+        public override string AssetInfo => Enum.IsDefined((PickupReference)(uint)PickReferenceID) ?
+            ((PickupReference)(uint)PickReferenceID).ToString().Replace('_', ' ') :
+            HexUIntTypeConverter.StringFromAssetID(PickupModel != 0 ? PickupModel : PickReferenceID);
 
         [Category(categoryName)]
         public AssetByte Shape { get => TypeFlag; set => TypeFlag = value; }
@@ -35,17 +29,26 @@ namespace IndustrialPark
         public AssetID PickReferenceID { get; set; }
 
         [Category(categoryName)]
+        public PickupReference PickupReference
+        {
+            get => (PickupReference)(uint)PickReferenceID;
+            set => PickReferenceID = new AssetID((uint)value);
+        }
+
+        [Category(categoryName)]
         public EPickupFlags PickupFlags { get; set; }
 
         [Category(categoryName)]
         public short PickupValue { get; set; }
+
+        public static bool persistentShinies = true;
 
         public AssetPKUP(string assetName, Game game, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Pickup, BaseAssetType.Pickup, position)
         {
             if (game >= Game.Incredibles)
                 Model = 0x94E25463;
             else
-                Model = pkupsMinfName;
+                Model = AssetFactory.pkupsMinfName;
 
             if (game != Game.Scooby)
                 PickupFlags = EPickupFlags.InitiallyVisible;
@@ -179,7 +182,6 @@ namespace IndustrialPark
                     PickupValue = 0;
                     break;
                 case AssetTemplate.Key:
-                    StateIsPersistent = true;
                     PickReferenceID = 0x6F24CBD8;
                     break;
                 case AssetTemplate.Clue:
@@ -270,20 +272,13 @@ namespace IndustrialPark
             }
 
             Shape = BitConverter.GetBytes(PickReferenceID)[3];
-
-            CreateTransformMatrix();
         }
 
-        public AssetPKUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPKUP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                PickReferenceID = reader.ReadUInt32();
-                PickupFlags = (EPickupFlags)reader.ReadUInt16();
-                PickupValue = reader.ReadInt16();
-            }
+            PickReferenceID = reader.ReadUInt32();
+            PickupFlags = (EPickupFlags)reader.ReadUInt16();
+            PickupValue = reader.ReadInt16();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -299,67 +294,45 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        protected override void CreateBoundingBox()
+        [Category(categoryName)]
+        public AssetID PickupModel => AssetPICK.pickEntries.TryGetValue(PickReferenceID, out uint value) ? value : PickReferenceID;
+
+        protected override void CreateBoundingBox(SharpRenderer renderer)
         {
-            if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
-            {
-                var model = GetFromRenderingDictionary(AssetPICK.pickEntries[PickReferenceID]);
-                if (model != null)
-                {
-                    var vertexList = model.vertexListG;
-
-                    vertices = new Vector3[vertexList.Count];
-                    for (int i = 0; i < vertexList.Count; i++)
-                        vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
-                    boundingBox = BoundingBox.FromPoints(vertices);
-
-                    triangles = model.triangleList.ToArray();
-                    return;
-                }
-            }
-
-            vertices = new Vector3[SharpRenderer.cubeVertices.Count];
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = null;
+            var model = renderer.Assets.GetModelFromRenderingDictionary(PickupModel);
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.cubeVertices, world, model != null ? 1f : 0.5f);
         }
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (AssetPICK.pickEntries.ContainsKey(PickReferenceID))
-                if (renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]))
-                {
-                    renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
-                    return;
-                }
-
-            renderer.DrawCube(LocalWorld(), isSelected);
+            if (renderer.Assets.GetFromRenderingDictionary(PickupModel) is IAssetWithModel value)
+                value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
+            else
+                renderer.DrawCube(LocalWorld(), isSelected);
         }
 
         [Browsable(false)]
-        public override bool SpecialBlendMode =>
-            !AssetPICK.pickEntries.ContainsKey(PickReferenceID) || !renderingDictionary.ContainsKey(AssetPICK.pickEntries[PickReferenceID]) || renderingDictionary[AssetPICK.pickEntries[PickReferenceID]].SpecialBlendMode;
+        public override bool SpecialBlendMode(SharpRenderer renderer) =>
+            !AssetPICK.pickEntries.TryGetValue(PickReferenceID, out uint modelID) ||
+            renderer.Assets.GetFromRenderingDictionary(modelID) is not IAssetWithModel value ||
+            value.SpecialBlendMode(renderer);
 
         public override Matrix PlatLocalRotation()
         {
-            return Matrix.RotationY(localFrameCounter * MathUtil.Pi / 60f);
+            return Matrix.RotationY((float)localFrameCounter * MathUtil.Pi / 60f);
         }
 
         public override Matrix LocalWorld()
         {
             if (movementPreview)
             {
-                var driver = FindDrivenByAsset(out bool useRotation);
-
                 if (driver != null)
                 {
                     return PlatLocalRotation() * Matrix.Scaling(_scale)
                         * Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll)
                         * Matrix.Translation(_position - new Vector3(driver.PositionX, driver.PositionY, driver.PositionZ))
-                        * (useRotation ? driver.PlatLocalRotation() : Matrix.Identity)
-                        * Matrix.Translation((Vector3)Vector3.Transform(Vector3.Zero, driver.LocalWorld()));
+                        * (driverUseRotation ? driver.PlatLocalRotation() : Matrix.Identity)
+                        * Matrix.Translation(Vector3.TransformCoordinate(Vector3.Zero, driver.LocalWorld()));
                 }
 
                 return PlatLocalRotation()

@@ -1,10 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class UIBoxPart : GenericAssetDataContainer
     {
@@ -107,31 +107,26 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public byte ForceAlphaWrite { get; set; }
 
-        public DynaUIBox(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__box, game, endianness)
+        public DynaUIBox(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.ui__box, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaUIEnd;
+            _parts = new UIBoxPart[9];
+            for (int i = 0; i < _parts.Length; i++)
+                _parts[i] = new UIBoxPart(reader);
 
-                _parts = new UIBoxPart[9];
-                for (int i = 0; i < _parts.Length; i++)
-                    _parts[i] = new UIBoxPart(reader);
-
-                BorderWidth = reader.ReadSingle();
-                BorderHeight = reader.ReadSingle();
-                WidthPerUV = reader.ReadSingle();
-                HeightPerUV = reader.ReadSingle();
-                CenterWidthPerUV = reader.ReadSingle();
-                CenterHeightPerUV = reader.ReadSingle();
-                ScaleHSide = reader.ReadByte();
-                ScaleVSide = reader.ReadByte();
-                ScaleCenter = reader.ReadByte();
-                StretchUVsOnMotionScale = reader.ReadByte();
-                ForceAlphaWrite = reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-            }
+            BorderWidth = reader.ReadSingle();
+            BorderHeight = reader.ReadSingle();
+            WidthPerUV = reader.ReadSingle();
+            HeightPerUV = reader.ReadSingle();
+            CenterWidthPerUV = reader.ReadSingle();
+            CenterHeightPerUV = reader.ReadSingle();
+            ScaleHSide = reader.ReadByte();
+            ScaleVSide = reader.ReadByte();
+            ScaleCenter = reader.ReadByte();
+            StretchUVsOnMotionScale = reader.ReadByte();
+            ForceAlphaWrite = reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

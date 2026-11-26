@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetLOBM : BaseAsset
     {
@@ -69,43 +69,38 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Mode { get; set; }
 
-        public AssetLOBM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetLOBM(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                LobMasterType = reader.ReadUInt32();
-                Projectile = reader.ReadUInt32();
-                PositionX = reader.ReadSingle();
-                PositionY = reader.ReadSingle();
-                PositionZ = reader.ReadSingle();
-                RotationX = reader.ReadSingle();
-                RotationY = reader.ReadSingle();
-                RotationZ = reader.ReadSingle();
-                LaunchSpeed = reader.ReadSingle();
-                SpeedRandomPct = reader.ReadSingle();
-                ScaleX = reader.ReadSingle();
-                ScaleY = reader.ReadSingle();
-                ScaleZ = reader.ReadSingle();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                MaxLifetime = reader.ReadSingle();
-                MaxDistance = reader.ReadSingle();
-                Aid_MovePoint = reader.ReadUInt32();
-                SalvoCount = reader.ReadInt32();
-                AmmoCount = reader.ReadInt32();
-                ArcCoeffFactor = reader.ReadSingle();
-                DebrisConeAngle = reader.ReadInt32();
-                NumBounce = reader.ReadInt32();
-                PowerupType = reader.ReadInt32();
-                HeavyFactor = reader.ReadSingle();
-                TumbleRotationX = reader.ReadSingle();
-                TumbleRotationY = reader.ReadSingle();
-                TumbleRotationZ = reader.ReadSingle();
-                CollideDelay = reader.ReadSingle();
-                AtRestPeriod = reader.ReadSingle();
-                Mode = reader.ReadInt32();
-            }
+            LobMasterType = reader.ReadUInt32();
+            Projectile = reader.ReadUInt32();
+            PositionX = reader.ReadSingle();
+            PositionY = reader.ReadSingle();
+            PositionZ = reader.ReadSingle();
+            RotationX = reader.ReadSingle();
+            RotationY = reader.ReadSingle();
+            RotationZ = reader.ReadSingle();
+            LaunchSpeed = reader.ReadSingle();
+            SpeedRandomPct = reader.ReadSingle();
+            ScaleX = reader.ReadSingle();
+            ScaleY = reader.ReadSingle();
+            ScaleZ = reader.ReadSingle();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            MaxLifetime = reader.ReadSingle();
+            MaxDistance = reader.ReadSingle();
+            Aid_MovePoint = reader.ReadUInt32();
+            SalvoCount = reader.ReadInt32();
+            AmmoCount = reader.ReadInt32();
+            ArcCoeffFactor = reader.ReadSingle();
+            DebrisConeAngle = reader.ReadInt32();
+            NumBounce = reader.ReadInt32();
+            PowerupType = reader.ReadInt32();
+            HeavyFactor = reader.ReadSingle();
+            TumbleRotationX = reader.ReadSingle();
+            TumbleRotationY = reader.ReadSingle();
+            TumbleRotationZ = reader.ReadSingle();
+            CollideDelay = reader.ReadSingle();
+            AtRestPeriod = reader.ReadSingle();
+            Mode = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

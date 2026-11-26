@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class EntrySHDW : GenericAssetDataContainer
     {
@@ -47,27 +47,25 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSHDW : Asset, IAssetAddSelected
+    public class AssetSHDW : Asset, IAssetAddSelected, ITableAsset<AssetSHDW, EntrySHDW>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
+        private List<EntrySHDW> _entries;
         [Category("Shadow Map"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
-        public EntrySHDW[] Entries { get; set; }
+        public EntrySHDW[] Entries { get => [.. _entries]; set => _entries = [.. value]; }
 
         public AssetSHDW(string assetName) : base(assetName, AssetType.ShadowTable)
         {
-            Entries = new EntrySHDW[0];
+            _entries = [];
         }
 
-        public AssetSHDW(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetSHDW(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                Entries = new EntrySHDW[reader.ReadInt32()];
-
-                for (int i = 0; i < Entries.Length; i++)
-                    Entries[i] = new EntrySHDW(reader);
-            }
+            var len = reader.ReadInt32();
+            _entries = [with(len)];
+            for (int i = 0; i < len; i++)
+                _entries.Add(new EntrySHDW(reader));
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -80,15 +78,8 @@ namespace IndustrialPark
 
         public void Merge(AssetSHDW asset)
         {
-            var entries = Entries.ToList();
-
-            foreach (var entry in asset.Entries)
-            {
-                entries.Remove(entry);
-                entries.Add(entry);
-            }
-
-            Entries = entries.ToArray();
+            _entries.RemoveAll(e => asset._entries.Any(entry => e.Model == entry.Model));
+            _entries.AddRange(asset._entries);
         }
 
         [Browsable(false)]
@@ -96,34 +87,21 @@ namespace IndustrialPark
 
         public void AddItems(List<uint> items)
         {
-            var entries = Entries.ToList();
             foreach (var i in items)
-                if (!entries.Any(e => e.Model == i))
-                    entries.Add(new EntrySHDW() { Model = i });
-            Entries = entries.ToArray();
+                AddEntry(new EntrySHDW() { Model = i });
         }
+
+        public List<uint> GetItems() => _entries.SelectMany(a => new uint[] { a.Model, a.ShadowModel }).Where(a => a != 0).ToList();
 
         public void AddEntry(EntrySHDW entry)
         {
-            var entries = Entries.ToList();
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].Model == entry.Model)
-                {
-                    entries[i] = entry;
-                    Entries = entries.ToArray();
-                    return;
-                }
-            entries.Add(entry);
-            Entries = entries.ToArray();
+            RemoveEntry(entry.Model);
+            _entries.Add(entry);
         }
 
         public void RemoveEntry(uint assetID)
         {
-            var entries = Entries.ToList();
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].Model == assetID)
-                    entries.RemoveAt(i--);
-            Entries = entries.ToArray();
+            _entries.RemoveAll(e => e.Model == assetID);
         }
     }
 }

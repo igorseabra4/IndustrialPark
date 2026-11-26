@@ -1,12 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
-using IndustrialPark.Models;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectFlamethrower : RenderableRotatableDynaBase
     {
@@ -31,30 +29,22 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle DamageRadius { get; set; }
 
-        public DynaEffectFlamethrower(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Flamethrower, game, endianness)
+        public DynaEffectFlamethrower(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__Flamethrower, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _yaw = reader.ReadSingle();
-                _pitch = reader.ReadSingle();
-                _roll = reader.ReadSingle();
-                Visible = reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                OnLength = reader.ReadSingle();
-                OffLength = reader.ReadSingle();
-                Color = reader.ReadColor();
-                Damage = reader.ReadInt32();
-                Knockback = reader.ReadSingle();
-                DamageRadius = reader.ReadSingle();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _yaw = reader.ReadSingle();
+            _pitch = reader.ReadSingle();
+            _roll = reader.ReadSingle();
+            Visible = reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            OnLength = reader.ReadSingle();
+            OffLength = reader.ReadSingle();
+            Color = reader.ReadColor();
+            Damage = reader.ReadInt32();
+            Knockback = reader.ReadSingle();
+            DamageRadius = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
@@ -76,9 +66,9 @@ namespace IndustrialPark
             writer.Write(DamageRadius);
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
 

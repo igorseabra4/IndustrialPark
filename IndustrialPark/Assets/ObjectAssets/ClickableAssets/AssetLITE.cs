@@ -1,9 +1,11 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum LightType : byte
     {
@@ -35,7 +37,7 @@ namespace IndustrialPark
         Cauldron = 17,
     }
 
-    public class AssetLITE : BaseAsset, IRenderableAsset, IClickableAsset
+    public class AssetLITE : BaseAsset, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
         private const string categoryName = "Light";
 
@@ -95,19 +97,19 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
         [Category(categoryName)]
         public AssetSingle Radius { get; set; }
@@ -133,33 +135,22 @@ namespace IndustrialPark
                 ColorBlue = 0.082353f;
                 ColorAlpha = 1f;
             }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public AssetLITE(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetLITE(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                LightType = (LightType)reader.ReadByte();
-                LightEffect = (LightEffect)reader.ReadByte();
-                reader.ReadInt16();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                DirectionX = reader.ReadSingle();
-                DirectionY = reader.ReadSingle();
-                DirectionZ = reader.ReadSingle();
-                LightConeAngle = reader.ReadSingle();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                Radius = reader.ReadSingle();
-                Attach = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            LightType = (LightType)reader.ReadByte();
+            LightEffect = (LightEffect)reader.ReadByte();
+            reader.ReadInt16();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            _color = new Vector4(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            DirectionX = reader.ReadSingle();
+            DirectionY = reader.ReadSingle();
+            DirectionZ = reader.ReadSingle();
+            LightConeAngle = reader.ReadSingle();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            Radius = reader.ReadSingle();
+            Attach = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -193,20 +184,20 @@ namespace IndustrialPark
         public static bool dontRender = false;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public void CreateTransformMatrix()
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.Translation(_position);
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(SharpRenderer renderer)
         {
-            var vertices = new Vector3[SharpRenderer.cubeVertices.Count];
+            var vertices = new Vector3[renderer.cubeVertices.Count];
 
-            for (int i = 0; i < SharpRenderer.cubeVertices.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.cubeVertices[i] * 0.5f, world);
+            for (int i = 0; i < renderer.cubeVertices.Count; i++)
+                vertices[i] = (Vector3)Vector3.Transform(renderer.cubeVertices[i] * 0.5f, world);
 
             boundingBox = BoundingBox.FromPoints(vertices);
         }
@@ -214,7 +205,7 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
+                return TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world);
             return null;
         }
 
@@ -237,5 +228,26 @@ namespace IndustrialPark
         public BoundingBox GetBoundingBox() => boundingBox;
 
         public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position);
+
+        public AssetTransformation GetTransformation() => new AssetTransformation()
+        {
+            _positionX = PositionX,
+            _positionY = PositionY,
+            _positionZ = PositionZ,
+            _scaleX = Radius,
+            _scaleY = Radius,
+            _scaleZ = Radius,
+            _scaleSingle = Radius,
+            _scaleSfxMin = Radius,
+            _scaleSfxMax = Radius,
+        };
+
+        public void SetTransformation(AssetTransformation transformation)
+        {
+            PositionX = transformation._positionX;
+            PositionY = transformation._positionY;
+            PositionZ = transformation._positionZ;
+            Radius = transformation._scaleSingle;
+        }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
@@ -6,7 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum TriggerShape
     {
@@ -26,11 +28,13 @@ namespace IndustrialPark
             get => (TriggerShape)(byte)TypeFlag;
             set => TypeFlag = (byte)value;
         }
+        [Category(categoryName)]
+        public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
 
         private Vector3 _minimum;
         private Vector3 _maximum;
 
-        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        [Category(categoryName), DisplayName("Minimum / Center X")]
         public AssetSingle MinimumX
         {
             get => _minimum.X;
@@ -40,7 +44,7 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        [Category(categoryName), DisplayName("Minimum / Center Y")]
         public AssetSingle MinimumY
         {
             get => _minimum.Y;
@@ -50,7 +54,7 @@ namespace IndustrialPark
                 FixPosition();
             }
         }
-        [Category(categoryName), Description("Center position for Sphere and Cylinder")]
+        [Category(categoryName), DisplayName("Minimum / Center Z")]
         public AssetSingle MinimumZ
         {
             get => _minimum.Z;
@@ -125,8 +129,6 @@ namespace IndustrialPark
         public AssetSingle DirectionY { get; set; }
         [Category(categoryName)]
         public AssetSingle DirectionZ { get; set; }
-        [Category(categoryName)]
-        public FlagBitmask TriggerFlags { get; set; } = IntFlagsDescriptor();
 
         public AssetTRIG(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Trigger, BaseAssetType.Trigger, position)
         {
@@ -168,27 +170,22 @@ namespace IndustrialPark
             }
         }
 
-        public AssetTRIG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetTRIG(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
+            _minimum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _maximum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            Position2X = reader.ReadSingle();
+            Position2Y = reader.ReadSingle();
+            Position2Z = reader.ReadSingle();
+            Position3X = reader.ReadSingle();
+            Position3Y = reader.ReadSingle();
+            Position3Z = reader.ReadSingle();
+            DirectionX = reader.ReadSingle();
+            DirectionY = reader.ReadSingle();
+            DirectionZ = reader.ReadSingle();
+            TriggerFlags.FlagValueInt = reader.ReadUInt32();
 
-                _minimum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _maximum = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                Position2X = reader.ReadSingle();
-                Position2Y = reader.ReadSingle();
-                Position2Z = reader.ReadSingle();
-                Position3X = reader.ReadSingle();
-                Position3Y = reader.ReadSingle();
-                Position3Z = reader.ReadSingle();
-                DirectionX = reader.ReadSingle();
-                DirectionY = reader.ReadSingle();
-                DirectionZ = reader.ReadSingle();
-                TriggerFlags.FlagValueInt = reader.ReadUInt32();
-
-                FixPosition();
-            }
+            FixPosition();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -220,7 +217,7 @@ namespace IndustrialPark
         public BoundingSphere boundingSphere;
         private Matrix pivotWorld;
 
-        public override void CreateTransformMatrix()
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             if (Shape == TriggerShape.Box)
             {
@@ -252,10 +249,10 @@ namespace IndustrialPark
 
             pivotWorld = Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        protected override void CreateBoundingBox()
+        protected override void CreateBoundingBox(SharpRenderer renderer)
         {
             if (Shape == TriggerShape.Sphere)
             {
@@ -264,15 +261,7 @@ namespace IndustrialPark
             }
             else
             {
-                List<Vector3> verticesF = Shape == TriggerShape.Box ?
-                    SharpRenderer.cubeVertices : SharpRenderer.cylinderVertices;
-
-                vertices = new Vector3[verticesF.Count];
-
-                for (int i = 0; i < verticesF.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(verticesF[i], world);
-
-                boundingBox = BoundingBox.FromPoints(vertices);
+                boundingBox = CreateBoundingBox(Shape == TriggerShape.Box ? renderer.cubeVertices : renderer.cylinderVertices, world);
             }
         }
 
@@ -281,7 +270,7 @@ namespace IndustrialPark
             if (Shape == TriggerShape.Box)
                 renderer.DrawCube(world, isSelected, 1f);
             else if (Shape == TriggerShape.Sphere)
-                renderer.DrawSphere(world, isSelected, renderer.trigColor);
+                renderer.DrawSphere(boundingSphere, isSelected, renderer.trigColor);
             else
                 renderer.DrawCylinder(world, isSelected, renderer.trigColor);
 
@@ -290,7 +279,7 @@ namespace IndustrialPark
         }
 
         [Browsable(false)]
-        public override bool SpecialBlendMode => true;
+        public override bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
@@ -300,17 +289,17 @@ namespace IndustrialPark
             if (Shape == TriggerShape.Box)
             {
                 if (ray.Intersects(ref boundingBox))
-                    return TriangleIntersection(ray, SharpRenderer.cubeTriangles, SharpRenderer.cubeVertices, world);
+                    return TriangleIntersection(ray, renderer.cubeTriangles, renderer.cubeVertices, world);
             }
             else if (Shape == TriggerShape.Sphere)
             {
                 if (ray.Intersects(ref boundingSphere))
-                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                    return TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
             }
             else
             {
                 if (ray.Intersects(ref boundingBox))
-                    return TriangleIntersection(ray, SharpRenderer.cylinderTriangles, SharpRenderer.cylinderVertices, world);
+                    return TriangleIntersection(ray, renderer.cylinderTriangles, renderer.cylinderVertices, world);
             }
 
             return null;
@@ -341,8 +330,6 @@ namespace IndustrialPark
                     (_minimum.Z, _maximum.Z) = (_maximum.Z, _minimum.Z);
                 }
             }
-
-            CreateTransformMatrix();
         }
 
         [Category(categoryNamePlacement)]
@@ -439,15 +426,15 @@ namespace IndustrialPark
             FixPosition();
         }
 
-        public override void CopyTransformation()
+        public override AssetTransformation GetTransformation()
         {
             if (Shape == TriggerShape.Box)
             {
                 MessageBox.Show("Cannot copy transformation for box triggers");
-                return;
+                return null;
             }
 
-            var transformation = new Transformation()
+            var transformation = new AssetTransformation()
             {
                 _positionX = _minimum.X,
                 _positionY = _minimum.Y,
@@ -463,10 +450,10 @@ namespace IndustrialPark
             if (Shape == TriggerShape.Cylinder)
                 transformation._scaleSfxMax = _maximum.Y;
 
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
+            return transformation;
         }
 
-        public override void PasteTransformation()
+        public override void SetTransformation(AssetTransformation transformation)
         {
             if (Shape == TriggerShape.Box)
             {
@@ -474,24 +461,15 @@ namespace IndustrialPark
                 return;
             }
 
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                _minimum.X = transformation._positionX;
-                _minimum.Y = transformation._positionY;
-                _minimum.Z = transformation._positionZ;
-                _maximum.X = transformation._scaleSingle;
-                if (Shape == TriggerShape.Cylinder)
-                    _maximum.Y = transformation._scaleSfxMax;
-                CreateTransformMatrix();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            _minimum.X = transformation._positionX;
+            _minimum.Y = transformation._positionY;
+            _minimum.Z = transformation._positionZ;
+            _maximum.X = transformation._scaleSingle;
+            if (Shape == TriggerShape.Cylinder)
+                _maximum.Y = transformation._scaleSfxMax;
         }
     }
 }

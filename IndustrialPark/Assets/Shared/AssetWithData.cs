@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetWithData : Asset
     {
@@ -15,7 +15,7 @@ namespace IndustrialPark
             Data = data;
         }
 
-        public AssetWithData(Section_AHDR AHDR, Game game) : base(AHDR, game)
+        public AssetWithData(Section_AHDR AHDR) : base(AHDR)
         {
             Data = AHDR.data;
         }
@@ -23,12 +23,6 @@ namespace IndustrialPark
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Data);
-        }
-
-        public string RwVersion(int renderWareVersion)
-        {
-            var str = RenderWareFile.Shared.UnpackLibraryVersion(renderWareVersion).ToString("X5");
-            return $"RW {str[0]}.{str[1]}.{str[2]}.{str[3]}{str[4]}";
         }
     }
 }

@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum XboxFormat : short
     {
@@ -90,7 +90,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSNDI_XBOX : Asset
+    public class AssetSNDI_XBOX : Asset, ISoundInfoAsset<AssetSNDI_XBOX>
     {
         public override string AssetInfo => $"Xbox, {Entries_SND.Length + Entries_SNDS.Length + Entries_Sound_CIN.Length} entries";
 
@@ -112,26 +112,23 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_XBOX[0];
         }
 
-        public AssetSNDI_XBOX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetSNDI_XBOX(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
-            {
-                int entriesSndAmount = reader.ReadInt32();
-                int entriesSndsAmount = reader.ReadInt32();
-                int entriesCinAmount = reader.ReadInt32();
+            int entriesSndAmount = reader.ReadInt32();
+            int entriesSndsAmount = reader.ReadInt32();
+            int entriesCinAmount = reader.ReadInt32();
 
-                Entries_SND = new EntrySoundInfo_XBOX[entriesSndAmount];
-                for (int i = 0; i < Entries_SND.Length; i++)
-                    Entries_SND[i] = new EntrySoundInfo_XBOX(reader);
+            Entries_SND = new EntrySoundInfo_XBOX[entriesSndAmount];
+            for (int i = 0; i < Entries_SND.Length; i++)
+                Entries_SND[i] = new EntrySoundInfo_XBOX(reader);
 
-                Entries_SNDS = new EntrySoundInfo_XBOX[entriesSndsAmount];
-                for (int i = 0; i < Entries_SNDS.Length; i++)
-                    Entries_SNDS[i] = new EntrySoundInfo_XBOX(reader);
+            Entries_SNDS = new EntrySoundInfo_XBOX[entriesSndsAmount];
+            for (int i = 0; i < Entries_SNDS.Length; i++)
+                Entries_SNDS[i] = new EntrySoundInfo_XBOX(reader);
 
-                Entries_Sound_CIN = new EntrySoundInfo_XBOX[entriesCinAmount];
-                for (int i = 0; i < Entries_Sound_CIN.Length; i++)
-                    Entries_Sound_CIN[i] = new EntrySoundInfo_XBOX(reader);
-            }
+            Entries_Sound_CIN = new EntrySoundInfo_XBOX[entriesCinAmount];
+            for (int i = 0; i < Entries_Sound_CIN.Length; i++)
+                Entries_Sound_CIN[i] = new EntrySoundInfo_XBOX(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

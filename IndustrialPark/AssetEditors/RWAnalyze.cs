@@ -1,0 +1,17 @@
+﻿using RenderWareFile;
+using System.Windows.Forms;
+
+namespace IndustrialPark.ArchiveEditors
+{
+    public partial class RWAnalyze : Form
+    {
+        private RWSection[] data;
+
+        public RWAnalyze(RWSection[] data)
+        {
+            InitializeComponent();
+            this.data = data;
+            propertyGridData.SelectedObject = this.data;
+        }
+    }
+}

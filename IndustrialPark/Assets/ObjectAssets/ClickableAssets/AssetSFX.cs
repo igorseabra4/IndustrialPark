@@ -1,11 +1,13 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetSFX : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetCopyPasteTransformation
     {
@@ -13,9 +15,21 @@ namespace IndustrialPark
         public override string AssetInfo => HexUIntTypeConverter.StringFromAssetID(Sound);
 
         [Category(categoryName)]
-        public FlagBitmask Flags08 { get; set; } = ByteFlagsDescriptor();
-        [Category(categoryName)]
-        public FlagBitmask Flags09 { get; set; } = ByteFlagsDescriptor();
+        public FlagBitmask Flags { get; set; } = ShortFlagsDescriptor(
+            "Unknown 0001",
+            "Play in 3D", // 0002
+            "adds sound flag 0x100",
+            "Use Attach", // 0008
+            "Unknown 0010",
+            "Unknown 0020",
+            "Unknown 0040",
+            "Unknown 0080",
+            "Unknown 0100",
+            "Environmental", // 0200
+            "Notify Player", // 0400
+            "Has link which receives Done", // 0800
+            "Pending Play" // 1000
+            );
         [Category(categoryName)]
         public short Frequency { get; set; }
         [Category(categoryName)]
@@ -35,34 +49,41 @@ namespace IndustrialPark
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
         private float _radius;
         [Category(categoryName)]
         public AssetSingle InnerRadius
         {
             get => _radius;
-            set { _radius = value; CreateTransformMatrix(); }
+            set => _radius = value;
         }
         private float _radius2;
         [Category(categoryName)]
         public AssetSingle OuterRadius
         {
             get => _radius2;
-            set { _radius2 = value; CreateTransformMatrix(); }
+            set => _radius2 = value;
         }
+
+        [Browsable(false)]
+        public bool PlayIn3D => (Flags.FlagValueShort & 0x0002) != 0;
+        [Browsable(false)]
+        public bool UseAttach => PlayIn3D && (Flags.FlagValueShort & 0x0008) != 0;
+        [Browsable(false)]
+        public Func<uint, Asset> GetAttach;
 
         public AssetSFX(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.SFX, BaseAssetType.SFX)
         {
@@ -70,22 +91,20 @@ namespace IndustrialPark
 
             if (template == AssetTemplate.SFX_OnRadius)
             {
-                Flags08.FlagValueByte = 0x03;
-                Flags09.FlagValueByte = 0xE6;
+                Flags.FlagValueShort = 0x01C2;
                 _links = new Link[]
                 {
                     new Link(game)
                     {
                         TargetAsset = assetID,
-                        EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                        EventSendID = (ushort)EventBFBB.Play
+                        EventReceiveBFBB = EventBFBB.ScenePrepare,
+                        EventSendBFBB = EventBFBB.Play
                     }
                 };
             }
             else if (template == AssetTemplate.SFX_OnEvent)
             {
-                Flags08.FlagValueByte = 0x01;
-                Flags09.FlagValueByte = 0xC0;
+                Flags.FlagValueShort = 0x01C0;
             }
 
             MinFrequency = 1f;
@@ -96,8 +115,7 @@ namespace IndustrialPark
 
             if (template == AssetTemplate.Cauldron_Sfx)
             {
-                Flags08.FlagValueByte = 0x01;
-                Flags09.FlagValueByte = 0xCA;
+                Flags.FlagValueShort = 0x01CA;
                 Sound = "cauldron_loop1";
                 Volume = 100;
                 InnerRadius = 20f;
@@ -107,46 +125,32 @@ namespace IndustrialPark
                     new Link(game)
                     {
                         TargetAsset = assetID,
-                        EventReceiveID = (ushort)EventScooby.ScenePrepare,
-                        EventSendID = (ushort)EventScooby.Play
+                        EventReceiveScooby = EventScooby.ScenePrepare,
+                        EventSendScooby = EventScooby.Play
                     }
                 };
             }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public AssetSFX(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSFX(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                Flags08.FlagValueByte = reader.ReadByte();
-                Flags09.FlagValueByte = reader.ReadByte();
-                Frequency = reader.ReadInt16();
-                MinFrequency = reader.ReadSingle();
-                Sound = reader.ReadUInt32();
-                Attach = reader.ReadUInt32();
-                LoopCount = reader.ReadByte();
-                Priority = reader.ReadByte();
-                Volume = reader.ReadByte();
-                reader.ReadByte();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _radius = reader.ReadSingle();
-                _radius2 = reader.ReadSingle();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            Flags.FlagValueShort = reader.ReadUInt16();
+            Frequency = reader.ReadInt16();
+            MinFrequency = reader.ReadSingle();
+            Sound = reader.ReadUInt32();
+            Attach = reader.ReadUInt32();
+            LoopCount = reader.ReadByte();
+            Priority = reader.ReadByte();
+            Volume = reader.ReadByte();
+            reader.ReadByte();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _radius = reader.ReadSingle();
+            _radius2 = reader.ReadSingle();
         }
-
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
-            writer.Write(Flags08.FlagValueByte);
-            writer.Write(Flags09.FlagValueByte);
+            writer.Write(Flags.FlagValueShort);
             writer.Write(Frequency);
             writer.Write(MinFrequency);
             writer.Write(Sound);
@@ -164,34 +168,52 @@ namespace IndustrialPark
         }
 
         private Matrix world;
-        private Matrix world2;
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public BoundingSphere boundingSphere;
+        private BoundingSphere boundingSphere;
+        private BoundingSphere boundingSphere2;
 
-        public void CreateTransformMatrix()
+        public void CalculateTransformation(SharpRenderer renderer)
         {
-            world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(_position);
-            world2 = Matrix.Scaling(_radius2 * 2f) * Matrix.Translation(_position);
-
-            CreateBoundingBox();
+            if (PlayIn3D)
+            {
+                var position = (UseAttach && GetAttach?.Invoke(Attach) is IClickableAsset ica) ?
+                    new Vector3(ica.PositionX, ica.PositionY, ica.PositionZ) : _position;
+                world = Matrix.Scaling(_radius * 2f) * Matrix.Translation(position);
+                CreateBoundingBox(position);
+            }
+            else
+            {
+                world = Matrix.Identity;
+                CreateBoundingBox(null);
+            }
         }
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(Vector3? position)
         {
-            boundingSphere = new BoundingSphere(_position, _radius);
-            boundingBox = BoundingBox.FromSphere(boundingSphere);
+            if (position.HasValue)
+            {
+                boundingSphere = new BoundingSphere(position.Value, _radius);
+                boundingSphere2 = new BoundingSphere(position.Value, _radius2);
+                boundingBox = BoundingBox.FromSphere(boundingSphere);
+            }
+            else
+            {
+                boundingSphere = new BoundingSphere();
+                boundingSphere2 = new BoundingSphere();
+                boundingBox = new BoundingBox();
+            }
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingSphere))
-                return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                return TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
             return null;
         }
 
@@ -203,18 +225,20 @@ namespace IndustrialPark
                 return false;
             if (isInvisible)
                 return false;
+            if (!PlayIn3D)
+                return false;
             if (AssetMODL.renderBasedOnLodt && GetDistanceFrom(renderer.Camera.Position) > SharpRenderer.DefaultLODTDistance)
                 return false;
 
-            return renderer.frustum.Intersects(ref boundingBox);
+            return renderer.frustum.Intersects(ref boundingSphere);
         }
 
         public void Draw(SharpRenderer renderer)
         {
-            renderer.DrawSphere(world, isSelected, renderer.sfxColor);
+            renderer.DrawSphere(boundingSphere, isSelected, renderer.sfxColor);
 
             if (isSelected)
-                renderer.DrawSphere(world2, false, renderer.sfxColor);
+                renderer.DrawSphere(boundingSphere2, false, renderer.sfxColor);
         }
 
         public BoundingBox GetBoundingBox() => boundingBox;
@@ -252,37 +276,23 @@ namespace IndustrialPark
             }
         }
 
-        public void CopyTransformation()
+        public AssetTransformation GetTransformation() => new AssetTransformation()
         {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-                _scaleSingle = _radius,
-                _scaleSfxMin = _radius,
-                _scaleSfxMax = _radius2,
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+            _scaleSingle = _radius,
+            _scaleSfxMin = _radius,
+            _scaleSfxMax = _radius2,
+        };
 
-        public void PasteTransformation()
+        public void SetTransformation(AssetTransformation transformation)
         {
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                _radius = transformation._scaleSfxMin;
-                _radius2 = transformation._scaleSfxMax;
-
-                CreateTransformMatrix();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            _radius = transformation._scaleSfxMin;
+            _radius2 = transformation._scaleSfxMax;
         }
     }
 }

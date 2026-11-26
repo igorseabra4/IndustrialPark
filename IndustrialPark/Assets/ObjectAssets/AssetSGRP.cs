@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class SoundGroupInfo : GenericAssetDataContainer
     {
@@ -85,33 +85,28 @@ namespace IndustrialPark
             Entries = new SoundGroupInfo[] { new SoundGroupInfo() };
         }
 
-        public AssetSGRP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSGRP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            uPlayedMask = reader.ReadInt32();
 
-                uPlayedMask = reader.ReadInt32();
+            byte entryCount = reader.ReadByte();
+            uSetBits = reader.ReadByte();
+            nMaxPlays = reader.ReadByte();
+            uPriority = reader.ReadByte();
 
-                byte entryCount = reader.ReadByte();
-                uSetBits = reader.ReadByte();
-                nMaxPlays = reader.ReadByte();
-                uPriority = reader.ReadByte();
+            uFlags.FlagValueByte = reader.ReadByte();
+            eSoundCategory = reader.ReadByte();
+            ePlayRule = reader.ReadByte();
+            uInfoPad0 = reader.ReadByte();
 
-                uFlags.FlagValueByte = reader.ReadByte();
-                eSoundCategory = reader.ReadByte();
-                ePlayRule = reader.ReadByte();
-                uInfoPad0 = reader.ReadByte();
+            InnerRadius = reader.ReadSingle();
+            OuterRadius = reader.ReadSingle();
 
-                InnerRadius = reader.ReadSingle();
-                OuterRadius = reader.ReadSingle();
+            PszGroupName = reader.ReadInt32();
 
-                PszGroupName = reader.ReadInt32();
-
-                Entries = new SoundGroupInfo[entryCount];
-                for (int i = 0; i < Entries.Length; i++)
-                    Entries[i] = new SoundGroupInfo(reader);
-            }
+            Entries = new SoundGroupInfo[entryCount];
+            for (int i = 0; i < Entries.Length; i++)
+                Entries[i] = new SoundGroupInfo(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -146,5 +141,7 @@ namespace IndustrialPark
                     entries.Add(new SoundGroupInfo(i));
             Entries = entries.ToArray();
         }
+
+        public List<uint> GetItems() => Entries.Select(a => (uint)a.Sound).ToList();
     }
 }

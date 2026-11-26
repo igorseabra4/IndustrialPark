@@ -1,7 +1,8 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaSceneProperties : AssetDYNA
     {
@@ -11,8 +12,10 @@ namespace IndustrialPark
         protected override short constVersion => 1;
 
         [Category(dynaCategoryName)]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] idle03Extras { get; set; }
         [Category(dynaCategoryName)]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] idle04Extras { get; set; }
         [Category(dynaCategoryName)]
         public AssetByte bombCount { get; set; }
@@ -72,53 +75,48 @@ namespace IndustrialPark
             lodFadeDistance = 4;
         }
 
-        public DynaSceneProperties(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.SceneProperties, game, endianness)
+        public DynaSceneProperties(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.SceneProperties, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            idle03Extras = new AssetID[reader.ReadInt32()];
+            var idle03ExtraOffset = reader.ReadInt32() + 0x10;
+            idle04Extras = new AssetID[reader.ReadInt32()];
+            var idle04ExtraOffset = reader.ReadInt32() + 0x10;
+
+            bombCount = reader.ReadByte();
+            extraIdleDelay = reader.ReadByte();
+            hdrGlow = reader.ReadByte();
+            hdrDarken = reader.ReadByte();
+            BackgroundMusic = reader.ReadUInt32();
+            scenePropertiesFlags = reader.ReadInt32();
+            waterTileWidth = reader.ReadSingle();
+            lodFadeDistance = reader.ReadSingle();
+
+            if (reader.BaseStream.Length > 0x44)
             {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                idle03Extras = new AssetID[reader.ReadInt32()];
-                var idle03ExtraOffset = reader.ReadInt32() + 0x10;
-                idle04Extras = new AssetID[reader.ReadInt32()];
-                var idle04ExtraOffset = reader.ReadInt32() + 0x10;
-
-                bombCount = reader.ReadByte();
-                extraIdleDelay = reader.ReadByte();
-                hdrGlow = reader.ReadByte();
-                hdrDarken = reader.ReadByte();
-                BackgroundMusic = reader.ReadUInt32();
-                scenePropertiesFlags = reader.ReadInt32();
-                waterTileWidth = reader.ReadSingle();
-                lodFadeDistance = reader.ReadSingle();
-
-                if (reader.BaseStream.Length > 0x44)
-                {
-                    AssetVersion = EVersionIncrediblesOthers.Incredibles;
-                    WaterTileOffsetX = reader.ReadSingle();
-                    WaterTileOffsetY = reader.ReadSingle();
-                    NumCheckpoints = reader.ReadByte();
-                    reader.ReadBytes(3);
-                    GrassDistFade = reader.ReadSingle();
-                    GrassDistCull = reader.ReadSingle();
-                    PiggyBank = reader.ReadUInt32();
-                    MaxAnimationMem = reader.ReadUInt32();
-                    MaxArtMem = reader.ReadUInt32();
-                    MaxDesignMem = reader.ReadUInt32();
-                    MaxProgrammingMem = reader.ReadUInt32();
-                }
-                else
-                {
-                    AssetVersion = EVersionIncrediblesOthers.Others;
-                }
-
-                reader.BaseStream.Position = idle03ExtraOffset;
-                for (int i = 0; i < idle03Extras.Length; i++)
-                    idle03Extras[i] = reader.ReadUInt32();
-                reader.BaseStream.Position = idle04ExtraOffset;
-                for (int i = 0; i < idle04Extras.Length; i++)
-                    idle04Extras[i] = reader.ReadUInt32();
+                AssetVersion = EVersionIncrediblesOthers.Incredibles;
+                WaterTileOffsetX = reader.ReadSingle();
+                WaterTileOffsetY = reader.ReadSingle();
+                NumCheckpoints = reader.ReadByte();
+                reader.ReadBytes(3);
+                GrassDistFade = reader.ReadSingle();
+                GrassDistCull = reader.ReadSingle();
+                PiggyBank = reader.ReadUInt32();
+                MaxAnimationMem = reader.ReadUInt32();
+                MaxArtMem = reader.ReadUInt32();
+                MaxDesignMem = reader.ReadUInt32();
+                MaxProgrammingMem = reader.ReadUInt32();
             }
+            else
+            {
+                AssetVersion = EVersionIncrediblesOthers.Others;
+            }
+
+            reader.BaseStream.Position = idle03ExtraOffset;
+            for (int i = 0; i < idle03Extras.Length; i++)
+                idle03Extras[i] = reader.ReadUInt32();
+            reader.BaseStream.Position = idle04ExtraOffset;
+            for (int i = 0; i < idle04Extras.Length; i++)
+                idle04Extras[i] = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

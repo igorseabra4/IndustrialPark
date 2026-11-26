@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectBulletMark : AssetDYNA
     {
@@ -22,16 +22,11 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle Lifetime { get; set; }
 
-        public DynaGObjectBulletMark(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bullet_mark, game, endianness)
+        public DynaGObjectBulletMark(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__bullet_mark, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                TextureID = reader.ReadUInt32();
-                Size = reader.ReadSingle();
-                Lifetime = reader.ReadSingle();
-            }
+            TextureID = reader.ReadUInt32();
+            Size = reader.ReadSingle();
+            Lifetime = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

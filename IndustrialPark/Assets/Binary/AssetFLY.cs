@@ -1,9 +1,10 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class FlyFrame : GenericAssetDataContainer
     {
@@ -74,7 +75,7 @@ namespace IndustrialPark
     {
         public override string AssetInfo => $"{Frames.Length} frames";
 
-        [Category("Flythrough")]
+        [Category("Flythrough"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public FlyFrame[] Frames { get; set; }
 
         public AssetFLY(string assetName) : base(assetName, AssetType.Flythrough)
@@ -82,13 +83,14 @@ namespace IndustrialPark
             Frames = new FlyFrame[0];
         }
 
-        public AssetFLY(Section_AHDR AHDR, Game game) : base(AHDR, game)
+        public AssetFLY(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
             List<FlyFrame> entries = new List<FlyFrame>();
 
-            using (var reader = new BinaryReader(new MemoryStream(AHDR.data)))
-                while (reader.BaseStream.Position < reader.BaseStream.Length)
-                    entries.Add(new FlyFrame(reader));
+            reader.endianness = Endianness.Little;
+
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
+                entries.Add(new FlyFrame(reader));
 
             Frames = entries.ToArray();
         }

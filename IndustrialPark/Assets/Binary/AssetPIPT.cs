@@ -1,11 +1,12 @@
 ﻿using HipHopFile;
+using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum PIPTLayerType
     {
@@ -83,15 +84,14 @@ namespace IndustrialPark
         Unknown = 0,
         None = 1,
         Back = 2,
-        Dual = 3
+        BackThenFront = 3
     }
 
     public enum ZWriteMode
     {
         Enabled = 0,
         Disabled = 1,
-        Dual = 2,
-        Unknown = 3
+        ZFirst = 2
     }
 
     public class PipeInfo : GenericAssetDataContainer
@@ -103,78 +103,57 @@ namespace IndustrialPark
         [Category(categoryName)]
         public FlagBitmask SubObjectBits { get; set; } = IntFlagsDescriptor();
         [Category(categoryName)]
-        public int PipeFlags { get; set; }
+        public uint PipeFlags { get; set; }
         [Category(categoryName)]
         public PiptPreset PipeFlags_Preset
         {
             get
             {
                 foreach (PiptPreset v in Enum.GetValues(typeof(PiptPreset)))
-                    if ((int)v == PipeFlags)
+                    if ((uint)v == PipeFlags)
                         return v;
                 return PiptPreset.None;
             }
             set
             {
-                PipeFlags = (int)value;
+                PipeFlags = (uint)value;
             }
         }
 
         private const string categoryNameFlags = "Pipe Info Flags";
 
-        [Category(categoryNameFlags), Description("0 - 255")]
-        public byte AlphaCompareValue
+        [Category(categoryNameFlags)]
+        public bool HDR_Brightening
         {
-            get => (byte)((PipeFlags & 0xFF000000) >> 24);
-
+            get => ((PipeFlags & 0x00400000) >> 22) != 0;
             set
             {
-                PipeFlags &= 0x00FFFFFF;
-                PipeFlags |= value << 24;
-            }
-        }
-
-        [Category(categoryNameFlags), Description("0 - 15")]
-        public byte UnknownFlagB
-        {
-            get => (byte)((PipeFlags & 0x00F00000) >> 20);
-
-            set
-            {
-                unchecked
-                {
-                    PipeFlags &= (int)0xFF0FFFFF;
-                    PipeFlags |= value << 20;
-                }
-            }
-        }
-
-        [Category(categoryNameFlags), Description("0 - 7")]
-        public byte UnknownFlagC
-        {
-            get => (byte)((PipeFlags & 0x000E0000) >> 17);
-
-            set
-            {
-                unchecked
-                {
-                    PipeFlags &= (int)0xFFF1FFFF;
-                    PipeFlags |= value << 17;
-                }
+                PipeFlags &= ~0x00400000u;
+                PipeFlags |= (uint)(value ? 1 : 0) << 22;
             }
         }
 
         [Category(categoryNameFlags)]
         public bool IgnoreFog
         {
-            get => ((PipeFlags & 0x00010000) >> 16) != 0;
-
+            get
+            {
+                if (game >= Game.Incredibles)
+                    return ((PipeFlags & 0x8) >> 3) != 0;
+                else
+                    return ((PipeFlags & 0x00010000) >> 16) != 0;
+            }
             set
             {
-                unchecked
+                if (game >= Game.Incredibles)
                 {
-                    PipeFlags &= (int)0xFFFEFFFF;
-                    PipeFlags |= (value ? 1 : 0) << 16;
+                    PipeFlags &= ~0x8u;
+                    PipeFlags |= (uint)(value ? 1 : 0) << 3;
+                }
+                else
+                {
+                    PipeFlags &= ~0x10000u;
+                    PipeFlags |= (uint)(value ? 1 : 0) << 16;
                 }
             }
         }
@@ -186,11 +165,8 @@ namespace IndustrialPark
 
             set
             {
-                unchecked
-                {
-                    PipeFlags &= (int)0xFFFF0FFF;
-                    PipeFlags |= (byte)value << 12;
-                }
+                PipeFlags &= ~0xF000u;
+                PipeFlags |= (uint)(byte)value << 12;
             }
         }
 
@@ -201,11 +177,8 @@ namespace IndustrialPark
 
             set
             {
-                unchecked
-                {
-                    PipeFlags &= (int)0xFFFFF0FF;
-                    PipeFlags |= (byte)value << 8;
-                }
+                PipeFlags &= ~0xF00u;
+                PipeFlags |= (uint)(byte)value << 8;
             }
         }
 
@@ -216,67 +189,122 @@ namespace IndustrialPark
 
             set
             {
-                unchecked
-                {
-                    PipeFlags &= (int)0xFFFFFF3F;
-                    PipeFlags |= (byte)value << 6;
-                }
+                PipeFlags &= ~0xC0u;
+                PipeFlags |= (uint)(byte)value << 6;
             }
         }
 
         [Category(categoryNameFlags)]
         public PiptCullMode CullMode
         {
-            get => (PiptCullMode)((PipeFlags & 0x00000030) >> 4);
+            get => (PiptCullMode)((PipeFlags & 0x30) >> 4);
 
             set
             {
-                unchecked
-                {
-                    PipeFlags &= (int)0xFFFFFFCF;
-                    PipeFlags |= (byte)value << 4;
-                }
+                PipeFlags &= ~0x30u;
+                PipeFlags |= (uint)(byte)value << 4;
             }
         }
 
         [Category(categoryNameFlags)]
         public ZWriteMode ZWriteMode
         {
-            get => (ZWriteMode)((PipeFlags & 0x000000C) >> 2);
-
+            get
+            {
+                if (game >= Game.Incredibles)
+                    return (ZWriteMode)((PipeFlags & 0x30000) >> 16);
+                else
+                    return (ZWriteMode)((PipeFlags & 0x4) >> 2);
+            }
             set
             {
-                unchecked
+                if (game >= Game.Incredibles)
                 {
-                    PipeFlags &= (int)0xFFFFFFF3;
-                    PipeFlags |= (byte)value << 2;
+                    PipeFlags &= ~0x30000u;
+                    PipeFlags |= (uint)value << 16;
                 }
+                else
+                {
+                    PipeFlags &= ~0x4u;
+                    PipeFlags |= (uint)value << 2;
+                }
+
             }
         }
 
-        [Category(categoryNameFlags), Description("0 - 3")]
-        public byte UnknownFlagJ
+        private PIPTLayerType _layer;
+        [Category(categoryName)]
+        public PIPTLayerType Layer
         {
-            get => (byte)(PipeFlags & 0x00000003);
-
+            get
+            {
+                if (game >= Game.Incredibles)
+                    return _layer;
+                else
+                    return (PIPTLayerType)((PipeFlags & 0xF80000) >> 19);
+            }
             set
             {
-                unchecked
+                if (game >= Game.Incredibles)
+                    _layer = value;
+                else
                 {
-                    PipeFlags &= (int)0xFFFFFFFC;
-                    PipeFlags |= value;
+                    PipeFlags &= 0xF80000;
+                    PipeFlags |= (uint)value << 19;
                 }
+                    
             }
         }
 
+        private byte _alphadiscard;
         [Category(categoryName)]
-        public PIPTLayerType Layer { get; set; }
-
-        [Category(categoryName)]
-        public byte AlphaDiscard { get; set; }
+        public byte AlphaDiscard
+        {
+            get
+            {
+                if (game >= Game.Incredibles)
+                    return _alphadiscard;
+                else
+                    return (byte)(PipeFlags >> 24);
+            }
+            set
+            {
+                if (game >= Game.Incredibles)
+                    _alphadiscard = value;
+                else
+                    PipeFlags = (PipeFlags & ~0xFF000000) | (uint)(value << 24);
+            }
+        }
 
         [Category(categoryName)]
         public ushort PipePad { get; set; }
+
+        private const uint BFBBUnknownFlagsMask = 0xE0003;
+        private const uint UnknownFlagsMask = 0xFC7C0007;
+        [Category(categoryNameFlags)]
+        public uint UnknownFlags
+        {
+            get
+            {
+                if (game >= Game.Incredibles)
+                    return PipeFlags & UnknownFlagsMask;
+                else
+                    return PipeFlags & BFBBUnknownFlagsMask;
+            }
+            set
+            {
+                if (game >= Game.Incredibles)
+                {
+                    PipeFlags &= ~UnknownFlagsMask;
+                    PipeFlags |= (value & UnknownFlagsMask);
+                }
+                else
+                {
+                    PipeFlags &= ~BFBBUnknownFlagsMask;
+                    PipeFlags |= value & BFBBUnknownFlagsMask;
+                }
+            }
+        }
 
         public PipeInfo(Game game)
         {
@@ -284,9 +312,6 @@ namespace IndustrialPark
 
             Model = 0;
             SubObjectBits.FlagValueInt = 0xFFFFFFFF;
-            UnknownFlagB = 9;
-            UnknownFlagC = 4;
-            UnknownFlagJ = 2;
         }
 
         public override string ToString()
@@ -297,7 +322,7 @@ namespace IndustrialPark
         public override bool Equals(object obj)
         {
             if (obj != null && obj is PipeInfo entry)
-                return Model.Equals(entry.Model);
+                return Model.Equals(entry.Model) && SubObjectBits.FlagValueInt.Equals(entry.SubObjectBits.FlagValueInt);
             return false;
         }
 
@@ -306,13 +331,44 @@ namespace IndustrialPark
             return Model.GetHashCode();
         }
 
+        public BlendOption GetSharpBlendMode(bool src)
+        {
+            switch (src ? SourceBlend : DestinationBlend)
+            {
+                case BlendFactorType.Zero:
+                    return BlendOption.Zero;
+                case BlendFactorType.One:
+                    return BlendOption.One;
+                case BlendFactorType.SourceColor:
+                    return BlendOption.SourceColor;
+                case BlendFactorType.InverseSourceColor:
+                    return BlendOption.InverseSourceColor;
+                case BlendFactorType.SourceAlpha:
+                    return BlendOption.SourceAlpha;
+                case BlendFactorType.InverseSourceAlpha:
+                    return BlendOption.InverseSourceAlpha;
+                case BlendFactorType.DestinationAlpha:
+                    return BlendOption.DestinationAlpha;
+                case BlendFactorType.InverseDestinationAlpha:
+                    return BlendOption.InverseDestinationAlpha;
+                case BlendFactorType.DestinationColor:
+                    return BlendOption.DestinationColor;
+                case BlendFactorType.InverseDestinationColor:
+                    return BlendOption.InverseDestinationColor;
+                case BlendFactorType.SourceAlphaSaturated:
+                    return BlendOption.SourceAlphaSaturate;
+            }
+
+            return src ? BlendOption.Zero : BlendOption.One;
+        }
+
         public PipeInfo(EndianBinaryReader reader, Game game)
         {
             _game = game;
 
             Model = reader.ReadUInt32();
             SubObjectBits.FlagValueInt = reader.ReadUInt32();
-            PipeFlags = reader.ReadInt32();
+            PipeFlags = reader.ReadUInt32();
 
             if (game >= Game.Incredibles)
             {
@@ -340,89 +396,69 @@ namespace IndustrialPark
         {
             if (game < Game.Incredibles)
             {
+                dt.RemoveProperty("HDR_Brightening");
                 dt.RemoveProperty("Layer");
-                dt.RemoveProperty("AlphaDiscard");
                 dt.RemoveProperty("PipePad");
             }
         }
+
+        public PipeInfo Clone()
+        {
+            var result = new PipeInfo(game)
+            {
+                Model = Model,
+                PipeFlags = PipeFlags,
+                Layer = Layer,
+                AlphaDiscard = AlphaDiscard,
+                PipePad = PipePad
+            };
+            result.SubObjectBits.FlagValueInt = SubObjectBits.FlagValueInt;
+            return result;
+        }
     }
 
-    public class AssetPIPT : Asset, IAssetAddSelected
+    public class AssetPIPT : Asset, IAssetAddSelected, IDisposableAsset, ITableAsset<AssetPIPT, PipeInfo>
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
-        private PipeInfo[] _entries { get; set; }
-        [Category("Pipe Info Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        private List<PipeInfo> _entries { get; set; }
+        [Category("Pipe Info Table"), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowSearch: true)]
         public PipeInfo[] Entries
         {
-            get => _entries;
+            get => [.. _entries];
             set
             {
-                _entries = value;
-                UpdateDictionary();
+                _entries = [.. value];
+                PipeInfoUpdate?.Invoke(false);
             }
         }
+
+        public event Action<bool> PipeInfoUpdate;
 
         public AssetPIPT(string assetName) : base(assetName, AssetType.PipeInfoTable)
         {
-            Entries = new PipeInfo[0];
+            _entries = [];
         }
 
-        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetPIPT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                _entries = new PipeInfo[reader.ReadInt32()];
-
-                for (int i = 0; i < _entries.Length; i++)
-                    _entries[i] = new PipeInfo(reader, game);
-
-                UpdateDictionary();
-            }
+            var len = reader.ReadInt32();
+            _entries = [with(len)];
+            for (int i = 0; i < len; i++)
+                _entries.Add(new PipeInfo(reader, game));
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            writer.Write(_entries.Length);
+            writer.Write(_entries.Count);
 
             foreach (var l in _entries)
                 l.Serialize(writer);
         }
 
-        public AssetPIPT(Section_AHDR AHDR, Game game, Endianness endianness, OnPipeInfoTableEdited onPipeInfoTableEdited) : this(AHDR, game, endianness)
+        public void Dispose()
         {
-            this.onPipeInfoTableEdited = onPipeInfoTableEdited;
-        }
-
-        public delegate void OnPipeInfoTableEdited(Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> blendModes);
-        private readonly OnPipeInfoTableEdited onPipeInfoTableEdited;
-
-        public void UpdateDictionary()
-        {
-            ClearDictionary();
-
-            Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]> BlendModes = new Dictionary<uint, (uint, BlendFactorType, BlendFactorType)[]>();
-
-            foreach (PipeInfo entry in Entries)
-            {
-                if (!BlendModes.ContainsKey(entry.Model))
-                    BlendModes[entry.Model] = new (uint, BlendFactorType, BlendFactorType)[0];
-
-                var entries = BlendModes[entry.Model].ToList();
-                for (int i = 0; i < entries.Count; i++)
-                    if (entries[i].Item1 == entry.SubObjectBits.FlagValueInt)
-                        entries.RemoveAt(i--);
-
-                entries.Add((entry.SubObjectBits.FlagValueInt, entry.SourceBlend, entry.DestinationBlend));
-                BlendModes[entry.Model] = entries.ToArray();
-            }
-
-            onPipeInfoTableEdited?.Invoke(BlendModes);
-        }
-
-        public void ClearDictionary()
-        {
-            onPipeInfoTableEdited?.Invoke(null);
+            PipeInfoUpdate?.Invoke(true);
         }
 
         public void Merge(AssetPIPT asset)
@@ -431,7 +467,7 @@ namespace IndustrialPark
 
             foreach (var entry in asset.Entries)
             {
-                entries.Remove(entry);
+                entries.RemoveAll(e => e.Model == entry.Model && e.SubObjectBits.FlagValueInt == entry.SubObjectBits.FlagValueInt);
                 entries.Add(entry);
             }
 
@@ -450,6 +486,8 @@ namespace IndustrialPark
             Entries = entries.ToArray();
         }
 
+        public List<uint> GetItems() => Entries.Select(a => (uint)a.Model).Distinct().ToList();
+
         public void AddEntry(PipeInfo entry)
         {
             var entries = Entries.ToList();
@@ -466,11 +504,22 @@ namespace IndustrialPark
 
         public void RemoveEntry(uint assetID)
         {
-            var entries = Entries.ToList();
-            for (int i = 0; i < entries.Count; i++)
-                if (entries[i].Model == assetID)
-                    entries.RemoveAt(i--);
-            Entries = entries.ToArray();
+            Entries = [.. Entries.Where(e => e.Model != assetID)];
+        }
+
+        public Dictionary<uint, List<PipeInfo>> GetEntryDictionary()
+        {
+            var result = new Dictionary<uint, List<PipeInfo>>();
+            foreach (PipeInfo entry in Entries)
+            {
+                if (!result.ContainsKey(entry.Model))
+                    result[entry.Model] = [];
+
+                result[entry.Model].RemoveAll(item => item.SubObjectBits.FlagValueInt == entry.SubObjectBits.FlagValueInt);
+
+                result[entry.Model].Add(entry);
+            }
+            return result;
         }
     }
 }

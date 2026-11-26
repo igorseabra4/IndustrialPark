@@ -1,6 +1,6 @@
 ﻿using HipHopFile;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetSound : AssetWithData
     {
@@ -35,9 +35,9 @@ namespace IndustrialPark
             SetFileType(game, platform);
         }
 
-        public AssetSound(Section_AHDR AHDR, Game game, Platform platform) : base(AHDR, game)
+        public AssetSound(Section_AHDR AHDR) : base(AHDR)
         {
-            SetFileType(game, platform);
+            SetFileType(game, AHDR.Platform);
         }
     }
 }

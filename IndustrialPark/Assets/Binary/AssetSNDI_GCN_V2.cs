@@ -5,9 +5,9 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
-    public class AssetSNDI_GCN_V2 : Asset
+    public class AssetSNDI_GCN_V2 : Asset, ISoundInfoAsset<AssetSNDI_GCN_V2>
     {
         public override string AssetInfo => $"GameCube {game}, {(Entry_Sounds == null ? 0 : Entry_Sounds.SampleHeader.Length) + Entries_StreamingSounds.Length} entries";
 
@@ -29,74 +29,71 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
         }
 
-        public AssetSNDI_GCN_V2(Section_AHDR AHDR, Game game) : base(AHDR, game)
+        public AssetSNDI_GCN_V2(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Big))
-            {
-                reader.ReadUInt32();
-                var totalSize = reader.ReadUInt32();
-                // Internal Pointers
-                reader.BaseStream.Position += 0x10;
-                ushort nWavFiles = reader.ReadUInt16();
-                ushort nSounds = reader.ReadUInt16();
-                ushort nStreams = reader.ReadUInt16();
-                byte nFSBFiles = reader.ReadByte();
-                byte nCutsceneAudioHeaders = reader.ReadByte();
+            reader.ReadUInt32();
+            var totalSize = reader.ReadUInt32();
+            // Internal Pointers
+            reader.BaseStream.Position += 0x10;
+            ushort nWavFiles = reader.ReadUInt16();
+            ushort nSounds = reader.ReadUInt16();
+            ushort nStreams = reader.ReadUInt16();
+            byte nFSBFiles = reader.ReadByte();
+            byte nCutsceneAudioHeaders = reader.ReadByte();
 
-                reader.BaseStream.Position = totalSize + 0x20;
+            reader.BaseStream.Position = totalSize + 0x20;
 
-                var offsets = new uint[nFSBFiles];
-                for (int i = 0; i < nFSBFiles; i++)
-                    offsets[i] = reader.ReadUInt32() + 0x20;
+            var offsets = new uint[nFSBFiles];
+            for (int i = 0; i < nFSBFiles; i++)
+                offsets[i] = reader.ReadUInt32() + 0x20;
 
-                List<FSB3_File> entries = new List<FSB3_File>();
-                for (int i = 0; i < offsets.Length; i++)
-                    using (var fsbReader = new EndianBinaryReader(AHDR.data, Endianness.Little))
-                    {
-                        fsbReader.BaseStream.Position = offsets[i];
-                        var fsb3file = new FSB3_File(fsbReader);
-                        fsb3file.UnknownBytes = fsbReader.ReadBytes((32 - (fsb3file.TotalFSBSize % 32)) % 32);
-                        entries.Add(fsb3file);
-                    }
-
-                for (int i = 0; i < nWavFiles; i++)
+            List<FSB3_File> entries = new List<FSB3_File>();
+            for (int i = 0; i < offsets.Length; i++)
+                using (var fsbReader = new EndianBinaryReader(AHDR.data, Endianness.Little))
                 {
-                    var assetID = reader.ReadUInt32();
-                    var uFlags = reader.ReadByte();
-                    var uAudioSampleIndex = reader.ReadByte();
-                    var uFSBIndex = reader.ReadByte();
-                    var uSoundInfoIndex = reader.ReadByte();
-                    entries[uFSBIndex].SampleHeader[uAudioSampleIndex].SetEntryData(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+                    fsbReader.BaseStream.Position = offsets[i];
+                    var fsb3file = new FSB3_File(fsbReader);
+                    fsb3file.UnknownBytes = fsbReader.ReadBytes((32 - (fsb3file.TotalFSBSize % 32)) % 32);
+                    entries.Add(fsb3file);
                 }
 
-                if (entries.Count == 0 || (entries.Count == 1 && entries[0].SampleHeader.Length == 0))
+            for (int i = 0; i < nWavFiles; i++)
+            {
+                var assetID = reader.ReadUInt32();
+                var uFlags = reader.ReadByte();
+                var uAudioSampleIndex = reader.ReadByte();
+                var uFSBIndex = reader.ReadByte();
+                var uSoundInfoIndex = reader.ReadByte();
+                entries[uFSBIndex].SampleHeader[uAudioSampleIndex].SetEntryData(assetID, uFlags, uAudioSampleIndex, uFSBIndex, uSoundInfoIndex);
+            }
+
+            if (entries.Count == 0 || (entries.Count == 1 && entries[0].SampleHeader.Length == 0))
+            {
+                Entry_Sounds = null;
+                Entries_StreamingSounds = new FSB3_File[0];
+            }
+            else if (entries.Count == 1)
+            {
+                if (entries[0].SampleHeader[0].StreamedSound)
                 {
                     Entry_Sounds = null;
-                    Entries_StreamingSounds = new FSB3_File[0];
-                }
-                else if (entries.Count == 1)
-                {
-                    if (entries[0].SampleHeader[0].StreamedSound)
-                    {
-                        Entry_Sounds = null;
-                        Entries_StreamingSounds = entries.ToArray();
-                    }
-                    else
-                    {
-                        Entry_Sounds = entries[0];
-                        Entries_StreamingSounds = new FSB3_File[0];
-                    }
+                    Entries_StreamingSounds = entries.ToArray();
                 }
                 else
                 {
                     Entry_Sounds = entries[0];
-                    Entries_StreamingSounds = entries.Skip(1).ToArray();
+                    Entries_StreamingSounds = new FSB3_File[0];
                 }
-
-                Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[nCutsceneAudioHeaders];
-                for (int i = 0; i < Entries_Sound_CIN.Length; i++)
-                    Entries_Sound_CIN[i] = new EntrySoundInfo_GCN_V1(reader);
             }
+            else
+            {
+                Entry_Sounds = entries[0];
+                Entries_StreamingSounds = entries.Skip(1).ToArray();
+            }
+
+            Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[nCutsceneAudioHeaders];
+            for (int i = 0; i < Entries_Sound_CIN.Length; i++)
+                Entries_Sound_CIN[i] = new EntrySoundInfo_GCN_V1(reader);
         }
 
         public List<FSB3_File> GetAllEntries()
@@ -234,10 +231,15 @@ namespace IndustrialPark
                     Entry_Sounds.Merge(assetSNDI.Entry_Sounds.SampleHeader);
             }
 
-            List<FSB3_File> newEntries = Entries_StreamingSounds.ToList();
+            var newEntries = Entries_StreamingSounds.ToList();
             newEntries.RemoveAll(entry => assetSNDI.Entries_StreamingSounds.Select(es => es.SampleHeader[0].Sound).Contains(entry.SampleHeader[0].Sound));
             newEntries.AddRange(assetSNDI.Entries_StreamingSounds);
             Entries_StreamingSounds = newEntries.ToArray();
+
+            var newEntriesCin = Entries_Sound_CIN.ToList();
+            newEntriesCin.RemoveAll(entry => assetSNDI.Entries_Sound_CIN.Select(es => es.Sound).Contains(entry.Sound));
+            newEntriesCin.AddRange(assetSNDI.Entries_Sound_CIN);
+            Entries_Sound_CIN = newEntriesCin.ToArray();
         }
 
         public void RemoveEntry(uint assetID)

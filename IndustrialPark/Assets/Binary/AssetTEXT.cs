@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetTEXT : Asset
     {
@@ -15,13 +15,10 @@ namespace IndustrialPark
             Text = "";
         }
 
-        public AssetTEXT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetTEXT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                var length = reader.ReadInt32();
-                Text = reader.ReadString(length);
-            }
+            var length = reader.ReadInt32();
+            Text = reader.ReadString(length);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -44,8 +41,16 @@ namespace IndustrialPark
             base.Verify(ref result);
 
             foreach (string s in AssetNamesInText)
-                if (!(Program.MainForm.AssetExists(Functions.BKDRHash(s)) || Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3"))))
+                if (!(Program.NameRepository.AssetExists(new AssetID(s)) || Program.NameRepository.AssetExists(new AssetID(s + ".RW3"))))
                     result.Add("No open archive contains asset " + s + ", which is referenced in this asset.");
+        }
+
+        public override List<uint> GetHierarchy()
+        {
+            var result = base.GetHierarchy();
+            result.AddRange(AssetNamesInText.Select(s => Functions.BKDRHash(s + ".RW3")));
+            result.AddRange(AssetNamesInText.Select(s => Functions.BKDRHash(s)));
+            return result;
         }
 
         private List<string> AssetNamesInText

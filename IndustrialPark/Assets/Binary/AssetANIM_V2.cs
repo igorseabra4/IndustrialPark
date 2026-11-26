@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetANIM_KeyFrame_V2 : GenericAssetDataContainer
     {
@@ -56,64 +56,61 @@ namespace IndustrialPark
         public AssetSingle ScaleZ { get; set; }
         [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetANIM_KeyFrame_V2[] KeyFrames { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public short[] Times { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public short[][] TranslateTable { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public short[][] Offsets { get; set; }
 
-        public AssetANIM_V2(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetANIM_V2(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            reader.ReadUInt64();
+            BoneCount = reader.ReadUInt16();
+            TimeCount = reader.ReadUInt16();
+            KeyCount = reader.ReadUInt16();
+            TranCount = reader.ReadUInt16();
+            ScaleX = reader.ReadSingle();
+            ScaleY = reader.ReadSingle();
+            ScaleZ = reader.ReadSingle();
+
+            KeyFrames = new AssetANIM_KeyFrame_V2[KeyCount];
+            for (int i = 0; i < KeyCount; i++)
+                KeyFrames[i] = new AssetANIM_KeyFrame_V2(reader);
+
+            var times = new List<short>();
+            for (int i = 0; i < TimeCount; i++)
+                times.Add(reader.ReadInt16());
+            Times = times.ToArray();
+
+            if (TimeCount % 2 != 0)
+                reader.ReadUInt16();
+
+            var trantable = new List<short[]>();
+            for (int i = 0; i < TranCount; i++)
             {
-                reader.ReadUInt64();
-                BoneCount = reader.ReadUInt16();
-                TimeCount = reader.ReadUInt16();
-                KeyCount = reader.ReadUInt16();
-                TranCount = reader.ReadUInt16();
-                ScaleX = reader.ReadSingle();
-                ScaleY = reader.ReadSingle();
-                ScaleZ = reader.ReadSingle();
-
-                KeyFrames = new AssetANIM_KeyFrame_V2[KeyCount];
-                for (int i = 0; i < KeyCount; i++)
-                    KeyFrames[i] = new AssetANIM_KeyFrame_V2(reader);
-
-                var times = new List<short>();
-                for (int i = 0; i < TimeCount; i++)
-                    times.Add(reader.ReadInt16());
-                Times = times.ToArray();
-
-                if (TimeCount % 2 != 0)
-                    reader.ReadUInt16();
-
-                var trantable = new List<short[]>();
-                for (int i = 0; i < TranCount; i++)
-                {
-                    var translate = new List<short>();
-                    for (int j = 0; j < 3; j++)
-                        translate.Add(reader.ReadInt16());
-                    trantable.Add(translate.ToArray());
-                }
-                TranslateTable = trantable.ToArray();
-
-                if (TranCount % 2 != 0)
-                    reader.ReadUInt16();
-
-                var offsets = new List<short[]>();
-                for (int i = 0; i < TimeCount - 1; i++)
-                {
-                    var offset = new List<short>();
-                    for (int j = 0; j < BoneCount; j++)
-                        offset.Add(reader.ReadInt16());
-                    offsets.Add(offset.ToArray());
-                }
-                Offsets = offsets.ToArray();
-
-                if ((BoneCount * (TimeCount - 1)) % 2 != 0)
-                    reader.ReadUInt16();
+                var translate = new List<short>();
+                for (int j = 0; j < 3; j++)
+                    translate.Add(reader.ReadInt16());
+                trantable.Add(translate.ToArray());
             }
+            TranslateTable = trantable.ToArray();
+
+            if (TranCount % 2 != 0)
+                reader.ReadUInt16();
+
+            var offsets = new List<short[]>();
+            for (int i = 0; i < TimeCount - 1; i++)
+            {
+                var offset = new List<short>();
+                for (int j = 0; j < BoneCount; j++)
+                    offset.Add(reader.ReadInt16());
+                offsets.Add(offset.ToArray());
+            }
+            Offsets = offsets.ToArray();
+
+            if ((BoneCount * (TimeCount - 1)) % 2 != 0)
+                reader.ReadUInt16();
         }
 
         public override bool HasReference(uint assetID) => false;

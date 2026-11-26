@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectBoulderGen : AssetDYNA
     {
@@ -44,27 +44,22 @@ namespace IndustrialPark
         {
         }
 
-        public DynaGObjectBoulderGen(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__BoulderGenerator, game, endianness)
+        public DynaGObjectBoulderGen(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__BoulderGenerator, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Object = reader.ReadUInt32();
-                OffsetX = reader.ReadSingle();
-                OffsetY = reader.ReadSingle();
-                OffsetZ = reader.ReadSingle();
-                OffsetRand = reader.ReadSingle();
-                InitVelX = reader.ReadSingle();
-                InitVelY = reader.ReadSingle();
-                InitVelZ = reader.ReadSingle();
-                VelAngleRand = reader.ReadSingle();
-                VelMagRand = reader.ReadSingle();
-                InitAxisX = reader.ReadSingle();
-                InitAxisY = reader.ReadSingle();
-                InitAxisZ = reader.ReadSingle();
-                AngVel = reader.ReadSingle();
-            }
+            Object = reader.ReadUInt32();
+            OffsetX = reader.ReadSingle();
+            OffsetY = reader.ReadSingle();
+            OffsetZ = reader.ReadSingle();
+            OffsetRand = reader.ReadSingle();
+            InitVelX = reader.ReadSingle();
+            InitVelY = reader.ReadSingle();
+            InitVelZ = reader.ReadSingle();
+            VelAngleRand = reader.ReadSingle();
+            VelMagRand = reader.ReadSingle();
+            InitAxisX = reader.ReadSingle();
+            InitAxisY = reader.ReadSingle();
+            InitAxisZ = reader.ReadSingle();
+            AngVel = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

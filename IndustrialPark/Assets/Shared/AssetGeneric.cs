@@ -2,78 +2,78 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets;
+
+public class AssetGeneric : Asset
 {
-    public class AssetGeneric : Asset
+    private const string categoryName = "Generic Asset";
+
+    private Endianness endianness;
+
+    [Category(categoryName)]
+    public byte[] Data { get; set; }
+
+    public AssetGeneric(string assetName, AssetType assetType, byte[] data) : base(assetName, assetType)
     {
-        private const string categoryName = "Generic Asset";
+        Data = data;
+    }
 
-        private Endianness endianness;
+    public AssetGeneric(Section_AHDR AHDR) : base(AHDR)
+    {
+        Data = AHDR.data;
+        endianness = AHDR.Platform.Endianness();
+    }
 
-        [Category(categoryName)]
-        public byte[] Data { get; set; }
+    public override void Serialize(EndianBinaryWriter writer)
+    {
+        writer.Write(Data);
+    }
 
-        public AssetGeneric(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+    [Category(categoryName)]
+    public AssetID[] Data_AsHex
+    {
+        get
         {
-            Data = AHDR.data;
-            this.endianness = endianness;
+            try
+            {
+                var values = new List<AssetID>();
+                using var reader = new EndianBinaryReader(Data, endianness);
+                while (!reader.EndOfStream)
+                    values.Add(reader.ReadUInt32());
+                return values.ToArray();
+            }
+            catch { return []; }
         }
-
-        public override void Serialize(EndianBinaryWriter writer)
+        set
         {
-            writer.Write(Data);
+            using var writer = new EndianBinaryWriter(endianness);
+            foreach (var f in value)
+                writer.Write(f);
+            Data = writer.ToArray();
         }
+    }
 
-        [Category(categoryName)]
-        public AssetID[] Data_AsHex
+    [Category(categoryName)]
+    public AssetSingle[] Data_AsFloat
+    {
+        get
         {
-            get
+            try
             {
-                try
-                {
-                    var values = new List<AssetID>();
-                    var reader = new EndianBinaryReader(Data, endianness);
-                    while (!reader.EndOfStream)
-                        values.Add(reader.ReadUInt32());
-                    return values.ToArray();
-                }
-                catch { return new AssetID[0]; }
+                var values = new List<AssetSingle>();
+                using var reader = new EndianBinaryReader(Data, endianness);
+                while (!reader.EndOfStream)
+                    values.Add(reader.ReadSingle());
+                return values.ToArray();
             }
-            set
-            {
-                using (var writer = new EndianBinaryWriter(endianness))
-                {
-                    foreach (var f in value)
-                        writer.Write(f);
-                    Data = writer.ToArray();
-                }
-            }
+            catch { return []; }
         }
-
-        [Category(categoryName)]
-        public AssetSingle[] Data_AsFloat
+        set
         {
-            get
-            {
-                try
-                {
-                    var values = new List<AssetSingle>();
-                    var reader = new EndianBinaryReader(Data, endianness);
-                    while (!reader.EndOfStream)
-                        values.Add(reader.ReadSingle());
-                    return values.ToArray();
-                }
-                catch { return new AssetSingle[0]; }
-            }
-            set
-            {
-                using (var writer = new EndianBinaryWriter(endianness))
-                {
-                    foreach (var f in value)
-                        writer.Write(f);
-                    Data = writer.ToArray();
-                }
-            }
+            using var writer = new EndianBinaryWriter(endianness);
+            foreach (var f in value)
+                writer.Write(f);
+            Data = writer.ToArray();
         }
     }
 }

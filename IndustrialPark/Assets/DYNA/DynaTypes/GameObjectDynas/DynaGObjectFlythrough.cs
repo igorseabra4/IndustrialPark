@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectFlythrough : AssetDYNA
     {
@@ -19,13 +19,9 @@ namespace IndustrialPark
             Flythrough = 0;
         }
 
-        public DynaGObjectFlythrough(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Flythrough, game, endianness)
+        public DynaGObjectFlythrough(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Flythrough, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-                Flythrough = reader.ReadUInt32();
-            }
+            Flythrough = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

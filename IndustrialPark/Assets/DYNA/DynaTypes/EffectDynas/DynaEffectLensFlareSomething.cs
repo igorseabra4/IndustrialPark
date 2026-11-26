@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectLensFlareSource : AssetDYNA
     {
@@ -27,21 +27,16 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID Unknown1C { get; set; }
 
-        public DynaEffectLensFlareSource(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__LensFlareSource, game, endianness)
+        public DynaEffectLensFlareSource(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__LensFlareSource, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Unknown00 = reader.ReadUInt32();
-                Unknown04 = reader.ReadUInt32();
-                Unknown08 = reader.ReadUInt32();
-                Unknown0C = reader.ReadUInt32();
-                Unknown10 = reader.ReadSingle();
-                Unknown14 = reader.ReadSingle();
-                Unknown18 = reader.ReadSingle();
-                Unknown1C = reader.ReadUInt32();
-            }
+            Unknown00 = reader.ReadUInt32();
+            Unknown04 = reader.ReadUInt32();
+            Unknown08 = reader.ReadUInt32();
+            Unknown0C = reader.ReadUInt32();
+            Unknown10 = reader.ReadSingle();
+            Unknown14 = reader.ReadSingle();
+            Unknown18 = reader.ReadSingle();
+            Unknown1C = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

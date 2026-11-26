@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaHudMeterUnit : DynaHudMeter
     {
@@ -47,31 +47,26 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int MeterFillDirection { get; set; }
 
-        public DynaHudMeterUnit(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__meter__unit, game, endianness)
+        public DynaHudMeterUnit(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.hud__meter__unit, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaHudMeterEnd;
-
-                EmptyModel = reader.ReadUInt32();
-                EmptyOffset_X = reader.ReadSingle();
-                EmptyOffset_Y = reader.ReadSingle();
-                EmptyOffset_Z = reader.ReadSingle();
-                EmptyScale_X = reader.ReadSingle();
-                EmptyScale_Y = reader.ReadSingle();
-                EmptyScale_Z = reader.ReadSingle();
-                FullModel = reader.ReadUInt32();
-                FullOffset_X = reader.ReadSingle();
-                FullOffset_Y = reader.ReadSingle();
-                FullOffset_Z = reader.ReadSingle();
-                FullScale_X = reader.ReadSingle();
-                FullScale_Y = reader.ReadSingle();
-                FullScale_Z = reader.ReadSingle();
-                Spacing_X = reader.ReadSingle();
-                Spacing_Y = reader.ReadSingle();
-                Spacing_Z = reader.ReadSingle();
-                MeterFillDirection = reader.ReadInt32();
-            }
+            EmptyModel = reader.ReadUInt32();
+            EmptyOffset_X = reader.ReadSingle();
+            EmptyOffset_Y = reader.ReadSingle();
+            EmptyOffset_Z = reader.ReadSingle();
+            EmptyScale_X = reader.ReadSingle();
+            EmptyScale_Y = reader.ReadSingle();
+            EmptyScale_Z = reader.ReadSingle();
+            FullModel = reader.ReadUInt32();
+            FullOffset_X = reader.ReadSingle();
+            FullOffset_Y = reader.ReadSingle();
+            FullOffset_Z = reader.ReadSingle();
+            FullScale_X = reader.ReadSingle();
+            FullScale_Y = reader.ReadSingle();
+            FullScale_Z = reader.ReadSingle();
+            Spacing_X = reader.ReadSingle();
+            Spacing_Y = reader.ReadSingle();
+            Spacing_Z = reader.ReadSingle();
+            MeterFillDirection = reader.ReadInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

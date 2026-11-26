@@ -1,11 +1,11 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class GrassMeshVertex
     {
@@ -47,7 +47,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetGRSM : BaseAsset, IRenderableAsset, IClickableAsset
+    public class AssetGRSM : BaseAsset, IRenderableAsset, IClickableAsset, IDisposableAsset
     {
         private const string categoryName = "Grass Mesh";
 
@@ -69,35 +69,27 @@ namespace IndustrialPark
         public DashTrackPortal[] Triangles { get; set; }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public AssetGRSM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetGRSM(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            var numVertices = reader.ReadUInt32();
+            var numTriangles = reader.ReadUInt32();
 
-                var numVertices = reader.ReadUInt32();
-                var numTriangles = reader.ReadUInt32();
+            MinX = reader.ReadSingle();
+            MinY = reader.ReadSingle();
+            MinZ = reader.ReadSingle();
+            MaxX = reader.ReadSingle();
+            MaxY = reader.ReadSingle();
+            MaxZ = reader.ReadSingle();
 
-                MinX = reader.ReadSingle();
-                MinY = reader.ReadSingle();
-                MinZ = reader.ReadSingle();
-                MaxX = reader.ReadSingle();
-                MaxY = reader.ReadSingle();
-                MaxZ = reader.ReadSingle();
+            Vertices = new GrassMeshVertex[numVertices];
+            for (int i = 0; i < Vertices.Length; i++)
+                Vertices[i] = new GrassMeshVertex(reader);
 
-                Vertices = new GrassMeshVertex[numVertices];
-                for (int i = 0; i < Vertices.Length; i++)
-                    Vertices[i] = new GrassMeshVertex(reader);
-
-                Triangles = new DashTrackPortal[numTriangles];
-                for (int i = 0; i < Triangles.Length; i++)
-                    Triangles[i] = new DashTrackPortal(reader);
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            Triangles = new DashTrackPortal[numTriangles];
+            for (int i = 0; i < Triangles.Length; i++)
+                Triangles[i] = new DashTrackPortal(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -122,7 +114,7 @@ namespace IndustrialPark
             SerializeLinks(writer);
         }
 
-        public void CreateTransformMatrix()
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             if (Vertices.Length == 0)
                 boundingBox = new BoundingBox();
@@ -155,29 +147,21 @@ namespace IndustrialPark
                     new Color(v.Color.R, v.Color.G, v.Color.B, v.Color.A)));
             }
 
-            triangles = new List<Models.Triangle>(Triangles.Length);
+            triangles = new List<RenderWareFile.Triangle>(Triangles.Length);
 
             foreach (var T in Triangles)
-                triangles.Add(new Models.Triangle
+                triangles.Add(new RenderWareFile.Triangle
                 {
                     vertex1 = T.Vertex1,
                     vertex2 = T.Vertex2,
                     vertex3 = T.Vertex3,
-
-                    normal1 = T.Vertex1,
-                    normal2 = T.Vertex2,
-                    normal3 = T.Vertex3,
-
-                    Color1 = T.Vertex1,
-                    Color2 = T.Vertex2,
-                    Color3 = T.Vertex3
                 });
 
             vertices = new List<Vector3>(Vertices.Length);
             foreach (var v in verticesCT)
                 vertices.Add((Vector3)v.Position);
 
-            Setup(Program.MainForm.renderer, verticesCT);
+            Setup(renderer, verticesCT);
         }
 
         private void Setup(SharpRenderer renderer, List<VertexColoredTextured> vertices)
@@ -193,7 +177,7 @@ namespace IndustrialPark
             }
 
             mesh = SharpMesh.Create(renderer.device, vertices.ToArray(), indices.ToArray(),
-                new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, SharpRenderer.whiteDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
+                new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, renderer.whiteDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
         }
 
         public float GetDistanceFrom(Vector3 position) => Vector3.Distance(position, boundingBox.Center);
@@ -204,7 +188,7 @@ namespace IndustrialPark
         private BoundingBox boundingBox;
 
         private List<Vector3> vertices;
-        private List<Models.Triangle> triangles;
+        private List<RenderWareFile.Triangle> triangles;
 
         public bool ShouldDraw(SharpRenderer renderer)
         {
@@ -218,7 +202,7 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        private UvAnimRenderData renderData;
+        private RenderData.UvAnimRenderData renderData;
 
         public void Draw(SharpRenderer renderer)
         {
@@ -229,8 +213,8 @@ namespace IndustrialPark
             else
                 renderData.Color = Vector4.One;
 
-            renderer.device.UpdateData(renderer.tintedBuffer, renderData);
-            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
+            renderer.tintedBuffer.UpdateValue(renderData);
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer.Buffer);
             renderer.tintedShader.Apply();
 
             renderer.device.SetBlendStateAlphaBlend();

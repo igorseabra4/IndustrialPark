@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ConditionalOperation
     {
@@ -370,18 +370,13 @@ namespace IndustrialPark
         {
         }
 
-        public AssetCOND(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetCOND(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                EvaluationAmount = reader.ReadInt32();
-                ConditionalVariable_Hash = reader.ReadUInt32();
-                Operation = (ConditionalOperation)reader.ReadUInt32();
-                if (game != Game.Scooby)
-                    AssetUnderEvaluation = reader.ReadUInt32();
-            }
+            EvaluationAmount = reader.ReadInt32();
+            ConditionalVariable_Hash = reader.ReadUInt32();
+            Operation = (ConditionalOperation)reader.ReadUInt32();
+            if (game != Game.Scooby)
+                AssetUnderEvaluation = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

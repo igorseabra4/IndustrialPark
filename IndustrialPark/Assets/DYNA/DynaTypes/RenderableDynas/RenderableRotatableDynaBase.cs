@@ -1,15 +1,16 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class RenderableRotatableDynaBase : RenderableDynaBase, IRotatableAsset
     {
-        private const string dynaCategoryName = "DYNA Placement";
+        private const string dynaCategoryName = "Placement";
 
         protected virtual bool inRadians => true;
 
@@ -24,7 +25,6 @@ namespace IndustrialPark
                     _yaw = MathUtil.DegreesToRadians(value);
                 else
                     _yaw = value;
-                CreateTransformMatrix();
             }
         }
 
@@ -39,7 +39,6 @@ namespace IndustrialPark
                     _pitch = MathUtil.DegreesToRadians(value);
                 else
                     _pitch = value;
-                CreateTransformMatrix();
             }
         }
 
@@ -54,14 +53,13 @@ namespace IndustrialPark
                     _roll = MathUtil.DegreesToRadians(value);
                 else
                     _roll = value;
-                CreateTransformMatrix();
             }
         }
 
         public RenderableRotatableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType, position) { }
-        public RenderableRotatableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
+        public RenderableRotatableDynaBase(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader) { }
 
-        public override void CreateTransformMatrix()
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             if (inRadians)
                 world = Matrix.RotationYawPitchRoll(_yaw, _pitch, _roll) * Matrix.Translation(_position);
@@ -71,40 +69,27 @@ namespace IndustrialPark
                     MathUtil.DegreesToRadians(_pitch),
                     MathUtil.DegreesToRadians(_roll)) * Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            boundingBox = CreateBoundingBox(vertexSource(renderer), world);
         }
 
-        public override void CopyTransformation()
+        public override AssetTransformation GetTransformation() => new AssetTransformation()
         {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-                _yaw = _yaw,
-                _pitch = _pitch,
-                _roll = _roll,
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+            _yaw = _yaw,
+            _pitch = _pitch,
+            _roll = _roll,
+        };
 
-        public override void PasteTransformation()
+        public override void SetTransformation(AssetTransformation transformation)
         {
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                _yaw = transformation._yaw;
-                _pitch = transformation._pitch;
-                _roll = transformation._roll;
-                CreateTransformMatrix();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            _yaw = transformation._yaw;
+            _pitch = transformation._pitch;
+            _roll = transformation._roll;
         }
     }
 }

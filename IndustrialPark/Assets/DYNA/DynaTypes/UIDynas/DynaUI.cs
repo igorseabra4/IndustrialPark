@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class DynaUI : AssetDYNA
     {
@@ -41,34 +41,27 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID customWidget { get; set; }
 
-        protected int dynaUIEnd => dynaDataStartPosition + 64;
-
-        public DynaUI(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        public DynaUI(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                PositionX = reader.ReadSingle();
-                PositionY = reader.ReadSingle();
-                PositionZ = reader.ReadSingle();
-                Width = reader.ReadSingle();
-                Height = reader.ReadSingle();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                Color = reader.ReadColor();
-                UIMotion_Selected = reader.ReadUInt32();
-                UIMotion_Unselected = reader.ReadUInt32();
-                Brightness = reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                autoMenuUp = reader.ReadUInt32();
-                autoMenuDown = reader.ReadUInt32();
-                autoMenuLeft = reader.ReadUInt32();
-                autoMenuRight = reader.ReadUInt32();
-                custom = reader.ReadUInt32();
-                customWidget = reader.ReadUInt32();
-            }
+            PositionX = reader.ReadSingle();
+            PositionY = reader.ReadSingle();
+            PositionZ = reader.ReadSingle();
+            Width = reader.ReadSingle();
+            Height = reader.ReadSingle();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            Color = reader.ReadColor();
+            UIMotion_Selected = reader.ReadUInt32();
+            UIMotion_Unselected = reader.ReadUInt32();
+            Brightness = reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            autoMenuUp = reader.ReadUInt32();
+            autoMenuDown = reader.ReadUInt32();
+            autoMenuLeft = reader.ReadUInt32();
+            autoMenuRight = reader.ReadUInt32();
+            custom = reader.ReadUInt32();
+            customWidget = reader.ReadUInt32();
         }
 
         protected void SerializeDynaUI(EndianBinaryWriter writer)

@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectCameraParamAsset : AssetDYNA
     {
@@ -25,20 +25,15 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle EndFov { get; set; }
 
-        public DynaGObjectCameraParamAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__camera_param_asset, game, endianness)
+        public DynaGObjectCameraParamAsset(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__camera_param_asset, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                X = reader.ReadSingle();
-                Y = reader.ReadSingle();
-                Z = reader.ReadSingle();
-                BlendTime = reader.ReadSingle();
-                FovFilterPeriod = reader.ReadSingle();
-                StartFov = reader.ReadSingle();
-                EndFov = reader.ReadSingle();
-            }
+            X = reader.ReadSingle();
+            Y = reader.ReadSingle();
+            Z = reader.ReadSingle();
+            BlendTime = reader.ReadSingle();
+            FovFilterPeriod = reader.ReadSingle();
+            StartFov = reader.ReadSingle();
+            EndFov = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

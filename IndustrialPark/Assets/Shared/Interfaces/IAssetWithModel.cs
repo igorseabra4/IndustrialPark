@@ -1,19 +1,22 @@
-﻿using SharpDX;
+﻿using IndustrialPark.Archives;
+using SharpDX;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public interface IAssetWithModel
     {
-        void Draw(SharpRenderer renderer, Matrix worldViewProjection, Vector4 color, Vector3 uvAnimOffset);
+        uint assetID { get; }
 
-        RenderWareModelFile GetRenderWareModelFile();
+        void Draw(SharpRenderer renderer, Matrix worldViewProjection, Vector4 color, Vector3 uvAnimOffset, bool isSelected);
 
-        void RemoveFromDictionary();
+        RenderWareModelFile GetRenderWareModelFile(AssetRenderer rendererA);
 
-        bool SpecialBlendMode { get; }
+        bool SpecialBlendMode(SharpRenderer renderer);
 
         Matrix TransformMatrix { get; }
 
         void ApplyScale(Vector3 factor);
+
+        string fileNameWithoutExtension { get; }
     }
 }

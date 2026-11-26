@@ -1,73 +1,68 @@
 ﻿using HipHopFile;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
+using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets;
+
+public class DynaGeneric : AssetDYNA
 {
-    public class DynaGeneric : AssetDYNA
+    private const string dynaCategoryName = "Generic Dynamic";
+
+    private Endianness endianness;
+
+    public DynaGeneric(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader)
     {
-        private const string dynaCategoryName = "Generic Dynamic";
+        int len = AHDR.data.Length > 0 ? AHDR.data.Length : (int)reader.BaseStream.Length;
+        Data = reader.ReadBytes(len - 16 - _links.Length * Link.sizeOfStruct);
+        this.endianness = reader.endianness;
+    }
 
-        private Endianness endianness;
+    [Category(dynaCategoryName)]
+    public byte[] Data { get; set; }
 
-        public DynaGeneric(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+    [Category(dynaCategoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+    public AssetID[] Data_AsHex
+    {
+        get
         {
-            Data = AHDR.data.Skip(dynaDataStartPosition).Take(AHDR.data.Length - dynaDataStartPosition - _links.Length * Link.sizeOfStruct).ToArray();
-
-            this.endianness = endianness;
+            var values = new List<AssetID>();
+            using var reader = new EndianBinaryReader(Data, endianness);
+            while (!reader.EndOfStream)
+                values.Add(reader.ReadUInt32());
+            return values.ToArray();
         }
-
-        [Category(dynaCategoryName)]
-        public byte[] Data { get; set; }
-
-        [Category(dynaCategoryName)]
-        public AssetID[] Data_AsHex
+        set
         {
-            get
-            {
-                var values = new List<AssetID>();
-                var reader = new EndianBinaryReader(Data, endianness);
-                while (!reader.EndOfStream)
-                    values.Add(reader.ReadUInt32());
-                return values.ToArray();
-            }
-            set
-            {
-                using (var writer = new EndianBinaryWriter(endianness))
-                {
-                    foreach (var f in value)
-                        writer.Write(f);
-                    Data = writer.ToArray();
-                }
-            }
+            using var writer = new EndianBinaryWriter(endianness);
+            foreach (var f in value)
+                writer.Write(f);
+            Data = writer.ToArray();
         }
+    }
 
-        [Category(dynaCategoryName)]
-        public AssetSingle[] Data_AsFloat
+    [Category(dynaCategoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+    public AssetSingle[] Data_AsFloat
+    {
+        get
         {
-            get
-            {
-                var values = new List<AssetSingle>();
-                var reader = new EndianBinaryReader(Data, endianness);
-                while (!reader.EndOfStream)
-                    values.Add(reader.ReadSingle());
-                return values.ToArray();
-            }
-            set
-            {
-                using (var writer = new EndianBinaryWriter(endianness))
-                {
-                    foreach (var f in value)
-                        writer.Write(f);
-                    Data = writer.ToArray();
-                }
-            }
+            var values = new List<AssetSingle>();
+            using var reader = new EndianBinaryReader(Data, endianness);
+            while (!reader.EndOfStream)
+                values.Add(reader.ReadSingle());
+            return values.ToArray();
         }
+        set
+        {
+            using var writer = new EndianBinaryWriter(endianness);
+            foreach (var f in value)
+                writer.Write(f);
+            Data = writer.ToArray();
+        }
+    }
 
-        protected override void SerializeDyna(EndianBinaryWriter writer)
-        {
-            writer.Write(Data);
-        }
+    protected override void SerializeDyna(EndianBinaryWriter writer)
+    {
+        writer.Write(Data);
     }
 }

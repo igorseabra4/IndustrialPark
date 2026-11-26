@@ -1,35 +1,33 @@
 ﻿using HipHopFile;
-using Newtonsoft.Json;
+using IndustrialPark.ArchiveEditors;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class RenderableDynaBase : AssetDYNA, IRenderableAsset, IClickableAsset, IAssetCopyPasteTransformation
     {
-        private const string dynaCategoryName = "DYNA Placement";
+        private const string dynaCategoryName = "Placement";
 
         protected Vector3 _position;
         [Category(dynaCategoryName)]
         public virtual AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(dynaCategoryName)]
         public virtual AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(dynaCategoryName)]
         public virtual AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
         public RenderableDynaBase(string assetName, DynaType dynaType, Vector3 position) : base(assetName, dynaType)
@@ -37,35 +35,19 @@ namespace IndustrialPark
             _position = position;
         }
 
-        public RenderableDynaBase(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness) { }
+        public RenderableDynaBase(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader) { }
 
         [Browsable(false)]
         public Matrix world { get; protected set; }
         protected BoundingBox boundingBox;
-        protected Vector3[] vertices;
-        protected RenderWareFile.Triangle[] triangles;
 
-        protected abstract List<Vector3> vertexSource { get; }
-        protected abstract List<Models.Triangle> triangleSource { get; }
+        protected abstract List<Vector3> vertexSource(SharpRenderer renderer);
+        protected abstract List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer);
 
-        public virtual void CreateTransformMatrix()
+        public virtual void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.Translation(_position);
-
-            CreateBoundingBox();
-        }
-
-        protected virtual void CreateBoundingBox()
-        {
-            vertices = new Vector3[vertexSource.Count];
-            for (int i = 0; i < vertexSource.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexSource[i], world);
-            boundingBox = BoundingBox.FromPoints(vertices);
-
-            triangles = new RenderWareFile.Triangle[triangleSource.Count];
-            for (int i = 0; i < triangleSource.Count; i++)
-                triangles[i] = new RenderWareFile.Triangle((ushort)triangleSource[i].materialIndex,
-                    (ushort)triangleSource[i].vertex1, (ushort)triangleSource[i].vertex2, (ushort)triangleSource[i].vertex3);
+            boundingBox = CreateBoundingBox(vertexSource(renderer), world);
         }
 
         public abstract void Draw(SharpRenderer renderer);
@@ -83,24 +65,12 @@ namespace IndustrialPark
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
         {
             if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return triangles == null ? TriangleIntersection(ray, triangleSource, vertexSource, world) : TriangleIntersection(ray);
+                return TriangleIntersection(ray, triangleSource(renderer), vertexSource(renderer), world);
             return null;
         }
 
-        private float? TriangleIntersection(Ray ray)
-        {
-            float? smallestDistance = null;
-
-            foreach (RenderWareFile.Triangle t in triangles)
-                if (ray.Intersects(ref vertices[t.vertex1], ref vertices[t.vertex2], ref vertices[t.vertex3], out float distance))
-                    if (smallestDistance == null || distance < smallestDistance)
-                        smallestDistance = distance;
-
-            return smallestDistance;
-        }
-
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
         protected abstract bool DontRender { get; }
 
@@ -118,31 +88,18 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        public virtual void CopyTransformation()
+        public virtual AssetTransformation GetTransformation() => new AssetTransformation()
         {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+        };
 
-        public virtual void PasteTransformation()
+        public virtual void SetTransformation(AssetTransformation transformation)
         {
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                CreateTransformMatrix();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
         }
     }
 }

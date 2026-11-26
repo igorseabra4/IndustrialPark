@@ -1,10 +1,13 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetVIL : EntityAsset
     {
@@ -44,9 +47,9 @@ namespace IndustrialPark
             }
         }
 
-        [Category(categoryName)]
+        [Category(categoryName), Description("Optional settings object that defines NPC behavior. If left empty, the default settings are used, which are the same as those in the NPC Settings Object template.")]
         public AssetID NPCSettingsObject { get; set; }
-        [Category(categoryName)]
+        [Category(categoryName), Description("The move point where the NPC starts, even if the point is off. For enemy spawners, this field can be left empty, in which case the spawner selects a move point from its group. If a move point is assigned, the spawner will attempt to spawn the enemy at that point if it is available.")]
         public AssetID MovePoint { get; set; }
         [Category(categoryName)]
         public AssetID TaskBox1 { get; set; }
@@ -162,24 +165,19 @@ namespace IndustrialPark
             }
         }
 
-        public AssetVIL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetVIL(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            NpcFlags.FlagValueInt = reader.ReadUInt32();
+            NpcType = reader.ReadUInt32();
+            NPCSettingsObject = reader.ReadUInt32();
+            MovePoint = reader.ReadUInt32();
+            TaskBox1 = reader.ReadUInt32();
+            TaskBox2 = reader.ReadUInt32();
+
+            if (game >= Game.Incredibles)
             {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                NpcFlags.FlagValueInt = reader.ReadUInt32();
-                NpcType = reader.ReadUInt32();
-                NPCSettingsObject = reader.ReadUInt32();
-                MovePoint = reader.ReadUInt32();
-                TaskBox1 = reader.ReadUInt32();
-                TaskBox2 = reader.ReadUInt32();
-
-                if (game >= Game.Incredibles)
-                {
-                    NavMesh2 = reader.ReadUInt32();
-                    NPCSettings = reader.ReadUInt32();
-                }
+                NavMesh2 = reader.ReadUInt32();
+                NPCSettings = reader.ReadUInt32();
             }
         }
 
@@ -244,15 +242,8 @@ namespace IndustrialPark
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (movementPreview)
-            {
-                localFrameCounter++;
-                if (localFrameCounter >= int.MaxValue)
-                    localFrameCounter = 0;
-            }
-
-            if (ArchiveEditorFunctions.renderingDictionary.ContainsKey(_model))
-                ArchiveEditorFunctions.renderingDictionary[_model].Draw(renderer, LocalWorld(), isSelected ? renderer.selectedObjectColor * _color : _color, UvAnimOffset);
+            if (renderer.Assets.GetFromRenderingDictionary(_model) is IAssetWithModel value)
+                value.Draw(renderer, LocalWorld(), _color, UvAnimOffset, isSelected);
             else
                 renderer.DrawCube(LocalWorld(), isSelected);
         }
@@ -276,13 +267,9 @@ namespace IndustrialPark
 
         private AssetMVPT FindMVPT(out bool found)
         {
-            foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(MovePoint))
-                {
-                    Asset asset = ae.archive.GetFromAssetID(MovePoint);
-                    if (asset is AssetMVPT MVPT)
-                        return FindMVPTWithRadius(MVPT, out found, new List<uint>() { MovePoint });
-                }
+            var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(MovePoint);
+            if (ae != null && ae.archive.GetAsset(MovePoint) is AssetMVPT MVPT)
+                return FindMVPTWithRadius(MVPT, out found, [MovePoint]);
 
             found = false;
             return null;
@@ -298,16 +285,14 @@ namespace IndustrialPark
                     return MVPT;
                 }
                 foreach (AssetID assetID in MVPT.NextMovePoints)
-                    foreach (ArchiveEditor ae in Program.MainForm.archiveEditors)
-                        if (ae.archive.ContainsAsset(assetID))
-                        {
-                            Asset asset = ae.archive.GetFromAssetID(assetID);
-                            if (asset is AssetMVPT MVPT2 && !list.Contains(assetID))
-                            {
-                                list.Add(assetID);
-                                return FindMVPTWithRadius(MVPT2, out found, list);
-                            }
-                        }
+                {
+                    var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(assetID);
+                    if (ae != null && ae.archive.GetAsset(assetID) is AssetMVPT MVPT2 && !list.Contains(MVPT2.assetID))
+                    {
+                        list.Add(MVPT2.assetID);
+                        return FindMVPTWithRadius(MVPT2, out found, list);
+                    }
+                }
             }
             found = false;
             return null;

@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaHudText : DynaHud
     {
@@ -16,15 +16,10 @@ namespace IndustrialPark
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Text { get; set; }
 
-        public DynaHudText(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.hud__text, game, endianness)
+        public DynaHudText(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.hud__text, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaHudEnd;
-
-                TextBox = reader.ReadUInt32();
-                Text = reader.ReadUInt32();
-            }
+            TextBox = reader.ReadUInt32();
+            Text = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

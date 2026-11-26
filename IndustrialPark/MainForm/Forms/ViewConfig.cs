@@ -1,0 +1,205 @@
+﻿using SharpDX;
+using System;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace IndustrialPark
+{
+    public partial class ViewConfig : Form
+    {
+        public static bool ProgramIsUpdatingValues { get; set; } = true;
+        private static bool _invalidCameraValues { get; set; } = false;
+        private Task _updateViewValuesTask;
+        private CancellationTokenSource _cancellationTokenSource;
+
+        /*
+            ------------
+            Constructors
+            ------------
+        */
+
+        // Default value assignments moved to Program.renderer.
+
+        public ViewConfig()
+        {
+            InitializeComponent();
+            Program.Renderer.Camera.CameraChangedEvent += CameraChanged;
+
+            NumericIntervalRotation.Maximum = decimal.MaxValue;
+            NumericInterval.Maximum = decimal.MaxValue;
+        }
+
+        /// <summary>
+        /// Updates the GUI if the invalid flag has been set.
+        /// </summary>
+        /// <param name="obj"></param>
+        private async void UpdateGUIValues(CancellationToken token)
+        {
+            while (!token.IsCancellationRequested)
+            {
+                if (_invalidCameraValues)
+                {
+                    NumericFOV.Invoke((MethodInvoker)UpdateValues);
+                }
+
+                try
+                {
+                    await Task.Delay(33, token);
+                }
+                catch (TaskCanceledException)
+                {
+                    break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Signal no longer valid camera values when event thrown.
+        /// </summary>
+        private void CameraChanged(SharpCamera camera)
+        {
+            _invalidCameraValues = true;
+        }
+
+        /*
+             ------
+             Events
+             ------
+        */
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.WindowsShutDown)
+                return;
+            if (e.CloseReason == CloseReason.FormOwnerClosing)
+                return;
+
+            e.Cancel = true;
+            Hide();
+        }
+
+        private void NumericCamera_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+                Program.Renderer.Camera.SetPosition(new Vector3((float)NumericCameraX.Value, (float)NumericCameraY.Value, (float)NumericCameraZ.Value));
+        }
+
+        private void NumericCameraRot_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+            {
+                Program.Renderer.Camera.Pitch = (float)NumericCameraPitch.Value;
+                Program.Renderer.Camera.Yaw = (float)NumericCameraYaw.Value;
+                Program.Renderer.Camera.Roll = (float)NumericCameraRoll.Value;
+            }
+        }
+
+        private void NumericInterval_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+                Program.Renderer.Camera.Speed = (float)NumericInterval.Value;
+        }
+
+        private void NumericIntervalRotation_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+                Program.Renderer.Camera.SpeedRot = (float)NumericIntervalRotation.Value;
+        }
+
+        private void NumericDrawD_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+                Program.Renderer.Camera.FarPlane = (float)NumericDrawD.Value;
+        }
+
+        private void NumericFOV_ValueChanged(object sender, EventArgs e)
+        {
+            if (NumericFOV.Value < 1)
+                NumericFOV.Value = 1;
+            Program.Renderer.Camera.FieldOfView = MathUtil.DegreesToRadians((float)NumericFOV.Value);
+        }
+
+        private void numericGrid_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ProgramIsUpdatingValues)
+                Program.MainForm.gizmoManager.Grid = new Vector3((float)numericGridX.Value, (float)numericGridY.Value, (float)numericGridZ.Value);
+        }
+
+        private void ViewConfig_VisibleChanged(object sender, EventArgs e)
+        {
+            if (Visible)
+            {
+                UpdateValues();
+                _cancellationTokenSource = new CancellationTokenSource();
+                _updateViewValuesTask = Task.Run(() => UpdateGUIValues(_cancellationTokenSource.Token), _cancellationTokenSource.Token);
+            }
+            else
+            {
+                _cancellationTokenSource?.Cancel();
+                _updateViewValuesTask?.Wait();
+            }
+
+        }
+
+        /*
+            -------
+            Methods
+            -------
+        */
+
+        /// <summary>
+        /// Obtains the values from the current Power Plant instance and applies them to the
+        /// View Config.
+        /// </summary>
+        public void UpdateValues()
+        {
+            ProgramIsUpdatingValues = true;
+            NumericFOV.Value = (decimal)MathUtil.RadiansToDegrees(Program.Renderer.Camera.FieldOfView);
+            NumericDrawD.Value = (decimal)Program.Renderer.Camera.FarPlane;
+            NumericInterval.Value = (decimal)Program.Renderer.Camera.Speed;
+            NumericIntervalRotation.Value = (decimal)Program.Renderer.Camera.SpeedRot;
+            NumericCameraX.Value = (decimal)Program.Renderer.Camera.Position.X;
+            NumericCameraY.Value = (decimal)Program.Renderer.Camera.Position.Y;
+            NumericCameraZ.Value = (decimal)Program.Renderer.Camera.Position.Z;
+
+            NumericCameraYaw.Value = (decimal)Program.Renderer.Camera.Yaw;
+            NumericCameraPitch.Value = (decimal)Program.Renderer.Camera.Pitch;
+            NumericCameraRoll.Value = (decimal)Program.Renderer.Camera.Roll;
+
+            numericGridX.Value = (decimal)Program.MainForm.gizmoManager.Grid.X;
+            numericGridY.Value = (decimal)Program.MainForm.gizmoManager.Grid.Y;
+            numericGridZ.Value = (decimal)Program.MainForm.gizmoManager.Grid.Z;
+
+            ProgramIsUpdatingValues = false;
+            _invalidCameraValues = false;
+        }
+
+        private void buttonViewControls_Click(object sender, EventArgs e)
+        {
+            if (!Program.ViewControls.Visible)
+                Program.ViewControls.Show(Program.MainForm);
+            Program.ViewControls.Activate();
+        }
+
+        private void buttonAbout_Click(object sender, EventArgs e)
+        {
+            if (!Program.AboutBox.Visible)
+                Program.AboutBox.Show(Program.MainForm);
+            Program.AboutBox.Activate();
+        }
+
+        private void buttonResetView_Click(object sender, EventArgs e)
+        {
+            Program.Renderer.Camera.Reset();
+            UpdateValues();
+        }
+
+        private void buttonResetSpeeds_Click(object sender, EventArgs e)
+        {
+            Program.Renderer.Camera.Speed = SharpCamera.DEFAULT_SPEED;
+            Program.Renderer.Camera.SpeedRot = SharpCamera.DEFAULT_SPEED_ROT;
+            UpdateValues();
+        }
+    }
+}

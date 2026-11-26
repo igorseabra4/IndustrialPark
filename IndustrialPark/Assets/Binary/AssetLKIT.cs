@@ -1,9 +1,9 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class LightKitLight : GenericAssetDataContainer
     {
@@ -43,6 +43,16 @@ namespace IndustrialPark
         public AssetSingle Radius { get; set; }
         public AssetSingle Angle { get; set; }
         public AssetSingle PlatLight { get; set; }
+        public SharpDX.Vector3 DirectionVector
+        {
+            get => new SharpDX.Vector3(Direction_X, Direction_Y, Direction_Z);
+            set
+            {
+                Direction_X = value.X;
+                Direction_Y = value.Y;
+                Direction_Z = value.Z;
+            }
+        }
 
         public LightKitLight() { }
         public LightKitLight(EndianBinaryReader reader)
@@ -114,31 +124,35 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Blended { get; set; }
 
+        public const int MAX_DIRECTIONAL_LIGHTS = 8;
+        [Browsable(false)]
+        public static bool DontRender = false;
+        [Browsable(false)]
+        public static AssetLKIT SceneLightKit = null;
+
         public AssetLKIT(string assetName, byte[] data, Endianness endianness) : base(assetName, AssetType.LightKit)
         {
-            Read(data, endianness);
+            using var reader = new EndianBinaryReader(data, endianness);
+            Read(reader);
         }
 
-        public AssetLKIT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetLKIT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            Read(AHDR.data, endianness);
+            Read(reader);
         }
 
-        private void Read(byte[] data, Endianness endianness)
+        private void Read(EndianBinaryReader reader)
         {
-            using (var reader = new EndianBinaryReader(data, endianness))
-            {
-                reader.BaseStream.Position = 0x04;
-                Group = reader.ReadUInt32();
-                int lightCount = reader.ReadInt32();
-                Lights = new LightKitLight[lightCount];
+            reader.BaseStream.Position = 0x04;
+            Group = reader.ReadUInt32();
+            int lightCount = reader.ReadInt32();
+            reader.ReadInt32();
+            if (game >= Game.ROTU)
+                Blended = reader.ReadInt32();
+            Lights = new LightKitLight[lightCount];
 
-                reader.BaseStream.Position = 0x10;
-                for (int i = 0; i < lightCount; i++)
-                    Lights[i] = new LightKitLight(reader);
-                if (game >= Game.ROTU)
-                    Blended = reader.ReadInt32();
-            }
+            for (int i = 0; i < lightCount; i++)
+                Lights[i] = new LightKitLight(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -151,12 +165,11 @@ namespace IndustrialPark
             writer.Write(Group);
             writer.Write(Lights.Length);
             writer.Write(0);
+            if (game >= Game.ROTU)
+                writer.Write(Blended);
 
             foreach (var l in Lights)
                 l.Serialize(writer);
-
-            if (game >= Game.ROTU)
-                writer.Write(Blended);
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

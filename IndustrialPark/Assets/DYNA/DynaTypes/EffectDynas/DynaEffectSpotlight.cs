@@ -1,9 +1,9 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectSpotlight : AssetDYNA
     {
@@ -52,31 +52,26 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte GlowMax { get; set; }
 
-        public DynaEffectSpotlight(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__spotlight, game, endianness)
+        public DynaEffectSpotlight(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__spotlight, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Flags.FlagValueInt = reader.ReadUInt32();
-                OriginEntity = reader.ReadUInt32();
-                TargetEntity = reader.ReadUInt32();
-                AttachBone = reader.ReadByte();
-                TargetBone = reader.ReadByte();
-                reader.ReadInt16();
-                Radius = reader.ReadSingle();
-                ViewAngle_Rad = reader.ReadSingle();
-                MaxDist = reader.ReadSingle();
-                LightColor = reader.ReadColor();
-                AuraColor = reader.ReadColor();
-                FlareTexture = reader.ReadUInt32();
-                FlareColor = reader.ReadColor();
-                SizeMin = reader.ReadSingle();
-                SizeMax = reader.ReadSingle();
-                GlowMin = reader.ReadByte();
-                GlowMax = reader.ReadByte();
-                reader.ReadInt16();
-            }
+            Flags.FlagValueInt = reader.ReadUInt32();
+            OriginEntity = reader.ReadUInt32();
+            TargetEntity = reader.ReadUInt32();
+            AttachBone = reader.ReadByte();
+            TargetBone = reader.ReadByte();
+            reader.ReadInt16();
+            Radius = reader.ReadSingle();
+            ViewAngle_Rad = reader.ReadSingle();
+            MaxDist = reader.ReadSingle();
+            LightColor = reader.ReadColor();
+            AuraColor = reader.ReadColor();
+            FlareTexture = reader.ReadUInt32();
+            FlareColor = reader.ReadColor();
+            SizeMin = reader.ReadSingle();
+            SizeMax = reader.ReadSingle();
+            GlowMin = reader.ReadByte();
+            GlowMax = reader.ReadByte();
+            reader.ReadInt16();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

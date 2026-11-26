@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetSingleTypeConverter : TypeConverter
     {
@@ -14,7 +14,12 @@ namespace IndustrialPark
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
             if (value is string s)
-                return new AssetSingle(Convert.ToSingle(s));
+            {
+                if (string.IsNullOrWhiteSpace(s))
+                    return new AssetSingle(0);
+                if (float.TryParse(s, out float result))
+                    return new AssetSingle(result);
+            }
 
             return base.ConvertFrom(context, culture, value);
         }
@@ -27,7 +32,7 @@ namespace IndustrialPark
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == typeof(string))
-                return string.Format("{0:0.000000}", (float)(AssetSingle)value);
+                return value.ToString();
 
             return base.ConvertTo(context, culture, value, destinationType);
         }

@@ -1,63 +1,114 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
+using IndustrialPark.Models;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
+using SharpDX.Text;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
-    public class AssetRenderWareModel : AssetWithData
+    public abstract class AssetRenderWareModel : AssetWithData, IDisposableAsset, ISetupableAsset
     {
         protected RenderWareModelFile model;
 
-        public override string AssetInfo => $"{RwVersion(renderWareVersion)} {(IsNativeData ? "native" : "")} {base.AssetInfo}";
+        public override string AssetInfo => $"{renderWareVersion} {(IsNativeData ? "native" : "")} {base.AssetInfo}";
 
-        public AssetRenderWareModel(string assetName, AssetType assetType, byte[] data, SharpRenderer renderer) : base(assetName, assetType, data)
+        protected AssetRenderWareModel(string assetName, AssetType assetType, byte[] data) : base(assetName, assetType, data)
         {
-            Setup(renderer);
         }
 
-        public AssetRenderWareModel(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game)
+        protected AssetRenderWareModel(Section_AHDR AHDR) : base(AHDR)
         {
-            Setup(renderer);
         }
 
-        public virtual void Setup(SharpRenderer renderer)
+        public void Setup(SharpRenderer renderer)
         {
-            if (model != null)
-                model.Dispose();
-            if (renderer == null)
-                return;
-
-#if !DEBUG
+            model?.Dispose();
             try
             {
-#endif
-            ReadFileMethods.treatStuffAsByteArray = false;
-            var rwSecArray = ReadFileMethods.ReadRenderWareFile(Data);
-            model = new RenderWareModelFile(renderer.device, rwSecArray);
-            if (rwSecArray.Length > 0)
-                renderWareVersion = rwSecArray[0].renderWareVersion;
-            SetupAtomicFlagsForRender();
-#if !DEBUG
+                model = new RenderWareModelFile(renderer.device, ModelAsRWSections);
+                SetupAtomicFlagsForRender();
             }
-            catch (Exception ex)
+            catch
             {
-                if (model != null)
-                    model.Dispose();
+                model?.Dispose();
                 model = null;
-                throw new Exception("Error: " + ToString() + " has an unsupported format and cannot be rendered. " + ex.Message);
+                throw;
             }
-#endif
         }
 
-        public RenderWareModelFile GetRenderWareModelFile() => model;
+        public void Dispose()
+        {
+            model?.Dispose();
+        }
+
+        public RenderWareModelFile GetRenderWareModelFile(AssetRenderer rendererA) => model;
 
         [Browsable(false)]
         public bool IsNativeData => model != null && model.isNativeData;
+
+        [Browsable(false)]
+        public bool HasCollisionPLG
+        {
+            get
+            {
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (HasCollPlg(rws))
+                        return true;
+                   
+                return false;
+            }
+        }
+
+        private static bool HasCollPlg(Clump_0010 clump)
+        {
+            foreach (Geometry_000F geo in clump.geometryList.geometryList)
+                foreach (var ext in geo.geometryExtension.extensionSectionList)
+                    if (ext.sectionIdentifier == RenderWareFile.Section.CollisionPLG)
+                        return true;
+            return false;
+        }
+        private static bool HasCollPlg(AtomicSector_0009 atomic)
+        {
+            foreach (var ext in atomic.atomicSectorExtension.extensionSectionList)
+                if (ext.sectionIdentifier == RenderWareFile.Section.CollisionPLG)
+                    return true;
+            return false;
+        }
+        private static bool HasCollPlg(PlaneSector_000A plane)
+        {
+            return HasCollPlg(plane.leftSection) || HasCollPlg(plane.rightSection);
+        }
+        private static bool HasCollPlg(RWSection section)
+        {
+            if (section is Clump_0010 clump)
+                return HasCollPlg(clump);
+            if (section is AtomicSector_0009 atomic)
+                return HasCollPlg(atomic);
+            if (section is PlaneSector_000A plane)
+                return HasCollPlg(plane);
+            return false;
+        }
+
+        [Browsable(false)]
+        public bool IsCollisionModel
+        {
+            get
+            {
+                foreach (RWSection rws in ModelAsRWSections)
+                    if (rws is Clump_0010 clump)
+                        foreach (RWSection section in clump.clumpExtension.extensionSectionList)
+                            if (section.sectionIdentifier == RenderWareFile.Section.String)
+                                if (Encoding.ASCII.GetString(((GenericSection)section).data, 0, 4).Contains("COLL"))
+                                    return true;
+                return false;
+            }
+        }
 
         [Browsable(false)]
         public string[] Textures
@@ -102,17 +153,26 @@ namespace IndustrialPark
             base.Verify(ref result);
 
             if (ModelAsRWSections.Length == 0)
-                result.Add("Failed to read MODL asset. This might be just a library error and does not necessarily mean the model is broken.");
+                result.Add("Library failed to read model asset.");
 
             foreach (string s in Textures)
-                if (!(Program.MainForm.AssetExists(Functions.BKDRHash(s + ".RW3")) || Program.MainForm.AssetExists(Functions.BKDRHash(s))))
-                    result.Add($"I haven't found texture {s}, used by the model. This might just mean I haven't looked properly for it, though.");
+                if (!(Program.NameRepository.AssetExists(new AssetID(s)) || Program.NameRepository.AssetExists(new AssetID(s + ".RW3"))))
+                    result.Add($"Texture {s} referenced by model was not found.");
 
-            if (Program.MainForm.WhoTargets(assetID).Count == 0)
-                result.Add("Model appears to be unused, as no other asset references it. This might just mean I haven't looked properly for an asset which does does, though.");
+            if (!AssetService.HasWhoTargets(assetID))
+                result.Add("Model appears unused; no references found.");
         }
 
-        private int renderWareVersion;
+        public override List<uint> GetHierarchy()
+        {
+            var result = base.GetHierarchy();
+            result.AddRange(Textures.Select(s => Functions.BKDRHash(s + ".RW3")));
+            result.AddRange(Textures.Select(s => Functions.BKDRHash(s)));
+            return result;
+        }
+
+        private RWVersion renderWareVersion;
+        public RWVersion RenderWareVersion => renderWareVersion;
 
         public RWSection[] ModelAsRWSections
         {
@@ -120,10 +180,9 @@ namespace IndustrialPark
             {
                 try
                 {
-                    ReadFileMethods.treatStuffAsByteArray = true;
+                    ReadFileMethods.treatStuffAsByteArray = false;
                     RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
                     renderWareVersion = sections[0].renderWareVersion;
-                    ReadFileMethods.treatStuffAsByteArray = false;
                     return sections;
                 }
                 catch
@@ -133,12 +192,8 @@ namespace IndustrialPark
             }
             set
             {
-                ReadFileMethods.treatStuffAsByteArray = true;
-                Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
                 ReadFileMethods.treatStuffAsByteArray = false;
-
-                model.Dispose();
-                Setup(Program.MainForm.renderer);
+                Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
             }
         }
 
@@ -160,6 +215,8 @@ namespace IndustrialPark
                     if (rws is Clump_0010 clump)
                         foreach (Geometry_000F geo in clump.geometryList.geometryList)
                             materials.AddRange(geo.materialList.materialList);
+                    else if (rws is World_000B world)
+                        materials.AddRange(world.materialList.materialList);
 
                 return materials.ToArray();
             }
@@ -171,54 +228,60 @@ namespace IndustrialPark
                 foreach (RWSection rws in sections)
                     if (rws is Clump_0010 clump)
                     {
-                        for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+                        for (int i = 0; i < clump.geometryList.geometryList.Length; i++)
                         {
-                            bool hasMaterialEffects = false;
-                            for (int j = 0; j < clump.geometryList.geometryList[i].materialList.materialList.Length; j++)
-                            {
-                                if (k >= value.Length)
-                                    break;
-                                else
-                                    clump.geometryList.geometryList[i].materialList.materialList[j] = value[k];
-
-                                foreach (var rwss in value[k].materialExtension.extensionSectionList)
-                                    if (rwss is MaterialEffectsPLG_0120)
-                                        hasMaterialEffects = true;
-                                k++;
-                            }
-
-                            // giving the atomic the material effects
-                            if (hasMaterialEffects)
-                            {
-                                var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
-
-                                bool newMatEffsFound = false;
-                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)
-                                    if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120)
-                                    {
-                                        clump.atomicList[i].atomicExtension.extensionSectionList[j] = plg;
-                                        newMatEffsFound = true;
-                                        break;
-                                    }
-
-                                if (!newMatEffsFound)
-                                    clump.atomicList[i].atomicExtension.extensionSectionList.Add(plg);
-                            }
-                            else
-                            {
-                                for (int j = 0; j < clump.atomicList[i].atomicExtension.extensionSectionList.Count; j++)
-                                    if (clump.atomicList[i].atomicExtension.extensionSectionList[j] is MaterialEffectsPLG_0120 plg)
-                                        clump.atomicList[i].atomicExtension.extensionSectionList.RemoveAt(j--);
-                            }
+                            ApplyMaterials(clump.geometryList.geometryList[i].materialList, clump.atomicList[i].atomicExtension, value, ref k);
                         }
+                    }
+                    else if (rws is World_000B world)
+                    {
+                        ApplyMaterials(world.materialList, world.worldExtension, value, ref k);
                     }
 
                 ModelAsRWSections = sections;
-                Setup(Program.MainForm.renderer);
             }
         }
 
-        protected bool[] _dontDrawMeshNumber;
+        private void ApplyMaterials(MaterialList_0008 materialList, Extension_0003 extension, Material_0007[] value, ref int k)
+        {
+            bool hasMaterialEffects = false;
+            for (int j = 0; j < materialList.materialList.Length; j++)
+            {
+                if (k >= value.Length)
+                    break;
+                else
+                    materialList.materialList[j] = value[k];
+
+                foreach (var rwss in value[k].materialExtension.extensionSectionList)
+                    if (rwss is MaterialEffectsPLG_0120)
+                        hasMaterialEffects = true;
+                k++;
+            }
+
+            // giving the atomic the material effects
+            if (hasMaterialEffects)
+            {
+                var plg = new MaterialEffectsPLG_0120() { value = MaterialEffectType.BumpMap, isAtomicExtension = true };
+
+                bool newMatEffsFound = false;
+                for (int j = 0; j < extension.extensionSectionList.Length; j++)
+                    if (extension.extensionSectionList[j] is MaterialEffectsPLG_0120)
+                    {
+                        extension.extensionSectionList[j] = plg;
+                        newMatEffsFound = true;
+                        break;
+                    }
+
+                if (!newMatEffsFound)
+                    extension.Add(plg);
+            }
+            else
+            {
+                extension.RemoveAll(s => s is MaterialEffectsPLG_0120 plg);
+            }
+        }
+
+        protected bool[] _dontDrawMeshNumber = new bool[0];
 
         [Category("Model Data")]
         public AtomicFlags[] AtomicFlags
@@ -280,7 +343,7 @@ namespace IndustrialPark
 
             foreach (RWSection rws in sections)
                 if (rws is Clump_0010 clump)
-                    for (int i = 0; i < clump.geometryList.geometryList.Count; i++)
+                    for (int i = 0; i < clump.geometryList.geometryList.Length; i++)
                         if (clump.geometryList.geometryList[i].geometryStruct.vertexColors != null)
                             ApplyVertexColors(clump.geometryList.geometryList[i], getColor);
                         else
@@ -288,32 +351,115 @@ namespace IndustrialPark
                                 if (ex is NativeDataPLG_0510 nativeData)
                                     if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.GameCube)
                                         ApplyVertexColors(nativeData.nativeDataStruct.nativeData, getColor);
+                                    else if (nativeData.nativeDataStruct.nativeDataType == NativeDataType.PS2)
+                                        ApplyVertexColors(nativeData.nativeDataStruct.nativeDataPs2, getColor);
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            if (Program.MainForm != null)
-                Setup(Program.MainForm.renderer);
+        }
+
+        public void RemoveCollisionTree()
+        {
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            renderWareVersion = sections[0].renderWareVersion;
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    foreach (Geometry_000F geom in clump.geometryList.geometryList)
+                        geom.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+        }
+
+        public void BuildCollisionTree(CollTreeVersion ver = CollTreeVersion.NONE)
+        {
+            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(Data);
+            renderWareVersion = sections[0].renderWareVersion;
+
+            if (ver == CollTreeVersion.NONE)
+                ver = (renderWareVersion >= (3,6,0,1)) ? CollTreeVersion.COLLTREE_36 : CollTreeVersion.COLLTREE_31;
+
+            if (game <= Game.BFBB && ver > CollTreeVersion.COLLTREE_31)
+                throw new NotSupportedException("Scooby/BFBB only support version 3.1 collision plg's");
+
+            if (IsNativeData)
+                throw new Exception("Native Data");
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    if (clump.geometryList.geometryList.All(g => g.geometryStruct.triangles.Length == 0))
+                        throw new Exception("No geometry faces");
+
+            foreach (RWSection rws in sections)
+                if (rws is Clump_0010 clump)
+                    foreach (Geometry_000F geom in clump.geometryList.geometryList)
+                    {
+                        geom.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+
+                        if (geom.geometryStruct.triangles.Length == 0)
+                            continue;
+
+                        if (ver == CollTreeVersion.COLLTREE_31)
+                            geom.geometryExtension.Add(new Collis_31().RpCollisionGeometryBuildData(geom));
+                        else
+                            geom.geometryExtension.Add(new Collis_36().RpCollisionGeometryBuildData(geom, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
+                    }
+                else if (rws is World_000B world)
+                    BuildCollisionTree(ver, world.firstWorldChunk);
+
+            Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+        }
+
+        private void BuildCollisionTree(CollTreeVersion ver, RWSection firstWorldChunk)
+        {
+            if (firstWorldChunk is PlaneSector_000A plane)
+            {
+                BuildCollisionTree(ver, plane.leftSection);
+                BuildCollisionTree(ver, plane.rightSection);
+            }
+            else if (firstWorldChunk is AtomicSector_0009 atomic)
+            {
+                atomic.atomicSectorExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
+
+                if (atomic.atomicSectorStruct.triangleArray.Length == 0)
+                    return;
+
+                if (ver == CollTreeVersion.COLLTREE_31)
+                    atomic.atomicSectorExtension.Add(new Collis_31().RpCollisionAtomicBuildData(atomic));
+                else
+                    atomic.atomicSectorExtension.Add(new Collis_36().RpCollisionAtomicBuildData(atomic, (ver == CollTreeVersion.COLLTREE_36) ? false : true));
+            }
         }
 
         private void ApplyVertexColors(NativeDataGC nativeData, Func<Vector4, Vector4> getColor)
         {
-            for (int j = 0; j < nativeData.declarations.Length; j++)
-                if (nativeData.declarations[j].declarationType == Declarations.Color)
+            for (int j = 0; j < nativeData.attr.Length; j++)
+                if (nativeData.attr[j].attr == rwGCNVertexAttribute.rwGCNVA_CLR0)
                 {
-                    var vd = (ColorDeclaration)nativeData.declarations[j];
-                    for (int k = 0; k < vd.entryList.Count; k++)
+                    var vd = (VertexAttribute<RenderWareFile.Color>)nativeData.attr[j];
+                    for (int k = 0; k < vd.entries.Count; k++)
                     {
-                        var oldColor = vd.entryList[k];
+                        var oldColor = vd.entries[k];
 
                         var newColor = getColor(
                             new Vector4(oldColor.R / 255f, oldColor.G / 255f, oldColor.B / 255f, oldColor.A / 255f));
 
-                        vd.entryList[k] = new RenderWareFile.Color(
-                            (byte)(newColor.X * 255),
-                            (byte)(newColor.Y * 255),
-                            (byte)(newColor.Z * 255),
-                            (byte)(newColor.W * 255));
+                        vd.entries[k] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
                     }
                 }
+        }
+
+        private void ApplyVertexColors(NativeDataPS2 nativeData, Func<Vector4, Vector4> getColor)
+        {
+            foreach (var batch in nativeData.Batches)
+                foreach (var cluster in batch.Clusters)
+                    if (cluster is Cluster<RenderWareFile.Color> clusterColor)
+                    {
+                        for (int i = 0; i < clusterColor.entryList.Count; i++)
+                        {
+                            RenderWareFile.Color oldColor = clusterColor.entryList[i];
+                            Vector4 newColor = getColor(new Vector4(oldColor.R / 255f, oldColor.G / 255f, oldColor.B / 255f, oldColor.A / 255f));
+                            clusterColor.entryList[i] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
+                        }
+                    }
         }
 
         private void ApplyVertexColors(Geometry_000F geometry, Func<Vector4, Vector4> getColor)
@@ -322,11 +468,7 @@ namespace IndustrialPark
             {
                 var oldColor = geometry.geometryStruct.vertexColors[i];
                 var newColor = getColor(new Vector4(oldColor.R / 255.0f, oldColor.G / 255.0f, oldColor.B / 255.0f, oldColor.A / 255.0f));
-                geometry.geometryStruct.vertexColors[i] = new RenderWareFile.Color(
-                    (byte)(newColor.X * 255f),
-                    (byte)(newColor.Y * 255f),
-                    (byte)(newColor.Z * 255f),
-                    (byte)(newColor.W * 255f));
+                geometry.geometryStruct.vertexColors[i] = new RenderWareFile.Color(newColor.X, newColor.Y, newColor.Z, newColor.W);
             }
         }
 
@@ -377,26 +519,21 @@ namespace IndustrialPark
                 }
 
             Data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            Setup(Program.Renderer);
         }
 
         private void StripClump(Clump_0010 clump)
         {
-            foreach (var extension in clump.frameList.extensionList)
-                for (int i = 0; i < extension.extensionSectionList.Count; i++)
-                    if (extension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.HAnimPLG)
-                        extension.extensionSectionList.RemoveAt(i--);
+            foreach (var extension in clump.frameList.extensions)
+                extension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.HAnimPLG);
             foreach (var geo in clump.geometryList.geometryList)
-                for (int i = 0; i < geo.geometryExtension.extensionSectionList.Count; i++)
-                    if (geo.geometryExtension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.MorphPLG || geo.geometryExtension.extensionSectionList[i].sectionIdentifier == RenderWareFile.Section.CollisionPLG)
-                        geo.geometryExtension.extensionSectionList.RemoveAt(i--);
+                geo.geometryExtension.RemoveAll(ex => ex.sectionIdentifier == RenderWareFile.Section.MorphPLG || ex.sectionIdentifier == RenderWareFile.Section.CollisionPLG);
         }
 
         private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, Geometry_000F geo)
         {
             var allVertices = new List<Vector3>();
 
-            if ((geo.geometryStruct.geometryFlags2 & GeometryFlags2.isNativeGeometry) == 0)
+            if ((geo.geometryStruct.geometryFlags & GeometryFlags.rpGEOMETRYNATIVE) == 0)
             {
                 ApplyTransformation(transform, geo.geometryStruct, ref allVertices);
             }
@@ -436,14 +573,14 @@ namespace IndustrialPark
 
         private static void ApplyTransformation(Func<float, float, float, Vertex3> transform, NativeDataPLG_0510 nativeData, ref List<Vector3> allVertices)
         {
-            for (int i = 0; i < nativeData.nativeDataStruct.nativeData.declarations.Length; i++)
-                if (nativeData.nativeDataStruct.nativeData.declarations[i].declarationType == Declarations.Vertex)
+            for (int i = 0; i < nativeData.nativeDataStruct.nativeData.attr.Length; i++)
+                if (nativeData.nativeDataStruct.nativeData.attr[i].attr == rwGCNVertexAttribute.rwGCNVA_POS)
                 {
-                    var vd = (Vertex3Declaration)nativeData.nativeDataStruct.nativeData.declarations[i];
-                    for (int j = 0; j < vd.entryList.Count; j++)
-                        vd.entryList[j] = transform(vd.entryList[j].X, vd.entryList[j].Y, vd.entryList[j].Z);
+                    var vd = (VertexAttribute<Vertex3>)nativeData.nativeDataStruct.nativeData.attr[i];
+                    for (int j = 0; j < vd.entries.Count; j++)
+                        vd.entries[j] = transform(vd.entries[j].X, vd.entries[j].Y, vd.entries[j].Z);
 
-                    allVertices.AddRange(vd.entryList.Select(v => new Vector3(v.X, v.Y, v.Z)));
+                    allVertices.AddRange(vd.entries.Select(v => new Vector3(v.X, v.Y, v.Z)));
                 }
         }
 

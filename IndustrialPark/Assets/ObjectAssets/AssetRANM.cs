@@ -1,7 +1,8 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
+using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class ReactiveAnimation : GenericAssetDataContainer
     {
@@ -69,20 +70,16 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Version { get; set; }
         [Category(categoryName)]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public ReactiveAnimation[] ReactiveAnimations { get; set; }
 
-        public AssetRANM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetRANM(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                Version = reader.ReadInt32();
-                var count = reader.ReadInt32();
-                ReactiveAnimations = new ReactiveAnimation[count];
-                for (int i = 0; i < ReactiveAnimations.Length; i++)
-                    ReactiveAnimations[i] = new ReactiveAnimation(reader);
-            }
+            Version = reader.ReadInt32();
+            var count = reader.ReadInt32();
+            ReactiveAnimations = new ReactiveAnimation[count];
+            for (int i = 0; i < ReactiveAnimations.Length; i++)
+                ReactiveAnimations[i] = new ReactiveAnimation(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

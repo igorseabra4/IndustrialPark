@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetCSNM : BaseAsset
     {
@@ -110,66 +110,61 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetID Emitter15 { get; set; }
 
-        public AssetCSNM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetCSNM(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            Cutscene = reader.ReadUInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            InterpSpeed = reader.ReadSingle();
+            if (game >= Game.Incredibles)
+                Subtitles = reader.ReadUInt32();
 
-                Cutscene = reader.ReadUInt32();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                InterpSpeed = reader.ReadSingle();
-                if (game >= Game.Incredibles)
-                    Subtitles = reader.ReadUInt32();
+            StartTime1 = reader.ReadSingle();
+            StartTime2 = reader.ReadSingle();
+            StartTime3 = reader.ReadSingle();
+            StartTime4 = reader.ReadSingle();
+            StartTime5 = reader.ReadSingle();
+            StartTime6 = reader.ReadSingle();
+            StartTime7 = reader.ReadSingle();
+            StartTime8 = reader.ReadSingle();
+            StartTime9 = reader.ReadSingle();
+            StartTime10 = reader.ReadSingle();
+            StartTime11 = reader.ReadSingle();
+            StartTime12 = reader.ReadSingle();
+            StartTime13 = reader.ReadSingle();
+            StartTime14 = reader.ReadSingle();
+            StartTime15 = reader.ReadSingle();
 
-                StartTime1 = reader.ReadSingle();
-                StartTime2 = reader.ReadSingle();
-                StartTime3 = reader.ReadSingle();
-                StartTime4 = reader.ReadSingle();
-                StartTime5 = reader.ReadSingle();
-                StartTime6 = reader.ReadSingle();
-                StartTime7 = reader.ReadSingle();
-                StartTime8 = reader.ReadSingle();
-                StartTime9 = reader.ReadSingle();
-                StartTime10 = reader.ReadSingle();
-                StartTime11 = reader.ReadSingle();
-                StartTime12 = reader.ReadSingle();
-                StartTime13 = reader.ReadSingle();
-                StartTime14 = reader.ReadSingle();
-                StartTime15 = reader.ReadSingle();
+            EndTime1 = reader.ReadSingle();
+            EndTime2 = reader.ReadSingle();
+            EndTime3 = reader.ReadSingle();
+            EndTime4 = reader.ReadSingle();
+            EndTime5 = reader.ReadSingle();
+            EndTime6 = reader.ReadSingle();
+            EndTime7 = reader.ReadSingle();
+            EndTime8 = reader.ReadSingle();
+            EndTime9 = reader.ReadSingle();
+            EndTime10 = reader.ReadSingle();
+            EndTime11 = reader.ReadSingle();
+            EndTime12 = reader.ReadSingle();
+            EndTime13 = reader.ReadSingle();
+            EndTime14 = reader.ReadSingle();
+            EndTime15 = reader.ReadSingle();
 
-                EndTime1 = reader.ReadSingle();
-                EndTime2 = reader.ReadSingle();
-                EndTime3 = reader.ReadSingle();
-                EndTime4 = reader.ReadSingle();
-                EndTime5 = reader.ReadSingle();
-                EndTime6 = reader.ReadSingle();
-                EndTime7 = reader.ReadSingle();
-                EndTime8 = reader.ReadSingle();
-                EndTime9 = reader.ReadSingle();
-                EndTime10 = reader.ReadSingle();
-                EndTime11 = reader.ReadSingle();
-                EndTime12 = reader.ReadSingle();
-                EndTime13 = reader.ReadSingle();
-                EndTime14 = reader.ReadSingle();
-                EndTime15 = reader.ReadSingle();
-
-                Emitter1 = reader.ReadUInt32();
-                Emitter2 = reader.ReadUInt32();
-                Emitter3 = reader.ReadUInt32();
-                Emitter4 = reader.ReadUInt32();
-                Emitter5 = reader.ReadUInt32();
-                Emitter6 = reader.ReadUInt32();
-                Emitter7 = reader.ReadUInt32();
-                Emitter8 = reader.ReadUInt32();
-                Emitter9 = reader.ReadUInt32();
-                Emitter10 = reader.ReadUInt32();
-                Emitter11 = reader.ReadUInt32();
-                Emitter12 = reader.ReadUInt32();
-                Emitter13 = reader.ReadUInt32();
-                Emitter14 = reader.ReadUInt32();
-                Emitter15 = reader.ReadUInt32();
-            }
+            Emitter1 = reader.ReadUInt32();
+            Emitter2 = reader.ReadUInt32();
+            Emitter3 = reader.ReadUInt32();
+            Emitter4 = reader.ReadUInt32();
+            Emitter5 = reader.ReadUInt32();
+            Emitter6 = reader.ReadUInt32();
+            Emitter7 = reader.ReadUInt32();
+            Emitter8 = reader.ReadUInt32();
+            Emitter9 = reader.ReadUInt32();
+            Emitter10 = reader.ReadUInt32();
+            Emitter11 = reader.ReadUInt32();
+            Emitter12 = reader.ReadUInt32();
+            Emitter13 = reader.ReadUInt32();
+            Emitter14 = reader.ReadUInt32();
+            Emitter15 = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

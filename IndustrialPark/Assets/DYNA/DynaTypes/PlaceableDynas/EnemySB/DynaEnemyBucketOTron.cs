@@ -1,8 +1,9 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum EnemyBucketOTronType : uint
     {
@@ -61,18 +62,13 @@ namespace IndustrialPark
             SpawnGroup = groupAssetID;
         }
 
-        public DynaEnemyBucketOTron(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__BucketOTron, game, endianness)
+        public DynaEnemyBucketOTron(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__BucketOTron, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                SpawnGroup = reader.ReadUInt32();
-                SpawnMode = (enSpawnMode)reader.ReadInt32();
-                SpawnDelay = reader.ReadSingle();
-                FlagBuckAss.FlagValueInt = reader.ReadUInt32();
-                MaxSpawn = reader.ReadInt32();
-            }
+            SpawnGroup = reader.ReadUInt32();
+            SpawnMode = (enSpawnMode)reader.ReadInt32();
+            SpawnDelay = reader.ReadSingle();
+            FlagBuckAss.FlagValueInt = reader.ReadUInt32();
+            MaxSpawn = reader.ReadInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

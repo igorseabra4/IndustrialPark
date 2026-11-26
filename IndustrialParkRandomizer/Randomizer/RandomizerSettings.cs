@@ -1,635 +1,770 @@
-﻿using System;
+﻿using IndustrialPark.Assets;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
+using System.Reflection;
 
-namespace IndustrialPark.Randomizer
+namespace IndustrialPark.Randomizer;
+
+public class RandomizerSettings
 {
-    public class RandomizerSettings
+    [Category("\tRandomizer"), DisplayName("Patterns/files to skip entirely"), Description("The randomizer will leave these files unnafected.\nRecommended: leave as default")]
+    [Bfbb(new string[] { "hb10", "db05", "b301" })]
+    [Scooby(new string[] { "s006" })]
+    [Movie(new string[] { "b402" })]
+    public string[] skipFiles { get; set; }
+
+    [Category("\tRandomizer"), Description("Randomize pickup locations among each other within a room.")]
+    [All(true)]
+    public bool Pickups { get; set; }
+
+    [Category("\tRandomizer"), DisplayName("Disco Floor Patterns")]
+    [Bfbb(true)]
+    [Movie(true)]
+    public bool Disco_Floors { get; set; }
+
+    [Category("\tRandomizer")]
+    [All(true)]
+    public bool Music { get; set; }
+
+    [Category("\tRandomizer"), DisplayName("Floating Block Challenge")]
+    [Movie(true)]
+    public bool FloatingBlockChallenge { get; set; }
+
+    [Category("\tRandomizer")]
+    [All(false)]
+    public bool Cameras { get; set; }
+
+    [Category("\tRandomizer")]
+    [All(false)]
+    public bool Textures { get; set; }
+
+    [Category("\tRandomizer"), DisplayName("Textures (Special)"), Description("Includes menu/HUD and particle textures.")]
+    [All(false)]
+    public bool Textures_Special { get; set; }
+
+    [Category("\tRandomizer")]
+    [All(false)]
+    public bool Sounds { get; set; }
+
+    [Category("\tRandomizer"), DisplayName("Mix Sound Types"), Description("Mixes sound effects and voices (SND/SNDS). Not recommended as this can cause crashes.")]
+    [All(false)]
+    public bool Mix_Sound_Types { get; set; }
+
+    [Category("\tRandomizer"), DisplayName("Player Sounds"), Description("Randomizes the player's sound effects")]
+    [Bfbb(false)]
+    public bool PlayerSounds { get; set; }
+
+    [Category("\tRandomizer"), Description("Randomize food.")]
+    [Scooby(true)]
+    public bool Food { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Power-Up Rooms"), Description("Randomizes the rooms where power-ups are located.")]
+    [Scooby(true)]
+    public bool Power_Up_Levels_Scooby { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Include Monster Tokens"), Description("Includes Monster Tokens in the Power-Up Rooms randomizer.")]
+    [Scooby(true)]
+    public bool Include_MonsterTokens { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Include Gum and Soap Upgrades"), Description("Includes Gum and Soap upgrades as power-ups in the Power-Up Rooms randomizer. Does not include the items in Mastermind Unmasked 2.")]
+    [Scooby(true)]
+    public bool Include_GumSoap_Upgrades { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Power-Up Pool"), Description(Constants.powerupPool), TypeConverter(typeof(ExpandableObjectConverter))]
+    [Scooby]
+    [Browsable(false)]
+    public PowerupPoolScooby Power_Up_Pool_Scooby { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Unlock Groundskeeper at Hub"), Description("The Groundskeeper will appear at the hub without requiring you to obtain the map first.")]
+    [Scooby(true)]
+    public bool Unlock_Groundskeeper { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Skip Springs Location"), Description("If Pickups (randomize pickup positions) is on, this keeps the power-up in Fear on the Pier 3 in its original location, preventing it from appearing in a difficult spot. This does not prevent the room's power-up from being randomized to something other than the Springs if Power-Up Rooms is enabled.")]
+    [Scooby(false)]
+    public bool Skip_Springs { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Skip Slippers and Lampshade"), Description("Keeps the Slippers and Lampshade in their original locations in On Edge in the Hedge 2 instead of randomizing them among the other power-ups.")]
+    [Scooby(false)]
+    public bool Skip_Slippers_Lampshade { get; set; }
+
+    [Category("Power-Ups"), DisplayName("Enable Boss Hints"), Description("Reveals which power-up you will receive before fighting the Black Knight, Green Ghost, and Redbeard. Look for the hint near the room's start point.")]
+    [Scooby(true)]
+    public bool Power_Up_Levels_Scooby_Hints { get; set; }
+
+
+    [Category("Boulder Settings"), DisplayName("Boulder Settings"), Description("Randomizes floating point values in boulders, such as speed, gravity, mass, lifetime etc.")]
+    [Bfbb(false), Movie(false)]
+    public bool BoulderSettings { get; set; }
+    
+    [Category("Boulder Settings"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(0.5f), Movie(0.5f)]
+    public float boulderMin { get; set; }
+
+    [Category("Boulder Settings"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(2f), Movie(2f)]
+    public float boulderMax { get; set; }
+
+    [Category("Warps"), Description("Randomizes destination of level warps.")]
+    [Bfbb(true), Scooby(true), Movie(false)]
+    public bool Warps { get; set; }
+
+    [Category("Warps"), DisplayName("Randomize Mastermind 1 Warp"), Description("If disabled, the warp to Mastermind Unmasked, Part 1 will remain in its default location in Little Lab of Horrors, Part 2. If enabled, it will be randomized along with the other warps.")]
+    [Scooby]
+    public bool IncludeMastermind1Warp
     {
-        [Category("\tRandomizer"), DisplayName("Patterns/files to skip entirely"), Description("The randomizer will leave these files unnafected.")]
-        public string[] skipFiles { get; set; }
-        [Category("\tRandomizer"), Description("Randomize pickup positions.")]
-        public bool Pickups { get; set; }
-        [Category("\tRandomizer"), DisplayName("Disco Floor Patterns")]
-        public bool Disco_Floors { get; set; }
-        [Category("\tRandomizer")]
-        public bool Music { get; set; }
-        [Category("\tRandomizer"), DisplayName("Floating Block Challenge")]
-        public bool FloatingBlockChallenge { get; set; }
-        [Category("\tRandomizer")]
-        public bool Cameras { get; set; }
-        [Category("\tRandomizer")]
-        public bool Textures { get; set; }
-        [Category("\tRandomizer"), DisplayName("Textures (Special)"), Description("Includes menu/HUD and particle textures.")]
-        public bool Textures_Special { get; set; }
-        [Category("\tRandomizer")]
-        public bool Sounds { get; set; }
-        [Category("\tRandomizer"), DisplayName("Mix Sound Types"), Description("NOT RECOMMENDED\nMixes sound effects and voices (SND/SNDS).")]
-        public bool Mix_Sound_Types { get; set; }
-        [Category("\tRandomizer"), DisplayName("Player Sounds"), Description("Randomizes the player's sound effects")]
-        public bool PlayerSounds { get; set; }
-
-        [Category("Boulder Settings"), DisplayName("Boulder Settings"), Description("Randomizes floating point values in boulders, such as speed, gravity, mass, lifetime etc.")]
-        public bool BoulderSettings { get; set; }
-        [Category("Boulder Settings"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float boulderMin { get; set; } = 0.5f;
-        [Category("Boulder Settings"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float boulderMax { get; set; } = 2f;
-
-        [Category("Warps"), Description("Randomizes destination of level warps.")]
-        public bool Warps { get; set; }
-        [Category("Warps"), DisplayName("Skip Warps"), Description("The randomizer will leave warps to/from these files unnafected.")]
-        public string[] skipFilesWarps { get; set; }
-
-        [Category("Tikis/Crates"), DisplayName("Types"), Description("Randomizes tiki (BFBB)/crate (TSSM) types.")]
-        public bool Tiki_Types { get; set; }
-        [Category("Tikis/Crates"), DisplayName("Models"), Description("Allows a tiki's look and behavior to be different.")]
-        public bool Tiki_Models { get; set; }
-        [Category("Tikis/Crates"), DisplayName("Allow Any Type"), Description("Allows tikis/crates which were not present in the level before.")]
-        public bool Tiki_Allow_Any_Type { get; set; }
-        [Category("Tikis/Crates"), Description(Constants.probExample), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Probabilities")]
-        public TikiProbabilities TikiProbabilities { get; set; } = new TikiProbabilities();
-
-        [Category("Enemies"), DisplayName("Types"), Description("Randomizes enemy types.")]
-        public bool Enemy_Types { get; set; }
-        [Category("Enemies"), DisplayName("Allow Any Type"), Description("NOT RECOMMENDED FOR MOVIE\nAllows enemies which were not present in the level before.")]
-        public bool Enemies_Allow_Any_Type { get; set; }
-        [Category("Enemies"), Description(Constants.probExample), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Probabilities")]
-        public EnemyProbabilities EnemyProbabilities { get; set; } = new EnemyProbabilities();
-        [Category("Enemies"), Description(Constants.probExample), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Probabilities")]
-        public EnemyProbabilitiesMovie EnemyProbabilitiesMovie { get; set; } = new EnemyProbabilitiesMovie();
-
-
-        [Category("MovePoint"), DisplayName("MovePoint Radius"), Description("Randomizes MovePoint asset radius. Enemies can move more and see you from further away.")]
-        public bool MovePoint_Radius { get; set; }
-        [Category("MovePoint"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float mvptMin { get; set; } = 0.9f;
-        [Category("MovePoint"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float mvptMax { get; set; } = 1.8f;
-
-
-        [Category("Platform Speed"), DisplayName("Platform Speed"), Description("Randomizes spped of platform (moving) assets. Higher values mean faster platforms. Negative values create interesting results.")]
-        public bool PlatformSpeed { get; set; }
-        [Category("Platform Speed"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float speedMin { get; set; }
-        [Category("Platform Speed"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float speedMax { get; set; }
-
-
-        [Category("Positions"), Description(Constants.posHelpExample + " Markers are used in BFBB and Scooby for warping and checkpoints.")]
-        public bool Markers { get; set; }
-        [Category("Positions"), DisplayName("Pointer Positions"), Description("NOT RECOMMENDED FOR BFBB\n" + Constants.posHelpExample + " Pointers are used for talking to NPCs in BFBB, but for warps and checkpoints in Movie.")]
-        public bool Pointer_Positions { get; set; }
-        [Category("Positions"), DisplayName("Teleport Box Positions"), Description("NOT RECOMMENDED FOR BFBB\n" + Constants.posHelpExample)]
-        public bool Teleport_Box_Positions { get; set; }
-        [Category("Positions"), DisplayName("Taxi Trigger Positions"), Description("NOT RECOMMENDED\n" + Constants.posHelpExample)]
-        public bool Taxi_Trigger_Positions { get; set; }
-        [Category("Positions"), DisplayName("Bus Stop Trigger Positions"), Description("NOT RECOMMENDED\n" + Constants.posHelpExample)]
-        public bool Bus_Stop_Trigger_Positions { get; set; }
-
-
-        [Category("Timers"), Description("Randomizes timer values")]
-        public bool Timers { get; set; }
-        [Category("Timers"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float timerMin { get; set; }
-        [Category("Timers"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float timerMax { get; set; }
-
-
-        [Category("Scales"), DisplayName("Set Scales"), Description("Applies a fixed scale (size) to assets.")]
-        public bool Set_Scale { get; set; }
-        [Category("Scales"), DisplayName("Scale Factor X"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
-        public float scaleFactorX { get; set; }
-        [Category("Scales"), DisplayName("Scale Factor Y"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
-        public float scaleFactorY { get; set; }
-        [Category("Scales"), DisplayName("Scale Factor Z"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
-        public float scaleFactorZ { get; set; }
-        //[Category("Scales"), DisplayName("Scale Physics"), Description("Applies the scale to the player's movement (experimental).")]
-        //public bool Set_Scale_Physics { get; set; }
-
-        [Category("Scales (Not recommended)"), DisplayName("Scales"), Description("NOT RECOMMENDED\nRandomizes scale (size) of Entity assets.")]
-        public bool Scale_Of_Things { get; set; }
-        [Category("Scales (Not recommended)"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float scaleMin { get; set; }
-        [Category("Scales (Not recommended)"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float scaleMax { get; set; }
-
-
-        [Category("Ring Challenges"), DisplayName("Ring Sizes"), Description("Randomizes size of rings.")]
-        public bool RingSizes { get; set; }
-        [Category("Ring Challenges"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float ringScaleMin { get; set; }
-        [Category("Ring Challenges"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float ringScaleMax { get; set; }
-
-
-        [Category("Shiny Object/Snack Gates"), DisplayName("Shiny Object/Snack Gates"), Description("Randomizes clam\toll gate shiny object requirements in BFBB or snack gate requirements in Scooby.")]
-        public bool Shiny_Object_Gates { get; set; }
-        [Category("Shiny Object/Snack Gates"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float shinyReqMin { get; set; }
-        [Category("Shiny Object/Snack Gates"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float shinyReqMax { get; set; }
-
-
-        [Category("Spatula Gates"), DisplayName("Spatula Gates"), Description("Randomizes spatula toll gate requirements in BFBB.")]
-        public bool Spatula_Gates { get; set; }
-        [Category("Spatula Gates"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample)]
-        public int spatReqMin { get; set; }
-        [Category("Spatula Gates"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample)]
-        public int spatReqMax { get; set; }
-
-
-        [Category("Combat Arena Challenges"), DisplayName("Enemy Counts")]
-        public bool CombatArenaCounts { get; set; }
-        [Category("Combat Arena Challenges"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample)]
-        public int combatMin { get; set; }
-        [Category("Combat Arena Challenges"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample)]
-        public int combatMax { get; set; }
-
-
-        [Category("Texture Animations"), DisplayName("Texture Animations"), Description("Randomizes speed of UV animations on surfaces.")]
-        public bool Texture_Animations { get; set; }
-        [Category("Texture Animations"),
-            DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float surfMin { get; set; }
-        [Category("Texture Animations"),
-            DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
-        public float surfMax { get; set; }
-
-
-        [Category("Colors"), Description("Randomizes colors of stuff.")]
-        public bool Colors { get; set; }
-        [Category("Colors"), DisplayName("Vertex Colors"), Description("Randomizes vertex colors of level models instead of mesh colors (basically, it's more chaotic)")]
-        public bool VertexColors { get; set; }
-        [Category("Colors"), DisplayName("Bright Colors"), Description("Colors randomizer results in lighter colors")]
-        public bool brightColors { get; set; }
-        [Category("Colors"), DisplayName("Strong Colors"), Description("Colors randomizer results in very saturated colors")]
-        public bool strongColors { get; set; }
-
-
-        [Category("Characters"), DisplayName("Player Characters"), Description("Randomizes the characters in each Bus Stop (Patrick or Sandy). This will automatically enable Unlock Characters.")]
-        public bool PlayerCharacters { get; set; }
-        [Category("Characters"), DisplayName("Unlock Characters"), Description("Allows playing as Patrick and Sandy on every level. This will automatically disable Enemies Allow Any Type")]
-        public bool UnlockCharacters { get; set; }
-        [Category("Characters"), DisplayName("Random Characters"), Description("Switches you to Spongebob, Patrick or Sandy randomly on every spawn.")]
-        public bool RandomCharacters { get; set; }
-
-
-        [Category("\tCheats"), DisplayName("Invincible")]
-        public bool cheatInvincible { get; set; } = false;
-        [Category("\tCheats"), DisplayName("BFBB Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
-        public PowerupCheatsBFBB PowerupCheatsBFBB { get; set; }
-        [Category("\tCheats"), DisplayName("Scooby Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
-        public PowerupCheatsScooby PowerupCheatsScooby { get; set; }
-        [Category("\tCheats"), DisplayName("Movie Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
-        public PowerupCheatsMovie PowerupCheatsMovie { get; set; }
-
-
-        [Category("\t\tINI Mods"), DisplayName("Boot Level"), Description("Which level to start the game in.\n- Default: Unchanged.\n- Set: the one set in the box below.\n- Random: picks a random level.")]
-        public BootLevelMode bootLevelMode { get; set; }
-
-        private string bootLevel;
-
-        [Category("\t\tINI Mods"), DisplayName("Set Boot Level"), Description("If Boot Level is 'set', start the game in this level.")]
-        public string BootLevel
+        get => !skipFilesWarps?.Contains("s004") ?? false;
+        set
         {
-            get => bootLevel;
-            set
+            if (skipFilesWarps != null)
             {
-                if (value.Length != 4)
-                    throw new ArgumentException("Value must have 4 characters.");
-                bootLevel = value;
+                if (!value && !skipFilesWarps.Contains("s004"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps, "s004"];
+                }
+                else if (value && skipFilesWarps.Contains("s004"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps.Where(f => f != "s004")];
+                }
             }
         }
+    }
 
-        [Category("\t\tINI Mods"), DisplayName("Skip Main Menu")]
-        public bool dontShowMenuOnBoot { get; set; }
-
-        [Category("\t\tINI Mods"), DisplayName("All Menu Warps HB01"),
-            Description("If true, all menu warps will lead to the hub.")]
-        public bool allMenuWarpsHB01 { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
-        public bool restoreRobotLaugh { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Widescreen Patch"), Description("Patches the game to run in a 16:9 resolution by modifying some assets and enabling a widescreen Gecko code.")]
-        public bool widescreen { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Disable Cutscenes")]
-        public bool disableCutscenes { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Disable Flythroughs")]
-        public bool disableFlythroughs { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Skip Spatula Animations")]
-        public bool skipSpatulaAnims { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Open Teleport Boxes")]
-        public bool openTeleportBoxes { get; set; }
-
-        [Category("\t\t\tPatches"),
-            DisplayName("Spatulas for Chum Bucket Lab"),
-            Description("This will be the amount of spatulas needed for the final boss. Set to -1 to include it in the Spatula Gates randomizer method.")]
-        public int spatReqChum { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
-        public bool invisibleLevel { get; set; }
-
-        [Category("\t\t\tPatches"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
-        public bool invisibleObjects { get; set; }
-
-        [Category("\t\t\tPatches: LODT"), DisplayName("boot.HIP LODT multiplier"),
-            Description("If true, multiply the render distance for the pickups by this amount.")]
-        public bool bootHipLodtMulti { get; set; }
-
-        [Category("\t\t\tPatches: LODT"), DisplayName("boot.HIP LODT multiplier"),
-            Description("If true, multiply the render distance for the pickups by this amount."),
-            TypeConverter(typeof(SingleTypeConverter))]
-        public float lodtValue { get; set; }
-
-        public RandomizerSettings(int game)
+    [Category("Warps"), DisplayName("Randomize Mastermind 2 Warp"), Description("If disabled, the warp to Mastermind Unmasked, Part 2 will remain in its default location in Mastermind Unmasked, Part 1. If enabled, it will be randomized along with the other warps.")]
+    [Scooby]
+    public bool IncludeMastermind2Warp
+    {
+        get => !skipFilesWarps?.Contains("s005") ?? false;
+        set
         {
-            Pickups = true;
-            BoulderSettings = true;
-            MovePoint_Radius = true;
-            PlatformSpeed = true;
-            Music = true;
-            Cameras = false;
-            Textures = false;
-            Textures_Special = false;
-            Sounds = false;
-            Mix_Sound_Types = false;
-            Warps = true;
-            Scale_Of_Things = false;
-            Texture_Animations = true;
-            Markers = true;
-            Timers = true;
-            Colors = true;
-            brightColors = true;
-            strongColors = false;
-            cheatInvincible = false;
-            bootLevelMode = BootLevelMode.Set;
-            bootHipLodtMulti = true;
-            dontShowMenuOnBoot = true;
-            invisibleLevel = false;
-            invisibleObjects = false;
-            disableCutscenes = true;
-            PlayerCharacters = false;
-            UnlockCharacters = false;
-            RandomCharacters = false;
-            Taxi_Trigger_Positions = false;
-            Bus_Stop_Trigger_Positions = false;
-            openTeleportBoxes = false;
-            widescreen = false;
-            Set_Scale = false;
-            VertexColors = false;
-            PlayerSounds = false;
-
-            boulderMin = 0.5f;
-            boulderMax = 2f;
-            mvptMin = 0.9f;
-            mvptMax = 1.8f;
-            speedMin = 1f;
-            speedMax = 5f;
-            timerMin = 0.75f;
-            timerMax = 1.75f;
-            scaleMin = 0.8f;
-            scaleMax = 1.3f;
-            ringScaleMin = 0.2f;
-            ringScaleMax = 2f;
-            shinyReqMin = 0.6f;
-            shinyReqMax = 1.5f;
-            spatReqMin = 5;
-            spatReqMax = 70;
-            surfMin = -2f;
-            surfMax = 2f;
-            spatReqChum = 75;
-            lodtValue = 2f;
-            combatMin = 5;
-            combatMax = 100;
-            scaleFactorX = 1f;
-            scaleFactorY = 1f;
-            scaleFactorZ = 1f;
-
-            skipFiles = new string[] { "hb10", "db05", "b301", "s006", "b402" };
-            skipFilesWarps = new string[] { "hb00", "gy04", "b3", "pg", "s005" };
-
-            TikiProbabilities = new TikiProbabilities();
-            EnemyProbabilities = new EnemyProbabilities();
-            EnemyProbabilitiesMovie = new EnemyProbabilitiesMovie();
-
-            PowerupCheatsBFBB = new PowerupCheatsBFBB();
-            PowerupCheatsScooby = new PowerupCheatsScooby();
-            PowerupCheatsMovie = new PowerupCheatsMovie();
-
-            ChangeForGame(game);
-        }
-
-        public void ChangeForGame(int game)
-        {
-            if (game == 0)
+            if (skipFilesWarps != null)
             {
-                Spatula_Gates = true;
-                Tiki_Models = true;
-                Enemies_Allow_Any_Type = true;
-                allMenuWarpsHB01 = true;
-                disableFlythroughs = true;
-                restoreRobotLaugh = true;
-                bootLevel = "HB01";
-            }
-            else
-            {
-                Spatula_Gates = false;
-                Tiki_Models = false;
-                Enemies_Allow_Any_Type = false;
-                allMenuWarpsHB01 = false;
-                disableFlythroughs = false;
-                restoreRobotLaugh = false;
-                PlayerCharacters = false;
-                UnlockCharacters = false;
-                RandomCharacters = false;
-                Taxi_Trigger_Positions = false;
-                PlayerSounds = false;
-
-                disableCutscenes = false; // remove this line later
-            }
-
-            if (game == 1)
-            {
-                Disco_Floors = false;
-                Tiki_Types = false;
-                Tiki_Allow_Any_Type = false;
-                Enemy_Types = false;
-                invisibleLevel = false;
-                openTeleportBoxes = false;
-                Bus_Stop_Trigger_Positions = false;
-                bootLevel = "h001";
-            }
-            else
-            {
-                Disco_Floors = true;
-                Tiki_Types = true;
-                Tiki_Allow_Any_Type = true;
-                Enemy_Types = true;
-            }
-
-            if (game == 2)
-            {
-                FloatingBlockChallenge = true;
-                Pointer_Positions = true;
-                Teleport_Box_Positions = true;
-                CombatArenaCounts = true;
-                RingSizes = true;
-                Shiny_Object_Gates = false;
-                bootLevel = "BB02";
-            }
-            else
-            {
-                FloatingBlockChallenge = false;
-                Pointer_Positions = false;
-                Teleport_Box_Positions = false;
-                CombatArenaCounts = false;
-                Shiny_Object_Gates = true;
-                RingSizes = false;
+                if (!value && !skipFilesWarps.Contains("s005"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps, "s005"];
+                }
+                else if (value && skipFilesWarps.Contains("s005"))
+                {
+                    skipFilesWarps = [.. skipFilesWarps.Where(f => f != "s005")];
+                }
             }
         }
+    }
 
-        public void SetAllFalse()
+    [Category("Warps"), DisplayName("Skip Warps"), Description("The randomizer will leave warps to/from these files unnafected.\nRecommended: leave as default.\nDefault: final boss and post-game levels, plus Flying Dutchman boss as changing those warps can cause issues.")]
+    [Bfbb(new string[] { "hb00", "gy04", "b3", "pg" })]
+    [Scooby(new string[] { "s005", "s006" })]
+    [Movie(new string[] { })] 
+    public string[] skipFilesWarps { get; set; }
+
+    [Category("Tikis/Crates"), DisplayName("Types"), Description("Randomizes tiki (BFBB)/crate (TSSM) types.")]
+    [Bfbb(true), Movie(true)]
+    public bool Tiki_Types { get; set; }
+
+    [Category("Tikis/Crates"), DisplayName("Models"), Description("Allows a tiki's look and behavior to be different.")]
+    [Bfbb(true)]
+    public bool Tiki_Models { get; set; }
+    
+    [Category("Tikis/Crates"), DisplayName("Allow Any Type"), Description("Allows tikis/crates which were not present in the level before.")]
+    [Bfbb(true)]
+    [Movie(true)]
+    public bool Tiki_Allow_Any_Type { get; set; }
+
+    [Category("Tikis/Crates"), Description(Constants.probExample), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Probabilities")]
+    [Bfbb, Movie]
+    public TikiProbabilities TikiProbabilities { get; set; }
+
+    [Category("Enemies"), DisplayName("Types"), Description("Randomizes enemy types.")]
+    [Bfbb(true), Movie(true)]
+    public bool Enemy_Types { get; set; }
+
+    [Category("Enemies"), DisplayName("Allow Any Type"), Description("Allows enemies which were not present in the level before. Not recommended for Movie.")]
+    [Bfbb(true), Movie(false)]
+    public bool Enemies_Allow_Any_Type { get; set; }
+
+    [Category("Enemies"), Description(Constants.probExample), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Probabilities")]
+    [Bfbb]
+    public EnemyProbabilities EnemyProbabilities { get; set; }
+    
+    [Category("Enemies"), Description(Constants.probExample), TypeConverter(typeof(ExpandableObjectConverter)), DisplayName("Probabilities")]
+    [Movie]
+    public EnemyProbabilitiesMovie EnemyProbabilitiesMovie { get; set; }
+
+    [Category("MovePoint"), DisplayName("MovePoint Radius"), Description("Randomizes MovePoint asset radius. Enemies can move more and see you from further away.")]
+    [Bfbb(true), Movie(true)]
+    public bool MovePoint_Radius { get; set; }
+
+    [Category("MovePoint"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(0.9f), Movie(0.9f)]
+    public float mvptMin { get; set; }
+
+    [Category("MovePoint"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(1.8f), Movie(1.8f)] 
+    public float mvptMax { get; set; }
+
+    [Category("Platform Speed"), DisplayName("Platform Speed"), Description("Randomizes spped of platform (moving) assets. Higher values mean faster platforms. Negative values create interesting results.")]
+    [All(true)]
+    public bool PlatformSpeed { get; set; }
+    
+    [Category("Platform Speed"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(1f), Movie(1f), Scooby(0.8f)]
+    public float speedMin { get; set; }
+    
+    [Category("Platform Speed"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(5f), Movie(5f), Scooby(2f)]
+    public float speedMax { get; set; }
+
+    [Category("Positions"), Description("Randomizes where you spawn after warps, and where checkpoints respawn you.")]
+    [Bfbb(true)]
+    public bool Markers { get; set; }
+    
+    [Category("Positions"), Description("Randomizes where you spawn after warps, and where checkpoints respawn you.")]
+    [Movie(true)]
+    public bool Pointers { get; set; }
+    
+    [Category("Positions"), DisplayName("Teleport Boxes"), Description("Randomizes the locations of teleport boxes in a level. This is not recommended for BFBB, as boxes sometimes appear on top of each other, causing a softlock.")]
+    [Bfbb(false), Movie(true)]
+    public bool Teleport_Box_Positions { get; set; }
+    
+    [Category("Timers"), Description("Randomizes timer values")]
+    [All(true)]
+    public bool Timers { get; set; }
+
+    [Category("Timers"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [All(0.75f)]
+    public float timerMin { get; set; }
+    
+    [Category("Timers"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [All(1.75f)]
+    public float timerMax { get; set; }
+
+    [Category("Scales"), DisplayName("Set Scales"), Description("Applies a fixed scale (size) to assets.")]
+    [All(false)]
+    public bool Set_Scale { get; set; }
+    
+    [Category("Scales"), DisplayName("Scale Factor X"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
+    [All(1f)]
+    public float scaleFactorX { get; set; }
+    
+    [Category("Scales"), DisplayName("Scale Factor Y"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
+    [All(1f)]
+    public float scaleFactorY { get; set; }
+    
+    [Category("Scales"), DisplayName("Scale Factor Z"), Description("Factor to scale the assets."), TypeConverter(typeof(SingleTypeConverter))]
+    [All(1f)]
+    public float scaleFactorZ { get; set; }
+
+    [Category("Scales (Not recommended)"), DisplayName("Scales"), Description("Randomizes scale (size) of Entity assets.")]
+    [All(false)]
+    public bool Scale_Of_Things { get; set; }
+    
+    [Category("Scales (Not recommended)"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [All(0.8f)]
+    public float scaleMin { get; set; }
+    
+    [Category("Scales (Not recommended)"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [All(1.3f)]
+    public float scaleMax { get; set; }
+
+    [Category("Ring Challenges"), DisplayName("Ring Sizes"), Description("Randomizes size of rings.")]
+    [Movie(true)]
+    public bool RingSizes { get; set; }
+    
+    [Category("Ring Challenges"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Movie(0.2f)]
+    public float ringScaleMin { get; set; }
+
+    [Category("Ring Challenges"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Movie(2f)]
+    public float ringScaleMax { get; set; }
+
+    [Category("Shiny Object Gates"), DisplayName("Shiny Object Gates"), Description("Randomizes clam toll gate shiny object requirements. The requirement will be multiplied by a random value between minimum and maximum.")]
+    [Bfbb(true)]
+    public bool Shiny_Object_Gates { get; set; }
+
+    [Category("Shiny Object Gates"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(0.6f)]
+    public float shinyReqMin { get; set; }
+
+    [Category("Shiny Object Gates"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Bfbb(1.5f)]
+    public float shinyReqMax { get; set; }
+
+    [Category("Snack Gates"), DisplayName("Snack Gates"), Description("Randomizes snack gate requirements. The requirement will be multiplied by a random value between minimum and maximum.")]
+    [Scooby(true)]
+    public bool SnackGates { get; set; }
+
+    [Category("Snack Gates"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Scooby(0.5f)]
+    public float snackReqMin { get; set; }
+
+    [Category("Snack Gates"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [Scooby(1.5f)]
+    public float snackReqMax { get; set; }
+
+    [Category("Spatula Gates"), DisplayName("Spatula Gates"), Description("Randomizes spatula toll gate requirements in BFBB.")]
+    [Bfbb(true)]
+    public bool Spatula_Gates { get; set; }
+    
+    [Category("Spatula Gates"), DisplayName("Minimum"), Description(Constants.minMaxExample)]
+    [Bfbb(5)]
+    public int spatReqMin { get; set; }
+    
+    [Category("Spatula Gates"), DisplayName("Maximum"), Description(Constants.minMaxExample)]
+    [Bfbb(70)]
+    public int spatReqMax { get; set; }
+
+    [Category("Combat Arena Challenges"), DisplayName("Enemy Counts")]
+    [Movie(true)]
+    public bool CombatArenaCounts { get; set; }
+
+    [Category("Combat Arena Challenges"), DisplayName("Minimum"), Description(Constants.minMaxExample)]
+    [Movie(5)]
+    public int combatMin { get; set; }
+    
+    [Category("Combat Arena Challenges"), DisplayName("Maximum"), Description(Constants.minMaxExample)]
+    [Movie(100)]
+    public int combatMax { get; set; }
+
+
+    [Category("Texture Animations"), DisplayName("Texture Animations"), Description("Randomizes speed of UV animations on surfaces.")]
+    [All(true)]
+    public bool Texture_Animations { get; set; }
+    
+    [Category("Texture Animations"), DisplayName("Minimum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [All(-1.5f)]
+    public float surfMin { get; set; }
+    
+    [Category("Texture Animations"), DisplayName("Maximum"), Description(Constants.minMaxExample), TypeConverter(typeof(SingleTypeConverter))]
+    [All(1.5f)]
+    public float surfMax { get; set; }
+
+
+    [Category("Colors"), Description("Randomizes colors of stuff.")]
+    [Bfbb(true), Movie(true)]
+    public bool Colors { get; set; }
+   
+    [Category("Colors"), DisplayName("Vertex Colors"), Description("Randomizes vertex colors of level models instead of mesh colors (basically, it's more chaotic)")]
+    [Bfbb(false), Movie(false)]
+    public bool VertexColors { get; set; }
+    
+    [Category("Colors"), DisplayName("Bright Colors"), Description("Colors randomizer results in lighter colors")]
+    [Bfbb(true), Movie(true)]
+    public bool brightColors { get; set; }
+    
+    [Category("Colors"), DisplayName("Strong Colors"), Description("Colors randomizer results in very saturated colors")]
+    [Bfbb(false), Movie(false)]
+    public bool strongColors { get; set; }
+
+
+    [Category("Characters"), DisplayName("Player Characters"), Description("Randomizes the characters in each Bus Stop (Patrick or Sandy). This will automatically enable Unlock Characters.")]
+    [Bfbb(false)]
+    public bool PlayerCharacters { get; set; }
+    
+    [Category("Characters"), DisplayName("Unlock Characters"), Description("Allows playing as Patrick and Sandy on every level. This will automatically disable Enemies Allow Any Type")]
+    [Bfbb(false)]
+    public bool UnlockCharacters { get; set; }
+    
+    [Category("Characters"), DisplayName("Random Characters"), Description("Switches you to Spongebob, Patrick or Sandy randomly on every spawn.")]
+    [Bfbb(false)]
+    public bool RandomCharacters { get; set; }
+
+
+    [Category("\tCheats"), DisplayName("Invincible")]
+    [All(false)]
+    public bool cheatInvincible { get; set; }
+
+    [Category("\tCheats"), DisplayName("BFBB Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
+    [Bfbb]
+    public PowerupCheatsBFBB PowerupCheatsBFBB { get; set; }
+    
+    [Category("\tCheats"), DisplayName("Scooby Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
+    [Scooby]
+    public PowerupCheatsScooby PowerupCheatsScooby { get; set; }
+    
+    [Category("\tCheats"), DisplayName("Movie Cheats"), TypeConverter(typeof(ExpandableObjectConverter))]
+    [Movie]
+    public PowerupCheatsMovie PowerupCheatsMovie { get; set; }
+
+
+    [Category("\t\tINI Mods"), DisplayName("Boot Level"), Description("Which level to start the game in.\n- Default: Unchanged.\n- Set: the one set in the box below.\n- Random: picks a random level.")]
+    [All(BootLevelMode.Set)]
+    public BootLevelMode bootLevelMode { get; set; }
+
+    private string bootLevel;
+
+    [Category("\t\tINI Mods"), DisplayName("Set Boot Level"), Description("If Boot Level is 'set', start the game in this level.")]
+    [Bfbb("HB01")]
+    [Scooby("h001")]
+    [Movie("BB02")]
+    public string BootLevel
+    {
+        get => bootLevel;
+        set
         {
-            Warps = false;
-            Pickups = false;
-            Tiki_Types = false;
-            Tiki_Models = false;
-            Tiki_Allow_Any_Type = false;
-            Enemy_Types = false;
-            Enemies_Allow_Any_Type = false;
-            MovePoint_Radius = false;
-            PlatformSpeed = false;
-            BoulderSettings = false;
-            Markers = false;
-            PlayerSounds = false;
-            Pointer_Positions = false;
-            Teleport_Box_Positions = false;
-            Taxi_Trigger_Positions = false;
-            Bus_Stop_Trigger_Positions = false;
-            Scale_Of_Things = false;
-            Shiny_Object_Gates = false;
-            Spatula_Gates = false;
-            Texture_Animations = false;
-            Disco_Floors = false;
-            Music = false;
-            Colors = false;
-            Cameras = false;
-            Textures = false;
-            Textures_Special = false;
-            Sounds = false;
-            Mix_Sound_Types = false;
-            FloatingBlockChallenge = false;
-            Timers = false;
-            brightColors = false;
-            strongColors = false;
-            PlayerCharacters = false;
-            cheatInvincible = false;
-            PowerupCheatsMovie.Preset = Preset.Nothing;
-            bootLevelMode = BootLevelMode.Default;
-            dontShowMenuOnBoot = false;
-            allMenuWarpsHB01 = false;
-            disableCutscenes = false;
-            spatReqChum = 75;
-            bootHipLodtMulti = false;
-            restoreRobotLaugh = false;
-            openTeleportBoxes = false;
-            disableFlythroughs = false;
-            UnlockCharacters = false;
-            RandomCharacters = false;
-            invisibleLevel = false;
-            invisibleObjects = false;
-            CombatArenaCounts = false;
-            Set_Scale = false;
+            if (value.Length != 4)
+                throw new ArgumentException("Value must have 4 characters.");
+            bootLevel = value;
         }
+    }
 
-        public void SetDynamicProperties(DynamicTypeDescriptor dt, int game)
+    [Category("\t\tINI Mods"), DisplayName("Skip Main Menu")]
+    [All(false)]
+    public bool dontShowMenuOnBoot { get; set; }
+
+    [Category("\t\tINI Mods"), DisplayName("All Menu Warps HB01"), Description("If true, all menu warps will lead to the hub.")]
+    [Bfbb(true)]
+    public bool allMenuWarpsHB01 { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Restore Robot Laugh"), Description("Restores robot laugh sound, which is not present normally in the GameCube version of the game.")]
+    [Bfbb(true)]
+    public bool restoreRobotLaugh { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Widescreen Patch"), Description("Patches the game to run in a 16:9 resolution by modifying some assets and enabling a widescreen Gecko code.")]
+    [Bfbb(false)]
+    public bool widescreen { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Disable Cutscenes")]
+    [Bfbb(true)]
+    public bool disableCutscenes { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Disable Flythroughs")]
+    [Bfbb(true)]
+    public bool disableFlythroughs { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Skip Spatula Animations")]
+    [Bfbb(true)]
+    public bool skipSpatulaAnims { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Open Teleport Boxes")]
+    [Bfbb(false)]
+    [Movie(false)]
+    public bool openTeleportBoxes { get; set; }
+
+    [Category("\t\t\tPatches"),
+        DisplayName("Spatulas for Chum Bucket Lab"),
+        Description("This will be the amount of spatulas needed for the final boss. Set to -1 to include it in the Spatula Gates randomizer method.")]
+    [Bfbb(75)]
+    public int spatReqChum { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Invisible Level"), Description("Makes all levels invisible.")]
+    [Bfbb(false)]
+    [Movie(false)]
+    public bool invisibleLevel { get; set; }
+
+    [Category("\t\t\tPatches"), DisplayName("Invisible Objects"), Description("Makes all objects invisible.")]
+    [Bfbb(false)]
+    [Movie(false)]
+    public bool invisibleObjects { get; set; }
+
+    [Category("\t\t\tPatches: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        Description("If true, multiply the render distance for the pickups by this amount.")]
+    [All(true)]
+    public bool bootHipLodtMulti { get; set; }
+
+    [Category("\t\t\tPatches: LODT"), DisplayName("boot.HIP LODT multiplier"),
+        Description("If true, multiply the render distance for the pickups by this amount."),
+        TypeConverter(typeof(SingleTypeConverter))]
+    [All(2f)]
+    public float lodtValue { get; set; }
+
+    [Category("Scooby Level Patches"), DisplayName("Wreck 1: Softlock prevention"), Description("Changes your spawn position in Wreck on the Deck, Part 1 to prevent being stuck if you arrive here without the springs.")]
+    [Scooby(true)]
+    public bool Wreck1_Softlock { get; set; }
+
+    [Category("Scooby Level Patches"), DisplayName("Don't Look Down 2: Warp Gate"), Description("Adds a warp gate near the exit door in Don't Look Down, Scooby-Doo, Part 2 to prevent you from getting stuck there.")]
+    [Scooby(true)]
+    public bool DontLookDown_Softlock { get; set; }
+
+    [Category("Scooby Level Patches"), DisplayName("Shiver 2: Warp Gate"), Description("Adds a warp gate to Shiver Your Timbers, Scooby, Part 2 (Redbeard battle). The warp gate only spawns if you arrive here without a power-up that can defeat enemies.")]
+    [Scooby(true)]
+    public bool Redbeard_Softlock { get; set; }
+
+    [Category("Scooby Level Patches"), DisplayName("Aghast 1: Plungers stick to deck"), Description("Allows the plungers to function on the slippery surfaces in Aghast by the Mast, Part 1.")]
+    [Scooby(false)]
+    public bool Aghast1_PlungersWork { get; set; }
+
+    [Category("Scooby Level Patches"), DisplayName("Cellar 1: Unlock door"), Description("Pulling down the chain will unlock both the exit door and the secret room door in Who's Yella in the Cellar, Part 1.")]
+    [Scooby(false)]
+    public bool Cellar1_UnlockDoor { get; set; }
+
+    [Category("Scooby Level Patches"), DisplayName("Hedge 1: Unlock gate"), Description("Unlocks the locked gate near the start of On Edge in the Hedge, Part 1 from both sides.")]
+    [Scooby(false)]
+    public bool Hedge1_UnlockGate { get; set; }
+
+    public RandomizerSettings()
+    {
+        TikiProbabilities = new TikiProbabilities();
+        EnemyProbabilities = new EnemyProbabilities();
+        EnemyProbabilitiesMovie = new EnemyProbabilitiesMovie();
+
+        PowerupCheatsBFBB = new PowerupCheatsBFBB();
+        PowerupCheatsScooby = new PowerupCheatsScooby();
+        PowerupCheatsMovie = new PowerupCheatsMovie();
+
+        Power_Up_Pool_Scooby = new PowerupPoolScooby();
+    }
+
+    public void SetAllFalse()
+    {
+        PowerupCheatsMovie.Preset = Preset.Nothing;
+        bootLevelMode = BootLevelMode.Default;
+
+        foreach (PropertyInfo property in GetType().GetProperties())
+            if (property.PropertyType == typeof(bool) && property.CanWrite)
+                property.SetValue(this, false);
+    }
+
+    public void ResetToDefault(int game)
+    {
+        foreach (PropertyInfo property in GetType().GetProperties())
         {
-            switch (game)
+            if (!property.CanRead || !property.CanWrite)
+                continue;
+
+            var attributes = property.GetCustomAttributes<GameAttribute>(true).ToArray();
+
+            var attribute =
+                attributes.FirstOrDefault(a => a.Game == game) ??
+                attributes.FirstOrDefault(a => a.Game == -1);
+
+            if (attribute != null)
             {
-                case 0: //BFBB
-                    dt.RemoveProperty("EnemyProbabilitiesMovie");
-                    dt.RemoveProperty("PowerupCheatsScooby");
-                    dt.RemoveProperty("PowerupCheatsMovie");
-                    dt.RemoveProperty("FloatingBlockChallenge");
-                    dt.RemoveProperty("CombatArenaCounts");
-                    dt.RemoveProperty("combatMin");
-                    dt.RemoveProperty("combatMax");
-                    dt.RemoveProperty("RingSizes");
-                    dt.RemoveProperty("ringScaleMin");
-                    dt.RemoveProperty("ringScaleMax");
-                    break;
-                case 1: // Scooby
-                    dt.RemoveProperty("Disco_Floors");
-                    dt.RemoveProperty("Tiki_Types");
-                    dt.RemoveProperty("Tiki_Models");
-                    dt.RemoveProperty("Tiki_Allow_Any_Type");
-                    dt.RemoveProperty("TikiProbabilities");
-                    dt.RemoveProperty("Enemy_Types");
-                    dt.RemoveProperty("Enemies_Allow_Any_Type");
-                    dt.RemoveProperty("EnemyProbabilities");
-                    dt.RemoveProperty("EnemyProbabilitiesMovie");
-                    dt.RemoveProperty("Pointer_Positions");
-                    dt.RemoveProperty("Teleport_Box_Positions");
-                    dt.RemoveProperty("Taxi_Trigger_Positions");
-                    dt.RemoveProperty("Bus_Stop_Trigger_Positions");
-                    dt.RemoveProperty("Spatula_Gates");
-                    dt.RemoveProperty("spatReqMin");
-                    dt.RemoveProperty("spatReqMax");
-                    dt.RemoveProperty("PlayerCharacters");
-                    dt.RemoveProperty("UnlockCharacters");
-                    dt.RemoveProperty("RandomCharacters");
-                    dt.RemoveProperty("PowerupCheatsBFBB");
-                    dt.RemoveProperty("PowerupCheatsMovie");
-                    dt.RemoveProperty("allMenuWarpsHB01");
-                    dt.RemoveProperty("invisibleLevel");
-                    dt.RemoveProperty("openTeleportBoxes");
-                    dt.RemoveProperty("disableFlythroughs");
-                    dt.RemoveProperty("disableCutscenes");
-                    dt.RemoveProperty("spatReqChum");
-                    dt.RemoveProperty("restoreRobotLaugh");
-                    dt.RemoveProperty("FloatingBlockChallenge");
-                    dt.RemoveProperty("CombatArenaCounts");
-                    dt.RemoveProperty("combatMin");
-                    dt.RemoveProperty("combatMax");
-                    dt.RemoveProperty("RingSizes");
-                    dt.RemoveProperty("ringScaleMin");
-                    dt.RemoveProperty("ringScaleMax");
-                    dt.RemoveProperty("widescreenMenu");
-                    dt.RemoveProperty("PlayerSounds");
-                    break;
-                case 2: // Movie
-                    dt.RemoveProperty("Tiki_Models");
-                    dt.RemoveProperty("EnemyProbabilities");
-                    dt.RemoveProperty("Taxi_Trigger_Positions");
-                    dt.RemoveProperty("Shiny_Object_Gates");
-                    dt.RemoveProperty("shinyReqMin");
-                    dt.RemoveProperty("shinyReqMax");
-                    dt.RemoveProperty("Spatula_Gates");
-                    dt.RemoveProperty("spatReqMin");
-                    dt.RemoveProperty("spatReqMax");
-                    dt.RemoveProperty("PlayerCharacters");
-                    dt.RemoveProperty("UnlockCharacters");
-                    dt.RemoveProperty("RandomCharacters");
-                    dt.RemoveProperty("PowerupCheatsBFBB");
-                    dt.RemoveProperty("PowerupCheatsScooby");
-                    dt.RemoveProperty("allMenuWarpsHB01");
-                    dt.RemoveProperty("disableFlythroughs");
-                    dt.RemoveProperty("spatReqChum");
-                    dt.RemoveProperty("restoreRobotLaugh");
-                    dt.RemoveProperty("widescreenMenu");
-                    dt.RemoveProperty("PlayerSounds");
-
-
-                    dt.RemoveProperty("disableCutscenes"); // remove this line later
-                    break;
-                default:
-                    throw new Exception("Invalid game");
+                if (attribute.Value != null && property.PropertyType.IsInstanceOfType(attribute.Value))
+                    property.SetValue(this, attribute.Value);
+            }
+            else if (property.PropertyType == typeof(bool))
+            {
+                property.SetValue(this, false);
             }
         }
+    }
 
-        public override int GetHashCode()
+    public void SetDynamicProperties(DynamicTypeDescriptor dt, int game)
+    {
+        foreach (PropertyDescriptor property in TypeDescriptor.GetProperties(this))
         {
-            int hashCode = 2009126788;
-            hashCode = hashCode * -1521134295 + EqualityComparer<string[]>.Default.GetHashCode(skipFiles);
-            hashCode = hashCode * -1521134295 + Pickups.GetHashCode();
-            hashCode = hashCode * -1521134295 + Disco_Floors.GetHashCode();
-            hashCode = hashCode * -1521134295 + Music.GetHashCode();
-            hashCode = hashCode * -1521134295 + FloatingBlockChallenge.GetHashCode();
-            hashCode = hashCode * -1521134295 + Cameras.GetHashCode();
-            hashCode = hashCode * -1521134295 + Textures.GetHashCode();
-            hashCode = hashCode * -1521134295 + Textures_Special.GetHashCode();
-            hashCode = hashCode * -1521134295 + Sounds.GetHashCode();
-            hashCode = hashCode * -1521134295 + Mix_Sound_Types.GetHashCode();
-            hashCode = hashCode * -1521134295 + PlayerSounds.GetHashCode();
-            hashCode = hashCode * -1521134295 + BoulderSettings.GetHashCode();
-            hashCode = hashCode * -1521134295 + boulderMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + boulderMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + Warps.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string[]>.Default.GetHashCode(skipFilesWarps);
-            hashCode = hashCode * -1521134295 + Tiki_Types.GetHashCode();
-            hashCode = hashCode * -1521134295 + Tiki_Models.GetHashCode();
-            hashCode = hashCode * -1521134295 + Tiki_Allow_Any_Type.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<TikiProbabilities>.Default.GetHashCode(TikiProbabilities);
-            hashCode = hashCode * -1521134295 + Enemy_Types.GetHashCode();
-            hashCode = hashCode * -1521134295 + Enemies_Allow_Any_Type.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<EnemyProbabilities>.Default.GetHashCode(EnemyProbabilities);
-            hashCode = hashCode * -1521134295 + EqualityComparer<EnemyProbabilitiesMovie>.Default.GetHashCode(EnemyProbabilitiesMovie);
-            hashCode = hashCode * -1521134295 + MovePoint_Radius.GetHashCode();
-            hashCode = hashCode * -1521134295 + mvptMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + mvptMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + PlatformSpeed.GetHashCode();
-            hashCode = hashCode * -1521134295 + speedMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + speedMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + Markers.GetHashCode();
-            hashCode = hashCode * -1521134295 + Pointer_Positions.GetHashCode();
-            hashCode = hashCode * -1521134295 + Teleport_Box_Positions.GetHashCode();
-            hashCode = hashCode * -1521134295 + Taxi_Trigger_Positions.GetHashCode();
-            hashCode = hashCode * -1521134295 + Bus_Stop_Trigger_Positions.GetHashCode();
-            hashCode = hashCode * -1521134295 + Timers.GetHashCode();
-            hashCode = hashCode * -1521134295 + timerMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + timerMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + Set_Scale.GetHashCode();
-            hashCode = hashCode * -1521134295 + scaleFactorX.GetHashCode();
-            hashCode = hashCode * -1521134295 + scaleFactorY.GetHashCode();
-            hashCode = hashCode * -1521134295 + scaleFactorZ.GetHashCode();
-            hashCode = hashCode * -1521134295 + Scale_Of_Things.GetHashCode();
-            hashCode = hashCode * -1521134295 + scaleMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + scaleMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + RingSizes.GetHashCode();
-            hashCode = hashCode * -1521134295 + ringScaleMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + ringScaleMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + Shiny_Object_Gates.GetHashCode();
-            hashCode = hashCode * -1521134295 + shinyReqMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + shinyReqMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + Spatula_Gates.GetHashCode();
-            hashCode = hashCode * -1521134295 + spatReqMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + spatReqMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + CombatArenaCounts.GetHashCode();
-            hashCode = hashCode * -1521134295 + combatMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + combatMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + Texture_Animations.GetHashCode();
-            hashCode = hashCode * -1521134295 + surfMin.GetHashCode();
-            hashCode = hashCode * -1521134295 + surfMax.GetHashCode();
-            hashCode = hashCode * -1521134295 + Colors.GetHashCode();
-            hashCode = hashCode * -1521134295 + VertexColors.GetHashCode();
-            hashCode = hashCode * -1521134295 + brightColors.GetHashCode();
-            hashCode = hashCode * -1521134295 + strongColors.GetHashCode();
-            hashCode = hashCode * -1521134295 + PlayerCharacters.GetHashCode();
-            hashCode = hashCode * -1521134295 + UnlockCharacters.GetHashCode();
-            hashCode = hashCode * -1521134295 + RandomCharacters.GetHashCode();
-            hashCode = hashCode * -1521134295 + cheatInvincible.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<PowerupCheatsBFBB>.Default.GetHashCode(PowerupCheatsBFBB);
-            hashCode = hashCode * -1521134295 + EqualityComparer<PowerupCheatsScooby>.Default.GetHashCode(PowerupCheatsScooby);
-            hashCode = hashCode * -1521134295 + EqualityComparer<PowerupCheatsMovie>.Default.GetHashCode(PowerupCheatsMovie);
-            hashCode = hashCode * -1521134295 + bootLevelMode.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(bootLevel);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(BootLevel);
-            hashCode = hashCode * -1521134295 + dontShowMenuOnBoot.GetHashCode();
-            hashCode = hashCode * -1521134295 + allMenuWarpsHB01.GetHashCode();
-            hashCode = hashCode * -1521134295 + restoreRobotLaugh.GetHashCode();
-            hashCode = hashCode * -1521134295 + widescreen.GetHashCode();
-            hashCode = hashCode * -1521134295 + disableCutscenes.GetHashCode();
-            hashCode = hashCode * -1521134295 + disableFlythroughs.GetHashCode();
-            hashCode = hashCode * -1521134295 + skipSpatulaAnims.GetHashCode();
-            hashCode = hashCode * -1521134295 + openTeleportBoxes.GetHashCode();
-            hashCode = hashCode * -1521134295 + spatReqChum.GetHashCode();
-            hashCode = hashCode * -1521134295 + invisibleLevel.GetHashCode();
-            hashCode = hashCode * -1521134295 + invisibleObjects.GetHashCode();
-            hashCode = hashCode * -1521134295 + bootHipLodtMulti.GetHashCode();
-            hashCode = hashCode * -1521134295 + lodtValue.GetHashCode();
-            return hashCode;
+            var attributes = GetType()
+                .GetProperty(property.Name)?
+                .GetCustomAttributes<GameAttribute>(true)
+                .ToArray() ?? Array.Empty<GameAttribute>();
+
+            if (!attributes.Any(a => a.Game == -1 || a.Game == game))
+                dt.RemoveProperty(property.Name);
         }
+    }
+
+    public override bool Equals(object obj)
+    {
+        return obj is RandomizerSettings settings &&
+               EqualityComparer<string[]>.Default.Equals(skipFiles, settings.skipFiles) &&
+               Pickups == settings.Pickups &&
+               Disco_Floors == settings.Disco_Floors &&
+               Music == settings.Music &&
+               FloatingBlockChallenge == settings.FloatingBlockChallenge &&
+               Cameras == settings.Cameras &&
+               Textures == settings.Textures &&
+               Textures_Special == settings.Textures_Special &&
+               Sounds == settings.Sounds &&
+               Mix_Sound_Types == settings.Mix_Sound_Types &&
+               PlayerSounds == settings.PlayerSounds &&
+               Power_Up_Levels_Scooby == settings.Power_Up_Levels_Scooby &&
+               Include_MonsterTokens == settings.Include_MonsterTokens &&
+               Include_GumSoap_Upgrades == settings.Include_GumSoap_Upgrades &&
+               Unlock_Groundskeeper == settings.Unlock_Groundskeeper &&
+               Skip_Springs == settings.Skip_Springs &&
+               Skip_Slippers_Lampshade == settings.Skip_Slippers_Lampshade &&
+               Power_Up_Levels_Scooby_Hints == settings.Power_Up_Levels_Scooby_Hints &&
+               BoulderSettings == settings.BoulderSettings &&
+               boulderMin == settings.boulderMin &&
+               boulderMax == settings.boulderMax &&
+               Warps == settings.Warps &&
+               EqualityComparer<string[]>.Default.Equals(skipFilesWarps, settings.skipFilesWarps) &&
+               Tiki_Types == settings.Tiki_Types &&
+               Tiki_Models == settings.Tiki_Models &&
+               Tiki_Allow_Any_Type == settings.Tiki_Allow_Any_Type &&
+               EqualityComparer<TikiProbabilities>.Default.Equals(TikiProbabilities, settings.TikiProbabilities) &&
+               Enemy_Types == settings.Enemy_Types &&
+               Enemies_Allow_Any_Type == settings.Enemies_Allow_Any_Type &&
+               EqualityComparer<EnemyProbabilities>.Default.Equals(EnemyProbabilities, settings.EnemyProbabilities) &&
+               EqualityComparer<EnemyProbabilitiesMovie>.Default.Equals(EnemyProbabilitiesMovie, settings.EnemyProbabilitiesMovie) &&
+               MovePoint_Radius == settings.MovePoint_Radius &&
+               mvptMin == settings.mvptMin &&
+               mvptMax == settings.mvptMax &&
+               PlatformSpeed == settings.PlatformSpeed &&
+               speedMin == settings.speedMin &&
+               speedMax == settings.speedMax &&
+               Markers == settings.Markers &&
+               Pointers == settings.Pointers &&
+               Teleport_Box_Positions == settings.Teleport_Box_Positions &&
+               Timers == settings.Timers &&
+               timerMin == settings.timerMin &&
+               timerMax == settings.timerMax &&
+               Set_Scale == settings.Set_Scale &&
+               scaleFactorX == settings.scaleFactorX &&
+               scaleFactorY == settings.scaleFactorY &&
+               scaleFactorZ == settings.scaleFactorZ &&
+               Scale_Of_Things == settings.Scale_Of_Things &&
+               scaleMin == settings.scaleMin &&
+               scaleMax == settings.scaleMax &&
+               RingSizes == settings.RingSizes &&
+               ringScaleMin == settings.ringScaleMin &&
+               ringScaleMax == settings.ringScaleMax &&
+               Shiny_Object_Gates == settings.Shiny_Object_Gates &&
+               shinyReqMin == settings.shinyReqMin &&
+               shinyReqMax == settings.shinyReqMax &&
+               SnackGates == settings.SnackGates &&
+               snackReqMin == settings.snackReqMin &&
+               snackReqMax == settings.snackReqMax &&
+               Spatula_Gates == settings.Spatula_Gates &&
+               spatReqMin == settings.spatReqMin &&
+               spatReqMax == settings.spatReqMax &&
+               CombatArenaCounts == settings.CombatArenaCounts &&
+               combatMin == settings.combatMin &&
+               combatMax == settings.combatMax &&
+               Texture_Animations == settings.Texture_Animations &&
+               surfMin == settings.surfMin &&
+               surfMax == settings.surfMax &&
+               Colors == settings.Colors &&
+               VertexColors == settings.VertexColors &&
+               brightColors == settings.brightColors &&
+               strongColors == settings.strongColors &&
+               PlayerCharacters == settings.PlayerCharacters &&
+               UnlockCharacters == settings.UnlockCharacters &&
+               RandomCharacters == settings.RandomCharacters &&
+               cheatInvincible == settings.cheatInvincible &&
+               EqualityComparer<PowerupCheatsBFBB>.Default.Equals(PowerupCheatsBFBB, settings.PowerupCheatsBFBB) &&
+               EqualityComparer<PowerupCheatsScooby>.Default.Equals(PowerupCheatsScooby, settings.PowerupCheatsScooby) &&
+               EqualityComparer<PowerupCheatsMovie>.Default.Equals(PowerupCheatsMovie, settings.PowerupCheatsMovie) &&
+               bootLevelMode == settings.bootLevelMode &&
+               bootLevel == settings.bootLevel &&
+               BootLevel == settings.BootLevel &&
+               dontShowMenuOnBoot == settings.dontShowMenuOnBoot &&
+               allMenuWarpsHB01 == settings.allMenuWarpsHB01 &&
+               restoreRobotLaugh == settings.restoreRobotLaugh &&
+               widescreen == settings.widescreen &&
+               disableCutscenes == settings.disableCutscenes &&
+               disableFlythroughs == settings.disableFlythroughs &&
+               skipSpatulaAnims == settings.skipSpatulaAnims &&
+               openTeleportBoxes == settings.openTeleportBoxes &&
+               spatReqChum == settings.spatReqChum &&
+               invisibleLevel == settings.invisibleLevel &&
+               invisibleObjects == settings.invisibleObjects &&
+               bootHipLodtMulti == settings.bootHipLodtMulti &&
+               lodtValue == settings.lodtValue &&
+               Hedge1_UnlockGate == settings.Hedge1_UnlockGate &&
+               DontLookDown_Softlock == settings.DontLookDown_Softlock &&
+               Cellar1_UnlockDoor == settings.Cellar1_UnlockDoor &&
+               Wreck1_Softlock == settings.Wreck1_Softlock &&
+               Redbeard_Softlock == settings.Redbeard_Softlock &&
+               Aghast1_PlungersWork == settings.Aghast1_PlungersWork;
+    }
+
+    public override int GetHashCode()
+    {
+        HashCode hash = new HashCode();
+        hash.Add(skipFiles);
+        hash.Add(Pickups);
+        hash.Add(Disco_Floors);
+        hash.Add(Music);
+        hash.Add(FloatingBlockChallenge);
+        hash.Add(Cameras);
+        hash.Add(Textures);
+        hash.Add(Textures_Special);
+        hash.Add(Sounds);
+        hash.Add(Mix_Sound_Types);
+        hash.Add(PlayerSounds);
+        hash.Add(Power_Up_Levels_Scooby);
+        hash.Add(Include_MonsterTokens);
+        hash.Add(Include_GumSoap_Upgrades);
+        hash.Add(Unlock_Groundskeeper);
+        hash.Add(Skip_Springs);
+        hash.Add(Skip_Slippers_Lampshade);
+        hash.Add(Power_Up_Levels_Scooby_Hints);
+        hash.Add(BoulderSettings);
+        hash.Add(boulderMin);
+        hash.Add(boulderMax);
+        hash.Add(Warps);
+        hash.Add(skipFilesWarps);
+        hash.Add(Tiki_Types);
+        hash.Add(Tiki_Models);
+        hash.Add(Tiki_Allow_Any_Type);
+        hash.Add(TikiProbabilities);
+        hash.Add(Enemy_Types);
+        hash.Add(Enemies_Allow_Any_Type);
+        hash.Add(EnemyProbabilities);
+        hash.Add(EnemyProbabilitiesMovie);
+        hash.Add(MovePoint_Radius);
+        hash.Add(mvptMin);
+        hash.Add(mvptMax);
+        hash.Add(PlatformSpeed);
+        hash.Add(speedMin);
+        hash.Add(speedMax);
+        hash.Add(Markers);
+        hash.Add(Pointers);
+        hash.Add(Teleport_Box_Positions);
+        hash.Add(Timers);
+        hash.Add(timerMin);
+        hash.Add(timerMax);
+        hash.Add(Set_Scale);
+        hash.Add(scaleFactorX);
+        hash.Add(scaleFactorY);
+        hash.Add(scaleFactorZ);
+        hash.Add(Scale_Of_Things);
+        hash.Add(scaleMin);
+        hash.Add(scaleMax);
+        hash.Add(RingSizes);
+        hash.Add(ringScaleMin);
+        hash.Add(ringScaleMax);
+        hash.Add(Shiny_Object_Gates);
+        hash.Add(shinyReqMin);
+        hash.Add(shinyReqMax);
+        hash.Add(SnackGates);
+        hash.Add(snackReqMin);
+        hash.Add(snackReqMax);
+        hash.Add(Spatula_Gates);
+        hash.Add(spatReqMin);
+        hash.Add(spatReqMax);
+        hash.Add(CombatArenaCounts);
+        hash.Add(combatMin);
+        hash.Add(combatMax);
+        hash.Add(Texture_Animations);
+        hash.Add(surfMin);
+        hash.Add(surfMax);
+        hash.Add(Colors);
+        hash.Add(VertexColors);
+        hash.Add(brightColors);
+        hash.Add(strongColors);
+        hash.Add(PlayerCharacters);
+        hash.Add(UnlockCharacters);
+        hash.Add(RandomCharacters);
+        hash.Add(cheatInvincible);
+        hash.Add(PowerupCheatsBFBB);
+        hash.Add(PowerupCheatsScooby);
+        hash.Add(PowerupCheatsMovie);
+        hash.Add(bootLevelMode);
+        hash.Add(bootLevel);
+        hash.Add(BootLevel);
+        hash.Add(dontShowMenuOnBoot);
+        hash.Add(allMenuWarpsHB01);
+        hash.Add(restoreRobotLaugh);
+        hash.Add(widescreen);
+        hash.Add(disableCutscenes);
+        hash.Add(disableFlythroughs);
+        hash.Add(skipSpatulaAnims);
+        hash.Add(openTeleportBoxes);
+        hash.Add(spatReqChum);
+        hash.Add(invisibleLevel);
+        hash.Add(invisibleObjects);
+        hash.Add(bootHipLodtMulti);
+        hash.Add(lodtValue);
+        hash.Add(Hedge1_UnlockGate);
+        hash.Add(DontLookDown_Softlock);
+        hash.Add(Cellar1_UnlockDoor);
+        hash.Add(Wreck1_Softlock);
+        hash.Add(Redbeard_Softlock);
+        hash.Add(Aghast1_PlungersWork);
+        return hash.ToHashCode();
     }
 }

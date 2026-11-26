@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ezMissionStatus
     {
@@ -62,25 +62,19 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID ExternalLoadID { get; set; }
 
-        public DynaLogicMission(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.logic__Mission, game, endianness)
+        public DynaLogicMission(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.logic__Mission, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                RequiredMission = new AssetID[4];
-                for (int i = 0; i < 4; i++)
-                    RequiredMission[i] = reader.ReadUInt32();
-                InitialLockStatus = (ezMissionStatus)reader.ReadUInt32();
-                OnceOnly = reader.ReadByteBool();
-                LoadInSlot = reader.ReadByteBool();
-                reader.ReadUInt16();
-                Task = new AssetID[16];
-                for (int i = 0; i < 16; i++)
-                    Task[i] = reader.ReadUInt32();
-                ExternalLoadID = reader.ReadUInt32();
-
-            }
+            RequiredMission = new AssetID[4];
+            for (int i = 0; i < 4; i++)
+                RequiredMission[i] = reader.ReadUInt32();
+            InitialLockStatus = (ezMissionStatus)reader.ReadUInt32();
+            OnceOnly = reader.ReadByteBool();
+            LoadInSlot = reader.ReadByteBool();
+            reader.ReadUInt16();
+            Task = new AssetID[16];
+            for (int i = 0; i < 16; i++)
+                Task[i] = reader.ReadUInt32();
+            ExternalLoadID = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

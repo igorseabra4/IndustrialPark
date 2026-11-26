@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetPGRS : BaseAsset
     {
@@ -32,18 +32,13 @@ namespace IndustrialPark
             _progressLinks = new Link[0];
         }
 
-        public AssetPGRS(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPGRS(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            int progressLinkCount = reader.ReadInt32();
 
-                int progressLinkCount = reader.ReadInt32();
-
-                _progressLinks = new Link[progressLinkCount];
-                for (int i = 0; i < _progressLinks.Length; i++)
-                    _progressLinks[i] = new Link(reader, LinkType.Progress, game);
-            }
+            _progressLinks = new Link[progressLinkCount];
+            for (int i = 0; i < _progressLinks.Length; i++)
+                _progressLinks[i] = new Link(reader, LinkType.Progress, game);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

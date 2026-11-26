@@ -1,11 +1,11 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
 using SharpDX.Direct3D11;
 using System.ComponentModel;
 using System.Drawing;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetUIFT : AssetUI
     {
@@ -60,34 +60,31 @@ namespace IndustrialPark
             Char_Height = 24;
         }
 
-        public AssetUIFT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetUIFT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = game == Game.BFBB ? 0x80 : 0x7C;
+            reader.BaseStream.Position = game == Game.BFBB ? 0x80 : 0x7C;
 
-                UIFontFlags.FlagValueShort = reader.ReadUInt16();
-                UIFontMode = reader.ReadByte();
-                FontID = (FontEnum)reader.ReadByte();
-                Text = reader.ReadUInt32();
-                BackgroundColor = reader.ReadColor();
-                FontColor = reader.ReadColor();
-                Padding_Top = reader.ReadInt16();
-                Padding_Bottom = reader.ReadInt16();
-                Padding_Left = reader.ReadInt16();
-                Padding_Right = reader.ReadInt16();
-                Spacing_Horizontal = reader.ReadInt16();
-                Spacing_Vertical = reader.ReadInt16();
-                Char_Width = reader.ReadInt16();
-                Char_Height = reader.ReadInt16();
-                if (game != Game.Scooby)
-                    MaxHeight = reader.ReadInt32();
-            }
+            UIFontFlags.FlagValueShort = reader.ReadUInt16();
+            UIFontMode = reader.ReadByte();
+            FontID = (FontEnum)reader.ReadByte();
+            Text = reader.ReadUInt32();
+            BackgroundColor = reader.ReadColor();
+            FontColor = reader.ReadColor();
+            Padding_Top = reader.ReadInt16();
+            Padding_Bottom = reader.ReadInt16();
+            Padding_Left = reader.ReadInt16();
+            Padding_Right = reader.ReadInt16();
+            Spacing_Horizontal = reader.ReadInt16();
+            Spacing_Vertical = reader.ReadInt16();
+            Char_Width = reader.ReadInt16();
+            Char_Height = reader.ReadInt16();
+            if (game != Game.Scooby)
+                MaxHeight = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            SerializeForUIFT(writer);
+            SerializeUI(writer);
             writer.Write(UIFontFlags.FlagValueShort);
             writer.Write(UIFontMode);
             writer.Write((byte)FontID);
@@ -111,38 +108,24 @@ namespace IndustrialPark
 
         public override bool DontRender => dontRender;
 
-        public override float? GetIntersectionPosition(SharpRenderer renderer, Ray ray)
-        {
-            if (ShouldDraw(renderer) && ray.Intersects(ref boundingBox))
-                return TriangleIntersection(ray, SharpRenderer.planeTriangles, SharpRenderer.planeVertices, world);
-            return null;
-        }
-
 #if DEBUG
-        protected override void CreateBoundingBox()
-        {
-            CreateBoundingBox(SharpRenderer.planeVertices);
-        }
 
         public override void Draw(SharpRenderer renderer)
         {
             bool found = false;
-            foreach (var ae in Program.MainForm.archiveEditors)
-                if (ae.archive.ContainsAsset(Text) && ae.archive.GetFromAssetID(Text) is AssetTEXT assetText)
+            var ae = Program.ArchiveManager.ArchiveEditorContainingAsset(Text);
+            if (ae != null && ae.archive.GetAsset(Text) is AssetTEXT assetText)
+            {
+                var newText = assetText.Text;
+                if (newText != text)
                 {
-                    var newText = assetText.Text;
-                    if (newText != text)
-                    {
-                        text = newText;
-                        if (image != null)
-                        {
-                            image.Dispose();
-                            image = null;
-                        }
-                        image = TextureUtilities.CreateTextureFromBitmap(renderer.device.Device, DrawBitmapFromText());
-                        found = true;
-                    }
+                    text = newText;
+                    image?.Dispose();
+                    image = null;
+                    image = TextureUtilities.CreateTextureFromBitmap(renderer.device.Device, DrawBitmapFromText());
+                    found = true;
                 }
+            }
             if (!found)
                 image = null;
 

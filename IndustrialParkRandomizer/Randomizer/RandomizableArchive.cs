@@ -1,5 +1,6 @@
 ﻿using HipHopFile;
-using Newtonsoft.Json;
+using IndustrialPark.Archives;
+using IndustrialPark.Assets;
 using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX;
@@ -7,33 +8,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static IndustrialPark.Randomizer.RandomizerHelper;
 
 namespace IndustrialPark.Randomizer
 {
-    public class RandomizableArchive : ArchiveEditorFunctions
+    public class RandomizableArchive : Archive
     {
-        protected Asset TryCreateAsset(Section_AHDR AHDR, Game game, Endianness endianness, bool showMessageBox, ref string error)
+        public RandomizableArchive(HipFile hipFile, string hipPath) : base(hipFile, hipPath, false, out _)
         {
-            try
-            {
-                return CreateAsset(AHDR, game, endianness);
-            }
-            catch
-            {
-                return new AssetGeneric(AHDR, game, endianness);
-            }
-        }
-
-        public RandomizableArchive()
-        {
-            SkipTextureDisplay = true;
+            layerRepository.AutoLayers = true;
+            layerRepository.ClearLayers();
         }
 
         public static Random random;
 
         public bool Randomize(RandomizerSettings settings)
         {
-            if (LevelName == "hb09")
+            if (Game == Game.BFBB && LevelName == "hb09")
                 return RandomizePoliceStation(settings);
 
             bool shuffled = false;
@@ -53,11 +44,14 @@ namespace IndustrialPark.Randomizer
             if (settings.BoulderSettings && ContainsAssetWithType(AssetType.Boulder))
                 shuffled |= RandomizeBoulderSettings(settings);
 
-            if (settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
-                shuffled |= RandomizePickupPositions();
+            if (Game != Game.Scooby && settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
+                shuffled |= RandomizePickupPositions(settings.Skip_Springs);
 
-            if (settings.Shiny_Object_Gates && game == Game.Scooby && ContainsAssetWithType(AssetType.Pickup))
-                shuffled |= RandomizeSnackGates(settings.shinyReqMin, settings.shinyReqMax);
+            if (Game == Game.Scooby && settings.Food && ContainsAssetWithType(AssetType.Pickup))
+                shuffled |= RandomizeFood();
+
+            if (Game == Game.Scooby && settings.SnackGates && ContainsAssetWithType(AssetType.Pickup))
+                shuffled |= RandomizeSnackGates(settings.snackReqMin, settings.snackReqMax);
 
             shuffled |= RandomizeTikisCrates(settings);
 
@@ -66,13 +60,11 @@ namespace IndustrialPark.Randomizer
             if (settings.MovePoint_Radius && ContainsAssetWithType(AssetType.MovePoint))
                 shuffled |= RandomizeMovePointRadius(settings);
 
-            if (settings.Markers)
-                shuffled |= ShuffleMRKRPositions(
-                    settings.allMenuWarpsHB01,
-                    settings.Pointer_Positions,
-                    settings.Bus_Stop_Trigger_Positions,
-                    settings.Teleport_Box_Positions,
-                    settings.Taxi_Trigger_Positions);
+            if ((Game == Game.BFBB || Game == Game.Incredibles) && (settings.Markers || settings.Pointers))
+                shuffled |= ShufflePositionAssets(
+                    settings.Markers,
+                    settings.Pointers,
+                    settings.Teleport_Box_Positions);
 
             if (settings.Cameras && ContainsAssetWithType(AssetType.Camera))
                 shuffled |= ShuffleCameras();
@@ -80,17 +72,17 @@ namespace IndustrialPark.Randomizer
             bool shinyNumbers = false;
             bool spatNumbers = false;
 
-            if (game == Game.BFBB && settings.Shiny_Object_Gates && ContainsAssetWithType(AssetType.Conditional))
+            if (Game == Game.BFBB && settings.Shiny_Object_Gates && ContainsAssetWithType(AssetType.Conditional))
                 shuffled |= ShuffleShinyGates(settings, out shinyNumbers);
 
-            if (game == Game.BFBB)
+            if (Game == Game.BFBB)
                 if ((settings.spatReqChum != 75 || settings.Spatula_Gates) && ContainsAssetWithType(AssetType.Conditional))
                     shuffled |= ShuffleSpatulaGates(settings.Spatula_Gates, settings, out spatNumbers);
 
-            if (game == Game.Incredibles && settings.CombatArenaCounts && ContainsAssetWithType(AssetType.Counter))
+            if (Game == Game.Incredibles && settings.CombatArenaCounts && ContainsAssetWithType(AssetType.Counter))
                 shuffled |= ShuffleCombatArenas(settings.combatMin, settings.combatMax);
 
-            if (settings.PlatformSpeed && ContainsAssetWithType(AssetType.Platform))
+            if (settings.PlatformSpeed && (ContainsAssetWithType(AssetType.Platform)|| ContainsAssetWithType(AssetType.Pendulum)))
                 shuffled |= ShufflePlatSpeeds(settings);
 
             if (shinyNumbers || spatNumbers)
@@ -102,7 +94,7 @@ namespace IndustrialPark.Randomizer
             if (settings.RingSizes && ContainsAssetWithType(AssetType.Ring))
                 shuffled |= ShuffleRingScales(settings);
 
-            if (settings.FloatingBlockChallenge && game == Game.Incredibles && ContainsAssetWithType(AssetType.Platform))
+            if (settings.FloatingBlockChallenge && Game == Game.Incredibles && ContainsAssetWithType(AssetType.Platform))
                 shuffled |= ShuffleFloatingBlocks();
 
             if (settings.Colors)
@@ -111,16 +103,16 @@ namespace IndustrialPark.Randomizer
                     ShufflePlaceableDynaColors(settings.brightColors, settings.strongColors) |
                     ShuffleLevelModelColors(settings.brightColors, settings.strongColors, settings.VertexColors);
 
-            if (game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.BusStop))
+            if (Game == Game.BFBB && settings.PlayerCharacters && ContainsAssetWithType(AssetType.BusStop))
                 shuffled |= ShuffleBusStops();
 
             if (settings.Music)
                 shuffled |= RandomizePlaylistLocal();
 
-            if (game == Game.BFBB && settings.disableCutscenes)
+            if (Game == Game.BFBB && settings.disableCutscenes)
                 shuffled |= DisableCutscenes();
 
-            if (game == Game.Incredibles && settings.disableCutscenes)
+            if (Game == Game.Incredibles && settings.disableCutscenes)
                 shuffled |= DisableCutscenesMovie();
 
             if (settings.openTeleportBoxes && ContainsAssetWithType(AssetType.TeleportBox))
@@ -135,7 +127,7 @@ namespace IndustrialPark.Randomizer
             if (settings.Set_Scale)
             {
                 shuffled |= true;
-                ApplyScale(new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
+                ArchiveModelTransformer.ApplyScale(this, new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
             }
 
             if (settings.Textures && ContainsAssetWithType(AssetType.Texture))
@@ -149,7 +141,7 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeTikisCrates(RandomizerSettings settings)
         {
-            if (game == Game.BFBB)
+            if (Game == Game.BFBB)
             {
                 if (settings.Tiki_Types && ContainsAssetWithType(AssetType.NPC))
                 {
@@ -183,7 +175,7 @@ namespace IndustrialPark.Randomizer
                     return ShuffleVilTypes(chooseFrom, setTo, settings.Tiki_Models, settings.Tiki_Allow_Any_Type, false);
                 }
             }
-            else if (game == Game.Incredibles)
+            else if (Game == Game.Incredibles)
             {
                 if (settings.Tiki_Types && ContainsAssetWithType(AssetType.Crate))
                 {
@@ -220,7 +212,7 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeEnemies(RandomizerSettings settings)
         {
-            if (game == Game.BFBB)
+            if (Game == Game.BFBB)
             {
                 if (settings.Enemy_Types && ContainsAssetWithType(AssetType.NPC))
                 {
@@ -285,7 +277,7 @@ namespace IndustrialPark.Randomizer
                     return ShuffleVilTypes(chooseFrom, setTo, false, settings.Enemies_Allow_Any_Type, true);
                 }
             }
-            else if (game == Game.Incredibles)
+            else if (Game == Game.Incredibles)
             {
                 if (settings.Enemy_Types && ContainsAssetWithType(AssetType.Enemy))
                 {
@@ -391,9 +383,18 @@ namespace IndustrialPark.Randomizer
             return false;
         }
 
+        private Asset PlaceTemplate(AssetTemplate template, string assetName = null, Vector3 position = new Vector3())
+        {
+            var assets = AssetFactory.GenerateTemplate(Game, Platform, ContainsAsset, template, assetName, position);
+
+            AddMultipleAssets(assets, -1, false);
+
+            return assets[0];
+        }
+
         private bool RandomizeTimers(float timerMin, float timerMax)
         {
-            var timers = from asset in assetDictionary.Values where asset.assetType == AssetType.Timer select (AssetTIMR)asset;
+            var timers = from asset in assetRepository.Assets where asset.assetType == AssetType.Timer select (AssetTIMR)asset;
             foreach (var timr in timers)
                 timr.Time *= random.NextFloat(timerMin, timerMax);
             return timers.Any();
@@ -401,7 +402,7 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeSurfs(float surfMin, float surfMax)
         {
-            var surfs = from asset in assetDictionary.Values where asset.assetType == AssetType.Surface select (AssetSURF)asset;
+            var surfs = from asset in assetRepository.Assets where asset.assetType == AssetType.Surface select (AssetSURF)asset;
             foreach (var surf in surfs)
             {
                 if (surf.zSurfUVFX.TransSpeed_X == 0)
@@ -419,7 +420,7 @@ namespace IndustrialPark.Randomizer
 
         private bool DisableFlys()
         {
-            var flys = from asset in assetDictionary.Values where asset is AssetFLY fly && fly.Frames.Length > 1 select (AssetFLY)asset;
+            var flys = from asset in assetRepository.Assets where asset is AssetFLY fly && fly.Frames.Length > 1 select (AssetFLY)asset;
             foreach (var fly in flys)
                 fly.Frames = new FlyFrame[] { fly.Frames[0] };
             return flys.Any();
@@ -427,27 +428,20 @@ namespace IndustrialPark.Randomizer
 
         private bool OpenTeleportBoxes()
         {
-            List<uint> dynaTeleportAssetIDs = new List<uint>();
+            var teleportBoxes = assetRepository.Assets.OfType<DynaGObjectTeleport>().ToList();
 
-            foreach (AssetDYNA dyna in (from asset in assetDictionary.Values
-                                        where asset is AssetDYNA dyna && dyna.Type == DynaType.game_object__Teleport
-                                        select asset).Cast<AssetDYNA>())
-            {
-                dynaTeleportAssetIDs.Add(dyna.assetID);
-            }
-
-            if (dynaTeleportAssetIDs.Count == 0)
+            if (teleportBoxes.Count == 0)
                 return false;
 
-            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate("IP_TELEBOX", AssetTemplate.Dispatcher);
+            AssetDPAT dispatcher = (AssetDPAT)PlaceTemplate(AssetTemplate.Dispatcher, "IP_TELEBOX");
 
             var links = new List<Link>();
-            foreach (uint u in dynaTeleportAssetIDs)
-                links.Add(new Link(game)
+            foreach (var asset in teleportBoxes)
+                links.Add(new Link(Game)
                 {
-                    EventReceiveID = (ushort)(ushort)EventBFBB.ScenePrepare,
-                    EventSendID = (ushort)EventBFBB.OpenTeleportBox,
-                    TargetAsset = u,
+                    EventReceiveBFBB = EventBFBB.ScenePrepare,
+                    EventSendBFBB = EventBFBB.OpenTeleportBox,
+                    TargetAsset = asset.assetID,
                 });
 
             dispatcher.Links = links.ToArray();
@@ -457,7 +451,7 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeTextures(bool hud)
         {
-            var assets = (from asset in assetDictionary.Values
+            var assets = (from asset in assetRepository.Assets
                           where asset.assetType == AssetType.Texture
                           && ((hud && asset.assetName.ToLower().Contains("rw3")) || (!hud))
                           select (AssetWithData)asset).ToList();
@@ -479,7 +473,7 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeDisco()
         {
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.DiscoFloor select (AssetDSCO)asset).ToList();
+            var assets = (from asset in assetRepository.Assets where asset.assetType == AssetType.DiscoFloor select (AssetDSCO)asset).ToList();
 
             foreach (var dsco in assets)
             {
@@ -499,19 +493,19 @@ namespace IndustrialPark.Randomizer
             return result;
         }
 
-        private bool RandomizePickupPositions()
+        public bool RandomizePickupPositions(bool skipSprings)
         {
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.Pickup select (AssetPKUP)asset).ToList();
+            var assets = (from asset in assetRepository.Assets where asset.assetType == AssetType.Pickup select (AssetPKUP)asset).ToList();
 
             if (assets.Count < 2)
                 return false;
 
-            if (game == Game.BFBB)
+            if (Game == Game.BFBB)
                 VerifyPickupsBFBB(ref assets);
-            else if (game == Game.Incredibles)
+            else if (Game == Game.Incredibles)
                 VerifyPickupsMovie(ref assets);
-            else if (game == Game.Scooby)
-                VerifyPickupsScooby(ref assets);
+            else if (Game == Game.Scooby)
+                VerifyPickupsScooby(ref assets, skipSprings);
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
 
@@ -525,8 +519,30 @@ namespace IndustrialPark.Randomizer
 
                 positions.RemoveAt(value);
 
-                if (game == Game.Incredibles)
+                if (Game == Game.Incredibles)
                     RemoveFromVolume(a.assetID);
+            }
+
+            return true;
+        }
+
+        public bool RandomizeFood()
+        {
+            var assets = assetRepository.Assets.OfType<AssetPKUP>().Where(pkup => Food.Contains((PickupReference)(uint)pkup.PickReferenceID)).ToList();
+
+            if (assets.Count == 0)
+                return false;
+
+            var food = new List<PickupReference>();
+
+            foreach (AssetPKUP a in assets)
+            {
+                if (food.Count == 0)
+                    food.AddRange(Food.OrderBy(f => f));
+
+                int index = random.Next(0, food.Count);
+                a.PickReferenceID = (uint)food[index];
+                food.RemoveAt(index);
             }
 
             return true;
@@ -534,9 +550,9 @@ namespace IndustrialPark.Randomizer
 
         private bool RandomizeSnackGates(float snackGateMin, float snackGateMax)
         {
-            var assets = (from asset in assetDictionary.Values where asset is AssetPKUP pkup && pkup.PickReferenceID.Equals(0x25E4C286) select (AssetPKUP)asset).ToList();
+            var assets = (from asset in assetRepository.Assets where asset is AssetPKUP pkup && pkup.PickReferenceID.Equals((uint)PickupReference.Snack_Gate) select (AssetPKUP)asset).ToList();
 
-            if (assets.Count < 2)
+            if (assets.Count == 0)
                 return false;
 
             foreach (var a in assets)
@@ -570,19 +586,17 @@ namespace IndustrialPark.Randomizer
                     break;
                 case "gl01":
                     RemoveAssetsFrom(ref assets, "SHINY_YELLOW_004");
-                    if (ContainsAsset(new AssetID("GOLDENSPATULA_04")))
-                        ((AssetPKUP)GetFromAssetID(new AssetID("GOLDENSPATULA_04"))).PositionY += 2f;
+                    if (TryGetAsset(new AssetID("GOLDENSPATULA_04"), out AssetPKUP goldenSpatula04))
+                        goldenSpatula04.PositionY += 2f;
                     break;
                 case "gl03":
-                    if (ContainsAsset(0x0B48E8AC))
+                    if (TryGetAsset(new AssetID(0x0B48E8AC), out AssetDYNA dyna))
                     {
-                        AssetDYNA dyna = (AssetDYNA)GetFromAssetID(0x0B48E8AC);
-                        dyna.Links = new Link[0];
-
-                        if (ContainsAsset(0xF70F6FEE))
+                        dyna.Links = [];
+                        if (TryGetAsset(new AssetID(0xF70F6FEE), out AssetPKUP targetPickup))
                         {
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).PickupFlags = EPickupFlags.InitiallyVisible;
-                            ((AssetPKUP)GetFromAssetID(0xF70F6FEE)).VisibilityFlags.FlagValueByte = 1;
+                            targetPickup.PickupFlags = EPickupFlags.InitiallyVisible;
+                            targetPickup.VisibilityFlags.FlagValueByte = 1;
                         }
                     }
                     break;
@@ -596,7 +610,7 @@ namespace IndustrialPark.Randomizer
                     for (int i = 0; i < assets.Count; i++)
                     {
                         foreach (Link link in assets[i].Links)
-                            if (link.EventSendID == (ushort)EventBFBB.Mount)
+                            if (link.EventSendBFBB == EventBFBB.Mount)
                             {
                                 assets.RemoveAt(i);
                                 i--;
@@ -607,27 +621,6 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private void RemoveAssetsFrom(ref List<AssetPKUP> assets, params string[] names)
-        {
-            for (int i = 0; i < assets.Count; i++)
-                foreach (string s in names)
-                    if (assets[i].assetName.Equals(s))
-                    {
-                        assets.RemoveAt(i--);
-                        break;
-                    }
-        }
-
-        private void RemoveAssetsFromContains(ref List<AssetPKUP> assets, params string[] names)
-        {
-            for (int i = 0; i < assets.Count; i++)
-                foreach (string s in names)
-                    if (assets[i].assetName.Contains(s))
-                    {
-                        assets.RemoveAt(i--);
-                        break;
-                    }
-        }
 
         private void VerifyPickupsMovie(ref List<AssetPKUP> assets)
         {
@@ -656,10 +649,17 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private void VerifyPickupsScooby(ref List<AssetPKUP> assets)
+        private void VerifyPickupsScooby(ref List<AssetPKUP> assets, bool skipSprings)
         {
             switch (LevelName)
             {
+                case "e002":
+                    RemoveAssetsFromContains(ref assets, "SLIPPERS");
+                    RemoveAssetsFromContains(ref assets, "LAMPSHADE");
+                    break;
+                case "f010" when skipSprings:
+                    RemoveAssetsFromContains(ref assets, "SPRINGS");
+                    break;
                 case "g009":
                     RemoveAssetsFromContains(ref assets, "FLOAT");
                     break;
@@ -670,11 +670,15 @@ namespace IndustrialPark.Randomizer
                     RemoveAssetsFromContains(ref assets, "GUMMACHINE");
                     break;
             }
+            if (DontRandomizeKeys.Contains(LevelName))
+                assets.RemoveAll(asset => asset.PickReferenceID == 0x6F24CBD8); // keys
         }
+
+        private static HashSet<string> DontRandomizeKeys = ["b003", "g001", "g007", "g009", "i001", "i003", "i005", "p002", "p003", "p005"];
 
         private void RemoveFromVolume(uint assetID)
         {
-            foreach (Asset a in assetDictionary.Values)
+            foreach (Asset a in assetRepository.Assets)
                 if (a is AssetGRUP grup && grup.assetName.ToLower().Contains("volume"))
                 {
                     var items = (from value in grup.Items select (uint)value).ToList();
@@ -688,7 +692,7 @@ namespace IndustrialPark.Randomizer
 
         private bool ShuffleCameras()
         {
-            var assets = (from asset in assetDictionary.Values
+            var assets = (from asset in assetRepository.Assets
                           where asset.assetType == AssetType.Camera && asset.assetName != "STARTCAM"
                           select (AssetCAM)asset).ToList();
 
@@ -698,7 +702,7 @@ namespace IndustrialPark.Randomizer
             for (int i = 0; i < assets.Count; i++)
             {
                 var whoTargets = FindWhoTargets(assets[i].assetID);
-                if (whoTargets.Count > 0 && GetFromAssetID(whoTargets[0]) is AssetDYNA dyna
+                if (whoTargets.Count > 0 && whoTargets[0] is AssetDYNA dyna
                     && (dyna.Type == DynaType.game_object__BusStop || dyna.Type == DynaType.game_object__Taxi))
                 {
                     assets.RemoveAt(i);
@@ -751,7 +755,7 @@ namespace IndustrialPark.Randomizer
         {
             var types = new AssetType[] { AssetType.Boulder, AssetType.Button, AssetType.DestructibleObject, AssetType.Platform, AssetType.SimpleObject };
 
-            var assets = (from asset in assetDictionary.Values
+            var assets = (from asset in assetRepository.Assets
                           where types.Contains(asset.assetType) && !asset.assetName.ToLower().Contains("track")
                           select (EntityAsset)asset).ToList();
 
@@ -759,7 +763,7 @@ namespace IndustrialPark.Randomizer
             {
                 bool isSkydome = false;
                 foreach (var l in a.Links)
-                    if ((EventBFBB)l.EventSendID == EventBFBB.SetasSkydome && l.TargetAsset.Equals(a.assetID))
+                    if (l.EventSendBFBB == EventBFBB.SetasSkydome && l.TargetAsset.Equals(a.assetID))
                     {
                         isSkydome = true;
                         break;
@@ -787,7 +791,7 @@ namespace IndustrialPark.Randomizer
 
         private bool ShuffleRingScales(RandomizerSettings settings)
         {
-            var assets = (from asset in assetDictionary.Values where asset is DynaGObjectRing select (DynaGObjectRing)asset).ToList();
+            var assets = (from asset in assetRepository.Assets where asset is DynaGObjectRing select (DynaGObjectRing)asset).ToList();
 
             bool result = assets.Count != 0;
 
@@ -815,7 +819,7 @@ namespace IndustrialPark.Randomizer
                 case "fb01":
                 case "fb02":
                 case "fb03":
-                    var assets = (from asset in assetDictionary.Values where asset is AssetPLAT select (AssetPLAT)asset).ToList();
+                    var assets = (from asset in assetRepository.Assets where asset is AssetPLAT select (AssetPLAT)asset).ToList();
 
                     for (int i = 0; i < assets.Count; i++)
                     {
@@ -825,9 +829,9 @@ namespace IndustrialPark.Randomizer
                         {
                             assets.RemoveAt(i--);
                             continue;
-                        }
-                        foreach (var l in assets[i].Links)
-                            if (l.EventSendID == (ushort)EventTSSM.Drivenby)
+                            }
+                            foreach (var l in assets[i].Links)
+                            if (l.EventSendTSSM == EventTSSM.Drivenby)
                             {
                                 assets.RemoveAt(i--);
                                 break;
@@ -859,10 +863,10 @@ namespace IndustrialPark.Randomizer
 
         private void SetDeltaToDriven(uint assetID, Vector3 delta)
         {
-            foreach (Asset a in assetDictionary.Values)
+            foreach (Asset a in assetRepository.Assets)
                 if (a is EntityAsset entity)
                     foreach (var l in entity.Links)
-                        if (l.EventSendID == (ushort)EventTSSM.Drivenby && l.TargetAsset.Equals(assetID))
+                        if (l.EventSendTSSM == EventTSSM.Drivenby && l.TargetAsset.Equals(assetID))
                         {
                             entity.PositionX += delta.X;
                             entity.PositionY += delta.Y;
@@ -877,7 +881,7 @@ namespace IndustrialPark.Randomizer
                             AssetType.Boulder, AssetType.Button, AssetType.DestructibleObject, AssetType.Hangable, AssetType.Villain, AssetType.Pendulum,
                             AssetType.Pickup, AssetType.Platform, AssetType.Player, AssetType.SimpleObject, AssetType.NPC };
 
-            List<EntityAsset> assets = (from asset in assetDictionary.Values
+            List<EntityAsset> assets = (from asset in assetRepository.Assets
                                         where allowed.Contains(asset.assetType)
                                         select asset).Cast<EntityAsset>().ToList();
 
@@ -894,7 +898,7 @@ namespace IndustrialPark.Randomizer
 
         private bool ShufflePlaceableDynaColors(bool brightColors, bool strongColors)
         {
-            List<DynaEnemy> assets = (from asset in assetDictionary.Values
+            List<DynaEnemy> assets = (from asset in assetRepository.Assets
                                       where asset is DynaEnemy
                                       select asset).Cast<DynaEnemy>().ToList();
 
@@ -911,7 +915,7 @@ namespace IndustrialPark.Randomizer
 
         private bool ShuffleLevelModelColors(bool brightColors, bool strongColors, bool vertexColors)
         {
-            var assets = (from asset in assetDictionary.Values
+            var assets = (from asset in assetRepository.Assets
                           where asset is AssetJSP assetJsp
                           select (AssetJSP)asset).ToList();
 
@@ -1056,25 +1060,36 @@ namespace IndustrialPark.Randomizer
         private RWSection[] ModelAsRWSections(byte[] data, out int renderWareVersion, bool treatStuffAsByteArray = true)
         {
             ReadFileMethods.treatStuffAsByteArray = treatStuffAsByteArray;
-            RWSection[] sections = ReadFileMethods.ReadRenderWareFile(data);
-            renderWareVersion = sections[0].renderWareVersion;
-            ReadFileMethods.treatStuffAsByteArray = false;
-            return sections;
+            try
+            {
+                RWSection[] sections = ReadFileMethods.ReadRenderWareFile(data);
+                renderWareVersion = sections[0].renderWareVersion;
+                return sections;
+            }
+            finally
+            {
+                ReadFileMethods.treatStuffAsByteArray = false;
+            }
         }
 
         private byte[] ModelToRWSections(RWSection[] sections, int renderWareVersion)
         {
             ReadFileMethods.treatStuffAsByteArray = true;
-            byte[] data = ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
-            ReadFileMethods.treatStuffAsByteArray = false;
-            return data;
+            try
+            {
+                return ReadFileMethods.ExportRenderWareFile(sections, renderWareVersion);
+            }
+            finally
+            {
+                ReadFileMethods.treatStuffAsByteArray = false;
+            }
         }
 
         private bool ShuffleBusStops()
         {
             bool result = false;
 
-            foreach (var dynaBusStop in (from asset in assetDictionary.Values
+            foreach (var dynaBusStop in (from asset in assetRepository.Assets
                                          where asset is DynaGObjectBusStop
                                          select asset).Cast<DynaGObjectBusStop>())
             {
@@ -1109,69 +1124,64 @@ namespace IndustrialPark.Randomizer
         {
             if (ContainsAsset(vilAssetID))
             {
-                AssetVIL vil = ((AssetVIL)GetFromAssetID(vilAssetID));
+                AssetVIL vil = GetAsset<AssetVIL>(vilAssetID);
                 vil.TaskBox2 = vil.TaskBox1;
             }
         }
 
         public bool RandomizePlayerOnSpawn()
         {
-            var group = (AssetGRUP)PlaceTemplate("IP_RANDO_PLAYER_GRUP", AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(AssetTemplate.Group, "IP_RANDO_PLAYER_GRUP");
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
-                new Link(game)
+                new Link(Game)
                 {
-                    EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                    EventSendID = (ushort)EventBFBB.Run,
+                    EventReceiveBFBB = EventBFBB.ScenePrepare,
+                    EventSendBFBB = EventBFBB.Run,
                     TargetAsset = group.assetID
                 }
             };
 
-            var outAssetIDs = new List<uint>();
+            var timers = new List<AssetID>();
             for (int i = 0; i < 3; i++)
             {
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_PLAYER_TIMR", AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(AssetTemplate.Timer, "IP_RANDO_PLAYER_TIMR");
                 timer.Time = 0.1f;
-                timer.Links = new Link[]
-                {
-                    new Link(game)
+                timer.Links =
+                [
+                    new Link(Game)
                     {
                         FloatParameter1 = i,
-                        EventReceiveID = (ushort)EventBFBB.Expired,
-                        EventSendID = (ushort)EventBFBB.SwitchPlayerCharacter,
+                        EventReceiveBFBB = EventBFBB.Expired,
+                        EventSendBFBB = EventBFBB.SwitchPlayerCharacter,
                         TargetAsset = "SPONGEBOB"
                     },
-                    new Link(game)
+                    new Link(Game)
                     {
-                        EventReceiveID = (ushort)EventBFBB.Expired,
-                        EventSendID = (ushort)EventBFBB.Reset,
+                        EventReceiveBFBB = EventBFBB.Expired,
+                        EventSendBFBB = EventBFBB.Reset,
                         TargetAsset = timer.assetID
                     }
-                };
+                ];
+                timers.Add(timer.assetID);
             }
 
-            var assetIDs = new List<AssetID>();
-            foreach (uint i in outAssetIDs)
-                assetIDs.Add(new AssetID(i));
-            group.Items = assetIDs.ToArray();
+            group.Items = timers.ToArray();
 
             return true;
         }
 
         private bool ShuffleVilTypes(List<NpcType_BFBB> chooseFrom, List<NpcType_BFBB> setTo, bool mixModels, bool veryRandom, bool enemies)
         {
-            if (veryRandom && (LevelName == "sm01" || LevelName == "gl01"))
+            if (veryRandom && (LevelName == "sm01" || LevelName == "gl01" || LevelName == "bb01" || LevelName == "bb02"))
             {
-                HashSet<NpcType_BFBB> uniqueSetTo = new HashSet<NpcType_BFBB>();
-                foreach (NpcType_BFBB v in setTo)
-                    uniqueSetTo.Add(v);
+                HashSet<NpcType_BFBB> uniqueSetTo = [.. setTo];
 
-                while (uniqueSetTo.Count > 5)
+                while (uniqueSetTo.Count > 6)
                 {
                     NpcType_BFBB randomRemove = setTo[random.Next(0, setTo.Count)];
-                    while (setTo.Contains(randomRemove))
-                        setTo.Remove(randomRemove);
+                    setTo.RemoveAll(s => s == randomRemove);
                     uniqueSetTo.Remove(randomRemove);
                 }
             }
@@ -1179,7 +1189,7 @@ namespace IndustrialPark.Randomizer
             if (setTo.Count == 0)
                 return false;
 
-            List<AssetVIL> assets = (from asset in assetDictionary.Values where asset is AssetVIL vil && chooseFrom.Contains(vil.NpcType_BFBB) select (AssetVIL)asset).ToList();
+            List<AssetVIL> assets = (from asset in assetRepository.Assets where asset is AssetVIL vil && chooseFrom.Contains(vil.NpcType_BFBB) select (AssetVIL)asset).ToList();
             List<NpcType_BFBB> viltypes = (from asset in assets select asset.NpcType_BFBB).ToList();
             List<AssetID> models = (from asset in assets select asset.Model).ToList();
 
@@ -1355,7 +1365,7 @@ namespace IndustrialPark.Randomizer
             }
             var links = vil.Links.ToList();
             for (int i = 0; i < links.Count; i++)
-                if (links[i].EventSendID.Equals(EventBFBB.Connect_IOwnYou))
+                if (links[i].EventSendBFBB.Equals(EventBFBB.Connect_IOwnYou))
                     links.RemoveAt(i--);
             vil.Links = links.ToArray();
         }
@@ -1370,24 +1380,24 @@ namespace IndustrialPark.Randomizer
                 var dogCount = 3;
                 for (int i = 0; i < dogCount; i++)
                 {
-                    var dog = PlaceTemplate(position, vil.assetName + "_DOG" + i.ToString(), AssetTemplate.ArfDog);
-                    links.Add(new Link(game)
+                    var dog = PlaceTemplate(AssetTemplate.ArfDog, vil.assetName + "_DOG" + i.ToString(), position);
+                    links.Add(new Link(Game)
                     {
                         TargetAsset = dog.assetID,
-                        EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                        EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                        EventReceiveBFBB = EventBFBB.ScenePrepare,
+                        EventSendBFBB = EventBFBB.Connect_IOwnYou
                     });
-                    links.Add(new Link(game)
+                    links.Add(new Link(Game)
                     {
                         TargetAsset = dog.assetID,
-                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOff,
-                        EventSendID = (ushort)EventBFBB.NPCSetActiveOff
+                        EventReceiveBFBB = EventBFBB.NPCSetActiveOff,
+                        EventSendBFBB = EventBFBB.NPCSetActiveOff
                     });
-                    links.Add(new Link(game)
+                    links.Add(new Link(Game)
                     {
                         TargetAsset = dog.assetID,
-                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOn,
-                        EventSendID = (ushort)EventBFBB.NPCSetActiveOn
+                        EventReceiveBFBB = EventBFBB.NPCSetActiveOn,
+                        EventSendBFBB = EventBFBB.NPCSetActiveOn
                     });
                 }
             }
@@ -1395,24 +1405,24 @@ namespace IndustrialPark.Randomizer
             {
                 for (int i = 0; i < 2; i++)
                 {
-                    var slave = PlaceTemplate(position, vil.assetName + "_SLAVE" + i.ToString(), AssetTemplate.TubeletSlave);
-                    links.Add(new Link(game)
+                    var slave = PlaceTemplate(AssetTemplate.TubeletSlave, vil.assetName + "_SLAVE" + i.ToString(), position);
+                    links.Add(new Link(Game)
                     {
                         TargetAsset = slave.assetID,
-                        EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                        EventSendID = (ushort)EventBFBB.Connect_IOwnYou
+                        EventReceiveBFBB = EventBFBB.ScenePrepare,
+                        EventSendBFBB = EventBFBB.Connect_IOwnYou
                     });
-                    links.Add(new Link(game)
+                    links.Add(new Link(Game)
                     {
                         TargetAsset = slave.assetID,
-                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOff,
-                        EventSendID = (ushort)EventBFBB.NPCSetActiveOff
+                        EventReceiveBFBB = EventBFBB.NPCSetActiveOff,
+                        EventSendBFBB = EventBFBB.NPCSetActiveOff
                     });
-                    links.Add(new Link(game)
+                    links.Add(new Link(Game)
                     {
                         TargetAsset = slave.assetID,
-                        EventReceiveID = (ushort)EventBFBB.NPCSetActiveOn,
-                        EventSendID = (ushort)EventBFBB.NPCSetActiveOn
+                        EventReceiveBFBB = EventBFBB.NPCSetActiveOn,
+                        EventSendBFBB = EventBFBB.NPCSetActiveOn
                     });
                 }
             }
@@ -1421,16 +1431,16 @@ namespace IndustrialPark.Randomizer
             vil.Links = links.ToArray();
         }
 
-        private bool ArfAllowed() => !new string[] { "hb07", "rb01", "sm03" }.Contains(LevelName);
+        private bool ArfAllowed() => !new string[] { "hb07", "bb02", "rb01", "sm03" }.Contains(LevelName);
 
-        private bool TubeletsAllowed() => !new string[] { "jf01", "jf02", "jf03", "gl01", "rb01", "sm03", "db04" }.Contains(LevelName);
+        private bool TubeletsAllowed() => !new string[] { "jf01", "jf02", "jf03", "bb02", "gl01", "rb01", "sm03", "db04" }.Contains(LevelName);
 
         private bool ShuffleBoxDynaTypes(List<EnemySupplyCrateType> chooseFrom, List<EnemySupplyCrateType> setTo)
         {
             if (setTo.Count == 0)
                 return false;
 
-            var assets = (from asset in assetDictionary.Values
+            var assets = (from asset in assetRepository.Assets
                           where asset is DynaEnemySupplyCrate dynaC &&
                           chooseFrom.Contains(dynaC.CrateType)
                           select (DynaEnemySupplyCrate)asset).ToList();
@@ -1483,7 +1493,7 @@ namespace IndustrialPark.Randomizer
             if (setTo.Count == 0)
                 return false;
 
-            var assets = (from asset in assetDictionary.Values
+            var assets = (from asset in assetRepository.Assets
                           where asset is DynaEnemyStandard dynaC &&
                           chooseFrom.Contains(dynaC.EnemyType)
                           select (DynaEnemyStandard)asset).ToList();
@@ -1608,12 +1618,12 @@ namespace IndustrialPark.Randomizer
                     short count1 = (short)random.Next(combatMin, combatMax + 1);
                     short count2 = (short)random.Next(combatMin, combatMax + 1);
                     short count3 = (short)random.Next(combatMin, combatMax + 1);
-                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_1_COUNTER_01"))).Count = count1;
-                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_1_DONE_COUNTER_01"))).Count = count1;
-                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_2_COUNTER_01"))).Count = count2;
-                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_2_DONE_COUNTER_01"))).Count = count2;
-                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_3_COUNTER_01"))).Count = count3;
-                    ((AssetCNTR)GetFromAssetID(new AssetID("WAVE_3_DONE_COUNTER_01"))).Count = count3;
+                    GetAsset<AssetCNTR>(new AssetID("WAVE_1_COUNTER_01")).Count = count1;
+                    GetAsset<AssetCNTR>(new AssetID("WAVE_1_DONE_COUNTER_01")).Count = count1;
+                    GetAsset<AssetCNTR>(new AssetID("WAVE_2_COUNTER_01")).Count = count2;
+                    GetAsset<AssetCNTR>(new AssetID("WAVE_2_DONE_COUNTER_01")).Count = count2;
+                    GetAsset<AssetCNTR>(new AssetID("WAVE_3_COUNTER_01")).Count = count3;
+                    GetAsset<AssetCNTR>(new AssetID("WAVE_3_DONE_COUNTER_01")).Count = count3;
                     return true;
             }
             return false;
@@ -1628,37 +1638,37 @@ namespace IndustrialPark.Randomizer
                     uint gloveIntroTrig = new AssetID("GLOVE_INTRO_TRIG");
 
                     if (ContainsAsset(gloveIntroDisp))
-                        ((AssetDPAT)GetFromAssetID(gloveIntroDisp)).EnabledOnStart = false;
+                        GetAsset<AssetDPAT>(gloveIntroDisp).EnabledOnStart = false;
                     if (ContainsAsset(gloveIntroTrig))
-                        ((AssetTRIG)GetFromAssetID(gloveIntroTrig)).EnabledOnStart = false;
+                        GetAsset<AssetTRIG>(gloveIntroTrig).EnabledOnStart = false;
                     return true;
 
                 case "bb02":
                     uint chuckOffDisp = new AssetID("CHUCK_CINEMATIC_OFF_DISP");
 
                     if (ContainsAsset(chuckOffDisp))
-                        ((AssetDPAT)GetFromAssetID(chuckOffDisp)).EnabledOnStart = false;
+                        GetAsset<AssetDPAT>(chuckOffDisp).EnabledOnStart = false;
                     return true;
 
                 case "bc01":
                     uint arfIntroTrigDisp = new AssetID("ARF_INTRO_TRIG_DISP");
 
                     if (ContainsAsset(arfIntroTrigDisp))
-                        ((AssetDPAT)GetFromAssetID(arfIntroTrigDisp)).EnabledOnStart = false;
+                        GetAsset<AssetDPAT>(arfIntroTrigDisp).EnabledOnStart = false;
                     return true;
 
                 case "gl01":
                     uint moonsoonIntroTrig = new AssetID("MONSOON_INTRO_TRIG");
 
                     if (ContainsAsset(moonsoonIntroTrig))
-                        ((AssetTRIG)GetFromAssetID(moonsoonIntroTrig)).EnabledOnStart = false;
+                        GetAsset<AssetTRIG>(moonsoonIntroTrig).EnabledOnStart = false;
                     return true;
 
                 case "gy01":
                     uint slickIntoDisp = new AssetID("SLICK_INTRO_TRIG_DISP'");
 
                     if (ContainsAsset(slickIntoDisp))
-                        ((AssetDPAT)GetFromAssetID(slickIntoDisp)).EnabledOnStart = false;
+                        GetAsset<AssetDPAT>(slickIntoDisp).EnabledOnStart = false;
                     return true;
 
                 case "jf01":
@@ -1666,10 +1676,10 @@ namespace IndustrialPark.Randomizer
 
                     if (ContainsAsset(jf01fly))
                     {
-                        AssetDYNA fly = (AssetDYNA)GetFromAssetID(jf01fly);
+                        AssetDYNA fly = GetAsset<AssetDYNA>(jf01fly);
                         List<Link> flyLinks = fly.Links.ToList();
                         for (int i = 0; i < flyLinks.Count; i++)
-                            if (flyLinks[i].EventSendID == (ushort)EventBFBB.Preload)
+                            if (flyLinks[i].EventSendBFBB == EventBFBB.Preload)
                             {
                                 flyLinks.RemoveAt(i);
                                 break;
@@ -1679,37 +1689,37 @@ namespace IndustrialPark.Randomizer
 
                     uint swCinemaDisp = new AssetID("SWCINEMA_DISP_01");
                     if (ContainsAsset(swCinemaDisp))
-                        ((AssetDPAT)GetFromAssetID(swCinemaDisp)).EnabledOnStart = true;
+                        GetAsset<AssetDPAT>(swCinemaDisp).EnabledOnStart = true;
 
                     uint hammerDisp = new AssetID("HAMMERCINEMA_DISP_01");
                     if (ContainsAsset(hammerDisp))
-                        ((AssetDPAT)GetFromAssetID(hammerDisp)).EnabledOnStart = true;
+                        GetAsset<AssetDPAT>(hammerDisp).EnabledOnStart = true;
                     return true;
 
                 case "jf03":
                     uint tartarIntroDisp = new AssetID("TARTAR_CUTSCENE_OFF_DISP");
 
                     if (ContainsAsset(tartarIntroDisp))
-                        ((AssetDPAT)GetFromAssetID(tartarIntroDisp)).EnabledOnStart = true;
+                        GetAsset<AssetDPAT>(tartarIntroDisp).EnabledOnStart = true;
                     return true;
 
                 case "kf01":
                     Link[] csnmLinks = null;
                     uint kf01csnm = new AssetID("TUBELET_CUTSCENE_MGR");
                     if (ContainsAsset(kf01csnm))
-                        csnmLinks = ((BaseAsset)GetFromAssetID(kf01csnm)).Links;
+                        csnmLinks = GetAsset<BaseAsset>(kf01csnm).Links;
 
                     uint kf01fly = new AssetID("KF01_FLYTHOUGH_WIDGET");
                     if (ContainsAsset(kf01fly))
                     {
-                        BaseAsset flyWidged = ((BaseAsset)GetFromAssetID(kf01fly));
+                        BaseAsset flyWidged = GetAsset<BaseAsset>(kf01fly);
                         List<Link> flyLinks = flyWidged.Links.ToList();
                         flyLinks.AddRange(csnmLinks);
 
                         for (int i = 0; i < flyLinks.Count; i++)
-                            if (flyLinks[i].EventReceiveID == (ushort)EventBFBB.Done)
-                                flyLinks[i].EventReceiveID = (ushort)EventBFBB.Stop;
-                            else if (flyLinks[i].EventSendID == (ushort)EventBFBB.Preload)
+                            if (flyLinks[i].EventReceiveBFBB == EventBFBB.Done)
+                                flyLinks[i].EventReceiveBFBB = EventBFBB.Stop;
+                            else if (flyLinks[i].EventSendBFBB == EventBFBB.Preload)
                                 flyLinks.RemoveAt(i--);
 
                         flyWidged.Links = flyLinks.ToArray();
@@ -1722,10 +1732,10 @@ namespace IndustrialPark.Randomizer
 
                     if (ContainsAsset(rb01fly))
                     {
-                        AssetDYNA fly = (AssetDYNA)GetFromAssetID(rb01fly);
+                        AssetDYNA fly = GetAsset<AssetDYNA>(rb01fly);
                         List<Link> flyLinks = fly.Links.ToList();
                         for (int i = 0; i < flyLinks.Count; i++)
-                            if (flyLinks[i].EventSendID == (ushort)EventBFBB.Preload)
+                            if (flyLinks[i].EventSendBFBB == EventBFBB.Preload)
                             {
                                 flyLinks.RemoveAt(i);
                                 break;
@@ -1735,7 +1745,7 @@ namespace IndustrialPark.Randomizer
 
                     uint sleepyDpat = new AssetID("SLEEPY_DESP_02");
                     if (ContainsAsset(sleepyDpat))
-                        ((AssetDPAT)GetFromAssetID(sleepyDpat)).StateIsPersistent = false;
+                        GetAsset<AssetDPAT>(sleepyDpat).StateIsPersistent = false;
                     return true;
             }
 
@@ -1751,27 +1761,27 @@ namespace IndustrialPark.Randomizer
                     uint dpat1 = new AssetID("AUTOSAVE_DONE_DISP");
                     if (ContainsAsset(dpat1))
                     {
-                        var a2 = (BaseAsset)GetFromAssetID(dpat1);
+                        var a2 = GetAsset<BaseAsset>(dpat1);
                         var a3 = a2.Links;
-                        a3[0].EventSendID = (ushort)EventTSSM.Run;
+                        a3[0].EventSendTSSM = EventTSSM.Run;
                         a3[0].TargetAsset = "FRENCH_NARR2PORTAL_SCRIPT";
                         a2.Links = a3;
                     }
                     uint dpat2 = new AssetID("BOSS_DEATH_HAVE_TOKEN_SCRIPT");
                     if (ContainsAsset(dpat2))
                     {
-                        var a2 = (AssetSCRP)GetFromAssetID(dpat2);
+                        var a2 = GetAsset<AssetSCRP>(dpat2);
                         var a3 = a2.TimedLinks;
-                        a3[0].EventSendID = (ushort)EventTSSM.Run;
+                        a3[0].EventSendTSSM = EventTSSM.Run;
                         a3[0].TargetAsset = "FRENCH_NARR2PORTAL_SCRIPT";
                         a2.TimedLinks = a3;
                     }
                     uint dpat3 = new AssetID("CIN_PLAY_DISP");
                     if (ContainsAsset(dpat3))
                     {
-                        var a2 = (AssetDPAT)GetFromAssetID(dpat3);
+                        var a2 = GetAsset<AssetDPAT>(dpat3);
                         var a3 = a2.Links;
-                        a3[0].EventSendID = (ushort)EventTSSM.BossStageSet;
+                        a3[0].EventSendTSSM = EventTSSM.BossStageSet;
                         a3[0].TargetAsset = "FROG_FISH_NME";
                         a2.Links = a3;
                     }
@@ -1784,12 +1794,11 @@ namespace IndustrialPark.Randomizer
                         RemoveAsset(dpat1);
 
                     uint scrp1 = new AssetID("PRE_END_CUTSCENE_SCRIPT");
-                    if (ContainsAsset(scrp1))
+                    if (TryGetAsset(scrp1, out AssetSCRP a3))
                     {
-                        var a3 = (AssetSCRP)GetFromAssetID(scrp1);
                         var a4 = a3.TimedLinks;
 
-                        a4[6].EventSendID = (ushort)EventTSSM.Done;
+                        a4[6].EventSendTSSM = EventTSSM.Done;
                         a3.TimedLinks = a4;
                     }
                     return true;
@@ -1799,118 +1808,28 @@ namespace IndustrialPark.Randomizer
             return false;
         }
 
-        public string[] GetMarkerNames()
+
+
+        private bool ShufflePositionAssets(bool markers, bool pointers, bool teleBox)
         {
-            if (game == Game.BFBB)
-                switch (LevelName)
-                {
-                    case "bb01":
-                        return new string[] { "BB_SPAT_MARKER_01", "BB_SPAT_MARKER_02", "BB_SPAT_MARKER_03", "BB01MK01", "BB01MK02", "BB01MK03", "BB01MK04", "BB01MK05", "BB01MK06", "BB01MK07", "BB01MK08", "BB01MK09", "BB01MK10", "BB01MK11", "BB01MK12", "FROMBB02", "FROMBB03", "FROMBB04", "FROMHB01" };
-                    case "bb02":
-                        return new string[] { "BB_SPAT_MARKER_04", "BB_SPAT_MARKER_05", "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "CHECKPOINT_MK_04", "CHECKPOINT_MK_05", "CHECKPOINT_MK_06", "CHECKPOINT_MK_07", "CHECKPOINT_MK_08", "CHECKPOINT_MK_09", "CHECKPOINT_MK_10", "CHECKPOINT_MK_11", "CHUCK_CIN_PORTAL_MK", "FROMBB01", "FROMBB03" };
-                    case "bb04":
-                        return new string[] { "BB_SPAT_MARKER_07", "BB_SPAT_MARKER_08", "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "FROMBB01" };
-                    case "bc01":
-                        return new string[] { "BC_SPAT_MARKER_01", "BC01MK01", "BC01MK02", "BC01MK03", "BC01MK04", "FROMBC02", "FROMHB06" };
-                    case "bc02":
-                        return new string[] { "BC_SPAT_MARKER_02", "BC_SPAT_MARKER_03", "BC_SPAT_MARKER_04", "BC_SPAT_MARKER_05", "BC02MK01", "BC02MK02", "BC02MK03", "BC02MK04", "BC02MK05", "FROMBC01", "FROMBC03", "FROMBC04", "FROMBC05" };
-                    case "bc03":
-                        return new string[] { "BC_SPAT_MARKER_06", "BC03MK01", "BC03MK02", "BC03MK03", "BC03MK04", "BC03MK05", "BC03MK06", "FROMBC02", "FROMBC04" };
-                    case "bc04":
-                        return new string[] { "BC_SPAT_MARKER_07", "BC04MK01", "BC04MK02", "FROMBC02", "FROMBC03" };
-                    case "db01":
-                        return new string[] { "DB_SPAT_MARKER_01", "DB_SPAT_MARKER_02", "DB_SPAT_MARKER_07", "DB01MK01", "DB01MK02", "DB01MK03", "DB01MK04", "DB01MK05", "FROMDB02", "FROMDB03", "FROMDB04", "FROMDB06", "FROMHB01" };
-                    case "db02":
-                        return new string[] { "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "CHECKPOINT_MK_04", "CHECKPOINT_MK_05", "CHECKPOINT_MK_06", "DB_SPAT_MARKER_03", "DB_SPAT_MARKER_04", "DB02MK01", "FROMDB01" };
-                    case "db03":
-                        return new string[] { "DB_SPAT_MARKER_05", "DB03MK01", "DB03MK02", "DB03MK03", "DB03MK04", "DB03MK05", "DB03MK06", "FROMDB01" };
-                    case "gl01":
-                        return new string[] { "FROMGL02", "FROMGL03", "FROMHB01", "GL_SPAT_MARKER_01", "GL_SPAT_MARKER_02", "GL_SPAT_MARKER_03", "GL_SPAT_MARKER_04", "GL01MK02", "GL01MK03", "GL01MK04", "GL01MK05", "GL01MK06", "GL01MK07", "GL01MK08", "GL01MK09", "GL01MK10", "GL01MK11", "GL01MK12", "GL01MK13", "GL01MK14", "GL01MK15" };
-                    case "gl02":
-                        return new string[] { "FROMGL01", "FROMGL03", "GL_SPAT_MARKER_05", "GL02MK01", "GL02MK02", "GL02MK03", "GL02MK04", "GL02MK05" };
-                    case "gl03":
-                        return new string[] { "FROMGL01", "FROMGL02", "GL_SPAT_MARKER_06", "GL_SPAT_MARKER_07", "GL_SPAT_MARKER_08", "GL03MK01", "GL03MK02", "GL03MK03", "GL03MK04", "GL03MK05", "GL03MK06", "GL03MK07", "GL03MK08" };
-                    case "gy01":
-                        return new string[] { "FROMGY02", "FROMGY04", "FROMHB01", "GY_SPAT_MARKER_01", "GY_SPAT_MARKER_02", "GY_SPAT_MARKER_03", "GY01MK01", "GY01MK02", "GY01MK03", "TELEPRT_MARK_T" };
-                    case "gy02":
-                        return new string[] { "FROMGY01", "FROMGY03", "GY_SPAT_MARKER_04", "GY_SPAT_MARKER_05", "GY02MK01", "GY02MK02", "GY02MK03", "GY02MK04" };
-                    case "gy03":
-                        return new string[] { "FROMGY02", "GY_SPAT_MARKER_06", "GY_SPAT_MARKER_07", "GY03MK01", "GY03MK02", "GY03MK03" };
-                    case "hb01":
-                        return new string[] { "FROMB101", "FROMB201", "FROMBB01", "FROMBC01", "FROMDB01", "FROMGL01", "FROMGY01", "FROMHB02", "FROMHB03", "FROMHB04", "FROMHB05", "FROMHB06", "FROMHB07", "FROMHB08", "FROMHB09", "FROMHB10", "FROMJF01", "FROMKF01", "FROMPG01", "FROMRB01", "FROMSM01", "HB_SPAT_MARKER_01", "HB_SPAT_MARKER_02", "HB_SPAT_MARKER_03", "HB_SPAT_MARKER_07", "KS_SPAT_MARKER_01", "KS_SPAT_MARKER_02", "KS_SPAT_MARKER_03" };
-                    case "jf01":
-                        return new string[] { "CHECKP_INVIS_MK_01", "CHECKP_INVIS_MK_02", "CHECKP_INVIS_MK_03", "CHECKP_INVIS_MK_04", "CHECKP_INVIS_MK_05", "CHECKP_INVIS_MK_06", "CHECKP_INVIS_MK_07", "CHECKP_INVIS_MK_08", "FROMHB01", "FROMJF02", "FROMJF04", "JF_SPAT_MARKER_01", "JF_SPAT_MARKER_02", "JF01MK02", "JF01MK03", "JF01MK04" };
-                    case "jf02":
-                        return new string[] { "CHECKP_INVIS_MK_01", "CHECKP_INVIS_MK_02", "CHECKP_INVIS_MK_03", "CHECKP_INVIS_MK_04", "CHECKP_INVIS_MK_05", "CHECKP_INVIS_MK_06", "CHECKP_INVIS_MK_07", "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "CHECKPOINT_MK_04", "FROMJF01", "FROMJF03", "JF_SPAT_MARKER_03", "JF_SPAT_MARKER_04", "SLIDEVENT_CP_MARKER_01" };
-                    case "jf03":
-                        return new string[] { "FROMJF02", "FROMJF04", "JF_SPAT_MARKER_05", "JF_SPAT_MARKER_06", "JF03MK02", "JF03MK03", "JF03MK04", "JF03MK10", "JF03MK11", "JF03MK12", "JF03MK13", "JF03MK14", "JF03MK15", "JF03MK16", "JF03MK17" };
-                    case "kf01":
-                        return new string[] { "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "FROMHB01", "FROMKF02", "FROMKF05", "KF_SPAT_MARKER_01", "KF_SPAT_MARKER_02", "KF01MK10", "KF01MK11" };
-                    case "kf02":
-                        return new string[] { "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "FROMKF01", "FROMKF04", "KF_SPAT_MARKER_03", "KF_SPAT_MARKER_04", "KF02MK02", "KF02MK10", "KF02MK11", "KF02MK12", "KF02MK13" };
-                    case "kf04":
-                        return new string[] { "FROMKF02", "FROMKF05", "KF_SPAT_MARKER_05", "KF_SPAT_MARKER_06" };
-                    case "kf05":
-                        return new string[] { "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "FROMKF01", "FROMKF04", "KF_SPAT_MARKER_07", "KF_SPAT_MARKER_08" };
-                    case "rb01":
-                        return new string[] { "FROM_HUB", "FROMRB02", "FROMRB03", "RB_SPAT_MARKER_01", "RB_SPAT_MARKER_02", "RB_SPAT_MARKER_03", "RB_SPAT_MARKER_04", "RB01MK00", "RB01MK01", "RB01MK02", "RB01MK03", "RB01MK04", "RB01MK05", "RB01MK10", "RB01MK11", "RB01MK12", "RB01MK13" };
-                    case "rb02":
-                        return new string[] { "FROMRB01", "FROMRB03", "RB_SPAT_MARKER_05", "RB02MK01", "RB02MK02", "RB02MK03", "RB02MK10", "RB02MK11", "RB03MK01" };
-                    case "rb03":
-                        return new string[] { "CHECK_INVIS_MK_01", "CHECK_INVIS_MK_02", "CHECK_INVIS_MK_03", "FROM_RB02", "FROM_RB03", "FROMRB01", "RB_SPAT_MARKER_06", "RB_SPAT_MARKER_07", "RB_SPAT_MARKER_08", "RB03MK10", "RB03MK11", "RB03MK12", "RB03MK14" };
-                    case "sm01":
-                        return new string[] { "CHECKPOINT_MK_01", "FROMHB01", "FROMSM02", "FROMSM03", "FROMSM04", "SM_SPAT_MARKER_01", "SM_SPAT_MARKER_02" };
-                    case "sm02":
-                        return new string[] { "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "CHECKPOINT_MK_04", "FROMSM01", "SM_SPAT_MARKER_03", "SM_SPAT_MARKER_04", "SM02MK01" };
-                    case "sm03":
-                        return new string[] { "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "CHECKPOINT_MK_04", "FROMSM01", "SM_SPAT_MARKER_05", "SM_SPAT_MARKER_06" };
-                    case "sm04":
-                        return new string[] { "CHECKPOINT_MK_01", "CHECKPOINT_MK_02", "CHECKPOINT_MK_03", "CHECKPOINT_MK_04", "FROMSM01", "SM_SPAT_MARKER_07", "SM_SPAT_MARKER_08" };
-                }
-            return new string[0];
-        }
-
-        private bool ShuffleMRKRPositions(bool noWarps, bool pointers, bool busStops, bool teleBox, bool taxis)
-        {
-            var markerNames = GetMarkerNames();
-
-            if (game == Game.BFBB && !markerNames.Any())
-                return false;
-
             var assets = new List<IClickableAsset>();
 
-            if (game == Game.BFBB)
-            {
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetMRKR mrkr && markerNames.Contains(mrkr.assetName)).Select(a => (AssetMRKR)a));
+            if (markers && Game == Game.BFBB)
+                assets.AddRange(GetMarkerNamesBfbb(LevelName).Select(name => GetAsset(new AssetID(name))).Cast<IClickableAsset>());
 
-                if (LevelName == "sm02")
-                {
-                    var CHECKPOINT_MK_01 = (AssetMRKR)GetFromAssetID(new AssetID("CHECKPOINT_MK_01"));
-                    CHECKPOINT_MK_01.PositionY += 0.5f;
-                    var CHECKPOINT_MK_02 = (AssetMRKR)GetFromAssetID(new AssetID("CHECKPOINT_MK_02"));
-                    CHECKPOINT_MK_02.PositionY += 0.5f;
-                }
-            }
-            else
+            if (Game == Game.BFBB && LevelName == "sm02")
             {
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetMRKR mrkr && VerifyMarkerStep1(mrkr, noWarps, busStops, teleBox, taxis)).Select(a => (AssetMRKR)a));
+                var CHECKPOINT_MK_01 = GetAsset<AssetMRKR>(new AssetID("CHECKPOINT_MK_01"));
+                CHECKPOINT_MK_01.PositionY += 0.5f;
+                var CHECKPOINT_MK_02 = GetAsset<AssetMRKR>(new AssetID("CHECKPOINT_MK_02"));
+                CHECKPOINT_MK_02.PositionY += 0.5f;
             }
 
-            if (pointers)
-                foreach (DynaPointer dyna in assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaPointer && VerifyPointer(dyna)).Select(a => (DynaPointer)a))
-                    assets.Add(dyna);
-
-            if (pointers)
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaPointer && VerifyPointer(dyna)).Select(a => (DynaPointer)a));
-
-            if (busStops)
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaGObjectBusStop).Select(a => (AssetMRKR)GetFromAssetID(((DynaGObjectBusStop)a).Marker)));
+            if (pointers && Game == Game.Incredibles)
+                assets.AddRange(assetRepository.Assets.OfType<DynaPointer>().Where(VerifyPointer));
 
             if (teleBox)
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaGObjectTeleport).Select(a => (AssetMRKR)GetFromAssetID(((DynaGObjectTeleport)a).Marker)));
-
-            if (taxis)
-                assets.AddRange(assetDictionary.Values.Where(a => a is AssetDYNA dyna && dyna is DynaGObjectTaxi).Select(a => (AssetMRKR)GetFromAssetID(((DynaGObjectTaxi)a).Marker)));
+                assets.AddRange(assetRepository.Assets.OfType<DynaGObjectTeleport>().Select(a => GetAsset<AssetMRKR>(a.Marker)));
 
             List<Vector3> positions = (from asset in assets select (new Vector3(asset.PositionX, asset.PositionY, asset.PositionZ))).ToList();
 
@@ -1930,7 +1849,7 @@ namespace IndustrialPark.Randomizer
 
         private bool VerifyPointer(AssetDYNA pointer)
         {
-            if (game == Game.Incredibles)
+            if (Game == Game.Incredibles)
                 switch (LevelName)
                 {
                     case "bb03":
@@ -1950,166 +1869,66 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private bool VerifyMarkerStep1(AssetMRKR mrkr, bool noWarps, bool busStops, bool teleBox, bool taxis)
-        {
-            string assetName = mrkr.assetName;
-
-            if (assetName.Contains("TEMP"))
-                return false;
-            if (noWarps && assetName.Contains("SPAT"))
-                return false;
-
-            List<uint> whoTargets = FindWhoTargets(mrkr.assetID);
-            if (whoTargets.Count > 0)
-            {
-                foreach (uint u in whoTargets)
-                    if (GetFromAssetID(u) is AssetTRIG trig)
-                        foreach (Link link in trig.Links)
-                            if (link.EventSendID == (ushort)EventBFBB.SetCheckPoint)
-                                return VerifyMarkerStep2(assetName);
-                            else if (GetFromAssetID(u) is AssetPORT)
-                                return true;
-
-                return false;
-            }
-
-            return VerifyMarkerStep2(assetName);
-        }
-
-        private bool VerifyMarkerStep2(string assetName)
-        {
-            try
-            {
-                if (game == Game.BFBB)
-                    switch (LevelName)
-                    {
-                        case "jf01":
-                            if (assetName.Contains("BOUCETREE PARTICLE MARKER"))
-                                return false;
-                            break;
-                        case "jf04":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
-                                return false;
-                            break;
-                        case "gl01":
-                            if (assetName.Contains("TOWER"))
-                                return false;
-                            break;
-                        case "rb03":
-                            if (assetName == "RB03MK12" || assetName == "RB03MK13")
-                                return false;
-                            break;
-                        case "sm03":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
-                                return false;
-                            break;
-                        case "sm04":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 4)
-                                return false;
-                            break;
-                        case "kf01":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) == 3)
-                                return false;
-                            break;
-                        case "kf04":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) == 2)
-                                return false;
-                            break;
-                        case "kf05":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 3)
-                                return false;
-                            break;
-                        case "gy01":
-                            if (assetName.Equals("TELEPRT_MARK_B"))
-                                return false;
-                            break;
-                        case "gy03":
-                            if (assetName.Contains("BALLDESTROYED"))
-                                return false;
-                            break;
-                        case "db02":
-                            if (Convert.ToInt32(assetName.Split('_')[2]) > 6)
-                                return false;
-                            break;
-                    }
-                else
-                if (game == Game.Scooby)
-                {
-                    if (assetName.ToUpper().Contains("CAM") || assetName.ToUpper().Contains("RAIL"))
-                        return false;
-
-                    switch (LevelName)
-                    {
-                        case "r020":
-                            if (assetName.Contains("FROMR003"))
-                                return false;
-                            break;
-                        case "f010":
-                            if (assetName.Contains("WAVE1800"))
-                                return false;
-                            break;
-                    }
-                }
-            }
-            catch { }
-
-            return true;
-        }
-
         private bool ShufflePlatSpeeds(RandomizerSettings settings)
         {
+            if (Game == Game.Scooby && scoobySkipPlats.Contains(LevelName))
+                return false;
+
             float minMultiSpeed = settings.speedMin;
             float maxMultiSpeed = settings.speedMax;
-            float minMultiTime = settings.speedMax == 0 ? 0 : 1 / settings.speedMax;
-            float maxMultiTime = settings.speedMin == 0 ? 0 : 1 / settings.speedMin;
+            float minMultiTime = settings.speedMax == 0 ? 0 : 1f / settings.speedMax;
+            float maxMultiTime = settings.speedMin == 0 ? 0 : 1f / settings.speedMin;
 
             bool result = false;
 
-            foreach (Asset a in assetDictionary.Values)
-                if (a is AssetPLAT plat)
+            foreach (AssetWithMotion mot in assetRepository.Assets.OfType<AssetWithMotion>().Where(a => a is not AssetBUTN))
+            {
+                if (mot is AssetPLAT plat)
                 {
                     if (plat.PlatformSpecific is PlatSpecific_ConveryorBelt p)
                     {
                         p.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatformSpecific = p;
                     }
                     else if (plat.PlatformSpecific is PlatSpecific_FallingPlatform pf)
                     {
                         pf.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatformSpecific = pf;
                     }
                     else if (plat.PlatformSpecific is PlatSpecific_BreakawayPlatform b)
                     {
                         b.BreakawayDelay *= random.NextFloat(minMultiTime, maxMultiTime);
                         b.ResetDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        plat.PlatformSpecific = b;
                     }
                     else if (plat.PlatformSpecific is PlatSpecific_TeeterTotter tt)
                     {
                         tt.InverseMass *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.PlatformSpecific = tt;
                     }
-
-                    if (plat.Motion is Motion_MovePoint mp)
-                    {
-                        mp.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
-                        plat.Motion = mp;
-                    }
-                    else if (plat.Motion is Motion_Mechanism mc)
-                    {
-                        mc.PostRetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RotateAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RotateDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.RotateTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.SlideAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.SlideDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        mc.SlideTime *= random.NextFloat(minMultiTime, maxMultiTime);
-                        plat.Motion = mc;
-                    }
-
-                    result = true;
                 }
+
+                if (mot.Motion is Motion_MovePoint mp)
+                {
+                    mp.Speed *= random.NextFloat(minMultiSpeed, maxMultiSpeed);
+                }
+                else if (mot.Motion is Motion_Mechanism mc)
+                {
+                    mc.PostRetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RetractDelay *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RotateAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RotateDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.RotateTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.SlideAccelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.SlideDecelTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                    mc.SlideTime *= random.NextFloat(minMultiTime, maxMultiTime);
+                }
+                else if (mot.Motion is Motion_Pendulum pend)
+                {
+                    pend.Length *= random.NextFloat(minMultiTime, maxMultiTime);
+                    pend.Period *= random.NextFloat(minMultiTime, maxMultiTime);
+                    pend.Phase *= random.NextFloat(minMultiTime, maxMultiTime);
+                    pend.Range *= random.NextFloat(minMultiTime, maxMultiTime);
+                }
+
+                result = true;
+            }
 
             return result;
         }
@@ -2119,7 +1938,7 @@ namespace IndustrialPark.Randomizer
             float min = settings.boulderMin;
             float max = settings.boulderMax;
 
-            List<AssetBOUL> assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.Boulder select asset).Cast<AssetBOUL>().ToList();
+            List<AssetBOUL> assets = (from asset in assetRepository.Assets where asset.assetType == AssetType.Boulder select asset).Cast<AssetBOUL>().ToList();
 
             foreach (AssetBOUL boul in assets)
             {
@@ -2144,7 +1963,7 @@ namespace IndustrialPark.Randomizer
         {
             bool result = false;
 
-            foreach (Asset a in assetDictionary.Values)
+            foreach (Asset a in assetRepository.Assets)
                 if (a is AssetSNDI_GCN_V1 sndi1)
                     result |= RandomizeSNDI_GCN_V1(sndi1, mixTypes, scoobyBoot, limited);
                 else if (a is AssetSNDI_GCN_V2 sndi2)
@@ -2199,15 +2018,15 @@ namespace IndustrialPark.Randomizer
                 List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
 
                 foreach (var v in snds)
-                    if (!GetFromAssetID(v.Sound).assetName.Contains("thera"))
-                        sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                    if (!GetAsset(v.Sound).assetName.Contains("thera"))
+                        sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                 foreach (var v in snds)
-                    if (!GetFromAssetID(v.Sound).assetName.Contains("thera"))
+                    if (!GetAsset(v.Sound).assetName.Contains("thera"))
                     {
                         int index = random.Next(0, sounds.Count);
                         v.SoundHeader = sounds[index].Item1;
-                        ((AssetWithData)GetFromAssetID(v.Sound)).Data = sounds[index].Item2;
+                        GetAsset<AssetWithData>(v.Sound).Data = sounds[index].Item2;
                         sounds.RemoveAt(index);
                     }
             }
@@ -2216,16 +2035,16 @@ namespace IndustrialPark.Randomizer
                 List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
 
                 foreach (var v in snd)
-                    sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                    sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                 foreach (var v in snds)
-                    sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                    sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                 foreach (var v in snd)
                 {
                     int index = random.Next(0, sounds.Count);
                     v.SoundHeader = sounds[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.Sound)).Data = sounds[index].Item2;
+                    GetAsset<AssetWithData>(v.Sound).Data = sounds[index].Item2;
                     sounds.RemoveAt(index);
                 }
 
@@ -2233,7 +2052,7 @@ namespace IndustrialPark.Randomizer
                 {
                     int index = random.Next(0, sounds.Count);
                     v.SoundHeader = sounds[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.Sound)).Data = sounds[index].Item2;
+                    GetAsset<AssetWithData>(v.Sound).Data = sounds[index].Item2;
                     sounds.RemoveAt(index);
                 }
             }
@@ -2243,19 +2062,19 @@ namespace IndustrialPark.Randomizer
                 List<EntrySoundInfo_XBOX> soundsSNDCopy = new List<EntrySoundInfo_XBOX>();
 
                 if (limited)
-                    foreach (string soundName in GetLimitedSoundRandomizerNames())
+                    foreach (string soundName in GetLimitedSoundRandomizerNamesBfbb(LevelName))
                     {
                         var v = snd.Find(s => new AssetID(soundName).Equals(s.Sound));
                         if (v != null)
                         {
-                            soundsSND.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                            soundsSND.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
                             soundsSNDCopy.Add(v);
                         }
                     }
                 else
                     foreach (var v in snd)
                     {
-                        soundsSND.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                        soundsSND.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
                         soundsSNDCopy.Add(v);
                     }
 
@@ -2263,7 +2082,7 @@ namespace IndustrialPark.Randomizer
                 {
                     int index = random.Next(0, soundsSND.Count);
                     v.SoundHeader = soundsSND[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.Sound)).Data = soundsSND[index].Item2;
+                    GetAsset<AssetWithData>(v.Sound).Data = soundsSND[index].Item2;
                     soundsSND.RemoveAt(index);
                 }
 
@@ -2272,13 +2091,13 @@ namespace IndustrialPark.Randomizer
                     List<(byte[], byte[])> soundsSNDS = new List<(byte[], byte[])>();
 
                     foreach (var v in snds)
-                        soundsSNDS.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                        soundsSNDS.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                     foreach (var v in snds)
                     {
                         int index = random.Next(0, soundsSNDS.Count);
                         v.SoundHeader = soundsSNDS[index].Item1;
-                        ((AssetWithData)GetFromAssetID(v.Sound)).Data = soundsSNDS[index].Item2;
+                        GetAsset<AssetWithData>(v.Sound).Data = soundsSNDS[index].Item2;
                         soundsSNDS.RemoveAt(index);
                     }
                 }
@@ -2300,15 +2119,15 @@ namespace IndustrialPark.Randomizer
                 List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
 
                 foreach (var v in snds)
-                    if (!GetFromAssetID(v.Sound).assetName.Contains("thera"))
-                        sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                    if (!GetAsset(v.Sound).assetName.Contains("thera"))
+                        sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                 foreach (var v in snds)
-                    if (!GetFromAssetID(v.Sound).assetName.Contains("thera"))
+                    if (!GetAsset(v.Sound).assetName.Contains("thera"))
                     {
                         int index = random.Next(0, sounds.Count);
                         v.SoundHeader = sounds[index].Item1;
-                        ((AssetWithData)GetFromAssetID(v.Sound)).Data = sounds[index].Item2;
+                        GetAsset<AssetWithData>(v.Sound).Data = sounds[index].Item2;
                         sounds.RemoveAt(index);
                     }
             }
@@ -2317,16 +2136,16 @@ namespace IndustrialPark.Randomizer
                 List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
 
                 foreach (var v in snd)
-                    sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                    sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                 foreach (var v in snds)
-                    sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                    sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                 foreach (var v in snd)
                 {
                     int index = random.Next(0, sounds.Count);
                     v.SoundHeader = sounds[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.Sound)).Data = sounds[index].Item2;
+                    GetAsset<AssetWithData>(v.Sound).Data = sounds[index].Item2;
                     sounds.RemoveAt(index);
                 }
 
@@ -2334,7 +2153,7 @@ namespace IndustrialPark.Randomizer
                 {
                     int index = random.Next(0, sounds.Count);
                     v.SoundHeader = sounds[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.Sound)).Data = sounds[index].Item2;
+                    GetAsset<AssetWithData>(v.Sound).Data = sounds[index].Item2;
                     sounds.RemoveAt(index);
                 }
             }
@@ -2344,19 +2163,19 @@ namespace IndustrialPark.Randomizer
                 List<EntrySoundInfo_GCN_V1> soundsSNDCopy = new List<EntrySoundInfo_GCN_V1>();
 
                 if (limited)
-                    foreach (string soundName in GetLimitedSoundRandomizerNames())
+                    foreach (string soundName in GetLimitedSoundRandomizerNamesBfbb(LevelName))
                     {
                         var v = snd.Find(s => new AssetID(soundName).Equals(s.Sound));
                         if (v == null)
                             throw new Exception("File not found");
 
-                        soundsSND.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                        soundsSND.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
                         soundsSNDCopy.Add(v);
                     }
                 else
                     foreach (var v in snd)
                     {
-                        soundsSND.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                        soundsSND.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
                         soundsSNDCopy.Add(v);
                     }
 
@@ -2364,7 +2183,7 @@ namespace IndustrialPark.Randomizer
                 {
                     int index = random.Next(0, soundsSND.Count);
                     v.SoundHeader = soundsSND[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.Sound)).Data = soundsSND[index].Item2;
+                    GetAsset<AssetWithData>(v.Sound).Data = soundsSND[index].Item2;
                     soundsSND.RemoveAt(index);
                 }
 
@@ -2373,13 +2192,13 @@ namespace IndustrialPark.Randomizer
                     List<(byte[], byte[])> soundsSNDS = new List<(byte[], byte[])>();
 
                     foreach (var v in snds)
-                        soundsSNDS.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.Sound)).Data));
+                        soundsSNDS.Add((v.SoundHeader, GetAsset<AssetWithData>(v.Sound).Data));
 
                     foreach (var v in snds)
                     {
                         int index = random.Next(0, soundsSNDS.Count);
                         v.SoundHeader = soundsSNDS[index].Item1;
-                        ((AssetWithData)GetFromAssetID(v.Sound)).Data = soundsSNDS[index].Item2;
+                        GetAsset<AssetWithData>(v.Sound).Data = soundsSNDS[index].Item2;
                         soundsSNDS.RemoveAt(index);
                     }
                 }
@@ -2401,15 +2220,15 @@ namespace IndustrialPark.Randomizer
                 List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
 
                 foreach (var v in snds)
-                    if (!GetFromAssetID(v.SoundAssetID).assetName.Contains("thera"))
-                        sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data));
+                    if (!GetAsset(v.SoundAssetID).assetName.Contains("thera"))
+                        sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.SoundAssetID).Data));
 
                 foreach (var v in snds)
-                    if (!GetFromAssetID(v.SoundAssetID).assetName.Contains("thera"))
+                    if (!GetAsset(v.SoundAssetID).assetName.Contains("thera"))
                     {
                         int index = random.Next(0, sounds.Count);
                         v.SoundHeader = sounds[index].Item1;
-                        ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data = sounds[index].Item2;
+                        GetAsset<AssetWithData>(v.SoundAssetID).Data = sounds[index].Item2;
                         sounds.RemoveAt(index);
                     }
             }
@@ -2418,24 +2237,16 @@ namespace IndustrialPark.Randomizer
                 List<(byte[], byte[])> sounds = new List<(byte[], byte[])>();
 
                 foreach (var v in snd)
-                    sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data));
+                    sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.SoundAssetID).Data));
 
                 foreach (var v in snds)
-                    sounds.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data));
+                    sounds.Add((v.SoundHeader, GetAsset<AssetWithData>(v.SoundAssetID).Data));
 
                 foreach (var v in snd)
                 {
                     int index = random.Next(0, sounds.Count);
                     v.SoundHeader = sounds[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data = sounds[index].Item2;
-                    sounds.RemoveAt(index);
-                }
-
-                foreach (var v in snds)
-                {
-                    int index = random.Next(0, sounds.Count);
-                    v.SoundHeader = sounds[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data = sounds[index].Item2;
+                    GetAsset<AssetWithData>(v.SoundAssetID).Data = sounds[index].Item2;
                     sounds.RemoveAt(index);
                 }
             }
@@ -2445,19 +2256,19 @@ namespace IndustrialPark.Randomizer
                 List<EntrySoundInfo_PS2> soundsSNDCopy = new List<EntrySoundInfo_PS2>();
 
                 if (limited)
-                    foreach (string soundName in GetLimitedSoundRandomizerNames())
+                    foreach (string soundName in GetLimitedSoundRandomizerNamesBfbb(LevelName))
                     {
                         var v = snd.Find(s => new AssetID(soundName).Equals(s.SoundAssetID));
                         if (v != null)
                         {
-                            soundsSND.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data));
+                            soundsSND.Add((v.SoundHeader, GetAsset<AssetWithData>(v.SoundAssetID).Data));
                             soundsSNDCopy.Add(v);
                         }
                     }
                 else
                     foreach (var v in snd)
                     {
-                        soundsSND.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data));
+                        soundsSND.Add((v.SoundHeader, GetAsset<AssetWithData>(v.SoundAssetID).Data));
                         soundsSNDCopy.Add(v);
                     }
 
@@ -2465,7 +2276,7 @@ namespace IndustrialPark.Randomizer
                 {
                     int index = random.Next(0, soundsSND.Count);
                     v.SoundHeader = soundsSND[index].Item1;
-                    ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data = soundsSND[index].Item2;
+                    GetAsset<AssetWithData>(v.SoundAssetID).Data = soundsSND[index].Item2;
                     soundsSND.RemoveAt(index);
                 }
 
@@ -2474,13 +2285,13 @@ namespace IndustrialPark.Randomizer
                     List<(byte[], byte[])> soundsSNDS = new List<(byte[], byte[])>();
 
                     foreach (var v in snds)
-                        soundsSNDS.Add((v.SoundHeader, ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data));
+                        soundsSNDS.Add((v.SoundHeader, GetAsset<AssetWithData>(v.SoundAssetID).Data));
 
                     foreach (var v in snds)
                     {
                         int index = random.Next(0, soundsSNDS.Count);
                         v.SoundHeader = soundsSNDS[index].Item1;
-                        ((AssetWithData)GetFromAssetID(v.SoundAssetID)).Data = soundsSNDS[index].Item2;
+                        GetAsset<AssetWithData>(v.SoundAssetID).Data = soundsSNDS[index].Item2;
                         soundsSNDS.RemoveAt(index);
                     }
                 }
@@ -2492,37 +2303,12 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private string[] GetLimitedSoundRandomizerNames()
-        {
-            switch (game)
-            {
-                case Game.BFBB:
-                    switch (LevelName)
-                    {
-                        case "boot":
-                            return new string[] { "Box_open", "Box_shuffle_alt", "Box_shuffle_open", "Button_press", "Button_up", "springboard", "springboard_big", "teleport_snd" };
-                        case "mnu4":
-                            return new string[] { "mnu4_bubblewand", "mnu4_exit", "mnu4_Pop_in", "mnu4_SB_jog1L", "mnu4_SB_jog1R", "sax", "shiny_object_triangle3_soft" };
-                        case "mnu5":
-                            return new string[] { "Check1", "fanfare" };
-                        case "sppa":
-                            return new string[] { "Pat_belly", "Pat_jump_dub", "Pat_jump_land", "Pat_jump_sngl", "Pat_lift3B", "Pat_Ouch1", "Pat_Ouch2", "Pat_Ouch3", "Pat_Ouch4", "Pat_smash_belly", "Pat_throw" };
-                        case "spsb":
-                            return new string[] { "generic_land", "SB_bounce_hit1", "SB_bounce_hit2", "SB_bounce_start", "SB_bowl_release", "SB_Bubble_wand", "SB_bungee2", "SB_cruise_hit", "SB_cruise_start", "SB_jump_dub", "SB_jump_end", "SB_jump_sngl", "SB_ouch1", "SB_ouch2", "SB_ouch3", "SB_ouch4", "SB_wetball_end", "SB_wetball_start" };
-                        case "spsc":
-                            return new string[] { "SC_chop", "SC_jump_dub", "SC_jump_end", "SC_jump_sngl", "SC_kick", "SC_lasso_pull_pop", "SC_lasso_stretch", "SC_lasso_throw", "SC_Ouch1", "SC_Ouch2", "SC_Ouch3", "SC_Ouch4" };
-                    }
-                    break;
-            }
-            return new string[0];
-        }
-
         private bool RandomizeMovePointRadius(RandomizerSettings settings)
         {
             float min = settings.mvptMin;
             float max = settings.mvptMax;
 
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.MovePoint select asset).Cast<AssetMVPT>().ToList();
+            var assets = (from asset in assetRepository.Assets where asset.assetType == AssetType.MovePoint select asset).Cast<AssetMVPT>().ToList();
 
             foreach (var mvpt in assets)
             {
@@ -2542,7 +2328,7 @@ namespace IndustrialPark.Randomizer
 
         private bool MakeLevelInvisible()
         {
-            var assets = (from asset in assetDictionary.Values where asset.assetType == AssetType.JSP select (AssetJSP)asset).ToList();
+            var assets = (from asset in assetRepository.Assets where asset.assetType == AssetType.JSP select (AssetJSP)asset).ToList();
 
             foreach (var a in assets)
             {
@@ -2573,14 +2359,14 @@ namespace IndustrialPark.Randomizer
                             Functions.BKDRHash("trailer_hitch")
                         };
 
-            foreach (var asset in assetDictionary.Values)
+            foreach (var asset in assetRepository.Assets)
                 if (asset is AssetSIMP simp)
                 {
                     if (keepvisible.Contains(simp.Model))
                         continue;
 
                     foreach (var link in simp.Links)
-                        if (link.EventReceiveID.ToString().ToLower().Contains("hit"))
+                        if (link.EventReceiveBFBB.ToString().ToLower().Contains("hit"))
                             continue;
 
                     simp.ColorAlpha = 0f;
@@ -2710,19 +2496,19 @@ namespace IndustrialPark.Randomizer
         {
             if (LevelName == "hb01")
             {
-                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(new Vector3(8.774022f, 5.877692f, -23.492590f), "SPATULA_EXTRA_FIX", AssetTemplate.Spatula);
+                AssetPKUP spatula = (AssetPKUP)PlaceTemplate(AssetTemplate.Spatula, "SPATULA_EXTRA_FIX", new Vector3(8.774022f, 5.877692f, -23.492590f));
                 spatula.Links = new Link[]
                 {
-                    new Link(game)
+                    new Link(Game)
                     {
-                        EventReceiveID = (ushort)EventBFBB.Pickup,
-                        EventSendID = (ushort)EventBFBB.Count2,
+                        EventReceiveBFBB = EventBFBB.Pickup,
+                        EventSendBFBB = EventBFBB.Count2,
                         TargetAsset = 0x5F45B82A,
                     }
                 };
 
-                ((AssetDYNA)GetFromAssetID(new AssetID("EXIT_TALKBOX_HB05"))).Links = new Link[0];
-                ((AssetTEXT)GetFromAssetID(new AssetID("exit_hb05_text"))).Text = "You have been forbidden from entering this level :3.";
+                GetAsset<AssetDYNA>(new AssetID("EXIT_TALKBOX_HB05")).Links = new Link[0];
+                GetAsset<AssetTEXT>(new AssetID("exit_hb05_text")).Text = "You have been forbidden from entering this level :3.";
 
                 return true;
             }
@@ -2735,31 +2521,31 @@ namespace IndustrialPark.Randomizer
             {
                 case "b302":
                     uint dpat = new AssetID("BOSS3_OPEN_DISP");
-                    if (ContainsAsset(dpat) && GetFromAssetID(dpat) is AssetDPAT dispatcher)
+                    if (ContainsAsset(dpat) && GetAsset<AssetDPAT>(dpat) is AssetDPAT dispatcher)
                     {
                         dispatcher.EnabledOnStart = false;
                         AssetTIMR timer = (AssetTIMR)PlaceTemplate(AssetTemplate.Timer);
                         timer.Time = 1f;
                         uint boss = new AssetID("BOSS_NPC");
-                        if (ContainsAsset(boss) && GetFromAssetID(boss) is AssetVIL spongebot)
+                        if (ContainsAsset(boss) && GetAsset<AssetVIL>(boss) is AssetVIL spongebot)
                         {
                             uint transCut = new AssetID("BOSS3_TRANSITION_CSNMANAGER");
                             Link[] links = spongebot.Links;
                             for (int i = 0; i < links.Length; i++)
-                                if (links[i].EventSendID == (ushort)EventBFBB.Preload)
+                                if (links[i].EventSendBFBB == EventBFBB.Preload)
                                 {
                                     links[i].TargetAsset = timer.assetID;
-                                    links[i].EventSendID = (ushort)EventBFBB.Run;
+                                    links[i].EventSendBFBB = EventBFBB.Run;
                                 }
                             spongebot.Links = links;
-                            if (ContainsAsset(transCut) && GetFromAssetID(transCut) is AssetCSNM transitionCutscene)
+                            if (ContainsAsset(transCut) && GetAsset<AssetCSNM>(transCut) is AssetCSNM transitionCutscene)
                             {
                                 Link[] cutLinks = transitionCutscene.Links;
                                 for (int i = 0; i < cutLinks.Length; i++)
-                                    if (cutLinks[i].EventReceiveID == (ushort)EventBFBB.Play)
-                                        cutLinks[i].EventReceiveID = (ushort)EventBFBB.Run;
-                                    else if (cutLinks[i].EventReceiveID == (ushort)EventBFBB.Done)
-                                        cutLinks[i].EventReceiveID = (ushort)EventBFBB.Expired;
+                                    if (cutLinks[i].EventReceiveBFBB == EventBFBB.Play)
+                                        cutLinks[i].EventReceiveBFBB = EventBFBB.Run;
+                                    else if (cutLinks[i].EventReceiveBFBB == EventBFBB.Done)
+                                        cutLinks[i].EventReceiveBFBB = EventBFBB.Expired;
                                 timer.Links = cutLinks;
                             }
                         }
@@ -2768,20 +2554,20 @@ namespace IndustrialPark.Randomizer
                     break;
                 case "b303":
                     uint cutTimerAssetID = new AssetID("CUTSCN_TIMER");
-                    if (ContainsAsset(cutTimerAssetID) && GetFromAssetID(cutTimerAssetID) is AssetTIMR cutTimer)
+                    if (ContainsAsset(cutTimerAssetID) && GetAsset<AssetTIMR>(cutTimerAssetID) is AssetTIMR cutTimer)
                     {
                         List<Link> links = cutTimer.Links.ToList();
                         uint cut = new AssetID("WIN_GAME_CTSNMANAGER");
-                        if (ContainsAsset(cut) && GetFromAssetID(cut) is AssetCSNM cutManager)
+                        if (ContainsAsset(cut) && GetAsset<AssetCSNM>(cut) is AssetCSNM cutManager)
                         {
                             links.AddRange(cutManager.Links);
                             for (int i = 0; i < links.Count; i++)
-                                if (links[i].EventSendID == (ushort)EventBFBB.Preload)
+                                if (links[i].EventSendBFBB == EventBFBB.Preload)
                                     links.RemoveAt(i--);
-                                else if (links[i].EventReceiveID == (ushort)EventBFBB.Play)
-                                    links[i].EventReceiveID = (ushort)EventBFBB.Run;
-                                else if (links[i].EventReceiveID == (ushort)EventBFBB.Done)
-                                    links[i].EventReceiveID = (ushort)EventBFBB.Expired;
+                                else if (links[i].EventReceiveBFBB == EventBFBB.Play)
+                                    links[i].EventReceiveBFBB = EventBFBB.Run;
+                                else if (links[i].EventReceiveBFBB == EventBFBB.Done)
+                                    links[i].EventReceiveBFBB = EventBFBB.Expired;
                             cutTimer.Links = links.ToArray();
                         }
                         return true;
@@ -2869,31 +2655,11 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        private static readonly NpcType_BFBB[] importVilTypes = new NpcType_BFBB[] {
-            NpcType_BFBB.g_love_bind,
-            NpcType_BFBB.ham_bind,
-            NpcType_BFBB.robot_0a_bomb_bind,
-            NpcType_BFBB.robot_0a_bzzt_bind,
-            NpcType_BFBB.robot_0a_chomper_bind,
-            NpcType_BFBB.robot_0a_fodder_bind,
-            NpcType_BFBB.robot_4a_monsoon_bind,
-            NpcType_BFBB.robot_9a_bind,
-            NpcType_BFBB.robot_chuck_bind,
-            NpcType_BFBB.robot_sleepytime_bind,
-            NpcType_BFBB.robot_tar_bind,
-            NpcType_BFBB.robot_arf_bind,
-            NpcType_BFBB.tubelet_bind,
-            NpcType_BFBB.tiki_lovey_dovey_bind,
-            NpcType_BFBB.tiki_shhhh_bind,
-            NpcType_BFBB.tiki_stone_bind,
-            NpcType_BFBB.tiki_thunder_bind,
-            NpcType_BFBB.tiki_wooden_bind
-        };
-
+        // fossil
         public HashSet<NpcType_BFBB> GetEnemyTypes()
         {
             HashSet<NpcType_BFBB> outSet = new HashSet<NpcType_BFBB>();
-            foreach (AssetVIL a in (from asset in assetDictionary.Values
+            foreach (AssetVIL a in (from asset in assetRepository.Assets
                                     where asset is AssetVIL vil && importVilTypes.Contains(vil.NpcType_BFBB)
                                     select asset).Cast<AssetVIL>())
             {
@@ -2926,7 +2692,7 @@ namespace IndustrialPark.Randomizer
                 new AssetID("BLUE ALPHA 3 BAMBOO UI"),
             })
             {
-                var ui = (AssetUI)GetFromAssetID(u);
+                var ui = GetAsset<AssetUI>(u);
                 ui.ScaleX *= 4f / 3f;
             }
 
@@ -2936,7 +2702,7 @@ namespace IndustrialPark.Randomizer
                 new AssetID("BLUE ALPHA 3 UI"),
             })
             {
-                var ui = (AssetUI)GetFromAssetID(u);
+                var ui = GetAsset<AssetUI>(u);
                 ui.Width = (short)(ui.Width * 4f / 3f);
                 ui.PositionX -= 107f;
             }
@@ -2944,22 +2710,20 @@ namespace IndustrialPark.Randomizer
             return true;
         }
 
-        public void ProgImportHip(string folderName, string fileName)
+        public IEnumerable<uint> ProgImportHip(string folderName, string fileName)
         {
-            string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
-            ImportHip(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName), true);
+            var hipFileName = Path.Combine(AutomaticUpdater.editorFilesFolder, EditorFilesGameFolderName(Game), Platform.ToString(), folderName, fileName);
+            return Transformer.ImportHip(hipFileName, true);
         }
 
         private void ProgUnimportHip(string folderName, string fileName)
         {
-            string gameName = game == Game.BFBB ? "BattleForBikiniBottom" : "MovieGame";
-            UnimportHip(HipFile.FromPath(Path.Combine(editorFilesFolder, gameName, platform.ToString(), folderName, fileName)).DICT);
+            var hipFileName = Path.Combine(AutomaticUpdater.editorFilesFolder, EditorFilesGameFolderName(Game), Platform.ToString(), folderName, fileName);
+            UnimportHip(HipFile.FromPath(hipFileName).DICT);
         }
 
         public void UnimportHip(Section_DICT dict)
         {
-            UnsavedChanges = true;
-
             foreach (Section_AHDR AHDR in dict.ATOC.AHDRList)
             {
                 switch (AHDR.assetType)
@@ -2968,6 +2732,7 @@ namespace IndustrialPark.Randomizer
                     case AssetType.JawDataTable:
                     case AssetType.LevelOfDetailTable:
                     case AssetType.ShadowTable:
+                    case AssetType.PipeInfoTable:
                     case AssetType.SoundInfo:
                         continue;
                 }
@@ -2976,205 +2741,33 @@ namespace IndustrialPark.Randomizer
             }
         }
 
-        private string LevelName => Path.GetFileNameWithoutExtension(currentlyOpenFilePath).ToLower();
+        public List<AssetPORT> ValidWarps(List<string> toSkip) => assetRepository.Assets.OfType<AssetPORT>().Where(port => !IsWarpToSameLevel(LevelName, port.DestinationLevel) && !PortInToSkip(Game, LevelName, port, toSkip)).ToList();
 
-        private bool IsWarpToSameLevel(string warpName) =>
-            LevelName.ToLower().Equals(warpName.ToLower()) || new string(warpName.Reverse().ToArray()).ToLower().Equals(LevelName.ToLower());
-
-        public List<string> GetWarpNames(List<string> toSkip) =>
-            assetDictionary.Values.OfType<AssetPORT>().Where(port => !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, toSkip)).Select(port => port.DestinationLevel).ToList();
-
-        private bool PortInToSkip(AssetPORT port, List<string> toSkip)
-        {
-            string dest = port.DestinationLevel.ToLower();
-
-            if (game == Game.BFBB)
-                switch (LevelName)
-                {
-                    case "bb01":
-                        if (port.assetName == "TOHB01")
-                            return true;
-                        else if (dest == "bb03")
-                            return true;
-                        break;
-                    case "bc01":
-                        if (dest == "hb01")
-                            return true;
-                        break;
-                    case "bc02":
-                        if (dest == "bc04")
-                            return true;
-                        break;
-                    case "hb01":
-                        if (dest == "tl01")
-                            return true;
-                        else if (port.assetName == "TOJF01")
-                            return true;
-                        else if (port.assetName == "TOBB01")
-                            return true;
-                        else if (port.assetName == "TOGL01")
-                            return true;
-                        else if (port.assetName == "TOBC01")
-                            return true;
-                        break;
-                    case "jf01":
-                        if (port.assetName == "TAXISTAND_PORTAL_01")
-                            return true;
-                        break;
-                    case "jf02":
-                        if (dest == "jf04")
-                            return true;
-                        break;
-                    case "jf04":
-                        if (dest == "jf02")
-                            return true;
-                        else if (dest == "jf80")
-                            return true;
-                        break;
-                    case "rb01":
-                        if (port.assetName == "TOHUB_PORTAL")
-                            return true;
-                        break;
-                    case "sm01":
-                        if (port.assetName == "TOHB01")
-                            return true;
-                        break;
-                }
-            else if (game == Game.Scooby)
-                switch (LevelName)
-                {
-                    case "g001":
-                        if (dest == "h001")
-                            return true;
-                        break;
-                    case "h001":
-                        if (dest == "b001" || dest == "c001" || dest == "g001" || dest == "l011" || dest == "mnu5" ||
-                            dest == "o001" || dest == "p001" || dest == "r001" || dest == "s001" || dest == "w020")
-                            return true;
-                        break;
-                    case "h002":
-                        if (dest != "h001")
-                            return true;
-                        break;
-                    case "i001":
-                        if (dest != "h001" || dest != "i002" || dest != "r001")
-                            return true;
-                        break;
-                    case "i020":
-                        if (dest == "i003")
-                            return true;
-                        break;
-                    case "i005":
-                        if (dest == "r001")
-                            return true;
-                        break;
-                    case "i006":
-                        if (dest == "i004" || port.assetName == "TOR001A")
-                            return true;
-                        break;
-                    case "o006":
-                        if (dest == "h001")
-                            return true;
-                        break;
-                    case "p001":
-                        if (dest == "unti")
-                            return true;
-                        break;
-                    case "p004":
-                        if (port.assetName == "TOP005A")
-                            return true;
-                        break;
-                    case "p005":
-                        if (port.assetName == "TOP004A")
-                            return true;
-                        break;
-                    case "r001":
-                        if (port.assetName == "TOI005A")
-                            return true;
-                        break;
-                    case "r020":
-                        if (dest == "r003")
-                            return true;
-                        break;
-                    case "r021":
-                        if (dest == "r001")
-                            return true;
-                        break;
-                    case "w027":
-                    case "w028":
-                        if (dest == "w024")
-                            return true;
-                        break;
-                    case "s005":
-                        return true;
-                }
-            else if (game == Game.Incredibles)
-                switch (LevelName)
-                {
-                    case "b402":
-                        if (port.assetName == "B402_PORTAL")
-                            return true;
-                        break;
-                    case "jk01":
-                        if (port.assetName == "FB03_PORTAL")
-                            return true;
-                        break;
-                    case "jk02":
-                        if (port.assetName == "MINDY_PORTAL_01")
-                            return true;
-                        if (port.assetName == "RINGRACE_PORTAL")
-                            return true;
-                        break;
-                    case "pt01":
-                        if (port.assetName == "PT02_PORTAL_01")
-                            return true;
-                        break;
-                    case "pt02":
-                        if (port.assetName == "PORTAL_TO_PT01")
-                            return true;
-                        break;
-                    case "sc02":
-                    case "tr01":
-                        if (port.assetName == "TO_FINISH_PORTAL")
-                            return true;
-                        if (port.assetName == "TO_MINDY_PORTAL")
-                            return true;
-                        if (port.assetName == "TO_NEUTRAL_PORTAL")
-                            return true;
-                        if (port.assetName == "TO_START_PORTAL")
-                            return true;
-                        break;
-                }
-
-            foreach (string s in toSkip)
-                if (dest.Contains(s.ToLower()))
-                    return true;
-                else if (new string(dest.ToArray()).ToLower().Contains(s.ToLower()))
-                    return true;
-
-            return false;
-        }
+        public List<string> GetWarpNames(List<string> toSkip) => ValidWarps(toSkip).Select(port => port.DestinationLevel).ToList();
 
         public bool SetWarpNames(List<string> toSkip, ref List<string> warpNames, ref List<(string, string, string)> warpRandomizerOutput, HashSet<string> unique, ref Dictionary<string, List<string>> markerNames)
         {
-            var warpsRandomizer = assetDictionary.Values.OfType<AssetPORT>().Where(port => !IsWarpToSameLevel(port.DestinationLevel) && !PortInToSkip(port, toSkip)).ToList();
+            var warpsRandomizer = ValidWarps(toSkip);
 
             foreach (AssetPORT port in warpsRandomizer)
             {
                 if (ShouldFillWithUnique(warpNames))
                     warpNames.AddRange(unique.OrderBy(x => x));
 
-                var localWarpNames = warpNames.Where(name => !IsWarpToSameLevel(name)).ToList();
+                var localWarpNames = warpNames.Where(name => !IsWarpToSameLevel(LevelName, name)).ToList();
                 int index = random.Next(0, localWarpNames.Count);
 
-                warpRandomizerOutput.Add((LevelName.ToUpper(), port.DestinationLevel, localWarpNames[index]));
+                warpRandomizerOutput.Add((LevelName.ToUpper(), port.DestinationLevel.ToUpper(), localWarpNames[index].ToUpper()));
 
                 port.DestinationLevel = localWarpNames[index];
                 port.Rotation = random.NextFloat(0f, 360f);
+                port.DestinationMarker = 0;
 
-                if (markerNames.ContainsKey(port.DestinationLevel.ToUpper()))
+                if (markerNames.TryGetValue(port.DestinationLevel.ToLower(), out var localMarkerNames))
                 {
-                    var localMarkerNames = markerNames[port.DestinationLevel.ToUpper()];
+                    if (localMarkerNames.Count == 0 && Game == Game.Scooby)
+                        localMarkerNames.AddRange(GetMarkerNamesScooby(localWarpNames[index]));
+
                     if (localMarkerNames.Count > 0)
                     {
                         var mrkrIndex = random.Next(0, localMarkerNames.Count);
@@ -3184,6 +2777,12 @@ namespace IndustrialPark.Randomizer
                 }
 
                 warpNames.Remove(localWarpNames[index]);
+            }
+
+            if (Game == Game.Scooby && LevelName == "w026")
+            {
+                RemoveAsset(new AssetID("BLOCKER_SO"));
+                RemoveAsset(new AssetID("GUM_COND"));
             }
 
             return warpsRandomizer.Count != 0;
@@ -3208,15 +2807,14 @@ namespace IndustrialPark.Randomizer
 
             if (ContainsAsset(new AssetID(musicDispAssetName)))
             {
-                List<uint> assetIDs = FindWhoTargets(new AssetID(musicDispAssetName));
-                foreach (uint assetID in assetIDs)
+                var assets = FindWhoTargets(new AssetID(musicDispAssetName));
+                foreach (var objectAsset in assets.OfType<BaseAsset>())
                 {
-                    BaseAsset objectAsset = (BaseAsset)GetFromAssetID(assetID);
                     Link[] links = objectAsset.Links;
                     foreach (Link link in links)
-                        if (link.EventSendID == (ushort)EventBFBB.PlayMusic)
+                        if (link.EventSendBFBB == EventBFBB.PlayMusic)
                         {
-                            link.EventSendID = (ushort)EventBFBB.Run;
+                            link.EventSendBFBB = EventBFBB.Run;
                             link.TargetAsset = MusicGroupAssetName + "_01";
                         }
                     objectAsset.Links = links;
@@ -3232,51 +2830,49 @@ namespace IndustrialPark.Randomizer
             if (ContainsAsset(new AssetID(MusicDispAssetName + "_01")) && ContainsAsset(new AssetID(MusicGroupAssetName + "_01")))
                 return false;
 
-            var dpat = PlaceTemplate(MusicDispAssetName, AssetTemplate.Dispatcher);
+            var dpat = PlaceTemplate(AssetTemplate.Dispatcher, MusicDispAssetName);
 
-            var group = (AssetGRUP)PlaceTemplate(MusicGroupAssetName, AssetTemplate.Group);
+            var group = (AssetGRUP)PlaceTemplate(AssetTemplate.Group, MusicGroupAssetName);
             group.ReceiveEventDelegation = Delegation.RandomItem;
             group.Links = new Link[]
             {
-                new Link(game)
+                new Link(Game)
                 {
-                    EventReceiveID = (ushort)EventBFBB.ScenePrepare,
-                    EventSendID = (ushort)EventBFBB.Run,
+                    EventReceiveBFBB = EventBFBB.ScenePrepare,
+                    EventSendBFBB = EventBFBB.Run,
                     TargetAsset = group.assetID
                 }
             };
 
-            var outAssetIDs = new List<uint>();
+            List<AssetID> assetIDs = new List<AssetID>();
             for (int i = 0; i < 17; i++)
             {
                 if (i == 7 || i == 14)
                     continue;
 
-                var timer = (AssetTIMR)PlaceTemplate(new Vector3(), ref outAssetIDs, "IP_RANDO_TIMR", template: AssetTemplate.Timer);
+                var timer = (AssetTIMR)PlaceTemplate(AssetTemplate.Timer, "IP_RANDO_TIMR");
                 timer.Time = 0.1f;
                 var links = new List<Link>()
                 {
-                    new Link(game)
+                    new Link(Game)
                     {
                         FloatParameter1 = i,
-                        EventReceiveID = (ushort)EventBFBB.Expired,
-                        EventSendID = (ushort)EventBFBB.PlayMusic,
+                        EventReceiveBFBB = EventBFBB.Expired,
+                        EventSendBFBB = EventBFBB.PlayMusic,
                         TargetAsset = dpat.assetID
                     },
-                    new Link(game)
+                    new Link(Game)
                     {
-                        EventReceiveID = (ushort)EventBFBB.Expired,
-                        EventSendID = (ushort)EventBFBB.Reset,
+                        EventReceiveBFBB = EventBFBB.Expired,
+                        EventSendBFBB = EventBFBB.Reset,
                         TargetAsset = timer.assetID
                     },
                 };
 
                 timer.Links = links.ToArray();
+                assetIDs.Add(timer.assetID);
             }
 
-            List<AssetID> assetIDs = new List<AssetID>();
-            foreach (uint i in outAssetIDs)
-                assetIDs.Add(new AssetID(i));
             group.Items = assetIDs.ToArray();
 
             return true;
@@ -3284,7 +2880,7 @@ namespace IndustrialPark.Randomizer
 
         public bool MultiplyLODT(float value)
         {
-            foreach (Asset a in assetDictionary.Values)
+            foreach (Asset a in assetRepository.Assets)
                 if (a is AssetLODT lodt && lodt.assetFileName != "lodt_doubled")
                 {
                     lodt.assetFileName = "lodt_doubled";
@@ -3311,145 +2907,142 @@ namespace IndustrialPark.Randomizer
             switch (LevelName)
             {
                 case "hb01":
-                {
-                    if (!shuffleSpatulaGates)
-                        return false;
-                    // Downtown
                     {
-                        uint spatMechAssetID = new AssetID("SPATULA_BB_MECH_01");
-                        if (ContainsAsset(spatMechAssetID))
+                        if (!shuffleSpatulaGates)
+                            return false;
+                        // Downtown
                         {
-                            ((AssetPLAT)GetFromAssetID(spatMechAssetID)).PositionX = 87.315510f;
-                            ((AssetPLAT)GetFromAssetID(spatMechAssetID)).PositionZ = 10.411270f;
-                        }
+                            uint spatMechAssetID = new AssetID("SPATULA_BB_MECH_01");
+                            if (ContainsAsset(spatMechAssetID))
+                            {
+                                GetAsset<AssetPLAT>(spatMechAssetID).PositionX = 87.315510f;
+                                GetAsset<AssetPLAT>(spatMechAssetID).PositionZ = 10.411270f;
+                            }
 
-                        List<uint> platAssetIDs = new List<uint>();
+                            List<uint> platAssetIDs = new List<uint>();
 
-                        uint numRightAssetID = new AssetID("NUMBER_5_BB_MECH_01");
-                        if (ContainsAsset(numRightAssetID))
-                        {
-                            AssetPLAT plat = (AssetPLAT)GetFromAssetID(numRightAssetID);
-                            plat.PositionX = 87.481760f;
-                            plat.PositionZ = 9.643267f;
+                            uint numRightAssetID = new AssetID("NUMBER_5_BB_MECH_01");
+                            if (ContainsAsset(numRightAssetID))
+                            {
+                                AssetPLAT plat = GetAsset<AssetPLAT>(numRightAssetID);
+                                plat.PositionX = 87.481760f;
+                                plat.PositionZ = 9.643267f;
 
-                            string serializedObject = JsonConvert.SerializeObject(plat.BuildAHDR(platform.Endianness()));
-                            Section_AHDR AHDR = JsonConvert.DeserializeObject<Section_AHDR>(serializedObject);
+                                var (clone, layerIndex) = AssetService.DuplicateAssets([plat], Platform, GetLayerFromAssetID, ContainsAsset, true).FirstOrDefault();
+                                var plat2 = (AssetPLAT)AddNewAsset(clone, layerIndex);
 
-                            var plat2 = (AssetPLAT)AddAssetWithUniqueID(AHDR, game, platform.Endianness());
+                                plat2.PositionX = 87.692600f;
+                                plat2.PositionZ = 8.692189f;
 
-                            plat2.PositionX = 87.692600f;
-                            plat2.PositionZ = 8.692189f;
+                                platAssetIDs.Add(numRightAssetID);
+                                platAssetIDs.Add(plat2.assetID);
 
-                            platAssetIDs.Add(numRightAssetID);
-                            platAssetIDs.Add(plat2.assetID);
-
-                            plat.Links = new Link[] { new Link(game)
+                                plat.Links = [.. plat.Links, new Link(Game)
                                 {
-                                    EventReceiveID = (ushort)EventBFBB.Invisible,
-                                    EventSendID = (ushort)EventBFBB.Invisible,
+                                    EventReceiveBFBB = EventBFBB.Invisible,
+                                    EventSendBFBB = EventBFBB.Invisible,
                                     TargetAsset = plat2.assetID,
                                     FloatParameter1 = 77,
-                                }
-                                };
+                                }];
+                            }
+
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_BB_COND_01"));
+                            int i = 0;
+                            foreach (uint u in platAssetIDs)
+                                SetNumberPlats(value, i++, u);
+
+                            ReplaceInText(new AssetID("Spatula_exit_bb01_text"), "5", value.ToString());
                         }
 
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_BB_COND_01"));
-                        int i = 0;
-                        foreach (uint u in platAssetIDs)
-                            SetNumberPlats(value, i++, u);
+                        // GL
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GL_COND_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_GL_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_1_GL_MECH_01"));
+                            ReplaceInText(new AssetID("Spatula_exit_gl01_text"), "10", value.ToString());
 
-                        ReplaceInText(new AssetID("Spatula_exit_bb01_text"), "5", value.ToString());
-                    }
+                            GetAsset<AssetPLAT>(new AssetID("NUMBER_0_GL_MECH_01")).Yaw += 180f;
+                        }
+                        // H2
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H2_COND_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_5_H2_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_1_H2_MECH_01"));
+                            ReplaceInText(new AssetID("Spatula_exit_hub2_text"), "15", value.ToString());
+                        }
+                        // RB
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_RB_COND_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_5_RB_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_2_RB_MECH_01"));
+                            ReplaceInText(new AssetID("Spatula_exit_rb01_text"), "25", value.ToString());
+                        }
+                        // SM
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_SM_COND_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_SM_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_3_SM_MECH_01"));
+                            ReplaceInText(new AssetID("Spatula_exit_sm01_text"), "30", value.ToString());
 
-                    // GL
-                    {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GL_COND_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_GL_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_1_GL_MECH_01"));
-                        ReplaceInText(new AssetID("Spatula_exit_gl01_text"), "10", value.ToString());
+                            GetAsset<AssetPLAT>(new AssetID("NUMBER_0_SM_MECH_01")).Yaw += 180f;
+                        }
+                        // H3
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H3_COND_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_H3_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_4_H3_MECH_01"));
+                            ReplaceInText(new AssetID("Spatula_exit_hub3_text"), "40", value.ToString());
 
-                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_GL_MECH_01"))).Yaw += 180f;
-                    }
-                    // H2
-                    {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H2_COND_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_5_H2_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_1_H2_MECH_01"));
-                        ReplaceInText(new AssetID("Spatula_exit_hub2_text"), "15", value.ToString());
-                    }
-                    // RB
-                    {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_RB_COND_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_5_RB_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_2_RB_MECH_01"));
-                        ReplaceInText(new AssetID("Spatula_exit_rb01_text"), "25", value.ToString());
-                    }
-                    // SM
-                    {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_SM_COND_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_SM_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_3_SM_MECH_01"));
-                        ReplaceInText(new AssetID("Spatula_exit_sm01_text"), "30", value.ToString());
+                            GetAsset<AssetPLAT>(new AssetID("NUMBER_0_H3_MECH_01")).Yaw += 180f;
+                        }
+                        // KF
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_KF_COND_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_KF_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_5_KF_MECH_01"));
+                            ReplaceInText(new AssetID("Spatula_exit_kf01_text"), "50", value.ToString());
 
-                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_SM_MECH_01"))).Yaw += 180f;
-                    }
-                    // H3
-                    {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_H3_COND_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_H3_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_4_H3_MECH_01"));
-                        ReplaceInText(new AssetID("Spatula_exit_hub3_text"), "40", value.ToString());
+                            GetAsset<AssetPLAT>(new AssetID("NUMBER_0_KF_MECH_01")).Yaw += 180f;
+                        }
+                        // GY
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GY_COND_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_0_GY_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_6_GY_MECH_01"));
+                            ReplaceInText(new AssetID("Spatula_exit_gy01_text"), "60", value.ToString());
+                        }
 
-                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_H3_MECH_01"))).Yaw += 180f;
+                        needToAddNumbers = true;
                     }
-                    // KF
-                    {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_KF_COND_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_KF_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_5_KF_MECH_01"));
-                        ReplaceInText(new AssetID("Spatula_exit_kf01_text"), "50", value.ToString());
-
-                        ((AssetPLAT)GetFromAssetID(new AssetID("NUMBER_0_KF_MECH_01"))).Yaw += 180f;
-                    }
-                    // GY
-                    {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_BOOTH_GY_COND_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_0_GY_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_6_GY_MECH_01"));
-                        ReplaceInText(new AssetID("Spatula_exit_gy01_text"), "60", value.ToString());
-                    }
-
-                    needToAddNumbers = true;
-                }
-                break;
+                    break;
                 case "hb08":
-                {
-                    if (ContainsAssetWithType(AssetType.Conditional))
                     {
-                        int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
+                        if (ContainsAssetWithType(AssetType.Conditional))
+                        {
+                            int value = random.Next(settings.spatReqMin, settings.spatReqMax + 1);
 
-                        if (settings.spatReqChum != -1)
-                            value = settings.spatReqChum;
+                            if (settings.spatReqChum != -1)
+                                value = settings.spatReqChum;
 
-                        SetCondEvaluationAmount(value - 1, new AssetID("TOLL_DOOR_CONDITIONAL_01"));
-                        SetNumberPlats(value, 0, new AssetID("NUMBER_5_MECH_01"));
-                        SetNumberPlats(value, 1, new AssetID("NUMBER_7_MECH_01"));
-                        ReplaceInText(new AssetID("exit_b301_denial_text"), "75", value.ToString());
-                        ReplaceInText(new AssetID("exit_b301_description_text"), "75", value.ToString());
+                            SetCondEvaluationAmount(value - 1, new AssetID("TOLL_DOOR_CONDITIONAL_01"));
+                            SetNumberPlats(value, 0, new AssetID("NUMBER_5_MECH_01"));
+                            SetNumberPlats(value, 1, new AssetID("NUMBER_7_MECH_01"));
+                            ReplaceInText(new AssetID("exit_b301_denial_text"), "75", value.ToString());
+                            ReplaceInText(new AssetID("exit_b301_description_text"), "75", value.ToString());
 
-                        if (value != 75)
-                            needToAddNumbers = true;
+                            if (value != 75)
+                                needToAddNumbers = true;
+                        }
                     }
-                }
-                break;
+                    break;
                 default:
                     return false;
             }
@@ -4007,38 +3600,30 @@ namespace IndustrialPark.Randomizer
         {
             if (ContainsAsset(assetID))
             {
-                AssetTEXT TEXT = ((AssetTEXT)GetFromAssetID(assetID));
+                AssetTEXT TEXT = GetAsset<AssetTEXT>(assetID);
                 string text = TEXT.Text;
                 if (text.Contains(originalText))
                     TEXT.Text = text.Replace(originalText, newText);
-                else
-                    MessageBox.Show("Text asset " + assetID.ToString("X8") + " on file " + LevelName + " doesn't contain " + originalText);
             }
-            else
-                MessageBox.Show("Text asset " + assetID.ToString("X8") + " not found on file " + LevelName);
         }
 
         private void SetCondEvaluationAmount(int shinyAmount, uint assetID)
         {
-            if (ContainsAsset(assetID))
-                ((AssetCOND)GetFromAssetID(assetID)).EvaluationAmount = shinyAmount;
-            else
-                MessageBox.Show("Cond asset " + assetID.ToString("X8") + " not found on file " + LevelName);
+            if (TryGetAsset(assetID, out AssetCOND cond))
+                cond.EvaluationAmount = shinyAmount;
         }
 
         private void SetGiveShinyObjects(int shinyAmount, uint assetID)
         {
-            if (ContainsAsset(assetID) && GetFromAssetID(assetID) is BaseAsset objectAsset)
+            if (TryGetAsset(assetID, out BaseAsset objectAsset))
             {
                 Link[] links = objectAsset.Links;
                 for (int i = 0; i < links.Length; i++)
-                    if (links[i].EventSendID == (ushort)EventBFBB.GiveShinyObjects)
+                    if (links[i].EventSendBFBB == EventBFBB.GiveShinyObjects)
                         links[i].FloatParameter1 = shinyAmount;
 
                 objectAsset.Links = links;
             }
-            else
-                MessageBox.Show("Asset " + assetID.ToString("X8") + " not found on file " + LevelName);
         }
 
         private void SetNumberPlats(int shinyAmount, int power, uint assetID)
@@ -4052,10 +3637,8 @@ namespace IndustrialPark.Randomizer
 
         private void SetPlaceableAssetModel(uint assetID, string modelName)
         {
-            if (ContainsAsset(assetID))
-                ((EntityAsset)GetFromAssetID(assetID)).Model = modelName;
-            else
-                MessageBox.Show("Placeable asset " + assetID.ToString("X8") + " not found on file " + LevelName);
+            if (TryGetAsset(assetID, out EntityAsset entity))
+                entity.Model = modelName;
         }
 
         public bool RandomizePoliceStation(RandomizerSettings settings)
@@ -4063,7 +3646,7 @@ namespace IndustrialPark.Randomizer
             bool shuffled = false;
 
             if (settings.Pickups && ContainsAssetWithType(AssetType.Pickup))
-                shuffled |= RandomizePickupPositions();
+                shuffled |= RandomizePickupPositions(false);
 
             if (settings.Colors)
                 shuffled |=
@@ -4080,7 +3663,7 @@ namespace IndustrialPark.Randomizer
             if (settings.Set_Scale)
             {
                 shuffled |= true;
-                ApplyScale(new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
+                ArchiveModelTransformer.ApplyScale(this, new Vector3(settings.scaleFactorX, settings.scaleFactorY, settings.scaleFactorZ));
             }
 
             if (settings.Textures && ContainsAssetWithType(AssetType.Texture))
@@ -4090,6 +3673,321 @@ namespace IndustrialPark.Randomizer
                 shuffled |= RandomizeSounds(settings.Mix_Sound_Types);
 
             return shuffled;
+        }
+
+        public void GetMonsterTokens(Dictionary<uint, List<Asset>> tokens)
+        {
+            if (LevelName == "h003")
+                return;
+
+            var models = assetRepository.Assets.OfType<AssetMODL>().Where(a => a.assetName.Contains("token")).ToList();
+            foreach (var model in models)
+            {
+                if (!tokens.ContainsKey(model.assetID))
+                    tokens[model.assetID] = new List<Asset>();
+                tokens[model.assetID].Add(model);
+                var textures = assetRepository.Assets.OfType<AssetRWTX>().Where(a => model.Textures.Any(t => a.assetName.Contains(t)));
+                tokens[model.assetID].AddRange(textures);
+            }
+        }
+
+        public bool RandomizePowerupLevels(HashSet<PickupReference> powerupsFrom, List<uint> powerupsTo, bool createBossHints, Dictionary<uint, List<Asset>> tokens)
+        {
+            if (LevelName == "s005") // mastermind 2
+                return false;
+
+            var pickups = assetRepository.Assets.OfType<AssetPKUP>()
+                .Where(pkup => powerupsFrom.Contains((PickupReference)(uint)pkup.PickReferenceID))
+                .ToList();
+
+            if (pickups.Count == 0)
+                return false;
+
+            foreach (var pkup in pickups)
+            {
+                var index = -1;
+                do
+                {
+                    index = random.Next(powerupsTo.Count);
+                }
+                while (!ReplacementAllowed(LevelName, (PickupReference)powerupsTo[index], new Vector3(pkup.PositionX, pkup.PositionY, pkup.PositionZ)));
+
+                pkup.PickReferenceID = powerupsTo[index];
+                pkup.Shape = BitConverter.GetBytes(pkup.PickReferenceID)[0];
+                pkup.ScaleX = 1f;
+                pkup.ScaleY = 1f;
+                pkup.ScaleZ = 1f;
+
+                powerupsTo.RemoveAt(index);
+
+                uint modelAssetId = 0;
+                string hipFolderName = "Powerups";
+                string hipImportName = null;
+                switch ((PickupReference)(uint)pkup.PickReferenceID)
+                {
+                    case PickupReference.Shovel:
+                        hipImportName = "shovel.hip";
+                        break;
+                    case PickupReference.Springs:
+                        hipImportName = "springs.hip";
+                        break;
+                    case PickupReference.Umbrella:
+                        hipImportName = "umbrella.hip";
+                        break;
+                    case PickupReference.Helmet:
+                        pkup.ScaleX = 2f;
+                        pkup.ScaleY = 2f;
+                        pkup.ScaleZ = 2f;
+                        hipImportName = "helmet.hip";
+                        break;
+                    case PickupReference.Knight_Helmet:
+                        pkup.ScaleX = 2f;
+                        pkup.ScaleY = 2f;
+                        pkup.ScaleZ = 2f;
+                        hipImportName = "knight_helmet.hip";
+                        break;
+                    case PickupReference.Boots:
+                        hipImportName = "boots.hip";
+                        break;
+                    case PickupReference.Super_Smash:
+                        hipImportName = "smash.hip";
+                        break;
+                    case PickupReference.Super_Sonic_Smash:
+                        hipImportName = "smash_stun.hip";
+                        break;
+                    case PickupReference.Gum_Machine:
+                        hipImportName = "gum.hip";
+                        break;
+                    case PickupReference.Soap_Bubble:
+                        hipImportName = "soap.hip";
+                        break;
+                    case PickupReference.Slippers:
+                        hipImportName = "slippers.hip";
+                        break;
+                    case PickupReference.Lampshade:
+                        hipImportName = "lampshade.hip";
+                        break;
+                    case PickupReference.Plungers:
+                        hipImportName = "plungers.hip";
+                        break;
+                    case PickupReference.Gum_Pack:
+                        hipImportName = "gum_pack.hip";
+                        hipFolderName = "Pickups";
+                        break;
+                    case PickupReference.Soap_Pack:
+                        hipImportName = "soap_box.hip";
+                        hipFolderName = "Pickups";
+                        break;
+                    default:
+                        var pkupRef = (PickupReference)(uint)pkup.PickReferenceID;
+                        if (pkupRef.ToString().StartsWith("Token"))
+                        {
+                            modelAssetId = AssetPICK.pickEntries[pkup.PickReferenceID];
+                            var assets = tokens[modelAssetId];
+                            foreach (var asset in assets)
+                                AddNewAsset(asset, -1);
+                        }
+                        break;
+                }
+
+                if (hipImportName != null)
+                {
+                    var imported = ProgImportHip(hipFolderName, hipImportName);
+                    var model = imported.Select(GetAsset).FirstOrDefault(a => a.assetType == AssetType.Model);
+                    modelAssetId = model?.assetID ?? 0;
+                }
+                
+                if (modelAssetId == 0)
+                {
+                    throw new Exception("Unsupported powerup.");
+                }
+
+                switch (LevelName)
+                {
+                    case "h001":
+                        var checkShovelCond = GetAsset<AssetCOND>(new AssetID("CHECK SHOVEL CONDITIONAL"));
+                        checkShovelCond.Conditional_Scooby = GetConditionalVariableScooby((PickupReference)powerupsTo[index]);
+                        break;
+                    case "e002":
+                        var lampshadeMech = GetAsset<AssetPLAT>(0x5E356230);
+                        lampshadeMech.Model = modelAssetId;
+                        lampshadeMech.ScaleX = pkup.ScaleX;
+                        lampshadeMech.ScaleY = pkup.ScaleY;
+                        lampshadeMech.ScaleZ = pkup.ScaleZ;
+                        var groundsgonecounter = GetAsset<AssetCNTR>(new AssetID("GROUNDSGONE COUNTER"));
+                        groundsgonecounter.Links = [];
+                        break;
+                    case "e007":
+                        var invisTrig = GetAsset<AssetTRIG>(0xF5024627);
+                        invisTrig.Links = [..invisTrig.Links, new Link(Game.Scooby) {
+                            EventReceiveScooby = EventScooby.ScenePrepare,
+                            EventSendScooby = EventScooby.EnterPlayer,
+                            TargetAsset = invisTrig.assetID,
+                        }];
+                        break;
+                    default:
+                        break;
+                }
+
+                if (createBossHints)
+                {
+                    Vector3 position = default;
+                    switch (LevelName)
+                    {
+                        case "g009":
+                            position = new Vector3(-30f, 18f, 36f);
+                            break;
+                        case "o008":
+                            position = new Vector3(12.8f, 53.5f, -232f);
+                            break;
+                        case "w028":
+                            position = new Vector3(-0.5f, 1.2f, -6.2f);
+                            break;
+                        default:
+                            continue;
+                    }
+                    var plat = (AssetPLAT)PlaceTemplate(AssetTemplate.Platform, position: position);
+                    plat.Model = modelAssetId;
+                    plat.ColorAlpha = 0.8f;
+                    plat.SolidityFlags.FlagValueByte = 3;
+                    plat.PlatformFlags.FlagValueShort = 0;
+                    plat.Motion = new Motion_Mechanism(Game.Scooby)
+                    {
+                        MovementType = EMovementType.Rotate,
+                        RotateAxis = Axis.Y,
+                        RotateDistance = 360f,
+                        RotateTime = 5f,
+                    };
+                    plat.Motion.MotionFlags.FlagValueShort = 0;
+                    plat.ScaleX = pkup.ScaleX;
+                    plat.ScaleY = pkup.ScaleY;
+                    plat.ScaleZ = pkup.ScaleZ;
+                    plat.StateIsPersistent = true;
+                    pkup.Links = [.. pkup.Links, new Link(Game.Scooby) {
+                        EventReceiveScooby = EventScooby.Pickup,
+                        EventSendScooby = EventScooby.Invisible,
+                        TargetAsset = plat.assetID,
+                    }];
+                }
+            }
+            return true;
+        }
+
+        public bool UnlockGroundskeeper()
+        {
+            if (LevelName == "h001")
+            {
+                var pkup = GetAsset<AssetPKUP>(new AssetID("SHOVEL"));
+                pkup.Links = [.. pkup.Links, new Link(Game.Scooby)
+                {
+                    EventReceiveScooby = EventScooby.ScenePrepare,
+                    EventSendScooby = EventScooby.False,
+                    TargetAsset = 0x1F21DCB5 // CHECK SHOVEL CONDITIONAL
+                }];
+                return true;
+            }
+            return false;
+        }
+
+        public bool UnlockCellar1Door()
+        {
+            if (LevelName == "b001")
+            {
+                var chain = GetAsset<AssetHANG>(0xCC43FFE8);
+                chain.Links = [.. chain.Links, new Link(Game.Scooby)
+                {
+                    EventReceiveScooby = EventScooby.Mount,
+                    EventSendScooby = EventScooby.ButtonPress,
+                    TargetAsset = new AssetID("WINEBUTTON0")
+                }];
+                return true;
+            }
+            return false;
+        }
+
+        public bool Hedge1_UnlockGate()
+        {
+            if (LevelName == "e001")
+            {
+                var trig = GetAsset<AssetTRIG>(0xC91CA497);
+                trig.EnabledOnStart = true;
+                return true;
+            }
+            return false;
+        }
+
+        public bool Aghast1_PlungersOnDeck()
+        {
+            if (LevelName == "w023")
+            {
+                var surf = GetAsset<AssetSURF>(new AssetID("DECK_OF_SHIP"));
+                surf.PhysicsFlags.FlagValueByte = 3;
+                return true;
+            }
+            return false;
+        }
+
+        public bool Wreck1_Softlock()
+        {
+            if (LevelName == "w020")
+            {
+                var player = GetAsset<AssetPLYR>(new AssetID("SCOOBY"));
+                var marker = GetAsset<AssetMRKR>(new AssetID("FROMLIGHTHOUSE"));
+                player.PositionX = marker.PositionX;
+                player.PositionY = marker.PositionY;
+                player.PositionZ = marker.PositionZ;
+                return true;
+            }
+            return false;
+        }
+
+        public void AddWarpGateToRedbeard()
+        {
+            if (Game != Game.Scooby || LevelName != "w028")
+                return;
+
+            ProgImportHip("Pickups", "warp_gate.hip");
+
+            var warpGate = (AssetPKUP)PlaceTemplate(AssetTemplate.Warp_Gate, position: new Vector3(1.75f, 1.38f, 11.0f));
+            warpGate.VisibilityFlags.FlagValueByte = 0;
+
+            var noHelmet = (AssetCOND)PlaceTemplate(AssetTemplate.Conditional, "NoHelmetCond");
+            noHelmet.Conditional_Scooby = ConditionalVariableScooby.FootballHelmet;
+            noHelmet.Operation = ConditionalOperation.EQUAL_TO;
+            noHelmet.EvaluationAmount = 0;
+            noHelmet.Links = [
+                new Link(Game.Scooby) {
+                        EventReceiveScooby = EventScooby.True,
+                        EventSendScooby = EventScooby.Visible,
+                        TargetAsset = warpGate.assetID,
+                    },
+                ];
+
+            var noSmash = (AssetCOND)PlaceTemplate(AssetTemplate.Conditional, "NoSmashCond");
+            noSmash.Conditional_Scooby = ConditionalVariableScooby.LightningBolt;
+            noSmash.Operation = ConditionalOperation.EQUAL_TO;
+            noSmash.EvaluationAmount = 0;
+            noSmash.Links = [
+                new Link(Game.Scooby) {
+                        EventReceiveScooby = EventScooby.ScenePrepare,
+                        EventSendScooby = EventScooby.Evaluate,
+                        TargetAsset = noSmash.assetID,
+                    },
+                    new Link(Game.Scooby) {
+                        EventReceiveScooby = EventScooby.True,
+                        EventSendScooby = EventScooby.Evaluate,
+                        TargetAsset = noHelmet.assetID,
+                    },
+                ];
+        }
+
+        public void AddWarpGateToDontLookDown2()
+        {
+            if (Game != Game.Scooby || LevelName != "r005")
+                return;
+
+            ProgImportHip("Pickups", "warp_gate.hip");
+            PlaceTemplate(AssetTemplate.Warp_Gate, position: new Vector3(24.54f, 24f, -187.34f));
         }
     }
 }

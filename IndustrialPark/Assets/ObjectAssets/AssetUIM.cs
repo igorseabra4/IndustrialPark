@@ -2,9 +2,8 @@
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
-using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetUIM : BaseAsset
     {
@@ -17,67 +16,44 @@ namespace IndustrialPark
         public AssetSingle TotalTime { get; set; }
         [Category(categoryName)]
         public AssetSingle LoopTime { get; set; }
-        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowAdd: false)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)), AssetPropertyCollectionOptions(allowCopy: false)]
         public UIMCommand[] Commands { get; set; }
 
         public AssetUIM(string assetName) : base(assetName, AssetType.UserInterfaceMotion, BaseAssetType.UIM)
         {
+            Commands = [];
         }
 
-        public AssetUIM(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetUIM(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            byte cmdCount = reader.ReadByte();
+            In = reader.ReadByte();
+            reader.ReadInt16();
+            var cmdSize = reader.ReadInt32();
+            TotalTime = reader.ReadSingle();
+            LoopTime = reader.ReadSingle();
+            var cmdStart = reader.BaseStream.Position;
+
+            Commands = new UIMCommand[cmdCount];
+            for (int i = 0; i < cmdCount; i++)
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                byte cmdCount = reader.ReadByte();
-                In = reader.ReadByte();
-                reader.ReadInt16();
-                var cmdSize = reader.ReadInt32();
-                TotalTime = reader.ReadSingle();
-                LoopTime = reader.ReadSingle();
-                var cmdStart = reader.BaseStream.Position;
-
-                Commands = new UIMCommand[cmdCount];
-                for (int i = 0; i < cmdCount; i++)
+                var cmdType = (UIMCommandType)reader.ReadInt32();
+                Commands[i] = cmdType switch
                 {
-                    var cmdType = (UIMCommandType)reader.ReadInt32();
-                    UIMCommand newCmd;
-                    switch (cmdType)
-                    {
-                        case UIMCommandType.Move:
-                            newCmd = new UIMCommand_Move(reader);
-                            break;
-                        case UIMCommandType.Scale:
-                            newCmd = new UIMCommand_Scale(reader);
-                            break;
-                        case UIMCommandType.Rotate:
-                            newCmd = new UIMCommand_Rotate(reader);
-                            break;
-                        case UIMCommandType.Opacity:
-                            newCmd = new UIMCommand_Opacity(reader);
-                            break;
-                        case UIMCommandType.AbsoluteScale:
-                            newCmd = new UIMCommand_AbsoluteScale(reader);
-                            break;
-                        case UIMCommandType.Brightness:
-                            newCmd = new UIMCommand_Brightness(reader);
-                            break;
-                        case UIMCommandType.Color:
-                            newCmd = new UIMCommand_Color(reader);
-                            break;
-                        case UIMCommandType.UVScroll:
-                            newCmd = new UIMCommand_UVScroll(reader);
-                            break;
-                        default:
-                            throw new Exception($"Unsupported UIM command: {cmdType}");
-                    }
-                    Commands[i] = newCmd;
-                }
-
-                if (reader.BaseStream.Position - cmdStart != cmdSize)
-                    throw new Exception("UIM loading was invalid");
+                    UIMCommandType.Move => new UIMCommand_Move(reader),
+                    UIMCommandType.Scale => new UIMCommand_Scale(reader),
+                    UIMCommandType.Rotate => new UIMCommand_Rotate(reader),
+                    UIMCommandType.Opacity => new UIMCommand_Opacity(reader),
+                    UIMCommandType.AbsoluteScale => new UIMCommand_AbsoluteScale(reader),
+                    UIMCommandType.Brightness => new UIMCommand_Brightness(reader),
+                    UIMCommandType.Color => new UIMCommand_Color(reader),
+                    UIMCommandType.UVScroll => new UIMCommand_UVScroll(reader),
+                    _ => throw new Exception($"Unsupported UIM command: {cmdType}"),
+                };
             }
+
+            if (reader.BaseStream.Position - cmdStart != cmdSize)
+                throw new Exception("UIM loading was invalid");
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -101,41 +77,20 @@ namespace IndustrialPark
             SerializeLinks(writer);
         }
 
-        public void AddEntry(UIMCommandType cmdType)
+        public static UIMCommand CreateEntry(UIMCommandType cmdType)
         {
-            UIMCommand newCmd;
-            switch (cmdType)
+            return cmdType switch
             {
-                case UIMCommandType.Move:
-                    newCmd = new UIMCommand_Move();
-                    break;
-                case UIMCommandType.Scale:
-                    newCmd = new UIMCommand_Scale();
-                    break;
-                case UIMCommandType.Rotate:
-                    newCmd = new UIMCommand_Rotate();
-                    break;
-                case UIMCommandType.Opacity:
-                    newCmd = new UIMCommand_Opacity();
-                    break;
-                case UIMCommandType.AbsoluteScale:
-                    newCmd = new UIMCommand_AbsoluteScale();
-                    break;
-                case UIMCommandType.Brightness:
-                    newCmd = new UIMCommand_Brightness();
-                    break;
-                case UIMCommandType.Color:
-                    newCmd = new UIMCommand_Color();
-                    break;
-                case UIMCommandType.UVScroll:
-                    newCmd = new UIMCommand_UVScroll();
-                    break;
-                default:
-                    throw new Exception($"Unsupported UIM command: {cmdType}");
-            }
-            var commands = Commands.ToList();
-            commands.Add(newCmd);
-            Commands = commands.ToArray();
+                UIMCommandType.Move => new UIMCommand_Move(),
+                UIMCommandType.Scale => new UIMCommand_Scale(),
+                UIMCommandType.Rotate => new UIMCommand_Rotate(),
+                UIMCommandType.Opacity => new UIMCommand_Opacity(),
+                UIMCommandType.AbsoluteScale => new UIMCommand_AbsoluteScale(),
+                UIMCommandType.Brightness => new UIMCommand_Brightness(),
+                UIMCommandType.Color => new UIMCommand_Color(),
+                UIMCommandType.UVScroll => new UIMCommand_UVScroll(),
+                _ => throw new Exception($"Unsupported UIM command: {cmdType}"),
+            };
         }
     }
 }

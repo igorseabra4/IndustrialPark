@@ -1,14 +1,13 @@
-﻿using IndustrialPark.AssetEditorColors;
+﻿using IndustrialPark.Assets.Colors;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Metadata.W3cXsd2001;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ParticleSystemType
     {

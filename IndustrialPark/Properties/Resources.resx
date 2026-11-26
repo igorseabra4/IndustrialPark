@@ -1,5 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
@@ -53,13 +112,68 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="icon_drop" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_drop.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="BakeRotationDescription" xml:space="preserve">
+    <value>Creates a copy of the model used by this asset with the Entity rotation applied directly to the model.
+The asset will use the newly rotated model, and its Entity rotation values will be reset to (0, 0, 0).
+This function only works with Model assets, not Model Info assets.
+
+Useful for:
+- Rotating platforms that follow Move Points and face the direction of movement, allowing you to change their movement direction.
+- Rotating Teeter-Totter type platforms to change their tilt direction.
+- Rotating TRACK assets used for slides.
+
+This function creates a copy of the model, increasing the archive's file size. If the archive becomes too large, the game may fail to load.
+The original model will not be removed. You can delete it manually if it is no longer used by any other assets.</value>
+  </data>
+  <data name="BakeScaleDescription" xml:space="preserve">
+    <value>Creates a copy of the model with the Entity scale applied directly to the model.
+The asset will use the newly scaled model, and its Entity scale values will be reset to (1, 1, 1).
+This function works with both Model and Model Info assets.
+
+Useful for:
+- Avoiding collision glitches: Collidable assets normally have glitchy collision when scaled non-uniformly through their Entity scale values (when X, Y, and Z are not equal).
+- Scaling NPCs: Most NPC and enemy asset types do not handle Entity scale values properly. Since these assets use Model Info, this function creates a scaled copy of the Model Info asset so you can use the scaled NPC or enemy without relying on the Entity scale values. The Model Info scale is a field which you can also edit yourself in the Model Info asset editor later.
+
+This function creates a copy of the model, increasing the archive's file size. If the archive becomes too large, the game may fail to load.
+The original model will not be removed. You can delete it manually if it is no longer used by any other assets.</value>
+  </data>
+  <data name="icon_play_2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_play_2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_save" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_redo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_redo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_gizmo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_gizmo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_wireframe" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_wireframe.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_play" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_play.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="PlaceholderBanner" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\PlaceholderBanner1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_showhide" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_showhide.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_undo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_undo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icon_sun" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Icons\Toolbar\icon_sun.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

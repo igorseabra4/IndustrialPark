@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetTIMR : BaseAsset
     {
@@ -18,17 +18,12 @@ namespace IndustrialPark
             Time = 1;
         }
 
-        public AssetTIMR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetTIMR(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            Time = reader.ReadSingle();
 
-                Time = reader.ReadSingle();
-
-                if (game != Game.Scooby)
-                    RandomRange = reader.ReadSingle();
-            }
+            if (game != Game.Scooby)
+                RandomRange = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaLogicFunctionGenerator : AssetDYNA
     {
@@ -31,23 +31,18 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte EndEnabled { get; set; }
 
-        public DynaLogicFunctionGenerator(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.logic__FunctionGenerator, game, endianness)
+        public DynaLogicFunctionGenerator(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.logic__FunctionGenerator, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                StartCycleWidth = reader.ReadSingle();
-                MiddleCycleWidth = reader.ReadSingle();
-                EndCycleWidth = reader.ReadSingle();
-                StartPulseWidth = reader.ReadSingle();
-                MiddlePulseWidth = reader.ReadSingle();
-                EndPulseWidth = reader.ReadSingle();
-                MiddleTime = reader.ReadSingle();
-                EndTime = reader.ReadSingle();
-                MiddleEnabled = reader.ReadByte();
-                EndEnabled = reader.ReadByte();
-            }
+            StartCycleWidth = reader.ReadSingle();
+            MiddleCycleWidth = reader.ReadSingle();
+            EndCycleWidth = reader.ReadSingle();
+            StartPulseWidth = reader.ReadSingle();
+            MiddlePulseWidth = reader.ReadSingle();
+            EndPulseWidth = reader.ReadSingle();
+            MiddleTime = reader.ReadSingle();
+            EndTime = reader.ReadSingle();
+            MiddleEnabled = reader.ReadByte();
+            EndEnabled = reader.ReadByte();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

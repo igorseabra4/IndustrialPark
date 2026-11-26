@@ -1,9 +1,10 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
 using SharpDX;
 using System;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ButnActMethod
     {
@@ -49,7 +50,7 @@ namespace IndustrialPark
 
         public AssetBUTN(string assetName, Vector3 position, AssetTemplate template) : base(assetName, AssetType.Button, BaseAssetType.Button, position)
         {
-            if (template == AssetTemplate.Button_Red)
+            if (template == AssetTemplate.Button_Red || template == AssetTemplate.Button_Red_WithBase)
             {
                 Model = "button";
                 PressedModel = "button_grn";
@@ -153,21 +154,16 @@ namespace IndustrialPark
                 Motion = new Motion_Mechanism(game);
         }
 
-        public AssetBUTN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetBUTN(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                if (game != Game.Scooby)
-                    PressedModel = reader.ReadUInt32();
-                ActMethod = (ButnActMethod)reader.ReadInt32();
-                InitialButtonState = reader.ReadInt32();
-                ResetAfterDelay = reader.ReadInt32Bool();
-                ResetDelay = reader.ReadSingle();
-                HitMask.FlagValueInt = reader.ReadUInt32();
-                Motion = new Motion_Mechanism(reader, game);
-            }
+            if (game != Game.Scooby)
+                PressedModel = reader.ReadUInt32();
+            ActMethod = (ButnActMethod)reader.ReadInt32();
+            InitialButtonState = reader.ReadInt32();
+            ResetAfterDelay = reader.ReadInt32Bool();
+            ResetDelay = reader.ReadSingle();
+            HitMask.FlagValueInt = reader.ReadUInt32();
+            Motion = new Motion_Mechanism(reader, game);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

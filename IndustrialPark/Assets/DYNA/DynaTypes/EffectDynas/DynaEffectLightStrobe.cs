@@ -1,14 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
-using SharpDX;
-using System;
-using System.Collections.Generic;
+using IndustrialPark.Assets.Colors;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectLightStrobe : AssetDYNA
     {
@@ -54,23 +48,18 @@ namespace IndustrialPark
         {
         }
 
-        public DynaEffectLightStrobe(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__LightEffectStrobe, game, endianness)
+        public DynaEffectLightStrobe(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__LightEffectStrobe, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                RedMult = reader.ReadSingle();
-                GreenMult = reader.ReadSingle();
-                BlueMult = reader.ReadSingle();
-                SeeThru = reader.ReadSingle();
-                FadeUpTime = reader.ReadSingle();
-                FadeDownTime = reader.ReadSingle();
-                TimeMax = reader.ReadSingle();
-                TimeMin = reader.ReadSingle();
-                RandomTimeMax = reader.ReadSingle();
-                RandomTimeMin = reader.ReadSingle();
-            }
+            RedMult = reader.ReadSingle();
+            GreenMult = reader.ReadSingle();
+            BlueMult = reader.ReadSingle();
+            SeeThru = reader.ReadSingle();
+            FadeUpTime = reader.ReadSingle();
+            FadeDownTime = reader.ReadSingle();
+            TimeMax = reader.ReadSingle();
+            TimeMin = reader.ReadSingle();
+            RandomTimeMax = reader.ReadSingle();
+            RandomTimeMin = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ezTaskAvailability
     {
@@ -42,20 +42,15 @@ namespace IndustrialPark
             }
         }
 
-        public DynaLogicTask(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.logic__Task, game, endianness)
+        public DynaLogicTask(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.logic__Task, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                CheckpointID = reader.ReadUInt32();
-                Required = reader.ReadByteBool();
-                reader.BaseStream.Position += 3;
-                InitialAvailability = (ezTaskAvailability)reader.ReadUInt32();
-                RequiredTask = new AssetID[16];
-                for (int i = 0; i < 16; i++)
-                    RequiredTask[i] = reader.ReadUInt32();
-            }
+            CheckpointID = reader.ReadUInt32();
+            Required = reader.ReadByteBool();
+            reader.BaseStream.Position += 3;
+            InitialAvailability = (ezTaskAvailability)reader.ReadUInt32();
+            RequiredTask = new AssetID[16];
+            for (int i = 0; i < 16; i++)
+                RequiredTask[i] = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

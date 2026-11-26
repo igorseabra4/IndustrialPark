@@ -1,7 +1,7 @@
 ﻿using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     [TypeConverter(typeof(ExpandableObjectConverter))]
     public class WireVector

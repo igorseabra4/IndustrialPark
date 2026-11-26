@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum EPlayerType
     {
@@ -94,16 +94,13 @@ namespace IndustrialPark
             OneLiners = new OneLiner[0];
         }
 
-        public AssetONEL(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetONEL(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                int num = reader.ReadInt32();
-                OneLiners = new OneLiner[num];
-                for (int i = 0; i < OneLiners.Length; i++)
-                    OneLiners[i] = new OneLiner(reader);
-                reader.ReadBytes(unkByteCount);
-            }
+            int num = reader.ReadInt32();
+            OneLiners = new OneLiner[num];
+            for (int i = 0; i < OneLiners.Length; i++)
+                OneLiners[i] = new OneLiner(reader);
+            reader.ReadBytes(unkByteCount);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

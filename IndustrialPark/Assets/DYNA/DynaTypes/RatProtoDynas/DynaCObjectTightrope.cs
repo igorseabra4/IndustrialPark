@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaCObjectTightrope : AssetDYNA
     {
@@ -21,17 +21,12 @@ namespace IndustrialPark
         public FlagBitmask Flags { get; set; } = ByteFlagsDescriptor();
 
         public DynaCObjectTightrope(string assetName) : base(assetName, DynaType.ContextObject_Tightrope) { }
-        public DynaCObjectTightrope(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ContextObject_Tightrope, game, endianness)
+        public DynaCObjectTightrope(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.ContextObject_Tightrope, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                CurveID = reader.ReadUInt32();
-                ObjectID = reader.ReadUInt32();
-                FallBelow = reader.ReadByteBool();
-                Flags.FlagValueByte = reader.ReadByte();
-            }
+            CurveID = reader.ReadUInt32();
+            ObjectID = reader.ReadUInt32();
+            FallBelow = reader.ReadByteBool();
+            Flags.FlagValueByte = reader.ReadByte();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

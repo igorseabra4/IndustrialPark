@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaLogicReference : AssetDYNA
     {
@@ -14,20 +14,14 @@ namespace IndustrialPark
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Initial { get; set; }
 
-        public DynaLogicReference(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.logic__reference, game, endianness)
+        public DynaLogicReference(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.logic__reference, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-                Initial = reader.ReadUInt32();
-            }
+            Initial = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
             writer.Write(Initial);
-
         }
     }
 }

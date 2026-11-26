@@ -6,7 +6,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class SplineVector
     {
@@ -52,7 +52,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSPLN : BaseAsset, IRenderableAsset
+    public class AssetSPLN : BaseAsset, IRenderableAsset, IDisposableAsset, ISetupableAsset
     {
         private const string categoryName = "Spline";
 
@@ -67,53 +67,37 @@ namespace IndustrialPark
         public SplineVector[] Points
         {
             get => _points;
-            set
-            {
-                _points = value;
-                Setup(Program.Renderer);
-            }
+            set => _points = value;
         }
         private AssetSingle[] _points2;
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetSingle[] Points2
         {
             get => _points2;
-            set
-            {
-                _points2 = value;
-            }
+            set => _points2 = value;
         }
 
-        public AssetSPLN(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness)
+        public AssetSPLN(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
             BaseFlags = BitConverter.ToUInt16(AHDR.data, 6);
 
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            SplineType = reader.ReadInt32();
+            int pointCount = reader.ReadInt32() - SplineType; // point count plus 3
+            reader.ReadInt32(); // point count minus one
+            UnknownHash_14 = reader.ReadUInt32();
+            UnknownHash_18 = reader.ReadUInt32();
 
-                SplineType = reader.ReadInt32();
-                int pointCount = reader.ReadInt32() - SplineType; // point count plus 3
-                reader.ReadInt32(); // point count minus one
-                UnknownHash_14 = reader.ReadUInt32();
-                UnknownHash_18 = reader.ReadUInt32();
+            _points = new SplineVector[pointCount];
+            for (int i = 0; i < _points.Length; i++)
+                _points[i] = new SplineVector(reader);
 
-                _points = new SplineVector[pointCount];
-                for (int i = 0; i < _points.Length; i++)
-                    _points[i] = new SplineVector(reader);
+            if (SplineType == 1)
+                reader.BaseStream.Position += 8;
+            else if (SplineType == 3)
+                reader.BaseStream.Position += 16;
 
-                if (SplineType == 1)
-                    reader.BaseStream.Position += 8;
-                else if (SplineType == 3)
-                    reader.BaseStream.Position += 16;
-
-                for (int i = 0; i < _points.Length; i++)
-                    _points[i].W = reader.ReadSingle();
-
-                Setup(renderer);
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            for (int i = 0; i < _points.Length; i++)
+                _points[i].W = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -155,9 +139,6 @@ namespace IndustrialPark
 
         public void Setup(SharpRenderer renderer)
         {
-            if (renderer == null)
-                return;
-
             renderer.completeVertexBufferList.Remove(vertexBuffer);
             if (vertexBuffer != null)
                 vertexBuffer.Dispose();
@@ -186,7 +167,7 @@ namespace IndustrialPark
         public void Draw(SharpRenderer renderer) => renderer.DrawSpline(vertexBuffer, vertexCount, Matrix.Identity,
                 isSelected ? renderer.selectedObjectColor : Color.YellowGreen.ToVector4(), false);
 
-        public void CreateTransformMatrix()
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             if (_points.Length == 0)
                 boundingBox = new BoundingBox();
@@ -217,6 +198,6 @@ namespace IndustrialPark
         public void Dispose() => vertexBuffer.Dispose();
 
         [Browsable(false)]
-        public bool SpecialBlendMode => false;
+        public bool SpecialBlendMode(SharpRenderer renderer) => false;
     }
 }

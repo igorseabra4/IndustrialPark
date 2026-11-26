@@ -1,11 +1,28 @@
-﻿using IndustrialPark.Randomizer;
-using System;
+﻿using System;
+using System.IO;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Runtime.Loader;
 using System.Windows.Forms;
 
-namespace IndustrialParkRandomizer
+namespace IndustrialPark.Randomizer
 {
-    static class Program
+    public static class Program
     {
+        public static RandomizerMenu menu;
+
+        [ModuleInitializer]
+        internal static void InitializeAssemblyResolver()
+        {
+            AssemblyLoadContext.Default.Resolving += ResolveDependencyAssembly;
+        }
+
+        private static Assembly ResolveDependencyAssembly(AssemblyLoadContext context, AssemblyName assemblyName)
+        {
+            string assemblyPath = Path.Combine(AppContext.BaseDirectory, "Library", assemblyName.Name + ".dll");
+            return File.Exists(assemblyPath) ? context.LoadFromAssemblyPath(assemblyPath) : null;
+        }
+
         /// <summary>
         /// Ponto de entrada principal para o aplicativo.
         /// </summary>
@@ -17,9 +34,9 @@ namespace IndustrialParkRandomizer
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            new IndustrialPark.SharpRenderer();
+            Application.SetColorMode(SystemColorMode.System);
 
-            RandomizerMenu menu = new RandomizerMenu();
+            menu = new RandomizerMenu();
 
             Application.Run(menu);
         }

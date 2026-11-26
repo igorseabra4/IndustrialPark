@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectVentType : AssetDYNA
     {
@@ -23,19 +23,14 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID DamageSound { get; set; }
 
-        public DynaGObjectVentType(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__VentType, game, endianness)
+        public DynaGObjectVentType(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__VentType, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                IdleEmitter = reader.ReadUInt32();
-                IdleSound = reader.ReadUInt32();
-                WarnEmitter = reader.ReadUInt32();
-                WarnSound = reader.ReadUInt32();
-                DamageEmitter = reader.ReadUInt32();
-                DamageSound = reader.ReadUInt32();
-            }
+            IdleEmitter = reader.ReadUInt32();
+            IdleSound = reader.ReadUInt32();
+            WarnEmitter = reader.ReadUInt32();
+            WarnSound = reader.ReadUInt32();
+            DamageEmitter = reader.ReadUInt32();
+            DamageSound = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaAnalogDeflection : AssetDYNA
     {
@@ -24,17 +24,12 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID OutputID2 { get; set; }
 
-        public DynaAnalogDeflection(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.AnalogDeflection, game, endianness)
+        public DynaAnalogDeflection(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.AnalogDeflection, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Stick = reader.ReadUInt32();
-                Axis = reader.ReadUInt32();
-                OutputID1 = reader.ReadUInt32();
-                OutputID2 = reader.ReadUInt32();
-            }
+            Stick = reader.ReadUInt32();
+            Axis = reader.ReadUInt32();
+            OutputID1 = reader.ReadUInt32();
+            OutputID2 = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

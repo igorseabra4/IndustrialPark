@@ -1,17 +1,27 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetFOG : BaseAsset
     {
         private const string categoryName = "Fog";
 
         [Category(categoryName)]
-        public AssetColor StartColor { get; set; }
+        public AssetColor FogColor { get; set; }
+        private AssetColor _backgroundColor;
         [Category(categoryName)]
-        public AssetColor EndColor { get; set; }
+        public AssetColor BackgroundColor
+        {
+            get => _backgroundColor;
+            set
+            {
+                _backgroundColor = value;
+                if (Program.Renderer.Fog == this)
+                    Program.Renderer.backgroundColor = new SharpDX.Color4(value.ToVector4());
+            }
+        }
         [Category(categoryName)]
         public AssetSingle FogDensity { get; set; }
         [Category(categoryName)]
@@ -25,35 +35,33 @@ namespace IndustrialPark
 
         public AssetFOG(string assetName) : base(assetName, AssetType.Fog, BaseAssetType.Fog)
         {
-            EndColor = new AssetColor();
-            StartColor = new AssetColor();
+            _backgroundColor = new AssetColor();
+            FogColor = new AssetColor();
             FogDensity = 1;
             StartDistance = 100;
             EndDistance = 400;
         }
 
-        public AssetFOG(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetFOG(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                EndColor = reader.ReadColor();
-                StartColor = reader.ReadColor();
-                FogDensity = reader.ReadSingle();
-                StartDistance = reader.ReadSingle();
-                EndDistance = reader.ReadSingle();
-                TransitionTime = reader.ReadSingle();
-                FogType = reader.ReadByte();
-            }
+            _backgroundColor = reader.ReadColor();
+            FogColor = reader.ReadColor();
+            FogDensity = reader.ReadSingle();
+            StartDistance = reader.ReadSingle();
+            EndDistance = reader.ReadSingle();
+            TransitionTime = reader.ReadSingle();
+            FogType = reader.ReadByte();
         }
+
+        [Browsable(false)]
+        public static bool DontRender = false;
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
 
-            writer.Write(EndColor);
-            writer.Write(StartColor);
+            writer.Write(_backgroundColor);
+            writer.Write(FogColor);
             writer.Write(FogDensity);
             writer.Write(StartDistance);
             writer.Write(EndDistance);

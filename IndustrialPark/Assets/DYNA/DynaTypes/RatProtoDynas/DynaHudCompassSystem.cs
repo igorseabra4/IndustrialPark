@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaHudCompassSystem : AssetDYNA
     {
@@ -35,22 +35,17 @@ namespace IndustrialPark
         public uint BeadOpacity { get; set; }
 
         public DynaHudCompassSystem(string assetName) : base(assetName, DynaType.HUD_Compass_System) { }
-        public DynaHudCompassSystem(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.HUD_Compass_System, game, endianness)
+        public DynaHudCompassSystem(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.HUD_Compass_System, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Radius = reader.ReadSingle();
-                CenterY = reader.ReadSingle();
-                CenterX = reader.ReadSingle();
-                TextureID = reader.ReadUInt32();
-                MaxDistance = reader.ReadSingle();
-                MinBeadSize = reader.ReadSingle();
-                MaxBeadSize = reader.ReadSingle();
-                SystemOpacity = reader.ReadUInt32();
-                BeadOpacity = reader.ReadUInt32();
-            }
+            Radius = reader.ReadSingle();
+            CenterY = reader.ReadSingle();
+            CenterX = reader.ReadSingle();
+            TextureID = reader.ReadUInt32();
+            MaxDistance = reader.ReadSingle();
+            MinBeadSize = reader.ReadSingle();
+            MaxBeadSize = reader.ReadSingle();
+            SystemOpacity = reader.ReadUInt32();
+            BeadOpacity = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

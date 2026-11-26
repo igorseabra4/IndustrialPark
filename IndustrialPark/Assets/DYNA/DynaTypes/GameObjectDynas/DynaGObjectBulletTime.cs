@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectBulletTime : AssetDYNA
     {
@@ -25,18 +25,13 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public bool Global { get; set; }
 
-        public DynaGObjectBulletTime(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bullet_time, game, endianness)
+        public DynaGObjectBulletTime(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__bullet_time, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Frequency = reader.ReadSingle();
-                Fadeout = reader.ReadSingle();
-                OriginalTimer = reader.ReadSingle();
-                OriginalScale = reader.ReadSingle();
-                Global = reader.ReadByteBool();
-            }
+            Frequency = reader.ReadSingle();
+            Fadeout = reader.ReadSingle();
+            OriginalTimer = reader.ReadSingle();
+            OriginalScale = reader.ReadSingle();
+            Global = reader.ReadByteBool();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

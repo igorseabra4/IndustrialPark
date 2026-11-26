@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     [TypeConverter(typeof(HexByteTypeConverter))]
     public struct AssetByte

@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class GcnV2SoundWrapper
     {

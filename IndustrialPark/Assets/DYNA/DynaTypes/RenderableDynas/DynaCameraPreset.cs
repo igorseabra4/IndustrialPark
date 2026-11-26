@@ -1,11 +1,9 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaCameraPreset : RenderableRotatableDynaBase
     {
@@ -23,23 +21,16 @@ namespace IndustrialPark
         public static bool dontRender = false;
         protected override bool DontRender => dontRender;
 
-        public DynaCameraPreset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.camera__preset, game, endianness)
+        public DynaCameraPreset(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.camera__preset, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
 
-                CameraPresetFlags.FlagValueInt = reader.ReadUInt32();
-                Checkpoint = reader.ReadUInt32();
+            CameraPresetFlags.FlagValueInt = reader.ReadUInt32();
+            Checkpoint = reader.ReadUInt32();
 
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                _yaw = reader.ReadSingle();
-                _pitch = reader.ReadSingle();
-                _roll = reader.ReadSingle();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            _yaw = reader.ReadSingle();
+            _pitch = reader.ReadSingle();
+            _roll = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
@@ -54,9 +45,9 @@ namespace IndustrialPark
             writer.Write(_roll);
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.pyramidVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.pyramidTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawPyramid(world, isSelected);
     }

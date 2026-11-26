@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectCamTweak : AssetDYNA
     {
@@ -25,21 +25,16 @@ namespace IndustrialPark
         public DynaGObjectCamTweak(string assetName, int version) : base(assetName, DynaType.game_object__Camera_Tweak, (short)version)
         {
         }
-        public DynaGObjectCamTweak(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Camera_Tweak, game, endianness)
+        public DynaGObjectCamTweak(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Camera_Tweak, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            Priority = reader.ReadInt32();
+            Time = reader.ReadSingle();
+            PitchAdjust = reader.ReadSingle();
+            DistAdjust = reader.ReadSingle();
+            if (Version == 2)
             {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Priority = reader.ReadInt32();
-                Time = reader.ReadSingle();
-                PitchAdjust = reader.ReadSingle();
-                DistAdjust = reader.ReadSingle();
-                if (Version == 2)
-                {
-                    PivotHeightAdjust = reader.ReadSingle();
-                    FovAdjust = reader.ReadSingle();
-                }
+                PivotHeightAdjust = reader.ReadSingle();
+                FovAdjust = reader.ReadSingle();
             }
         }
 

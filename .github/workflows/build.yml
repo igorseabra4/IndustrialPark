@@ -5,30 +5,26 @@ on:
     branches: [master, main]
   pull_request:
     branches: [master, main]
-    
+
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: windows-2022
-    
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-        
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
-
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v2
-
-      - name: Restore Packages
-        run: nuget restore IndustrialPark.sln
-
-      - name: Build solution
-        run: msbuild IndustrialPark.sln -t:rebuild -property:Configuration=Release -property:platform="Any CPU"
-
-      - name: Run unit tests
-        uses: rusty-bender/vstest-action@main
+      - uses: actions/setup-dotnet@v4
         with:
-          testAssembly: '**\bin\Release\**\*Test.dll'
-
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore IndustrialPark.sln
+      - name: Build
+        run: dotnet build IndustrialPark.sln --configuration Release --no-restore -m:1
+      - name: Run tests
+        shell: pwsh
+        run: |
+          & .\IndustrialParkTest\bin\Release\net10.0-windows\IndustrialParkTest.exe
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

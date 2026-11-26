@@ -1,6 +1,6 @@
 ﻿using SharpDX;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public interface IVolumeAsset
     {
@@ -12,5 +12,6 @@ namespace IndustrialPark
         AssetSingle MaximumZ { get; set; }
 
         void ApplyScale(Vector3 scale, float singleFactor);
+        BoundingBox GetBoundingBox();
     }
 }

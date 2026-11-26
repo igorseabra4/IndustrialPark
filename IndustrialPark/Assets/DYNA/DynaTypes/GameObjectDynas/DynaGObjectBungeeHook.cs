@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectBungeeHook : AssetDYNA
     {
@@ -107,44 +107,39 @@ namespace IndustrialPark
             CollisionHitVelocity = 0.2f;
         }
 
-        public DynaGObjectBungeeHook(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__bungee_hook, game, endianness)
+        public DynaGObjectBungeeHook(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__bungee_hook, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Entity = reader.ReadUInt32();
-                EnterX = reader.ReadInt32();
-                EnterY = reader.ReadInt32();
-                EnterZ = reader.ReadInt32();
-                AttachDist = reader.ReadSingle();
-                AttachTravelTime = reader.ReadSingle();
-                DetachDist = reader.ReadSingle();
-                DetachFreeFallTime = reader.ReadSingle();
-                DetachAccel = reader.ReadSingle();
-                TurnUnused1 = reader.ReadSingle();
-                TurnUnused2 = reader.ReadSingle();
-                VerticalFrequency = reader.ReadSingle();
-                VerticalGravity = reader.ReadSingle();
-                VerticalDive = reader.ReadSingle();
-                VerticalMinDist = reader.ReadSingle();
-                VerticalMaxDist = reader.ReadSingle();
-                VerticalDamp = reader.ReadSingle();
-                HorizontalMaxDist = reader.ReadSingle();
-                CameraRestDist = reader.ReadSingle();
-                Cameraview_angle = reader.ReadSingle();
-                CameraOffset = reader.ReadSingle();
-                CameraOffsetDir = reader.ReadSingle();
-                CameraTurnSpeed = reader.ReadSingle();
-                CameraVelScale = reader.ReadSingle();
-                CameraRollSpeed = reader.ReadSingle();
-                CameraUnused1_X = reader.ReadSingle();
-                CameraUnused1_Y = reader.ReadSingle();
-                CameraUnused1_Z = reader.ReadSingle();
-                CollisionHitLoss = reader.ReadSingle();
-                CollisionDamageVelocity = reader.ReadSingle();
-                CollisionHitVelocity = reader.ReadSingle();
-            }
+            Entity = reader.ReadUInt32();
+            EnterX = reader.ReadInt32();
+            EnterY = reader.ReadInt32();
+            EnterZ = reader.ReadInt32();
+            AttachDist = reader.ReadSingle();
+            AttachTravelTime = reader.ReadSingle();
+            DetachDist = reader.ReadSingle();
+            DetachFreeFallTime = reader.ReadSingle();
+            DetachAccel = reader.ReadSingle();
+            TurnUnused1 = reader.ReadSingle();
+            TurnUnused2 = reader.ReadSingle();
+            VerticalFrequency = reader.ReadSingle();
+            VerticalGravity = reader.ReadSingle();
+            VerticalDive = reader.ReadSingle();
+            VerticalMinDist = reader.ReadSingle();
+            VerticalMaxDist = reader.ReadSingle();
+            VerticalDamp = reader.ReadSingle();
+            HorizontalMaxDist = reader.ReadSingle();
+            CameraRestDist = reader.ReadSingle();
+            Cameraview_angle = reader.ReadSingle();
+            CameraOffset = reader.ReadSingle();
+            CameraOffsetDir = reader.ReadSingle();
+            CameraTurnSpeed = reader.ReadSingle();
+            CameraVelScale = reader.ReadSingle();
+            CameraRollSpeed = reader.ReadSingle();
+            CameraUnused1_X = reader.ReadSingle();
+            CameraUnused1_Y = reader.ReadSingle();
+            CameraUnused1_Z = reader.ReadSingle();
+            CollisionHitLoss = reader.ReadSingle();
+            CollisionDamageVelocity = reader.ReadSingle();
+            CollisionHitVelocity = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

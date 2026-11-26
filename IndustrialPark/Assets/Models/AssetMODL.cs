@@ -1,101 +1,76 @@
 ﻿using HipHopFile;
 using SharpDX;
-using SharpDX.Direct3D11;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetMODL : AssetRenderWareModel, IAssetWithModel
     {
         public static bool renderBasedOnLodt = false;
         public static bool renderBasedOnPipt = true;
 
-        public AssetMODL(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game, endianness, renderer) { }
+        public AssetMODL(string assetName, byte[] data) : base(assetName, AssetType.Model, data) { }
 
-        public override void Setup(SharpRenderer renderer)
-        {
-            base.Setup(renderer);
-            AddToRenderingDictionary(assetID, this);
+        public AssetMODL(Section_AHDR AHDR) : base(AHDR) { }
 
-            if (game >= Game.Incredibles)
-            {
-                AddToRenderingDictionary(Functions.BKDRHash(newName), this);
-                AddToNameDictionary(Functions.BKDRHash(newName), newName);
-            }
-        }
-
-        private string newName => assetName.Replace(".dff", "");
-
-        public void RemoveFromDictionary()
-        {
-            RemoveFromRenderingDictionary(Functions.BKDRHash(newName));
-            RemoveFromNameDictionary(Functions.BKDRHash(newName));
-        }
-
-        private Dictionary<uint, (BlendOption, BlendOption)> blendModes;
         [Browsable(false)]
-        public bool SpecialBlendMode { get; private set; }
+        public string fileNameWithoutExtension => assetName.Replace(".dff", "");
+
+        private Dictionary<uint, PipeInfo> pipeEntries;
+        private bool _specialBlendMode;
+        [Browsable(false)]
+        public bool SpecialBlendMode(SharpRenderer renderer) => _specialBlendMode;
 
         [Browsable(false)]
         public Matrix TransformMatrix => Matrix.Identity;
 
-        public void SetBlendModes((uint, BlendFactorType, BlendFactorType)[] sourceDest)
+        public void SetPipeline(IEnumerable<PipeInfo> piptEntries)
         {
-            blendModes = new Dictionary<uint, (BlendOption, BlendOption)>();
-            SpecialBlendMode = false;
-            foreach (var f in sourceDest)
+            pipeEntries = new Dictionary<uint, PipeInfo>();
+            _specialBlendMode = false;
+            foreach (var p in piptEntries)
             {
-                blendModes[f.Item1 == 0xFFFFFFFF ? 0xFFFFFFFF : (uint)(Math.Log(f.Item1, 2) - 1)] = (GetSharpBlendMode(f.Item2, true), GetSharpBlendMode(f.Item3, false));
-                SpecialBlendMode |= f.Item2 != BlendFactorType.None || f.Item3 != BlendFactorType.None;
+                _specialBlendMode |= p.SourceBlend != BlendFactorType.None || p.DestinationBlend != BlendFactorType.None;
+                if (p.SubObjectBits.FlagValueInt == uint.MaxValue)
+                    pipeEntries[uint.MaxValue] = p;
+                else
+                {
+                    uint subBits = p.SubObjectBits.FlagValueInt;
+                    int atomic = AtomicFlags.Length - 1;
+                    for (int i = atomic; i >= 0; i--)
+                    {
+                        if ((subBits & 1) != 0)
+                        {
+                            if (assetName == "test_ring")
+                            {
+                                var p2 = p.Clone();
+                                p2.LightingMode = LightingMode.Prelight;
+                                pipeEntries[(uint)i] = p2;
+                            }
+                            else
+                            {
+                                pipeEntries[(uint)i] = p;
+                            }
+                        }
+                        subBits >>= 1;
+                    }
+                }
             }
         }
 
-        public void ResetBlendModes()
+        public void ResetPipeline()
         {
-            SpecialBlendMode = false;
-            blendModes = null;
+            _specialBlendMode = false;
+            pipeEntries = null;
         }
 
-        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset)
+        public void Draw(SharpRenderer renderer, Matrix world, Vector4 color, Vector3 uvAnimOffset, bool isSelected)
         {
-            if (renderBasedOnPipt && blendModes != null)
-                model.RenderPipt(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber, blendModes);
+            if (renderBasedOnPipt && pipeEntries != null)
+                model?.RenderPipt(renderer, world, color, uvAnimOffset, isSelected || this.isSelected, _dontDrawMeshNumber, pipeEntries);
             else
-                model.Render(renderer, world, isSelected ? renderer.selectedObjectColor * color : color, uvAnimOffset, _dontDrawMeshNumber);
-        }
-
-        private static BlendOption GetSharpBlendMode(BlendFactorType type, bool dest)
-        {
-            switch (type)
-            {
-                case BlendFactorType.Zero:
-                    return BlendOption.Zero;
-                case BlendFactorType.One:
-                    return BlendOption.One;
-                case BlendFactorType.SourceColor:
-                    return BlendOption.SourceColor;
-                case BlendFactorType.InverseSourceColor:
-                    return BlendOption.InverseSourceColor;
-                case BlendFactorType.SourceAlpha:
-                    return BlendOption.SourceAlpha;
-                case BlendFactorType.InverseSourceAlpha:
-                    return BlendOption.InverseSourceAlpha;
-                case BlendFactorType.DestinationAlpha:
-                    return BlendOption.DestinationAlpha;
-                case BlendFactorType.InverseDestinationAlpha:
-                    return BlendOption.InverseDestinationAlpha;
-                case BlendFactorType.DestinationColor:
-                    return BlendOption.DestinationColor;
-                case BlendFactorType.InverseDestinationColor:
-                    return BlendOption.InverseDestinationColor;
-                case BlendFactorType.SourceAlphaSaturated:
-                    return BlendOption.SourceAlphaSaturate;
-            }
-
-            return dest ? BlendOption.One : BlendOption.Zero;
+                model?.Render(renderer, world, color, uvAnimOffset, isSelected || this.isSelected, _dontDrawMeshNumber);
         }
     }
 }

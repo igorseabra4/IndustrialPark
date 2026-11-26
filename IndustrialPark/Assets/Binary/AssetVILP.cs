@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetVILP : Asset
     {
@@ -26,20 +26,17 @@ namespace IndustrialPark
         [Category(categoryName)]
         public int Unknown_20 { get; set; }
 
-        public AssetVILP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetVILP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                Unknown_00 = reader.ReadUInt32();
-                Unknown_04 = reader.ReadInt32();
-                Unknown_08 = reader.ReadInt32();
-                Unknown_0C = reader.ReadInt32();
-                Unknown_10 = reader.ReadInt32();
-                Unknown_14 = reader.ReadInt32();
-                Unknown_18 = reader.ReadInt32();
-                Unknown_1C = reader.ReadSingle();
-                Unknown_20 = reader.ReadInt32();
-            }
+            Unknown_00 = reader.ReadUInt32();
+            Unknown_04 = reader.ReadInt32();
+            Unknown_08 = reader.ReadInt32();
+            Unknown_0C = reader.ReadInt32();
+            Unknown_10 = reader.ReadInt32();
+            Unknown_14 = reader.ReadInt32();
+            Unknown_18 = reader.ReadInt32();
+            Unknown_1C = reader.ReadSingle();
+            Unknown_20 = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

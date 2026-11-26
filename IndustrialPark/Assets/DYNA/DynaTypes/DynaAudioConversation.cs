@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaAudioConversation : AssetDYNA
     {
@@ -14,14 +14,9 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID SoundGroup { get; set; }
 
-        public DynaAudioConversation(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.audio__conversation, game, endianness)
+        public DynaAudioConversation(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.audio__conversation, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                SoundGroup = reader.ReadUInt32();
-            }
+            SoundGroup = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

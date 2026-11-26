@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaInteractionTurn : AssetDYNA
     {
@@ -31,23 +31,18 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask TurnFlags { get; set; } = IntFlagsDescriptor();
 
-        public DynaInteractionTurn(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Turn, game, endianness)
+        public DynaInteractionTurn(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.interaction__Turn, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                ForwardScript = reader.ReadUInt32();
-                BackwardScript = reader.ReadUInt32();
-                TurnObject = reader.ReadUInt32();
-                Increment = reader.ReadSingle();
-                TurnRate = reader.ReadSingle();
-                RestoreRate = reader.ReadSingle();
-                GoalIncrement = reader.ReadInt32();
-                MinIncrement = reader.ReadInt32();
-                MaxIncrement = reader.ReadInt32();
-                TurnFlags.FlagValueInt = reader.ReadUInt32();
-            }
+            ForwardScript = reader.ReadUInt32();
+            BackwardScript = reader.ReadUInt32();
+            TurnObject = reader.ReadUInt32();
+            Increment = reader.ReadSingle();
+            TurnRate = reader.ReadSingle();
+            RestoreRate = reader.ReadSingle();
+            GoalIncrement = reader.ReadInt32();
+            MinIncrement = reader.ReadInt32();
+            MaxIncrement = reader.ReadInt32();
+            TurnFlags.FlagValueInt = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

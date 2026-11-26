@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaNPCCustomAV : AssetDYNA
     {
@@ -38,25 +38,20 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public bool RandomStartTime { get; set; }
 
-        public DynaNPCCustomAV(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.npc__NPC_Custom_AV, game, endianness)
+        public DynaNPCCustomAV(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.npc__NPC_Custom_AV, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                AnimID = reader.ReadUInt32();
-                AnimDelay = reader.ReadSingle();
-                SoundGroupID = reader.ReadUInt32();
-                SoundDelay = reader.ReadSingle();
-                WaitOnSound = reader.ReadByteBool();
-                reader.BaseStream.Position += 3;
-                LoopTime = reader.ReadSingle();
-                FaceTargetID = reader.ReadUInt32();
-                AnimBlendTime = reader.ReadSingle();
-                SpeedMin = reader.ReadSingle();
-                SpeedMax = reader.ReadSingle();
-                RandomStartTime = reader.ReadByteBool();
-            }
+            AnimID = reader.ReadUInt32();
+            AnimDelay = reader.ReadSingle();
+            SoundGroupID = reader.ReadUInt32();
+            SoundDelay = reader.ReadSingle();
+            WaitOnSound = reader.ReadByteBool();
+            reader.BaseStream.Position += 3;
+            LoopTime = reader.ReadSingle();
+            FaceTargetID = reader.ReadUInt32();
+            AnimBlendTime = reader.ReadSingle();
+            SpeedMin = reader.ReadSingle();
+            SpeedMax = reader.ReadSingle();
+            RandomStartTime = reader.ReadByteBool();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

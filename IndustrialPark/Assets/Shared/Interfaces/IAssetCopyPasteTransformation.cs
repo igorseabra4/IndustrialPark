@@ -1,8 +1,10 @@
-﻿namespace IndustrialPark
+﻿using IndustrialPark.ArchiveEditors;
+
+namespace IndustrialPark.Assets;
+
+public interface IAssetCopyPasteTransformation
 {
-    public interface IAssetCopyPasteTransformation
-    {
-        void CopyTransformation();
-        void PasteTransformation();
-    }
+    AssetTransformation GetTransformation();
+    void SetTransformation(AssetTransformation transformation);
+    void CalculateTransformation(SharpRenderer renderer);
 }

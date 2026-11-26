@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetIDEditor : UITypeEditor
     {
@@ -14,9 +14,8 @@ namespace IndustrialPark
 
         public override object EditValue(ITypeDescriptorContext context, IServiceProvider provider, object value)
         {
-            if (value is AssetID assetID && Program.MainForm != null && assetID != 0)
-                foreach (ArchiveEditor archiveEditor in Program.MainForm.archiveEditors)
-                    archiveEditor.OpenInternalEditors(new List<uint>() { assetID }, true);
+            if (value is AssetID assetID && assetID != 0)
+                Program.EditorManager.OpenInternalEditor(assetID);
 
             return value;
         }

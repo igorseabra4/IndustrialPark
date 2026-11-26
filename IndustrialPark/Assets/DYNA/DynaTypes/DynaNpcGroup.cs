@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaNPCGroup : AssetDYNA
     {
@@ -13,20 +13,14 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public int MaxAttackers { get; set; }
 
-        public DynaNPCGroup(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.npc__group, game, endianness)
+        public DynaNPCGroup(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.npc__group, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-                MaxAttackers = reader.ReadInt32();
-            }
+            MaxAttackers = reader.ReadInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-
             writer.Write(MaxAttackers);
-
         }
     }
 }

@@ -2,7 +2,7 @@
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetEGEN : EntityAsset
     {
@@ -28,22 +28,17 @@ namespace IndustrialPark
             OnAnimation = 0xCE7F8131;
         }
 
-        public AssetEGEN(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetEGEN(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                Src_dpos_X = reader.ReadSingle();
-                Src_dpos_Y = reader.ReadSingle();
-                Src_dpos_Z = reader.ReadSingle();
-                DamageType = reader.ReadByte();
-                EgenFlags.FlagValueByte = reader.ReadByte();
-                reader.ReadByte();
-                reader.ReadByte();
-                ActiveTimeSeconds = reader.ReadSingle();
-                OnAnimation = reader.ReadUInt32();
-            }
+            Src_dpos_X = reader.ReadSingle();
+            Src_dpos_Y = reader.ReadSingle();
+            Src_dpos_Z = reader.ReadSingle();
+            DamageType = reader.ReadByte();
+            EgenFlags.FlagValueByte = reader.ReadByte();
+            reader.ReadByte();
+            reader.ReadByte();
+            ActiveTimeSeconds = reader.ReadSingle();
+            OnAnimation = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

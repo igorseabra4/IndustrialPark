@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetCNTR : BaseAsset
     {
@@ -14,13 +14,9 @@ namespace IndustrialPark
         {
         }
 
-        public AssetCNTR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetCNTR(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-                Count = reader.ReadInt16();
-            }
+            Count = reader.ReadInt16();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

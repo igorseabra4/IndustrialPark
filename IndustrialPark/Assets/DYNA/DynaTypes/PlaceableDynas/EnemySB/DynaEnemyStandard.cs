@@ -1,8 +1,9 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum EnemyStandardType : uint
     {
@@ -139,20 +140,15 @@ namespace IndustrialPark
             EnemyFlags.FlagValueByte = 8 | 4; 
         }
 
-        public DynaEnemyStandard(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.Enemy__SB__Standard, game, endianness)
+        public DynaEnemyStandard(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.Enemy__SB__Standard, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                MovePoint = reader.ReadUInt32();
-                MovePointGroup = reader.ReadUInt32();
-                EnemyFlags.FlagValueInt = reader.ReadUInt32();
-                Unknown5C = reader.ReadUInt32();
-                Unknown60 = reader.ReadUInt32();
-                Unknown64 = reader.ReadUInt32();
-                Unknown68 = reader.ReadUInt32();
-            }
+            MovePoint = reader.ReadUInt32();
+            MovePointGroup = reader.ReadUInt32();
+            EnemyFlags.FlagValueInt = reader.ReadUInt32();
+            Unknown5C = reader.ReadUInt32();
+            Unknown60 = reader.ReadUInt32();
+            Unknown64 = reader.ReadUInt32();
+            Unknown68 = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

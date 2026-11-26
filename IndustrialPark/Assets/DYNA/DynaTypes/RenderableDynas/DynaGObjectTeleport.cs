@@ -1,12 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.Models;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using static IndustrialPark.ArchiveEditorFunctions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectTeleport : RenderableDynaBase
     {
@@ -14,155 +12,140 @@ namespace IndustrialPark
         public override string TypeString => dynaCategoryName;
         public override string AssetInfo => $"{HexUIntTypeConverter.StringFromAssetID(Marker)} {HexUIntTypeConverter.StringFromAssetID(TargetTeleportBox)}";
 
-        public override string Note => "Version is always 1 or 2. CameraAngle is not present in version 1, or in Movie/Incredibles regardless of version.";
+        public override string Note => "Version is always 1 or 2.";
 
-        private uint _mrkr;
         [Category(dynaCategoryName), ValidReferenceRequired]
-        public AssetID Marker
-        {
-            get => _mrkr;
-            set
-            {
-                _mrkr = value;
-                CreateTransformMatrix();
-            }
-        }
+        public AssetID Marker { get; set; }
 
         [Category(dynaCategoryName)]
         public bool Opened { get; set; }
 
-        private int _launchAngle;
         [Category(dynaCategoryName)]
-        public int LaunchAngle
-        {
-            get => _launchAngle;
-            set
-            {
-                _launchAngle = value;
-                CreateTransformMatrix();
-            }
-        }
+        public int LaunchAngle { get; set; }
 
-        [Category(dynaCategoryName), Description("Not used in version 1 or Movie/Incredibles.")]
+        [Category(dynaCategoryName), Description("Only used in BFBB, Version 2")]
         public int CameraAngle { get; set; }
 
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID TargetTeleportBox { get; set; }
 
-        public DynaGObjectTeleport(string assetName, uint mrkrId, Func<uint, AssetMRKR> getMRKR) : base(assetName, DynaType.game_object__Teleport, Vector3.Zero)
+        public DynaGObjectTeleport(string assetName, uint mrkrId) : base(assetName, DynaType.game_object__Teleport, Vector3.Zero)
         {
-            _mrkr = mrkrId;
-            GetMRKR = getMRKR;
+            Marker = mrkrId;
             Version = 2;
         }
 
-        private Func<uint, AssetMRKR> GetMRKR;
+        public Func<uint, AssetMRKR> GetMRKR;
 
-        public DynaGObjectTeleport(Section_AHDR AHDR, Game game, Endianness endianness, Func<uint, AssetMRKR> getMRKR) : base(AHDR, DynaType.game_object__Teleport, game, endianness)
+        public DynaGObjectTeleport(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Teleport, reader)
         {
-            GetMRKR = getMRKR;
-
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                _mrkr = reader.ReadUInt32();
-                Opened = reader.ReadInt32Bool();
-                _launchAngle = reader.ReadInt32();
-                if (game < Game.Incredibles && Version > 1)
-                    CameraAngle = reader.ReadInt32();
-                TargetTeleportBox = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            Marker = reader.ReadUInt32();
+            Opened = reader.ReadInt32Bool();
+            LaunchAngle = reader.ReadInt32();
+            if (game < Game.Incredibles && Version > 1)
+                CameraAngle = reader.ReadInt32();
+            TargetTeleportBox = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
         {
-            writer.Write(_mrkr);
+            writer.Write(Marker);
             writer.Write(Opened ? 1 : 0);
-            writer.Write(_launchAngle);
+            writer.Write(LaunchAngle);
             if (game < Game.Incredibles && Version > 1)
                 writer.Write(CameraAngle);
             writer.Write(TargetTeleportBox);
         }
 
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.Incredibles)
+                dt.RemoveProperty("CameraAngle");
+            base.SetDynamicProperties(dt);
+        }
+
+        public const string PositionDescription = "The position values are defined in the Marker asset. I will update them for you if you define them here or with the gizmo, and the marker will turn invisible.";
+
+        [Description(PositionDescription)]
         public override AssetSingle PositionX
         {
             get
             {
-                var MRKR = GetMRKR(_mrkr);
-                return MRKR != null ? MRKR.PositionX : 0;
+                var MRKR = GetMRKR?.Invoke(Marker);
+                return _position.X = MRKR != null ? MRKR.PositionX : 0;
             }
             set
             {
-                var MRKR = GetMRKR(_mrkr);
-                if (MRKR != null)
-                    MRKR.PositionX = value;
-                CreateTransformMatrix();
+                var MRKR = GetMRKR?.Invoke(Marker);
+                MRKR?.PositionX = value;
+                MRKR?.isInvisible = true;
+                MRKR?.CalculateTransformation(Program.Renderer);
+                _position.X = value;
             }
         }
 
+        [Description(PositionDescription)]
         public override AssetSingle PositionY
         {
             get
             {
-                var MRKR = GetMRKR(_mrkr);
-                return MRKR != null ? MRKR.PositionY : 0;
+                var MRKR = GetMRKR?.Invoke(Marker);
+                return _position.Z = MRKR != null ? MRKR.PositionY : 0;
             }
             set
             {
-                var MRKR = GetMRKR(_mrkr);
-                if (MRKR != null)
-                    MRKR.PositionY = value;
-                CreateTransformMatrix();
+                var MRKR = GetMRKR?.Invoke(Marker);
+                MRKR?.PositionY = value;
+                MRKR?.isInvisible = true;
+                MRKR?.CalculateTransformation(Program.Renderer);
+                _position.Y = value;
             }
         }
 
+        [Description(PositionDescription)]
         public override AssetSingle PositionZ
         {
             get
             {
-                var MRKR = GetMRKR(_mrkr);
-                return MRKR != null ? MRKR.PositionZ : 0;
+                var MRKR = GetMRKR?.Invoke(Marker);
+                return _position.Z = MRKR != null ? MRKR.PositionZ : 0;
             }
             set
             {
-                var MRKR = GetMRKR(_mrkr);
-                if (MRKR != null)
-                    MRKR.PositionZ = value;
-                CreateTransformMatrix();
+                var MRKR = GetMRKR?.Invoke(Marker);
+                MRKR?.PositionZ = value;
+                MRKR?.isInvisible = true;
+                MRKR?.CalculateTransformation(Program.Renderer);
+                _position.Z = value;
             }
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.pyramidVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer)
+        {
+            var model = renderer.Assets.GetModelFromRenderingDictionary(_modelAssetID);
+            return model?.vertexListG ?? renderer.pyramidVertices;
+        }
 
-        protected override List<Triangle> triangleSource => SharpRenderer.pyramidTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer)
+        {
+            var model = renderer.Assets.GetModelFromRenderingDictionary(_modelAssetID);
+            return model?.triangleList ?? renderer.pyramidTriangles;
+        }
 
-        private static readonly uint _modelAssetID = Functions.BKDRHash("teleportation_box_bind");
+        private static readonly uint _modelAssetID = new AssetID("teleportation_box_bind");
 
-        public override void CreateTransformMatrix()
+        public override void CalculateTransformation(SharpRenderer renderer)
         {
             world = Matrix.RotationY(MathUtil.DegreesToRadians(LaunchAngle)) * Matrix.Translation(PositionX, PositionY, PositionZ);
 
-            var model = GetFromRenderingDictionary(_modelAssetID);
-            CreateBoundingBox((model != null) ? model.vertexListG : SharpRenderer.pyramidVertices);
-            triangles = model?.triangleList.ToArray();
-        }
-
-        private void CreateBoundingBox(List<Vector3> vertexList)
-        {
-            vertices = new Vector3[vertexList.Count];
-            for (int i = 0; i < vertexList.Count; i++)
-                vertices[i] = (Vector3)Vector3.Transform(vertexList[i], world);
-            boundingBox = BoundingBox.FromPoints(vertices);
+            var model = renderer.Assets.GetModelFromRenderingDictionary(_modelAssetID);
+            boundingBox = CreateBoundingBox(model?.vertexListG ?? renderer.pyramidVertices, world, model == null ? 0.5f : 1f);
         }
 
         public override void Draw(SharpRenderer renderer)
         {
-            if (renderingDictionary.ContainsKey(_modelAssetID))
-                renderingDictionary[_modelAssetID].Draw(renderer, world, isSelected ? renderer.selectedObjectColor : Vector4.One, Vector3.Zero);
+            if ((renderer.Assets.GetFromRenderingDictionary(_modelAssetID) is IAssetWithModel value))
+                value.Draw(renderer, world, Vector4.One, Vector3.Zero, isSelected);
             else
                 renderer.DrawPyramid(world, isSelected);
         }

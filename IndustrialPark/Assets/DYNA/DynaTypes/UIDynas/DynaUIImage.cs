@@ -1,8 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaUIImage : DynaUI
     {
@@ -53,38 +53,33 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public EVersionIncrediblesOthers AssetVersion { get; set; } = EVersionIncrediblesOthers.Others;
 
-        public DynaUIImage(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.ui__image, game, endianness)
+        public DynaUIImage(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.ui__image, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            Texture = reader.ReadUInt32();
+            uv1u = reader.ReadSingle();
+            uv1v = reader.ReadSingle();
+            uv2u = reader.ReadSingle();
+            uv2v = reader.ReadSingle();
+            uv3u = reader.ReadSingle();
+            uv3v = reader.ReadSingle();
+            uv4u = reader.ReadSingle();
+            uv4v = reader.ReadSingle();
+            rotation = reader.ReadSingle();
+            UIImageFlags.FlagValueShort = reader.ReadUInt16();
+            addreasMoveU = reader.ReadByte();
+            addreasMoveV = reader.ReadByte();
+            Color1 = reader.ReadColor();
+            Color2 = reader.ReadColor();
+            Color3 = reader.ReadColor();
+            Color4 = reader.ReadColor();
+
+            if (reader.BaseStream.Position != linkStartPosition(reader.BaseStream.Length, _links.Length))
             {
-                reader.BaseStream.Position = dynaUIEnd;
-
-                Texture = reader.ReadUInt32();
-                uv1u = reader.ReadSingle();
-                uv1v = reader.ReadSingle();
-                uv2u = reader.ReadSingle();
-                uv2v = reader.ReadSingle();
-                uv3u = reader.ReadSingle();
-                uv3v = reader.ReadSingle();
-                uv4u = reader.ReadSingle();
-                uv4v = reader.ReadSingle();
-                rotation = reader.ReadSingle();
-                UIImageFlags.FlagValueShort = reader.ReadUInt16();
-                addreasMoveU = reader.ReadByte();
-                addreasMoveV = reader.ReadByte();
-                Color1 = reader.ReadColor();
-                Color2 = reader.ReadColor();
-                Color3 = reader.ReadColor();
-                Color4 = reader.ReadColor();
-
-                if (reader.BaseStream.Position != linkStartPosition(reader.BaseStream.Length, _links.Length))
-                {
-                    AssetVersion = EVersionIncrediblesOthers.Incredibles;
-                    Unknown = reader.ReadInt32();
-                }
-                else
-                    AssetVersion = EVersionIncrediblesOthers.Others;
+                AssetVersion = EVersionIncrediblesOthers.Incredibles;
+                Unknown = reader.ReadInt32();
             }
+            else
+                AssetVersion = EVersionIncrediblesOthers.Others;
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

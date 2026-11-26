@@ -1,0 +1,41 @@
+<Project>
+
+  <!--
+	Shared output layout for every executable (WinExe) project under this folder.
+	Imported automatically by MSBuild, so new projects inherit it without edits.
+
+	- Each executable's own DLL and any other executable's DLL (a DLL with a matching .exe
+	  in the same output folder) stay at the root.
+	- All other DLLs at the root are dependencies and are moved to Library.
+	- Satellite resource assemblies and their culture folders are removed.
+  -->
+
+  <PropertyGroup Condition="'$(OutputType)' == 'WinExe'">
+	<!-- Prevents Visual Studio from skipping the build (and this cleanup) when up to date. -->
+	<DisableFastUpToDateCheck>true</DisableFastUpToDateCheck>
+  </PropertyGroup>
+
+  <Target Name="StageAndPruneOutputAssemblies"
+		  AfterTargets="CopyFilesToOutputDirectory"
+		  Condition="'$(OutputType)' == 'WinExe'">
+	<ItemGroup>
+	  <!-- Executables present in the output folder. Their DLLs are application assemblies. -->
+	  <OutputExecutables Include="$(TargetDir)*.exe" />
+	  <!-- All root DLLs, minus the DLL of every executable (matched by name, per item). -->
+	  <OutputDependencyDlls Include="$(TargetDir)*.dll" />
+	  <OutputDependencyDlls Remove="@(OutputExecutables->'$(TargetDir)%(Filename).dll')" />
+	  <!-- Application DLLs that were wrongly staged into Library by a previous build. -->
+	  <LibraryAppDlls Include="@(OutputExecutables->'$(TargetDir)Library\%(Filename).dll')" />
+	  <SatelliteAssembliesToRemove Include="$(TargetDir)*\*.resources.dll" />
+	  <SatelliteDirectoriesToRemove Include="@(SatelliteAssembliesToRemove->'%(RootDir)%(Directory)')" />
+	</ItemGroup>
+
+	<MakeDir Directories="$(TargetDir)Library" Condition="'@(OutputDependencyDlls)' != ''" />
+	<Copy SourceFiles="@(OutputDependencyDlls)" DestinationFolder="$(TargetDir)Library" SkipUnchangedFiles="true" Condition="'@(OutputDependencyDlls)' != ''" />
+	<Delete Files="@(OutputDependencyDlls)" />
+	<Delete Files="@(LibraryAppDlls)" />
+	<Delete Files="@(SatelliteAssembliesToRemove)" />
+	<RemoveDir Directories="@(SatelliteDirectoriesToRemove)" />
+  </Target>
+
+</Project>

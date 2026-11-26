@@ -1,0 +1,112 @@
+﻿using IndustrialPark.Archives;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
+
+namespace IndustrialPark
+{
+    public partial class UserTemplateManager : Form
+    {
+        public static string UserTemplatesFolder => Path.Combine(MainForm.PathToUserFolder, "UserTemplates");
+
+        public UserTemplateManager()
+        {
+            InitializeComponent();
+
+            if (!Directory.Exists(UserTemplatesFolder))
+                Directory.CreateDirectory(UserTemplatesFolder);
+
+            UpdateListBox();
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.WindowsShutDown)
+                return;
+            if (e.CloseReason == CloseReason.FormOwnerClosing)
+                return;
+
+            e.Cancel = true;
+            Hide();
+        }
+
+        private void UpdateListBox()
+        {
+            listBoxTemplates.Items.Clear();
+
+            foreach (string s in Directory.GetFiles(UserTemplatesFolder))
+                listBoxTemplates.Items.Add(Path.GetFileName(s));
+
+            Program.MainForm.UpdateUserTemplateComboBox();
+        }
+
+        private void listBox1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if ((listBoxTemplates.SelectedItem != null) && (e.KeyCode == Keys.Delete))
+                buttonDelete_Click(sender, e);
+        }
+
+        private void buttonCopy_Click(object sender, EventArgs e)
+        {
+            if (listBoxTemplates.SelectedIndex < 0)
+                return;
+
+            Clipboard.SetText(File.ReadAllText(Path.Combine(UserTemplatesFolder, listBoxTemplates.SelectedItem.ToString())));
+        }
+
+        private void buttonPaste_Click(object sender, EventArgs e)
+        {
+            List<AssetClipboard> clipboard;
+
+            try
+            {
+                clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(Clipboard.GetText());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error pasting objects from clipboard: " + ex.Message + ". Are you sure you have assets copied?");
+                return;
+            }
+
+            string templateName = "";
+            foreach (var asset in clipboard)
+                templateName += "[" + asset.AHDR.assetType.ToString() + "][" + asset.AHDR.assetName + "]";
+
+            File.WriteAllText(
+                Path.Combine(UserTemplatesFolder, templateName),
+                JsonConvert.SerializeObject(clipboard, Formatting.None));
+
+            UpdateListBox();
+        }
+
+        private void buttonDelete_Click(object sender, EventArgs e)
+        {
+            File.Delete(Path.Combine(UserTemplatesFolder, Path.GetFileName(listBoxTemplates.SelectedItem.ToString())));
+            UpdateListBox();
+        }
+
+        private void listBoxTemplates_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            buttonRename_Click(null, null);
+        }
+
+        private void buttonRename_Click(object sender, EventArgs e)
+        {
+            if (listBoxTemplates.SelectedIndex < 0)
+                return;
+
+            string newName = EditName.GetName(listBoxTemplates.SelectedItem.ToString(), "Template Name", out bool okED);
+
+            if (okED)
+            {
+                File.Move(
+                    Path.Combine(UserTemplatesFolder, listBoxTemplates.SelectedItem.ToString()),
+                    Path.Combine(UserTemplatesFolder, newName));
+
+                UpdateListBox();
+            }
+        }
+    }
+}

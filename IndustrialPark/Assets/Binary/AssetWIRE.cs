@@ -4,16 +4,19 @@ using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public struct Line
     {
         public ushort Vertex0 { get; set; }
         public ushort Vertex1 { get; set; }
+
+        public Line() { }
 
         public Line(ushort vertex0, ushort vertex1)
         {
@@ -39,40 +42,36 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetWIRE : Asset, IRenderableAsset
+    public class AssetWIRE : Asset, IRenderableAsset, IDisposableAsset, ISetupableAsset
     {
         private const string categoryName = "Wireframe Model";
 
         [Category(categoryName)]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public WireVector[] Points { get; set; }
         [Category(categoryName)]
+        [Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public Line[] Lines { get; set; }
         [Category(categoryName)]
         public AssetID hashID0 { get; set; }
         [Category(categoryName)]
         public AssetID hashID1 { get; set; }
 
-        public AssetWIRE(Section_AHDR AHDR, Game game, Endianness endianness, SharpRenderer renderer) : base(AHDR, game)
+        public AssetWIRE(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.ReadInt32();
-                int vertexAmount = reader.ReadInt32();
-                int lineAmount = reader.ReadInt32();
-                hashID0 = reader.ReadUInt32();
-                hashID1 = reader.ReadUInt32();
+            reader.ReadInt32();
+            int vertexAmount = reader.ReadInt32();
+            int lineAmount = reader.ReadInt32();
+            hashID0 = reader.ReadUInt32();
+            hashID1 = reader.ReadUInt32();
 
-                Points = new WireVector[vertexAmount];
-                for (int i = 0; i < Points.Length; i++)
-                    Points[i] = new WireVector(reader);
+            Points = new WireVector[vertexAmount];
+            for (int i = 0; i < Points.Length; i++)
+                Points[i] = new WireVector(reader);
 
-                Lines = new Line[lineAmount];
-                for (int i = 0; i < Lines.Length; i++)
-                    Lines[i] = new Line(reader);
-
-                Setup(renderer);
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            Lines = new Line[lineAmount];
+            for (int i = 0; i < Lines.Length; i++)
+                Lines[i] = new Line(reader);
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -159,9 +158,6 @@ namespace IndustrialPark
 
         public void Setup(SharpRenderer renderer)
         {
-            if (renderer == null)
-                return;
-
             renderer.completeVertexBufferList.Remove(vertexBuffer);
             if (vertexBuffer != null)
                 vertexBuffer.Dispose();
@@ -190,13 +186,13 @@ namespace IndustrialPark
             vertexBuffer.Dispose();
         }
 
-        public void CreateTransformMatrix()
+        public void CalculateTransformation(SharpRenderer renderer)
         {
         }
 
         public float? GetIntersectionPosition(SharpRenderer renderer, Ray ray) => null;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => false;
+        public bool SpecialBlendMode(SharpRenderer renderer) => false;
     }
 }

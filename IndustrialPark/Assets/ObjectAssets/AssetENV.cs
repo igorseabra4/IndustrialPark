@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetENV : BaseAsset
     {
@@ -20,8 +20,18 @@ namespace IndustrialPark
         public AssetSingle ClimateStrengthMax { get; set; }
         [Category(categoryName)]
         public AssetID BSP_LightKit { get; set; }
+
+        private AssetID _object_lightkit;
         [Category(categoryName)]
-        public AssetID Object_LightKit { get; set; }
+        public AssetID Object_LightKit
+        {
+            get => _object_lightkit;
+            set
+            {
+                _object_lightkit = value;
+                UpdateLightKit?.Invoke(value);
+            }
+        }
         [Category(categoryName)]
         public int Padding24 { get; set; }
         [Category(categoryName)]
@@ -51,52 +61,47 @@ namespace IndustrialPark
         [Category(categoryName)]
         public AssetSingle MaxBounds_Z { get; set; }
 
+        public event Action<AssetID> UpdateLightKit;
+
         public AssetENV(string assetName, string startCamName) : base(assetName, AssetType.Environment, BaseAssetType.Env)
         {
             StartCamera = startCamName;
             LoldHeight = 10f;
         }
 
-        public AssetENV(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetENV(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            BSP = reader.ReadUInt32();
+            StartCamera = reader.ReadUInt32();
+            ClimateFlags = reader.ReadInt32();
+            ClimateStrengthMin = reader.ReadSingle();
+            ClimateStrengthMax = reader.ReadSingle();
+            BSP_LightKit = reader.ReadUInt32();
+            Object_LightKit = reader.ReadUInt32();
+            Padding24 = reader.ReadInt32();
+            BSP_Collision = reader.ReadUInt32();
+            BSP_FX = reader.ReadUInt32();
+            BSP_Camera = reader.ReadUInt32();
+            BSP_SurfaceMapper = reader.ReadUInt32();
+            BSP_Collision_SurfaceMapper = reader.ReadUInt32();
+            BSP_FX_SurfaceMapper = reader.ReadUInt32();
+            if (game != Game.Scooby)
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                BSP = reader.ReadUInt32();
-                StartCamera = reader.ReadUInt32();
-                ClimateFlags = reader.ReadInt32();
-                ClimateStrengthMin = reader.ReadSingle();
-                ClimateStrengthMax = reader.ReadSingle();
-                BSP_LightKit = reader.ReadUInt32();
-                Object_LightKit = reader.ReadUInt32();
-                Padding24 = reader.ReadInt32();
-                BSP_Collision = reader.ReadUInt32();
-                BSP_FX = reader.ReadUInt32();
-                BSP_Camera = reader.ReadUInt32();
-                BSP_SurfaceMapper = reader.ReadUInt32();
-                BSP_Collision_SurfaceMapper = reader.ReadUInt32();
-                BSP_FX_SurfaceMapper = reader.ReadUInt32();
-                if (game != Game.Scooby)
-                {
-                    LoldHeight = reader.ReadSingle();
-                }
-                if (game >= Game.Incredibles)
-                {
-                    MinBounds_X = reader.ReadSingle();
-                    MinBounds_Y = reader.ReadSingle();
-                    MinBounds_Z = reader.ReadSingle();
-                    MaxBounds_X = reader.ReadSingle();
-                    MaxBounds_Y = reader.ReadSingle();
-                    MaxBounds_Z = reader.ReadSingle();
-                }
+                LoldHeight = reader.ReadSingle();
+            }
+            if (game >= Game.Incredibles)
+            {
+                MinBounds_X = reader.ReadSingle();
+                MinBounds_Y = reader.ReadSingle();
+                MinBounds_Z = reader.ReadSingle();
+                MaxBounds_X = reader.ReadSingle();
+                MaxBounds_Y = reader.ReadSingle();
+                MaxBounds_Z = reader.ReadSingle();
             }
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-
-
             base.Serialize(writer);
             writer.Write(BSP);
             writer.Write(StartCamera);
@@ -125,8 +130,6 @@ namespace IndustrialPark
             }
 
             SerializeLinks(writer);
-
-
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)

@@ -1,10 +1,11 @@
 ﻿using HipHopFile;
-using RenderWareFile;
 using SharpDX;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetJSP_INFO : Asset
     {
@@ -12,112 +13,94 @@ namespace IndustrialPark
 
         public int renderWareVersion;
 
-        [Category(categoryName)]
+        [Category(categoryName), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
         public AssetID[] JSP_AssetIDs { get; set; }
 
         [Category(categoryName)]
-        public Platform Platform { get; set; }
+        public HI_Tags_BEEF01 Section1 { get; set; }
+        [Category(categoryName)]
+        public HI_Tags_BEEF02 Section2 { get; set; }
+        [Category(categoryName)]
+        public HI_Tags_BEEF03 Section3 { get; set; }
+        [Category(categoryName)]
+        public HI_Tags_BEEF04 Section4 { get; set; }
 
-        [Category(categoryName)]
-        public CollisionData_Section1_00BEEF01 Section1 { get; set; }
-        [Category(categoryName)]
-        public CollisionData_Section2_00BEEF02 Section2 { get; set; }
-        [Category(categoryName), TypeConverter(typeof(ExpandableObjectConverter))]
-        public GenericSection Section2_Data { get; set; }
-        [Category(categoryName)]
-        public CollisionData_Section3_00BEEF03 Section3 { get; set; }
-        [Category(categoryName)]
-        public CollisionData_Section4_00BEEF04 Section4 { get; set; }
-
-        public AssetJSP_INFO(Section_AHDR AHDR, Game game, Platform platform, AssetID[] jspAssetIds) : base(AHDR, game)
+        public AssetJSP_INFO(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            Platform = platform;
-            JSP_AssetIDs = jspAssetIds;
+            reader.endianness = Endianness.Little;
+            Section1 = new HI_Tags_BEEF01(reader, game);
 
-            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Little))
-            {
-                Section1 = new CollisionData_Section1_00BEEF01(reader, platform);
+            renderWareVersion = Section1.RenderWareVersion;
 
-                renderWareVersion = Section1.RenderWareVersion;
+            Section2 = new HI_Tags_BEEF02(reader, AHDR.Platform.Endianness());
 
-                if (game == Game.BFBB)
-                    Section2 = new CollisionData_Section2_00BEEF02(reader, platform);
-                else
-                {
-                    var currentSection = (RenderWareFile.Section)reader.ReadInt32();
-                    Section2_Data = new GenericSection().Read(reader, currentSection);
-                }
+            reader.endianness = Endianness.Little;
+            if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF03)
+                Section3 = new HI_Tags_BEEF03(reader);
 
-                if (game == Game.BFBB && Platform == Platform.GameCube)
-                {
-                    Section3 = new CollisionData_Section3_00BEEF03(reader);
-                }
-
-                if (game != Game.BFBB)
-                {
-                    Section4 = new CollisionData_Section4_00BEEF04(reader);
-                }
-            }
+            reader.endianness = Endianness.Little;
+            if (!reader.EndOfStream && reader.PeekUInt32() == (int)RenderWareFile.Section.HI_TAGS_BEEF04)
+                Section4 = new HI_Tags_BEEF04(reader, AHDR.Platform.Endianness());
         }
 
         public AssetJSP_INFO(string assetName, Game game, Platform platform) : base(assetName, AssetType.JSPInfo)
         {
             _game = game;
-            Platform = platform;
+            Section1 = new HI_Tags_BEEF01(game);
+            Section2 = new HI_Tags_BEEF02();
+
+            if (game == Game.BFBB && platform == Platform.GameCube)
+                Section3 = new HI_Tags_BEEF03();
+
+            if (game >= Game.Incredibles)
+                Section4 = new HI_Tags_BEEF04(platform);
+        }
+
+        public IEnumerable<(uint jspAssetID, xJSPNodeInfo[] nodeInfo)> SetJspAssets(AssetJSP[] jspAssets)
+        {
+            JSP_AssetIDs = [.. jspAssets.Select(j => (AssetID)j.assetID)];
+
+            int done = 0;
+            if (jspAssets.Sum(j => j.AtomicFlags.Length) == Section2.jspNodeList.Length)
+            {
+                foreach (AssetJSP jsp in jspAssets.Reverse())
+                {
+                    xJSPNodeInfo[] entries = new xJSPNodeInfo[jsp.AtomicFlags.Length];
+                    for (int i = 0; i < entries.Length; i++)
+                        entries[i] = Section2.jspNodeList[done + i];
+                    done += entries.Length;
+                    yield return (jsp.assetID, entries.Reverse().ToArray());
+                }
+            }
         }
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-
-            if (game == Game.BFBB)
-            {
-                dt.RemoveProperty("Section2_Data");
-                dt.RemoveProperty("Section4");
-                if (Platform != Platform.GameCube)
-                    dt.RemoveProperty("Section3");
-            }
-
-            if (game != Game.BFBB)
-            {
-                dt.RemoveProperty("Section2");
+            if (Section3 == null)
                 dt.RemoveProperty("Section3");
-            }
+            if (Section4 == null)
+                dt.RemoveProperty("Section4");
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
-            Section1.RenderWareVersion = renderWareVersion;
             Section1.Serialize(writer);
-
-            if (game == Game.BFBB)
-            {
-                Section2.RenderWareVersion = renderWareVersion;
-                Section2.Serialize(writer);
-            }
-            else
-                writer.Write(Section2_Data.GetBytes(renderWareVersion));
-
-            if (game == Game.BFBB && Platform == Platform.GameCube)
-            {
-                Section3.RenderWareVersion = renderWareVersion;
-                Section3.Serialize(writer);
-            }
-
-            if (game != Game.BFBB)
-                Section4.Serialize(writer);
+            Section2.Serialize(writer);
+            Section3?.Serialize(writer);
+            Section4?.Serialize(writer);
         }
 
         public void ApplyScale(Vector3 factor)
         {
             for (int i = 0; i < Section1.branchNodes.Length; i++)
             {
-                switch (Section1.branchNodes[i].LeftDirection)
+                switch (Section1.branchNodes[i].LeftAxis)
                 {
-                    case ClumpDirection.X:
+                    case ClumpAxis.X:
                         Section1.branchNodes[i].LeftValue *= factor.X;
                         Section1.branchNodes[i].RightValue *= factor.X;
                         break;
-                    case ClumpDirection.Y:
+                    case ClumpAxis.Y:
                         Section1.branchNodes[i].LeftValue *= factor.Y;
                         Section1.branchNodes[i].RightValue *= factor.Y;
                         break;
@@ -128,35 +111,40 @@ namespace IndustrialPark
                 }
             }
 
-            for (int i = 0; i < Section3.vertexList.Length; i++)
+            if (Section2.Version == 5)
             {
-                Section3.vertexList[i].X *= factor.X;
-                Section3.vertexList[i].Y *= factor.Y;
-                Section3.vertexList[i].Z *= factor.Z;
+                for (int i = 0; i < Section2.branchNodes.Length; i++)
+                {
+                    switch (Section2.branchNodes[i].coord)
+                    {
+                        case 0:
+                            Section2.branchNodes[i].leftValue *= factor.X;
+                            Section2.branchNodes[i].rightValue *= factor.X;
+                            break;
+                        case 4:
+                            Section2.branchNodes[i].leftValue *= factor.Y;
+                            Section2.branchNodes[i].rightValue *= factor.Y;
+                            break;
+                        case 8:
+                            Section2.branchNodes[i].leftValue *= factor.Z;
+                            Section2.branchNodes[i].rightValue *= factor.Z;
+                            break;
+                    }
+                }
             }
-        }
 
-        public void CreateFromJsp(AssetJSP assetJSP)
-        {
-            JSP_AssetIDs = new AssetID[] { assetJSP.assetID };
-
-            var clump = assetJSP.GetClump();
-            renderWareVersion = clump.renderWareVersion;
-
-            Section1 = new CollisionData_Section1_00BEEF01(Platform);
-
-            Section2 = new CollisionData_Section2_00BEEF02(Platform);
-
-            Section2_Data = null;
-
-            Section3 = new CollisionData_Section3_00BEEF03(clump.geometryList.geometryList);
-
-            Section4 = null;
+            if (Section3 != null && Section3.vertexList != null)
+                for (int i = 0; i < Section3.vertexList.Length; i++)
+                {
+                    Section3.vertexList[i].X *= factor.X;
+                    Section3.vertexList[i].Y *= factor.Y;
+                    Section3.vertexList[i].Z *= factor.Z;
+                }
         }
 
         public override bool HasReference(uint assetID)
         {
-            return JSP_AssetIDs.Contains(assetID);
+            return JSP_AssetIDs?.Contains(assetID) ?? false;
         }
     }
 }

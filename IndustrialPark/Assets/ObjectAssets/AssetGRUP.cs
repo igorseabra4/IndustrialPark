@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum Delegation
     {
@@ -29,19 +29,14 @@ namespace IndustrialPark
             Items = new AssetID[0];
         }
 
-        public AssetGRUP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetGRUP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            var itemCount = reader.ReadUInt16();
+            ReceiveEventDelegation = (Delegation)reader.ReadInt16();
 
-                var itemCount = reader.ReadUInt16();
-                ReceiveEventDelegation = (Delegation)reader.ReadInt16();
-
-                Items = new AssetID[itemCount];
-                for (int i = 0; i < Items.Length; i++)
-                    Items[i] = reader.ReadUInt32();
-            }
+            Items = new AssetID[itemCount];
+            for (int i = 0; i < Items.Length; i++)
+                Items[i] = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -68,5 +63,7 @@ namespace IndustrialPark
                     items.Add(i);
             Items = items.ToArray();
         }
+
+        public List<uint> GetItems() => Items.Select(u => (uint)u).Where(i => i != 0).ToList();
     }
 }

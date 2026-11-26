@@ -1,7 +1,12 @@
-﻿using System;
+﻿using HipHopFile;
+using System;
 using System.ComponentModel;
+using System.Drawing.Design;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ParticleCommandType : int
     {
@@ -55,9 +60,13 @@ namespace IndustrialPark
         [Category(categoryName), Browsable(false)]
         public short Pad { get; set; }
 
-        public ParticleCommand(ParticleCommandType commandType)
+        public ParticleCommand()
         {
             Enabled = true;
+        }
+
+        public ParticleCommand(ParticleCommandType commandType) : this()
+        {
             CommandType = commandType;
         }
 
@@ -935,21 +944,28 @@ namespace IndustrialPark
 
         [Category(categoryNameE)]
         public int Damage { get; set; }
-        [Category(categoryNameE)]
+        [Category(categoryNameE), Description("Not present in Scooby.")]
         public int Granular { get; set; }
 
-        public ParticleCommand_DamagePlayer() : base(ParticleCommandType.DamagePlayer) { }
-        public ParticleCommand_DamagePlayer(EndianBinaryReader reader) : base(reader, ParticleCommandType.DamagePlayer)
+        public ParticleCommand_DamagePlayer(Game game) : base(ParticleCommandType.DamagePlayer)
         {
+            this._game = game;
+        }
+
+        public ParticleCommand_DamagePlayer(EndianBinaryReader reader, Game game) : base(reader, ParticleCommandType.DamagePlayer)
+        {
+            this._game = game;
             Damage = reader.ReadInt32();
-            Granular = reader.ReadInt32();
+            if (_game > Game.Scooby)
+                Granular = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             base.Serialize(writer);
             writer.Write(Damage);
-            writer.Write(Granular);
+            if (_game > Game.Scooby)
+                writer.Write(Granular);
         }
     }
 
@@ -1011,28 +1027,25 @@ namespace IndustrialPark
     {
         private const string categoryNameE = categoryName + ": Shaper";
 
-        [Category(categoryNameE)]
-        public AssetSingle[] CustAlpha { get; set; }
-        [Category(categoryNameE)]
-        public AssetSingle[] CustSize { get; set; }
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustAlpha { get; set; } = new AssetSingle[4];
+
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustSize { get; set; } = new AssetSingle[4];
+
         [Category(categoryNameE)]
         public AssetSingle DampSpeed { get; set; }
+
         [Category(categoryNameE)]
         public AssetSingle Gravity { get; set; }
 
-        public ParticleCommand_Shaper() : base(ParticleCommandType.Shaper)
-        {
-            CustAlpha = new AssetSingle[4];
-            CustSize = new AssetSingle[4];
-        }
+        public ParticleCommand_Shaper() : base(ParticleCommandType.Shaper) { }
 
         public ParticleCommand_Shaper(EndianBinaryReader reader) : base(reader, ParticleCommandType.Shaper)
         {
-            CustAlpha = new AssetSingle[4];
             for (int i = 0; i < 4; i++)
                 CustAlpha[i] = reader.ReadSingle();
 
-            CustSize = new AssetSingle[4];
             for (int i = 0; i < 4; i++)
                 CustSize[i] = reader.ReadSingle();
 
@@ -1056,13 +1069,10 @@ namespace IndustrialPark
     {
         private const string categoryNameE = categoryName + ": AlphaInOut";
 
-        [Category(categoryNameE)]
-        public AssetSingle[] CustAlpha { get; set; }
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustAlpha { get; set; } = new AssetSingle[4];
 
-        public ParticleCommand_AlphaInOut() : base(ParticleCommandType.AlphaInOut)
-        {
-            CustAlpha = new AssetSingle[4];
-        }
+        public ParticleCommand_AlphaInOut() : base(ParticleCommandType.AlphaInOut) { }
 
         public ParticleCommand_AlphaInOut(EndianBinaryReader reader) : base(reader, ParticleCommandType.AlphaInOut)
         {
@@ -1083,13 +1093,10 @@ namespace IndustrialPark
     {
         private const string categoryNameE = categoryName + ": SizeInOut";
 
-        [Category(categoryNameE)]
-        public AssetSingle[] CustSize { get; set; }
+        [Category(categoryNameE), Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor))]
+        public AssetSingle[] CustSize { get; set; } = new AssetSingle[4];
 
-        public ParticleCommand_SizeInOut() : base(ParticleCommandType.SizeInOut)
-        {
-            CustSize = new AssetSingle[4];
-        }
+        public ParticleCommand_SizeInOut() : base(ParticleCommandType.SizeInOut) { }
 
         public ParticleCommand_SizeInOut(EndianBinaryReader reader) : base(reader, ParticleCommandType.SizeInOut)
         {

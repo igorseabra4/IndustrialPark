@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaInteractionLaunch : AssetDYNA
     {
@@ -26,20 +26,15 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask LaunchFlags { get; set; } = IntFlagsDescriptor();
 
-        public DynaInteractionLaunch(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.interaction__Launch, game, endianness)
+        public DynaInteractionLaunch(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.interaction__Launch, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                LaunchType = reader.ReadInt32();
-                LaunchObject = reader.ReadUInt32();
-                Target = reader.ReadUInt32();
-                Gravity = reader.ReadSingle();
-                Height = reader.ReadSingle();
-                LeavesBone = reader.ReadInt32();
-                LaunchFlags.FlagValueInt = reader.ReadUInt32();
-            }
+            LaunchType = reader.ReadInt32();
+            LaunchObject = reader.ReadUInt32();
+            Target = reader.ReadUInt32();
+            Gravity = reader.ReadSingle();
+            Height = reader.ReadSingle();
+            LeavesBone = reader.ReadInt32();
+            LaunchFlags.FlagValueInt = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

@@ -1,124 +1,114 @@
 ﻿using HipHopFile;
+using IndustrialPark.ArchiveEditors;
+using IndustrialPark.Archives;
 using Newtonsoft.Json;
 using SharpDX;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing.Design;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetMVPT : BaseAsset, IRenderableAsset, IClickableAsset, IScalableAsset, IAssetAddSelected, IAssetCopyPasteTransformation
     {
         private const string categoryName = "Move Point";
-        public override string AssetInfo => IsZone == 0 ? "Arena" : "Zone";
 
         private Vector3 _position;
         [Category(categoryName)]
         public AssetSingle PositionX
         {
             get => _position.X;
-            set { _position.X = value; CreateTransformMatrix(); }
+            set => _position.X = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionY
         {
             get => _position.Y;
-            set { _position.Y = value; CreateTransformMatrix(); }
+            set => _position.Y = value;
         }
         [Category(categoryName)]
         public AssetSingle PositionZ
         {
             get => _position.Z;
-            set { _position.Z = value; CreateTransformMatrix(); }
+            set => _position.Z = value;
         }
 
-        [Category(categoryName), TypeConverter(typeof(HexUShortTypeConverter)), Description("Usually 0x2710")]
-        public ushort Wt { get; set; }
-        [Category(categoryName), Description("0x00 for arena (can see you), 0x01 for zone")]
-        public AssetByte IsZone { get; set; }
-        [Category(categoryName), Description("Usually 0x00")]
-        public AssetByte BezIndex { get; set; }
+        [Category(categoryName), Description("Allows the object to follow a curved path through this point, calculated using the previous and next points. Set to 1 to enable.")]
+        public byte BezierIndex { get; set; }
+
         [Category(categoryName)]
         public AssetByte Flg_Props { get; set; }
 
-        [Category(categoryName), Description("Movement Angle - Enemy will rotate around the point this amount, -1 means disabled")]
+        [Category(categoryName), Description("How long the object waits at this point before continuing, in seconds. NPCs may wander around the point during this time if ZoneRadius is enabled (except in Scooby, where ZoneRadius doesn't exist).")]
         public AssetSingle Delay { get; set; }
 
-        private float _zoneRadius;
-        [Category(categoryName), Description("Enemy will circle around the point in this distance, -1 means disabled")]
-        public AssetSingle ZoneRadius
-        {
-            get => _zoneRadius;
-            set { _zoneRadius = value; CreateTransformMatrix(); }
-        }
+        [Category(categoryName), Description("For NPCs, determines the radius within which they wander randomly while waiting at this point. Set to -1 to disable. Delay must be greater than 0 for wandering to occur, and wandering might have to be turned on for certain NPC types.")]
+        public AssetSingle ZoneRadius { get; set; }
 
-        private float _arenaRadius;
-        [Category(categoryName), Description("Enemy will be able to see you from this radius (as in a sphere trigger), -1 means disabled")]
-        public AssetSingle ArenaRadius
-        {
-            get => _arenaRadius;
-            set { _arenaRadius = value; CreateTransformMatrix(); }
-        }
+        [Category(categoryName), Description("Applies only to NPCs. Determines the radius within which the NPC can detect the player. Set to -1 to disable. A move point with an ArenaRadius greater than 0 can optionally be used in combination with other move points as a player-detection trigger. Turn the point off and reference it as a next move point of the other move points used by the NPC. The NPC will not move to this point, but will use its position and ArenaRadius to detect the player.")]
+        public AssetSingle ArenaRadius { get; set; }
 
-        [Category(categoryName), ValidReferenceRequired]
+        [Category(categoryName), Description("Determines whether the point starts enabled or disabled. Disabled points cannot be selected as next destinations. Use the On and Off events to change the point's state, or Reset to restore its initial state. An NPC can still start at a disabled point if it is directly referenced in the NPC asset.")]
+        public bool On { get; set; }
+        
+        [Category(categoryName), Description("Determines the likelihood of this point being selected as the next destination from a connected point. Higher values increase the likelihood of selection. Default: 10000.")]
+        public ushort Weight { get; set; }
+
+        [Category(categoryName), ValidReferenceRequired, Editor(typeof(AssetPropertyCollectionEditor), typeof(UITypeEditor)),
+            Description("The points the object can move to after reaching this point and completing its Delay. The next destination is chosen randomly from the points that are currently on, taking their Weight values into account. If no eligible destination is found, the object remains at the current point.")]
         public AssetID[] NextMovePoints { get; set; }
 
         public AssetMVPT(string assetName, Vector3 position, Game game, AssetTemplate template) : base(assetName, AssetType.MovePoint, BaseAssetType.MovePoint)
         {
             _position = position;
-            Wt = 0x2710;
-            BezIndex = 0x00;
-            NextMovePoints = new AssetID[0];
+            Weight = 10000;
+            BezierIndex = 0;
+            NextMovePoints = [];
 
             switch (template)
             {
-                case AssetTemplate.MovePoint_Area:
-                    IsZone = 0x00;
+                case AssetTemplate.MovePoint_Arena:
+                    On = false;
                     Delay = 360;
                     ZoneRadius = 4;
                     ArenaRadius = 8;
                     break;
                 case AssetTemplate.MovePoint:
-                    IsZone = 0x01;
-                    Delay = game >= Game.Incredibles ? 2 : 0;
+                    On = true;
+                    Delay = 0;
                     ZoneRadius = -1;
                     ArenaRadius = -1;
                     break;
             }
-
-            CreateTransformMatrix();
-            ArchiveEditorFunctions.AddToRenderableAssets(this);
         }
 
-        public AssetMVPT(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public static bool chainPointMVPTs = false;
+
+        public static uint chainPointMVPTlast = 0;
+
+        public AssetMVPT(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            Weight = reader.ReadUInt16();
+            On = reader.ReadByte() != 0;
+            BezierIndex = reader.ReadByte();
+            Flg_Props = reader.ReadByte();
+            reader.ReadByte(); // pad
+            ushort pointCount = reader.ReadUInt16();
+            
+            Delay = reader.ReadSingle();
+            if (game != Game.Scooby)
             {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                Wt = reader.ReadUInt16();
-                IsZone = reader.ReadByte();
-                BezIndex = reader.ReadByte();
-                Flg_Props = reader.ReadByte();
-                reader.ReadByte(); // pad
-                ushort pointCount = reader.ReadUInt16();
-
-                if (game != Game.Scooby)
-                    Delay = reader.ReadSingle();
-                _zoneRadius = reader.ReadSingle();
-                if (game != Game.Scooby)
-                    _arenaRadius = reader.ReadSingle();
-
-                NextMovePoints = new AssetID[pointCount];
-                for (int i = 0; i < NextMovePoints.Length; i++)
-                    NextMovePoints[i] = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
+                ZoneRadius = reader.ReadSingle();
+                ArenaRadius = reader.ReadSingle();
             }
+
+            NextMovePoints = new AssetID[pointCount];
+            for (int i = 0; i < NextMovePoints.Length; i++)
+                NextMovePoints[i] = reader.ReadUInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -128,58 +118,60 @@ namespace IndustrialPark
             writer.Write(_position.X);
             writer.Write(_position.Y);
             writer.Write(_position.Z);
-            writer.Write(Wt);
-            writer.Write(IsZone);
-            writer.Write(BezIndex);
+            writer.Write(Weight);
+            writer.Write((byte)(On ? 1 : 0));
+            writer.Write(BezierIndex);
             writer.Write(Flg_Props);
             writer.Write((byte)0);
             writer.Write((ushort)NextMovePoints.Length);
+            writer.Write(Delay);
             if (game != Game.Scooby)
-                writer.Write(Delay);
-            writer.Write(_zoneRadius);
-            if (game != Game.Scooby)
-                writer.Write(_arenaRadius);
+            {
+                writer.Write(ZoneRadius);
+                writer.Write(ArenaRadius);
+            }
             foreach (var i in NextMovePoints)
                 writer.Write(i);
 
             SerializeLinks(writer);
         }
 
+        public static bool DrawAllAsPoints = false;
         private Matrix world;
         private BoundingBox boundingBox;
 
         public static bool dontRender = false;
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
+        public bool DrawAsPoint => DrawAllAsPoints || ArenaRadius <= 0f;
 
-        public void CreateTransformMatrix()
+        public void CalculateTransformation(SharpRenderer renderer)
         {
-            if (IsZone == 1 || _arenaRadius == -1f)
-                world = Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f));
-            else
-                world = Matrix.Scaling(_arenaRadius * 2f) * Matrix.Translation(_position);
+            world = DrawAsPoint
+                ? Matrix.RotationX(MathUtil.PiOverTwo) * Matrix.Translation(_position + new Vector3(0f, 0.5f, 0f))
+                : Matrix.Scaling(ArenaRadius * 2f) * Matrix.Translation(_position);
 
-            CreateBoundingBox();
+            CreateBoundingBox(renderer);
         }
 
-        public BoundingSphere boundingSphere;
+        private BoundingSphere boundingSphere;
 
-        protected void CreateBoundingBox()
+        protected void CreateBoundingBox(SharpRenderer renderer)
         {
-            if (IsZone == 1 || _arenaRadius == -1f)
+            if (DrawAsPoint)
             {
-                var vertices = new Vector3[SharpRenderer.pyramidVertices.Count];
+                var vertices = new Vector3[renderer.pyramidVertices.Count];
 
-                for (int i = 0; i < SharpRenderer.pyramidVertices.Count; i++)
-                    vertices[i] = (Vector3)Vector3.Transform(SharpRenderer.pyramidVertices[i], world);
+                for (int i = 0; i < renderer.pyramidVertices.Count; i++)
+                    vertices[i] = (Vector3)Vector3.Transform(renderer.pyramidVertices[i], world);
 
                 boundingBox = BoundingBox.FromPoints(vertices);
                 boundingSphere = BoundingSphere.FromBox(boundingBox);
             }
             else
             {
-                boundingSphere = new BoundingSphere(_position, _arenaRadius);
+                boundingSphere = new BoundingSphere(_position, ArenaRadius);
                 boundingBox = BoundingBox.FromSphere(boundingSphere);
             }
         }
@@ -189,9 +181,9 @@ namespace IndustrialPark
             if (ShouldDraw(renderer))
                 if (ray.Intersects(ref boundingSphere))
                 {
-                    if (IsZone == 1 || _arenaRadius == -1f)
-                        return TriangleIntersection(ray, SharpRenderer.pyramidTriangles, SharpRenderer.pyramidVertices, world);
-                    return TriangleIntersection(ray, SharpRenderer.sphereTriangles, SharpRenderer.sphereVertices, world);
+                    return DrawAsPoint
+                        ? TriangleIntersection(ray, renderer.pyramidTriangles, renderer.pyramidVertices, world)
+                        : TriangleIntersection(ray, renderer.sphereTriangles, renderer.sphereVertices, world);
                 }
             return null;
         }
@@ -212,15 +204,15 @@ namespace IndustrialPark
 
         public void Draw(SharpRenderer renderer)
         {
-            if (IsZone == 1 || _arenaRadius == -1f)
-                renderer.DrawPyramid(world, isSelected, 1f);
+            if (DrawAsPoint)
+                renderer.DrawPyramid(world, isSelected, 1f, renderer.mvptColor);
             else
-                renderer.DrawSphere(world, isSelected, renderer.mvptColor);
+                renderer.DrawSphere(boundingSphere, isSelected, renderer.mvptColor);
         }
 
         public BoundingBox GetBoundingBox() => boundingBox;
 
-        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - (_arenaRadius == -1f ? 0 : _arenaRadius);
+        public float GetDistanceFrom(Vector3 cameraPosition) => Vector3.Distance(cameraPosition, _position) - Math.Max(0f, ArenaRadius);
 
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
@@ -253,15 +245,15 @@ namespace IndustrialPark
 
         private float GetScale()
         {
-            if (IsZone == 0x00 && _arenaRadius != -1f)
-                return _arenaRadius;
+            if (DrawAsPoint)
+                return ArenaRadius;
 
             return 1f;
         }
 
         private void SetScale(float scale)
         {
-            if (IsZone == 0x00)
+            if (DrawAsPoint)
                 ArenaRadius = scale;
         }
 
@@ -277,36 +269,24 @@ namespace IndustrialPark
             NextMovePoints = items.ToArray();
         }
 
-        public void CopyTransformation()
-        {
-            var transformation = new Transformation()
-            {
-                _positionX = _position.X,
-                _positionY = _position.Y,
-                _positionZ = _position.Z,
-                _scaleSingle = GetScale(),
-                _scaleSfxMin = GetScale(),
-                _scaleSfxMax = GetScale(),
-            };
-            Clipboard.SetText(JsonConvert.SerializeObject(transformation));
-        }
+        public List<uint> GetItems() => NextMovePoints.Select(a => (uint)a).ToList();
 
-        public void PasteTransformation()
+        public AssetTransformation GetTransformation() => new AssetTransformation()
         {
-            try
-            {
-                var transformation = JsonConvert.DeserializeObject<Transformation>(Clipboard.GetText());
-                _position.X = transformation._positionX;
-                _position.Y = transformation._positionY;
-                _position.Z = transformation._positionZ;
-                SetScale(transformation._scaleSingle);
+            _positionX = _position.X,
+            _positionY = _position.Y,
+            _positionZ = _position.Z,
+            _scaleSingle = GetScale(),
+            _scaleSfxMin = GetScale(),
+            _scaleSfxMax = GetScale(),
+        };
 
-                CreateTransformMatrix();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"There was an error pasting the transformation from clipboard: ${ex.Message}. Are you sure you have a transformation copied?");
-            }
+        public void SetTransformation(AssetTransformation transformation)
+        {
+            _position.X = transformation._positionX;
+            _position.Y = transformation._positionY;
+            _position.Z = transformation._positionZ;
+            SetScale(transformation._scaleSingle);
         }
     }
 }

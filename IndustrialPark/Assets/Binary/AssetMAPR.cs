@@ -2,31 +2,49 @@
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class EntryMAPR : GenericAssetDataContainer
     {
         [ValidReferenceRequired]
         public AssetID Surface { get; set; }
-        public int MeshIndex { get; set; }
+
+        public AssetID MeshAsset { get => MeshIndex; set => MeshIndex = value; }
+
+        public uint MeshIndex { get; set; }
 
         public EntryMAPR() { }
 
-        public EntryMAPR(EndianBinaryReader reader)
+        public EntryMAPR(Game game)
+        {
+            _game = game;
+        }
+
+        public EntryMAPR(EndianBinaryReader reader, Game game) : this(game)
         {
             Surface = reader.ReadUInt32();
-            MeshIndex = reader.ReadInt32();
+            MeshIndex = reader.ReadUInt32();
         }
 
         public override string ToString()
         {
-            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {MeshIndex}]";
+            if (game == Game.BFBB)
+                return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {MeshIndex}";
+            return $"[{HexUIntTypeConverter.StringFromAssetID(Surface)}] - {HexUIntTypeConverter.StringFromAssetID(MeshAsset)}";
         }
 
         public override void Serialize(EndianBinaryWriter writer)
         {
             writer.Write(Surface);
             writer.Write(MeshIndex);
+        }
+
+        public override void SetDynamicProperties(DynamicTypeDescriptor dt)
+        {
+            if (game == Game.BFBB)
+                dt.RemoveProperty("MeshAsset");
+            else
+                dt.RemoveProperty("MeshIndex");
         }
     }
 
@@ -42,17 +60,14 @@ namespace IndustrialPark
             Entries = new EntryMAPR[0];
         }
 
-        public AssetMAPR(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetMAPR(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.ReadInt32();
-                int maprCount = reader.ReadInt32();
-                Entries = new EntryMAPR[maprCount];
+            reader.ReadInt32();
+            int maprCount = reader.ReadInt32();
+            Entries = new EntryMAPR[maprCount];
 
-                for (int i = 0; i < Entries.Length; i++)
-                    Entries[i] = new EntryMAPR(reader);
-            }
+            for (int i = 0; i < Entries.Length; i++)
+                Entries[i] = new EntryMAPR(reader, game);
         }
 
         public override void Serialize(EndianBinaryWriter writer)

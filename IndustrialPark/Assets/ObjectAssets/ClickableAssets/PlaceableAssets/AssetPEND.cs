@@ -2,7 +2,7 @@
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetPEND : AssetWithMotion
     {
@@ -20,20 +20,15 @@ namespace IndustrialPark
             Motion = new Motion_Pendulum(game);
         }
 
-        public AssetPEND(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetPEND(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
+            Motion = new Motion_Pendulum(reader, game);
 
-                Motion = new Motion_Pendulum(reader, game);
+            reader.BaseStream.Position = 0x74 + (game == Game.BFBB ? 4 : 0);
 
-                reader.BaseStream.Position = 0x74 + (game == Game.BFBB ? 4 : 0);
-
-                Lt = reader.ReadInt32();
-                Q1t = reader.ReadInt32();
-                Q3t = reader.ReadInt32();
-            }
+            Lt = reader.ReadInt32();
+            Q1t = reader.ReadInt32();
+            Q3t = reader.ReadInt32();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

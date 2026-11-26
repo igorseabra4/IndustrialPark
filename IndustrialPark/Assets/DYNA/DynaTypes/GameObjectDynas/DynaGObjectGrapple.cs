@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectGrapple : AssetDYNA
     {
@@ -22,18 +22,13 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public FlagBitmask GrappleFlags { get; set; } = IntFlagsDescriptor();
 
-        public DynaGObjectGrapple(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__Grapple, game, endianness)
+        public DynaGObjectGrapple(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__Grapple, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Object = reader.ReadUInt32();
-                OffsetX = reader.ReadSingle();
-                OffsetY = reader.ReadSingle();
-                OffsetZ = reader.ReadSingle();
-                GrappleFlags.FlagValueInt = reader.ReadUInt32();
-            }
+            Object = reader.ReadUInt32();
+            OffsetX = reader.ReadSingle();
+            OffsetY = reader.ReadSingle();
+            OffsetZ = reader.ReadSingle();
+            GrappleFlags.FlagValueInt = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

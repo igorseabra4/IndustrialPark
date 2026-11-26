@@ -1,9 +1,8 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
+using IndustrialPark.Assets.Colors;
 using System.ComponentModel;
-using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public enum ColorAnimType : byte
     {
@@ -162,50 +161,45 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetSingle ColorAnimFlickerParam { get => ColorAnimPulseFrequency; set => ColorAnimPulseFrequency = value; }
 
-        public DynaGObjectLaserBeam(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__laser_beam, game, endianness)
+        public DynaGObjectLaserBeam(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__laser_beam, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
+            LaserBeamFlags.FlagValueInt = reader.ReadUInt32();
+            Attach = reader.ReadUInt32();
+            Target = reader.ReadUInt32();
+            OriginEmitter = reader.ReadUInt32();
+            StrikeEmitter = reader.ReadUInt32();
+            OriginX = reader.ReadSingle();
+            OriginY = reader.ReadSingle();
+            OriginZ = reader.ReadSingle();
+            if (game >= Game.ROTU)
             {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                LaserBeamFlags.FlagValueInt = reader.ReadUInt32();
-                Attach = reader.ReadUInt32();
-                Target = reader.ReadUInt32();
-                OriginEmitter = reader.ReadUInt32();
-                StrikeEmitter = reader.ReadUInt32();
-                OriginX = reader.ReadSingle();
-                OriginY = reader.ReadSingle();
-                OriginZ = reader.ReadSingle();
-                if (game >= Game.ROTU)
-                {
-                    TargetOffsetX = reader.ReadSingle();
-                    TargetOffsetY = reader.ReadSingle();
-                    TargetOffsetZ = reader.ReadSingle();
-                }
-                Speed = reader.ReadSingle();
-                SegmentDist = reader.ReadSingle();
-                Knockback = reader.ReadSingle();
-                Movement = reader.ReadByte();
-                AttachBone = reader.ReadByte();
-                TargetBone = reader.ReadByte();
-                ColorAnimType = (ColorAnimType)reader.ReadByte();
-                FadeInType = reader.ReadByte();
-                FadeOutType = reader.ReadByte();
-                reader.ReadInt16();
-                FadeInTime = reader.ReadSingle();
-                FadeOutTime = reader.ReadSingle();
-                DamagePlayer = reader.ReadSingle();
-                if (game < Game.ROTU)
-                    DamageNPC = reader.ReadSingle();
-                DamageOther = reader.ReadSingle();
-                Beam = new LaserBeam_Beam(reader);
-                Ribbon = new LaserBeam_Ribbon(reader);
-                ColorAnimPulseFrequency = reader.ReadSingle();
-                ColorAnimPulseIntensityMin = reader.ReadSingle();
-                ColorAnimPulseIntensityMax = reader.ReadSingle();
-                ColorAnimPulseGlowMin = reader.ReadSingle();
-                ColorAnimPulseGlowMax = reader.ReadSingle();
+                TargetOffsetX = reader.ReadSingle();
+                TargetOffsetY = reader.ReadSingle();
+                TargetOffsetZ = reader.ReadSingle();
             }
+            Speed = reader.ReadSingle();
+            SegmentDist = reader.ReadSingle();
+            Knockback = reader.ReadSingle();
+            Movement = reader.ReadByte();
+            AttachBone = reader.ReadByte();
+            TargetBone = reader.ReadByte();
+            ColorAnimType = (ColorAnimType)reader.ReadByte();
+            FadeInType = reader.ReadByte();
+            FadeOutType = reader.ReadByte();
+            reader.ReadInt16();
+            FadeInTime = reader.ReadSingle();
+            FadeOutTime = reader.ReadSingle();
+            DamagePlayer = reader.ReadSingle();
+            if (game < Game.ROTU)
+                DamageNPC = reader.ReadSingle();
+            DamageOther = reader.ReadSingle();
+            Beam = new LaserBeam_Beam(reader);
+            Ribbon = new LaserBeam_Ribbon(reader);
+            ColorAnimPulseFrequency = reader.ReadSingle();
+            ColorAnimPulseIntensityMin = reader.ReadSingle();
+            ColorAnimPulseIntensityMax = reader.ReadSingle();
+            ColorAnimPulseGlowMin = reader.ReadSingle();
+            ColorAnimPulseGlowMax = reader.ReadSingle();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

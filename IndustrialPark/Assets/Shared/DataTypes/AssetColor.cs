@@ -1,9 +1,10 @@
-﻿using SharpDX;
+﻿using IndustrialPark.Assets.Colors;
+using SharpDX;
 using System;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark.AssetEditorColors
+namespace IndustrialPark.Assets.Colors
 {
     [TypeConverter(typeof(AssetColorTypeConverter)), Editor(typeof(AssetColorEditor), typeof(UITypeEditor)), Description("Hex Color (RRGGBBAA)")]
     public class AssetColor
@@ -61,6 +62,8 @@ namespace IndustrialPark.AssetEditorColors
         public static AssetColor FromVector4(Vector4 color) => FromVector4(color.X, color.Y, color.Z, color.W);
 
         public static implicit operator uint(AssetColor color) => (uint)(color.R << 24 | color.G << 16 | color.B << 8 | color.A);
+
+        public static implicit operator AssetColor(RenderWareFile.Color color) => new AssetColor(color.R, color.G, color.B, color.A);
 
         public int GetARGB()
         {

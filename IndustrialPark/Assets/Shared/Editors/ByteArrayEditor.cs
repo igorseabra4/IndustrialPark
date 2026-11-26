@@ -4,7 +4,7 @@ using System.Drawing.Design;
 using System.IO;
 using System.Windows.Forms;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class ByteArrayEditor : UITypeEditor
     {

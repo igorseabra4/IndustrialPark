@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class BaseAsset : Asset
     {
@@ -18,12 +18,12 @@ namespace IndustrialPark
         }
 
         [Category(categoryName), ReadOnly(true)]
-        public BaseAssetType BaseAssetType { get; set; }
+        public BaseAssetType BaseAssetType { get; private set; }
 
         [Category(categoryName), Browsable(false)]
         public ushort BaseFlags { get; set; }
 
-        [Category(categoryName), DisplayName("Enabled On Start")]
+        [Category(categoryName), DisplayName("Enabled On Start"), Description("If true, asset is enabled on start. If false, it starts disabled. Enabled assets can send and receive events. Disabled assets cannot. Use the Enable and Disable events to control this at runtime.")]
         public bool EnabledOnStart
         {
             get => (BaseFlags & 1) != 0;
@@ -35,7 +35,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 1;
             }
         }
-        [Category(categoryName), DisplayName("Persistent"), Description("Asset state is saved to the save file and persists after deaths and reloads.")]
+        [Category(categoryName), DisplayName("Persistent"), Description("Asset state, such as Enabled/Disabled and certain other fields for specific types, is saved to the save file and persists after deaths and reloads. All non persistent assets are reset on loads and player respawns.")]
         public bool StateIsPersistent
         {
             get => (BaseFlags & 2) != 0;
@@ -59,7 +59,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 4;
             }
         }
-        [Category(categoryName), DisplayName("Visible During Cutscenes")]
+        [Category(categoryName), DisplayName("Visible During Cutscenes"), Description("Applies to visible assets.")]
         public bool VisibleDuringCutscenes
         {
             get => (BaseFlags & 8) != 0;
@@ -71,7 +71,7 @@ namespace IndustrialPark
                     BaseFlags &= ushort.MaxValue - 8;
             }
         }
-        [Category(categoryName), DisplayName("Receive Shadows")]
+        [Category(categoryName), DisplayName("Receive Shadows"), Description("Applies to visible assets.")]
         public bool ReceiveShadows
         {
             get => (BaseFlags & 16) != 0;
@@ -102,8 +102,6 @@ namespace IndustrialPark
             }
         }
 
-        protected const int baseHeaderEndPosition = 8;
-
         protected int linkStartPosition(long streamLength, int linkCount) =>
             (int)(streamLength - linkCount * Link.sizeOfStruct - (this is AssetPLYR && game != Game.Scooby ? 4 : 0));
 
@@ -114,27 +112,29 @@ namespace IndustrialPark
             _links = new Link[0];
         }
 
-        public BaseAsset(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public BaseAsset(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = 0x4;
+            int len = AHDR.data.Length > 0 ? AHDR.data.Length : (int)reader.BaseStream.Length;
 
-                BaseAssetType = (BaseAssetType)reader.ReadByte();
-                byte LinkCount = reader.ReadByte();
+            var startPosition = reader.BaseStream.Position;
+            reader.BaseStream.Position += 0x4;
 
-                BaseFlags = reader.ReadUInt16();
+            BaseAssetType = (BaseAssetType)reader.ReadByte();
+            byte LinkCount = reader.ReadByte();
 
-                reader.BaseStream.Position = linkStartPosition(reader.BaseStream.Length, LinkCount);
+            BaseFlags = reader.ReadUInt16();
 
-                _links = new Link[LinkCount];
-                for (int i = 0; i < _links.Length; i++)
-                    _links[i] = new Link(reader, LinkType.Normal, game);
-            }
+            reader.BaseStream.Position = startPosition + linkStartPosition(len, LinkCount);
+
+            _links = new Link[LinkCount];
+            for (int i = 0; i < _links.Length; i++)
+                _links[i] = new Link(reader, LinkType.Normal, game);
+
+            reader.BaseStream.Position = startPosition + 8;
         }
 
         // meant for use with DUPC VIL only
-        protected BaseAsset(EndianBinaryReader reader, Game game)
+        protected BaseAsset(EndianBinaryReader reader, Game game) : base()
         {
             _game = game;
             assetID = reader.ReadUInt32();

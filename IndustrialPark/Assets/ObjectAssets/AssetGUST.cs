@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetGUST : BaseAsset
     {
@@ -34,21 +34,16 @@ namespace IndustrialPark
             PartMod = 1f;
         }
 
-        public AssetGUST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetGUST(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
-
-                GustFlags.FlagValueInt = reader.ReadUInt32();
-                Volume = reader.ReadUInt32();
-                Effect = reader.ReadUInt32();
-                StrengthX = reader.ReadSingle();
-                StrengthY = reader.ReadSingle();
-                StrengthZ = reader.ReadSingle();
-                Fade = reader.ReadSingle();
-                PartMod = reader.ReadSingle();
-            }
+            GustFlags.FlagValueInt = reader.ReadUInt32();
+            Volume = reader.ReadUInt32();
+            Effect = reader.ReadUInt32();
+            StrengthX = reader.ReadSingle();
+            StrengthY = reader.ReadSingle();
+            StrengthZ = reader.ReadSingle();
+            Fade = reader.ReadSingle();
+            PartMod = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

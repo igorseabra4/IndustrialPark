@@ -1,59 +1,46 @@
 ﻿using HipHopFile;
 using SharpDX;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets;
+
+public abstract class DynaEnemyRATS : DynaEnemy
 {
-    public abstract class DynaEnemyRATS : DynaEnemy
+    private const string dynaCategoryName = "Enemy:RATS";
+
+    [Category(dynaCategoryName)]
+    public AssetID LightkitID { get; set; }
+    [Category(dynaCategoryName)]
+    public AssetID npcWalls { get; set; }
+    [Category(dynaCategoryName)]
+    public AssetID npcPerception { get; set; }
+    [Category(dynaCategoryName)]
+    public AssetSingle UpdateDistance { get; set; }
+    [Category(dynaCategoryName)]
+    public FlagBitmask Flags { get; set; } = IntFlagsDescriptor("Enabled");
+
+    public DynaEnemyRATS(string assetName, DynaType type, Vector3 position) : base(assetName, type, position)
     {
-        private const string dynaCategoryName = "Enemy:RATS";
+        UpdateDistance = 250f;
+        Flags.FlagValueInt = 1;
+    }
 
-        [Category(dynaCategoryName)]
-        public AssetID LightkitID { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID npcWalls { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetID npcPerception { get; set; }
-        [Category(dynaCategoryName)]
-        public AssetSingle UpdateDistance { get; set; }
-        [Category(dynaCategoryName)]
-        public FlagBitmask Flags { get; set; } = IntFlagsDescriptor("Enabled");
+    public DynaEnemyRATS(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader)
+    {
+        LightkitID = reader.ReadUInt32();
+        npcWalls = reader.ReadUInt32();
+        npcPerception = reader.ReadUInt32();
+        UpdateDistance = reader.ReadSingle();
+        Flags.FlagValueInt = reader.ReadUInt32();
+    }
 
-        protected int enemyRatsEndPosition => entityDynaEndPosition + 0x14;
-
-        public DynaEnemyRATS(string assetName, DynaType type, Vector3 position) : base(assetName, type, position)
-        {
-            UpdateDistance = 250f;
-            Flags.FlagValueInt = 1;
-        }
-
-        public DynaEnemyRATS(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
-        {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityDynaEndPosition;
-
-                LightkitID = reader.ReadUInt32();
-                npcWalls = reader.ReadUInt32();
-                npcPerception = reader.ReadUInt32();
-                UpdateDistance = reader.ReadSingle();
-                Flags.FlagValueInt = reader.ReadUInt32();
-            }
-        }
-
-        protected void SerializeDynaEnemyRATS(EndianBinaryWriter writer)
-        {
-            SerializeEntityDyna(writer);
-            writer.Write(LightkitID);
-            writer.Write(npcWalls);
-            writer.Write(npcPerception);
-            writer.Write(UpdateDistance);
-            writer.Write(Flags.FlagValueInt);
-        }
+    protected void SerializeDynaEnemyRATS(EndianBinaryWriter writer)
+    {
+        SerializeEntityDyna(writer);
+        writer.Write(LightkitID);
+        writer.Write(npcWalls);
+        writer.Write(npcPerception);
+        writer.Write(UpdateDistance);
+        writer.Write(Flags.FlagValueInt);
     }
 }

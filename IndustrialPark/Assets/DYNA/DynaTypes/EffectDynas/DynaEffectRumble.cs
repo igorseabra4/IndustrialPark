@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectRumble : AssetDYNA
     {
@@ -35,26 +35,21 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte ShakeY { get; set; }
 
-        public DynaEffectRumble(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__Rumble, game, endianness)
+        public DynaEffectRumble(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__Rumble, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                Time = reader.ReadSingle();
-                Intensity = reader.ReadSingle();
-                ID = reader.ReadSingle();
-                Priority = reader.ReadByte();
-                RumbleType = reader.ReadByte();
-                RumbleInPause = reader.ReadByte();
-                reader.ReadByte();
-                Param1 = reader.ReadSingle();
-                Param2 = reader.ReadSingle();
-                ShakeMagnitude = reader.ReadSingle();
-                ShakeCycleMax = reader.ReadSingle();
-                ShakeRotationalMagnitude = reader.ReadSingle();
-                ShakeY = reader.ReadByte();
-            }
+            Time = reader.ReadSingle();
+            Intensity = reader.ReadSingle();
+            ID = reader.ReadSingle();
+            Priority = reader.ReadByte();
+            RumbleType = reader.ReadByte();
+            RumbleInPause = reader.ReadByte();
+            reader.ReadByte();
+            Param1 = reader.ReadSingle();
+            Param2 = reader.ReadSingle();
+            ShakeMagnitude = reader.ReadSingle();
+            ShakeCycleMax = reader.ReadSingle();
+            ShakeRotationalMagnitude = reader.ReadSingle();
+            ShakeY = reader.ReadByte();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

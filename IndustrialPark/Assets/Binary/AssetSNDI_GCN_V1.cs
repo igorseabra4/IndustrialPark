@@ -5,7 +5,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class EntrySoundInfo_GCN_V1 : GenericAssetDataContainer
     {
@@ -17,7 +17,7 @@ namespace IndustrialPark
         public uint loop_start_offset { get; set; }
         public uint loop_end_offset { get; set; }
         public uint initial_offset_value { get; set; }
-        public short[] coefs { get; set; }
+        public short[] coefs { get; set; } = new short[16];
         public ushort gain_factor { get; set; }
         public ushort pred_scale { get; set; }
         public ushort yn1 { get; set; }
@@ -25,11 +25,13 @@ namespace IndustrialPark
         public ushort loop_pred_scale { get; set; }
         public ushort loop_yn1 { get; set; }
         public ushort loop_yn2 { get; set; }
-        public byte[] pad { get; set; }
+        public byte[] pad { get; set; } = new byte[22];
         [ValidReferenceRequired]
         public AssetID Sound { get; set; }
 
-        public EntrySoundInfo_GCN_V1() { }
+        public EntrySoundInfo_GCN_V1()
+        {
+        }
 
         public EntrySoundInfo_GCN_V1(EndianBinaryReader reader)
         {
@@ -72,26 +74,28 @@ namespace IndustrialPark
         {
             get
             {
-                List<byte> array = new List<byte>();
+                using var writer = new EndianBinaryWriter(Endianness.Big);
 
-                array.AddRange(BitConverter.GetBytes(num_samples).Reverse());
-                array.AddRange(BitConverter.GetBytes(num_adpcm_nibbles).Reverse());
-                array.AddRange(BitConverter.GetBytes(sample_rate).Reverse());
-                array.AddRange(BitConverter.GetBytes(Convert.ToUInt16(Loop)).Reverse());
-                array.AddRange(BitConverter.GetBytes(format).Reverse());
-                array.AddRange(BitConverter.GetBytes(loop_start_offset).Reverse());
-                array.AddRange(BitConverter.GetBytes(loop_end_offset).Reverse());
-                array.AddRange(BitConverter.GetBytes(initial_offset_value).Reverse());
-                array.AddRange(coefs.SelectMany(i => BitConverter.GetBytes(i).Reverse()).ToArray());
-                array.AddRange(BitConverter.GetBytes(gain_factor).Reverse());
-                array.AddRange(BitConverter.GetBytes(pred_scale).Reverse());
-                array.AddRange(BitConverter.GetBytes(yn1).Reverse());
-                array.AddRange(BitConverter.GetBytes(yn2).Reverse());
-                array.AddRange(BitConverter.GetBytes(loop_pred_scale).Reverse());
-                array.AddRange(BitConverter.GetBytes(loop_yn1).Reverse());
-                array.AddRange(BitConverter.GetBytes(loop_yn2).Reverse());
-                array.AddRange(pad);
-                return array.ToArray();
+                writer.Write(num_samples);
+                writer.Write(num_adpcm_nibbles);
+                writer.Write(sample_rate);
+                writer.Write(Convert.ToUInt16(Loop));
+                writer.Write(format);
+                writer.Write(loop_start_offset);
+                writer.Write(loop_end_offset);
+                writer.Write(initial_offset_value);
+                foreach (var coef in coefs)
+                    writer.Write(coef);
+                writer.Write(gain_factor);
+                writer.Write(pred_scale);
+                writer.Write(yn1);
+                writer.Write(yn2);
+                writer.Write(loop_pred_scale);
+                writer.Write(loop_yn1);
+                writer.Write(loop_yn2);
+                foreach (var b in pad)
+                    writer.Write(b);
+                return writer.ToArray();
             }
             set => Read(new EndianBinaryReader(value, Endianness.Big));
         }
@@ -102,7 +106,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetSNDI_GCN_V1 : Asset
+    public class AssetSNDI_GCN_V1 : Asset, ISoundInfoAsset<AssetSNDI_GCN_V1>
     {
         public override string AssetInfo => $"GameCube {game}, {Entries_SND.Length + Entries_SNDS.Length + Entries_Sound_CIN.Length} entries";
 
@@ -122,32 +126,29 @@ namespace IndustrialPark
             Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
         }
 
-        public AssetSNDI_GCN_V1(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetSNDI_GCN_V1(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, Endianness.Big))
+            int entriesSndAmount = reader.ReadInt32();
+            reader.ReadInt32();
+            int entriesSndsAmount = reader.ReadInt32();
+            int entriesCinAmount = game == Game.BFBB ? reader.ReadInt32() : 0;
+
+            Entries_SND = new EntrySoundInfo_GCN_V1[entriesSndAmount];
+            for (int i = 0; i < Entries_SND.Length; i++)
+                Entries_SND[i] = new EntrySoundInfo_GCN_V1(reader);
+
+            Entries_SNDS = new EntrySoundInfo_GCN_V1[entriesSndsAmount];
+            for (int i = 0; i < Entries_SNDS.Length; i++)
+                Entries_SNDS[i] = new EntrySoundInfo_GCN_V1(reader);
+
+            if (game == Game.BFBB)
             {
-                int entriesSndAmount = reader.ReadInt32();
-                reader.ReadInt32();
-                int entriesSndsAmount = reader.ReadInt32();
-                int entriesCinAmount = game == Game.BFBB ? reader.ReadInt32() : 0;
-
-                Entries_SND = new EntrySoundInfo_GCN_V1[entriesSndAmount];
-                for (int i = 0; i < Entries_SND.Length; i++)
-                    Entries_SND[i] = new EntrySoundInfo_GCN_V1(reader);
-
-                Entries_SNDS = new EntrySoundInfo_GCN_V1[entriesSndsAmount];
-                for (int i = 0; i < Entries_SNDS.Length; i++)
-                    Entries_SNDS[i] = new EntrySoundInfo_GCN_V1(reader);
-
-                if (game == Game.BFBB)
-                {
-                    Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[entriesCinAmount];
-                    for (int i = 0; i < Entries_Sound_CIN.Length; i++)
-                        Entries_Sound_CIN[i] = new EntrySoundInfo_GCN_V1(reader);
-                }
-                else
-                    Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
+                Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[entriesCinAmount];
+                for (int i = 0; i < Entries_Sound_CIN.Length; i++)
+                    Entries_Sound_CIN[i] = new EntrySoundInfo_GCN_V1(reader);
             }
+            else
+                Entries_Sound_CIN = new EntrySoundInfo_GCN_V1[0];
         }
 
         public override void Serialize(EndianBinaryWriter writer)

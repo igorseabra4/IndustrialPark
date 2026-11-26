@@ -1,4 +1,4 @@
-﻿namespace IndustrialPark
+﻿namespace IndustrialPark.Assets
 {
     public abstract class CamSpecific_Generic : GenericAssetDataContainer
     {

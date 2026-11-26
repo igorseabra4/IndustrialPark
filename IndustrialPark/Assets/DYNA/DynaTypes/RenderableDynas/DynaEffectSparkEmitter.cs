@@ -1,16 +1,10 @@
 ﻿using HipHopFile;
-using IndustrialPark.AssetEditorColors;
-using IndustrialPark.Models;
+using IndustrialPark.Assets.Colors;
 using SharpDX;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static IndustrialPark.ArchiveEditorFunctions;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaEffectSparkEmitter : RenderableDynaBase
     {
@@ -102,47 +96,39 @@ namespace IndustrialPark
             LightColor = new AssetColor();
         }
 
-        public DynaEffectSparkEmitter(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.effect__spark_emitter, game, endianness)
+        public DynaEffectSparkEmitter(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.effect__spark_emitter, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                UpdateDistance = reader.ReadSingle();
-                Texture = reader.ReadUInt32();
-                Flags.FlagValueInt = reader.ReadUInt32();
-                AttachObjID = reader.ReadUInt32();
-                _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                NumSparks = reader.ReadInt32();
-                Period = reader.ReadSingle();
-                PeriodRandom = reader.ReadSingle();
-                LifetimeMin = reader.ReadSingle();
-                LifetimeRandom = reader.ReadSingle();
-                Yaw = reader.ReadSingle();
-                Pitch = reader.ReadSingle();
-                DirectionVary = reader.ReadSingle();
-                VelocityMin = reader.ReadSingle();
-                VelocityRandom = reader.ReadSingle();
-                Gravity = reader.ReadSingle();
-                SizeMin = reader.ReadSingle();
-                SizeRandom = reader.ReadSingle();
-                TextureGlint = reader.ReadUInt32();
-                LengthMin = reader.ReadSingle();
-                LengthRandom = reader.ReadSingle();
-                LengthMax = reader.ReadSingle();
-                LightColorRed = reader.ReadSingle();
-                LightColorGreen = reader.ReadSingle();
-                LightColorBlue = reader.ReadSingle();
-                LightColorAlpha = reader.ReadSingle();
-                Radius = reader.ReadSingle();
-                Up = reader.ReadSingle();
-                Max = reader.ReadSingle();
-                Down = reader.ReadSingle();
-                SoundAsset = reader.ReadUInt32();
-
-                CreateTransformMatrix();
-                AddToRenderableAssets(this);
-            }
+            UpdateDistance = reader.ReadSingle();
+            Texture = reader.ReadUInt32();
+            Flags.FlagValueInt = reader.ReadUInt32();
+            AttachObjID = reader.ReadUInt32();
+            _position = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+            NumSparks = reader.ReadInt32();
+            Period = reader.ReadSingle();
+            PeriodRandom = reader.ReadSingle();
+            LifetimeMin = reader.ReadSingle();
+            LifetimeRandom = reader.ReadSingle();
+            Yaw = reader.ReadSingle();
+            Pitch = reader.ReadSingle();
+            DirectionVary = reader.ReadSingle();
+            VelocityMin = reader.ReadSingle();
+            VelocityRandom = reader.ReadSingle();
+            Gravity = reader.ReadSingle();
+            SizeMin = reader.ReadSingle();
+            SizeRandom = reader.ReadSingle();
+            TextureGlint = reader.ReadUInt32();
+            LengthMin = reader.ReadSingle();
+            LengthRandom = reader.ReadSingle();
+            LengthMax = reader.ReadSingle();
+            LightColorRed = reader.ReadSingle();
+            LightColorGreen = reader.ReadSingle();
+            LightColorBlue = reader.ReadSingle();
+            LightColorAlpha = reader.ReadSingle();
+            Radius = reader.ReadSingle();
+            Up = reader.ReadSingle();
+            Max = reader.ReadSingle();
+            Down = reader.ReadSingle();
+            SoundAsset = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
@@ -182,9 +168,9 @@ namespace IndustrialPark
             writer.Write(SoundAsset);
         }
 
-        protected override List<Vector3> vertexSource => SharpRenderer.cubeVertices;
+        protected override List<Vector3> vertexSource(SharpRenderer renderer) => renderer.cubeVertices;
 
-        protected override List<Triangle> triangleSource => SharpRenderer.cubeTriangles;
+        protected override List<RenderWareFile.Triangle> triangleSource(SharpRenderer renderer) => renderer.cubeTriangles;
 
         public override void Draw(SharpRenderer renderer) => renderer.DrawCube(world, isSelected);
 

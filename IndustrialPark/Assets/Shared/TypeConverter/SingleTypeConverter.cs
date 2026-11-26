@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Globalization;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class SingleTypeConverter : TypeConverter
     {
@@ -27,7 +27,7 @@ namespace IndustrialPark
         public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
         {
             if (destinationType == typeof(string))
-                return string.Format("{0:0.000000}", (float)value);
+                return string.Format("{0:0.0#####}", (float)value);
 
             return base.ConvertTo(context, culture, value, destinationType);
         }

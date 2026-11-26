@@ -1,8 +1,9 @@
 ﻿using HipHopFile;
+using IndustrialPark.Archives;
 using SharpDX;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetSIMP : EntityAsset
     {
@@ -118,20 +119,18 @@ namespace IndustrialPark
                     Surface = "SPIKE_SURF";
                     SimpFlags.FlagValueByte = 8;
                     break;
+                case AssetTemplate.Button_Red_Base:
+                    Model = "button_base";
+                    break;
             }
         }
 
-        public AssetSIMP(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetSIMP(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = entityHeaderEndPosition;
-
-                AnimSpeed = reader.ReadSingle();
-                InitialAnimState = reader.ReadInt32();
-                CollType.FlagValueByte = reader.ReadByte();
-                SimpFlags.FlagValueByte = reader.ReadByte();
-            }
+            AnimSpeed = reader.ReadSingle();
+            InitialAnimState = reader.ReadInt32();
+            CollType.FlagValueByte = reader.ReadByte();
+            SimpFlags.FlagValueByte = reader.ReadByte();
         }
 
         public override void Serialize(EndianBinaryWriter writer)

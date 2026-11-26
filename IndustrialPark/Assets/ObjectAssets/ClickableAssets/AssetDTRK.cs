@@ -3,8 +3,9 @@ using SharpDX;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
+using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DashTrackTriangle
     {
@@ -77,7 +78,7 @@ namespace IndustrialPark
         }
     }
 
-    public class AssetDTRK : BaseAsset, IRenderableAsset, IClickableAsset
+    public class AssetDTRK : BaseAsset, IRenderableAsset, IClickableAsset, IDisposableAsset
     {
         private const string categoryName = "Dash Track";
 
@@ -105,41 +106,33 @@ namespace IndustrialPark
         public AssetSingle LastPositionY { get; set; }
 
         [Browsable(false)]
-        public bool SpecialBlendMode => true;
+        public bool SpecialBlendMode(SharpRenderer renderer) => true;
 
-        public AssetDTRK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game, endianness)
+        public AssetDTRK(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = baseHeaderEndPosition;
+            var numVertices = reader.ReadUInt32();
+            var numTriangles = reader.ReadUInt32();
+            LandableStart = reader.ReadUInt32();
+            LeavableStart = reader.ReadUInt32();
+            Unknown1 = reader.ReadUInt32();
+            Unknown2 = reader.ReadUInt32();
+            Unknown3 = reader.ReadUInt32();
 
-                var numVertices = reader.ReadUInt32();
-                var numTriangles = reader.ReadUInt32();
-                LandableStart = reader.ReadUInt32();
-                LeavableStart = reader.ReadUInt32();
-                Unknown1 = reader.ReadUInt32();
-                Unknown2 = reader.ReadUInt32();
-                Unknown3 = reader.ReadUInt32();
+            Vertices = new WireVector[numVertices];
+            for (int i = 0; i < Vertices.Length; i++)
+                Vertices[i] = new WireVector(reader);
 
-                Vertices = new WireVector[numVertices];
-                for (int i = 0; i < Vertices.Length; i++)
-                    Vertices[i] = new WireVector(reader);
+            Triangles = new DashTrackTriangle[numTriangles];
+            for (int i = 0; i < Triangles.Length; i++)
+                Triangles[i] = new DashTrackTriangle(reader);
 
-                Triangles = new DashTrackTriangle[numTriangles];
-                for (int i = 0; i < Triangles.Length; i++)
-                    Triangles[i] = new DashTrackTriangle(reader);
+            Portals = new DashTrackPortal[numTriangles];
+            for (int i = 0; i < Portals.Length; i++)
+                Portals[i] = new DashTrackPortal(reader);
 
-                Portals = new DashTrackPortal[numTriangles];
-                for (int i = 0; i < Portals.Length; i++)
-                    Portals[i] = new DashTrackPortal(reader);
-
-                LastTriangle = reader.ReadUInt32();
-                LastPositionX = reader.ReadSingle();
-                LastPositionY = reader.ReadSingle();
-
-                CreateTransformMatrix();
-                ArchiveEditorFunctions.AddToRenderableAssets(this);
-            }
+            LastTriangle = reader.ReadUInt32();
+            LastPositionX = reader.ReadSingle();
+            LastPositionY = reader.ReadSingle();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -172,7 +165,7 @@ namespace IndustrialPark
             SerializeLinks(writer);
         }
 
-        public void CreateTransformMatrix()
+        public void CalculateTransformation(SharpRenderer renderer)
         {
             if (Vertices.Length == 0)
                 boundingBox = new BoundingBox();
@@ -201,11 +194,11 @@ namespace IndustrialPark
                 vertices.Add(new VertexColoredTextured(new Vector3(v.X, v.Y, v.Z), new Vector2(0, 0), new Color(255, 255, 255, 0)));
             }
 
-            triangles = new List<Models.Triangle>(Triangles.Length);
+            triangles = new List<RenderWareFile.Triangle>(Triangles.Length);
 
             foreach (var T in Triangles)
             {
-                var t = new Models.Triangle();
+                var t = new RenderWareFile.Triangle();
 
                 t.vertex1 = T.Vertex1;
                 if (vertices[T.Vertex1].Color.A == 0)
@@ -226,7 +219,7 @@ namespace IndustrialPark
                     {
                         v.TextureCoordinate.X = T.U1;
                         v.TextureCoordinate.Y = T.V1;
-                        t.vertex1 = vertices.Count;
+                        t.vertex1 = (ushort)vertices.Count;
                         vertices.Add(v);
                     }
                 }
@@ -250,7 +243,7 @@ namespace IndustrialPark
                     {
                         v.TextureCoordinate.X = T.U2;
                         v.TextureCoordinate.Y = T.V2;
-                        t.vertex2 = vertices.Count;
+                        t.vertex2 = (ushort)vertices.Count;
                         vertices.Add(v);
                     }
                 }
@@ -274,7 +267,7 @@ namespace IndustrialPark
                     {
                         v.TextureCoordinate.X = T.U3;
                         v.TextureCoordinate.Y = T.V3;
-                        t.vertex3 = vertices.Count;
+                        t.vertex3 = (ushort)vertices.Count;
                         vertices.Add(v);
                     }
                 }
@@ -282,11 +275,9 @@ namespace IndustrialPark
                 triangles.Add(t);
             }
 
-            this.vertices = new List<Vector3>(Vertices.Length);
-            foreach (var v in vertices)
-                this.vertices.Add((Vector3)v.Position);
+            this.vertices = vertices.Select(v => (Vector3)v.Position).ToList();
 
-            Setup(Program.MainForm.renderer, vertices);
+            Setup(Program.Renderer, vertices);
         }
 
         private void Setup(SharpRenderer renderer, List<VertexColoredTextured> vertices)
@@ -302,7 +293,7 @@ namespace IndustrialPark
             }
 
             mesh = SharpMesh.Create(renderer.device, vertices.ToArray(), indices.ToArray(),
-                new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, SharpRenderer.arrowDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
+                new List<SharpSubSet>() { new SharpSubSet(0, indices.Count, renderer.arrowDefault) }, SharpDX.Direct3D.PrimitiveTopology.TriangleList);
         }
 
         public float GetDistanceFrom(Vector3 position) => Vector3.Distance(position, boundingBox.Center);
@@ -313,7 +304,7 @@ namespace IndustrialPark
         private BoundingBox boundingBox;
 
         private List<Vector3> vertices;
-        private List<Models.Triangle> triangles;
+        private List<RenderWareFile.Triangle> triangles;
 
         public bool ShouldDraw(SharpRenderer renderer)
         {
@@ -327,7 +318,7 @@ namespace IndustrialPark
             return renderer.frustum.Intersects(ref boundingBox);
         }
 
-        private UvAnimRenderData renderData;
+        private RenderData.UvAnimRenderData renderData;
 
         public void Draw(SharpRenderer renderer)
         {
@@ -338,8 +329,8 @@ namespace IndustrialPark
             else
                 renderData.Color = Vector4.One;
 
-            renderer.device.UpdateData(renderer.tintedBuffer, renderData);
-            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer);
+            renderer.tintedBuffer.UpdateValue(renderData);
+            renderer.device.DeviceContext.VertexShader.SetConstantBuffer(0, renderer.tintedBuffer.Buffer);
             renderer.tintedShader.Apply();
 
             renderer.device.SetBlendStateAlphaBlend();

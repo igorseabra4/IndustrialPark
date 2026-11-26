@@ -1,12 +1,18 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class EntryPICK : GenericAssetDataContainer
     {
+        public PickupReference PickupReference
+        {
+            get => (PickupReference)(uint)PickupHash;
+            set => PickupHash = new AssetID((uint)value);
+        }
         public AssetID PickupHash { get; set; }
         public AssetByte PickupType { get; set; }
         public AssetByte PickupIndex { get; set; }
@@ -41,10 +47,10 @@ namespace IndustrialPark
         }
 
         public override string ToString() =>
-            $"[{HexUIntTypeConverter.StringFromAssetID(PickupHash)}] - [{HexUIntTypeConverter.StringFromAssetID(Model)}]";
+            $"[{(Enum.IsDefined(PickupReference) ? PickupReference.ToString() : HexUIntTypeConverter.StringFromAssetID(PickupHash))}] - [{HexUIntTypeConverter.StringFromAssetID(Model)}]";
     }
 
-    public class AssetPICK : Asset
+    public class AssetPICK : Asset, IDisposableAsset
     {
         public override string AssetInfo => $"{Entries.Length} entries";
 
@@ -62,17 +68,14 @@ namespace IndustrialPark
             }
         }
 
-        public AssetPICK(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetPICK(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.ReadInt32();
-                _entries = new EntryPICK[reader.ReadInt32()];
-                for (int i = 0; i < _entries.Length; i++)
-                    _entries[i] = new EntryPICK(reader);
+            reader.ReadInt32();
+            _entries = new EntryPICK[reader.ReadInt32()];
+            for (int i = 0; i < _entries.Length; i++)
+                _entries[i] = new EntryPICK(reader);
 
-                UpdateDictionary();
-            }
+            UpdateDictionary();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -91,7 +94,7 @@ namespace IndustrialPark
                 pickEntries[entry.PickupHash] = entry.Model;
         }
 
-        public void ClearDictionary()
+        public void Dispose()
         {
             foreach (EntryPICK entry in _entries)
                 pickEntries.Remove(entry.PickupHash);

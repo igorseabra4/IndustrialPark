@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaJSPExtraData : AssetDYNA
     {
@@ -16,15 +16,10 @@ namespace IndustrialPark
         [Category(dynaCategoryName), ValidReferenceRequired]
         public AssetID Group { get; set; }
 
-        public DynaJSPExtraData(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.JSPExtraData, game, endianness)
+        public DynaJSPExtraData(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.JSPExtraData, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                JSPInfo = reader.ReadUInt32();
-                Group = reader.ReadUInt32();
-            }
+            JSPInfo = reader.ReadUInt32();
+            Group = reader.ReadUInt32();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)

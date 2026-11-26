@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Drawing.Design;
 using System.Linq;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class AssetALST : Asset, IAssetAddSelected
     {
@@ -18,15 +18,12 @@ namespace IndustrialPark
             Animations = new AssetID[10];
         }
 
-        public AssetALST(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, game)
+        public AssetALST(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                var assetIDs = new List<AssetID>();
-                while (!reader.EndOfStream)
-                    assetIDs.Add(reader.ReadUInt32());
-                Animations = assetIDs.ToArray();
-            }
+            var assetIDs = new List<AssetID>();
+            while (!reader.EndOfStream)
+                assetIDs.Add(reader.ReadUInt32());
+            Animations = assetIDs.ToArray();
         }
 
         public override void Serialize(EndianBinaryWriter writer)
@@ -55,5 +52,7 @@ namespace IndustrialPark
                     Animations[i] = items[j++];
             }
         }
+
+        public List<uint> GetItems() => Animations.Where(a => a != 0).Select(a => (uint)a).ToList();
     }
 }

@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public abstract class DynaHudMeter : DynaHud
     {
@@ -26,24 +26,17 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetID DecrementSound { get; set; }
 
-        protected int dynaHudMeterEnd => dynaHudEnd + 36;
-
-        public DynaHudMeter(Section_AHDR AHDR, DynaType type, Game game, Endianness endianness) : base(AHDR, type, game, endianness)
+        public DynaHudMeter(Section_AHDR AHDR, DynaType type, EndianBinaryReader reader) : base(AHDR, type, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaHudEnd;
-
-                StartValue = reader.ReadSingle();
-                MinValue = reader.ReadSingle();
-                MaxValue = reader.ReadSingle();
-                IncrementTime = reader.ReadSingle();
-                DecrementTime = reader.ReadSingle();
-                StartIncrementSound = reader.ReadUInt32();
-                IncrementSound = reader.ReadUInt32();
-                StartDecrementSound = reader.ReadUInt32();
-                DecrementSound = reader.ReadUInt32();
-            }
+            StartValue = reader.ReadSingle();
+            MinValue = reader.ReadSingle();
+            MaxValue = reader.ReadSingle();
+            IncrementTime = reader.ReadSingle();
+            DecrementTime = reader.ReadSingle();
+            StartIncrementSound = reader.ReadUInt32();
+            IncrementSound = reader.ReadUInt32();
+            StartDecrementSound = reader.ReadUInt32();
+            DecrementSound = reader.ReadUInt32();
         }
 
         protected void SerializeDynaHudMeter(EndianBinaryWriter writer)

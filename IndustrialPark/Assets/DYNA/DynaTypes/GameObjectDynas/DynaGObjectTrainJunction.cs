@@ -1,7 +1,7 @@
 ﻿using HipHopFile;
 using System.ComponentModel;
 
-namespace IndustrialPark
+namespace IndustrialPark.Assets
 {
     public class DynaGObjectTrainJunction : AssetDYNA
     {
@@ -23,21 +23,16 @@ namespace IndustrialPark
         [Category(dynaCategoryName)]
         public AssetByte Out2IsForward { get; set; }
 
-        public DynaGObjectTrainJunction(Section_AHDR AHDR, Game game, Endianness endianness) : base(AHDR, DynaType.game_object__train_junction, game, endianness)
+        public DynaGObjectTrainJunction(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR, DynaType.game_object__train_junction, reader)
         {
-            using (var reader = new EndianBinaryReader(AHDR.data, endianness))
-            {
-                reader.BaseStream.Position = dynaDataStartPosition;
-
-                InSpline = reader.ReadUInt32();
-                IsInFromForward = reader.ReadByte();
-                reader.BaseStream.Position += 3;
-                OutSpline1 = reader.ReadUInt32();
-                Out1IsForward = reader.ReadByte();
-                reader.BaseStream.Position += 3;
-                OutSpline2 = reader.ReadUInt32();
-                Out2IsForward = reader.ReadByte();
-            }
+            InSpline = reader.ReadUInt32();
+            IsInFromForward = reader.ReadByte();
+            reader.BaseStream.Position += 3;
+            OutSpline1 = reader.ReadUInt32();
+            Out1IsForward = reader.ReadByte();
+            reader.BaseStream.Position += 3;
+            OutSpline2 = reader.ReadUInt32();
+            Out2IsForward = reader.ReadByte();
         }
 
         protected override void SerializeDyna(EndianBinaryWriter writer)
