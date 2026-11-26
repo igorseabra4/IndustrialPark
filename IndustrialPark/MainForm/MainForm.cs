@@ -264,6 +264,13 @@ namespace IndustrialPark
             ArchiveEditor.UpdateReferencesOnCopy = updateReferencesToolStripMenuItem.Checked;
         }
 
+        private void createBackupWhenSavingToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            bool? value = sender == alwaysCreateBackupToolStripMenuItem ? true :
+                sender == neverCreateBackupToolStripMenuItem ? false : null;
+            SetCreateBackupWhenSaving(value);
+        }
+
         private void replaceAssetsOnPasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             replaceAssetsOnPasteToolStripMenuItem.Checked = !replaceAssetsOnPasteToolStripMenuItem.Checked;
@@ -982,6 +989,7 @@ namespace IndustrialPark
         private void ApplyIPSettings(IPSettings settings)
         {
             SystemColorMode = settings.ColorMode;
+            SetCreateBackupWhenSaving(settings.CreateBackupWhenSaving);
 
             projectAutoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
             projetcAutoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
@@ -1104,6 +1112,7 @@ namespace IndustrialPark
             AutosaveOnClose = projectAutoSaveOnClosingToolStripMenuItem.Checked,
             AutoloadOnStartup = projetcAutoLoadOnStartupToolStripMenuItem.Checked,
             LastProjectPath = currentProjectPath,
+            CreateBackupWhenSaving = ArchiveEditor.CreateBackupWhenSaving,
             CheckForUpdatesOnStartup = checkForUpdatesDailyToolStripMenuItem.Checked,
             LastCheckedForUpdate = AutomaticUpdater.LastCheckedForUpdate,
             drawOnlyFirstMinf = AssetMINF.drawOnlyFirst,
@@ -1147,6 +1156,14 @@ namespace IndustrialPark
         {
             if (checkForUpdatesDailyToolStripMenuItem.Checked != value)
                 checkForUpdatesDailyToolStripMenuItem.Checked = value;
+        }
+
+        private void SetCreateBackupWhenSaving(bool? value)
+        {
+            ArchiveEditor.CreateBackupWhenSaving = value;
+            alwaysCreateBackupToolStripMenuItem.Checked = value == true;
+            neverCreateBackupToolStripMenuItem.Checked = value == false;
+            askCreateBackupToolStripMenuItem.Checked = !value.HasValue;
         }
 
         private void SaveProject(string fileName)

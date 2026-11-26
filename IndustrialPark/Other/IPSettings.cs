@@ -16,6 +16,7 @@ namespace IndustrialPark
         public DateTime LastCheckedForUpdate = DateTime.MinValue;
 
         public string[] recentArchivePaths;
+        public bool? CreateBackupWhenSaving = null;
 
         public float Speed = SharpCamera.DEFAULT_SPEED;
         public float SpeedRot = SharpCamera.DEFAULT_SPEED_ROT;

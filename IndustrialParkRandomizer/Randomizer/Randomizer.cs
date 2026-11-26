@@ -223,7 +223,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    boot.Save(destPath, createBackup: false);
+                    boot.Save(destPath);
                 }
             }
 
@@ -241,7 +241,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    sppa.Save(destPath, createBackup: false);
+                    sppa.Save(destPath);
                 }
 
                 // Randomize spsb
@@ -256,7 +256,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    spsb.Save(destPath, createBackup: false);
+                    spsb.Save(destPath);
                 }
 
                 // Randomize spsc
@@ -271,7 +271,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    spsc.Save(destPath, createBackup: false);
+                    spsc.Save(destPath);
                 }
             }
 
@@ -294,7 +294,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    mnu5.Save(destPath, createBackup: false);
+                    mnu5.Save(destPath);
                 }
             }
 
@@ -317,7 +317,7 @@ namespace IndustrialPark.Randomizer
                     var destDir = Path.GetDirectoryName(destPath);
                     if (!Directory.Exists(destDir))
                         Directory.CreateDirectory(destDir);
-                    mnu4.Save(destPath, createBackup: false);
+                    mnu4.Save(destPath);
                 }
             }
 
@@ -391,7 +391,7 @@ namespace IndustrialPark.Randomizer
                 var destDir = Path.GetDirectoryName(destPath);
                 if (!Directory.Exists(destDir))
                     Directory.CreateDirectory(destDir);
-                hip.Save(destPath, createBackup: false);
+                hip.Save(destPath);
 
                 if (backupDir == destinationDir)
                     File.Delete(hopPath);
