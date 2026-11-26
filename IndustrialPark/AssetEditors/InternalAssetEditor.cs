@@ -2,7 +2,6 @@
 using IndustrialPark.Archives;
 using IndustrialPark.Assets;
 using IndustrialPark.Properties;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -199,9 +198,9 @@ public partial class InternalAssetEditor : InternalEditor
         AddRow();
         AddTool("Export All", (_, _) =>
         {
-            using var openFolder = new CommonOpenFileDialog() { IsFolderPicker = true };
-            if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
-                GetCurrentAsset<AssetCSN>().ExtractToFolder(openFolder.FileName, archiveEditor.archive.Platform.Endianness());
+            using var openFolder = new FolderBrowserDialog();
+            if (openFolder.ShowDialog() == DialogResult.OK)
+                GetCurrentAsset<AssetCSN>().ExtractToFolder(openFolder.SelectedPath, archiveEditor.archive.Platform.Endianness());
         }, true);
     }
 

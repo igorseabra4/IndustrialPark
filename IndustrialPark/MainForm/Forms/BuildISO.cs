@@ -45,7 +45,7 @@ namespace IndustrialPark
 
         private void button2_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog dialog = new FolderBrowserDialog();
+            using var dialog = new FolderBrowserDialog();
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {

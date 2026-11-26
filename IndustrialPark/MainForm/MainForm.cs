@@ -6,7 +6,6 @@ using IndustrialPark.Assets.Colors;
 using IndustrialPark.Gizmos;
 using IndustrialPark.Scripting;
 using IndustrialPark.SoundUtility;
-using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -64,7 +63,7 @@ namespace IndustrialPark
             {
                 AutomaticUpdater.CloseForUpdate(this);
                 if (IsDisposed)
-                return;
+                    return;
             }
 
             UpdateUserTemplateComboBox();
@@ -684,10 +683,10 @@ namespace IndustrialPark
             }
 
             if (format != null)
-                using (CommonOpenFileDialog a = new CommonOpenFileDialog() { IsFolderPicker = true })
-                    if (a.ShowDialog() == CommonFileDialogResult.Ok)
+                using (FolderBrowserDialog a = new FolderBrowserDialog())
+                    if (a.ShowDialog() == DialogResult.OK)
                     {
-                        Program.Renderer.Assets.ExportScene(a.FileName, format, textureExtension, out string[] textureNames);
+                        Program.Renderer.Assets.ExportScene(a.SelectedPath, format, textureExtension, out string[] textureNames);
 
                         if (MessageBox.Show("Do you also wish to export textures?", "Export Textures", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
@@ -703,7 +702,7 @@ namespace IndustrialPark
                             RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
 
                             foreach (string textureName in bitmaps.Keys)
-                                bitmaps[textureName].Save(Path.Combine(a.FileName, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                                bitmaps[textureName].Save(Path.Combine(a.SelectedPath, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
                         }
                     }
         }
@@ -809,10 +808,10 @@ namespace IndustrialPark
 
         private void soakToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using var openFolder = new CommonOpenFileDialog() { IsFolderPicker = true, Multiselect = true };
-            if (openFolder.ShowDialog() == CommonFileDialogResult.Ok)
+            using var openFolder = new FolderBrowserDialog() { Multiselect = true };
+            if (openFolder.ShowDialog() == DialogResult.OK)
             {
-                var result = ArchiveSoak.Run(true, openFolder.FileNames);
+                var result = ArchiveSoak.Run(true, openFolder.SelectedPaths);
                 new ScrollableMessageBox("Soak Results", result).Show(this);
             }
         }

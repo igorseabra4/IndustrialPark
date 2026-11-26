@@ -35,8 +35,6 @@
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.DXGI" Version="4.2.0" />
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
-    <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
-    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
   </ItemGroup>
   <ItemGroup>

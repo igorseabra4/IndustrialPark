@@ -174,8 +174,6 @@
     <PackageReference Include="SharpDX.Direct2D1" Version="4.2.0" />
     <PackageReference Include="SharpDX.Direct3D11" Version="4.2.0" />
     <PackageReference Include="SharpDX.Mathematics" Version="4.2.0" />
-    <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
-    <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="NvTriStripDotNet">
