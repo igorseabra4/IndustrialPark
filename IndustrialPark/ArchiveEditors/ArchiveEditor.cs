@@ -18,6 +18,8 @@ namespace IndustrialPark.ArchiveEditors;
 
 public partial class ArchiveEditor : Form
 {
+    public static bool? CreateBackupWhenSaving = null;
+
     private readonly System.Drawing.Color defaultColor;
     private bool programIsChangingStuff = false;
     public bool Targeted => checkBoxTemplateFocus.Checked;
@@ -125,20 +127,9 @@ public partial class ArchiveEditor : Form
             Program.UndoBuffer.Undo();
         }
 
-        if (PressedKeys.Contains(Keys.Delete))
-        {
-            e.Handled = true;
-            ButtonRemoveAsset_Click(sender, e);
-        }
-
         if (PressedKeys.Contains(Keys.ControlKey))
         {
-            if (PressedKeys.Contains(Keys.S))
-            {
-                e.Handled = true;
-                Save();
-            }
-            else if (PressedKeys.Contains(Keys.N))
+            if (PressedKeys.Contains(Keys.N))
             {
                 e.Handled = true;
                 newToolStripMenuItem_Click(sender, e);
@@ -152,6 +143,24 @@ public partial class ArchiveEditor : Form
             {
                 e.Handled = true;
                 closeToolStripMenuItem_Click(sender, e);
+            }
+        }
+
+        if (archive == null)
+            return;
+
+        if (PressedKeys.Contains(Keys.Delete))
+        {
+            e.Handled = true;
+            ButtonRemoveAsset_Click(sender, e);
+        }
+
+        if (PressedKeys.Contains(Keys.ControlKey))
+        {
+            if (PressedKeys.Contains(Keys.S))
+            {
+                e.Handled = true;
+                Save();
             }
             else if (PressedKeys.Contains(Keys.I))
             {
@@ -1397,15 +1406,8 @@ public partial class ArchiveEditor : Form
             return SaveAs();
         else
         {
-            try
-            {
-                archive.Save();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving archive: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!SaveArchive())
                 return false;
-            }
 
             UnsavedChanges = false;
             _updateFilesizeStatusBarItem();
@@ -1424,15 +1426,8 @@ public partial class ArchiveEditor : Form
         };
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
         {
-            try
-            {
-                archive.Save(saveFileDialog.FileName);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving archive: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            if (!SaveArchive(saveFileDialog.FileName))
                 return false;
-            }
 
             UnsavedChanges = false;
 
@@ -1445,6 +1440,39 @@ public partial class ArchiveEditor : Form
         }
 
         return false;
+    }
+
+    private bool SaveArchive(string path = null)
+    {
+        if (archive == null)
+            return false;
+
+        string target = path ?? archive.CurrentFilePath;
+        bool? createBackup = CreateBackupWhenSaving;
+        if (!File.Exists(target))
+            createBackup ??= false;
+
+        if (!createBackup.HasValue)
+        {
+            string localFileName = Path.GetFileName(target);
+            var result = System.Windows.Forms.MessageBox.Show(this,
+                $"Saving {localFileName}.\n\nWould you like to create a backup as {localFileName}.bak?\n\nYou can change the default behavior in Options.",
+                "Create Backup", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+            if (result != DialogResult.Yes && result != DialogResult.No)
+                return false;
+            createBackup = result == DialogResult.Yes;
+        }
+
+        try
+        {
+            archive.Save(target, createBackup.Value);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error saving archive: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            return false;
+        }
     }
 
     public void DisposeArchive(bool showProgressBar = false)

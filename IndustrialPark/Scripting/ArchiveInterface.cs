@@ -39,10 +39,7 @@ public class ArchiveInterface
         Archive = archive;
     }
 
-    public void Save(string fileName = null)
-    {
-        Archive.Save(fileName);
-    }
+    public void Save(string fileName = null, bool createBackup = false) => Archive.Save(fileName, createBackup);
 
     public Game Game => Archive.Game;
     public Platform Platform => Archive.Platform;

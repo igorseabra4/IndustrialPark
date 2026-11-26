@@ -117,33 +117,31 @@ public class Archive
 
     public bool LegacySave = false;
 
-    public void Save(string path = null, bool createBackup = true)
+    public void Save(string path = null, bool createBackup = false)
     {
         var hipFile = ArchiveService.BuildHipFile(session, assetRepository.Assets, layerRepository);
         if (LegacySave)
             hipFile.HIPB = null;
 
         var target = Path.GetFullPath(path ?? session.CurrentFilePath);
-        if (!createBackup)
+        var temp = Path.Combine(Path.GetDirectoryName(target), $".{Path.GetFileName(target)}.{Guid.NewGuid():N}.tmp");
+
+        try
         {
-            hipFile.ToFile(target);
+            hipFile.ToFile(temp);
+            if (File.Exists(target))
+            {
+                File.Replace(temp, target, createBackup ? target + ".bak" : null);
+            }
+            else
+            {
+                File.Move(temp, target);
+            }
         }
-        else
+        finally
         {
-            var temp = Path.Combine(Path.GetDirectoryName(target), $".{Path.GetFileName(target)}.{Guid.NewGuid():N}.tmp");
-            try
-            {
-                hipFile.ToFile(temp);
-                if (File.Exists(target))
-                    File.Replace(temp, target, target + ".bak");
-                else
-                    File.Move(temp, target);
-            }
-            finally
-            {
-                if (File.Exists(temp))
-                    File.Delete(temp);
-            }
+            if (File.Exists(temp))
+                File.Delete(temp);
         }
 
         session.CurrentFilePath = target;

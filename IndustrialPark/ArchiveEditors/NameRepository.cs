@@ -89,7 +89,7 @@ public class NameRepository
             var deserialized = JsonConvert.DeserializeObject<Dictionary<uint, string>>(serialized);
             if (deserialized != null)
                 lock (nameDictionary)
-                    foreach (var kvp in deserialized)
+                    foreach (var kvp in deserialized.TakeLast(10000))
                         nameDictionary[kvp.Key] = kvp.Value;
         }
     }

@@ -49,6 +49,10 @@ namespace IndustrialPark
             projetcAutoLoadOnStartupToolStripMenuItem = new ToolStripMenuItem();
             projectShowEditorsWhenLoadingToolStripMenuItem = new ToolStripMenuItem();
             optionsToolStripMenuItem = new ToolStripMenuItem();
+            createBackupWhenSavingToolStripMenuItem = new ToolStripMenuItem();
+            alwaysCreateBackupToolStripMenuItem = new ToolStripMenuItem();
+            neverCreateBackupToolStripMenuItem = new ToolStripMenuItem();
+            askCreateBackupToolStripMenuItem = new ToolStripMenuItem();
             archiveEditorToolStripMenuItem1 = new ToolStripMenuItem();
             updateReferencesToolStripMenuItem = new ToolStripMenuItem();
             replaceAssetsOnPasteToolStripMenuItem = new ToolStripMenuItem();
@@ -343,11 +347,37 @@ namespace IndustrialPark
             // 
             // optionsToolStripMenuItem
             // 
-            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { archiveEditorToolStripMenuItem1, templatesToolStripMenuItem, toolStripSeparator1, checkForUpdatesDailyToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
+            optionsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { createBackupWhenSavingToolStripMenuItem, archiveEditorToolStripMenuItem1, templatesToolStripMenuItem, toolStripSeparator1, checkForUpdatesDailyToolStripMenuItem, discordRichPresenceToolStripMenuItem, themeToolStripMenuItem });
             optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
             optionsToolStripMenuItem.Size = new System.Drawing.Size(61, 19);
             optionsToolStripMenuItem.Text = "&Options";
             optionsToolStripMenuItem.DropDownOpened += MenuStrip_DropDownOpened;
+            // 
+            // createBackupWhenSavingToolStripMenuItem
+            // 
+            createBackupWhenSavingToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { alwaysCreateBackupToolStripMenuItem, neverCreateBackupToolStripMenuItem, askCreateBackupToolStripMenuItem });
+            createBackupWhenSavingToolStripMenuItem.Name = "createBackupWhenSavingToolStripMenuItem";
+            createBackupWhenSavingToolStripMenuItem.Text = "Create Backup When Saving";
+            // 
+            // alwaysCreateBackupToolStripMenuItem
+            // 
+            alwaysCreateBackupToolStripMenuItem.Name = "alwaysCreateBackupToolStripMenuItem";
+            alwaysCreateBackupToolStripMenuItem.Text = "Always";
+            alwaysCreateBackupToolStripMenuItem.Click += createBackupWhenSavingToolStripMenuItem_Click;
+            // 
+            // neverCreateBackupToolStripMenuItem
+            // 
+            neverCreateBackupToolStripMenuItem.Name = "neverCreateBackupToolStripMenuItem";
+            neverCreateBackupToolStripMenuItem.Text = "Never";
+            neverCreateBackupToolStripMenuItem.Click += createBackupWhenSavingToolStripMenuItem_Click;
+            // 
+            // askCreateBackupToolStripMenuItem
+            // 
+            askCreateBackupToolStripMenuItem.Checked = true;
+            askCreateBackupToolStripMenuItem.CheckState = CheckState.Checked;
+            askCreateBackupToolStripMenuItem.Name = "askCreateBackupToolStripMenuItem";
+            askCreateBackupToolStripMenuItem.Text = "Ask Every Time";
+            askCreateBackupToolStripMenuItem.Click += createBackupWhenSavingToolStripMenuItem_Click;
             // 
             // archiveEditorToolStripMenuItem1
             // 
@@ -1610,6 +1640,10 @@ namespace IndustrialPark
         private System.Windows.Forms.Panel renderPanel;
         private ToolStripStatusLabel toolStripStatusLabelMain;
         private System.Windows.Forms.ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem createBackupWhenSavingToolStripMenuItem;
+        private ToolStripMenuItem alwaysCreateBackupToolStripMenuItem;
+        private ToolStripMenuItem neverCreateBackupToolStripMenuItem;
+        private ToolStripMenuItem askCreateBackupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem backfaceCullingToolStripMenuItem;
         private ToolStripMenuItem wireframeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem viewConfigToolStripMenuItem;
