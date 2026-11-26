@@ -648,6 +648,7 @@
             checkBoxTemplateFocus.AutoCheck = false;
             checkBoxTemplateFocus.BackColor = System.Drawing.SystemColors.Control;
             checkBoxTemplateFocus.Cursor = System.Windows.Forms.Cursors.Hand;
+            checkBoxTemplateFocus.Enabled = false;
             checkBoxTemplateFocus.Name = "checkBoxTemplateFocus";
             checkBoxTemplateFocus.UseVisualStyleBackColor = false;
             checkBoxTemplateFocus.CheckedChanged += checkBoxTemplateFocus_CheckedChanged;

@@ -93,7 +93,8 @@ namespace IndustrialPark
 
             toolStripComboBoxArchive.Items.Clear();
             foreach (var ae in ArchiveEditors)
-                toolStripComboBoxArchive.Items.Add(Path.GetFileName(ae.GetCurrentFilePath()));
+                if (ae.archive != null)
+                    toolStripComboBoxArchive.Items.Add(Path.GetFileName(ae.GetCurrentFilePath()));
 
             toolStripComboBoxArchive.SelectedIndex = ArchiveEditors.FindIndex(ae => ae.Targeted);
             toolStripComboBoxArchive.Enabled = ArchiveEditors.Count > 0;
@@ -119,15 +120,15 @@ namespace IndustrialPark
             toolStripComboBoxLayer.Items.Clear();
 
             var ae = ToolbarActiveArchiveEditor;
-            if (ae == null || ae.archive.AutoLayers)
+            if (ae == null || ae.archive == null || ae.archive.AutoLayers)
             {
                 toolStripComboBoxLayer.Enabled = false;
-                toolStripComboBoxLayer.ToolTipText = ae == null ? "No active archive" : "This archive has no layers";
+                toolStripComboBoxLayer.ToolTipText = (ae?.archive?.AutoLayers ?? false) ? "This archive has no layers" : "No active archive";
             }
             else
             {
                 toolStripComboBoxLayer.Enabled = true;
-                toolStripComboBoxLayer.ToolTipText = "Active layer of the active archive: templates and pasted assets are placed here";
+                toolStripComboBoxLayer.ToolTipText = "Active layer of the target archive: templates and pasted assets are placed here";
                 toolStripComboBoxLayer.Items.AddRange(ae.LayerNames.ToArray());
                 toolStripComboBoxLayer.SelectedIndex = ae.SelectedLayerIndex;
             }

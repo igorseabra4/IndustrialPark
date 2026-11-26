@@ -1350,6 +1350,8 @@ public partial class ArchiveEditor : Form
 
             archive = new Archive(hipFile, fileName, true, out List<AssetError> errors, progressBar);
 
+            errors = errors.Where(e => e.reason is ErrorReason.CannotBuild or ErrorReason.ParseException).ToList();
+
             if (errors.Count != 0)
                 MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", errors),
                     $"{errors.Count} Asset(s) with errors",
@@ -1543,6 +1545,7 @@ public partial class ArchiveEditor : Form
         addLayerToolStripMenuItem.Enabled = buttonAddLayer.Enabled = true;
         importSoundsToolStripMenuItem.Enabled = true;
         importRawSoundsToolStripMenuItem.Enabled = true;
+        checkBoxTemplateFocus.Enabled = true;
 
         var canImportAssetsToLayer = archive.AutoLayers || (SelectedLayerIndex != -1);
         importTexturesToolStripMenuItem.Enabled = canImportAssetsToLayer;
