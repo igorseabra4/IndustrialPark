@@ -144,6 +144,7 @@ namespace IndustrialPark.Assets
 
         [Browsable(false)]
         public bool SpecialBlendMode(SharpRenderer renderer) => true;
+        [Browsable(false)]
         public bool DrawAsPoint => DrawAllAsPoints || ArenaRadius <= 0f;
 
         public void CalculateTransformation(SharpRenderer renderer)
