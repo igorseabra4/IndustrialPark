@@ -160,6 +160,8 @@ namespace IndustrialPark
                     .GetValue(menuItem.DropDown) is ToolTip dropDownToolTip)
                 {
                     dropDownToolTip.AutoPopDelay = 20000;
+                    dropDownToolTip.InitialDelay = 200;
+                    dropDownToolTip.ReshowDelay = 100;
                 }
             }
         }
