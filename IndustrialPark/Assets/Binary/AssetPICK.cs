@@ -1,4 +1,5 @@
 ﻿using HipHopFile;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
@@ -7,6 +8,11 @@ namespace IndustrialPark.Assets
 {
     public class EntryPICK : GenericAssetDataContainer
     {
+        public PickupReference PickupReference
+        {
+            get => (PickupReference)(uint)PickupHash;
+            set => PickupHash = new AssetID((uint)value);
+        }
         public AssetID PickupHash { get; set; }
         public AssetByte PickupType { get; set; }
         public AssetByte PickupIndex { get; set; }
@@ -41,7 +47,7 @@ namespace IndustrialPark.Assets
         }
 
         public override string ToString() =>
-            $"[{HexUIntTypeConverter.StringFromAssetID(PickupHash)}] - [{HexUIntTypeConverter.StringFromAssetID(Model)}]";
+            $"[{(Enum.IsDefined(PickupReference) ? PickupReference.ToString() : HexUIntTypeConverter.StringFromAssetID(PickupHash))}] - [{HexUIntTypeConverter.StringFromAssetID(Model)}]";
     }
 
     public class AssetPICK : Asset, IDisposableAsset

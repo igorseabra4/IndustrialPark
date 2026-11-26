@@ -29,6 +29,13 @@ namespace IndustrialPark.Assets
         public AssetID PickReferenceID { get; set; }
 
         [Category(categoryName)]
+        public PickupReference PickupReference
+        {
+            get => (PickupReference)(uint)PickReferenceID;
+            set => PickReferenceID = new AssetID((uint)value);
+        }
+
+        [Category(categoryName)]
         public EPickupFlags PickupFlags { get; set; }
 
         [Category(categoryName)]
