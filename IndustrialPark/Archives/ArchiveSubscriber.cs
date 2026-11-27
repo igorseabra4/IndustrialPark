@@ -25,8 +25,8 @@ public class ArchiveSubscriber
     public void SubscribeToModDateSet(Action<int> action) => session.ModDateSet += action;
     public void SubscribeToAssetAdded(Action<Asset> action) => assetRepository.AssetAdded += action;
     public void UnsubscribeFromAssetAdded(Action<Asset> action) => assetRepository.AssetAdded -= action;
-    public void SubscribeToAssetRemoved(Action<Asset> action) => assetRepository.AssetRemoved += action;
-    public void UnsubscribeFromAssetRemoved(Action<Asset> action) => assetRepository.AssetRemoved -= action;
+    public void SubscribeToAssetRemoved(AssetRepository.AssetRemovedHandler action) => assetRepository.AssetRemoved += action;
+    public void UnsubscribeFromAssetRemoved(AssetRepository.AssetRemovedHandler action) => assetRepository.AssetRemoved -= action;
     public void SubscribeToAutoLayersChanged(Action<bool> action) => layerRepository.AutoLayersChanged += action;
     public void SubscribeToLayerAdded(Action<int> action) => layerRepository.LayerAdded += action;
     public void SubscribeToLayerRemoved(Action<int> action) => layerRepository.LayerRemoved += action;
@@ -55,7 +55,7 @@ public class ArchiveSubscriber
             }
         });
 
-        SubscribeToAssetRemoved((asset) =>
+        SubscribeToAssetRemoved((asset, _) =>
         {
             if (asset is IDisposableAsset ida)
                 ida.Dispose();
@@ -71,7 +71,10 @@ public class ArchiveSubscriber
         // TODO: SubscribeToModDateSet
 
         SubscribeToAssetAdded((asset) => undo.AddActionToTransaction(ae, new AssetAddedAction(session, assetRepository, asset)));
-        SubscribeToAssetRemoved((asset) => undo.AddActionToTransaction(ae, new AssetAddedAction(session, assetRepository, asset, true)));
+        SubscribeToAssetRemoved((asset, isDisposing) => {
+            if (!isDisposing)
+                undo.AddActionToTransaction(ae, new AssetAddedAction(session, assetRepository, asset, true));
+        });
 
         SubscribeToAutoLayersChanged((value) => undo.AddActionToTransaction(ae, new AutoLayersChangedAction(layerRepository, value)));
         SubscribeToLayerTypeChanged((index, type) => undo.AddActionToTransaction(ae, new LayerTypeChangedAction(layerRepository, index, type)));

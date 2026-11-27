@@ -17,7 +17,8 @@ public class AssetRepository
 
     public event Action<Asset> AssetAdded;
 
-    public event Action<Asset> AssetRemoved;
+    public delegate void AssetRemovedHandler(Asset asset, bool isDisposingArchive);
+    public event AssetRemovedHandler AssetRemoved;
 
     public IEnumerable<Asset> Assets => assetDictionary.Values;
 
@@ -62,7 +63,7 @@ public class AssetRepository
     {
         foreach (uint u in assetIDs)
             if (assetDictionary.Remove(u, out Asset asset))
-                AssetRemoved?.Invoke(asset);
+                AssetRemoved?.Invoke(asset, false);
     }
     
     public bool ContainsType(AssetType assetType) => assetDictionary.Values.Any(a => a.assetType.Equals(assetType));
@@ -75,6 +76,6 @@ public class AssetRepository
     {
         if (AssetRemoved != null)
             foreach (var asset in Assets)
-                AssetRemoved.Invoke(asset);
+                AssetRemoved.Invoke(asset, true);
     }
 }

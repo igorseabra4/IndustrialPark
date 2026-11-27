@@ -269,7 +269,7 @@ public class AssetRenderer
             }
         });
 
-        archive.Subscriber.SubscribeToAssetRemoved((asset) =>
+        archive.Subscriber.SubscribeToAssetRemoved((asset, isDisposing) =>
         {
             switch (asset)
             {

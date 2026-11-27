@@ -64,8 +64,8 @@ public class NameRepository
                 Add(new AssetID(iawm.fileNameWithoutExtension), iawm.fileNameWithoutExtension);
         });
 
-        archive.Subscriber.SubscribeToAssetRemoved((asset) => {
-            if (Persistent)
+        archive.Subscriber.SubscribeToAssetRemoved((asset, isDisposing) => {
+            if (Persistent && isDisposing)
                 return;
             Remove(asset.assetID);
             if (asset is IAssetWithModel iawm)

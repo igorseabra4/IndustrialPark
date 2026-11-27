@@ -1148,7 +1148,7 @@ public partial class ArchiveEditor : Form
     public event Action TransactionEnd;
     public void EndTransaction() => TransactionEnd?.Invoke();
     private void AddToCustomSource(Asset asset) => textBoxFindAsset.AutoCompleteCustomSource.Add(asset.assetName);
-    private void RemoveFromCustomSource(Asset asset) => textBoxFindAsset.AutoCompleteCustomSource.Remove(asset.assetName);
+    private void RemoveFromCustomSource(Asset asset, bool isDisposing) => textBoxFindAsset.AutoCompleteCustomSource.Remove(asset.assetName);
 
     private bool archiveRefreshPending = false;
     private ArchiveRefreshKind pendingArchiveRefresh;
@@ -1190,7 +1190,7 @@ public partial class ArchiveEditor : Form
             asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
         });
 
-        archive.Subscriber.SubscribeToAssetRemoved((asset) =>
+        archive.Subscriber.SubscribeToAssetRemoved((asset, _) =>
         {
             NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.Menus, asset.assetID, false);
             historyManager.RemoveAsset(asset.assetID);
@@ -1456,7 +1456,7 @@ public partial class ArchiveEditor : Form
         {
             string localFileName = Path.GetFileName(target);
             var result = System.Windows.Forms.MessageBox.Show(this,
-                $"Saving {localFileName}.\n\nWould you like to create a backup as {localFileName}.bak?\n\nYou can change the default behavior in Options.",
+                $"Saving {localFileName}.\nWould you like to create a backup as {localFileName}.bak?\nYou can change the default behavior in Options.",
                 "Create Backup", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
             if (result != DialogResult.Yes && result != DialogResult.No)
                 return false;
@@ -1485,7 +1485,7 @@ public partial class ArchiveEditor : Form
             progressBar = new ProgressBar("Closing Archive");
             progressBar.SetProgressBar(0, archive.AssetCount, 1);
             progressBar.Show(this);
-            archive.Subscriber.SubscribeToAssetRemoved((assetID) => progressBar.PerformStep());
+            archive.Subscriber.SubscribeToAssetRemoved((assetID, _) => progressBar.PerformStep());
         }
 
         archive.Subscriber.UnsubscribeFromAssetAdded(AddToCustomSource);
