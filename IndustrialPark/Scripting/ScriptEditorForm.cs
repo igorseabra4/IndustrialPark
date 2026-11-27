@@ -93,6 +93,26 @@ public sealed class ScriptEditorForm : Form
         Controls.Add(layout);
     }
 
+    private static ScriptOptions CreateScriptOptions() => ScriptOptions.Default
+        .AddReferences(typeof(ScriptGlobals).Assembly)
+        .AddReferences(typeof(HipFile).Assembly)
+        .AddReferences(typeof(RWSection).Assembly)
+        .AddReferences(typeof(SharpDX.Vector3).Assembly)
+        .AddImports(
+            "HipHopFile",
+            "IndustrialPark.Assets",
+            "IndustrialPark.Archives",
+            "IndustrialPark.Scripting",
+            "SharpDX",
+            "SharpDX.Mathematics",
+            "System",
+            "System.Collections.Generic",
+            "System.IO",
+            "System.Linq",
+            "System.Text",
+            "System.Text.Json",
+            "RenderWareFile");
+
     private async void RunScript(object sender, EventArgs e)
     {
         runButton.Enabled = false;
@@ -100,13 +120,8 @@ public sealed class ScriptEditorForm : Form
 
         try
         {
-            ScriptOptions options = ScriptOptions.Default
-                .AddReferences(typeof(ScriptGlobals).Assembly)
-                .AddReferences(typeof(HipFile).Assembly)
-                .AddReferences(typeof(RWSection).Assembly)
-                .AddImports("System", "System.IO", "System.Linq", "System.Collections.Generic", "IndustrialPark.Assets", "HipHopFile", "RenderWareFile", "IndustrialPark.Scripting");
             ScriptGlobals globals = new ScriptGlobals(AppendOutput);
-            var state = await CSharpScript.RunAsync(scriptEditor.Text, options, globals);
+            var state = await CSharpScript.RunAsync(scriptEditor.Text, CreateScriptOptions(), globals);
             if (state.ReturnValue != null)
                 AppendOutput(state.ReturnValue.ToString());
             AppendOutput("Script completed.");

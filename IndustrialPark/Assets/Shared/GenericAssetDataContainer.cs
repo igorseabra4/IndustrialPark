@@ -119,8 +119,8 @@ namespace IndustrialPark.Assets
                         {
                             var enumerable = (IEnumerable<AssetID>)propValue;
                             foreach (var u in enumerable)
-                                if (!hierarchy.Contains((AssetID)propValue))
-                                    hierarchy.Add((AssetID)propValue);
+                                if (!hierarchy.Contains(u))
+                                    hierarchy.Add(u);
                         }
                         else if (typeof(GenericAssetDataContainer).IsAssignableFrom(i.GenericTypeArguments[0]))
                         {

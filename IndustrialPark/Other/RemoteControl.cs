@@ -13,7 +13,7 @@ namespace IndustrialPark
     public static class RemoteControl
     {
         // try to run game
-        public static void RunGame(Game game, string hipFileName)
+        public static void RunGame(Game game, Platform platform, string hipFileName)
         {
             var levelName = Path.GetFileNameWithoutExtension(hipFileName).ToUpper();
             var rootFolderName = Path.GetDirectoryName(Path.GetDirectoryName(Path.GetDirectoryName(hipFileName)));
@@ -26,7 +26,7 @@ namespace IndustrialPark
             if (modJsonExists)
             {
                 var modId = Path.GetFileNameWithoutExtension(rootFolderName);
-                var message = $"run {game} {levelName} {modId}";
+                var message = $"run {game} {platform} {levelName} {modId}";
                 bool hmm = SendMessageToHeavyModManager(message);
                 if (hmm)
                     return;

@@ -1033,7 +1033,7 @@ public class AssetFactory
             layers.Add(bspLayer);
         }
         var defaultLayer = new Layer(LayerType.DEFAULT);
-        defaultLayer.AssetIDs.AddRange(assets.Select(a => a.assetID).Where(u => u != bsp.assetID));
+        defaultLayer.AssetIDs.AddRange(assets.Select(a => a.assetID).Where(u => bsp == null || u != bsp.assetID));
         layers.Add(defaultLayer);
 
         return (layers, assets);

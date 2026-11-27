@@ -232,7 +232,7 @@ public static class SoundUtility_vgmstream
         playerStream = null;
     }
 
-    public static byte[]? GenerateJawData(byte[] bytes, float multiplier)
+    public static byte[] GenerateJawData(byte[] bytes, float multiplier)
     {
         try
         {

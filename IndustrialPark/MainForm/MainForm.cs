@@ -640,7 +640,7 @@ namespace IndustrialPark
             {
                 if (ae == null)
                     throw new Exception("No Archive Editor containing a stage found.");
-                RemoteControl.RunGame(ae.archive.Game, ae.GetCurrentFilePath());
+                RemoteControl.RunGame(ae.archive.Game, ae.archive.Platform, ae.GetCurrentFilePath());
             }
             catch (Exception ex)
             {

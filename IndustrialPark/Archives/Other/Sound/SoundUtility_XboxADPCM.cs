@@ -16,7 +16,7 @@ public static class SoundUtility_XboxADPCM
 
     private static readonly string xboxadpcmDownloadUrl = "https://github.com/Sergeanur/XboxADPCM/releases/latest/download/XboxADPCM.exe";
 
-    public static byte[]? ConvertSoundToXboxADPCM(string fileName, bool compress, bool forcemono, int samplerate)
+    public static byte[] ConvertSoundToXboxADPCM(string fileName, bool compress, bool forcemono, int samplerate)
     {
         string tempDir = null;
 

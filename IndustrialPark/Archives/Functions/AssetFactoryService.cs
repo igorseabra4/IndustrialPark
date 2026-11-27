@@ -16,7 +16,7 @@ public static class AssetFactoryService
 
     public static List<ToolStripMenuItem> PopulateTemplateMenusAt(ToolStripMenuItem menu, EventHandler eventHandler, bool pasteClipboard)
     {
-        ToolStripMenuItem controllers = new ToolStripMenuItem("Stage Controllers");
+        ToolStripMenuItem controllers = new ToolStripMenuItem("Logic");
         controllers.DropDownItems.AddRange(new ToolStripItem[]
         {
             GetTemplateMenuItem(AssetTemplate.Counter, eventHandler),

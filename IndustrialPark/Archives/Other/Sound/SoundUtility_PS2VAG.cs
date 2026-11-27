@@ -16,9 +16,9 @@ public static class SoundUtility_PS2VAG
 
     private static readonly string ps2vagDownloadUrl = "https://github.com/eurotools/es-ps2-vag-tool/releases/latest/download/AIFF2VAG.exe";
 
-    public static byte[]? ConvertSoundToPS2VAG(string fileName, bool looping, int samplerate)
+    public static byte[] ConvertSoundToPS2VAG(string fileName, bool looping, int samplerate)
     {
-        string? tempDir = null;
+        string tempDir = null;
 
         try
         {

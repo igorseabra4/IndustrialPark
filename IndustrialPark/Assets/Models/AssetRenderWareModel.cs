@@ -472,11 +472,6 @@ namespace IndustrialPark.Assets
             }
         }
 
-        public virtual void ApplyScale(float x, float y, float z)
-        {
-            ApplyScale(new Vector3(x, y, z));
-        }
-
         public virtual void ApplyScale(Vector3 factor)
         {
             var matrix = Matrix.Scaling(factor);

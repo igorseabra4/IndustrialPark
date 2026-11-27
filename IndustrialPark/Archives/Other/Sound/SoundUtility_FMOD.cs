@@ -17,7 +17,7 @@ public static class SoundUtility_FMOD
 
     public static byte[] ConvertSoundToFSB3(string fileName, int frequency, bool forcemono, bool compress)
     {
-        string? tempFolder = null;
+        string tempFolder = null;
 
         try
         {

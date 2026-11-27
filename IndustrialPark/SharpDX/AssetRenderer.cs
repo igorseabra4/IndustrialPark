@@ -303,9 +303,13 @@ public class AssetRenderer
             if (ra.assetID == assetIdSkip)
                 continue;
 
-            float? distance = ra.GetIntersectionPosition(renderer, ray);
-            if (distance != null && (smallestDistance == null || distance < smallestDistance))
-                smallestDistance = distance;
+            try
+            {
+                float? distance = ra.GetIntersectionPosition(renderer, ray);
+                if (distance != null && (smallestDistance == null || distance < smallestDistance))
+                    smallestDistance = distance;
+            }
+            catch { }
         }
 
         return ray.Position + Vector3.Normalize(ray.Direction) * (smallestDistance ?? 3f);
