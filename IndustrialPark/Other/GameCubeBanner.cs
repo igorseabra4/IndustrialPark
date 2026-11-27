@@ -100,65 +100,53 @@ namespace IndustrialPark
         /// Imports a GameCube banner from a file.
         /// </summary>
         /// <param name="filePath">The filepath to a .bnr file</param>
-        /// <returns>The GameCube banner</returns>
+        /// <returns>The GameCube banner, or null if the file is not a complete BNR1 banner.</returns>
         public static GameCubeBanner ImportFromFile(string filePath)
         {
-            // Import a GameCube banner by reading from a file
-            GameCubeBanner banner = new GameCubeBanner();
-            
-            // Open filestream
-            var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+            using var reader = new BinaryReader(new FileStream(filePath, FileMode.Open, FileAccess.Read));
             
             // Read magic "BNR1"
-            var magic = new byte[4];
-            fileStream.Read(magic, 0, 4);
+            var magic = reader.ReadBytes(4);
             
             // If magic is not "BNR1", return null
             if (Encoding.ASCII.GetString(magic) != MAGIC)
-            {
-                fileStream.Close();
                 return null;
-            }
+
             // Skip padding zeroes from 0x04 to 0x1f
-            fileStream.Seek(0x20, SeekOrigin.Begin);
+            reader.BaseStream.Seek(0x20, SeekOrigin.Begin);
             
             // Read image data
-            var imageData = new byte[IMAGE_WIDTH * IMAGE_HEIGHT * 2];
-            fileStream.Read(imageData, 0, imageData.Length);
-            
-            // Convert image data to bitmap
-            banner.Image = ConvertRGB5A1ToBitmap(imageData);
-            
+            var imageData = reader.ReadBytes(IMAGE_WIDTH * IMAGE_HEIGHT * 2);
+
             // Read game name
-            Debug.WriteLine("Position of metadata: " + fileStream.Position);
-            var title = new byte[0x20];
-            fileStream.Read(title, 0, 0x20);
-            banner.Title = Encoding.ASCII.GetString(title).TrimEnd('\0');
+            Debug.WriteLine("Position of metadata: " + reader.BaseStream.Position);
+            var title = reader.ReadBytes(0x20);
             
             // Read creator name
-            var creator = new byte[0x20];
-            fileStream.Read(creator, 0, 0x20);
-            banner.Creator = Encoding.ASCII.GetString(creator).TrimEnd('\0');
+            var creator = reader.ReadBytes(0x20);
             
             // Read full game name
-            var titleFull = new byte[0x40];
-            fileStream.Read(titleFull, 0, 0x40);
-            banner.TitleFull = Encoding.ASCII.GetString(titleFull).TrimEnd('\0');
+            var titleFull = reader.ReadBytes(0x40);
             
             // Read full creator name
-            var creatorFull = new byte[0x40];
-            fileStream.Read(creatorFull, 0, 0x40);
-            banner.CreatorFull = Encoding.ASCII.GetString(creatorFull).TrimEnd('\0');
+            var creatorFull = reader.ReadBytes(0x40);
             
             // Read description
-            var description = new byte[0x80];
-            fileStream.Read(description, 0, 0x80);
-            banner.Description = Encoding.ASCII.GetString(description).TrimEnd('\0').Replace("\n", "\r\n");
-            
-            // Close filestream
-            fileStream.Close();            
-            
-            return banner;
+            var description = reader.ReadBytes(0x80);
+
+            if (imageData.Length != IMAGE_WIDTH * IMAGE_HEIGHT * 2 ||
+                title.Length != 0x20 || creator.Length != 0x20 ||
+                titleFull.Length != 0x40 || creatorFull.Length != 0x40 ||
+                description.Length != 0x80)
+                return null;
+
+            return new GameCubeBanner(
+                ConvertRGB5A1ToBitmap(imageData),
+                Encoding.ASCII.GetString(title).TrimEnd('\0'),
+                Encoding.ASCII.GetString(creator).TrimEnd('\0'),
+                Encoding.ASCII.GetString(titleFull).TrimEnd('\0'),
+                Encoding.ASCII.GetString(creatorFull).TrimEnd('\0'),
+                Encoding.ASCII.GetString(description).TrimEnd('\0').Replace("\n", "\r\n"));
         }
 
         /// <summary>
