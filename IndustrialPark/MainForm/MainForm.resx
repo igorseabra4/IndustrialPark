@@ -121,8 +121,8 @@
     <value>17, 17</value>
   </metadata>
   <data name="replaceAssetsOnPasteToolStripMenuItem.ToolTipText" xml:space="preserve">
-    <value>If enabled, pasted assets will replace existing assets with the same IDs.
-If disabled, pasted assets will be assigned new names and IDs.
+    <value>Choose whether pasted assets replace existing assets with the same IDs,
+are assigned new names and IDs, or prompt when a conflict occurs.
 This setting applies to copying and pasting in an Archive Editor.
 It does not apply to User Templates or the Paste Clipboard template, which never replace existing assets.</value>
   </data>

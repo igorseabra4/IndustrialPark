@@ -17,6 +17,7 @@ namespace IndustrialPark
 
         public string[] recentArchivePaths;
         public bool? CreateBackupWhenSaving = null;
+        public bool? ReplaceAssetsOnPaste = null;
 
         public float Speed = SharpCamera.DEFAULT_SPEED;
         public float SpeedRot = SharpCamera.DEFAULT_SPEED_ROT;

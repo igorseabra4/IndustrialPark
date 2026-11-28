@@ -56,6 +56,9 @@ namespace IndustrialPark
             archiveEditorToolStripMenuItem1 = new ToolStripMenuItem();
             updateReferencesToolStripMenuItem = new ToolStripMenuItem();
             replaceAssetsOnPasteToolStripMenuItem = new ToolStripMenuItem();
+            alwaysReplaceAssetsOnPasteToolStripMenuItem = new ToolStripMenuItem();
+            neverReplaceAssetsOnPasteToolStripMenuItem = new ToolStripMenuItem();
+            askReplaceAssetsOnPasteToolStripMenuItem = new ToolStripMenuItem();
             useLegacyAssetTypeFormatToolStripMenuItem = new ToolStripMenuItem();
             useLegacyAssetIDFormatToolStripMenuItem = new ToolStripMenuItem();
             persistentAssetNameRepositoryToolStripMenuItem = new ToolStripMenuItem();
@@ -398,11 +401,29 @@ namespace IndustrialPark
             // 
             // replaceAssetsOnPasteToolStripMenuItem
             // 
+            replaceAssetsOnPasteToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { alwaysReplaceAssetsOnPasteToolStripMenuItem, neverReplaceAssetsOnPasteToolStripMenuItem, askReplaceAssetsOnPasteToolStripMenuItem });
             replaceAssetsOnPasteToolStripMenuItem.Name = "replaceAssetsOnPasteToolStripMenuItem";
             replaceAssetsOnPasteToolStripMenuItem.Size = new System.Drawing.Size(268, 22);
             replaceAssetsOnPasteToolStripMenuItem.Text = "Replace &Assets on Paste";
             replaceAssetsOnPasteToolStripMenuItem.ToolTipText = resources.GetString("replaceAssetsOnPasteToolStripMenuItem.ToolTipText");
-            replaceAssetsOnPasteToolStripMenuItem.Click += replaceAssetsOnPasteToolStripMenuItem_Click;
+            //
+            // alwaysReplaceAssetsOnPasteToolStripMenuItem
+            //
+            alwaysReplaceAssetsOnPasteToolStripMenuItem.Name = "alwaysReplaceAssetsOnPasteToolStripMenuItem";
+            alwaysReplaceAssetsOnPasteToolStripMenuItem.Text = "Always";
+            alwaysReplaceAssetsOnPasteToolStripMenuItem.Click += replaceAssetsOnPasteToolStripMenuItem_Click;
+            //
+            // neverReplaceAssetsOnPasteToolStripMenuItem
+            //
+            neverReplaceAssetsOnPasteToolStripMenuItem.Name = "neverReplaceAssetsOnPasteToolStripMenuItem";
+            neverReplaceAssetsOnPasteToolStripMenuItem.Text = "Never";
+            neverReplaceAssetsOnPasteToolStripMenuItem.Click += replaceAssetsOnPasteToolStripMenuItem_Click;
+            //
+            // askReplaceAssetsOnPasteToolStripMenuItem
+            //
+            askReplaceAssetsOnPasteToolStripMenuItem.Name = "askReplaceAssetsOnPasteToolStripMenuItem";
+            askReplaceAssetsOnPasteToolStripMenuItem.Text = "Ask Every Time";
+            askReplaceAssetsOnPasteToolStripMenuItem.Click += replaceAssetsOnPasteToolStripMenuItem_Click;
             // 
             // useLegacyAssetTypeFormatToolStripMenuItem
             // 
@@ -1720,6 +1741,9 @@ namespace IndustrialPark
         private System.Windows.Forms.ToolStripMenuItem useLegacyAssetTypeFormatToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem updateReferencesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem replaceAssetsOnPasteToolStripMenuItem;
+        private ToolStripMenuItem alwaysReplaceAssetsOnPasteToolStripMenuItem;
+        private ToolStripMenuItem neverReplaceAssetsOnPasteToolStripMenuItem;
+        private ToolStripMenuItem askReplaceAssetsOnPasteToolStripMenuItem;
         private ToolStripMenuItem refreshTexturesAndModelsToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator10;
         private ToolStripMenuItem vertexColorsToolStripMenuItem;

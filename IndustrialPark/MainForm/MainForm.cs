@@ -275,8 +275,9 @@ namespace IndustrialPark
 
         private void replaceAssetsOnPasteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            replaceAssetsOnPasteToolStripMenuItem.Checked = !replaceAssetsOnPasteToolStripMenuItem.Checked;
-            ArchiveEditor.ReplaceAssetsOnPaste = replaceAssetsOnPasteToolStripMenuItem.Checked;
+            bool? value = sender == alwaysReplaceAssetsOnPasteToolStripMenuItem ? true :
+                sender == neverReplaceAssetsOnPasteToolStripMenuItem ? false : null;
+            SetReplaceAssetsOnPaste(value);
         }
 
         private void useLegacyAssetTypeFormatToolStripMenuItem_Click(object sender, EventArgs e)
@@ -983,6 +984,7 @@ namespace IndustrialPark
         {
             SystemColorMode = settings.ColorMode;
             SetCreateBackupWhenSaving(settings.CreateBackupWhenSaving);
+            SetReplaceAssetsOnPaste(settings.ReplaceAssetsOnPaste);
 
             projectAutoSaveOnClosingToolStripMenuItem.Checked = settings.AutosaveOnClose;
             projetcAutoLoadOnStartupToolStripMenuItem.Checked = settings.AutoloadOnStartup;
@@ -1106,6 +1108,7 @@ namespace IndustrialPark
             AutoloadOnStartup = projetcAutoLoadOnStartupToolStripMenuItem.Checked,
             LastProjectPath = currentProjectPath,
             CreateBackupWhenSaving = ArchiveEditor.CreateBackupWhenSaving,
+            ReplaceAssetsOnPaste = ArchiveEditor.ReplaceAssetsOnPaste,
             CheckForUpdatesOnStartup = checkForUpdatesDailyToolStripMenuItem.Checked,
             LastCheckedForUpdate = AutomaticUpdater.LastCheckedForUpdate,
             drawOnlyFirstMinf = AssetMINF.drawOnlyFirst,
@@ -1157,6 +1160,14 @@ namespace IndustrialPark
             alwaysCreateBackupToolStripMenuItem.Checked = value == true;
             neverCreateBackupToolStripMenuItem.Checked = value == false;
             askCreateBackupToolStripMenuItem.Checked = !value.HasValue;
+        }
+
+        private void SetReplaceAssetsOnPaste(bool? value)
+        {
+            ArchiveEditor.ReplaceAssetsOnPaste = value;
+            alwaysReplaceAssetsOnPasteToolStripMenuItem.Checked = value == true;
+            neverReplaceAssetsOnPasteToolStripMenuItem.Checked = value == false;
+            askReplaceAssetsOnPasteToolStripMenuItem.Checked = !value.HasValue;
         }
 
         private void SaveProject(string fileName)
@@ -1701,7 +1712,7 @@ namespace IndustrialPark
         public void RefreshTexturesAndModels()
         {
             var textures = ArchiveEditors.SelectMany(ae => ae.archive?.Assets.OfType<AssetRWTX>() ?? []).ToList();
-                Program.TextureManager.ClearTextures();
+            Program.TextureManager.ClearTextures();
             TextureConverter.SetupTextureDisplay(textures);
             Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
         }

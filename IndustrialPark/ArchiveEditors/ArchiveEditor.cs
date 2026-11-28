@@ -38,7 +38,7 @@ public partial class ArchiveEditor : Form
     }
 
     public event Action ChangesMade;
-    
+
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     public int SelectedLayerIndex
     {
@@ -458,7 +458,7 @@ public partial class ArchiveEditor : Form
         using var saveFileDialog = new FolderBrowserDialog();
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
             TextureConverter.ExportTexturesAsPng(archive.Assets.OfType<AssetRWTX>(), saveFileDialog.SelectedPath);
-        }
+    }
 
     private void exportTxdToolStripMenuItem_Click(object sender, EventArgs e)
     {
@@ -787,7 +787,7 @@ public partial class ArchiveEditor : Form
         archive.RemoveLayer(index);
 
         EndTransaction();
-        
+
         Invoke(() => SelectedLayerIndex = archive.LayerCount == 0 ? -1 : Math.Max(index, archive.LayerCount - 1));
     }
 
@@ -1848,7 +1848,7 @@ public partial class ArchiveEditor : Form
         var keysConfig = Path.Combine(path, "Config.ini");
         if (File.Exists(keysConfig))
             ParseCustomImageKeys(File.ReadAllLines(keysConfig));
-     }
+    }
 
     private static Bitmap InvertImage(Image source)
     {
@@ -1944,7 +1944,7 @@ public partial class ArchiveEditor : Form
 
     public static bool UpdateReferencesOnCopy = true;
 
-    public static bool ReplaceAssetsOnPaste = false;
+    public static bool? ReplaceAssetsOnPaste = null;
 
     public void PasteAssets()
     {
@@ -1960,6 +1960,8 @@ public partial class ArchiveEditor : Form
             clipboard = JsonConvert.DeserializeObject<List<AssetClipboard>>(Clipboard.GetText());
             if (clipboard == null || clipboard.Count == 0)
                 throw new InvalidDataException("no assets found");
+            if (clipboard.Any(item => item?.AHDR == null))
+                throw new InvalidDataException("invalid asset data");
         }
         catch (Exception ex)
         {
@@ -1967,15 +1969,26 @@ public partial class ArchiveEditor : Form
             return;
         }
 
-        var assets = AssetService.ClipboardToAssets(archive.Platform, archive.Game, UpdateReferencesOnCopy, ReplaceAssetsOnPaste, archive.ContainsAsset, false, clipboard);
-        AddMultipleAssets(assets);
+        bool? replaceExisting = ReplaceAssetsOnPaste;
+        if (!replaceExisting.HasValue && clipboard.Any(item => archive.ContainsAsset(item.AHDR.assetID)))
+        {
+            var answer = System.Windows.Forms.MessageBox.Show(this,
+                "Some pasted assets already exist in this archive. Replace them?\n\nYes: replace existing assets.\nNo: paste copies with new names and IDs.\nCancel: cancel the paste.",
+                "Replace Assets on Paste", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question, MessageBoxDefaultButton.Button3);
+            if (answer == DialogResult.Cancel)
+                return;
+            replaceExisting = answer == DialogResult.Yes;
+        }
+        bool overwrite = replaceExisting.GetValueOrDefault();
+        var assets = AssetService.ClipboardToAssets(archive.Platform, archive.Game, UpdateReferencesOnCopy, overwrite, archive.ContainsAsset, false, clipboard);
+        AddMultipleAssets(assets, overwrite);
     }
 
-    private void AddMultipleAssets(IEnumerable<Asset> assets, bool isTemplate = false)
+    private void AddMultipleAssets(IEnumerable<Asset> assets, bool replaceExisting = false)
     {
         BeginTransaction();
 
-        var result = archive.AddMultipleAssets(assets, SelectedLayerIndex, !isTemplate && ReplaceAssetsOnPaste);
+        var result = archive.AddMultipleAssets(assets, SelectedLayerIndex, replaceExisting);
 
         EndTransaction();
 
@@ -2324,7 +2337,7 @@ public partial class ArchiveEditor : Form
         if (assets == null)
             return null;
 
-        AddMultipleAssets(assets, true);
+        AddMultipleAssets(assets);
         return assets;
     }
 
