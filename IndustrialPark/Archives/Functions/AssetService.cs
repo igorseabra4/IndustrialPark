@@ -93,7 +93,7 @@ public static class AssetService
             AssetType.BSP or AssetType.JSP => new AssetJSP(AHDR),
             AssetType.JSPInfo => new AssetJSP_INFO(AHDR, reader),
             AssetType.Model => new AssetMODL(AHDR),
-            AssetType.Texture or AssetType.TextureStream => new AssetRWTX(AHDR),
+            AssetType.Texture or AssetType.TextureStream => new AssetRWTX(AHDR, reader),
             AssetType.SoundInfo when AHDR.Platform == Platform.GameCube && AHDR.Game < Game.Incredibles => new AssetSNDI_GCN_V1(AHDR, reader),
             AssetType.SoundInfo when AHDR.Platform == Platform.GameCube => new AssetSNDI_GCN_V2(AHDR, reader),
             AssetType.SoundInfo when AHDR.Platform == Platform.Xbox => new AssetSNDI_XBOX(AHDR, reader),

@@ -82,18 +82,27 @@ public class Archive
         foreach (var ahdr in hipFile.DICT.ATOC.AHDRList)
             ahdrDictionary[ahdr.assetID] = ahdr;
 
-        for (int i = 0; i < layerRepository.LayerCount; i++)
-            foreach (var u in layerRepository.GetLayerAssetIDs(i))
-            {
-                var AHDR = ahdrDictionary[u];
+        var textureManager = subscriptions ? Program.TextureManager : null;
+        textureManager?.BeginTextureUpdates();
+        try
+        {
+            for (int i = 0; i < layerRepository.LayerCount; i++)
+                foreach (var u in layerRepository.GetLayerAssetIDs(i))
+                {
+                    var AHDR = ahdrDictionary[u];
 
-                var asset = AssetService.ConvertHeaderToAsset(AHDR, true, out AssetError error);
-                assetRepository.Add(asset);
+                    var asset = AssetService.ConvertHeaderToAsset(AHDR, true, out AssetError error);
+                    assetRepository.Add(asset);
 
-                if (error.reason != ErrorReason.NoError)
-                    errors.Add(error);
-                progressBar?.PerformStep();
-            }
+                    if (error.reason != ErrorReason.NoError)
+                        errors.Add(error);
+                    progressBar?.PerformStep();
+                }
+        }
+        finally
+        {
+            textureManager?.EndTextureUpdates();
+        }
 
         // TODO: fix this bad code
         foreach (var jspinfo in assetRepository.Assets.OfType<AssetJSP_INFO>())

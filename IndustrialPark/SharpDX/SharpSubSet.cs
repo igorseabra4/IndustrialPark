@@ -12,6 +12,7 @@ public class SharpSubSet
     /// Diffuse map name
     /// </summary>
     public string DiffuseMapName { get; set; }
+    internal string AnimatedTextureName { get; set; }
 
     /// <summary>
     /// Diffuse map

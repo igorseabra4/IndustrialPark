@@ -24,11 +24,10 @@ namespace IndustrialPark.ArchiveEditors
 
         public override void RefreshPropertyGrid()
         {
+            var bitmap = TextureConverter.GetTextureAsBitmap(asset.Native);
+            pictureBox1.Image = bitmap;
             b?.Dispose();
-
-            foreach (Bitmap bitmap in TextureConverter.ExportTXDToBitmaps(asset.Data, false).Values)
-                b = bitmap;
-                pictureBox1.Image = b;
+            b = bitmap;
 
             if (b != null)
             {
@@ -80,7 +79,7 @@ namespace IndustrialPark.ArchiveEditors
                         File.WriteAllBytes(a.FileName, asset.Serialize(archiveEditor.archive.Platform.Endianness()));
                         break;
                     case ".rwtex":
-                        ExportSingleTextureToRWTEX(asset.Data, a.FileName);
+                        ExportSingleTextureToRWTEX(asset.Native, a.FileName);
                         break;
                     case ".png":
                         b.Save(a.FileName, ImageFormat.Png);
@@ -116,25 +115,25 @@ namespace IndustrialPark.ArchiveEditors
             {
                 string i = a.FileName;
 
+                byte[] data;
                 if (Path.GetExtension(i).ToLower().Equals(".rwtex"))
                 {
-                    asset.Data = ReadFileMethods.ExportRenderWareFile(
+                    data = ReadFileMethods.ExportRenderWareFile(
                         new TextureDictionary_0016(new TextureNative_0015(File.ReadAllBytes(i))),
                         currentTextureVersion(archiveEditor.archive.Game, archiveEditor.archive.Platform));
                 }
                 else
                 {
-                    asset.Data = CreateRWTXFromBitmap(archiveEditor.archive.Game, archiveEditor.archive.Platform, i, false, checkBoxFlipTextures.Checked,
+                    data = CreateRWTXFromBitmap(archiveEditor.archive.Game, archiveEditor.archive.Platform, i, false, checkBoxFlipTextures.Checked,
                         checkBoxMipmaps.Checked, checkBoxCompress.Checked, checkBoxTransFix.Checked).data;
                 }
 
                 if (asset.game == HipHopFile.Game.Scooby)
                 {
-                    byte[] data = asset.Data;
                     FixTextureForScooby(ref data);
-                    asset.Data = data;
                 }
 
+                asset.ReplaceDictionary(data);
                 asset.InvokePropertyChanged(true);
             }
         }

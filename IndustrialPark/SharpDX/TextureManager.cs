@@ -1,35 +1,19 @@
 ﻿using HipHopFile;
-using IndustrialPark.ArchiveEditors;
 using IndustrialPark.Archives;
-using RenderWareFile;
 using RenderWareFile.Sections;
 using SharpDX.Direct3D11;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace IndustrialPark;
 
 public class TextureManager
 {
-    public string TreatTextureName(string entry)
-    {
-        entry = Path.GetFileNameWithoutExtension(entry).Trim('_');
-        entry = entry.Trim('_');
-        return entry;
-    }
-
-    public const string DefaultTexture = "default";
     private Dictionary<string, ShaderResourceView> Textures = new Dictionary<string, ShaderResourceView>();
-    private readonly List<ShaderResourceView> retiredTextures = new();
-
-    public HashSet<string> OpenTextureFolders { get; private set; } = new HashSet<string>();
-
-    public bool HasTexture(string textureName)
-    {
-        return Textures.TryGetValue(textureName, out ShaderResourceView texture) && texture != null && !texture.IsDisposed;
-    }
+    private readonly HashSet<ShaderResourceView> retiredTextures = new(ReferenceEqualityComparer.Instance);
+    private readonly Dictionary<ShaderResourceView, ShaderResourceView> pendingReplacements = new(ReferenceEqualityComparer.Instance);
+    private readonly HashSet<string> pendingNames = new();
+    private int updateDepth;
 
     public ShaderResourceView GetTextureFromDictionary(Material_0007 material)
     {
@@ -46,63 +30,30 @@ public class TextureManager
         return Program.Renderer.whiteDefault;
     }
 
-    public void LoadTexturesFromTXD(string textureFile, bool reapply = true, IProgressBar progressBar = null)
-    {
-        foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(textureFile))
-            if (rw is TextureDictionary_0016 td)
-                foreach (TextureNative_0015 tn in td.textureNativeList)
-                {
-                    progressBar?.PerformStep();
-                    AddTextureNative(tn.textureNativeStruct);
-                }
-
-        if (reapply)
-            ReapplyTextures();
-    }
-
-    private void AddTextureNative(TextureNativeStruct_0001 tnStruct)
-    {
-        ShaderResourceView texture;
-
-        try
-        { texture = Program.Renderer.device.LoadTextureFromRenderWareNative(tnStruct); }
-        catch { return; }
-
-        ReplaceTexture(tnStruct.textureName, texture);
-    }
-
     public void RemoveTexture(string textureName, Archive sender, uint assetID)
     {
         foreach (var ae in Program.ArchiveEditors)
             if (ae.archive != null && ae.archive != sender && ae.archive.ContainsAsset(assetID))
                 return;
-        
+
         DisposeTexture(textureName);
         ReapplyTextures();
     }
 
-    public void LoadTexturesFromFolder(IEnumerable<string> folderNames)
+    public void AddTextureMipmaps(string name, TextureNativeStruct_0001 texture, int width, int height, byte[][] mipmaps)
     {
-        string[] extensions = new string[] { ".png", ".bmp", ".gif", ".jpg", ".jpeg", ".jpe", ".jif", ".jfif", ".jfi", ".tif", ".tiff" };
-
-        foreach (string folderName in folderNames)
-            if (Directory.Exists(folderName))
-            {
-                OpenTextureFolders.Add(folderName);
-                foreach (string i in Directory.GetFiles(folderName))
-                    if (extensions.Contains(Path.GetExtension(i).ToLower()))
-                        AddTextureBitmap(i);
-            }
-            else
-                MessageBox.Show("Error loading textures from " + folderName + ": folder not found");
-
-        ReapplyTextures();
+        var view = Program.Renderer.device.CreateTextureFromBgraMipmaps(width, height, mipmaps, texture.addressModeU, texture.addressModeV);
+        ReplaceTexture(name, view);
     }
 
-    private void AddTextureBitmap(string path)
+    public void BeginTextureUpdates() => updateDepth++;
+
+    public void EndTextureUpdates()
     {
-        string textureName = TreatTextureName(Path.GetFileNameWithoutExtension(path));
-        ReplaceTexture(textureName, Program.Renderer.device.LoadTextureFromFile(path));
+        if (updateDepth == 0)
+            throw new InvalidOperationException("No texture update batch is active.");
+        if (--updateDepth == 0)
+            ApplyPendingTextures();
     }
 
     public void ReapplyTextures()
@@ -114,6 +65,7 @@ public class TextureManager
                     if (sub == null)
                         continue;
 
+                    sub.AnimatedTextureName = null;
                     if (Textures.TryGetValue(sub.DiffuseMapName, out ShaderResourceView texture) && texture != null && !texture.IsDisposed)
                     {
                         if (sub.DiffuseMap != texture)
@@ -124,34 +76,82 @@ public class TextureManager
                 }
 
         DisposeRetiredTextures();
+        pendingReplacements.Clear();
+        pendingNames.Clear();
     }
 
     private void ReplaceTexture(string textureName, ShaderResourceView texture)
     {
-        if (Textures.TryGetValue(textureName, out ShaderResourceView oldTexture) && oldTexture != texture)
+        Textures.TryGetValue(textureName, out ShaderResourceView oldTexture);
+        if (oldTexture != texture)
             RetireTexture(oldTexture);
 
         Textures[textureName] = texture;
+        if (updateDepth != 0)
+        {
+            pendingNames.Add(textureName);
+            if (oldTexture != null && oldTexture != texture)
+                pendingReplacements[oldTexture] = texture;
+            return;
+        }
+
+        foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
+            if (mesh?.SubSets != null)
+                foreach (SharpSubSet sub in mesh.SubSets)
+                    if (sub != null &&
+                        ((oldTexture != null && sub.DiffuseMap == oldTexture) ||
+                         ((sub.AnimatedTextureName ?? sub.DiffuseMapName) == textureName &&
+                          sub.DiffuseMap == Program.Renderer.whiteDefault)))
+                        sub.DiffuseMap = texture;
+        DisposeRetiredTextures();
+    }
+
+    private void ApplyPendingTextures()
+    {
+        if (pendingNames.Count == 0)
+            return;
+
+        foreach (SharpMesh mesh in RenderWareModelFile.completeMeshList)
+            if (mesh?.SubSets != null)
+                foreach (SharpSubSet sub in mesh.SubSets)
+                {
+                    if (sub == null)
+                        continue;
+                    var texture = sub.DiffuseMap;
+                    while (texture != null && pendingReplacements.TryGetValue(texture, out var replacement))
+                        texture = replacement;
+                    string name = sub.AnimatedTextureName ?? sub.DiffuseMapName;
+                    if (texture == Program.Renderer.whiteDefault && name != null &&
+                        pendingNames.Contains(name) && Textures.TryGetValue(name, out var added))
+                        texture = added;
+                    sub.DiffuseMap = texture;
+                }
+
+        DisposeRetiredTextures();
+        pendingReplacements.Clear();
+        pendingNames.Clear();
     }
 
     private void RetireTexture(ShaderResourceView texture)
     {
-        if (texture != null && texture != Program.Renderer.whiteDefault && !texture.IsDisposed && !retiredTextures.Any(retired => ReferenceEquals(retired, texture)))
+        if (texture != null && texture != Program.Renderer.whiteDefault && !texture.IsDisposed)
             retiredTextures.Add(texture);
     }
 
     private void DisposeRetiredTextures()
     {
-        for (int i = retiredTextures.Count - 1; i >= 0; i--)
+        if (retiredTextures.Count == 0)
+            return;
+        var currentTextures = new HashSet<ShaderResourceView>(Textures.Values, ReferenceEqualityComparer.Instance);
+        retiredTextures.RemoveWhere(texture =>
         {
-            ShaderResourceView texture = retiredTextures[i];
-            if (Textures.Values.Any(current => ReferenceEquals(current, texture)))
-                continue;
+            if (currentTextures.Contains(texture))
+                return false;
 
             if (texture != null && !texture.IsDisposed)
                 texture.Dispose();
-            retiredTextures.RemoveAt(i);
-        }
+            return true;
+        });
     }
 
     public void SetTextureForAnimation(string diffuseMapName, string newMapName)
@@ -165,7 +165,10 @@ public class TextureManager
                 foreach (SharpSubSet sub in mesh.SubSets)
                 {
                     if (sub != null && sub.DiffuseMapName == diffuseMapName)
+                    {
+                        sub.AnimatedTextureName = newMapName;
                         sub.DiffuseMap = texture;
+                    }
                 }
     }
 
@@ -186,7 +189,6 @@ public class TextureManager
 
     public void ClearTextures()
     {
-        OpenTextureFolders.Clear();
         DisposeTextures();
     }
 

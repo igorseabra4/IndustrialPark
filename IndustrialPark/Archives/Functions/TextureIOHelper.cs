@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using static HipHopFile.Functions;
 
@@ -21,11 +22,18 @@ public static class TextureIOHelper
     public static string pathToGcTXD => Path.Combine(tempGcTxdsDir, "temp.txd");
     public static string pathToPcTXD => Path.Combine(tempPcTxdsDir, "temp.txd");
 
-    public static void PerformTXDConversionExternal(bool compress = false, bool generateMipmaps = false, string custom_output = null)
+    public static void PerformTXDConversionExternal(bool compress = false, bool generateMipmaps = false, string custom_output = null) =>
+        PerformTXDConversionExternalCore(compress, generateMipmaps, custom_output, 300000);
+
+    internal static void PerformTXDDecodingExternal() =>
+        PerformTXDConversionExternalCore(false, false, null, 60000);
+
+    private static void PerformTXDConversionExternalCore(bool compress, bool generateMipmaps, string custom_output,
+        int waitMilliseconds)
     {
         lock (locker)
         {
-            if (!converterInitialized)
+            if (!converterInitialized || converterStarted)
                 initConverter();
 
             string ini =
@@ -55,16 +63,57 @@ public static class TextureIOHelper
 
             File.WriteAllText(Path.Combine(txdGenFolder, "txdgen.ini"), ini);
 
-            txdgenProcess.Start();
-            txdgenProcess.WaitForExit(5000);
+            var errors = new StringBuilder();
+            DataReceivedEventHandler onError = (_, e) =>
+            {
+                if (e.Data != null && errors.Length < 8192)
+                    errors.AppendLine(e.Data.Substring(0, System.Math.Min(e.Data.Length, 8192 - errors.Length)));
+            };
+            txdgenProcess.ErrorDataReceived += onError;
+            try
+            {
+                txdgenProcess.Start();
+                converterStarted = true;
+                txdgenProcess.BeginOutputReadLine();
+                txdgenProcess.BeginErrorReadLine();
+                if (!txdgenProcess.WaitForExit(waitMilliseconds))
+                {
+                    if (!txdgenProcess.HasExited)
+                    {
+                        try { txdgenProcess.Kill(); }
+                        catch (System.InvalidOperationException) when (txdgenProcess.HasExited) { }
+                    }
+                    txdgenProcess.WaitForExit();
+                    throw new System.TimeoutException("Texture conversion timed out.");
+                }
+                txdgenProcess.WaitForExit();
+                if (txdgenProcess.ExitCode != 0)
+                    throw new IOException($"Texture conversion failed with exit code {txdgenProcess.ExitCode}: {errors}");
+            }
+            catch
+            {
+                if (converterStarted && !txdgenProcess.HasExited)
+                {
+                    try { txdgenProcess.Kill(); }
+                    catch (System.InvalidOperationException) when (txdgenProcess.HasExited) { }
+                    txdgenProcess.WaitForExit();
+                }
+                throw;
+            }
+            finally
+            {
+                txdgenProcess.ErrorDataReceived -= onError;
+            }
         }
     }
 
     private static Process txdgenProcess;
     private static bool converterInitialized = false;
+    private static bool converterStarted = false;
 
     public static void initConverter()
     {
+        txdgenProcess?.Dispose();
         txdgenProcess = new Process();
         txdgenProcess.StartInfo.FileName = Path.Combine(txdGenFolder, "txdgen.exe");
         txdgenProcess.StartInfo.WorkingDirectory = txdGenFolder;
@@ -74,12 +123,25 @@ public static class TextureIOHelper
         txdgenProcess.StartInfo.UseShellExecute = false;
         txdgenProcess.EnableRaisingEvents = true;
         converterInitialized = true;
+        converterStarted = false;
     }
 
     public static void closeConverter()
     {
-        if (converterInitialized && txdgenProcess != null && !txdgenProcess.HasExited)
+        if (converterInitialized && converterStarted && txdgenProcess != null && !txdgenProcess.HasExited)
             txdgenProcess.Kill();
+    }
+
+    public static void CheckTXDConversionExternal()
+    {
+        if (!txdgenProcess.HasExited)
+        {
+            txdgenProcess.Kill();
+            txdgenProcess.WaitForExit();
+            throw new System.TimeoutException("Texture conversion timed out.");
+        }
+        if (txdgenProcess.ExitCode != 0)
+            throw new System.IO.IOException($"Texture conversion failed with exit code {txdgenProcess.ExitCode}.");
     }
 
     public static RWVersion currentTextureVersion(Game game, Platform platform)
@@ -102,53 +164,8 @@ public static class TextureIOHelper
         }
     }
 
-    public static void ExportSingleTextureToRWTEX(byte[] data, string fileName)
-    {
-        ReadFileMethods.treatStuffAsByteArray = true;
-        try
-        {
-            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
-                if (rw is TextureDictionary_0016 td)
-                    foreach (TextureNative_0015 tn in td.textureNativeList)
-                        File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(tn, tn.renderWareVersion));
-
-        }
-        finally
-        {
-            ReadFileMethods.treatStuffAsByteArray = false;
-        }
-    }
-
-    public static void ExportSingleTextureToDictionary(string fileName, byte[] data, string textureName)
-    {
-        ReadFileMethods.treatStuffAsByteArray = true;
-        try
-        {
-            List<TextureNative_0015> textNativeList = new List<TextureNative_0015>();
-
-            int fileVersion = 0;
-
-            foreach (RWSection rw in ReadFileMethods.ReadRenderWareFile(data))
-                if (rw is TextureDictionary_0016 td)
-                    foreach (TextureNative_0015 tn in td.textureNativeList)
-                    {
-                        fileVersion = tn.renderWareVersion;
-                        tn.textureNativeStruct.textureName = textureName.Replace(".RW3", "");
-                        textNativeList.Add(tn);
-                    }
-
-            TextureDictionary_0016 rws = new TextureDictionary_0016(textNativeList);
-
-            rws.textureNativeList = rws.textureNativeList.OrderBy(f => f.textureNativeStruct.textureName).ToList();
-
-            File.WriteAllBytes(fileName, ReadFileMethods.ExportRenderWareFile(rws, fileVersion));
-
-        }
-        finally
-        {
-            ReadFileMethods.treatStuffAsByteArray = false;
-        }
-    }
+    public static void ExportSingleTextureToRWTEX(TextureNative_0015 texture, string fileName) =>
+        File.WriteAllBytes(fileName, texture.GetBytes(texture.renderWareVersion));
 
     public static Section_AHDR CreateRWTXFromBitmap(Game game, Platform platform, string fileName, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
     {
@@ -158,6 +175,8 @@ public static class TextureIOHelper
     public static List<Section_AHDR> CreateRWTXsFromBitmaps
         (Game game, Platform platform, List<string> fileNames, bool appendRW3, bool flip, bool mipmaps, bool compress, bool transFix)
     {
+        if (fileNames.Count == 0)
+            return new List<Section_AHDR>();
         lock (locker)
         {
             if (transFix)
@@ -217,23 +236,25 @@ public static class TextureIOHelper
             if (!Directory.Exists(tempGcTxdsDir))
                 Directory.CreateDirectory(tempGcTxdsDir);
 
-            File.WriteAllBytes(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(
-                new TextureDictionary_0016(textureNativeList), currentTextureVersion(game, platform)));
-
             var platformText = (platform == Platform.GameCube ? "Gamecube" :
                 platform == Platform.Xbox ? "XBOX" :
                 platform == Platform.PS2 ? "PS2" : "PC");
 
-            PerformTXDConversionExternal(compress, mipmaps,
-                $"gameRoot={tempPcTxdsDir}\r\n" +
-                $"outputRoot={tempGcTxdsDir}\r\n" +
-                "targetVersion=VC\r\n" +
-                $"targetPlatform={platformText}\r\n");
-
-            ReadFileMethods.treatStuffAsByteArray = true;
-            List<Section_AHDR> AHDRs = new List<Section_AHDR>();
             try
             {
+                File.Delete(pathToGcTXD);
+                File.WriteAllBytes(pathToPcTXD, ReadFileMethods.ExportRenderWareFile(
+                    new TextureDictionary_0016(textureNativeList), currentTextureVersion(game, platform)));
+                PerformTXDConversionExternal(compress, mipmaps,
+                    $"gameRoot={tempPcTxdsDir}\r\n" +
+                    $"outputRoot={tempGcTxdsDir}\r\n" +
+                    "targetVersion=VC\r\n" +
+                    $"targetPlatform={platformText}\r\n");
+
+                if (!File.Exists(pathToGcTXD))
+                    throw new InvalidDataException("External texture conversion did not produce an output dictionary.");
+
+                List<Section_AHDR> AHDRs = new List<Section_AHDR>();
 
                 foreach (TextureNative_0015 texture in ((TextureDictionary_0016)ReadFileMethods.ReadRenderWareFile(pathToGcTXD)[0]).textureNativeList)
                 {
@@ -248,16 +269,13 @@ public static class TextureIOHelper
                     foreach (var AHDR in AHDRs)
                         AHDR.data[0x9B] = 0x01;
 
+                return AHDRs;
             }
             finally
             {
-                ReadFileMethods.treatStuffAsByteArray = false;
+                File.Delete(pathToGcTXD);
+                File.Delete(pathToPcTXD);
             }
-
-            File.Delete(pathToGcTXD);
-            File.Delete(pathToPcTXD);
-
-            return AHDRs;
         }
     }
 

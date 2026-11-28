@@ -73,21 +73,14 @@ public class AssetRenderer
 
     public bool PauseMatrixRecalculation = false;
 
-    public int ModelCount => renderingDictionary.Values.Count + renderableJSPs.Count;
-
-    public void RecalculateAllMatrices(SharpRenderer renderer, IProgressBar progressBar = null)
+    public void RecalculateAllMatrices(SharpRenderer renderer)
     {
         if (PauseMatrixRecalculation)
             return;
 
         foreach (var ra in GetRenderableAssets().Concat(GetRenderableJSPs()))
-        {
             ra.CalculateTransformation(renderer);
-            progressBar?.PerformStep();
-        }
     }
-
-    public int MatrixCount => renderableAssets.Count;
 
     public void AddToRenderingDictionary(IAssetWithModel withModel)
     {

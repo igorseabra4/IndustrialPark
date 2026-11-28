@@ -33,8 +33,8 @@ public class ArchiveSubscriber
     public void SubscribeToLayerSwapped(Action<int, int> action) => layerRepository.LayerSwapped += action;
     public void SubscribeToLayerTypeChanged(Action<int, LayerType> action) => layerRepository.LayerTypeChanged += action;
     public void SubscribeToLayerRenamed(Action<int, string> action) => layerRepository.LayerRenamed += action;
-    public void SubscribeToLayerIndicesSet(Action<int[]> action) => layerRepository.LayerIndicesSet += action;    
-    public void SubscribeToLayerAssetAdded(Action<int, uint> action) => layerRepository.LayerAssetAdded += action;    
+    public void SubscribeToLayerIndicesSet(Action<int[]> action) => layerRepository.LayerIndicesSet += action;
+    public void SubscribeToLayerAssetAdded(Action<int, uint> action) => layerRepository.LayerAssetAdded += action;
     public void SubscribeToLayerAssetRemoved(Action<int, uint> action) => layerRepository.LayerAssetRemoved += action;
 
     public void RegisterPreAssetsSubscriptions()
@@ -43,6 +43,9 @@ public class ArchiveSubscriber
         {
             switch (asset)
             {
+                case AssetRWTX rwtx:
+                    TextureConverter.EnableTextureForDisplay(rwtx);
+                    break;
                 case AssetSFX sfx:
                     sfx.GetAttach = attachID => archive.TryGetAsset(attachID, out Asset asset) ? asset : null;
                     break;

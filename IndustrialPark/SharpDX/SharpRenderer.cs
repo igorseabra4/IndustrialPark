@@ -213,15 +213,9 @@ public class SharpRenderer : IDisposable
     public void LoadTexture()
     {
         if (whiteDefault == null || (whiteDefault != null && whiteDefault.IsDisposed))
-        {
-            var path = Path.Combine(Program.ResourcesFolder, "Models", "WhiteDefault.png");
-            whiteDefault = device.LoadTextureFromFile(path);
-        }
+            whiteDefault = TextureRenderer.CreateWhiteDefault(device.Device);
         if (arrowDefault == null || (arrowDefault != null && arrowDefault.IsDisposed))
-        {
-            var path = Path.Combine(Program.ResourcesFolder, "Models", "ArrowDefault.png");
-            arrowDefault = device.LoadTextureFromFile(path);
-        }
+            arrowDefault = TextureRenderer.CreateArrowDefault(device.Device);
     }
 
     public SharpMesh Cube { get; private set; }

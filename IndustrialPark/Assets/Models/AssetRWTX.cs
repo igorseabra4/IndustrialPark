@@ -7,35 +7,31 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
+using System.Text;
 
 namespace IndustrialPark.Assets
 {
-    public class AssetRWTX : AssetWithData
+    public class AssetRWTX : Asset
     {
-        public override string AssetInfo => $"{platformFormat} {renderWareVersion} {base.AssetInfo}";
+        public override string AssetInfo => $"{platformFormat} {RenderWareVersion} {Size}";
         private const string categoryName = "\t\t\tTexture";
 
-        private string platformFormat;
+        private TextureDictionary_0016 dictionary;
 
-        public AssetRWTX(Section_AHDR AHDR) : base(AHDR)
+        public AssetRWTX(Section_AHDR AHDR, EndianBinaryReader reader) : base(AHDR)
         {
-            platformFormat = GetPlatform();
-            try
-            {
-                using var reader = new BinaryReader(new MemoryStream(Data));
-                reader.BaseStream.Position = 0x8;
-                renderWareVersion = reader.ReadInt32();
-            }
-            catch { }
+            ReadDictionary(reader.BaseStream, AHDR.data.Length);
+        }
+
+        public AssetRWTX(string assetName, byte[] data) : base(assetName, AssetType.Texture)
+        {
+            using var stream = new MemoryStream(data, false);
+            ReadDictionary(stream, data.Length);
         }
 
         public override void Verify(ref List<string> result)
         {
             base.Verify(ref result);
-
-            if (TextureAsRWSections.Length == 0)
-                result.Add("Library failed to read texture asset.");
 
             if (!AssetService.HasWhoTargets(assetID))
                 result.Add("Texture appears unused; no references found.");
@@ -44,116 +40,68 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public string Name { get => Path.GetFileNameWithoutExtension(assetName); }
 
-        private RWVersion renderWareVersion;
-
-        private RWSection[] _textureAsRWSections;
-        private RWSection[] TextureAsRWSections
+        [Browsable(false)]
+        public TextureNative_0015 Native
         {
-            get
-            {
-                if (_textureAsRWSections != null)
-                    return _textureAsRWSections;
-                try
-                {
-                    ReadFileMethods.treatStuffAsByteArray = true;
-                    _textureAsRWSections = ReadFileMethods.ReadRenderWareFile(Data);
-                    renderWareVersion = _textureAsRWSections[0].renderWareVersion;
-                    return _textureAsRWSections;
-                }
-                catch
-                {
-                    return new RWSection[0];
-                }
-                finally
-                {
-                    ReadFileMethods.treatStuffAsByteArray = false;
-                }
-            }
-            set
-            {
-                ReadFileMethods.treatStuffAsByteArray = true;
-                try
-                {
-                    _textureAsRWSections = value;
-                    Data = ReadFileMethods.ExportRenderWareFile(value, renderWareVersion);
-                }
-                finally
-                {
-                    ReadFileMethods.treatStuffAsByteArray = false;
-                }
-            }
+            get => dictionary.textureNativeList[0];
+            set => dictionary.textureNativeList[0] = value ?? throw new ArgumentNullException(nameof(value));
+        }
+
+        [Browsable(false)]
+        public IReadOnlyList<TextureNative_0015> Natives => dictionary.textureNativeList;
+
+        [Description("Present on the header of the TXD when version > 3.5.")]
+        public short DeviceId
+        {
+            get => dictionary.textureDictionaryStruct.deviceId;
+            set => dictionary.textureDictionaryStruct.deviceId = value;
+        }
+
+        private string platformFormat => GetPlatform();
+        private RWVersion RenderWareVersion => dictionary.renderWareVersion;
+
+        public void ReplaceDictionary(byte[] data)
+        {
+            using var stream = new MemoryStream(data, false);
+            ReadDictionary(stream, data.Length);
+        }
+
+        private void ReadDictionary(Stream stream, int length)
+        {
+            long start = stream.Position;
+            using var reader = new BinaryReader(stream, Encoding.UTF8, true);
+            if ((RenderWareFile.Section)reader.ReadInt32() != RenderWareFile.Section.TextureDictionary)
+                throw new InvalidDataException("Texture asset does not contain a texture dictionary.");
+            var parsed = new TextureDictionary_0016(reader);
+            if (parsed.textureNativeList.Count == 0 || stream.Position - start != length)
+                throw new InvalidDataException("Texture asset must contain one non-empty texture dictionary.");
+            dictionary = parsed;
+        }
+
+        public override void Serialize(EndianBinaryWriter writer)
+        {
+            writer.Write(dictionary.GetBytes(RenderWareVersion));
         }
 
         [Category(categoryName)]
         public TextureFilterMode FilterMode
         {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return native.textureNativeStruct.filterMode;
-                return 0;
-            }
-            set
-            {
-                RWSection[] file = TextureAsRWSections;
-
-                foreach (RWSection rws in file)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            native.textureNativeStruct.filterMode = value;
-
-                TextureAsRWSections = file;
-            }
+            get => Native.textureNativeStruct.filterMode;
+            set => Native.textureNativeStruct.filterMode = value;
         }
 
         [Category(categoryName)]
         public TextureAddressMode AddressModeU
         {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return native.textureNativeStruct.addressModeU;
-                return 0;
-            }
-            set
-            {
-                RWSection[] file = TextureAsRWSections;
-
-                foreach (RWSection rws in file)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            native.textureNativeStruct.addressModeU = value;
-
-                TextureAsRWSections = file;
-            }
+            get => Native.textureNativeStruct.addressModeU;
+            set => Native.textureNativeStruct.addressModeU = value;
         }
 
         [Category(categoryName)]
         public TextureAddressMode AddressModeV
         {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return native.textureNativeStruct.addressModeV;
-                return 0;
-            }
-            set
-            {
-                RWSection[] file = TextureAsRWSections;
-
-                foreach (RWSection rws in file)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            native.textureNativeStruct.addressModeV = value;
-
-                TextureAsRWSections = file;
-            }
+            get => Native.textureNativeStruct.addressModeV;
+            set => Native.textureNativeStruct.addressModeV = value;
         }
 
         [Category(categoryName), ReadOnly(true)]
@@ -161,14 +109,10 @@ namespace IndustrialPark.Assets
         {
             get
             {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            if (native.textureNativeStruct.platformType != TexturePlatformID.PS2)
-                                return $"{native.textureNativeStruct.width}x{native.textureNativeStruct.height}";
-                            else
-                                return $"{(short)native.PS2RasterFormat.Width}x{(short)native.PS2RasterFormat.Height}";
-                return "0x0";
+                if (Native.textureNativeStruct.platformType != TexturePlatformID.PS2)
+                    return $"{Native.textureNativeStruct.width}x{Native.textureNativeStruct.height}";
+                else
+                    return $"{(short)Native.PS2RasterFormat.Width}x{(short)Native.PS2RasterFormat.Height}";
             }
         }
 
@@ -177,14 +121,10 @@ namespace IndustrialPark.Assets
         {
             get
             {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            if (native.textureNativeStruct.platformType != TexturePlatformID.PS2)
-                                return (TextureRasterFormat)((int)native.textureNativeStruct.rasterFormatFlags & 0xF00);
-                            else
-                                return (TextureRasterFormat)(((int)native.PS2RasterFormat.RasterFormat & 0xF) << 8);
-                return 0;
+                if (Native.textureNativeStruct.platformType != TexturePlatformID.PS2)
+                    return (TextureRasterFormat)((int)Native.textureNativeStruct.rasterFormatFlags & 0xF00);
+                else
+                    return (TextureRasterFormat)(((int)Native.PS2RasterFormat.RasterFormat & 0xF) << 8);
             }
         }
 
@@ -193,14 +133,10 @@ namespace IndustrialPark.Assets
         {
             get
             {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            if (native.textureNativeStruct.platformType != TexturePlatformID.PS2)
-                                return (TextureRasterFormat)((int)native.textureNativeStruct.rasterFormatFlags & 0x6000);
-                            else
-                                return (TextureRasterFormat)(((int)native.PS2RasterFormat.RasterFormat & 0x60) << 8);
-                return 0;
+                if (Native.textureNativeStruct.platformType != TexturePlatformID.PS2)
+                    return (TextureRasterFormat)((int)Native.textureNativeStruct.rasterFormatFlags & 0x6000);
+                else
+                    return (TextureRasterFormat)(((int)Native.PS2RasterFormat.RasterFormat & 0x60) << 8);
             }
         }
 
@@ -209,219 +145,83 @@ namespace IndustrialPark.Assets
         {
             get
             {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            if (native.textureNativeStruct.platformType != TexturePlatformID.PS2)
-                                return ((int)native.textureNativeStruct.rasterFormatFlags & 0x8000) != 0;
-                            else
-                                return ((int)native.PS2RasterFormat.RasterFormat & 0x80) != 0;
-                return false;
+                if (Native.textureNativeStruct.platformType != TexturePlatformID.PS2)
+                    return ((int)Native.textureNativeStruct.rasterFormatFlags & 0x8000) != 0;
+                else
+                    return ((int)Native.PS2RasterFormat.RasterFormat & 0x80) != 0;
             }
         }
 
         [Category(categoryName), ReadOnly(true)]
-        public int MipMapCount
-        {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return (int)native.textureNativeStruct.mipMapCount;
-                return 0;
-            }
-        }
+        public int MipMapCount => Native.textureNativeStruct.mipMapCount;
 
         [Category(categoryName), ReadOnly(true)]
         public bool AutoGenerateMipMaps
         {
             get
             {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            if (native.textureNativeStruct.platformType != TexturePlatformID.PS2)
-                                return ((int)native.textureNativeStruct.rasterFormatFlags & 0x1000) != 0;
-                            else
-                                return ((int)native.PS2RasterFormat.RasterFormat & 0x10) != 0;
-                return false;
+                if (Native.textureNativeStruct.platformType != TexturePlatformID.PS2)
+                    return ((int)Native.textureNativeStruct.rasterFormatFlags & 0x1000) != 0;
+                else
+                    return ((int)Native.PS2RasterFormat.RasterFormat & 0x10) != 0;
             }
         }
 
         #region GameCube
         [Category(GameCubeCategory), ReadOnly(true)]
-        public GXTexFmt Format
-        {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return (GXTexFmt)native.textureNativeStruct.type;
-                return GXTexFmt.None;
-            }
-        }
+        public GXTexFmt Format => (GXTexFmt)Native.textureNativeStruct.type;
 
         [Category(GameCubeCategory), ReadOnly(true)]
-        public GXTexFmt TLUTFormat
-        {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return (GXTexFmt)native.textureNativeStruct.compression;
-                return GXTexFmt.None;
-            }
-        }
+        public GXTexFmt TLUTFormat => (GXTexFmt)Native.textureNativeStruct.compression;
 
         [Category(GameCubeCategory)]
         public uint MaxAniso
         {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return native.textureNativeStruct.maxAniso;
-                return 0;
-            }
-            set
-            {
-                RWSection[] file = TextureAsRWSections;
-
-                foreach (RWSection rws in file)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            native.textureNativeStruct.maxAniso = value;
-
-                TextureAsRWSections = file;
-            }
+            get => Native.textureNativeStruct.maxAniso;
+            set => Native.textureNativeStruct.maxAniso = value;
         }
 
         [Category(GameCubeCategory)]
         public int BiasClamp
         {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return native.textureNativeStruct.biasClamp;
-                return 0;
-            }
-            set
-            {
-                RWSection[] file = TextureAsRWSections;
-
-                foreach (RWSection rws in file)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            native.textureNativeStruct.biasClamp = value;
-
-                TextureAsRWSections = file;
-            }
+            get => Native.textureNativeStruct.biasClamp;
+            set => Native.textureNativeStruct.biasClamp = value;
         }
 
         [Category(GameCubeCategory)]
         public int EdgeLod
         {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return native.textureNativeStruct.edgeLod;
-                return 0;
-            }
-            set
-            {
-                RWSection[] file = TextureAsRWSections;
-
-                foreach (RWSection rws in file)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            native.textureNativeStruct.edgeLod = value;
-
-                TextureAsRWSections = file;
-            }
+            get => Native.textureNativeStruct.edgeLod;
+            set => Native.textureNativeStruct.edgeLod = value;
         }
 
         [Category(GameCubeCategory)]
         public float LodBias
         {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return native.textureNativeStruct.lodBias;
-                return 0;
-            }
-            set
-            {
-                RWSection[] file = TextureAsRWSections;
-
-                foreach (RWSection rws in file)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            native.textureNativeStruct.lodBias = value;
-
-                TextureAsRWSections = file;
-            }
+            get => Native.textureNativeStruct.lodBias;
+            set => Native.textureNativeStruct.lodBias = value;
         }
         #endregion
 
         #region Xbox
         [Category(XboxCategory), ReadOnly(true)]
-        public DXTFormat DXTFormat
-        {
-            get
-            {
-                foreach (RWSection rws in TextureAsRWSections)
-                    if (rws is TextureDictionary_0016 textD)
-                        foreach (TextureNative_0015 native in textD.textureNativeList)
-                            return (DXTFormat)native.textureNativeStruct.compression;
-                return DXTFormat.None;
-            }
-        }
+        public DXTFormat DXTFormat => (DXTFormat)Native.textureNativeStruct.compression;
         #endregion
 
-        public string GetPlatform()
+        public string GetPlatform() => Native.textureNativeStruct.platformType switch
         {
-            foreach (var rws in TextureAsRWSections)
-                if (rws is TextureDictionary_0016 textD)
-                    foreach (TextureNative_0015 native in textD.textureNativeList)
-                        switch (native.textureNativeStruct.platformType)
-                        {
-                            case TexturePlatformID.Xbox:
-                                return "Xbox";
-                            case TexturePlatformID.PCD3D8:
-                            case TexturePlatformID.PCD3D9:
-                                return "PC";
-                            case TexturePlatformID.GameCube:
-                                return "GC";
-                            case TexturePlatformID.PS2:
-                                return "PS2";
-                        }
-            return "Unknown Format";
-        }
-
-        public TexturePlatformID GetPlatformEnum()
-        {
-            foreach (var rws in TextureAsRWSections)
-                if (rws is TextureDictionary_0016 textD)
-                    foreach (TextureNative_0015 native in textD.textureNativeList)
-                        return native.textureNativeStruct.platformType;
-            return TexturePlatformID.ANY;
-        }
+            TexturePlatformID.Xbox => "Xbox",
+            TexturePlatformID.PCD3D8 or TexturePlatformID.PCD3D9 => "PC",
+            TexturePlatformID.GameCube => "GC",
+            TexturePlatformID.PS2 => "PS2",
+            _ => "Unknown Format",
+        };
 
         private const string GameCubeCategory = "GameCube";
         private const string XboxCategory = "Xbox";
         public override void SetDynamicProperties(DynamicTypeDescriptor dt)
         {
-            TexturePlatformID platform = GetPlatformEnum();
+            TexturePlatformID platform = Native.textureNativeStruct.platformType;
 
             if (platform != TexturePlatformID.GameCube)
                 dt.RemovePropertiesByCategory(GameCubeCategory);

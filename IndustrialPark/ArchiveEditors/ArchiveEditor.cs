@@ -457,34 +457,17 @@ public partial class ArchiveEditor : Form
     {
         using var saveFileDialog = new FolderBrowserDialog();
         if (saveFileDialog.ShowDialog() == DialogResult.OK)
-        {
-            var textures = TextureConverter.GetTexturesAsBitmaps(archive.Assets.OfType<AssetRWTX>(), TextureIOHelper.currentTextureVersion(archive.Game, archive.Platform));
-
-            RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
-
-            foreach ((string textureName, Bitmap texture) in textures)
-                texture.Save(Path.Combine(saveFileDialog.SelectedPath, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+            TextureConverter.ExportTexturesAsPng(archive.Assets.OfType<AssetRWTX>(), saveFileDialog.SelectedPath);
         }
+
+    private void exportTxdToolStripMenuItem_Click(object sender, EventArgs e)
+    {
+        ExportTXD();
     }
 
-    private void exportRW3ToolStripMenuItem_Click(object sender, EventArgs e)
+    private void importTxdToolStripMenuItem_Click(object sender, EventArgs e)
     {
-        ExportTXD(CheckState.Checked);
-    }
-
-    private void importRW3ToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        ImportTXD(true);
-    }
-
-    private void exportNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        ExportTXD(CheckState.Unchecked);
-    }
-
-    private void importNoRW3ToolStripMenuItem_Click(object sender, EventArgs e)
-    {
-        ImportTXD(false);
+        ImportTXD();
     }
 
     private void importAsSoundToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1183,8 +1166,6 @@ public partial class ArchiveEditor : Form
             Program.EditorManager.TryRebindAssetEditor(archive, asset);
             NotifyArchiveStateChanged(ArchiveRefreshKind.AssetMutations | ArchiveRefreshKind.Menus, asset.assetID, true);
             historyManager.AddAsset(asset);
-            if (asset is AssetRWTX rwtx)
-                TextureConverter.EnableTextureForDisplay(rwtx);
             if (asset is IClickableAsset clickableAsset)
                 RefreshReferencedTransformMatrices(clickableAsset);
             asset.PropertyChanged += (hard) => AssetPropertyChanged(asset, hard);
@@ -1372,9 +1353,6 @@ public partial class ArchiveEditor : Form
                 historyManager.AddAsset(assetID, data);
 
             ArchiveSubscriptions();
-            var textures = archive.Assets.OfType<AssetRWTX>();
-            if (textures.Any())
-                TextureConverter.SetupTextureDisplay(textures);
 
             toolStripStatusLabelCurrentFilename.Text = "File: " + fileName;
             Text = Path.GetFileName(fileName);
@@ -1577,8 +1555,7 @@ public partial class ArchiveEditor : Form
 
         var canImportAssetsToLayer = archive.AutoLayers || (SelectedLayerIndex != -1);
         importTexturesToolStripMenuItem.Enabled = canImportAssetsToLayer;
-        importRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
-        importNoRW3ToolStripMenuItem.Enabled = canImportAssetsToLayer;
+        importTxdToolStripMenuItem.Enabled = canImportAssetsToLayer;
         importModelsToolStripMenuItem.Enabled = canImportAssetsToLayer;
         importMultipleAssetsToolStripMenuItem.Enabled = canImportAssetsToLayer;
 
@@ -1588,8 +1565,7 @@ public partial class ArchiveEditor : Form
 
         var canExportTextures = archive.ContainsAssetWithType(AssetType.Texture);
         exportAllTexturesToolStripMenuItem.Enabled = canExportTextures;
-        exportRW3ToolStripMenuItem.Enabled = canExportTextures;
-        exportNoRW3ToolStripMenuItem.Enabled = canExportTextures;
+        exportTxdToolStripMenuItem.Enabled = canExportTextures;
 
         var canExportSounds = archive.ContainsAssetWithType(AssetType.Sound) || archive.ContainsAssetWithType(AssetType.SoundStream);
         exportAllSoundsToolStripMenuItem.Enabled = canExportSounds;
@@ -2404,7 +2380,7 @@ public partial class ArchiveEditor : Form
             Program.MainForm.DockAssetList(this);
     }
 
-    private void ImportTXD(bool RW3)
+    private void ImportTXD()
     {
         OpenFileDialog openTXD = new OpenFileDialog() { Filter = "TXD archives|*.txd" };
 
@@ -2412,8 +2388,8 @@ public partial class ArchiveEditor : Form
         {
             BeginTransaction();
 
-            var AHDRs = TextureConverter.GetAssetsFromTextureDictionary(openTXD.FileName, RW3, archive.Game, archive.Platform);
-            archive.ImportAssets(AHDRs, SelectedLayerIndex, true);
+            var assets = TextureConverter.ImportTXD(openTXD.FileName, archive.Game);
+            archive.AddMultipleAssets(assets, SelectedLayerIndex, true);
 
             EndTransaction();
 
@@ -2424,12 +2400,12 @@ public partial class ArchiveEditor : Form
         }
     }
 
-    private void ExportTXD(CheckState RW3)
+    private void ExportTXD()
     {
         SaveFileDialog saveTXD = new SaveFileDialog() { Filter = "TXD archives|*.txd" };
 
         if (saveTXD.ShowDialog() == DialogResult.OK)
-            TextureConverter.ExportTextureDictionary(archive.Assets.OfType<AssetRWTX>(), saveTXD.FileName, RW3);
+            TextureConverter.ExportTXD(archive.Assets.OfType<AssetRWTX>(), saveTXD.FileName);
     }
 
     /// <summary>

@@ -195,10 +195,7 @@ namespace IndustrialPark.ArchiveEditors
                     if (checkBoxExportTextures.Checked)
                     {
                         string folderName = Path.GetDirectoryName(a.FileName);
-                        var bitmaps = TextureConverter.GetTexturesAsBitmaps(archiveEditor.archive, asset.Textures);
-                        ReadFileMethods.treatStuffAsByteArray = false;
-                        foreach (string textureName in bitmaps.Keys)
-                            bitmaps[textureName].Save(folderName + "/" + textureName + ".png", System.Drawing.Imaging.ImageFormat.Png);
+                        TextureConverter.ExportTexturesAsPng([archiveEditor.archive], asset.Textures, folderName);
                     }
                 }
             }

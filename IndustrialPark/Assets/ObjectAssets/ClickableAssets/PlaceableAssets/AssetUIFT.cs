@@ -122,7 +122,7 @@ namespace IndustrialPark.Assets
                     text = newText;
                     image?.Dispose();
                     image = null;
-                    image = TextureUtilities.CreateTextureFromBitmap(renderer.device.Device, DrawBitmapFromText());
+                    image = TextureRenderer.CreateTextureFromBitmap(renderer.device.Device, DrawBitmapFromText());
                     found = true;
                 }
             }

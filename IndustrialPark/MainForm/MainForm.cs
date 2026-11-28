@@ -699,19 +699,10 @@ namespace IndustrialPark
 
                         if (MessageBox.Show("Do you also wish to export textures?", "Export Textures", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            Dictionary<string, Bitmap> bitmaps = new Dictionary<string, Bitmap>();
-
-                            foreach (var ae in ArchiveEditors.Where(ae => ae.archive != null))
-                            {
-                                var d = TextureConverter.GetTexturesAsBitmaps(ae.archive, textureNames);
-                                foreach (var key in d)
-                                    bitmaps.Add(key.Key, key.Value);
-                            }
-
                             RenderWareFile.ReadFileMethods.treatStuffAsByteArray = false;
-
-                            foreach (string textureName in bitmaps.Keys)
-                                bitmaps[textureName].Save(Path.Combine(a.SelectedPath, textureName + ".png"), System.Drawing.Imaging.ImageFormat.Png);
+                            TextureConverter.ExportTexturesAsPng(
+                                ArchiveEditors.Where(ae => ae.archive != null).Select(ae => ae.archive),
+                                textureNames, a.SelectedPath);
                         }
                     }
         }
@@ -1208,7 +1199,6 @@ namespace IndustrialPark
             {
                 hipPaths = hips,
                 scoobyPlatforms = platforms,
-                TextureFolderPaths = Program.TextureManager.OpenTextureFolders.ToList(),
                 CamPos = renderer.Camera.Position,
                 Yaw = renderer.Camera.Yaw,
                 Pitch = renderer.Camera.Pitch,
@@ -1240,8 +1230,6 @@ namespace IndustrialPark
             List<ArchiveEditor> archiveEditors = [.. this.ArchiveEditors];
             foreach (ArchiveEditor ae in archiveEditors)
                 ae.CloseArchiveEditor();
-
-            Program.TextureManager.LoadTexturesFromFolder(project.TextureFolderPaths);
 
             for (int i = 0; i < project.hipPaths.Count; i++)
                 if (project.hipPaths[i] == "Empty")
@@ -1713,20 +1701,9 @@ namespace IndustrialPark
         public void RefreshTexturesAndModels()
         {
             var textures = ArchiveEditors.SelectMany(ae => ae.archive?.Assets.OfType<AssetRWTX>() ?? []).ToList();
-            var progressBar = new ProgressBar("Setting up textures and models");
-            progressBar.SetProgressBar(0, textures.Count * 2 + Program.Renderer.Assets.MatrixCount, 1);
-            progressBar.Show(this);
-
-            try
-            {
                 Program.TextureManager.ClearTextures();
-                TextureConverter.SetupTextureDisplay(textures, progressBar);
-                Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer, progressBar);
-            }
-            finally
-            {
-                progressBar.Close();
-            }
+            TextureConverter.SetupTextureDisplay(textures);
+            Program.Renderer.Assets.RecalculateAllMatrices(Program.Renderer);
         }
 
         public void UnhideAllAssets()

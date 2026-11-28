@@ -62,10 +62,8 @@
             importTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             exportAllTexturesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             toolStripSeparator6 = new System.Windows.Forms.ToolStripSeparator();
-            exportRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            importRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            exportNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            importNoRW3ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            exportTxdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            importTxdToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             soundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importSoundsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             importAsSoundToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -323,7 +321,7 @@
             // 
             // texturesToolStripMenuItem
             // 
-            texturesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { importTexturesToolStripMenuItem, exportAllTexturesToolStripMenuItem, toolStripSeparator6, exportRW3ToolStripMenuItem, importRW3ToolStripMenuItem, exportNoRW3ToolStripMenuItem, importNoRW3ToolStripMenuItem });
+            texturesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] { importTexturesToolStripMenuItem, exportAllTexturesToolStripMenuItem, toolStripSeparator6, exportTxdToolStripMenuItem, importTxdToolStripMenuItem });
             resources.ApplyResources(texturesToolStripMenuItem, "texturesToolStripMenuItem");
             texturesToolStripMenuItem.Name = "texturesToolStripMenuItem";
             // 
@@ -344,29 +342,17 @@
             toolStripSeparator6.Name = "toolStripSeparator6";
             resources.ApplyResources(toolStripSeparator6, "toolStripSeparator6");
             // 
-            // exportRW3ToolStripMenuItem
+            // exportTxdToolStripMenuItem
             // 
-            resources.ApplyResources(exportRW3ToolStripMenuItem, "exportRW3ToolStripMenuItem");
-            exportRW3ToolStripMenuItem.Name = "exportRW3ToolStripMenuItem";
-            exportRW3ToolStripMenuItem.Click += exportRW3ToolStripMenuItem_Click;
+            resources.ApplyResources(exportTxdToolStripMenuItem, "exportTxdToolStripMenuItem");
+            exportTxdToolStripMenuItem.Name = "exportTxdToolStripMenuItem";
+            exportTxdToolStripMenuItem.Click += exportTxdToolStripMenuItem_Click;
             // 
-            // importRW3ToolStripMenuItem
+            // importTxdToolStripMenuItem
             // 
-            resources.ApplyResources(importRW3ToolStripMenuItem, "importRW3ToolStripMenuItem");
-            importRW3ToolStripMenuItem.Name = "importRW3ToolStripMenuItem";
-            importRW3ToolStripMenuItem.Click += importRW3ToolStripMenuItem_Click;
-            // 
-            // exportNoRW3ToolStripMenuItem
-            // 
-            resources.ApplyResources(exportNoRW3ToolStripMenuItem, "exportNoRW3ToolStripMenuItem");
-            exportNoRW3ToolStripMenuItem.Name = "exportNoRW3ToolStripMenuItem";
-            exportNoRW3ToolStripMenuItem.Click += exportNoRW3ToolStripMenuItem_Click;
-            // 
-            // importNoRW3ToolStripMenuItem
-            // 
-            resources.ApplyResources(importNoRW3ToolStripMenuItem, "importNoRW3ToolStripMenuItem");
-            importNoRW3ToolStripMenuItem.Name = "importNoRW3ToolStripMenuItem";
-            importNoRW3ToolStripMenuItem.Click += importNoRW3ToolStripMenuItem_Click;
+            resources.ApplyResources(importTxdToolStripMenuItem, "importTxdToolStripMenuItem");
+            importTxdToolStripMenuItem.Name = "importTxdToolStripMenuItem";
+            importTxdToolStripMenuItem.Click += importTxdToolStripMenuItem_Click;
             // 
             // soundsToolStripMenuItem
             // 
@@ -972,10 +958,8 @@
         private System.Windows.Forms.ListView listViewAssets;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripMenuItem texturesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exportRW3ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importRW3ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exportNoRW3ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem importNoRW3ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exportTxdToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem importTxdToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem importModelsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem convertArchiveToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader AssetNameCol;

@@ -11,7 +11,6 @@ namespace IndustrialPark
 
         public List<string> hipPaths;
         public List<Platform> scoobyPlatforms;
-        public List<string> TextureFolderPaths;
         public List<uint> hiddenAssets;
 
         public Vector3 CamPos;
@@ -35,7 +34,6 @@ namespace IndustrialPark
 
             hipPaths = new List<string>();
             scoobyPlatforms = new List<Platform>();
-            TextureFolderPaths = new List<string>();
             hiddenAssets = new List<uint>();
 
             CamPos = new Vector3();

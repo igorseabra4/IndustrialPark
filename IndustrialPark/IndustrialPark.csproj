@@ -124,9 +124,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon.ico" />
-    <Content Include="Resources\Models\ArrowDefault.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="Resources\PlaceholderBanner1.png" />
     <Content Include="Resources\SharpDX\Shader_Basic.hlsl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -153,9 +150,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\txdgen_1.0\txdgen_xp.exe">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Models\WhiteDefault.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
