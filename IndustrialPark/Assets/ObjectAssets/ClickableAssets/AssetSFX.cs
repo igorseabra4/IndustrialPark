@@ -45,43 +45,58 @@ namespace IndustrialPark.Assets
         [Category(categoryName)]
         public byte Volume { get; set; }
         private Vector3 _position;
-        [Category(categoryName)]
+        [Category(categoryName), Description("Position is only used when Play in 3D is on and Use Attach is off.")]
         public AssetSingle PositionX
         {
             get => _position.X;
             set => _position.X = value;
         }
-        [Category(categoryName)]
+        [Category(categoryName), Description("Position is only used when Play in 3D is on and Use Attach is off.")]
         public AssetSingle PositionY
         {
             get => _position.Y;
             set => _position.Y = value;
         }
-        [Category(categoryName)]
+        [Category(categoryName), Description("Position is only used when Play in 3D is on and Use Attach is off.")]
         public AssetSingle PositionZ
         {
             get => _position.Z;
             set => _position.Z = value;
         }
         private float _radius;
-        [Category(categoryName)]
+        [Category(categoryName), Description("Radius is used when Play in 3D is on, with regards to position or attach position.")]
         public AssetSingle InnerRadius
         {
             get => _radius;
             set => _radius = value;
         }
         private float _radius2;
-        [Category(categoryName)]
+        [Category(categoryName), Description("Radius is used when Play in 3D is on, with regards to position or attach position.")]
         public AssetSingle OuterRadius
         {
             get => _radius2;
             set => _radius2 = value;
         }
+        
+        // PlayIn3D = true: keep UseAttach off.
+        // UseAttach = true: automatically enable PlayIn3D.
+        // PlayIn3D = false: disable UseAttach too.
+        // UseAttach = false: keep PlayIn3D unchanged.
 
-        [Browsable(false)]
-        public bool PlayIn3D => (Flags.FlagValueShort & 0x0002) != 0;
-        [Browsable(false)]
-        public bool UseAttach => PlayIn3D && (Flags.FlagValueShort & 0x0008) != 0;
+        public bool PlayIn3D
+        {
+            get => (Flags.FlagValueShort & 0x0002) != 0;
+            set => Flags.FlagValueShort = value
+                ? (ushort)(Flags.FlagValueShort | 0x0002)
+                : (ushort)(Flags.FlagValueShort & ~0x000A);
+        }
+        public bool UseAttach
+        {
+            get => PlayIn3D && (Flags.FlagValueShort & 0x0008) != 0;
+            set => Flags.FlagValueShort = value
+                ? (ushort)(Flags.FlagValueShort | 0x000A)
+                : (ushort)(Flags.FlagValueShort & ~0x0008);
+        }
         [Browsable(false)]
         public Func<uint, Asset> GetAttach;
 
