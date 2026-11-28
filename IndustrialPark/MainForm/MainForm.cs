@@ -52,6 +52,7 @@ namespace IndustrialPark
             markerConnector = new ConnectMarkers(() => ArchiveEditors.SelectMany(ae => ae.SelectedAssets).OfType<AssetMRKR>());
 
             SetupToolbar();
+            SetupLogger();
 
             if (!Directory.Exists(PathToUserFolder))
                 Directory.CreateDirectory(PathToUserFolder);
@@ -780,6 +781,13 @@ namespace IndustrialPark
             Program.AboutBox.Activate();
         }
 
+        private void viewLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!loggerBox.Visible)
+                loggerBox.Show(this);
+            loggerBox.Activate();
+        }
+
         private void viewUndoBufferToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (undoBox == null)
@@ -802,7 +810,7 @@ namespace IndustrialPark
 
         private void hansToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Program.HansMainForm ??= new IndustrialPark.SaveFile.HansMainForm();
+            Program.HansMainForm ??= new SaveFile.HansMainForm();
             if (!Program.HansMainForm.Visible)
                 Program.HansMainForm.Show(this);
         }
@@ -1738,6 +1746,19 @@ namespace IndustrialPark
             // Updaate the toolstrip dropdown items
             foreach (ToolStripMenuItem item in cursorInFlyModeToolStripMenuItem.DropDownItems)
                 item.Checked = Convert.ToInt32(item.Tag) == flyModeCursor;
+        }
+
+        private ScrollableMessageBox loggerBox;
+
+        private void SetupLogger()
+        {
+            loggerBox = new ScrollableMessageBox("Log", "", true);
+            Program.Logger.Subscribe((text, important) =>
+            {
+                loggerBox.richTextBox1.Text = text;
+                if (important)
+                    viewLogToolStripMenuItem.PerformClick();
+            });
         }
     }
 }

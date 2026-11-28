@@ -14,7 +14,7 @@ public static class AssetService
 {
     public static Asset ConvertHeaderToAsset(Section_AHDR AHDR, bool testBuild, out AssetError error)
     {
-        error = new AssetError() { reason = ErrorReason.NoError, assetID = AHDR.assetID, assetName = AHDR.ADBG.assetName };
+        error = new AssetError() { reason = ErrorReason.NoError, assetType = AHDR.assetType, assetID = AHDR.assetID, assetName = AHDR.ADBG.assetName };
 
         Asset newAsset;
         try

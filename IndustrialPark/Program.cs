@@ -22,6 +22,7 @@ public static class Program
     public static List<ArchiveEditor> ArchiveEditors => ArchiveManager.ArchiveEditors;
     public static AssetEditorManager EditorManager;
     public static NameRepository NameRepository;
+    public static Logger Logger;
     public static SharpRenderer Renderer;
     public static TextureManager TextureManager;
     public static ViewConfig ViewConfig;
@@ -75,6 +76,7 @@ public static class Program
         TextureManager = new TextureManager();
         EditorManager = new AssetEditorManager();
         NameRepository = new NameRepository();
+        Logger = new Logger();
 
         MainForm = new MainForm(ipSettings);
 

@@ -1340,12 +1340,12 @@ public partial class ArchiveEditor : Form
 
             archive = new Archive(hipFile, fileName, true, out List<AssetError> errors, progressBar);
 
-            errors = errors.Where(e => e.reason is ErrorReason.CannotBuild or ErrorReason.ParseException).ToList();
+            errors = errors.Where(e => e.reason != ErrorReason.NoError).ToList();
 
             if (errors.Count != 0)
-                MessageBox.Show("There was an error loading the following assets and editing may have been disabled for them:\n" + string.Join("\n", errors),
-                    $"{errors.Count} Asset(s) with errors",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Program.Logger?.Log(this,
+                    $"{errors.Count} asset(s) could not be fully interpreted. You can still edit the archive; these assets use a generic editor for binary data instead of a dedicated property editor.\n{string.Join("\n", errors)}",
+                    true);
 
             historyManager?.Dispose();
             historyManager = new AssetHistoryManager(archive);

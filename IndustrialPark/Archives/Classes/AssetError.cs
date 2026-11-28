@@ -1,21 +1,24 @@
-﻿namespace IndustrialPark.Archives;
+﻿using HipHopFile;
+
+namespace IndustrialPark.Archives;
 
 public struct AssetError
 {
     public ErrorReason reason;
     public uint assetID;
     public string assetName;
+    public AssetType assetType;
     public string exception;
 
     public override string ToString() =>
-        $"-{reason}: [{assetID:X8}] {assetName} {string.Format("({0})", ErrorMessage) ?? ""}";
+        $"[{assetID:X8}] {assetName} ({AssetTypeContainer.AssetTypeToString(assetType)}) {string.Format("({0})", ErrorMessage) ?? ""}";
 
     public readonly string ErrorMessage => reason switch
     {
-        ErrorReason.ParseException => $"Cannot parse: {exception}",
-        ErrorReason.CannotBuild => "Cannot build",
-        ErrorReason.NotImplemented => "Unsupported by Industrial Park",
-        ErrorReason.NoData => "Asset is empty and does not contain any data",
+        ErrorReason.ParseException => $"Parse error: {exception}",
+        ErrorReason.CannotBuild => "Failed build testing",
+        ErrorReason.NotImplemented => "Unsupported",
+        ErrorReason.NoData => "Contains no data",
         _ => "No error"
     };
 }
