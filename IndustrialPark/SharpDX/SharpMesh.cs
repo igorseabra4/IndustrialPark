@@ -37,17 +37,7 @@ public class SharpMesh : IDisposable
     // indexed with subsets
     public static SharpMesh Create<VType>(SharpDevice device, VType[] vertices, int[] indices, List<SharpSubSet> SubSets, PrimitiveTopology topology = PrimitiveTopology.TriangleList) where VType : struct
     {
-        return new SharpMesh()
-        {
-#if DEBUG
-            VerticesAmount = vertices.Length,
-#endif
-            VertexBuffer = Buffer11.Create<VType>(device.Device, BindFlags.VertexBuffer, vertices),
-            IndexBuffer = Buffer11.Create(device.Device, BindFlags.IndexBuffer, indices),
-            VertexSize = Utilities.SizeOf<VType>(),
-            SubSets = SubSets,
-            primitiveTopology = topology,
-        };
+        return CreateIndexed(device, vertices, indices, SubSets, 0, topology);
     }
 
     // unindexed with subsets
@@ -71,18 +61,33 @@ public class SharpMesh : IDisposable
     // indexed without subsets
     public static SharpMesh Create<VType>(SharpDevice device, VType[] vertices, int[] indices, PrimitiveTopology topology = PrimitiveTopology.TriangleList) where VType : struct
     {
-        return new SharpMesh()
+        return CreateIndexed(device, vertices, indices, null, indices.Length, topology);
+    }
+
+    private static SharpMesh CreateIndexed<VType>(SharpDevice device, VType[] vertices, int[] indices,
+        List<SharpSubSet> subSets, int indexCount, PrimitiveTopology topology) where VType : struct
+    {
+        var mesh = new SharpMesh
         {
 #if DEBUG
             VerticesAmount = vertices.Length,
 #endif
-            VertexBuffer = Buffer11.Create<VType>(device.Device, BindFlags.VertexBuffer, vertices),
-            IndexBuffer = Buffer11.Create(device.Device, BindFlags.IndexBuffer, indices),
             VertexSize = Utilities.SizeOf<VType>(),
-            SubSets = null,
-            IndexCount = indices.Length,
+            SubSets = subSets,
+            IndexCount = indexCount,
             primitiveTopology = topology,
         };
+        try
+        {
+            mesh.VertexBuffer = Buffer11.Create(device.Device, BindFlags.VertexBuffer, vertices);
+            mesh.IndexBuffer = Buffer11.Create(device.Device, BindFlags.IndexBuffer, indices);
+            return mesh;
+        }
+        catch
+        {
+            mesh.Dispose();
+            throw;
+        }
     }
 
     /// <summary>

@@ -13,7 +13,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using static IndustrialPark.Models.BSP_IO_ReadOBJ;
 
 namespace IndustrialPark;
 
@@ -225,6 +224,10 @@ public class SharpRenderer : IDisposable
     public SharpMesh Plane { get; private set; }
     public SharpMesh Torus { get; private set; }
     public SharpMesh Cone { get; private set; }
+    private SharpMesh cubeWireframe;
+    private SharpMesh cylinderWireframe;
+    private SharpMesh sphereWireframe;
+    private bool drawingWidgetWireframe;
 #if DEBUG
     public SharpMesh BoundingBox { get; private set; }
     public List<Vector3> boundingBoxVertices;
@@ -247,57 +250,56 @@ public class SharpRenderer : IDisposable
 
     public void LoadModels()
     {
-        cubeVertices = [];
-        cubeTriangles = [];
-        Cube = LoadMesh("Box", ref cubeVertices, ref cubeTriangles);
+        if (disposed)
+            throw new ObjectDisposedException(nameof(SharpRenderer));
 
-        cylinderVertices = [];
-        cylinderTriangles = [];
-        Cylinder = LoadMesh("Cylinder", ref cylinderVertices, ref cylinderTriangles);
+        DisposeModels();
+        try
+        {
+            Cube = CreateShapeMesh(WidgetShapes.Box(), out cubeVertices, out cubeTriangles, out cubeWireframe);
+            Cylinder = CreateShapeMesh(WidgetShapes.Cylinder(), out cylinderVertices, out cylinderTriangles, out cylinderWireframe);
+            Pyramid = CreateShapeMesh(WidgetShapes.Pyramid(), out pyramidVertices, out pyramidTriangles, out _);
+            Sphere = CreateShapeMesh(WidgetShapes.Sphere(0.5f, 32, 16), out sphereVertices, out sphereTriangles, out _, createWireframe: false);
+            CreateShapeMesh(WidgetShapes.Sphere(0.5f, 12, 6), out _, out _, out sphereWireframe, createSolid: false);
+            Torus = CreateShapeMesh(WidgetShapes.Torus(), out torusVertices, out torusTriangles, out _);
+            Cone = CreateShapeMesh(WidgetShapes.Cone(), out coneVertices, out coneTriangles, out _);
 
-        pyramidVertices = [];
-        pyramidTriangles = [];
-        Pyramid = LoadMesh("Pyramid", ref pyramidVertices, ref pyramidTriangles);
-
-        sphereVertices = [];
-        sphereTriangles = [];
-        Sphere = LoadMesh("Sphere", ref sphereVertices, ref sphereTriangles);
-
-        torusVertices = [];
-        torusTriangles = [];
-        Torus = LoadMesh("Torus", ref torusVertices, ref torusTriangles);
-
-        coneVertices = [];
-        coneTriangles = [];
-        Cone = LoadMesh("Cone", ref coneVertices, ref coneTriangles);
-
-        CreatePlaneMesh();
+            CreatePlaneMesh();
 #if DEBUG
-        CreateBoundingBoxMesh();
+            CreateBoundingBoxMesh();
 #endif
-        GizmoBase.VertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.ForwardLH]);
-        AssetCAM.CamVertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.Up * 0.8f]);
+            GizmoBase.VertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.ForwardLH]);
+            AssetCAM.CamVertexBuffer = SharpDX.Direct3D11.Buffer.Create(device.Device, BindFlags.VertexBuffer, [Vector3.Zero, Vector3.Up * 0.8f]);
+        }
+        catch
+        {
+            DisposeModels();
+            throw;
+        }
     }
 
-    private SharpMesh LoadMesh(string meshName, ref List<Vector3> vertices, ref List<RenderWareFile.Triangle> triangles)
+    private SharpMesh CreateShapeMesh(ShapeGeometry shape, out List<Vector3> vertices,
+        out List<RenderWareFile.Triangle> triangles, out SharpMesh wireframe,
+        bool createSolid = true, bool createWireframe = true)
     {
-        var objData = ReadOBJFile(Path.Combine(Program.ResourcesFolder, "Models", $"{meshName}.obj"), false);
-        List<Vertex> vertexList = [];
-        foreach (Models.Vertex v in objData.VertexList)
+        vertices = shape.Vertices;
+        triangles = shape.Triangles;
+        var vertexData = vertices.Select(v => new Vertex(v)).ToArray();
+        wireframe = createWireframe && shape.WireframeIndices.Count != 0 ? SharpMesh.Create(device, vertexData,
+            shape.WireframeIndices.ToArray(), SharpDX.Direct3D.PrimitiveTopology.LineList) : null;
+        try
         {
-            vertexList.Add(new Vertex(v.Position));
-            vertices.Add(new Vector3(v.Position.X, v.Position.Y, v.Position.Z));
+            if (!createSolid)
+                return null;
+            var indices = triangles.SelectMany(t => new[] { (int)t.vertex1, t.vertex2, t.vertex3 }).ToArray();
+            return SharpMesh.Create(device, vertexData, indices);
         }
-        List<int> indexList = [];
-        foreach (Models.Triangle t in objData.TriangleList)
+        catch
         {
-            indexList.Add(t.vertex1);
-            indexList.Add(t.vertex2);
-            indexList.Add(t.vertex3);
-            triangles.Add(new RenderWareFile.Triangle((ushort)t.materialIndex, (ushort)t.vertex1, (ushort)t.vertex2, (ushort)t.vertex3));
+            wireframe?.Dispose();
+            wireframe = null;
+            throw;
         }
-        
-        return SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
     }
 
     public void CreatePlaneMesh()
@@ -324,7 +326,9 @@ public class SharpRenderer : IDisposable
         planeTriangles.Add(new RenderWareFile.Triangle(0, 0, 1, 2));
         planeTriangles.Add(new RenderWareFile.Triangle(0, 3, 2, 1));
 
-        Plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
+        var plane = SharpMesh.Create(device, vertexList.ToArray(), indexList.ToArray());
+        Plane?.Dispose();
+        Plane = plane;
     }
 
 #if DEBUG
@@ -457,7 +461,7 @@ public class SharpRenderer : IDisposable
         device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
         basicShader.Apply();
 
-        Cube.Draw(device);
+        (drawingWidgetWireframe ? cubeWireframe : Cube).Draw(device);
     }
 
     public void DrawPyramid(Matrix world, bool isSelected, float multiplier = 0.5f, Vector4? color = null)
@@ -495,7 +499,7 @@ public class SharpRenderer : IDisposable
         device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
         basicShader.Apply();
 
-        Sphere.Draw(device);
+        (drawingWidgetWireframe ? sphereWireframe : Sphere).Draw(device);
     }
 
     public void DrawSphere(BoundingSphere sphere, bool isSelected, Vector4 normalColor)
@@ -515,7 +519,7 @@ public class SharpRenderer : IDisposable
         device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
         basicShader.Apply();
 
-        Sphere.Draw(device);
+        (drawingWidgetWireframe ? sphereWireframe : Sphere).Draw(device);
     }
 
     public void DrawCylinder(Matrix world, bool isSelected, Vector4 normalColor)
@@ -534,7 +538,7 @@ public class SharpRenderer : IDisposable
         device.DeviceContext.VertexShader.SetConstantBuffer(0, basicBuffer.Buffer);
         basicShader.Apply();
 
-        Cylinder.Draw(device);
+        (drawingWidgetWireframe ? cylinderWireframe : Cylinder).Draw(device);
     }
 
     public void DrawPlane(Matrix world, bool isSelected, uint textureAssetID, Vector3 uvAnimOffset)
@@ -779,9 +783,17 @@ public class SharpRenderer : IDisposable
                         device.SetFillModeSolid();
                         a.Draw(this);
                     }
-                    WidgetAlpha = 1f;
+                    WidgetAlpha = 0.9f;
                     device.SetFillModeWireframe();
-                    a.Draw(this);
+                    drawingWidgetWireframe = true;
+                    try
+                    {
+                        a.Draw(this);
+                    }
+                    finally
+                    {
+                        drawingWidgetWireframe = false;
+                    }
                 }
             }
             else
@@ -832,6 +844,34 @@ public class SharpRenderer : IDisposable
         }
     }
 
+    private void DisposeModels()
+    {
+        Utilities.Dispose(ref GizmoBase.VertexBuffer);
+        Utilities.Dispose(ref AssetCAM.CamVertexBuffer);
+
+        Cube?.Dispose();
+        Cube = null;
+        Cylinder?.Dispose();
+        Cylinder = null;
+        Pyramid?.Dispose();
+        Pyramid = null;
+        Sphere?.Dispose();
+        Sphere = null;
+        Plane?.Dispose();
+        Plane = null;
+        Torus?.Dispose();
+        Torus = null;
+        Cone?.Dispose();
+        Cone = null;
+        Utilities.Dispose(ref cubeWireframe);
+        Utilities.Dispose(ref cylinderWireframe);
+        Utilities.Dispose(ref sphereWireframe);
+#if DEBUG
+        BoundingBox?.Dispose();
+        BoundingBox = null;
+#endif
+    }
+
     public void Dispose()
     {
         if (disposed)
@@ -842,20 +882,7 @@ public class SharpRenderer : IDisposable
         Program.TextureManager?.DisposeTextures();
         Utilities.Dispose(ref arrowDefault);
         Utilities.Dispose(ref whiteDefault);
-
-        Utilities.Dispose(ref GizmoBase.VertexBuffer);
-        Utilities.Dispose(ref AssetCAM.CamVertexBuffer);
-
-        Cube?.Dispose();
-        Cylinder?.Dispose();
-        Pyramid?.Dispose();
-        Sphere?.Dispose();
-        Plane?.Dispose();
-        Torus?.Dispose();
-        Cone?.Dispose();
-#if DEBUG
-        BoundingBox?.Dispose();
-#endif
+        DisposeModels();
 
         basicBuffer?.Dispose();
         basicShader?.Dispose();
